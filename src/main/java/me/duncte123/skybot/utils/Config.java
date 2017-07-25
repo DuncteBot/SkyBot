@@ -4,7 +4,7 @@ import java.awt.Color;
 
 public class Config {
 	// This is the token from your bot
-	public static final String token = "MjEwMzYzMTExNzI5NzkwOTc3.C3oSIA.b1i3o41B3cj7JQ8tPOqbyF8P26Y";
+	public static final String token = "";
 	// This is the prefix that your bot has, by default is the /
 	public static final String prefix = "/";
 	// This is the version of the bot
