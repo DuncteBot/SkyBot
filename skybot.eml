@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component inherit-compiler-output="true" jdk="JavaSE-1.8">
+	<output-test url="file://$MODULE_DIR$/out/test/skybot"/>
+	<exclude-output/>
+	<contentEntry url="file://$MODULE_DIR$">
+		<excludeFolder url="file://$MODULE_DIR$/.gradle"/>
+		<excludeFolder url="file://$MODULE_DIR$/build"/>
+		<excludeFolder url="file://$MODULE_DIR$/out"/>
+	</contentEntry>
+</component>

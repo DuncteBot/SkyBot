@@ -1,0 +1,24 @@
+plugins {
+    id'java'
+    id'application'
+    id'com.github.johnrengelman.shadow' version '2.0.1'
+}
+
+mainClassName = 'me.duncte123.skybot.SkyBot'
+
+version '3.25.0'
+
+sourceCompatibility = 1.8
+
+repositories {
+    jcenter()
+}
+
+dependencies {
+    compile 'net.dv8tion:JDA:3.2.0_237'
+    compile 'com.sedmelluq:lavaplayer:1.2.42'
+    compile 'ch.qos.logback:logback-classic:1.2.1'
+    compile 'ch.qos.logback:logback-core:1.2.1'
+}
+
+compileJava.options.encoding = 'UTF-8'
