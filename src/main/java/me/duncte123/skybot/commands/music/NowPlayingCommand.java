@@ -12,23 +12,23 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class NowPlayingCommand implements Command {
 
-	@Override
-	public boolean called(String[] args, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    @Override
+    public boolean called(String[] args, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-	@Override
-	public void action(String[] args, MessageReceivedEvent event) {
-		AudioUtils au = SkyBot.au;
-		
-		Guild guild = event.getGuild();
-		GuildMusicManager mng = au.getMusicManager(guild);
-		AudioPlayer player = mng.player;
-		
-		String msg = "";
-		
-		AudioTrack currentTrack = player.getPlayingTrack();
+    @Override
+    public void action(String[] args, MessageReceivedEvent event) {
+        AudioUtils au = SkyBot.au;
+
+        Guild guild = event.getGuild();
+        GuildMusicManager mng = au.getMusicManager(guild);
+        AudioPlayer player = mng.player;
+
+        String msg = "";
+
+        AudioTrack currentTrack = player.getPlayingTrack();
         if (currentTrack != null){
             String title = currentTrack.getInfo().title;
             String position = AudioUtils.getTimestamp(currentTrack.getPosition());
@@ -41,18 +41,18 @@ public class NowPlayingCommand implements Command {
         }
         event.getTextChannel().sendMessage(Functions.embedField(au.embedTitle, msg)).queue();
 
-	}
+    }
 
-	@Override
-	public String help() {
-		// TODO Auto-generated method stub
-		return "Prints information about the currently playing song (title, current time)";
-	}
+    @Override
+    public String help() {
+        // TODO Auto-generated method stub
+        return "Prints information about the currently playing song (title, current time)";
+    }
 
-	@Override
-	public void executed(boolean success, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
+    @Override
+    public void executed(boolean success, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
 
-	}
+    }
 
 }

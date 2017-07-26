@@ -14,7 +14,7 @@ public class URLConnectionReader {
         StringBuilder response = new StringBuilder();
         String inputLine;
 
-        while ((inputLine = in.readLine()) != null) 
+        while ((inputLine = in.readLine()) != null)
             response.append(inputLine);
 
         in.close();

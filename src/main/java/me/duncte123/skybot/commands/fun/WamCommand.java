@@ -6,29 +6,29 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class WamCommand implements Command {
 
-	public final static String help = "you need more WAM!.";
-	
-	@Override
-	public boolean called(String[] args, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    public final static String help = "you need more WAM!.";
 
-	@Override
-	public void action(String[] args, MessageReceivedEvent event) {
-		event.getTextChannel().sendMessage(Functions.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)") ).queue();
-	}
+    @Override
+    public boolean called(String[] args, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-	@Override
-	public String help() {
-		// TODO Auto-generated method stub
-		return help;
-	}
+    @Override
+    public void action(String[] args, MessageReceivedEvent event) {
+        event.getTextChannel().sendMessage(Functions.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)") ).queue();
+    }
 
-	@Override
-	public void executed(boolean success, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
+    @Override
+    public String help() {
+        // TODO Auto-generated method stub
+        return help;
+    }
 
-	}
+    @Override
+    public void executed(boolean success, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
+
+    }
 
 }

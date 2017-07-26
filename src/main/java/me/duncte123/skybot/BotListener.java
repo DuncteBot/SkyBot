@@ -24,82 +24,82 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class BotListener extends ListenerAdapter {
 
-	// listen for messages
-	@Override
-	public void onMessageReceived(MessageReceivedEvent event){
+    // listen for messages
+    @Override
+    public void onMessageReceived(MessageReceivedEvent event){
 
         if(event.getMessage().getContent().equals("/shutdown") && event.getAuthor().getId().equals("191231307290771456")){
             SkyBot.timer.cancel();
             event.getJDA().shutdown();
         }
 
-		if(event.isFromType(ChannelType.PRIVATE) && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) ){
-			SkyBot.log(CustomLog.Level.WARNING, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+", tried to do something in the pm-channel.\nThe message is " + event.getMessage().getContent());
-			return;
-		}
-		if(event.isFromType(ChannelType.PRIVATE)){
-			// NO JUST NO, RETURN THAT SHIT
-			return;
-		}
+        if(event.isFromType(ChannelType.PRIVATE) && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) ){
+            SkyBot.log(CustomLog.Level.WARNING, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+", tried to do something in the pm-channel.\nThe message is " + event.getMessage().getContent());
+            return;
+        }
+        if(event.isFromType(ChannelType.PRIVATE)){
+            // NO JUST NO, RETURN THAT SHIT
+            return;
+        }
 
-		Permission[] adminPerms = {
-				Permission.MESSAGE_MANAGE
-		};
+        Permission[] adminPerms = {
+                Permission.MESSAGE_MANAGE
+        };
 
-		if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
-			Message messageToCheck = event.getMessage();
-			for (String badWord : Config.bannedWordList) {
-				if (messageToCheck.getContent().toLowerCase().equals(badWord)) {
-					messageToCheck.delete().reason("Blocked for bad word: " + badWord).queue();
-					event.getChannel().sendMessage("Hello there, "+ event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
-							m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+        if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
+            Message messageToCheck = event.getMessage();
+            for (String badWord : Config.bannedWordList) {
+                if (messageToCheck.getContent().toLowerCase().equals(badWord)) {
+                    messageToCheck.delete().reason("Blocked for bad word: " + badWord).queue();
+                    event.getChannel().sendMessage("Hello there, "+ event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
               SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
-					return;
-				}
-			}
-		}
-		
-		if(event.getMessage().getContent().startsWith(Config.prefix) && event.getMessage().getAuthor().getId() != event.getJDA().getSelfUser().getId()){
-			// run the a command
-			SkyBot.lastGuildChannel.put(event.getGuild(), event.getTextChannel());
-			SkyBot.handleCommand(SkyBot.parser.parse(event.getMessage().getContent(), event));
-			SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
-			return;
-		}
+                    return;
+                }
+            }
+        }
+
+        if(event.getMessage().getContent().startsWith(Config.prefix) && event.getMessage().getAuthor().getId() != event.getJDA().getSelfUser().getId()){
+            // run the a command
+            SkyBot.lastGuildChannel.put(event.getGuild(), event.getTextChannel());
+            SkyBot.handleCommand(SkyBot.parser.parse(event.getMessage().getContent(), event));
+            SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
+            return;
+        }
     
-		SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
-	}
+        SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
+    }
 
-	// when the bot is ready
-	@Override
-	public void onReady(ReadyEvent event){
-		SkyBot.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
-		//event.getJDA().getGuilds().get(0).getPublicChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
-		TimerTask myTask = new TimerTask() {
-			@Override
-			public void run() {
-				SkyBot.updateStatus();
-			}
-		};
+    // when the bot is ready
+    @Override
+    public void onReady(ReadyEvent event){
+        SkyBot.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
+        //event.getJDA().getGuilds().get(0).getPublicChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
+        TimerTask myTask = new TimerTask() {
+            @Override
+            public void run() {
+                SkyBot.updateStatus();
+            }
+        };
 
-		SkyBot.timer.schedule(myTask, 60*1000, 60*1000);
-		
-	}
+        SkyBot.timer.schedule(myTask, 60*1000, 60*1000);
 
-	// when a new member joins the guild
-	@Override
-	public void onGuildMemberJoin(GuildMemberJoinEvent event){
+    }
 
-	    List<String> blackList = Arrays.asList("324453756794175488", "125227483518861312");
+    // when a new member joins the guild
+    @Override
+    public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
-	    if (blackList.contains(event.getGuild().getId())) return;
+        List<String> blackList = Arrays.asList("324453756794175488", "125227483518861312");
+
+        if (blackList.contains(event.getGuild().getId())) return;
 
         TextChannel t = event.getGuild().getPublicChannel();
-		String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
-		t.sendMessage(msg).queue();
-	}
+        String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
+        t.sendMessage(msg).queue();
+    }
 
-	//We will check if the bot is allowed to be in this guild
+    //We will check if the bot is allowed to be in this guild
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         List<String> allowedGuilds = Arrays.asList(
@@ -119,22 +119,22 @@ public class BotListener extends ListenerAdapter {
         );
     }
 
-	// leave channel and stop audio player when the channel is empty to prevent high data usage
-	@Override
-	public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
-		if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()){
-		    if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
-			if(event.getChannelLeft().getMembers().size() <= 1){
-				SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
-				SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
-				SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
-				SkyBot.lastGuildChannel.get(event.getGuild()).sendMessage(Functions.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-				if(event.getGuild().getAudioManager().isConnected()){
-					event.getGuild().getAudioManager().closeAudioConnection();
-					event.getGuild().getAudioManager().setSendingHandler(null);
-				}
-			}
-		}
-	}
-	
+    // leave channel and stop audio player when the channel is empty to prevent high data usage
+    @Override
+    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
+        if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()){
+            if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
+            if(event.getChannelLeft().getMembers().size() <= 1){
+                SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
+                SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
+                SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                SkyBot.lastGuildChannel.get(event.getGuild()).sendMessage(Functions.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                if(event.getGuild().getAudioManager().isConnected()){
+                    event.getGuild().getAudioManager().closeAudioConnection();
+                    event.getGuild().getAudioManager().setSendingHandler(null);
+                }
+            }
+        }
+    }
+
 }

@@ -27,20 +27,20 @@ import java.util.logging.Logger;
 
 
 public class SkyBot {
-	
-	private static String logName = new String(Config.defaultName);
-	// get a random thing
-	public static Random rand = new Random();
 
-	private static JDA jda;
-	public static AudioUtils au;
-	
-	public static final CommandParser parser = new CommandParser();
-	public static HashMap<String, Command> commands = new HashMap<String, Command>();
-	public static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<Guild, TextChannel>();
-	
-	private static Logger logForFile = Logger.getLogger(logName);
-	private static CustomLog logger2 = CustomLog.getLog(logName);
+    private static String logName = new String(Config.defaultName);
+    // get a random thing
+    public static Random rand = new Random();
+
+    private static JDA jda;
+    public static AudioUtils au;
+
+    public static final CommandParser parser = new CommandParser();
+    public static HashMap<String, Command> commands = new HashMap<String, Command>();
+    public static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<Guild, TextChannel>();
+
+    private static Logger logForFile = Logger.getLogger(logName);
+    private static CustomLog logger2 = CustomLog.getLog(logName);
 
     public static Timer timer = new Timer();
 
@@ -52,82 +52,82 @@ public class SkyBot {
             "Subscribe???"
     };
     public static int messageIndex = 0;
-	
-	
-	public static void main(String[] args){
-		// Setup file-logging
-		File theDir = new File("logs");
-		
-		if(!theDir.exists()){
-			System.out.println("creating directory: "+theDir.getName());
-			boolean res = false;
-			
-			try{
-				theDir.mkdir();
-				res = true;
-			}
-			catch(SecurityException e){
-				e.printStackTrace();
-			}
-			if(res){
-				System.out.println("DIR created");
-			}
-			
-		}
-		
-		SimpleDateFormat format = new SimpleDateFormat("M-d_HHmss");
-		String filepath = System.getProperty("user.dir")+File.separator+"logs"+File.separator+"log_"+format.format(Calendar.getInstance().getTime())+".log";
-		
-		
-		FileHandler fh;
-		// log to the file
-		try{
-			fh = new FileHandler(filepath);
-			logForFile.setUseParentHandlers(false);
-			logForFile.addHandler(fh);
-			fh.setFormatter(new Formatter() {
-	            @Override
-	            public String format(LogRecord record) {
-	                SimpleDateFormat logTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-	                Calendar cal = new GregorianCalendar();
-	                cal.setTimeInMillis(record.getMillis());
-	                return "["
-	                		+record.getLevel()
-	                		+"]["
-	                        + logTime.format(cal.getTime())
-	                        + "]["+logName+"]: "
-	                        + record.getMessage() + "\n";
-	            }
-	        });
-		}
-		catch(SecurityException e){
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
-		
-		logForFile.info("Logging to: "+filepath);
-		
-		// log in and set up the api
-		try{
-			jda = new JDABuilder(AccountType.BOT)
-					.setBulkDeleteSplittingEnabled(false)
-					.setAudioEnabled(true)
-					.addEventListener(new BotListener())
-					.setToken(Config.token)
+
+
+    public static void main(String[] args){
+        // Setup file-logging
+        File theDir = new File("logs");
+
+        if(!theDir.exists()){
+            System.out.println("creating directory: "+theDir.getName());
+            boolean res = false;
+
+            try{
+                theDir.mkdir();
+                res = true;
+            }
+            catch(SecurityException e){
+                e.printStackTrace();
+            }
+            if(res){
+                System.out.println("DIR created");
+            }
+
+        }
+
+        SimpleDateFormat format = new SimpleDateFormat("M-d_HHmss");
+        String filepath = System.getProperty("user.dir")+File.separator+"logs"+File.separator+"log_"+format.format(Calendar.getInstance().getTime())+".log";
+
+
+        FileHandler fh;
+        // log to the file
+        try{
+            fh = new FileHandler(filepath);
+            logForFile.setUseParentHandlers(false);
+            logForFile.addHandler(fh);
+            fh.setFormatter(new Formatter() {
+                @Override
+                public String format(LogRecord record) {
+                    SimpleDateFormat logTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
+                    Calendar cal = new GregorianCalendar();
+                    cal.setTimeInMillis(record.getMillis());
+                    return "["
+                            +record.getLevel()
+                            +"]["
+                            + logTime.format(cal.getTime())
+                            + "]["+logName+"]: "
+                            + record.getMessage() + "\n";
+                }
+            });
+        }
+        catch(SecurityException e){
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        logForFile.info("Logging to: "+filepath);
+
+        // log in and set up the api
+        try{
+            jda = new JDABuilder(AccountType.BOT)
+                    .setBulkDeleteSplittingEnabled(false)
+                    .setAudioEnabled(true)
+                    .addEventListener(new BotListener())
+                    .setToken(Config.token)
                     .setStatus(OnlineStatus.ONLINE)
                     // .setGame(Game.of(Config.prefix+"help"+ "|" + Config.defaultName+" V"+Config.version))
                     .setGame(Game.of(messages[messageIndex]))
-					.buildBlocking();
-			jda.setAutoReconnect(true);
-			au = new AudioUtils();
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
+                    .buildBlocking();
+            jda.setAutoReconnect(true);
+            au = new AudioUtils();
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
 
-		//setup commands
+        //setup commands
         setupCommands(true, false);
-	}
+    }
 
     public static void updateStatus(){
         messageIndex++;
@@ -152,36 +152,36 @@ public class SkyBot {
         return "none";
     }
 
-	// custom logging
-	public static final void log(String name, CustomLog.Level lvl, String message){
-		logName = name;
-		logForFile.log(toLevel(lvl), message);
-		logger2.log(lvl, message);
-		
-	}
-	
-	public static final void log(CustomLog.Level lvl, String message){
-		log(Config.defaultName, lvl, message);
-	}
+    // custom logging
+    public static final void log(String name, CustomLog.Level lvl, String message){
+        logName = name;
+        logForFile.log(toLevel(lvl), message);
+        logger2.log(lvl, message);
 
-	// handle the commands
-	public static void handleCommand(CommandParser.CommandContainer cmd){
-		if(commands.containsKey(cmd.invoke)){
-			boolean safe = commands.get(cmd.invoke).called(cmd.args, cmd.event);
-			
-			if(!safe){
-				commands.get(cmd.invoke).executed(safe, cmd.event);
-				return;
-			}
-			commands.get(cmd.invoke).action(cmd.args, cmd.event);
-			commands.get(cmd.invoke).executed(safe, cmd.event);
-		}
-	}
+    }
 
-	// to a normal lvl
-	private static java.util.logging.Level toLevel(CustomLog.Level lvl){	
-		return java.util.logging.Level.parse(lvl.name());
-	}
+    public static final void log(CustomLog.Level lvl, String message){
+        log(Config.defaultName, lvl, message);
+    }
+
+    // handle the commands
+    public static void handleCommand(CommandParser.CommandContainer cmd){
+        if(commands.containsKey(cmd.invoke)){
+            boolean safe = commands.get(cmd.invoke).called(cmd.args, cmd.event);
+
+            if(!safe){
+                commands.get(cmd.invoke).executed(safe, cmd.event);
+                return;
+            }
+            commands.get(cmd.invoke).action(cmd.args, cmd.event);
+            commands.get(cmd.invoke).executed(safe, cmd.event);
+        }
+    }
+
+    // to a normal lvl
+    private static java.util.logging.Level toLevel(CustomLog.Level lvl){
+        return java.util.logging.Level.parse(lvl.name());
+    }
 
     public static boolean isURL(String url) {
         try {

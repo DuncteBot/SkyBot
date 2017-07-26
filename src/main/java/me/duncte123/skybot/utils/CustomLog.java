@@ -11,11 +11,11 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 
 
-	/**
-	 * 
-	 * All the credits for this file go to the developers of the jda lib (https://github.com/DV8FromTheWorld/JDA)
-	 *
-	 */
+    /**
+     *
+     * All the credits for this file go to the developers of the jda lib (https://github.com/DV8FromTheWorld/JDA)
+     *
+     */
 public class CustomLog {
     /**
      * The global LOG-level that is used as standard if not overwritten

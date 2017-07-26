@@ -12,43 +12,43 @@ import java.util.SortedSet;
 import java.util.TreeSet;
 
 public class HelpCommand implements Command {
-	
-	public final static String help = "shows a list of all the commands.";
 
-	@Override
-	public boolean called(String[] args, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-		return true;
-	}
+    public final static String help = "shows a list of all the commands.";
 
-	@Override
-	public void action(String[] args, MessageReceivedEvent event) {
+    @Override
+    public boolean called(String[] args, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
+        return true;
+    }
 
-	    EmbedBuilder eb = Functions.defaultEmbed();
+    @Override
+    public void action(String[] args, MessageReceivedEvent event) {
+
+        EmbedBuilder eb = Functions.defaultEmbed();
 
         SortedSet<String> commands = new TreeSet<String>(SkyBot.commands.keySet());
-		for(String cmd: commands){
-			if((!SkyBot.commands.get(cmd).help().isEmpty()) || (SkyBot.commands.get(cmd).help() != null)){
-				eb.addField(Config.prefix+cmd, SkyBot.commands.get(cmd).help(), false);
-			}
-		}
-		
-		event.getTextChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
-		
-		event.getAuthor().openPrivateChannel().queue( pc -> pc.sendMessage(eb.build()).queue());
-	}
+        for(String cmd: commands){
+            if((!SkyBot.commands.get(cmd).help().isEmpty()) || (SkyBot.commands.get(cmd).help() != null)){
+                eb.addField(Config.prefix+cmd, SkyBot.commands.get(cmd).help(), false);
+            }
+        }
 
-	@Override
-	public String help() {
-		// TODO Auto-generated method stub
-		return help;
-	}
+        event.getTextChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
 
-	@Override
-	public void executed(boolean success, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-		return;
-		
-	}
+        event.getAuthor().openPrivateChannel().queue( pc -> pc.sendMessage(eb.build()).queue());
+    }
+
+    @Override
+    public String help() {
+        // TODO Auto-generated method stub
+        return help;
+    }
+
+    @Override
+    public void executed(boolean success, MessageReceivedEvent event) {
+        // TODO Auto-generated method stub
+        return;
+
+    }
 
 }
