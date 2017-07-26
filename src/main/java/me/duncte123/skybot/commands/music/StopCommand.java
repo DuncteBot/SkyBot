@@ -8,7 +8,6 @@ import me.duncte123.skybot.audio.TrackScheduler;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -16,14 +15,10 @@ public class StopCommand implements Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
-        boolean inChan = false;
-        boolean playing = true;
-        EmbedBuilder eb = Functions.defaultEmbed();
 
-        if(event.getGuild().getAudioManager().isConnected()){
-            inChan = true;
-        }else{
-            eb.addField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel", false);
+        if(!event.getGuild().getAudioManager().isConnected()){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            return false;
         }
 
         AudioUtils au = SkyBot.au;
@@ -32,15 +27,11 @@ public class StopCommand implements Command {
         GuildMusicManager mng = au.getMusicManager(guild);
 
         if(mng.player.getPlayingTrack().equals(null)){
-            playing = false;
-            eb.addField(au.embedTitle, "The player is not playing.", false);
+            event.getChannel().sendMessage(Functions.embedField(au.embedTitle, "The player is not playing.")).queue();
+            return false;
         }
 
-        if(!(inChan&&playing)){
-            event.getTextChannel().sendMessage(eb.build()).queue();
-        }
-
-        return inChan&&playing;
+        return true;
     }
 
     @Override

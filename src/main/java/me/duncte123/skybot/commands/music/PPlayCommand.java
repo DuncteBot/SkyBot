@@ -1,18 +1,16 @@
 package me.duncte123.skybot.commands.music;
 
-import java.time.Instant;
-import java.util.Arrays;
-
-import me.duncte123.skybot.utils.Functions;
-import org.apache.commons.lang3.StringUtils;
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.EmbedBuilder;
+import me.duncte123.skybot.utils.Functions;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 public class PPlayCommand implements Command {
 
@@ -20,27 +18,22 @@ public class PPlayCommand implements Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
-        boolean inChan = false;
-        boolean enoughArgs = false;
-        EmbedBuilder eb = Functions.defaultEmbed();
-
-        if(event.getGuild().getAudioManager().isConnected()){
-            inChan = true;
-        }else{
-            eb.addField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel", false);
+        if(!event.getGuild().getAudioManager().isConnected()){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            return false;
         }
 
-        if(args.length > 0){
-            enoughArgs = true;
-        }else{
-            eb.addField(SkyBot.au.embedTitle, "To few arguments, use `"+Config.prefix+"pplay <media link>`", false);
+        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            return false;
         }
 
-        if(!(inChan && enoughArgs)){
-            event.getTextChannel().sendMessage(eb.build()).queue();
+        if(!(args.length > 0)){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "To few arguments, use `"+Config.prefix+"pplay <media link>`")).queue();
+            return false;
         }
 
-        return inChan && enoughArgs;
+        return true;
     }
 
     @Override

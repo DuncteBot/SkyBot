@@ -14,7 +14,7 @@ public class Config {
     // This is the title from the player embed
     public static final String playerTitle = "AirPlayer";
     // The embed title
-    public static final String headerName = "DSHelmondGames";
+    //public static final String headerName = "DSHelmondGames";
     // The icon url for the embeds
     public static final String defaultIcon = "https://dshelmondgames.ml/faviecon/profileYT.png";
     // The link that the embed title goes to

@@ -19,28 +19,17 @@ public class PlayCommand implements Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
-        EmbedBuilder eb = Functions.defaultEmbed();
-        boolean inChan = false;
-        boolean userInChan = false;
-
-        if(event.getGuild().getAudioManager().isConnected()){
-            inChan = true;
-
-            if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-                eb.addField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands", false);
-                event.getTextChannel().sendMessage(eb.build()).queue();
-            }else{
-                userInChan = true;
-            }
-
-        }else{
-            eb.addField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel", false);
-            event.getTextChannel().sendMessage(eb.build()).queue();
+        if(!event.getGuild().getAudioManager().isConnected()){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            return false;
         }
 
+        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            return false;
+        }
 
-
-        return inChan && userInChan;
+        return true;
     }
 
     @Override

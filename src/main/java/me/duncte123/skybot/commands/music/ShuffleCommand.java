@@ -21,33 +21,23 @@ public class ShuffleCommand implements Command {
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
         TrackScheduler scheduler = mng.scheduler;
-    
-        boolean inChan = false;
-        boolean userInChan = true;
-        boolean isNotEmpty = true;
-        EmbedBuilder eb = Functions.defaultEmbed();
 
-        if(event.getGuild().getAudioManager().isConnected()){
-            inChan = true;
-        }else{
-            eb.addField(au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel", false);
+        if(!event.getGuild().getAudioManager().isConnected()){
+            event.getChannel().sendMessage(Functions.embedField(au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            return false;
         }
     
-    if (scheduler.queue.isEmpty()) {
-      eb.addField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands", false);
-            userInChan = false;
-    }
-
-        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            eb.addField(au.embedTitle, "There are no songs to shuffle", false);
-            isNotEmpty = false;
+        if (!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())) {
+            event.getChannel().sendMessage(Functions.embedField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            return false;
         }
 
-        if(!(inChan && userInChan)){
-            event.getTextChannel().sendMessage(eb.build()).queue();
+        if(scheduler.queue.isEmpty()){
+            event.getChannel().sendMessage(Functions.embedField(au.embedTitle, "There are no songs to shuffle")).queue();
+            return false;
         }
 
-        return inChan && userInChan && isNotEmpty;
+        return true;
     }
 
     @Override
