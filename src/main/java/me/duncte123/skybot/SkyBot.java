@@ -224,10 +224,12 @@ public class SkyBot {
             commands.put("pplay", new PPlayCommand());
             commands.put("skip", new SkipCommand());
             commands.put("pause", new PauseCommand());
-            commands.put("list", new ListCommand());
-            NowPlayingCommand np = new NowPlayingCommand();
-            commands.put("nowplaying", np);
-            commands.put("np", np);
+            ListCommand listCommand = new ListCommand();
+            commands.put("list", listCommand);
+            commands.put("queue", listCommand);
+            NowPlayingCommand playingCommand = new NowPlayingCommand();
+            commands.put("nowplaying", playingCommand);
+            commands.put("np", playingCommand);
             commands.put("shuffle", new ShuffleCommand());
             commands.put("repeat", new RepeatCommand());
         }
