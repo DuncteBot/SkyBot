@@ -38,6 +38,10 @@ public class BanCommand implements Command {
     public void action(String[] args, MessageReceivedEvent event) {
         try {
             User toBan = event.getMessage().getMentionedUsers().get(0);
+            if(toBan.equals(event.getAuthor())) {
+                event.getChannel().sendMessage(Functions.embedMessage("Why would you ban yourself?")).queue();
+                return;
+            }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                     (noting) -> {
