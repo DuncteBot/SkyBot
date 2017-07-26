@@ -1,12 +1,11 @@
 package me.duncte123.skybot.commands.music;
 
-import java.time.Instant;
-
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.Config;
+import me.duncte123.skybot.utils.Functions;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -14,6 +13,8 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+
+import java.time.Instant;
 
 public class JoinCommand extends ListenerAdapter implements Command {
 
@@ -50,13 +51,7 @@ public class JoinCommand extends ListenerAdapter implements Command {
 
 
         if(event.getGuild().getAudioManager().isConnected() && !mng.player.getPlayingTrack().equals(null)){
-            EmbedBuilder eb = new EmbedBuilder()
-                    .setColor(Config.defaultColour)
-                    .setAuthor(Config.headerName, Config.defaultUrl, Config.defaultIcon)
-                    .addField("", "I'm already in a channel.", false)
-                    .setFooter(Config.defaultName, Config.defaultIcon)
-                    .setTimestamp(Instant.now());
-            event.getTextChannel().sendMessage(eb.build()).queue();
+            event.getTextChannel().sendMessage(Functions.embedMessage("I'm already in a channel.")).queue();
             return;
         }
 
@@ -68,9 +63,7 @@ public class JoinCommand extends ListenerAdapter implements Command {
         }
 
 
-        EmbedBuilder eb = new EmbedBuilder()
-                .setColor(Config.defaultColour)
-                .setAuthor(Config.headerName, Config.defaultUrl, Config.defaultIcon);
+        EmbedBuilder eb = Functions.defaultEmbed();
         try{
             if(event.getGuild().getAudioManager().isConnected()){
                 event.getGuild().getAudioManager().closeAudioConnection();
@@ -82,8 +75,6 @@ public class JoinCommand extends ListenerAdapter implements Command {
                 eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
             }
         }
-        eb.setFooter(Config.defaultName, Config.defaultIcon)
-        .setTimestamp(Instant.now());
         event.getTextChannel().sendMessage(eb.build()).queue();
 
 
