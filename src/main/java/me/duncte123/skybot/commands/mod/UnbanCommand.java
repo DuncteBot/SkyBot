@@ -4,8 +4,12 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.Functions;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+
+import java.util.List;
 
 public class UnbanCommand implements Command {
     @Override
@@ -20,8 +24,8 @@ public class UnbanCommand implements Command {
             return false;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "unban <@user>")).queue();
+        if (args[0].isEmpty()) {
+            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "unban <username>")).queue();
             return false;
         }
 
@@ -31,7 +35,16 @@ public class UnbanCommand implements Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         try {
-            event.getGuild().getController().unban(event.getMessage().getMentionedUsers().get(0));
+            Guild guild = event.getGuild();
+            List<User> bannedUsers =  guild.getBans().complete();
+            for (User bannedUser : bannedUsers) {
+                if (bannedUser.getName().equalsIgnoreCase(args[0])) {
+                    guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
+                    event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.");
+                    Functions.modLog(event.getAuthor(), bannedUser, "unbanned", event);
+                    break;
+                }
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

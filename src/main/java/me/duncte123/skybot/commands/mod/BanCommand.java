@@ -25,8 +25,9 @@ public class BanCommand implements Command {
             return false;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "ban <@user> <days (set to 0 for perm)> [Resson]")).queue();
+        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
+            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "ban <@user> <time (set to 0 for perm)> " +
+                    "[days? months? years?] [Resson]")).queue();
             return false;
         }
 
@@ -37,13 +38,14 @@ public class BanCommand implements Command {
     public void action(String[] args, MessageReceivedEvent event) {
         try {
             User toBan = event.getMessage().getMentionedUsers().get(0);
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+            String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                     (noting) -> {
                         if (Integer.parseInt(args[1]) > 0) {
-                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event);
+                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
                         } else {
-                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, event);
+                            final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                            Functions.modLog(event.getAuthor(), toBan, "banned", newReason, event);
                         }
                     }
             );
