@@ -155,7 +155,7 @@ public class SkyBot {
     // custom logging
     public static final void log(String name, CustomLog.Level lvl, String message){
         logName = name;
-        logForFile.log(toLevel(lvl), message);
+        //logForFile.log(toLevel(lvl), message);
         logger2.log(lvl, message);
 
     }
