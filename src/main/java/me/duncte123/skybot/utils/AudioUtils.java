@@ -36,8 +36,7 @@ public class AudioUtils {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
 
         this.playerManager = new DefaultAudioPlayerManager();
-        playerManager.registerSourceManager(new DabYoutubeAudioSourceManager());
-        // playerManager.registerSourceManager(new YoutubeAudioSourceManager());
+        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
         playerManager.registerSourceManager(new BandcampAudioSourceManager());
         playerManager.registerSourceManager(new VimeoAudioSourceManager());
