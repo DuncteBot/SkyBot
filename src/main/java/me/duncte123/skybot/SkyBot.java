@@ -106,7 +106,7 @@ public class SkyBot {
             e.printStackTrace();
         }
 
-        logForFile.info("Logging to: "+filepath);
+        //logForFile.info("Logging to: "+filepath);
 
         // log in and set up the api
         try{
