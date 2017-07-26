@@ -31,10 +31,10 @@ public class Functions {
 
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, MessageReceivedEvent event){
         String length = "";
-        if (!time.isEmpty()) { length = " lasting " + time + " "; }
+        if (!time.isEmpty()) { length = " lasting " + time + ""; }
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
         MessageChannel modLogChannel = event.getGuild().getTextChannelsByName("modlog", true).get(0);
-        modLogChannel.sendMessage(embedField(punishedUser.getName() + punishment, punishment
+        modLogChannel.sendMessage(embedField(punishedUser.getName() + " " + punishment, punishment
                 + " by " + mod.getName() + length + " for " + reason)).queue(
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
         );
