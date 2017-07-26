@@ -127,7 +127,7 @@ public class SkyBot {
         }
 
         //setup commands
-        setupCommands(true, false);
+        setupCommands(true, true);
     }
 
     public static void updateStatus(){
