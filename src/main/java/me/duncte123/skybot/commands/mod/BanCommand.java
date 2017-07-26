@@ -11,11 +11,10 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
-public class KickCommand implements Command {
+public class BanCommand implements Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
-
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
                 Permission.BAN_MEMBERS
@@ -27,7 +26,7 @@ public class KickCommand implements Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "kick <@user> [Resson]")).queue();
+            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "ban <@user> <days (set to 0 for perm)> [Resson]")).queue();
             return false;
         }
 
@@ -36,31 +35,32 @@ public class KickCommand implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-
         try {
-
-            User toKick = event.getMessage().getMentionedUsers().get(0);
-                                           //Arrays.copyOfRange(Array, From, to)
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-            event.getGuild().getController().kick(toKick.getId(), reason).queue(
-                    (noting) -> Functions.modLog(event.getAuthor(), toKick, "kicked", reason, event)
+            User toBan = event.getMessage().getMentionedUsers().get(0);
+            String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+            event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+                    (noting) -> {
+                        if (Integer.parseInt(args[1]) > 0) {
+                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event);
+                        } else {
+                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, event);
+                        }
+                    }
             );
         }
         catch (Exception e) {
             e.printStackTrace();
             event.getChannel().sendMessage(Functions.embedMessage("ERROR: " + e.getMessage())).queue();
         }
-
-
     }
 
     @Override
     public String help() {
-        return "Kicks a user.";
+        return "Bans a user from the guild";
     }
 
     @Override
-    public void executed(boolean save, MessageReceivedEvent event) {
+    public void executed(boolean success, MessageReceivedEvent event) {
         return;
     }
 }

@@ -2,6 +2,7 @@ package me.duncte123.skybot;
 
 import me.duncte123.skybot.commands.*;
 import me.duncte123.skybot.commands.fun.*;
+import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.CommandParser;
@@ -192,7 +193,7 @@ public class SkyBot {
         }
     }
 
-    private static void setupCommands(boolean musicCommands, boolean prankCommands){
+    private static void setupCommands(boolean musicCommands, boolean modCommands){
 
         // default commands
         commands.put("help", new HelpCommand());
@@ -233,9 +234,11 @@ public class SkyBot {
             commands.put("shuffle", new ShuffleCommand());
             commands.put("repeat", new RepeatCommand());
         }
-        if (prankCommands) {
+        if (modCommands) {
             //prank commands
-            commands.put("rr", new RickRollCommand());
+            commands.put("ban", new BanCommand());
+            commands.put("unban", new UnbanCommand());
+            commands.put("kick", new KickCommand());
         }
     }
 }

@@ -1,7 +1,10 @@
 package me.duncte123.skybot.utils;
 
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.time.Instant;
 
@@ -24,5 +27,20 @@ public class Functions {
                 .setColor(Config.defaultColour)
                 .setFooter(Config.defaultName, Config.defaultIcon)
                 .setTimestamp(Instant.now());
+    }
+
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, MessageReceivedEvent event){
+        String length = "";
+        if (!time.isEmpty()) { length = " lasting " + time + " "; }
+        String punishedUserMention = "<@" + punishedUser.getId() + ">";
+        MessageChannel modLogChannel = event.getGuild().getTextChannelsByName("modlog", true).get(0);
+        modLogChannel.sendMessage(embedField(punishedUser.getName() + punishment, punishment
+                + " by " + mod.getName() + length + " for " + reason)).queue(
+                        msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
+        );
+    }
+
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, MessageReceivedEvent event) {
+        modLog(mod, punishedUser, punishment, reason, "", event);
     }
 }
