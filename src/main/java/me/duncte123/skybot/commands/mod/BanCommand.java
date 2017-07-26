@@ -47,6 +47,8 @@ public class BanCommand implements Command {
                         }
                     }
             );
+            event.getGuild().getPublicChannel().sendMessage("User " + toBan.getName() + "#"
+                    + toBan.getDiscriminator() + " got bent.").queue();
         }
         catch (Exception e) {
             e.printStackTrace();
