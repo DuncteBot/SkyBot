@@ -38,8 +38,9 @@ public class BanCommand implements Command {
     public void action(String[] args, MessageReceivedEvent event) {
         try {
             User toBan = event.getMessage().getMentionedUsers().get(0);
-            if(toBan.equals(event.getAuthor())) {
-                event.getChannel().sendMessage(Functions.embedMessage("Why would you ban yourself?")).queue();
+            if(toBan.equals(event.getAuthor()) &&
+                    !event.getGuild().getMember(toBan).canInteract(event.getMember()) ) {
+                event.getChannel().sendMessage(Functions.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
