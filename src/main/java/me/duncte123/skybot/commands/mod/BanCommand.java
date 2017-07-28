@@ -10,6 +10,8 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class BanCommand implements Command {
 
@@ -48,7 +50,9 @@ public class BanCommand implements Command {
                     (noting) -> {
                         if (Integer.parseInt(args[1]) > 0) {
                             //TODO make ban timed
-                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
+                            String time = args[1] + " " + args[2];
+
+                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
                         } else {
                             final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                             AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);

@@ -4,10 +4,7 @@ import me.duncte123.skybot.commands.*;
 import me.duncte123.skybot.commands.fun.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
-import me.duncte123.skybot.utils.AudioUtils;
-import me.duncte123.skybot.utils.CommandParser;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.CustomLog;
+import me.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -33,7 +30,7 @@ public class SkyBot {
     // get a random thing
     public static Random rand = new Random();
 
-    private static JDA jda;
+    public static JDA jda;
     public static AudioUtils au;
 
     public static final CommandParser parser = new CommandParser();
@@ -56,7 +53,6 @@ public class SkyBot {
 
 
     public static void main(String[] args){
-
         // Setup file-logging
         File theDir = new File("logs");
 
