@@ -47,6 +47,7 @@ public class BanCommand implements Command {
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                     (noting) -> {
                         if (Integer.parseInt(args[1]) > 0) {
+                            //TODO make ban timed
                             Functions.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
                         } else {
                             final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
