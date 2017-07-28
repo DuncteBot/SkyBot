@@ -2,7 +2,7 @@ package me.duncte123.skybot.commands;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
@@ -28,7 +28,7 @@ public class BotinfoCommand implements Command {
         User u = event.getJDA().getSelfUser();
         Member m = event.getGuild().getMemberById(u.getId());
 
-        EmbedBuilder eb = Functions.defaultEmbed()
+        EmbedBuilder eb = AirUtils.defaultEmbed()
                 .setDescription("Bot information.")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .setImage(u.getEffectiveAvatarUrl())

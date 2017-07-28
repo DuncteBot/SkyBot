@@ -1,7 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class TriggerCommand implements Command {
@@ -16,7 +16,7 @@ public class TriggerCommand implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-                event.getTextChannel().sendMessage(Functions.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif")).queue();
+                event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif")).queue();
     }
 
     @Override

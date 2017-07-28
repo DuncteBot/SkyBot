@@ -1,10 +1,8 @@
 package me.duncte123.skybot.commands.fun;
 
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import org.apache.commons.lang3.StringUtils;
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 /**
@@ -37,7 +35,7 @@ public class TextToBrickCommand implements Command {
                 }
             }
 
-        event.getChannel().sendMessage(Functions.embedMessage( sb.toString() )).queue();
+        event.getChannel().sendMessage(AirUtils.embedMessage( sb.toString() )).queue();
     }
 
     @Override

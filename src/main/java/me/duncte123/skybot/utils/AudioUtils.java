@@ -63,7 +63,7 @@ public class AudioUtils {
                 }
 
                 mng.scheduler.queue(track);
-                channel.sendMessage(Functions.embedField(embedTitle, msg)).queue();
+                channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
 
             }
 
@@ -84,17 +84,17 @@ public class AudioUtils {
                     msg = "Adding to queue "+ firstTrack.getInfo().title+" (first track of playlist "+playlist.getName()+")";
                     mng.scheduler.queue(firstTrack);
                 }
-                channel.sendMessage(Functions.embedField(embedTitle, msg)).queue();
+                channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
             }
 
             @Override
             public void noMatches() {
-                channel.sendMessage(Functions.embedField(embedTitle, "Nothing found by ["+trackUrl+"]("+trackUrl+")")).queue();
+                channel.sendMessage(AirUtils.embedField(embedTitle, "Nothing found by ["+trackUrl+"]("+trackUrl+")")).queue();
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                channel.sendMessage(Functions.embedField(embedTitle, "Could not play: "+exception.getMessage())).queue();
+                channel.sendMessage(AirUtils.embedField(embedTitle, "Could not play: "+exception.getMessage())).queue();
 
             }
 

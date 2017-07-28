@@ -1,7 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class WamCommand implements Command {
@@ -16,7 +16,7 @@ public class WamCommand implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-        event.getTextChannel().sendMessage(Functions.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)") ).queue();
+        event.getTextChannel().sendMessage(AirUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)") ).queue();
     }
 
     @Override

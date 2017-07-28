@@ -3,11 +3,10 @@ package me.duncte123.skybot.commands;
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-import java.util.Collections;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -24,7 +23,7 @@ public class HelpCommand implements Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
 
-        EmbedBuilder eb = Functions.defaultEmbed();
+        EmbedBuilder eb = AirUtils.defaultEmbed();
 
         SortedSet<String> commands = new TreeSet<String>(SkyBot.commands.keySet());
         for(String cmd: commands){

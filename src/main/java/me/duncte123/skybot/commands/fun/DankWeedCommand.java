@@ -1,7 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class DankWeedCommand implements Command {
@@ -16,7 +16,7 @@ public class DankWeedCommand implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-        event.getTextChannel().sendMessage(Functions.embedImage("https://cdn.discordapp.com/attachments/203624252295872513/214335018418307073/and-i-dont-care.jpg")).queue();
+        event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/203624252295872513/214335018418307073/and-i-dont-care.jpg")).queue();
     }
 
     @Override

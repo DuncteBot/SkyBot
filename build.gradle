@@ -19,8 +19,6 @@ dependencies {
     compile 'com.sedmelluq:lavaplayer:1.2.42'
     compile 'ch.qos.logback:logback-classic:1.2.1'
     compile 'ch.qos.logback:logback-core:1.2.1'
-    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
-    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.13'
 
 }
 

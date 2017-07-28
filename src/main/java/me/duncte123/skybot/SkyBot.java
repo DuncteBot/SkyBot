@@ -56,6 +56,7 @@ public class SkyBot {
 
 
     public static void main(String[] args){
+
         // Setup file-logging
         File theDir = new File("logs");
 

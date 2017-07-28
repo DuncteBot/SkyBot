@@ -2,7 +2,7 @@ package me.duncte123.skybot.commands.mod;
 
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
@@ -20,12 +20,12 @@ public class UnbanCommand implements Command {
         };
 
         if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(Functions.embedMessage("You don't have permission to run this command")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
             return false;
         }
 
         if (args[0].isEmpty()) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "unban <username>")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "unban <username>")).queue();
             return false;
         }
 
@@ -41,7 +41,7 @@ public class UnbanCommand implements Command {
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
                     event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.").queue();
-                    Functions.modLog(event.getAuthor(), bannedUser, "unbanned", event);
+                    AirUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event);
                     return;
                 }
             }
@@ -49,7 +49,7 @@ public class UnbanCommand implements Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(Functions.embedMessage("ERROR: " + e.getMessage())).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
         }
     }
 

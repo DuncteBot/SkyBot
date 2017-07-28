@@ -1,15 +1,13 @@
 package me.duncte123.skybot.commands;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.time.Instant;
 import java.time.format.DateTimeFormatter;
 
 /**
@@ -48,7 +46,7 @@ public class UserinfoCommand implements Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
       
-        EmbedBuilder eb = Functions.defaultEmbed()
+        EmbedBuilder eb = AirUtils.defaultEmbed()
                 .setDescription("Userinfor for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .setImage(u.getEffectiveAvatarUrl())

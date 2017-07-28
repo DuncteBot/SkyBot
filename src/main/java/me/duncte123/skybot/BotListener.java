@@ -2,7 +2,7 @@ package me.duncte123.skybot;
 
 import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.CustomLog;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
@@ -26,7 +26,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
 
-        if(event.getMessage().getContent().equals("/shutdown") && event.getAuthor().getId().equals("191231307290771456")){
+        if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals("191231307290771456")){
             SkyBot.timer.cancel();
             event.getJDA().shutdown();
         }
@@ -126,7 +126,7 @@ public class BotListener extends ListenerAdapter {
                 SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
                 SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
                 SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                SkyBot.lastGuildChannel.get(event.getGuild()).sendMessage(Functions.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                SkyBot.lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                 if(event.getGuild().getAudioManager().isConnected()){
                     event.getGuild().getAudioManager().closeAudioConnection();
                     event.getGuild().getAudioManager().setSendingHandler(null);

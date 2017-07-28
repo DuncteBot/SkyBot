@@ -1,7 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -23,7 +23,7 @@ public class MinehCommand implements Command {
         event.getTextChannel().sendTyping();
         event.getTextChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queueAfter(4, TimeUnit.SECONDS);
         event.getTextChannel().sendTyping();
-        event.getTextChannel().sendMessage(Functions.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")).queueAfter(4, TimeUnit.SECONDS);
+        event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")).queueAfter(4, TimeUnit.SECONDS);
     }
 
     @Override

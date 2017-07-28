@@ -7,7 +7,7 @@ import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.audio.TrackScheduler;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -17,7 +17,7 @@ public class StopCommand implements Command {
     public boolean called(String[] args, MessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
             return false;
         }
 
@@ -27,7 +27,7 @@ public class StopCommand implements Command {
         GuildMusicManager mng = au.getMusicManager(guild);
 
         if(mng.player.getPlayingTrack().equals(null)){
-            event.getChannel().sendMessage(Functions.embedField(au.embedTitle, "The player is not playing.")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player is not playing.")).queue();
             return false;
         }
 
@@ -46,7 +46,7 @@ public class StopCommand implements Command {
         scheduler.queue.clear();
         player.stopTrack();
         player.setPaused(false);
-        event.getTextChannel().sendMessage(Functions.embedField(au.embedTitle, "Playback has been completely stopped and the queue has been cleared")).queue();
+        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Playback has been completely stopped and the queue has been cleared")).queue();
     }
 
     @Override

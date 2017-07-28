@@ -2,7 +2,7 @@ package me.duncte123.skybot.commands.mod;
 
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -22,12 +22,12 @@ public class KickCommand implements Command {
         };
 
         if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(Functions.embedMessage("You don't have permission to run this command")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
             return false;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "kick <@user> [Resson]")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "kick <@user> [Resson]")).queue();
             return false;
         }
 
@@ -43,12 +43,12 @@ public class KickCommand implements Command {
                                            //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
             event.getGuild().getController().kick(toKick.getId(), reason).queue(
-                    (noting) -> Functions.modLog(event.getAuthor(), toKick, "kicked", reason, event)
+                    (noting) -> AirUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event)
             );
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(Functions.embedMessage("ERROR: " + e.getMessage())).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
         }
 
 

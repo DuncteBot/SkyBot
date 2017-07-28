@@ -2,7 +2,7 @@ package me.duncte123.skybot.commands.mod;
 
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -21,12 +21,12 @@ public class BanCommand implements Command {
         };
 
         if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(Functions.embedMessage("You don't have permission to run this command")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
             return false;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
-            event.getChannel().sendMessage(Functions.embedMessage("Usage is " + Config.prefix + "ban <@user> <time (set to 0 for perm)> " +
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "ban <@user> <time (set to 0 for perm)> " +
                     "[days? months? years?] [Resson]")).queue();
             return false;
         }
@@ -40,7 +40,7 @@ public class BanCommand implements Command {
             User toBan = event.getMessage().getMentionedUsers().get(0);
             if(toBan.equals(event.getAuthor()) &&
                     !event.getGuild().getMember(toBan).canInteract(event.getMember()) ) {
-                event.getChannel().sendMessage(Functions.embedMessage("You are not permitted to perform this action.")).queue();
+                event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
@@ -48,10 +48,10 @@ public class BanCommand implements Command {
                     (noting) -> {
                         if (Integer.parseInt(args[1]) > 0) {
                             //TODO make ban timed
-                            Functions.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
+                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
                         } else {
                             final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                            Functions.modLog(event.getAuthor(), toBan, "banned", newReason, event);
+                            AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);
                         }
                     }
             );
@@ -60,7 +60,7 @@ public class BanCommand implements Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(Functions.embedMessage("ERROR: " + e.getMessage())).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
         }
     }
 

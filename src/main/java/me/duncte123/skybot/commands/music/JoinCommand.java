@@ -4,8 +4,7 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.utils.AudioUtils;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -13,8 +12,6 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-
-import java.time.Instant;
 
 public class JoinCommand extends ListenerAdapter implements Command {
 
@@ -51,7 +48,7 @@ public class JoinCommand extends ListenerAdapter implements Command {
 
 
         if(event.getGuild().getAudioManager().isConnected() && !mng.player.getPlayingTrack().equals(null)){
-            event.getTextChannel().sendMessage(Functions.embedMessage("I'm already in a channel.")).queue();
+            event.getTextChannel().sendMessage(AirUtils.embedMessage("I'm already in a channel.")).queue();
             return;
         }
 
@@ -63,7 +60,7 @@ public class JoinCommand extends ListenerAdapter implements Command {
         }
 
 
-        EmbedBuilder eb = Functions.defaultEmbed();
+        EmbedBuilder eb = AirUtils.defaultEmbed();
         try{
             if(event.getGuild().getAudioManager().isConnected()){
                 event.getGuild().getAudioManager().closeAudioConnection();

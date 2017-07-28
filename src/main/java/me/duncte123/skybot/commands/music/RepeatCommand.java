@@ -6,8 +6,7 @@ import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.audio.TrackScheduler;
 import me.duncte123.skybot.utils.AudioUtils;
 import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -17,12 +16,12 @@ public class RepeatCommand implements Command {
     public boolean called(String[] args, MessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
             return false;
         }
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(Functions.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
             return false;
         }
 
@@ -39,7 +38,7 @@ public class RepeatCommand implements Command {
 
         scheduler.setRepeating(!scheduler.isRepeating());
 
-        event.getTextChannel().sendMessage(Functions.embedField(au.embedTitle, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**")).queue();
+        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**")).queue();
 
     }
 

@@ -2,7 +2,7 @@ package me.duncte123.skybot.commands;
 
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
@@ -25,7 +25,7 @@ public class GuildStatsCommand implements Command {
     public void action(String[] args, MessageReceivedEvent event){
         Guild g = event.getGuild();
         try {
-            event.getChannel().sendMessage(Functions.defaultEmbed()
+            event.getChannel().sendMessage(AirUtils.defaultEmbed()
                     .addField("Guild Owner", g.getOwner().getEffectiveName(), false)
                     .addField("Total Members", g.getMembers().size() + "", false)
                     .addField("Verification Level", SkyBot.verificationLvlToName(g.getVerificationLevel()), false)

@@ -1,7 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Functions;
+import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class SpamCommand implements Command {
@@ -16,7 +16,7 @@ public class SpamCommand implements Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
-        event.getTextChannel().sendMessage(Functions.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg")).queue();
+        event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg")).queue();
     }
 
     @Override
