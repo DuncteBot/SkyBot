@@ -1,11 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
-import java.time.Instant;
-
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 public class TriggerCommand implements Command {

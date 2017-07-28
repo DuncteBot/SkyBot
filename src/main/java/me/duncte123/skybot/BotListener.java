@@ -1,15 +1,8 @@
 package me.duncte123.skybot;
 
-import java.time.Instant;
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimerTask;
-import java.util.concurrent.TimeUnit;
-
 import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.CustomLog;
 import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.entities.Message;
@@ -21,6 +14,11 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.TimerTask;
+import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
 

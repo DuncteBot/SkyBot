@@ -1,6 +1,7 @@
 package me.duncte123.skybot.commands.fun;
 
 import me.duncte123.skybot.Command;
+import me.duncte123.skybot.utils.Functions;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -30,7 +31,7 @@ public class DialogCommand implements Command {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```");
-        event.getChannel().sendMessage(sb.toString()).queue();
+        event.getChannel().sendMessage(Functions.embedMessage(sb.toString())).queue();
 
     }
 

@@ -19,7 +19,7 @@ public class PingCommand implements Command {
         long time = System.currentTimeMillis();
 
         event.getTextChannel().sendMessage("PONG!").queue( (message) ->
-            message.editMessageFormat("PONG!\nping is: %dms \nWebsocket ping: " + event.getJDA().getPing(), (System.currentTimeMillis() - time) ).queue());
+            message.editMessageFormat("PONG!\nping is: %dms \nWebsocket ping: " + event.getJDA().getPing() + "ms", (System.currentTimeMillis() - time) ).queue());
 
     }
 

@@ -1,9 +1,8 @@
 package me.duncte123.skybot.utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+
+import java.util.Arrays;
 
 
 public class CommandParser {

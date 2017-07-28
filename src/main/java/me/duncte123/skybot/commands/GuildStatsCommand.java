@@ -1,15 +1,12 @@
 package me.duncte123.skybot.commands;
 
-import java.awt.Color;
-import java.time.format.DateTimeFormatter;
-
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.RateLimitedException;
+
+import java.time.format.DateTimeFormatter;
 
 /**
  * Created by Duncan on 2-7-2017.

@@ -1,15 +1,11 @@
 package me.duncte123.skybot.commands.music;
 
-import java.time.Instant;
-
 import me.duncte123.skybot.Command;
 import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.audio.TrackScheduler;
 import me.duncte123.skybot.utils.AudioUtils;
-import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.Functions;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
