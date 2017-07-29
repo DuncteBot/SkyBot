@@ -15,6 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.TimeZone;
 
 public class BanCommand implements Command {
 
@@ -42,38 +43,64 @@ public class BanCommand implements Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         try {
-            User toBan = event.getMessage().getMentionedUsers().get(0);
+             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if(toBan.equals(event.getAuthor()) &&
                     !event.getGuild().getMember(toBan).canInteract(event.getMember()) ) {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
+            String time = args[1] + " " + args[2];
+            String unbanDate = "";
+            if (Integer.parseInt(args[1]) > 0) {
+                //TODO make ban timed
+
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                //instantiates a calendar using the current time in the specified timezone
+                Calendar cSchedStartCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+                //change the timezone
+                cSchedStartCal.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
+
+                Date dt = cSchedStartCal.getTime();
+
+                switch (args[2]) {
+                    case "minute":
+                        DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "minutes":
+                        DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "day":
+                        DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "days":
+                        DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "week":
+                        DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "weeks":
+                        DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "month":
+                        DateUtils.addMonths(dt, Integer.parseInt(args[1]));
+                        break;
+                    case "months":
+                        DateUtils.addMonths(dt, Integer.parseInt(args[1]));
+                        break;
+
+                    default:
+                        event.getChannel().sendMessage("Please choose from day, minute, week or month").queue();
+                        return;
+                }
+                unbanDate = df.format(dt);
+            }
+
+            final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty()? "" : unbanDate);
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                     (noting) -> {
-                        if (Integer.parseInt(args[1]) > 0) {
-                            //TODO make ban timed
-                            String time = args[1] + " " + args[2];
-
-                            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-
-                            Date dt = new Date();
-
-                            switch (args[2]) {
-                                case "minute": DateUtils.addMinutes(dt, Integer.parseInt(args[1])); break;
-                                case "minutes": DateUtils.addMinutes(dt, Integer.parseInt(args[1])); break;
-                                case "day": DateUtils.addDays(dt, Integer.parseInt(args[1])); break;
-                                case "days": DateUtils.addDays(dt, Integer.parseInt(args[1])); break;
-                                case "week": DateUtils.addWeeks(dt, Integer.parseInt(args[1])); break;
-                                case "weeks": DateUtils.addWeeks(dt, Integer.parseInt(args[1])); break;
-                                case "month": DateUtils.addMonths(dt, Integer.parseInt(args[1])); break;
-                                case "months": DateUtils.addMonths(dt, Integer.parseInt(args[1])); break;
-
-                                default: event.getChannel().sendMessage("Please choose from day, minute, week or month").queue(); return;
-                            }
-                            String unbanDate = df.format(dt);
-
-                            AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), unbanDate, event.getGuild().getId());
+                        if(Integer.parseInt(args[1]) > 0) {
+                            AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
                             AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
                         } else {
