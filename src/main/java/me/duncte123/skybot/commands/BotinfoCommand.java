@@ -31,7 +31,6 @@ public class BotinfoCommand implements Command {
         EmbedBuilder eb = AirUtils.defaultEmbed()
                 .setDescription("Bot information.")
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .setImage(u.getEffectiveAvatarUrl())
                 .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), false)
                 .addField("Bot Id", u.getId(), false)
                 .addField("Game", m.getGame().getName(), false)
