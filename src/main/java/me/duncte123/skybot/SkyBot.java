@@ -27,7 +27,7 @@ import java.util.logging.Logger;
 
 public class SkyBot {
 
-    private static String logName = new String(Config.defaultName);
+    private static String logName = Config.defaultName;
     // get a random thing
     public static Random rand = new Random();
 
@@ -42,6 +42,7 @@ public class SkyBot {
     private static CustomLog logger2 = CustomLog.getLog(logName);
 
     public static Timer timer = new Timer();
+    public static Timer unbanTimer = new Timer();
 
     public static String[] messages = {
             "#HYPESQUAD",
@@ -126,8 +127,6 @@ public class SkyBot {
 
         //setup commands
         setupCommands(true, true);
-
-        AirUtils.addBannedUserToDb("MODID", "USERNAMA", "disc", "uid", "2017-08-01 07:58:51", "619257649234");
     }
 
     public static void updateStatus(){

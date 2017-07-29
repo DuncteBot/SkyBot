@@ -14,6 +14,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -81,6 +82,14 @@ public class BotListener extends ListenerAdapter {
         };
 
         SkyBot.timer.schedule(myTask, 60*1000, 60*1000);
+
+        TimerTask unbanTask = new TimerTask() {
+            @Override
+            public void run() {
+                AirUtils.checkUnbans();
+            }
+        };
+        SkyBot.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
 
     }
 
