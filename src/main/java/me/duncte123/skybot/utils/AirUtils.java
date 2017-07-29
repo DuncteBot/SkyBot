@@ -96,9 +96,7 @@ public class AirUtils {
 
             JSONArray json = new JSONArray(jsonData);
             for(Object userJson : json) {
-                System.out.println(userJson.toString());
                 JSONObject userData = new JSONObject(userJson.toString());
-                System.out.println(userData);
                 Guild g = SkyBot.jda.getGuildById(userData.getString("guild"));
                 g.getController().unban(userData.getString("userId")).reason("Ban expired").queue();
             }
