@@ -16,6 +16,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.FileHandler;
@@ -125,6 +126,8 @@ public class SkyBot {
 
         //setup commands
         setupCommands(true, true);
+
+        AirUtils.addBannedUserToDb("MODID", "USERNAMA", "disc", "uid", "2017-08-01 07:58:51", "619257649234");
     }
 
     public static void updateStatus(){

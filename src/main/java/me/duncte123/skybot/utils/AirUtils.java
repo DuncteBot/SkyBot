@@ -84,7 +84,7 @@ public class AirUtils {
             OkHttpClient client = new OkHttpClient();
 
             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "");
+            RequestBody body = RequestBody.create(mediaType, "delete=true");
             Request request = new Request.Builder()
                     .url("https://bot.duncte123.ml/getUnbans.php")
                     .post(body)
