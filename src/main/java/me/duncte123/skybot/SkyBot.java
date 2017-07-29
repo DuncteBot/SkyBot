@@ -236,6 +236,7 @@ public class SkyBot {
         if (modCommands) {
             //prank commands
             commands.put("ban", new BanCommand());
+            commands.put("hackban", new HackbanCommand());
             commands.put("softban", new SoftbanCommand());
             commands.put("unban", new UnbanCommand());
             commands.put("kick", new KickCommand());
