@@ -32,15 +32,15 @@ public class BotinfoCommand implements Command {
                 .setDescription("Bot information.")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .setImage(u.getEffectiveAvatarUrl())
-                .addField("Username", u.getName(), false)
-                .addField("Discriminator", u.getDiscriminator(), false)
+                .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), false)
                 .addField("Bot Id", u.getId(), false)
                 .addField("Game", m.getGame().getName(), false)
                 .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), false)
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
                 .addField("Online Status", m.getOnlineStatus().name(), false)
-                .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false);
+                .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
+                .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false);
         event.getChannel().sendMessage(eb.build()).queue();
     }
 

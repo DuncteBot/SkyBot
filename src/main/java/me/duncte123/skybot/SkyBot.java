@@ -56,7 +56,7 @@ public class SkyBot {
 
     public static void main(String[] args){
         // Setup file-logging
-        File theDir = new File("logs");
+        /*File theDir = new File("logs");
 
         if(!theDir.exists()){
             System.out.println("creating directory: "+theDir.getName());
@@ -106,7 +106,7 @@ public class SkyBot {
             e.printStackTrace();
         }
 
-        //logForFile.info("Logging to: "+filepath);
+        logForFile.info("Logging to: "+filepath);*/
 
         // log in and set up the api
         try{
