@@ -29,6 +29,7 @@ public class BotListener extends ListenerAdapter {
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals("191231307290771456")){
             SkyBot.timer.cancel();
+            SkyBot.unbanTimer.cancel();
             event.getJDA().shutdown();
         }
 

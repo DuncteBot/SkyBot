@@ -40,6 +40,11 @@ public class KickCommand implements Command {
         try {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
+            if(toKick.equals(event.getAuthor()) &&
+                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toKick)) ) {
+                event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
+                return;
+            }
                                            //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
             event.getGuild().getController().kick(toKick.getId(), reason).queue(

@@ -1,8 +1,8 @@
 package me.duncte123.skybot.commands.mod;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.AirUtils;
+import me.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -13,9 +13,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.TimeZone;
 
 public class BanCommand implements Command {
 
@@ -45,7 +43,7 @@ public class BanCommand implements Command {
         try {
              final User toBan = event.getMessage().getMentionedUsers().get(0);
             if(toBan.equals(event.getAuthor()) &&
-                    !event.getGuild().getMember(toBan).canInteract(event.getMember()) ) {
+                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan)) ) {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
@@ -56,12 +54,7 @@ public class BanCommand implements Command {
                 //TODO make ban timed
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                //instantiates a calendar using the current time in the specified timezone
-                Calendar cSchedStartCal = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-                //change the timezone
-                cSchedStartCal.setTimeZone(TimeZone.getTimeZone("Europe/Amsterdam"));
-
-                Date dt = cSchedStartCal.getTime();
+                Date dt = new Date(System.currentTimeMillis());
 
                 switch (args[2]) {
                     case "minute":
