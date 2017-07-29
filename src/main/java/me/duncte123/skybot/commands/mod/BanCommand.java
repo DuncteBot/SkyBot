@@ -8,8 +8,13 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang3.time.DateUtils;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
 
 public class BanCommand implements Command {
 
@@ -48,7 +53,29 @@ public class BanCommand implements Command {
                     (noting) -> {
                         if (Integer.parseInt(args[1]) > 0) {
                             //TODO make ban timed
-                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1] + " " + args[2], event);
+                            String time = args[1] + " " + args[2];
+
+                            DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+
+                            Date dt = new Date();
+
+                            switch (args[2]) {
+                                case "minute": DateUtils.addMinutes(dt, Integer.parseInt(args[1])); break;
+                                case "minutes": DateUtils.addMinutes(dt, Integer.parseInt(args[1])); break;
+                                case "day": DateUtils.addDays(dt, Integer.parseInt(args[1])); break;
+                                case "days": DateUtils.addDays(dt, Integer.parseInt(args[1])); break;
+                                case "week": DateUtils.addWeeks(dt, Integer.parseInt(args[1])); break;
+                                case "weeks": DateUtils.addWeeks(dt, Integer.parseInt(args[1])); break;
+                                case "month": DateUtils.addMonths(dt, Integer.parseInt(args[1])); break;
+                                case "months": DateUtils.addMonths(dt, Integer.parseInt(args[1])); break;
+
+                                default: event.getChannel().sendMessage("Please choose from day, minute, week or month").queue(); return;
+                            }
+                            String unbanDate = df.format(dt);
+
+                            AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), unbanDate, event.getGuild().getId());
+
+                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
                         } else {
                             final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                             AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);

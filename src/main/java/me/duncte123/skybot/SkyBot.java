@@ -4,10 +4,7 @@ import me.duncte123.skybot.commands.*;
 import me.duncte123.skybot.commands.fun.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
-import me.duncte123.skybot.utils.AudioUtils;
-import me.duncte123.skybot.utils.CommandParser;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.CustomLog;
+import me.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -19,6 +16,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
+import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.FileHandler;
@@ -29,11 +27,11 @@ import java.util.logging.Logger;
 
 public class SkyBot {
 
-    private static String logName = new String(Config.defaultName);
+    private static String logName = Config.defaultName;
     // get a random thing
     public static Random rand = new Random();
 
-    private static JDA jda;
+    public static JDA jda;
     public static AudioUtils au;
 
     public static final CommandParser parser = new CommandParser();
@@ -44,6 +42,7 @@ public class SkyBot {
     private static CustomLog logger2 = CustomLog.getLog(logName);
 
     public static Timer timer = new Timer();
+    public static Timer unbanTimer = new Timer();
 
     public static String[] messages = {
             "#HYPESQUAD",
@@ -56,7 +55,6 @@ public class SkyBot {
 
 
     public static void main(String[] args){
-
         // Setup file-logging
         File theDir = new File("logs");
 

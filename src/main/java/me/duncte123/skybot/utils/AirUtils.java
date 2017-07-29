@@ -1,13 +1,18 @@
 package me.duncte123.skybot.utils;
 
+import me.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import okhttp3.*;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
-import java.text.SimpleDateFormat;
 import java.time.Instant;
+import java.util.List;
 
 public class AirUtils {
 
@@ -49,22 +54,57 @@ public class AirUtils {
         modLog(mod, unbannedUser, punishment, "", event);
     }
 
-    /**
-     * give it a date and it convertes it to a sql date
-     * @param date format: Day-Month-Year
-     * @return a sql date
-     */
-    public static java.sql.Date dateStringToSqlDate(String date) {
+    public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
         try {
-            String startDate = (date.isEmpty()? "22-022013" : date).replaceAll("-", "");
-            SimpleDateFormat sdf1 = new SimpleDateFormat("dd-MM-yyyy");
-            java.util.Date sqlDate = sdf1.parse(startDate);
-            java.sql.Date sqlDateParsed = java.sql.Date.valueOf(date);
-            return sqlDateParsed;
+            OkHttpClient client = new OkHttpClient();
 
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+            RequestBody body = RequestBody.create(mediaType, "modId=" + modID
+                    + "&username=" + userName
+                    + "&discriminator=" + userDiscriminator
+                    + "&userId=" + userId
+                    + "&unbanDate=" + unbanDate
+                    + "&guildId=" + guildId
+            );
+            Request request = new Request.Builder()
+                    .url("https://bot.duncte123.ml/ban.php")
+                    .post(body)
+                    .addHeader("content-type", "application/x-www-form-urlencoded")
+                    .addHeader("cache-control", "no-cache")
+                    .build();
+            Response response = client.newCall(request).execute();
         }
         catch (Exception e) {
-            return new java.sql.Date(20170101);
+            e.printStackTrace();
+        }
+    }
+
+    public static void checkUnbans() {
+        try {
+            OkHttpClient client = new OkHttpClient();
+
+            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+            RequestBody body = RequestBody.create(mediaType, "delete=true");
+            Request request = new Request.Builder()
+                    .url("https://bot.duncte123.ml/getUnbans.php")
+                    .post(body)
+                    .addHeader("content-type", "application/x-www-form-urlencoded")
+                    .addHeader("cache-control", "no-cache")
+                    .build();
+            Response response = client.newCall(request).execute();
+            String jsonData = response.body().source().readUtf8();
+
+            JSONArray json = new JSONArray(jsonData);
+            for(Object userJson : json) {
+                System.out.println(userJson.toString());
+                JSONObject userData = new JSONObject(userJson.toString());
+                System.out.println(userData);
+                Guild g = SkyBot.jda.getGuildById(userData.getString("guild"));
+                g.getController().unban(userData.getString("userId")).reason("Ban expired").queue();
+            }
+        }
+        catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
