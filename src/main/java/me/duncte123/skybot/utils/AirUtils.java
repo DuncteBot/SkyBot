@@ -73,6 +73,7 @@ public class AirUtils {
                     .addHeader("cache-control", "no-cache")
                     .build();
             Response response = client.newCall(request).execute();
+            response.body().close();
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -93,13 +94,13 @@ public class AirUtils {
                     .build();
             Response response = client.newCall(request).execute();
             String jsonData = response.body().source().readUtf8();
-
             JSONArray json = new JSONArray(jsonData);
             for(Object userJson : json) {
                 JSONObject userData = new JSONObject(userJson.toString());
                 Guild g = SkyBot.jda.getGuildById(userData.getString("guild"));
                 g.getController().unban(userData.getString("userId")).reason("Ban expired").queue();
             }
+            response.body().close();
         }
         catch (Exception e) {
             e.printStackTrace();
