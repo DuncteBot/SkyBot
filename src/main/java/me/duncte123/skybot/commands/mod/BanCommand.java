@@ -113,7 +113,7 @@ public class BanCommand implements Command {
 
     @Override
     public String help() {
-        return "Bans a user from the guild";
+        return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**";
     }
 
     @Override
