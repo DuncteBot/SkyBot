@@ -25,4 +25,6 @@ dependencies {
 
 }
 
+shadowJar.archiveName = 'skybot-' + version + '-all.jar'
+
 compileJava.options.encoding = 'UTF-8'
