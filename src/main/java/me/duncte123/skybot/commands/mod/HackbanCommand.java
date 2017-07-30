@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
-public class HackbanCommand implements Command {
+public class HackbanCommand extends Command {
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
         Permission[] perms = {
@@ -45,10 +45,5 @@ public class HackbanCommand implements Command {
     @Override
     public String help() {
         return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + "hackban <userId>";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        return;
     }
 }

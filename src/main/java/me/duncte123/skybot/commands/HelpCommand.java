@@ -10,7 +10,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
-public class HelpCommand implements Command {
+public class HelpCommand extends Command {
 
     public final static String help = "shows a list of all the commands.";
 
@@ -42,12 +42,4 @@ public class HelpCommand implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
-
-    }
-
 }

@@ -6,7 +6,7 @@ import me.duncte123.skybot.audio.GuildMusicManager;
 import me.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class RickRollCommand implements Command {
+public class RickRollCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -27,12 +27,6 @@ public class RickRollCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return "";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
     }
 
 }

@@ -13,7 +13,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by Duncan on 9-7-2017.
  */
-public class UserinfoCommand implements Command {
+public class UserinfoCommand extends Command {
 
     User u;
     Member m;
@@ -66,10 +66,5 @@ public class UserinfoCommand implements Command {
     @Override
     public String help() {
         return "Get the userinfo from yourself or from another user.";
-    }
-
-    @Override
-    public void executed(boolean safe, MessageReceivedEvent event) {
-        return;
     }
 }

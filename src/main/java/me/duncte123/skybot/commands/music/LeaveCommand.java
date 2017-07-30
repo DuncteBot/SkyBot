@@ -8,7 +8,7 @@ import me.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class LeaveCommand implements Command {
+public class LeaveCommand extends Command {
 
     public final static String help = "make the bot leave your channel.";
 
@@ -61,11 +61,4 @@ public class LeaveCommand implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

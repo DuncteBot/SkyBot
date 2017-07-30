@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-public class MinehCommand implements Command {
+public class MinehCommand extends Command {
 
     public final static String help = "HERE COMES MINEH!";
 
@@ -24,12 +24,6 @@ public class MinehCommand implements Command {
         event.getTextChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queueAfter(4, TimeUnit.SECONDS);
         event.getTextChannel().sendTyping();
         event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")).queueAfter(4, TimeUnit.SECONDS);
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
     }
 
     @Override

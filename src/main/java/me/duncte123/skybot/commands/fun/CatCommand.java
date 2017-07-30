@@ -9,7 +9,7 @@ import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CatCommand implements Command {
+public class CatCommand extends Command {
 	
 	public final static String help = "here is a cat.";
 
@@ -40,11 +40,4 @@ public class CatCommand implements Command {
 		// TODO Auto-generated method stub
 		return help;
 	}
-
-	@Override
-	public void executed(boolean success, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-    return;
-	}
-
 }

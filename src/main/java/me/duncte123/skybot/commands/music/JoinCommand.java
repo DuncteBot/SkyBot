@@ -13,7 +13,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 
-public class JoinCommand extends ListenerAdapter implements Command {
+public class JoinCommand extends Command {
 
     public final static String help = "makes the bot join the voice channel that you are in.";
 
@@ -82,13 +82,4 @@ public class JoinCommand extends ListenerAdapter implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
-
-
 }

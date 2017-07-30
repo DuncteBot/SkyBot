@@ -9,7 +9,7 @@ import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class PauseCommand implements Command {
+public class PauseCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -49,11 +49,4 @@ public class PauseCommand implements Command {
         // TODO Auto-generated method stub
         return "pauses the current song";
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

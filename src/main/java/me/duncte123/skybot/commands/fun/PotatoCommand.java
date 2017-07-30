@@ -4,7 +4,7 @@ import me.duncte123.skybot.Command;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class PotatoCommand implements Command {
+public class PotatoCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -22,11 +22,4 @@ public class PotatoCommand implements Command {
         // TODO Auto-generated method stub
         return "POTATO!!!!";
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

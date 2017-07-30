@@ -12,7 +12,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
-public class PPlayCommand implements Command {
+public class PPlayCommand extends Command {
 
     public final static String help = "add a playlist to the queue.";
 
@@ -56,12 +56,6 @@ public class PPlayCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return help;
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
     }
 
 }

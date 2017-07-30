@@ -8,7 +8,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 /**
  * Created by Duncan on 9-7-2017.
  */
-public class TextToBrickCommand implements Command {
+public class TextToBrickCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -41,10 +41,5 @@ public class TextToBrickCommand implements Command {
     @Override
     public String help() {
         return "Text to bricks fun.";
-    }
-
-    @Override
-    public void executed(boolean safe, MessageReceivedEvent event) {
-      return;
     }
 }

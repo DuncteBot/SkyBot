@@ -5,7 +5,7 @@ import me.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CookieCommand implements Command {
+public class CookieCommand extends Command {
 
 	@Override
 	public boolean called(String[] args, MessageReceivedEvent event) {
@@ -23,12 +23,6 @@ public class CookieCommand implements Command {
 	public String help() {
 		// TODO Auto-generated method stub
 		return "blobnomcookie";
-	}
-
-	@Override
-	public void executed(boolean success, MessageReceivedEvent event) {
-		// TODO Auto-generated method stub
-    return;
 	}
 
 }

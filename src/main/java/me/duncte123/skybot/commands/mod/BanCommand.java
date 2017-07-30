@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class BanCommand implements Command {
+public class BanCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -114,10 +114,5 @@ public class BanCommand implements Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        return;
     }
 }

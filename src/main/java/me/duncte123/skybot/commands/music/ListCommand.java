@@ -12,7 +12,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
 import java.util.Queue;
 
-public class ListCommand implements Command {
+public class ListCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -56,11 +56,4 @@ public class ListCommand implements Command {
         // TODO Auto-generated method stub
         return "shows the current queue";
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

@@ -5,7 +5,7 @@ import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class CoinCommand implements Command {
+public class CoinCommand extends Command {
 
     public final static String help = "flips a coin.";
     private final String coinUrl = "https://dshelmondgames.ml/img/coin/";
@@ -31,12 +31,4 @@ public class CoinCommand implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
-
-    }
-
 }

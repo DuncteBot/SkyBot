@@ -14,7 +14,7 @@ import java.time.format.DateTimeFormatter;
 /**
  * Created by Duncan on 11-7-2017.
  */
-public class BotinfoCommand implements Command {
+public class BotinfoCommand extends Command {
 
 
 
@@ -46,10 +46,5 @@ public class BotinfoCommand implements Command {
     @Override
     public String help() {
         return "Get's some info about the bot";
-    }
-
-    @Override
-    public void executed(boolean safe, MessageReceivedEvent event) {
-        return;
     }
 }

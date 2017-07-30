@@ -4,7 +4,7 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class DankWeedCommand implements Command {
+public class DankWeedCommand extends Command {
 
     public final static String help = "ignore this one.";
 
@@ -24,11 +24,4 @@ public class DankWeedCommand implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
-    }
-
 }

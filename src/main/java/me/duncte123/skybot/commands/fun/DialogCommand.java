@@ -5,7 +5,7 @@ import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-public class DialogCommand implements Command {
+public class DialogCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -38,10 +38,5 @@ public class DialogCommand implements Command {
     @Override
     public String help() {
         return "Gives you a nice dialog";
-    }
-
-    @Override
-    public void executed(boolean safe, MessageReceivedEvent event) {
-        return;
     }
 }

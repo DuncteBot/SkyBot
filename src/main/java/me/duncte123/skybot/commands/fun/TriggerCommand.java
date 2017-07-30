@@ -4,7 +4,7 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class TriggerCommand implements Command {
+public class TriggerCommand extends Command {
 
     public final static String help = "use when you are triggered.";
 
@@ -20,16 +20,8 @@ public class TriggerCommand implements Command {
     }
 
     @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
-
-    }
-
-    @Override
     public String help() {
         // TODO Auto-generated method stub
         return help;
     }
-
 }

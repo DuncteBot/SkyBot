@@ -9,7 +9,7 @@ import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class SkipCommand implements Command {
+public class SkipCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -48,12 +48,6 @@ public class SkipCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return "skips the current track";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
     }
 
 }

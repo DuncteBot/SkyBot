@@ -5,7 +5,7 @@ import me.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class PingCommand implements Command {
+public class PingCommand extends Command {
 
     public final static String help = "PONG!";
 
@@ -27,11 +27,4 @@ public class PingCommand implements Command {
     public String help() {
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        return;
-    }
-
-
 }

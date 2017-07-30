@@ -10,7 +10,7 @@ import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class ShuffleCommand implements Command {
+public class ShuffleCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -56,12 +56,6 @@ public class ShuffleCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return "Makes the player repeat the currently playing song";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
     }
 
 }

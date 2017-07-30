@@ -11,7 +11,7 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.List;
 
-public class UnbanCommand implements Command {
+public class UnbanCommand extends Command {
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
         Permission[] perms = {
@@ -58,8 +58,4 @@ public class UnbanCommand implements Command {
         return "Unbans a user";
     }
 
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        return;
-    }
 }

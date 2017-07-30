@@ -13,7 +13,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-public class PlayCommand implements Command {
+public class PlayCommand extends Command {
 
     public final static String help = "make the bot play song.";
 
@@ -68,13 +68,6 @@ public class PlayCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return help;
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
-
     }
 
 }

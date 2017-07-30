@@ -4,7 +4,7 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class WamCommand implements Command {
+public class WamCommand extends Command {
 
     public final static String help = "you need more WAM!.";
 
@@ -24,11 +24,4 @@ public class WamCommand implements Command {
         // TODO Auto-generated method stub
         return help;
     }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-
-    }
-
 }

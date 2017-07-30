@@ -11,7 +11,7 @@ import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class StopCommand implements Command {
+public class StopCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -53,12 +53,6 @@ public class StopCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return "stops the music player.";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
     }
 
 }

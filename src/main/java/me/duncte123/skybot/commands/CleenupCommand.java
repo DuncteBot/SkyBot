@@ -13,7 +13,7 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class CleenupCommand implements Command {
+public class CleenupCommand extends Command {
 
     private int deletedMsg = 0;
 
@@ -68,11 +68,6 @@ public class CleenupCommand implements Command {
     @Override
     public String help() {
         return help;
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        return;
     }
 
 }

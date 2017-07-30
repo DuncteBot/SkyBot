@@ -12,7 +12,7 @@ import java.time.format.DateTimeFormatter;
  * Created by Duncan on 2-7-2017.
  */
 
-public class GuildStatsCommand implements Command {
+public class GuildStatsCommand extends Command {
 
 
     @Override
@@ -48,11 +48,5 @@ public class GuildStatsCommand implements Command {
     public String help() {
         // TODO Auto-generated method stub
         return "Show some stats";
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
     }
 }

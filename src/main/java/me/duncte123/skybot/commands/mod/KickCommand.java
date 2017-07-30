@@ -11,7 +11,7 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
 
-public class KickCommand implements Command {
+public class KickCommand extends Command {
 
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
@@ -62,10 +62,5 @@ public class KickCommand implements Command {
     @Override
     public String help() {
         return "Kicks a user.";
-    }
-
-    @Override
-    public void executed(boolean save, MessageReceivedEvent event) {
-        return;
     }
 }

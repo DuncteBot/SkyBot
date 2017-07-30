@@ -4,7 +4,7 @@ import me.duncte123.skybot.Command;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 
-public class SpamCommand implements Command {
+public class SpamCommand extends Command {
 
     public final static String help = "I'll show you some spam!";
 
@@ -17,12 +17,6 @@ public class SpamCommand implements Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         event.getTextChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg")).queue();
-    }
-
-    @Override
-    public void executed(boolean success, MessageReceivedEvent event) {
-        // TODO Auto-generated method stub
-        return;
     }
 
     @Override
