@@ -115,7 +115,8 @@ public class BotListener extends ListenerAdapter {
                 "125227483518861312",
                 "324453756794175488",
                 "292707924239712258",
-                "191245668617158656"
+                "191245668617158656",
+                "339772998120636417"
         );
 
         if (allowedGuilds.contains(event.getGuild().getId())) return;
