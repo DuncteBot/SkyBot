@@ -82,25 +82,13 @@ public class AirUtils {
 
     public static void checkUnbans() {
         try {
-            OkHttpClient client = new OkHttpClient();
-
-            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "delete=true");
-            Request request = new Request.Builder()
-                    .url("https://bot.duncte123.ml/getUnbans.php")
-                    .post(body)
-                    .addHeader("content-type", "application/x-www-form-urlencoded")
-                    .addHeader("cache-control", "no-cache")
-                    .build();
-            Response response = client.newCall(request).execute();
-            String jsonData = response.body().source().readUtf8();
+            String jsonData = URLConnectionReader.getText("https://bot.duncte123.ml/getUnbans.php");
             JSONArray json = new JSONArray(jsonData);
             for(Object userJson : json) {
                 JSONObject userData = new JSONObject(userJson.toString());
                 SkyBot.jda.getGuildById(userData.getString("guild"))
                 .getController().unban(userData.getString("userId")).reason("Ban expired").queue();
             }
-            response.body().close();
         }
         catch (Exception e) {
             e.printStackTrace();
