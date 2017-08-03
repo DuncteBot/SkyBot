@@ -41,6 +41,12 @@ public class BotListener extends ListenerAdapter {
             // NO JUST NO, RETURN THAT SHIT
             return;
         }
+        if(event.getAuthor().isFake()){
+            return;
+        }
+        if(event.getMember()==null) {
+            return;
+        }
 
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
