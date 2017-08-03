@@ -84,6 +84,9 @@ public class AudioUtils {
                     msg = "Adding to queue "+ firstTrack.getInfo().title+" (first track of playlist "+playlist.getName()+")";
                     mng.scheduler.queue(firstTrack);
                 }
+                if(mng.player.getPlayingTrack() == null){
+                    msg += "\nand the Player has stated playing;";
+                }
                 channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
             }
 
