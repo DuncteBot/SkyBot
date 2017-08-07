@@ -15,12 +15,12 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.2.0_241'
+    compile 'net.dv8tion:JDA:3.2.0_242'
     compile 'com.sedmelluq:lavaplayer:1.2.42'
     compile 'ch.qos.logback:logback-classic:1.2.1'
     compile 'ch.qos.logback:logback-core:1.2.1'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.1'
+    compile 'org.apache.commons:commons-lang3:3.1'
 
 
 }
