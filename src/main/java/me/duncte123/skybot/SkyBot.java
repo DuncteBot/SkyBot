@@ -4,7 +4,10 @@ import me.duncte123.skybot.commands.*;
 import me.duncte123.skybot.commands.fun.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
-import me.duncte123.skybot.utils.*;
+import me.duncte123.skybot.utils.AudioUtils;
+import me.duncte123.skybot.utils.CommandParser;
+import me.duncte123.skybot.utils.Config;
+import me.duncte123.skybot.utils.CustomLog;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -13,15 +16,10 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 
-import java.io.File;
-import java.io.IOException;
 import java.net.URL;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.*;
-import java.util.logging.FileHandler;
-import java.util.logging.Formatter;
-import java.util.logging.LogRecord;
+import java.util.HashMap;
+import java.util.Random;
+import java.util.Timer;
 import java.util.logging.Logger;
 
 
@@ -199,6 +197,7 @@ public class SkyBot {
         commands.put("ping", new PingCommand());
         commands.put("coin", new CoinCommand());
         commands.put("cat", new CatCommand());
+        commands.put("kitty", new KittyCommand());
         commands.put("dog", new DogCommand());
         commands.put("trigger", new TriggerCommand());
         commands.put("spam", new SpamCommand());
