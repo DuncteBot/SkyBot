@@ -104,7 +104,9 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
-        List<String> blackList = Arrays.asList("324453756794175488", "125227483518861312");
+        List<String> blackList = Arrays.asList("324453756794175488",
+                "125227483518861312",
+                "110373943822540800");
 
         if (blackList.contains(event.getGuild().getId())) return;
 
@@ -122,7 +124,8 @@ public class BotListener extends ListenerAdapter {
                 "324453756794175488",
                 "292707924239712258",
                 "191245668617158656",
-                "339772998120636417"
+                "339772998120636417",
+                "110373943822540800"
         );
 
         if (allowedGuilds.contains(event.getGuild().getId())) return;
