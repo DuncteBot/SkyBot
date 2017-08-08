@@ -1,14 +1,8 @@
 package me.duncte123.skybot.commands;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.SkyBot;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
+import me.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
-
-import java.util.SortedSet;
-import java.util.TreeSet;
 
 public class HelpCommand extends Command {
 
@@ -23,18 +17,15 @@ public class HelpCommand extends Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
 
-        EmbedBuilder eb = AirUtils.defaultEmbed();
 
-        SortedSet<String> commands = new TreeSet<String>(SkyBot.commands.keySet());
-        for(String cmd: commands){
-            if((!SkyBot.commands.get(cmd).help().isEmpty()) || (SkyBot.commands.get(cmd).help() != null)){
-                eb.addField(Config.prefix+cmd, SkyBot.commands.get(cmd).help(), false);
-            }
-        }
-
-        event.getTextChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
-
-        event.getAuthor().openPrivateChannel().queue( pc -> pc.sendMessage(eb.build()).queue());
+        event.getAuthor().openPrivateChannel().queue( (pc) -> {
+            event.getTextChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
+            pc.sendMessage(HelpEmbeds.mainCommands).queue();
+            pc.sendMessage(HelpEmbeds.musicCommands).queue();
+            pc.sendMessage(HelpEmbeds.funCommands).queue();
+            pc.sendMessage(HelpEmbeds.modCommands).queue();
+        },
+                err -> event.getChannel().sendMessage("ERROR: " + err.getMessage()).queue() );
     }
 
     @Override

@@ -36,7 +36,7 @@ public class SkyBot {
     public static HashMap<String, Command> commands = new HashMap<String, Command>();
     public static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<Guild, TextChannel>();
 
-    private static Logger logForFile = Logger.getLogger(logName);
+    //private static Logger logForFile = Logger.getLogger(logName);
     private static CustomLog logger2 = CustomLog.getLog(logName);
 
     public static Timer timer = new Timer();
@@ -114,7 +114,6 @@ public class SkyBot {
                     .addEventListener(new BotListener())
                     .setToken(Config.token)
                     .setStatus(OnlineStatus.ONLINE)
-                    // .setGame(Game.of(Config.prefix+"help"+ "|" + Config.defaultName+" V"+Config.version))
                     .setGame(Game.of(messages[messageIndex]))
                     .buildBlocking();
             jda.setAutoReconnect(true);
@@ -136,9 +135,7 @@ public class SkyBot {
     }
 
     public static String verificationLvlToName(Guild.VerificationLevel lvl){
-        if(lvl.equals(Guild.VerificationLevel.NONE)){
-            return "none";
-        }else if(lvl.equals(Guild.VerificationLevel.LOW)){
+        if(lvl.equals(Guild.VerificationLevel.LOW)){
             return "Low";
         }else if(lvl.equals(Guild.VerificationLevel.MEDIUM)){
             return "Medium";
