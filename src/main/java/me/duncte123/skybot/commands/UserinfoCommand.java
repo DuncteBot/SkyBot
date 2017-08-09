@@ -30,12 +30,18 @@ public class UserinfoCommand extends Command {
                 m = event.getGuild().getMemberById(u.getId());
             } else {
                 try {
-                    m = event.getGuild().getMembersByName(StringUtils.join(args, " "), true).get(0);
+                    m = event.getGuild().getMembersByEffectiveName(StringUtils.join(args, " "), true).get(0);
                     u = m.getUser();
                 }
                 catch (Exception e) {
-                    event.getChannel().sendMessage("This user could not be found.").queue();
-                    return false;
+                    try{
+                        m = event.getGuild().getMemberById(StringUtils.join(args, " "));
+                        u = m.getUser();
+                    }
+                    catch (Exception ex) {
+                        event.getChannel().sendMessage("This user could not be found.").queue();
+                        return false;
+                    }
                 }
             }
         }
@@ -50,17 +56,16 @@ public class UserinfoCommand extends Command {
                 .setColor(m.getColor())
                 .setDescription("Userinfor for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .setImage(u.getEffectiveAvatarUrl())
-                .addField("Username", u.getName(), false)
-                .addField("Discriminator", u.getDiscriminator(), false)
-                .addField("User Id", u.getId(), false)
-                .addField("Playing", (m.getGame() == null ? "**_NOTING_**" : m.getGame().getName()), false)
-                .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), false)
-                .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
-                .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
-                .addField("Online Status", m.getOnlineStatus().name(), false)
-                .addField("Is a bot", u.isBot() + "", false)
-                .addField("Is fake", u.isFake() + "", false);
+                .addField("Username", u.getName(), true)
+                .addField("Discriminator", u.getDiscriminator(), true)
+                .addField("User Id", u.getId(), true)
+                .addField("Playing", (m.getGame() == null ? "**_NOTING_**" : m.getGame().getName()), true)
+                .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), true)
+                .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Online Status", m.getOnlineStatus().name(), true)
+                .addField("Is a bot", u.isBot() + "", true)
+                .addField("Is fake", u.isFake() + "", true);
         event.getChannel().sendMessage(eb.build()).queue();
     }
 
