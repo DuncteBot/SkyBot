@@ -9,7 +9,7 @@ public class CommandParser {
 
     public CommandContainer parse(String rw, MessageReceivedEvent e){
         final String[] split = rw.substring(rw.indexOf(Config.prefix) + 1, rw.length()).split(" ");
-        final String invoke = split[0];
+        final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
 
         return new CommandContainer(invoke, args, e);

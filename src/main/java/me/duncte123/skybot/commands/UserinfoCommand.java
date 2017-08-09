@@ -47,6 +47,7 @@ public class UserinfoCommand extends Command {
     public void action(String[] args, MessageReceivedEvent event) {
       
         EmbedBuilder eb = AirUtils.defaultEmbed()
+                .setColor(m.getColor())
                 .setDescription("Userinfor for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .setImage(u.getEffectiveAvatarUrl())
