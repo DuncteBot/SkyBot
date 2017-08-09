@@ -28,9 +28,10 @@ public class BotListener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event){
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals("191231307290771456")){
+            System.out.println("Shutting down!!!");
             SkyBot.timer.cancel();
             SkyBot.unbanTimer.cancel();
-            event.getJDA().shutdown();
+            event.getJDA().shutdownNow();
         }
 
         if(event.isFromType(ChannelType.PRIVATE) && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) ){
