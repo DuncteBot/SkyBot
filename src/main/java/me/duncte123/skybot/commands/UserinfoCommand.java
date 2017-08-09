@@ -54,7 +54,7 @@ public class UserinfoCommand extends Command {
       
         EmbedBuilder eb = AirUtils.defaultEmbed()
                 .setColor(m.getColor())
-                .setDescription("Userinfor for " + u.getName() + "#" + u.getDiscriminator())
+                .setDescription("Userinfo for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Username", u.getName(), true)
                 .addField("Discriminator", u.getDiscriminator(), true)
