@@ -52,58 +52,6 @@ public class SkyBot {
 
 
     public static void main(String[] args){
-        // Setup file-logging
-        /*File theDir = new File("logs");
-
-        if(!theDir.exists()){
-            System.out.println("creating directory: "+theDir.getName());
-            boolean res = false;
-
-            try{
-                theDir.mkdir();
-                res = true;
-            }
-            catch(SecurityException e){
-                e.printStackTrace();
-            }
-            if(res){
-                System.out.println("DIR created");
-            }
-
-        }
-
-        SimpleDateFormat format = new SimpleDateFormat("M-d_HHmss");
-        String filepath = System.getProperty("user.dir")+File.separator+"logs"+File.separator+"log_"+format.format(Calendar.getInstance().getTime())+".log";
-
-
-        FileHandler fh;
-        // log to the file
-        try{
-            fh = new FileHandler(filepath);
-            logForFile.setUseParentHandlers(false);
-            logForFile.addHandler(fh);
-            fh.setFormatter(new Formatter() {
-                @Override
-                public String format(LogRecord record) {
-                    SimpleDateFormat logTime = new SimpleDateFormat("MM-dd-yyyy HH:mm:ss");
-                    Calendar cal = new GregorianCalendar();
-                    cal.setTimeInMillis(record.getMillis());
-                    return "["
-                            +record.getLevel()
-                            +"]["
-                            + logTime.format(cal.getTime())
-                            + "]["+logName+"]: "
-                            + record.getMessage() + "\n";
-                }
-            });
-        }
-        catch(SecurityException e){
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        logForFile.info("Logging to: "+filepath);*/
 
         // log in and set up the api
         try{
@@ -149,7 +97,6 @@ public class SkyBot {
     // custom logging
     public static final void log(String name, CustomLog.Level lvl, String message){
         logName = name;
-        //logForFile.log(toLevel(lvl), message);
         logger2.log(lvl, message);
 
     }
@@ -230,7 +177,7 @@ public class SkyBot {
         }
         if (modCommands) {
             //prank commands
-            commands.put("ban", new OLD_BanCommand());
+            commands.put("ban", new BanCommand());
             commands.put("hackban", new HackbanCommand());
             commands.put("softban", new SoftbanCommand());
             commands.put("unban", new UnbanCommand());
