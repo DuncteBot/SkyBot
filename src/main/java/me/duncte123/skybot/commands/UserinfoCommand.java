@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 /**
  * Created by Duncan on 9-7-2017.
@@ -21,29 +22,27 @@ public class UserinfoCommand extends Command {
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
 
-        u = event.getAuthor();
-        m = event.getGuild().getMemberById(u.getId());
-
-        if (args.length >= 1) {
-            if(event.getMessage().getMentionedUsers().size() >= 1) {
-                u = event.getMessage().getMentionedUsers().get(0);
-                m = event.getGuild().getMemberById(u.getId());
+        if (args.length == 0) {
+            u = event.getAuthor();
+            m = event.getGuild().getMemberById(u.getId());
+        } else {
+            List<User> mentioned = event.getMessage().getMentionedUsers();
+            if (!mentioned.isEmpty()) {
+                m = event.getGuild().getMember(mentioned.get(0));
             } else {
-                try {
-                    m = event.getGuild().getMembersByEffectiveName(StringUtils.join(args, " "), true).get(0);
-                    u = m.getUser();
+                String name = StringUtils.join(args, " ");
+
+                List<Member> members = event.getGuild().getMembersByName(name, true);
+                if (members.isEmpty()) {
+                    members = event.getGuild().getMembersByNickname(name, true);
                 }
-                catch (Exception e) {
-                    try{
-                        m = event.getGuild().getMemberById(StringUtils.join(args, " "));
-                        u = m.getUser();
-                    }
-                    catch (Exception ex) {
-                        event.getChannel().sendMessage("This user could not be found.").queue();
-                        return false;
-                    }
-                }
+                m = members.isEmpty() ? null : members.get(0);
             }
+        }
+
+        if (m == null) {
+            event.getChannel().sendMessage("This user could not be found.").queue();
+            return false;
         }
 
         return true;
@@ -51,13 +50,14 @@ public class UserinfoCommand extends Command {
 
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
+
+        u = m.getUser();
       
         EmbedBuilder eb = AirUtils.defaultEmbed()
                 .setColor(m.getColor())
                 .setDescription("Userinfo for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Username", u.getName(), true)
-                .addField("Discriminator", u.getDiscriminator(), true)
+                .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
                 .addField("User Id", u.getId(), true)
                 .addField("Playing", (m.getGame() == null ? "**_NOTING_**" : m.getGame().getName()), true)
                 .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), true)
