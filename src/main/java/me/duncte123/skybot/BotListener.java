@@ -1,5 +1,6 @@
 package me.duncte123.skybot;
 
+import me.duncte123.skybot.utils.BadWordFilter;
 import me.duncte123.skybot.utils.Config;
 import me.duncte123.skybot.utils.CustomLog;
 import me.duncte123.skybot.utils.AirUtils;
@@ -22,6 +23,8 @@ import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
+
+    final BadWordFilter filter = new BadWordFilter();
 
     // listen for messages
     @Override
@@ -55,14 +58,12 @@ public class BotListener extends ListenerAdapter {
 
         if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
             Message messageToCheck = event.getMessage();
-            for (String badWord : Config.bannedWordList) {
-                if (messageToCheck.getContent().toLowerCase().equals(badWord)) {
-                    messageToCheck.delete().reason("Blocked for bad word: " + badWord).queue();
-                    event.getChannel().sendMessage("Hello there, "+ event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
-                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
-              SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
-                    return;
-                }
+            if (filter.filterText(messageToCheck.getContent())) {
+                messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
+                event.getChannel().sendMessage("Hello there, "+ event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                        m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+                SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
+                return;
             }
         }
 
@@ -91,13 +92,13 @@ public class BotListener extends ListenerAdapter {
 
         SkyBot.timer.schedule(myTask, 60*1000, 60*1000);
 
-        TimerTask unbanTask = new TimerTask() {
+        /*TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
                 AirUtils.checkUnbans();
             }
-        };
-        SkyBot.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
+        };*/
+        //SkyBot.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
 
     }
 

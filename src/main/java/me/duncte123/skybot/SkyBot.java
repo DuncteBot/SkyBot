@@ -4,10 +4,7 @@ import me.duncte123.skybot.commands.*;
 import me.duncte123.skybot.commands.fun.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
-import me.duncte123.skybot.utils.AudioUtils;
-import me.duncte123.skybot.utils.CommandParser;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.CustomLog;
+import me.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
@@ -35,7 +32,6 @@ public class SkyBot {
     public static HashMap<String, Command> commands = new HashMap<String, Command>();
     public static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<Guild, TextChannel>();
 
-    //private static Logger logForFile = Logger.getLogger(logName);
     private static CustomLog logger2 = CustomLog.getLog(logName);
 
     public static Timer timer = new Timer();
