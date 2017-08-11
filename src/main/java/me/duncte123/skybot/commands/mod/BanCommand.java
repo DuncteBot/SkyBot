@@ -47,63 +47,67 @@ public class BanCommand extends Command {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
-            String time = args[1] + " " + args[2];
-            String unbanDate = "";
-            if (Integer.parseInt(args[1]) > 0) {
-                //TODO make ban timed
+            if(args.length > 3) {
+                String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
+                String time = args[1] + " " + args[2];
+                String unbanDate = "";
+                if (Integer.parseInt(args[1]) > 0) {
+                    //TODO make ban timed
 
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date dt = new Date(System.currentTimeMillis());
+                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                    Date dt = new Date(System.currentTimeMillis());
 
-                switch (args[2]) {
-                    case "minute":
-                        DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "minutes":
-                        DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "day":
-                        DateUtils.addDays(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "days":
-                        DateUtils.addDays(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "week":
-                        DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "weeks":
-                        DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "month":
-                        DateUtils.addMonths(dt, Integer.parseInt(args[1]));
-                        break;
-                    case "months":
-                        DateUtils.addMonths(dt, Integer.parseInt(args[1]));
-                        break;
+                    switch (args[2]) {
+                        case "minute":
+                            DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "minutes":
+                            DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "day":
+                            DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "days":
+                            DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "week":
+                            DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "weeks":
+                            DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "month":
+                            DateUtils.addMonths(dt, Integer.parseInt(args[1]));
+                            break;
+                        case "months":
+                            DateUtils.addMonths(dt, Integer.parseInt(args[1]));
+                            break;
 
-                    default:
-                        event.getChannel().sendMessage("Please choose from day, minute, week or month").queue();
-                        return;
-                }
-                unbanDate = df.format(dt);
-            }
-
-            final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty()? "" : unbanDate);
-            event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                    (noting) -> {
-                        if(Integer.parseInt(args[1]) > 0) {
-                            AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
-
-                            AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
-                        } else {
-                            final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                            AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);
-                        }
+                        default:
+                            event.getChannel().sendMessage("Please choose from day, minute, week or month").queue();
+                            return;
                     }
-            );
-            event.getGuild().getPublicChannel().sendMessage("User " + toBan.getName() + "#"
-                    + toBan.getDiscriminator() + " got bent.").queue();
+                    unbanDate = df.format(dt);
+                }
+
+                final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty() ? "" : unbanDate);
+                event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+                        (noting) -> {
+                            if (Integer.parseInt(args[1]) > 0) {
+                                AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
+                            } else {
+                                final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);
+                            }
+                        }
+                );
+                event.getGuild().getPublicChannel().sendMessage("User " + toBan.getName() + "#"
+                        + toBan.getDiscriminator() + " got bent.").queue();
+            } else {
+                event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();

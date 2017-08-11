@@ -20,7 +20,6 @@ import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 import java.util.Timer;
-import java.util.logging.Logger;
 
 
 public class SkyBot {
