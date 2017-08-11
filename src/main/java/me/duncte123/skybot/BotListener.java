@@ -71,11 +71,11 @@ public class BotListener extends ListenerAdapter {
             // run the a command
             SkyBot.lastGuildChannel.put(event.getGuild(), event.getTextChannel());
             SkyBot.handleCommand(SkyBot.parser.parse(event.getMessage().getContent(), event));
-            SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
+            //SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
             return;
         }
     
-        SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
+        //SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
     }
 
     // when the bot is ready
