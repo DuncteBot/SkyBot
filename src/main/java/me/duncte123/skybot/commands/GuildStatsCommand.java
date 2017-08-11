@@ -26,16 +26,16 @@ public class GuildStatsCommand extends Command {
         Guild g = event.getGuild();
         try {
             event.getChannel().sendMessage(AirUtils.defaultEmbed()
-                    .addField("Guild Owner", g.getOwner().getEffectiveName(), false)
-                    .addField("Total Members", g.getMembers().size() + "", false)
-                    .addField("Verification Level", SkyBot.verificationLvlToName(g.getVerificationLevel()), false)
-                    .addField("Guild Name", g.getName(), false)
-                    .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), false)
-                    .addField("Guild Region", g.getRegion().getName(), false)
+                    .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
+                    .addField("Total Members", g.getMembers().size() + "", true)
+                    .addField("Verification Level", SkyBot.verificationLvlToName(g.getVerificationLevel()), true)
+                    .addField("Guild Name", g.getName(), true)
+                    .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                    .addField("Guild Region", g.getRegion().getName(), true)
                     .addField("Guild Invite",
-                            "[https://discord.gg/" + g.getInvites().complete(false).get(0).getCode() +
-                                    "](https://discord.gg/" + g.getInvites().complete(false).get(0).getCode() + ")",
-                            false)
+                            "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
+                                    "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
+                            true)
                     .setThumbnail(event.getGuild().getIconUrl())
                     .build()).queue();
         }

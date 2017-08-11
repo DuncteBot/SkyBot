@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'me.duncte123.skybot.SkyBot'
 
-version '3.29.0'
+version '3.30.0'
 
 sourceCompatibility = 1.8
 
@@ -21,6 +21,8 @@ dependencies {
     compile 'org.apache.commons:commons-lang3:3.1'
     // jsoup HTML parser library @ https://jsoup.org/
     compile 'org.jsoup:jsoup:1.10.3'
+    // https://mvnrepository.com/artifact/mysql/mysql-connector-java
+    compile 'mysql:mysql-connector-java:5.1.6'
     compile 'ch.qos.logback:logback-classic:1.2.1'
     compile 'ch.qos.logback:logback-core:1.2.1'
 
