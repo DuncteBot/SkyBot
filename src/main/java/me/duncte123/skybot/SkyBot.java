@@ -28,23 +28,18 @@ public class SkyBot {
     public static JDA jda;
     public static AudioUtils au;
 
-    public static final CommandParser parser = new CommandParser();
     public static HashMap<String, Command> commands = new HashMap<String, Command>();
-    public static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<Guild, TextChannel>();
 
     private static CustomLog logger2 = CustomLog.getLog(logName);
 
-    public static Timer timer = new Timer();
-    public static Timer unbanTimer = new Timer();
-
-    public static String[] messages = {
+    private static String[] messages = {
             "#HYPESQUAD",
             "use " + Config.prefix + "help",
             "V"+Config.version,
             "duncte123.ml",
             "Subscribe???"
     };
-    public static int messageIndex = 0;
+    private static int messageIndex = 0;
 
 
     public static void main(String[] args){
@@ -91,13 +86,13 @@ public class SkyBot {
     }
 
     // custom logging
-    public static final void log(String name, CustomLog.Level lvl, String message){
+    public static void log(String name, CustomLog.Level lvl, String message){
         logName = name;
         logger2.log(lvl, message);
 
     }
 
-    public static final void log(CustomLog.Level lvl, String message){
+    public static void log(CustomLog.Level lvl, String message){
         log(Config.defaultName, lvl, message);
     }
 

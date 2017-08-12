@@ -1,11 +1,9 @@
 package me.duncte123.skybot;
 
-import me.duncte123.skybot.utils.BadWordFilter;
-import me.duncte123.skybot.utils.Config;
-import me.duncte123.skybot.utils.CustomLog;
-import me.duncte123.skybot.utils.AirUtils;
+import me.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
@@ -17,14 +15,19 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.time.DateUtils;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
 
-    final BadWordFilter filter = new BadWordFilter();
+    private final BadWordFilter filter = new BadWordFilter();
+    private static CommandParser parser = new CommandParser();
+    private static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<>();
+
+
+
+    private static Timer timer = new Timer();
+    private static Timer unbanTimer = new Timer();
 
     // listen for messages
     @Override
@@ -32,8 +35,8 @@ public class BotListener extends ListenerAdapter {
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals("191231307290771456")){
             System.out.println("Shutting down!!!");
-            SkyBot.timer.cancel();
-            SkyBot.unbanTimer.cancel();
+            timer.cancel();
+            unbanTimer.cancel();
             event.getJDA().shutdown();
         }
 
@@ -55,26 +58,27 @@ public class BotListener extends ListenerAdapter {
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
-
-        if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
-            Message messageToCheck = event.getMessage();
-            if (filter.filterText(messageToCheck.getContent())) {
-                messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
-                event.getChannel().sendMessage("Hello there, "+ event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
-                        m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
-                SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
-                return;
+        if(PermissionUtil.checkPermission(event.getTextChannel(), event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE)) { //Bot has no perms :(
+            if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
+                Message messageToCheck = event.getMessage();
+                if (filter.filterText(messageToCheck.getContent())) {
+                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
+                    event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+                    //SkyBot.log(Config.defaultName + "Message", CustomLog.Level.INFO, "Message from user " + event.getMessage().getAuthor().getName() + "#" + event.getMessage().getAuthor().getDiscriminator() + ": " + event.getMessage().getContent());
+                    return;
+                }
             }
         }
 
         if(event.getMessage().getContent().startsWith(Config.prefix) && event.getMessage().getAuthor().getId() != event.getJDA().getSelfUser().getId()){
             // run the a command
-            SkyBot.lastGuildChannel.put(event.getGuild(), event.getTextChannel());
-            SkyBot.handleCommand(SkyBot.parser.parse(event.getMessage().getContent(), event));
+            lastGuildChannel.put(event.getGuild(), event.getTextChannel());
+            SkyBot.handleCommand(parser.parse(event.getMessage().getContent(), event));
             //SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
             return;
         }
-    
+
         //SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
     }
 
@@ -89,8 +93,7 @@ public class BotListener extends ListenerAdapter {
                 SkyBot.updateStatus();
             }
         };
-
-        SkyBot.timer.schedule(myTask, 60*1000, 60*1000);
+        timer.schedule(myTask, 60*1000, 60*1000);
 
         /*TimerTask unbanTask = new TimerTask() {
             @Override
@@ -98,7 +101,7 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.checkUnbans();
             }
         };*/
-        //SkyBot.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
+        //unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
 
     }
 
@@ -148,7 +151,7 @@ public class BotListener extends ListenerAdapter {
                 SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
                 SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
                 SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                SkyBot.lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                 if(event.getGuild().getAudioManager().isConnected()){
                     event.getGuild().getAudioManager().closeAudioConnection();
                     event.getGuild().getAudioManager().setSendingHandler(null);
