@@ -55,6 +55,11 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
+        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())) {
+            event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
+            return;
+        }
+
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
@@ -65,7 +70,6 @@ public class BotListener extends ListenerAdapter {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
                     event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
-                    //SkyBot.log(Config.defaultName + "Message", CustomLog.Level.INFO, "Message from user " + event.getMessage().getAuthor().getName() + "#" + event.getMessage().getAuthor().getDiscriminator() + ": " + event.getMessage().getContent());
                     return;
                 }
             }
@@ -75,11 +79,9 @@ public class BotListener extends ListenerAdapter {
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getTextChannel());
             SkyBot.handleCommand(parser.parse(event.getMessage().getContent(), event));
-            //SkyBot.log(Config.defaultName+"Command", CustomLog.Level.INFO, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+" ran command "+ event.getMessage().getContent().toLowerCase().split(" ")[0]);
             return;
         }
 
-        //SkyBot.log(Config.defaultName+"Message", CustomLog.Level.INFO, "Message from user "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+": "+ event.getMessage().getContent());
     }
 
     // when the bot is ready
