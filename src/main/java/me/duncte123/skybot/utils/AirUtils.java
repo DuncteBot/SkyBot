@@ -2,7 +2,6 @@ package me.duncte123.skybot.utils;
 
 import me.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -12,9 +11,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 public class AirUtils {
+
+    public static List<String> whiteList = new ArrayList<>();
+    public static List<String> blackList = new ArrayList<>();
 
     public static MessageEmbed embedMessage(String message) {
         return defaultEmbed().setDescription(message).build();
@@ -33,6 +36,10 @@ public class AirUtils {
                 .setColor(Config.defaultColour)
                 .setFooter(Config.defaultName, Config.defaultIcon)
                 .setTimestamp(Instant.now());
+    }
+
+    public static void updateWhiteAndBlackList(){
+
     }
 
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, MessageReceivedEvent event){

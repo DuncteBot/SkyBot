@@ -3,6 +3,8 @@ package me.duncte123.skybot.utils;
 import java.awt.Color;
 
 public class Config {
+    //The userID from the guy that is hosting the bot, in most cases that is just my id :D
+    public static final String ownerId = "191231307290771456";
     // This is the token from your bot
     public static final String token = "";
     //The api key for http://thecatapi.com/, optional

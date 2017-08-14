@@ -33,7 +33,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
 
-        if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals("191231307290771456")){
+        if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
             System.out.println("Shutting down!!!");
             timer.cancel();
             unbanTimer.cancel();
