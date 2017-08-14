@@ -1,6 +1,7 @@
 package me.duncte123.skybot;
 
 import me.duncte123.skybot.commands.*;
+import me.duncte123.skybot.commands.essentials.*;
 import me.duncte123.skybot.commands.fun.*;
 import me.duncte123.skybot.commands.mod.*;
 import me.duncte123.skybot.commands.music.*;
@@ -10,13 +11,9 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
 
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
-import java.util.Timer;
 
 
 public class SkyBot {
@@ -56,12 +53,13 @@ public class SkyBot {
                     .buildBlocking();
             jda.setAutoReconnect(true);
             au = new AudioUtils();
+            AirUtils.getWhiteAndBlackList();
         }catch (Exception e) {
             e.printStackTrace();
         }
 
         //setup commands
-        setupCommands(true, true);
+        setupCommands();
     }
 
     public static void updateStatus(){
@@ -70,19 +68,6 @@ public class SkyBot {
             messageIndex = 0;
         }
         jda.getPresence().setGame(Game.of(messages[messageIndex]));
-    }
-
-    public static String verificationLvlToName(Guild.VerificationLevel lvl){
-        if(lvl.equals(Guild.VerificationLevel.LOW)){
-            return "Low";
-        }else if(lvl.equals(Guild.VerificationLevel.MEDIUM)){
-            return "Medium";
-        }else if(lvl.equals(Guild.VerificationLevel.HIGH)){
-            return "(╯°□°）╯︵ ┻━┻";
-        }else if(lvl.equals(Guild.VerificationLevel.VERY_HIGH)){
-            return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-        }
-        return "none";
     }
 
     // custom logging
@@ -110,21 +95,7 @@ public class SkyBot {
         }
     }
 
-    // to a normal lvl
-    private static java.util.logging.Level toLevel(CustomLog.Level lvl){
-        return java.util.logging.Level.parse(lvl.name());
-    }
-
-    public static boolean isURL(String url) {
-        try {
-            new URL(url);
-            return true;
-        } catch (Exception e) {
-            return false;
-        }
-    }
-
-    private static void setupCommands(boolean musicCommands, boolean modCommands){
+    private static void setupCommands(){
 
         // default commands
         commands.put("help", new HelpCommand());
@@ -148,31 +119,33 @@ public class SkyBot {
         commands.put("botinfo", new BotinfoCommand());
         commands.put("dialog", new DialogCommand());
 
-        if (musicCommands) {
-            //music commands
-            commands.put("join", new JoinCommand());
-            commands.put("leave", new LeaveCommand());
-            commands.put("play", new PlayCommand());
-            commands.put("stop", new StopCommand());
-            commands.put("pplay", new PPlayCommand());
-            commands.put("skip", new SkipCommand());
-            commands.put("pause", new PauseCommand());
-            ListCommand listCommand = new ListCommand();
-            commands.put("list", listCommand);
-            commands.put("queue", listCommand);
-            NowPlayingCommand playingCommand = new NowPlayingCommand();
-            commands.put("nowplaying", playingCommand);
-            commands.put("np", playingCommand);
-            commands.put("shuffle", new ShuffleCommand());
-            commands.put("repeat", new RepeatCommand());
-        }
-        if (modCommands) {
-            //prank commands
-            commands.put("ban", new BanCommand());
-            commands.put("hackban", new HackbanCommand());
-            commands.put("softban", new SoftbanCommand());
-            commands.put("unban", new UnbanCommand());
-            commands.put("kick", new KickCommand());
-        }
+        //essentials commands
+        commands.put("whitelist", new WhitelistCommand());
+        commands.put("Blacklist", new BlacklistCommand());
+
+
+        //music commands
+        commands.put("join", new JoinCommand());
+        commands.put("leave", new LeaveCommand());
+        commands.put("play", new PlayCommand());
+        commands.put("stop", new StopCommand());
+        commands.put("pplay", new PPlayCommand());
+        commands.put("skip", new SkipCommand());
+        commands.put("pause", new PauseCommand());
+        ListCommand listCommand = new ListCommand();
+        commands.put("list", listCommand);
+        commands.put("queue", listCommand);
+        NowPlayingCommand playingCommand = new NowPlayingCommand();
+        commands.put("nowplaying", playingCommand);
+        commands.put("np", playingCommand);
+        commands.put("shuffle", new ShuffleCommand());
+        commands.put("repeat", new RepeatCommand());
+
+        //prank commands
+        commands.put("ban", new BanCommand());
+        commands.put("hackban", new HackbanCommand());
+        commands.put("softban", new SoftbanCommand());
+        commands.put("unban", new UnbanCommand());
+        commands.put("kick", new KickCommand());
     }
 }

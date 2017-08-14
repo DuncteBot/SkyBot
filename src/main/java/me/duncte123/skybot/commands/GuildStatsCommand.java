@@ -1,7 +1,6 @@
 package me.duncte123.skybot.commands;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -28,7 +27,7 @@ public class GuildStatsCommand extends Command {
             event.getChannel().sendMessage(AirUtils.defaultEmbed()
                     .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
                     .addField("Total Members", g.getMembers().size() + "", true)
-                    .addField("Verification Level", SkyBot.verificationLvlToName(g.getVerificationLevel()), true)
+                    .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
                     .addField("Guild Name", g.getName(), true)
                     .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                     .addField("Guild Region", g.getRegion().getName(), true)

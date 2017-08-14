@@ -55,7 +55,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())) {
+        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getTextChannel().canTalk()) {
             event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
             return;
         }
@@ -111,11 +111,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
-        List<String> blackList = Arrays.asList("324453756794175488",
-                "125227483518861312",
-                "110373943822540800");
-
-        if (blackList.contains(event.getGuild().getId())) return;
+        if (AirUtils.blackList.contains(event.getGuild().getId())) return;
 
         TextChannel t = event.getGuild().getPublicChannel();
         String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
@@ -125,17 +121,8 @@ public class BotListener extends ListenerAdapter {
     //We will check if the bot is allowed to be in this guild
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        List<String> allowedGuilds = Arrays.asList(
-                "329962158471512075",
-                "125227483518861312",
-                "324453756794175488",
-                "292707924239712258",
-                "191245668617158656",
-                "339772998120636417",
-                "110373943822540800"
-        );
 
-        if (allowedGuilds.contains(event.getGuild().getId())) return;
+        if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
 
         event.getGuild().getPublicChannel().sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
                 + ", I'm not made to be in this guild and will leave it in 20 seconds")

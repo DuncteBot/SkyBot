@@ -55,7 +55,7 @@ public class PlayCommand extends Command {
             event.getTextChannel().sendMessage(eb.build()).queue();
         }else{
             String toPlay = StringUtils.join(args, " ");
-            if(!SkyBot.isURL(toPlay) && !toPlay.contains("/root/Desktop/music/")){
+            if(!AirUtils.isURL(toPlay) && !toPlay.contains("/root/Desktop/music/")){
                 toPlay = "ytsearch: " + toPlay;
             }
 

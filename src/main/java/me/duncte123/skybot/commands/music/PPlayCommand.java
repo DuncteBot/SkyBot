@@ -44,7 +44,7 @@ public class PPlayCommand extends Command {
         GuildMusicManager mng = au.getMusicManager(guild);
 
         String toPlay = StringUtils.join(Arrays.asList(args), " ");
-        if(!SkyBot.isURL(toPlay)){
+        if(!AirUtils.isURL(toPlay)){
             toPlay = "ytsearch: " + toPlay;
         }
 
