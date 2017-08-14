@@ -14,7 +14,7 @@ public class BlacklistCommand extends Command {
     public boolean called(String[] args, MessageReceivedEvent event) {
 
         if(args.length < 2) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is `" + Config.prefix + "whitelist <guild id> <guild name>")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is `" + Config.prefix + "whitelist <guild id> <guild name>`")).queue();
             return false;
         }
 

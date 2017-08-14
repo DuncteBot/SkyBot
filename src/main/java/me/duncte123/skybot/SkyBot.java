@@ -121,7 +121,7 @@ public class SkyBot {
 
         //essentials commands
         commands.put("whitelist", new WhitelistCommand());
-        commands.put("Blacklist", new BlacklistCommand());
+        commands.put("blacklist", new BlacklistCommand());
 
 
         //music commands
