@@ -20,6 +20,7 @@ public class AirUtils {
 
     public static List<String> whiteList = new ArrayList<>();
     public static List<String> blackList = new ArrayList<>();
+    public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
 
     public static MessageEmbed embedMessage(String message) {
         return defaultEmbed().setDescription(message).build();
@@ -41,6 +42,7 @@ public class AirUtils {
     }
 
     public static void getWhiteAndBlackList(){
+        log(CustomLog.Level.INFO, "Loading black and whitelist.");
         try {
             OkHttpClient client = new OkHttpClient();
 
@@ -68,6 +70,8 @@ public class AirUtils {
                 }
             }
             response.body().close();
+
+            log(CustomLog.Level.INFO, "Loaded black and whitelist.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -109,10 +113,12 @@ public class AirUtils {
     }
 
     public static String insetIntoWhitelist(String guildId, String guildName, String a1234567890) {
+        whiteList.add(guildId);
         return insertIntoWhiteOrBlacklist(guildId, guildName, "whiteList", a1234567890);
     }
 
     public static String insetIntoBlacklist(String guildId, String guildName, String a1234567890) {
+        blackList.add(guildId);
         return insertIntoWhiteOrBlacklist(guildId, guildName, "blackList", a1234567890);
     }
 
@@ -208,5 +214,14 @@ public class AirUtils {
             return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
         }
         return "none";
+    }
+
+    public static void log(CustomLog.Level lvl, String message){
+        log(Config.defaultName, lvl, message);
+    }
+
+    public static void log(String name, CustomLog.Level lvl, Object message){
+        logger2 = CustomLog.getLog(name);
+        logger2.log(lvl, message);
     }
 }

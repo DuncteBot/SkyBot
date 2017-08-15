@@ -1,12 +1,9 @@
 package me.duncte123.skybot.utils;
 
+import net.dv8tion.jda.core.utils.SimpleLog;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
-import javax.swing.JOptionPane;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.StandardOpenOption;
+import javax.swing.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
@@ -29,7 +26,7 @@ public class CustomLog {
 
     private static final String FORMAT = "[%time%] [%level%] [%name%]: %text%";
     private static final String MSGFORMAT = "%text%";
-    private static final SimpleDateFormat DFORMAT = new SimpleDateFormat("HH:mm:ss");
+    private static final SimpleDateFormat DFORMAT = new SimpleDateFormat("dd-mm-yyyy HH:mm:ss");
 
     private static final Map<String, CustomLog> LOGS = new HashMap<>();
     private static final Set<LogListener> listeners = new HashSet<>();
@@ -49,182 +46,6 @@ public class CustomLog {
         return LOGS.get(name.toLowerCase());
     }
 
-    private static final Map<Level, Set<File>> fileLogs = new HashMap<>();
-    private static PrintStream origStd = null;
-    private static PrintStream origErr = null;
-    private static FileOutputStream stdOut = null;
-    private static FileOutputStream errOut = null;
-
-    /**
-     * Will duplicate the output-streams to the specified Files.
-     * This will catch everything that is sent to sout and serr (even stuff not logged via CustomLog).
-     *
-     * @param std
-     *      The file to use for System.out logging, or null to not LOG System.out to a file
-     * @param err
-     *      The file to use for System.err logging, or null to not LOG System.err to a file
-     * @throws java.io.IOException
-     *      If an IO error is encountered while dealing with the file. Most likely
-     *      to be caused by a lack of permissions when creating the log folders or files.
-     */
-    //@SuppressWarnings("ResultOfMethodCallIgnored")
-    public static void addFileLogs(File std, File err) throws IOException {
-        if(std != null) {
-            if (origStd == null)
-                origStd = System.out;
-            if(!std.getAbsoluteFile().getParentFile().exists()) {
-                std.getAbsoluteFile().getParentFile().mkdirs();
-            }
-            if(!std.exists()) {
-                std.createNewFile();
-            }
-            FileOutputStream fOut = new FileOutputStream(std, true);
-            System.setOut(new PrintStream(new OutputStream() {
-                @Override
-                public void write(int b) throws IOException {
-                    origStd.write(b);
-                    fOut.write(b);
-                }
-            }));
-            if (stdOut != null)
-                stdOut.close();
-            stdOut = fOut;
-        }
-        else if (origStd != null) {
-            System.setOut(origStd);
-            stdOut.close();
-            origStd = null;
-        }
-        if(err != null) {
-            if (origErr == null)
-                origErr = System.err;
-            if(!err.getAbsoluteFile().getParentFile().exists()) {
-                err.getAbsoluteFile().getParentFile().mkdirs();
-            }
-            if(!err.exists()) {
-                err.createNewFile();
-            }
-            FileOutputStream fOut = new FileOutputStream(err, true);
-            System.setErr(new PrintStream(new OutputStream() {
-                @Override
-                public void write(int b) throws IOException {
-                    origErr.write(b);
-                    fOut.write(b);
-                }
-            }));
-            if (errOut != null)
-                errOut.close();
-            errOut = fOut;
-        }
-        else if (origErr != null) {
-            System.setErr(origErr);
-            errOut.close();
-            origErr = null;
-        }
-    }
-
-    /**
-     * Sets up a File to log all messages that are not visible via sout and serr and meet a given log-level criteria.
-     * All logs that would not be printed and are above given logLevel are printed to that File.
-     * If you want to log Logs printed to sout and serr to file(s), use {@link #addFileLogs(java.io.File, java.io.File)} instead.
-     *
-     * @param logLevel
-     *      The log-level criteria. Only logs equal or above this level are printed to the File
-     * @param file
-     *      The File where the logs should be printed
-     * @throws java.io.IOException
-     *      If the File can't be canonically resolved (access denied)
-     */
-    public static void addFileLog(Level logLevel, File file) throws IOException {
-        File canonicalFile = file.getCanonicalFile();
-        if (!fileLogs.containsKey(logLevel)) {
-            fileLogs.put(logLevel, new HashSet<>());
-        }
-        fileLogs.get(logLevel).add(canonicalFile);
-    }
-
-    /**
-     * Removes all File-logs created via {@link #addFileLog(net.dv8tion.jda.core.utils.CustomLog.Level, java.io.File)} with given Level.
-     * To remove the sout and serr logs, call {@link #addFileLogs(java.io.File, java.io.File)} with null args.
-     *
-     * @param logLevel
-     *      The level for which all fileLogs should be removed
-     */
-    public static void removeFileLog(Level logLevel) {
-        fileLogs.remove(logLevel);
-    }
-
-    /**
-     * Removes all File-logs created via {@link #addFileLog(net.dv8tion.jda.core.utils.CustomLog.Level, java.io.File)} with given File.
-     * To remove the sout and serr logs, call {@link #addFileLogs(java.io.File, java.io.File)} with null args.
-     *
-     * @param file
-     *      The file to remove from all FileLogs (except sout and serr logs)
-     * @throws java.io.IOException
-     *      If the File can't be canonically resolved (access denied)
-     */
-    public static void removeFileLog(File file) throws IOException {
-        File canonicalFile = file.getCanonicalFile();
-        Iterator<Map.Entry<Level, Set<File>>> setIter = fileLogs.entrySet().iterator();
-        while (setIter.hasNext()) {
-            Map.Entry<Level, Set<File>> set = setIter.next();
-            Iterator<File> fileIter = set.getValue().iterator();
-            while (fileIter.hasNext()) {
-                File logFile = fileIter.next();
-                if(logFile.equals(canonicalFile))  {
-                    fileIter.remove();
-                    break;
-                }
-            }
-            if (set.getValue().isEmpty()) {
-                setIter.remove();
-            }
-        }
-    }
-
-    private static Set<File> collectFiles(Level level) {
-        Set<File> out = new HashSet<>();
-        for (Map.Entry<Level, Set<File>> mapEntry : fileLogs.entrySet()) {
-            if(mapEntry.getKey().getPriority() <= level.getPriority())
-                out.addAll(mapEntry.getValue());
-        }
-        return out;
-    }
-
-    private static void logToFiles(String msg, Level level) {
-        Set<File> files = collectFiles(level);
-        for (File file : files) {
-            try {
-                Files.write(file.toPath(), (msg + '\n').getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
-            }
-            catch (IOException e) {
-                e.printStackTrace();
-//                JDAImpl.LOG.fatal("Could not write log to logFile...");
-//                JDAImpl.LOG.log(e);
-            }
-        }
-    }
-
-    /**
-     * Adds a custom Listener that receives all logs
-     * @param listener the listener to add
-     */
-    public static void addListener(LogListener listener) {
-        synchronized (listeners) {
-            listeners.add(listener);
-        }
-    }
-
-    /**
-     * Removes a custom Listener
-     * @param listener the listener to remove
-     */
-    public static void removeListener(LogListener listener) {
-        synchronized (listeners) {
-            listeners.remove(listener);
-        }
-    }
-
     public final String name;
     private Level level = null;
 
@@ -235,7 +56,7 @@ public class CustomLog {
     /**
      * Set the LOG-level
      * All messages with lower LOG-level will not be printed
-     * If this level is set to null, the global Log-level ({@link net.dv8tion.jda.core.utils.CustomLog#LEVEL}) will be used
+     * If this level is set to null, the global Log-level ({@link net.dv8tion.jda.core.utils.SimpleLog#LEVEL}) will be used
      *
      * @param lev the new LOG-level
      */
@@ -277,8 +98,8 @@ public class CustomLog {
         }
         String format = (ENABLE_GUI && !isConsolePresent()) ? MSGFORMAT : FORMAT;
         format = format.replace("%time%", DFORMAT.format(new Date())).replace("%level%", level.getTag()).replace("%name%", name).replace("%text%", String.valueOf(msg));
-        if(level == Level.OFF || level.getPriority() < ((this.level == null) ? CustomLog.LEVEL.getPriority() : this.level.getPriority())) {
-            logToFiles(format, level);
+        if(level == CustomLog.Level.OFF || level.getPriority() < ((this.level == null) ? CustomLog.LEVEL.getPriority() : this.level.getPriority())) {
+            //logToFiles(format, level);
         }
         else {
             print(format, level);
@@ -372,7 +193,7 @@ public class CustomLog {
     }
 
     /**
-     * This interface has to be able to register (via {@link net.dv8tion.jda.core.utils.CustomLog#addListener(net.dv8tion.jda.core.utils.CustomLog.LogListener)}) and listen to log-messages.
+     * This interface has to be able to register (via {@link net.dv8tion.jda.core.utils.SimpleLog#addListener(net.dv8tion.jda.core.utils.SimpleLog.LogListener)}) and listen to log-messages.
      */
     public interface LogListener {
         /**

@@ -1,7 +1,6 @@
 package me.duncte123.skybot.commands;
 
 import me.duncte123.skybot.Command;
-import me.duncte123.skybot.SkyBot;
 import me.duncte123.skybot.utils.CustomLog;
 import me.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
@@ -58,7 +57,7 @@ public class CleenupCommand extends Command {
                 event.getTextChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
              (message) -> { message.delete().queueAfter(5, TimeUnit.SECONDS); }
           );
-                SkyBot.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getTextChannel().getName());
+                AirUtils.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getTextChannel().getName());
         }
         catch (Exception e) {
           event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();

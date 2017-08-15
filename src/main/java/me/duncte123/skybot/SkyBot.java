@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.utils.SimpleLog;
 
 import java.util.HashMap;
 import java.util.Random;
@@ -18,7 +19,6 @@ import java.util.Random;
 
 public class SkyBot {
 
-    private static String logName = Config.defaultName;
     // get a random thing
     public static Random rand = new Random();
 
@@ -26,8 +26,6 @@ public class SkyBot {
     public static AudioUtils au;
 
     public static HashMap<String, Command> commands = new HashMap<String, Command>();
-
-    private static CustomLog logger2 = CustomLog.getLog(logName);
 
     private static String[] messages = {
             "#HYPESQUAD",
@@ -40,7 +38,11 @@ public class SkyBot {
 
 
     public static void main(String[] args){
-
+        // Load the whit and black list first
+        AirUtils.getWhiteAndBlackList();
+        // Register our custom logger and turn the default off
+        SimpleLog.LEVEL = SimpleLog.Level.OFF;
+        SimpleLog.addListener(new CloudLogListener());
         // log in and set up the api
         try{
             jda = new JDABuilder(AccountType.BOT)
@@ -53,7 +55,6 @@ public class SkyBot {
                     .buildBlocking();
             jda.setAutoReconnect(true);
             au = new AudioUtils();
-            AirUtils.getWhiteAndBlackList();
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -68,17 +69,6 @@ public class SkyBot {
             messageIndex = 0;
         }
         jda.getPresence().setGame(Game.of(messages[messageIndex]));
-    }
-
-    // custom logging
-    public static void log(String name, CustomLog.Level lvl, String message){
-        logName = name;
-        logger2.log(lvl, message);
-
-    }
-
-    public static void log(CustomLog.Level lvl, String message){
-        log(Config.defaultName, lvl, message);
     }
 
     // handle the commands

@@ -13,7 +13,6 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -41,7 +40,7 @@ public class BotListener extends ListenerAdapter {
         }
 
         if(event.isFromType(ChannelType.PRIVATE) && !event.getJDA().getSelfUser().getId().equals(event.getAuthor().getId()) ){
-            SkyBot.log(CustomLog.Level.WARNING, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+", tried to do something in the pm-channel.\nThe message is " + event.getMessage().getContent());
+            AirUtils.log(CustomLog.Level.WARNING, "User "+event.getMessage().getAuthor().getName()+"#"+event.getMessage().getAuthor().getDiscriminator()+", tried to do something in the pm-channel.\nThe message is " + event.getMessage().getContent());
             return;
         }
         if(event.isFromType(ChannelType.PRIVATE)){
@@ -87,7 +86,7 @@ public class BotListener extends ListenerAdapter {
     // when the bot is ready
     @Override
     public void onReady(ReadyEvent event){
-        SkyBot.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
+        AirUtils.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
         //event.getJDA().getGuilds().get(0).getPublicChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
         TimerTask myTask = new TimerTask() {
             @Override

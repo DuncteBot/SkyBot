@@ -40,7 +40,7 @@ public class BadWordFilter {
                 }
 
             }
-            System.out.println("Loaded " + counter + " words to filter out");
+            AirUtils.log(CustomLog.Level.INFO, "Loaded " + counter + " words to filter out");
         } catch (IOException e) {
             e.printStackTrace();
         }

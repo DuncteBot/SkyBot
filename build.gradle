@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'me.duncte123.skybot.SkyBot'
 
-version '3.33.0'
+version '3.34.0'
 
 sourceCompatibility = 1.8
 
