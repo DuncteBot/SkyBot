@@ -49,7 +49,7 @@ public class AirUtils {
             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
             RequestBody body = RequestBody.create(mediaType, "delete=true");
             Request request = new Request.Builder()
-                    .url("https://bot.duncte123.ml/getWhiteAndBlacklist.php")
+                    .url(Config.apiBase + "/getWhiteAndBlacklist.php")
                     .post(body)
                     .addHeader("content-type", "application/x-www-form-urlencoded")
                     .addHeader("cache-control", "no-cache")
@@ -90,7 +90,7 @@ public class AirUtils {
                     + "&tk=" + SkyBot.jda.getToken().split(" ")[1]
             );
             Request request = new Request.Builder()
-                    .url("https://bot.duncte123.ml/updateWhiteAndBlacklist.php")
+                    .url(Config.apiBase + "/updateWhiteAndBlacklist.php")
                     .post(body)
                     .addHeader("content-type", "application/x-www-form-urlencoded")
                     .addHeader("cache-control", "no-cache")
@@ -154,7 +154,7 @@ public class AirUtils {
                     + "&guildId=" + guildId
             );
             Request request = new Request.Builder()
-                    .url("https://bot.duncte123.ml/ban.php")
+                    .url(Config.apiBase + "/ban.php")
                     .post(body)
                     .addHeader("content-type", "application/x-www-form-urlencoded")
                     .addHeader("cache-control", "no-cache")
@@ -174,7 +174,7 @@ public class AirUtils {
             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
             RequestBody body = RequestBody.create(mediaType, "delete=true");
             Request request = new Request.Builder()
-                    .url("https://bot.duncte123.ml/getUnbans.php")
+                    .url(Config.apiBase + "/getUnbans.php")
                     .post(body)
                     .addHeader("content-type", "application/x-www-form-urlencoded")
                     .addHeader("cache-control", "no-cache")
