@@ -22,18 +22,38 @@ public class AirUtils {
     public static List<String> blackList = new ArrayList<>();
     public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
 
+    /**
+     * The default way to display a nice embedded message
+     * @param message The message to display
+     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
+     */
     public static MessageEmbed embedMessage(String message) {
         return defaultEmbed().setDescription(message).build();
     }
 
+    /**
+     * The default way to send a embedded message to the channel with a field in it
+     * @param title The title of the field
+     * @param message The message to display
+     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
+     */
     public static MessageEmbed embedField(String title, String message){
         return defaultEmbed().addField(title, message, false).build();
     }
 
+    /**
+     * The default way to send a embedded image to the channel
+     * @param imageURL The url from the image
+     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
+     */
     public static MessageEmbed embedImage(String imageURL) {
         return defaultEmbed().setImage(imageURL).build();
     }
 
+    /**
+     * The default embed layout that all of the embeds are based off
+     * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
+     */
     public static EmbedBuilder defaultEmbed(){
         return new EmbedBuilder()
                 .setColor(Config.defaultColour)
