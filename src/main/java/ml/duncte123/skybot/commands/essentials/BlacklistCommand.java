@@ -30,7 +30,7 @@ public class BlacklistCommand extends Command {
         if (!stat.isEmpty())
             event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + stat)).queue();
         else
-            event.getChannel().sendMessage(AirUtils.embedMessage("Successfully added " + guildName + " to the whitelist")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Successfully added " + guildName + " to the blacklist")).queue();
     }
 
     @Override

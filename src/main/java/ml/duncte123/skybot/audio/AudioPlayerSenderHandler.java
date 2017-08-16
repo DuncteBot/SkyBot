@@ -15,13 +15,17 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
         this.audioPlayer = audioPlayer;
     }
 
+    /**
+     * Checks if the player can provide the song
+     * @return true if we can provide something
+     */
     @Override
-  public boolean canProvide() {
-    if (lastFrame == null) {
-      lastFrame = audioPlayer.provide();
+    public boolean canProvide() {
+      if (lastFrame == null) {
+        lastFrame = audioPlayer.provide();
+      }
+      return lastFrame != null;
     }
-    return lastFrame != null;
-  }
 
     @Override
     public byte[] provide20MsAudio() {
@@ -35,6 +39,10 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
         return data;
     }
 
+    /**
+     * "Chceks" if this audio is opus
+     * @return always true
+     */
     @Override
     public boolean isOpus(){
         return true;

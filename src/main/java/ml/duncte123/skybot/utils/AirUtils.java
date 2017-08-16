@@ -282,7 +282,7 @@ public class AirUtils {
                     .addHeader("cache-control", "no-cache")
                     .build();
             Response response = client.newCall(request).execute();
-            String jsonData = response.body().source().readUtf8();response.body().source().readUtf8();
+            String jsonData = response.body().source().readUtf8();
             JSONArray json = new JSONArray(jsonData);
             for(Object userJson : json) {
                 JSONObject userData = new JSONObject(userJson.toString());
