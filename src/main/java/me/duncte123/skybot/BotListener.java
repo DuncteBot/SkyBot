@@ -33,7 +33,7 @@ public class BotListener extends ListenerAdapter {
     public void onMessageReceived(MessageReceivedEvent event){
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
-            System.out.println("Shutting down!!!");
+            AirUtils.log(CustomLog.Level.INFO,"Shutting down!!!");
             timer.cancel();
             unbanTimer.cancel();
             event.getJDA().shutdown();
@@ -62,7 +62,7 @@ public class BotListener extends ListenerAdapter {
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
-        if(PermissionUtil.checkPermission(event.getTextChannel(), event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE)) { //Bot has no perms :(
+        if(PermissionUtil.checkPermission(event.getTextChannel(), event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE) && !(AirUtils.blackList.contains(event.getGuild().getId()))) { //Bot has no perms :(
             if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getContent())) {

@@ -33,6 +33,7 @@ public class HelpEmbeds {
 
     public static MessageEmbed funCommands = AirUtils.defaultEmbed()
             .setDescription("**Fun Commands!!**")
+            .addField(Config.prefix + "kpop", getHelp("kpop"), false)
             .addField(Config.prefix + "cat", getHelp("cat"), false)
             .addField(Config.prefix + "kitty", getHelp("kitty"), false)
             .addField(Config.prefix + "cookie", getHelp("cookie"), false)

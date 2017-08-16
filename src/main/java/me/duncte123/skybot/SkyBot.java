@@ -11,8 +11,10 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Icon;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
+import java.net.URL;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -108,6 +110,7 @@ public class SkyBot {
         commands.put("ttb", new TextToBrickCommand());
         commands.put("botinfo", new BotinfoCommand());
         commands.put("dialog", new DialogCommand());
+        commands.put("kpop", new KpopCommand());
 
         //essentials commands
         commands.put("whitelist", new WhitelistCommand());
