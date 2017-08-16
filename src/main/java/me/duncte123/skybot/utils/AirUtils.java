@@ -2,6 +2,7 @@ package me.duncte123.skybot.utils;
 
 import me.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -59,6 +60,26 @@ public class AirUtils {
                 .setColor(Config.defaultColour)
                 .setFooter(Config.defaultName, Config.defaultIcon)
                 .setTimestamp(Instant.now());
+    }
+
+    public static String convertStatus(OnlineStatus status) {
+        switch (status) {
+            case ONLINE:
+                return "<:online:313956277808005120>";
+            case IDLE:
+                return "<:away:313956277220802560>";
+            case DO_NOT_DISTURB:
+                return "<:dnd:313956276893646850>";
+            case OFFLINE:
+                return "<:offline:313956277237710868>";
+            case INVISIBLE:
+                return "<:dnd:313956276893646850>";
+            case UNKNOWN:
+                return "<:blobnomcookie_secret:317636549342789632>";
+
+            default:
+                return "<:offline:313956277237710868>";
+        }
     }
 
     public static void getWhiteAndBlackList(){

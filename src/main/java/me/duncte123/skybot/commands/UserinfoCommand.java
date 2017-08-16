@@ -59,13 +59,12 @@ public class UserinfoCommand extends Command {
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
                 .addField("User Id", u.getId(), true)
-                .addField("Playing", (m.getGame() == null ? "**_NOTING_**" : m.getGame().getName()), true)
-                .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), true)
+                .addField("Playing", (m.getGame() == null ? "**_nothing_**" : m.getGame().getName()), true)
+                .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Online Status", m.getOnlineStatus().name(), true)
-                .addField("Is a bot", u.isBot() + "", true)
-                .addField("Is fake", u.isFake() + "", true);
+                .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
+                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true);
         event.getChannel().sendMessage(eb.build()).queue();
     }
 
