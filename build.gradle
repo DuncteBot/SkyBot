@@ -12,10 +12,12 @@ sourceCompatibility = 1.8
 
 repositories {
     jcenter()
+    maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.2.0_242'
+    //compile 'net.dv8tion:JDA:3.2.0_242'
+    compile 'com.github.DV8FromTheWorld:JDA:d01c0e0'
     compile 'com.sedmelluq:lavaplayer:1.2.42'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile 'org.apache.commons:commons-lang3:3.1'
