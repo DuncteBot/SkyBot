@@ -47,13 +47,9 @@ public class BotListener extends ListenerAdapter {
             // NO JUST NO, RETURN THAT SHIT
             return;
         }
-        if(event.getAuthor().isFake()){
+        if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
             return;
         }
-        if(event.getMember()==null) {
-            return;
-        }
-
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getTextChannel().canTalk()) {
             event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
             return;
