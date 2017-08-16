@@ -4,7 +4,7 @@ plugins {
     id'com.github.johnrengelman.shadow' version '2.0.1'
 }
 
-mainClassName = 'me.duncte123.skybot.SkyBot'
+mainClassName = 'ml.duncte123.skybot.SkyBot'
 
 version '3.34.3'
 
@@ -28,6 +28,10 @@ dependencies {
     compile 'ch.qos.logback:logback-core:1.2.1'
 
 
+}
+
+javadoc {
+    options.encoding = 'UTF-8'
 }
 
 libsDirName = '../'
