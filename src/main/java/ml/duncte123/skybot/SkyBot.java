@@ -14,6 +14,7 @@ import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
+import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -38,9 +39,7 @@ public class SkyBot {
     private static int messageIndex = 0;
 
 
-    public static void main(String[] args){
-        System.out.println(DataBaseUtil.getDbName());
-        System.exit(0);
+    public static void main(String[] args) {
         // Load the whit and black list first
         AirUtils.getWhiteAndBlackList();
         // Register our custom logger and turn the default off

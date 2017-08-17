@@ -22,8 +22,6 @@ public class DataBaseUtil {
         }
     }
 
-
-
     public static String getDbName() {
         return DbSettings.getProperty("dbname");
     }
