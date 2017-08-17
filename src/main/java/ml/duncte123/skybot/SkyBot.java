@@ -39,6 +39,8 @@ public class SkyBot {
 
 
     public static void main(String[] args){
+        System.out.println(DataBaseUtil.getDbName());
+        System.exit(0);
         // Load the whit and black list first
         AirUtils.getWhiteAndBlackList();
         // Register our custom logger and turn the default off

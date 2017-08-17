@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.34.3'
+version '3.35.0'
 
 sourceCompatibility = 1.8
 
@@ -17,7 +17,7 @@ repositories {
 
 dependencies {
     compile 'net.dv8tion:JDA:3.2.0_242'
-    compile 'com.sedmelluq:lavaplayer:1.2.42'
+    compile 'com.sedmelluq:lavaplayer:1.2.43'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile 'org.apache.commons:commons-lang3:3.1'
     // jsoup HTML parser library @ https://jsoup.org/

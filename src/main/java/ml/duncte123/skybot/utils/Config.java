@@ -14,7 +14,7 @@ public class Config {
     // This is the prefix that your bot has, by default is the /
     public static final String prefix = "/";
     // This is the version of the bot
-    public static final String version = "3.34.3";
+    public static final String version = "3.35.0";
     // This is the name that your bot has
     public static final String defaultName = "DuncteBot";
     // This is the title from the player embed
