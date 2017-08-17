@@ -17,7 +17,12 @@ public class CleenupCommand extends Command {
     private int deletedMsg = 0;
 
     public final static String help = "performs a cleanup in the channel where the command is run. (MOD or higher ONLY!)";
-
+    /**
+     * This is a check to see if the command is save to execute
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @return true if we are the command is safe to run
+     */
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
 
@@ -34,6 +39,11 @@ public class CleenupCommand extends Command {
         return true;
     }
 
+    /**
+     * This is the action of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     */
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
 
@@ -64,6 +74,10 @@ public class CleenupCommand extends Command {
         }
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public String help() {
         return help;

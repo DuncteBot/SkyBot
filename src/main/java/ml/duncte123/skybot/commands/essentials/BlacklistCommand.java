@@ -10,6 +10,12 @@ import java.util.Arrays;
 
 public class BlacklistCommand extends Command {
 
+    /**
+     * This is a check to see if the command is save to execute
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @return true if we are the command is safe to run
+     */
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
 
@@ -21,6 +27,11 @@ public class BlacklistCommand extends Command {
         return event.getAuthor().getId().equals(Config.ownerId);
     }
 
+    /**
+     * This is the action of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     */
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         String guildId = args[0];
@@ -33,6 +44,10 @@ public class BlacklistCommand extends Command {
             event.getChannel().sendMessage(AirUtils.embedMessage("Successfully added " + guildName + " to the blacklist")).queue();
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public String help() {
         return "add a guild to the whitelist";

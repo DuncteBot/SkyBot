@@ -6,12 +6,22 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 public class PingCommand extends Command {
 
     public final static String help = "PONG!";
-
+    /**
+     * This is a check to see if the command is save to execute
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @return true if we are the command is safe to run
+     */
     @Override
     public boolean called(String[] args, MessageReceivedEvent event) {
         return true;
     }
 
+    /**
+     * This is the action of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     */
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         long time = System.currentTimeMillis();
@@ -21,6 +31,10 @@ public class PingCommand extends Command {
 
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public String help() {
         return help;
