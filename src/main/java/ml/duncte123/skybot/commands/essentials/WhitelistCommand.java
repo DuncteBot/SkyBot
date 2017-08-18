@@ -35,7 +35,7 @@ public class WhitelistCommand extends Command {
     @Override
     public void action(String[] args, MessageReceivedEvent event) {
         String guildId = args[0];
-        String guildName = StringUtils.join(Arrays.copyOfRange(args, 1, args.length));
+        String guildName = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
         String stat = AirUtils.insetIntoWhitelist(guildId, guildName, event.getJDA().getSelfUser().getId());
 
         if (!stat.isEmpty())

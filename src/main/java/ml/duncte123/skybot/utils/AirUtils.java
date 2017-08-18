@@ -13,12 +13,15 @@ import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.awt.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
+import java.text.DateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -92,32 +95,6 @@ public class AirUtils {
     public static void getWhiteAndBlackList(){
         log(CustomLog.Level.INFO, "Loading black and whitelist.");
         try {
-            /*OkHttpClient client = new OkHttpClient();
-
-            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "delete=true");
-            Request request = new Request.Builder()
-                    .url(Config.apiBase + "/getWhiteAndBlacklist.php")
-                    .post(body)
-                    .addHeader("content-type", "application/x-www-form-urlencoded")
-                    .addHeader("cache-control", "no-cache")
-                    .build();
-            Response response = client.newCall(request).execute();
-            String jsonData = response.body().source().readUtf8();
-            JSONArray json = new JSONArray(jsonData);
-            for(Object userJson : json) {
-                JSONObject listData = new JSONObject(String.valueOf(userJson));
-                JSONArray whitelistJSON = listData.getJSONArray("whitelist");
-                for (Object whiteListItem : whitelistJSON) {
-                    whiteList.add((new JSONObject(whiteListItem.toString())).getString("guildID"));
-                }
-
-                JSONArray blacklistJSON = listData.getJSONArray("blacklist");
-                for (Object blackListItem : blacklistJSON) {
-                    blackList.add((new JSONObject(blackListItem.toString())).getString("guildID"));
-                }
-            }
-            response.body().close();*/
 
             String dbName = DataBaseUtil.getDbName();
 
@@ -127,9 +104,14 @@ public class AirUtils {
             ResultSet resWhiteList = smt.executeQuery("SELECT * FROM " + dbName + ".whiteList");
 
             while (resWhiteList.next()) {
-                System.out.println(resWhiteList.getString("guildId"));
+                whiteList.add(resWhiteList.getString("guildId"));
             }
 
+            ResultSet resBlackList = smt.executeQuery("SELECT * FROM " + dbName + ".blackList");
+
+            while (resBlackList.next()) {
+                blackList.add(resBlackList.getString("guildId"));
+            }
 
             log(CustomLog.Level.INFO, "Loaded black and whitelist.");
         }
@@ -145,7 +127,8 @@ public class AirUtils {
     public static void checkGuildsOnWhitelist(JDA jda) {
         for(Guild guild : jda.getGuilds()) {
             if(!whiteList.contains(guild.getId())) {
-                guild.getPublicChannel().sendMessage("I'm sorry but this guild is not on the current whitelist, " +
+                log(CustomLog.Level.INFO, "Leaving " + (guild.getName() == null ? "No Name" : guild.getName() ));
+                guild.getTextChannels().get(0).sendMessage("I'm sorry but this guild is not on the current whitelist, " +
                         "if you want this guild to be on the whitelist please contact _duncte123#1245_!").queue(
                                 channel -> channel.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
                 );
@@ -154,7 +137,7 @@ public class AirUtils {
     }
 
     /**
-     * This will update the witelist and the blacklist dependind on what <em>whatList</em> is
+     * This will update the whitelist and the blacklist depending on what <em>whatList</em> is
      * @param guildId The id from the guild to add
      * @param guildName The name from the guild to add
      * @param whatlist What list to add it to
@@ -303,25 +286,28 @@ public class AirUtils {
      */
     public static void checkUnbans() {
         try {
-            OkHttpClient client = new OkHttpClient();
 
-            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "delete=true");
-            Request request = new Request.Builder()
-                    .url(Config.apiBase + "/getUnbans.php")
-                    .post(body)
-                    .addHeader("content-type", "application/x-www-form-urlencoded")
-                    .addHeader("cache-control", "no-cache")
-                    .build();
-            Response response = client.newCall(request).execute();
-            String jsonData = response.body().source().readUtf8();
-            JSONArray json = new JSONArray(jsonData);
-            for(Object userJson : json) {
-                JSONObject userData = new JSONObject(userJson.toString());
-                SkyBot.jda.getGuildById(userData.getString("guild"))
-                .getController().unban(userData.getString("userId")).reason("Ban expired").queue();
+            String dbName = DataBaseUtil.getDbName();
+
+            Connection db = DataBaseUtil.getConnection();
+            Statement smt = db.createStatement();
+
+            ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".bans");
+
+            while (res.next()) {
+                java.util.Date unbanDate = res.getTimestamp("unban_date");
+                java.util.Date currDate = new java.util.Date();
+
+                if(currDate.after(unbanDate)) {
+                    log(CustomLog.Level.INFO, "Unbanning " + res.getString("Username"));
+                    SkyBot.jda.getGuildById(
+                            res.getString("guildId")
+                    ).getController().unban(
+                            res.getString("guildId")
+                    ).reason("Ban expired").queue();
+                }
             }
-            response.body().close();
+
         }
         catch (Exception e) {
             e.printStackTrace();

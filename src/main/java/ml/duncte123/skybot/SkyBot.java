@@ -58,7 +58,7 @@ public class SkyBot {
             jda.setAutoReconnect(true);
             au = new AudioUtils();
             //After we have logged in check for people that have added the bot while it was offline.
-            //AirUtils.checkGuildsOnWhitelist(jda);
+            AirUtils.checkGuildsOnWhitelist(jda);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -143,7 +143,7 @@ public class SkyBot {
         commands.put("repeat", new RepeatCommand());
 
         //prank commands
-        commands.put("ban", new BanCommand());
+        commands.put("ban", new OLD_BanCommand());
         commands.put("hackban", new HackbanCommand());
         commands.put("softban", new SoftbanCommand());
         commands.put("unban", new UnbanCommand());
