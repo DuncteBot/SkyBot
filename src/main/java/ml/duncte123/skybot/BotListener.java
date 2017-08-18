@@ -30,7 +30,10 @@ public class BotListener extends ListenerAdapter {
     private static Timer timer = new Timer();
     private static Timer unbanTimer = new Timer();
 
-    // listen for messages
+    /**
+     * Listen for messages send to the bot
+     * @param event The corresponding {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     */
     @Override
     public void onMessageReceived(MessageReceivedEvent event){
 
@@ -81,7 +84,10 @@ public class BotListener extends ListenerAdapter {
 
     }
 
-    // when the bot is ready
+    /**
+     * When the bot is ready to go
+     * @param event The corresponding {@link net.dv8tion.jda.core.events.ReadyEvent ReadyEvent}
+     */
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
@@ -104,7 +110,10 @@ public class BotListener extends ListenerAdapter {
 
     }
 
-    // when a new member joins the guild
+    /**
+     * This will fire when a new member joins
+     * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent GuildMemberJoinEvent}
+     */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
@@ -115,7 +124,10 @@ public class BotListener extends ListenerAdapter {
         t.sendMessage(msg).queue();
     }
 
-    //We will check if the bot is allowed to be in this guild
+    /**
+     * This will fire when the bot joins a guild and we check if we are allowed to join this guild
+     * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.GuildJoinEvent GuildJoinEvent}
+     */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
 
@@ -128,7 +140,10 @@ public class BotListener extends ListenerAdapter {
         );
     }
 
-    // leave channel and stop audio player when the channel is empty to prevent high data usage
+    /**
+     * This will fire when a member leaves a channel in a guild, we check if the channel is empty and if it is we leave it
+     * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent GuildVoiceLeaveEvent}
+     */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
         if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()){

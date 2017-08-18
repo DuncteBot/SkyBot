@@ -57,6 +57,8 @@ public class SkyBot {
                     .buildBlocking();
             jda.setAutoReconnect(true);
             au = new AudioUtils();
+            //After we have logged in check for people that have added the bot while it was offline.
+            //AirUtils.checkGuildsOnWhitelist(jda);
         }catch (Exception e) {
             e.printStackTrace();
         }
@@ -65,6 +67,9 @@ public class SkyBot {
         setupCommands();
     }
 
+    /**
+     * This is our status loop function
+     */
     public static void updateStatus(){
         messageIndex++;
         if(messageIndex == messages.length){
@@ -87,6 +92,9 @@ public class SkyBot {
         }
     }
 
+    /**
+     * This will register all our commands
+     */
     private static void setupCommands(){
 
         // default commands

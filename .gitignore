@@ -12,7 +12,6 @@
 .idea/vcs.xml
 .idea/.name
 .idea/compiler.xml
-src/main/resources/sql.properties
 
 # Sensitive or high-churn files:
 .idea/**/dataSources/

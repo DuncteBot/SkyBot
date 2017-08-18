@@ -2,6 +2,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -13,9 +14,13 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 public class AirUtils {
 
@@ -87,7 +92,7 @@ public class AirUtils {
     public static void getWhiteAndBlackList(){
         log(CustomLog.Level.INFO, "Loading black and whitelist.");
         try {
-            OkHttpClient client = new OkHttpClient();
+            /*OkHttpClient client = new OkHttpClient();
 
             MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
             RequestBody body = RequestBody.create(mediaType, "delete=true");
@@ -112,12 +117,39 @@ public class AirUtils {
                     blackList.add((new JSONObject(blackListItem.toString())).getString("guildID"));
                 }
             }
-            response.body().close();
+            response.body().close();*/
+
+            String dbName = DataBaseUtil.getDbName();
+
+            Connection db = DataBaseUtil.getConnection();
+            Statement smt = db.createStatement();
+
+            ResultSet resWhiteList = smt.executeQuery("SELECT * FROM " + dbName + ".whiteList");
+
+            while (resWhiteList.next()) {
+                System.out.println(resWhiteList.getString("guildId"));
+            }
+
 
             log(CustomLog.Level.INFO, "Loaded black and whitelist.");
         }
         catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    /**
+     * This will loop through all of the guild and checks if they are on the whitelist, if not leave the guilds and leave a message
+     * @param jda The current instance of the api
+     */
+    public static void checkGuildsOnWhitelist(JDA jda) {
+        for(Guild guild : jda.getGuilds()) {
+            if(!whiteList.contains(guild.getId())) {
+                guild.getPublicChannel().sendMessage("I'm sorry but this guild is not on the current whitelist, " +
+                        "if you want this guild to be on the whitelist please contact _duncte123#1245_!").queue(
+                                channel -> channel.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
+                );
+            }
         }
     }
 
