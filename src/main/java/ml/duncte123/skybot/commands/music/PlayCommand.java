@@ -47,11 +47,11 @@ public class PlayCommand extends Command {
         if(args.length == 0){
             if(player.isPaused()){
                 player.setPaused(false);
-                eb.addField(SkyBot.au.embedTitle, "Playback has been resumed.", false);
+                eb.addField(au.embedTitle, "Playback has been resumed.", false);
             }else if(player.getPlayingTrack() != null){
-                eb.addField(SkyBot.au.embedTitle, "Player is already playing!", false);
+                eb.addField(au.embedTitle, "Player is already playing!", false);
             }else if(scheduler.queue.isEmpty()){
-                eb.addField(SkyBot.au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
+                eb.addField(au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
             }
             event.getChannel().sendMessage(eb.build()).queue();
         }else{
