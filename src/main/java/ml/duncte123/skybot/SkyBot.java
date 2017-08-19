@@ -14,7 +14,6 @@ import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -141,8 +140,9 @@ public class SkyBot {
         commands.put("np", playingCommand);
         commands.put("shuffle", new ShuffleCommand());
         commands.put("repeat", new RepeatCommand());
+        commands.put("playrw", new PlayRawCommand());
 
-        //prank commands
+        //mod commands
         commands.put("ban", new OLD_BanCommand());
         commands.put("hackban", new HackbanCommand());
         commands.put("softban", new SoftbanCommand());
