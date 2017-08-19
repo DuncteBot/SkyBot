@@ -4,6 +4,7 @@ import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
 
@@ -20,7 +21,7 @@ public class GuildStatsCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
@@ -31,7 +32,7 @@ public class GuildStatsCommand extends Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event){
+    public void action(String[] args, GuildMessageReceivedEvent event){
         Guild g = event.getGuild();
         try {
             event.getChannel().sendMessage(AirUtils.defaultEmbed()

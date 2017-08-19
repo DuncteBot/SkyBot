@@ -9,17 +9,18 @@ import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class NowPlayingCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -39,7 +40,7 @@ public class NowPlayingCommand extends Command {
         }else{
             msg = "The player is not currently playing anything!";
         }
-        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, msg)).queue();
+        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, msg)).queue();
 
     }
 

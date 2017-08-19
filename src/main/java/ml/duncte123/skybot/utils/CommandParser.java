@@ -1,13 +1,13 @@
 package ml.duncte123.skybot.utils;
 
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
 
 
 public class CommandParser {
 
-    public CommandContainer parse(String rw, MessageReceivedEvent e){
+    public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
         final String[] split = rw.substring(rw.indexOf(Config.prefix) + 1, rw.length()).split(" ");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
@@ -18,7 +18,7 @@ public class CommandParser {
      public class CommandContainer {
          public final String invoke;
          public final String[] args;
-         public final MessageReceivedEvent event;
+         public final GuildMessageReceivedEvent event;
 
          /**
           * Puts the contents of a command in a simple class
@@ -26,7 +26,7 @@ public class CommandParser {
           * @param args The arguments from the command
           * @param e A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
           */
-         public CommandContainer(String invoke, String[] args, MessageReceivedEvent e){
+         public CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e){
              this.invoke = invoke;
              this.args = args;
              this.event = e;

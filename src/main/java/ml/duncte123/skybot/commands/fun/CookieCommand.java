@@ -2,18 +2,19 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.Command;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class CookieCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
-        event.getTextChannel().sendMessage("<:blobnomcookie_secret:317636549342789632>").queue();
+    public void action(String[] args, GuildMessageReceivedEvent event) {
+        event.getChannel().sendMessage("<:blobnomcookie_secret:317636549342789632>").queue();
 
     }
 

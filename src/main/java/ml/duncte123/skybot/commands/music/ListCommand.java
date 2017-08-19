@@ -9,19 +9,20 @@ import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Queue;
 
 public class ListCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -31,7 +32,7 @@ public class ListCommand extends Command {
         Queue<AudioTrack> queue = scheduler.queue;
         synchronized (queue) {
             if (queue.isEmpty()) {
-                event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue is currently empty!")).queue();
+                event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue is currently empty!")).queue();
             } else {
                 int trackCount = 0;
                 long queueLength = 0;
@@ -46,7 +47,7 @@ public class ListCommand extends Command {
                     }
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength));
-                event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, sb.toString())).queue();
+                event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, sb.toString())).queue();
             }
         }
     }

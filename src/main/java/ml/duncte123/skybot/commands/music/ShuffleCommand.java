@@ -9,11 +9,12 @@ import ml.duncte123.skybot.utils.Config;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class ShuffleCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
     
     AudioUtils au = SkyBot.au;
 
@@ -40,7 +41,7 @@ public class ShuffleCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -48,7 +49,7 @@ public class ShuffleCommand extends Command {
         TrackScheduler scheduler = mng.scheduler;
         scheduler.shuffle();
 
-        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue has been shuffled!")).queue();
+        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue has been shuffled!")).queue();
 
     }
 

@@ -1,6 +1,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import ml.duncte123.skybot.Command;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
@@ -11,7 +12,7 @@ import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 public class TextToBrickCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length == 0) {
             event.getChannel().sendMessage("Please type some words").queue();
@@ -22,7 +23,7 @@ public class TextToBrickCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
             StringBuilder sb = new StringBuilder();
             for (String a : StringUtils.join(args, " ").split("")) {
                 if (Character.isLetter(a.toLowerCase().charAt(0))) {

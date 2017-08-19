@@ -4,6 +4,7 @@ import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class HelpCommand extends Command {
 
@@ -15,7 +16,7 @@ public class HelpCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
@@ -23,10 +24,10 @@ public class HelpCommand extends Command {
     /**
      * This is the action of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
 
 
         event.getAuthor().openPrivateChannel().queue( (pc) -> {
@@ -34,11 +35,11 @@ public class HelpCommand extends Command {
                         pc.sendMessage(HelpEmbeds.musicCommands).queue();
                         pc.sendMessage(HelpEmbeds.funCommands).queue();
                         pc.sendMessage(HelpEmbeds.modCommands).queue();
-                        event.getTextChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
+                        event.getChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue();
                     },
                     //When sending fails, send to the channel
                     err -> {
-                        TextChannel currentChann = event.getTextChannel();
+                        TextChannel currentChann = event.getChannel();
                         currentChann.sendMessage(HelpEmbeds.mainCommands).queue();
                         currentChann.sendMessage(HelpEmbeds.musicCommands).queue();
                         currentChann.sendMessage(HelpEmbeds.funCommands).queue();

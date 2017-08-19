@@ -6,17 +6,18 @@ import ml.duncte123.skybot.utils.Config;
 import ml.duncte123.skybot.utils.DataBaseUtil;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
 public class KpopCommand extends Command {
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         return true;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
             String url = Config.apiBase + "/kpop.php";
             Document raw = Jsoup.connect(url).get();

@@ -10,11 +10,12 @@ import ml.duncte123.skybot.utils.Config;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class StopCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
             event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
@@ -35,7 +36,7 @@ public class StopCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -46,7 +47,7 @@ public class StopCommand extends Command {
         scheduler.queue.clear();
         player.stopTrack();
         player.setPaused(false);
-        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Playback has been completely stopped and the queue has been cleared")).queue();
+        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Playback has been completely stopped and the queue has been cleared")).queue();
     }
 
     @Override

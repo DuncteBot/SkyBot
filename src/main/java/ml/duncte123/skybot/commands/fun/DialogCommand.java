@@ -3,12 +3,13 @@ package ml.duncte123.skybot.commands.fun;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 public class DialogCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length < 1) {
             event.getChannel().sendMessage("Type some words please").queue();
@@ -19,7 +20,7 @@ public class DialogCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         StringBuilder sb = new StringBuilder()
                 .append("```")
                 .append("╔═══════════════════════════╗ \n")

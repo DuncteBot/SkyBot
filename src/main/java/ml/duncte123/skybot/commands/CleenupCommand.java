@@ -7,6 +7,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.List;
@@ -24,7 +25,7 @@ public class CleenupCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
         Permission[] permissions = {
                 Permission.MESSAGE_MANAGE,
@@ -33,7 +34,7 @@ public class CleenupCommand extends Command {
 
         if(event.getAuthor().isBot()){return false;}
         if(!PermissionUtil.checkPermission(event.getMember(), permissions )){
-            event.getTextChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command!")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command!")).queue();
             return false;
         }
         return true;
@@ -42,17 +43,17 @@ public class CleenupCommand extends Command {
     /**
      * This is the action of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
 
         int total = 5;
 
         if(args.length > 0){
             total = Integer.parseInt(args[0]);
           if (total < 2 || total > 100) {
-            event.getTextChannel().sendMessage(AirUtils.embedMessage("Error: count must be minimal 2 and maximal 100")).queue(
+            event.getChannel().sendMessage(AirUtils.embedMessage("Error: count must be minimal 2 and maximal 100")).queue(
                (message) -> { message.delete().queueAfter(5, TimeUnit.SECONDS); }
             );
       return;
@@ -60,14 +61,14 @@ public class CleenupCommand extends Command {
             }
     
         try {
-          MessageHistory mh = new MessageHistory(event.getTextChannel());
+          MessageHistory mh = new MessageHistory(event.getChannel());
           List<Message> msgLst =  mh.retrievePast(total).complete();
-          event.getTextChannel().deleteMessages(msgLst).queue();
+          event.getChannel().deleteMessages(msgLst).queue();
           deletedMsg = msgLst.size();
-                event.getTextChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
+                event.getChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
              (message) -> { message.delete().queueAfter(5, TimeUnit.SECONDS); }
           );
-                AirUtils.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getTextChannel().getName());
+                AirUtils.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getChannel().getName());
         }
         catch (Exception e) {
           event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();

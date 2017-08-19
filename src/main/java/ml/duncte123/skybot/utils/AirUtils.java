@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -211,7 +212,7 @@ public class AirUtils {
      * @param time How long it takes for the punishment to get removed
      * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, MessageReceivedEvent event){
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, GuildMessageReceivedEvent event){
         String length = "";
         if (!time.isEmpty()) { length = " lasting " + time + ""; }
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
@@ -223,7 +224,7 @@ public class AirUtils {
     }
 
     /**
-     * A version of {@link AirUtils#modLog(net.dv8tion.jda.core.entities.User, net.dv8tion.jda.core.entities.User, String, String, String, net.dv8tion.jda.core.events.message.MessageReceivedEvent)} but without the time
+     * A version of {@link AirUtils#modLog(User, User, String, String, String, GuildMessageReceivedEvent)} but without the time
      *
      * @param mod The mod that performed the punishment
      * @param punishedUser The user that got punished
@@ -231,7 +232,7 @@ public class AirUtils {
      * @param reason The reason of the punishment
      * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, MessageReceivedEvent event) {
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, GuildMessageReceivedEvent event) {
         modLog(mod, punishedUser, punishment, reason, "", event);
     }
 
@@ -242,7 +243,7 @@ public class AirUtils {
      * @param punishment The type of punishment that got removed
      * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
-    public static void modLog(User mod, User unbannedUser, String punishment, MessageReceivedEvent event) {
+    public static void modLog(User mod, User unbannedUser, String punishment, GuildMessageReceivedEvent event) {
         modLog(mod, unbannedUser, punishment, "", event);
     }
 

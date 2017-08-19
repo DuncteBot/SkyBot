@@ -8,6 +8,7 @@ import ml.duncte123.skybot.utils.Config;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ public class PPlayCommand extends Command {
     public final static String help = "add a playlist to the queue.";
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         if(!event.getGuild().getAudioManager().isConnected()){
             event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
             return false;
@@ -37,7 +38,7 @@ public class PPlayCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -48,7 +49,7 @@ public class PPlayCommand extends Command {
             toPlay = "ytsearch: " + toPlay;
         }
 
-        au.loadAndPlay(mng, event.getTextChannel(), toPlay, true);
+        au.loadAndPlay(mng, event.getChannel(), toPlay, true);
 
     }
 

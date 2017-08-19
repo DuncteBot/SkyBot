@@ -4,6 +4,7 @@ import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class CoinCommand extends Command {
 
@@ -17,7 +18,7 @@ public class CoinCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         return true;
     }
@@ -25,14 +26,14 @@ public class CoinCommand extends Command {
     /**
      * This is the action of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
 
-        event.getTextChannel().sendTyping().queue();
-        event.getTextChannel().sendMessage("*Flips a coin*").queue();
-        event.getTextChannel().sendMessage(AirUtils.embedImage(coinUrl+imagesArr[SkyBot.rand.nextInt(2)])).queue();
+        event.getChannel().sendTyping().queue();
+        event.getChannel().sendMessage("*Flips a coin*").queue();
+        event.getChannel().sendMessage(AirUtils.embedImage(coinUrl+imagesArr[SkyBot.rand.nextInt(2)])).queue();
     }
 
     /**

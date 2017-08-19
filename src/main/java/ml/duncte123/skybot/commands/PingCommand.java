@@ -2,6 +2,7 @@ package ml.duncte123.skybot.commands;
 
 import ml.duncte123.skybot.Command;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class PingCommand extends Command {
 
@@ -13,20 +14,20 @@ public class PingCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         return true;
     }
 
     /**
      * This is the action of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         long time = System.currentTimeMillis();
 
-        event.getTextChannel().sendMessage("PONG!").queue( (message) ->
+        event.getChannel().sendMessage("PONG!").queue( (message) ->
             message.editMessageFormat("PONG!\nping is: %dms \nWebsocket ping: " + event.getJDA().getPing() + "ms", (System.currentTimeMillis() - time) ).queue());
 
     }

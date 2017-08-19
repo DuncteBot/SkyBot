@@ -8,11 +8,12 @@ import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class SkipCommand extends Command {
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         boolean playing = true;
         AudioUtils au = SkyBot.au;
 
@@ -20,20 +21,20 @@ public class SkipCommand extends Command {
         GuildMusicManager mng = au.getMusicManager(guild);
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
             return false;
         }
 
         if(mng.player.getPlayingTrack().equals(null)){
             playing = false;
-            event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player is not playing.")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player is not playing.")).queue();
         }
 
         return playing;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -41,7 +42,7 @@ public class SkipCommand extends Command {
         TrackScheduler scheduler = mng.scheduler;
         scheduler.nextTrack();
 
-        event.getTextChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The current track was skipped.")).queue();
+        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The current track was skipped.")).queue();
     }
 
     @Override

@@ -7,13 +7,14 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.List;
 
 public class UnbanCommand extends Command {
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
                 Permission.BAN_MEMBERS
@@ -33,7 +34,7 @@ public class UnbanCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
             Guild guild = event.getGuild();
             List<User> bannedUsers =  guild.getBans().complete();

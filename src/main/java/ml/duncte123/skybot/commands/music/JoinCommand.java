@@ -10,6 +10,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
 
 public class JoinCommand extends Command {
@@ -19,7 +20,7 @@ public class JoinCommand extends Command {
     private String chanId = "";
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         boolean inChannel = false;
 
         for(VoiceChannel chan : event.getGuild().getVoiceChannels()){
@@ -31,14 +32,14 @@ public class JoinCommand extends Command {
         }
 
         if(!inChannel){
-            event.getTextChannel().sendMessage("You are not in a voice channel").queue();
+            event.getChannel().sendMessage("You are not in a voice channel").queue();
         }
 
         return inChannel;
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         VoiceChannel vc = null;
         AudioUtils au = SkyBot.au;
 
@@ -47,7 +48,7 @@ public class JoinCommand extends Command {
 
 
         if(event.getGuild().getAudioManager().isConnected() && !mng.player.getPlayingTrack().equals(null)){
-            event.getTextChannel().sendMessage(AirUtils.embedMessage("I'm already in a channel.")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("I'm already in a channel.")).queue();
             return;
         }
 
@@ -71,7 +72,7 @@ public class JoinCommand extends Command {
                 eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
             }
         }
-        event.getTextChannel().sendMessage(eb.build()).queue();
+        event.getChannel().sendMessage(eb.build()).queue();
 
 
     }

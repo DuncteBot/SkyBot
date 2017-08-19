@@ -5,11 +5,12 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class HackbanCommand extends Command {
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
                 Permission.BAN_MEMBERS
@@ -29,7 +30,7 @@ public class HackbanCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
             event.getGuild().getController().ban(args[0], 0).queue( (v) -> {
                 event.getChannel().sendMessage(AirUtils.embedMessage("User has been banned!")).queue();

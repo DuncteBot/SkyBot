@@ -4,6 +4,7 @@ import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -17,7 +18,7 @@ public class WhitelistCommand extends Command {
      * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
         if(args.length < 2) {
             event.getChannel().sendMessage(AirUtils.embedMessage("Usage is `" + Config.prefix + "whitelist <guild id> <guild name>`")).queue();
@@ -33,7 +34,7 @@ public class WhitelistCommand extends Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         String guildId = args[0];
         String guildName = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
         String stat = AirUtils.insetIntoWhitelist(guildId, guildName, event.getJDA().getSelfUser().getId());

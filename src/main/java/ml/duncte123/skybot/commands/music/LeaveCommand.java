@@ -7,13 +7,14 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class LeaveCommand extends Command {
 
     public final static String help = "make the bot leave your channel.";
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         boolean botInChannel = false;
 
         if(event.getGuild().getAudioManager().isConnected()){
@@ -25,7 +26,7 @@ public class LeaveCommand extends Command {
                 .addField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands", false);
                 eb.setFooter(Config.defaultName, Config.defaultIcon)
                 .setTimestamp(Instant.now());
-                event.getTextChannel().sendMessage(eb.build()).queue();
+                event.getChannel().sendMessage(eb.build()).queue();
                 return false;
             }
 
@@ -35,7 +36,7 @@ public class LeaveCommand extends Command {
                     .addField(SkyBot.au.embedTitle, "I'm not in a channel atm", false)
                     .setFooter(Config.defaultName, Config.defaultIcon)
                     .setTimestamp(Instant.now());
-            event.getTextChannel().sendMessage(eb.build()).queue();
+            event.getChannel().sendMessage(eb.build()).queue();
         }
 
 
@@ -43,7 +44,7 @@ public class LeaveCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
         event.getGuild().getAudioManager().setSendingHandler(null);
         event.getGuild().getAudioManager().closeAudioConnection();
@@ -52,7 +53,7 @@ public class LeaveCommand extends Command {
                 .addField(SkyBot.au.embedTitle, "Leaving your channel", false)
                 .setFooter(Config.defaultName, Config.defaultIcon)
                 .setTimestamp(Instant.now());
-        event.getTextChannel().sendMessage(eb.build()).queue();
+        event.getChannel().sendMessage(eb.build()).queue();
 
     }
 

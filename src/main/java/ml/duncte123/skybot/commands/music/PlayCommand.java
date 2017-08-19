@@ -11,6 +11,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 public class PlayCommand extends Command {
@@ -18,7 +19,7 @@ public class PlayCommand extends Command {
     public final static String help = "make the bot play song.";
 
     @Override
-    public boolean called(String[] args, MessageReceivedEvent event) {
+    public boolean called(String[] args, GuildMessageReceivedEvent event) {
         if(!event.getGuild().getAudioManager().isConnected()){
             event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
             return false;
@@ -33,7 +34,7 @@ public class PlayCommand extends Command {
     }
 
     @Override
-    public void action(String[] args, MessageReceivedEvent event) {
+    public void action(String[] args, GuildMessageReceivedEvent event) {
         AudioUtils au = SkyBot.au;
 
         Guild guild = event.getGuild();
@@ -52,14 +53,14 @@ public class PlayCommand extends Command {
             }else if(scheduler.queue.isEmpty()){
                 eb.addField(SkyBot.au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
             }
-            event.getTextChannel().sendMessage(eb.build()).queue();
+            event.getChannel().sendMessage(eb.build()).queue();
         }else{
             String toPlay = StringUtils.join(args, " ");
             if(!AirUtils.isURL(toPlay) && !toPlay.contains("/root/Desktop/music/")){
                 toPlay = "ytsearch: " + toPlay;
             }
 
-            au.loadAndPlay(mng, event.getTextChannel(), toPlay, false);
+            au.loadAndPlay(mng, event.getChannel(), toPlay, false);
         }
 
     }
