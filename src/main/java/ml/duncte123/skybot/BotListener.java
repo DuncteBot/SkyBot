@@ -42,12 +42,9 @@ public class BotListener extends ListenerAdapter {
             timer.cancel();
             unbanTimer.cancel();
             event.getJDA().shutdown();
-        }
-        if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
             return;
         }
-        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
+        if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
             return;
         }
 
@@ -71,6 +68,16 @@ public class BotListener extends ListenerAdapter {
             lastGuildChannel.put(event.getGuild(), event.getChannel());
             SkyBot.handleCommand(parser.parse(event.getMessage().getContent(), event));
             return;
+        }
+
+
+        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+            if(event.getMessage().getContent().split(" ").length > 1){
+                lastGuildChannel.put(event.getGuild(), event.getChannel());
+                SkyBot.handleCommand(parser.parse(event.getMessage().getRawContent().replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
+                return;
+            }
+            event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
         }
 
     }

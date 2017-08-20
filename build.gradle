@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.36.0'
+version '3.36.1'
 
 sourceCompatibility = 1.8
 
@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.2.0_244'
+    compile 'net.dv8tion:JDA:3.2.0_245'
     compile 'com.sedmelluq:lavaplayer:1.2.43'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile 'org.apache.commons:commons-lang3:3.1'
