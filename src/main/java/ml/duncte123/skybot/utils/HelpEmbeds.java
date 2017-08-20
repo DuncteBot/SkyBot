@@ -21,7 +21,7 @@ public class HelpEmbeds {
             .addField(Config.prefix + "join", getHelp("join"), false)
             .addField(Config.prefix + "leave", getHelp("leave"), false)
             .addField(Config.prefix + "play", getHelp("play"), false)
-            .addField(Config.prefix + "pplay", getHelp("play"), false)
+            .addField(Config.prefix + "pplay", getHelp("pplay"), false)
             .addField(Config.prefix + "pause", getHelp("pause"), false)
             .addField(Config.prefix + "repeat", getHelp("repeat"), false)
             .addField(Config.prefix + "shuffle", getHelp("shuffle"), false)

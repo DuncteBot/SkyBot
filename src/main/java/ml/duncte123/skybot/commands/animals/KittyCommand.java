@@ -1,4 +1,4 @@
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;

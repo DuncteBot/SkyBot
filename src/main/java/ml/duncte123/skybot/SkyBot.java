@@ -1,6 +1,7 @@
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.commands.*;
+import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
 import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
@@ -100,9 +101,6 @@ public class SkyBot {
         commands.put("help", new HelpCommand());
         commands.put("ping", new PingCommand());
         commands.put("coin", new CoinCommand());
-        commands.put("cat", new CatCommand());
-        commands.put("kitty", new KittyCommand());
-        commands.put("dog", new DogCommand());
         commands.put("trigger", new TriggerCommand());
         commands.put("spam", new SpamCommand());
         commands.put("mineh", new MinehCommand());
@@ -118,6 +116,12 @@ public class SkyBot {
         commands.put("botinfo", new BotinfoCommand());
         commands.put("dialog", new DialogCommand());
         commands.put("kpop", new KpopCommand());
+
+        //animal commands
+        commands.put("llama", new LlamaCommand());
+        commands.put("cat", new CatCommand());
+        commands.put("kitty", new KittyCommand());
+        commands.put("dog", new DogCommand());
 
         //essentials commands
         commands.put("whitelist", new WhitelistCommand());
