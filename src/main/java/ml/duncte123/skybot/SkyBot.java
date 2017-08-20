@@ -122,6 +122,7 @@ public class SkyBot {
         commands.put("cat", new CatCommand());
         commands.put("kitty", new KittyCommand());
         commands.put("dog", new DogCommand());
+        commands.put("alpaca", new AlpacaCommand());
 
         //essentials commands
         commands.put("whitelist", new WhitelistCommand());
