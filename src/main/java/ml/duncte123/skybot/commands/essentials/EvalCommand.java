@@ -58,7 +58,7 @@ public class EvalCommand extends Command {
             Object out = engine.eval(
                     "(function() {" +
                             "with (imports) {" +
-                            event.getMessage().getContent().substring(args[0].length()) +
+                            event.getMessage().getContent().substring(event.getMessage().getContent().split(" ")[0].length()) +
                             "}" +
                             "})();");
             event.getChannel().sendMessage(out == null ? "Executed without error." : out.toString()).queue();
