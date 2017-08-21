@@ -1,5 +1,6 @@
 package ml.duncte123.skybot;
 
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public abstract class Command {
@@ -31,5 +32,13 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
     public void executed(boolean success, GuildMessageReceivedEvent event) {  }
+
+    public void sendMsg(GuildMessageReceivedEvent event, String msg) {
+        event.getChannel().sendMessage(msg).queue();
+    }
+
+    public void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
+        event.getChannel().sendMessage(msg).queue();
+    }
 
 }

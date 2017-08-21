@@ -23,7 +23,7 @@ public class LlamaCommand extends Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+            sendMsg(event, AirUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }
 

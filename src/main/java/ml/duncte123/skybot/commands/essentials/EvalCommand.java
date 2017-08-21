@@ -27,7 +27,8 @@ public class EvalCommand extends Command {
                     "Packages.net.dv8tion.jda.core.entities.impl," +
                     "Packages.net.dv8tion.jda.core.managers," +
                     "Packages.net.dv8tion.jda.core.managers.impl," +
-                    "Packages.net.dv8tion.jda.core.utils);");
+                    "Packages.net.dv8tion.jda.core.utils," +
+                    "Packages.ml.duncte123.skybot.utils);");
         }
         catch (ScriptException e)
         {
@@ -65,7 +66,7 @@ public class EvalCommand extends Command {
             event.getChannel().sendMessage(out == null ? "Executed without error." : out.toString()).queue();
         }
         catch (ScriptException e1) {
-            event.getChannel().sendMessage(e1.getMessage()).queue();
+            sendMsg(event, e1.getMessage());
         }
     }
 

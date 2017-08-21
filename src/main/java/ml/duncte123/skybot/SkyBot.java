@@ -1,5 +1,6 @@
 package ml.duncte123.skybot;
 
+import ch.qos.logback.core.db.dialect.DBUtil;
 import ml.duncte123.skybot.commands.*;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
@@ -41,6 +42,14 @@ public class SkyBot {
 
 
     public static void main(String[] args) {
+        if(DbSettings.getProperty("host").isEmpty() ||
+                DbSettings.getProperty("username").isEmpty() ||
+                DbSettings.getProperty("password").isEmpty() ||
+                DbSettings.getProperty("dbname").isEmpty() ) {
+            AirUtils.log(CustomLog.Level.FATAL, "DB SETTINGS ARE DOWN ABORTING");
+            System.exit(0);
+            return;
+        }
         // Load the whit and black list first
         AirUtils.getWhiteAndBlackList();
         // Register our custom logger and turn the default off

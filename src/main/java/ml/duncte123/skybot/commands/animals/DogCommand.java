@@ -22,9 +22,9 @@ public class DogCommand extends Command {
             String finalS = base + jsonString;
 
             if (finalS.contains(".mp4")) {
-                event.getChannel().sendMessage(AirUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")")).queue();
+               sendMsg(event, AirUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
             } else {
-                event.getChannel().sendMessage(AirUtils.embedImage(finalS)).queue();
+                sendMsg(event, AirUtils.embedImage(finalS));
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
