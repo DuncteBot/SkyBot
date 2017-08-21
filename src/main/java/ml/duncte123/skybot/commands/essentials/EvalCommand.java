@@ -48,8 +48,9 @@ public class EvalCommand extends Command {
             engine.put("message", event.getMessage());
             engine.put("channel", event.getChannel());
             engine.put("args", args);
-            engine.put("api", event.getJDA());
+            engine.put("jda", event.getJDA());
             engine.put("commands", SkyBot.commands);
+
             if (event.isFromType(ChannelType.TEXT)) {
                 engine.put("guild", event.getGuild());
                 engine.put("member", event.getMember());
@@ -57,9 +58,9 @@ public class EvalCommand extends Command {
 
             Object out = engine.eval(
                     "(function() {" +
-                            "with (imports) {" +
-                            event.getMessage().getContent().substring(event.getMessage().getContent().split(" ")[0].length()) +
-                            "}" +
+                                "with (imports) {" +
+                                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()) +
+                                "}" +
                             "})();");
             event.getChannel().sendMessage(out == null ? "Executed without error." : out.toString()).queue();
         }
@@ -70,6 +71,6 @@ public class EvalCommand extends Command {
 
     @Override
     public String help() {
-        return null;
+        return "A simple eval command (Inspired off yuis one)";
     }
 }

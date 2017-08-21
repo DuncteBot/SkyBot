@@ -54,7 +54,7 @@ public class BotListener extends ListenerAdapter {
         if(PermissionUtil.checkPermission(event.getChannel(), event.getGuild().getSelfMember(), Permission.MESSAGE_MANAGE) && !(AirUtils.blackList.contains(event.getGuild().getId()))) { //Bot has no perms :(
             if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(messageToCheck.getContent())) {
+                if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
                     event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
@@ -66,7 +66,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getContent().startsWith(Config.prefix) && event.getMessage().getAuthor().getId() != event.getJDA().getSelfUser().getId()){
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
-            SkyBot.handleCommand(parser.parse(event.getMessage().getContent(), event));
+            SkyBot.handleCommand(parser.parse(event.getMessage().getRawContent(), event));
             return;
         }
 
