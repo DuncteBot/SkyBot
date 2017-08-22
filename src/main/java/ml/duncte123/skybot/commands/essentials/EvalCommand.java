@@ -16,8 +16,7 @@ public class EvalCommand extends Command {
 
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("nashorn");
-        try
-        {
+        try {
             engine.eval("var imports = new JavaImporter(" +
                     "java.io," +
                     "java.lang," +
@@ -30,8 +29,7 @@ public class EvalCommand extends Command {
                     "Packages.net.dv8tion.jda.core.utils," +
                     "Packages.ml.duncte123.skybot.utils);");
         }
-        catch (ScriptException e)
-        {
+        catch (ScriptException e) {
             e.printStackTrace();
         }
     }
@@ -67,6 +65,11 @@ public class EvalCommand extends Command {
         }
         catch (ScriptException e1) {
             sendMsg(event, e1.getMessage());
+            e1.printStackTrace();
+        }
+        catch (Exception e) {
+            sendMsg(event, e.getMessage());
+            e.printStackTrace();
         }
     }
 

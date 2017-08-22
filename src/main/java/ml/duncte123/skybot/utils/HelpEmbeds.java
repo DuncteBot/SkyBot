@@ -37,6 +37,8 @@ public class HelpEmbeds {
             .addField(Config.prefix + "cat", getHelp("cat"), false)
             .addField(Config.prefix + "kitty", getHelp("kitty"), false)
             .addField(Config.prefix + "cookie", getHelp("cookie"), false)
+            .addField(Config.prefix + "llama", getHelp("llama"), false)
+            .addField(Config.prefix + "alpaca", getHelp("alpaca"), false)
             .addField(Config.prefix + "dialog", getHelp("dialog"), false)
             .addField(Config.prefix + "dog", getHelp("dog"), false)
             .addField(Config.prefix + "mineh", getHelp("mineh"), false)
