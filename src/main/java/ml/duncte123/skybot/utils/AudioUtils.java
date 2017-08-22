@@ -25,7 +25,7 @@ import java.util.logging.Level;
 
 public class AudioUtils {
 
-    public static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
+    private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
 
     private final AudioPlayerManager playerManager;
     private final Map<String, GuildMusicManager> musicManagers;
@@ -69,7 +69,7 @@ public class AudioUtils {
             public void trackLoaded(AudioTrack track) {
                 String msg = "Adding to queue: " + track.getInfo().title;
                 if(mng.player.getPlayingTrack() == null){
-                    msg += "\nand the Player has stated playing;";
+                    msg += "\nand the Player has started playing;";
                 }
 
                 mng.scheduler.queue(track);
@@ -99,7 +99,7 @@ public class AudioUtils {
                     mng.scheduler.queue(firstTrack);
                 }
                 if(mng.player.getPlayingTrack() == null){
-                    msg += "\nand the Player has stated playing;";
+                    msg += "\nand the Player has started playing;";
                 }
                 channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
             }
