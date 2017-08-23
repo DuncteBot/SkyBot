@@ -1,4 +1,4 @@
-package ml.duncte123.skybot.commands;
+package ml.duncte123.skybot.commands.mod;
 
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.CustomLog;

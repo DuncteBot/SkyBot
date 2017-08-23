@@ -110,9 +110,6 @@ public class SkyBot {
         commands.put("spam", new SpamCommand());
         commands.put("mineh", new MinehCommand());
         commands.put("wam", new WamCommand());
-        CleenupCommand cleanupcmd = new CleenupCommand();
-        commands.put("cleanup", cleanupcmd);
-        commands.put("clear", cleanupcmd);
         commands.put("cookie", new CookieCommand());
         commands.put("potato", new PotatoCommand());
         commands.put("guildinfo", new GuildStatsCommand());
@@ -159,5 +156,8 @@ public class SkyBot {
         commands.put("softban", new SoftbanCommand());
         commands.put("unban", new UnbanCommand());
         commands.put("kick", new KickCommand());
+        CleenupCommand cleanupcmd = new CleenupCommand();
+        commands.put("cleanup", cleanupcmd);
+        commands.put("clear", cleanupcmd);
     }
 }
