@@ -60,9 +60,12 @@ public class EvalCommand extends Command {
                     "function sendMsg(msg) {" +
                             "channel.sendMessage(msg.split(jda.getToken()).join('Not Today')).queue();" +
                         "}" +
+                        "function tk() {" +
+                            "return 'Not Today';" +
+                        "}" +
                         "(function() {" +
                             "with (imports) {" +
-                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()) +
+                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "tk") +
                             "}" +
                         "})();");
            sendMsg(event, out == null ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
