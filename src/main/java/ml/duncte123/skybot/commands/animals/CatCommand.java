@@ -1,14 +1,12 @@
 package ml.duncte123.skybot.commands.animals;
 
-import java.net.URL;
-
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
+import java.net.URL;
 
 public class CatCommand extends Command {
 

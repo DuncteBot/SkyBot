@@ -97,10 +97,7 @@ public class CustomLog {
         }
         String format = (ENABLE_GUI && !isConsolePresent()) ? MSGFORMAT : FORMAT;
         format = format.replace("%time%", DFORMAT.format(new Date())).replace("%level%", level.getTag()).replace("%name%", name).replace("%text%", String.valueOf(msg));
-        if(level == CustomLog.Level.OFF || level.getPriority() < ((this.level == null) ? CustomLog.LEVEL.getPriority() : this.level.getPriority())) {
-            //logToFiles(format, level);
-        }
-        else {
+        if(level != CustomLog.Level.OFF || !(level.getPriority() < ((this.level == null) ? CustomLog.LEVEL.getPriority() : this.level.getPriority()))) {
             print(format, level);
         }
     }

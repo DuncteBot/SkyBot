@@ -4,10 +4,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class PauseCommand extends Command {

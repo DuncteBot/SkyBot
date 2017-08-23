@@ -4,7 +4,6 @@ import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class LlamaCommand extends Command {

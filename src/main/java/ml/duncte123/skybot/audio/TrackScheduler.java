@@ -19,7 +19,7 @@ public class TrackScheduler extends AudioEventAdapter {
 
     public TrackScheduler(AudioPlayer player){
         this.player = player;
-        this.queue = new LinkedList<AudioTrack>();
+        this.queue = new LinkedList<>();
     }
 
     /**

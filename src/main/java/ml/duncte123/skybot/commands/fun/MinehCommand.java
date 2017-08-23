@@ -3,7 +3,6 @@ package ml.duncte123.skybot.commands.fun;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;

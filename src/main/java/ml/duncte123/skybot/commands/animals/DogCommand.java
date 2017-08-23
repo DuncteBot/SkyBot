@@ -3,7 +3,6 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.URLConnectionReader;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class DogCommand extends Command {

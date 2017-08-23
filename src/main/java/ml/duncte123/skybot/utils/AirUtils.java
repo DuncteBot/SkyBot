@@ -8,22 +8,17 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.*;
-import org.json.JSONArray;
-import org.json.JSONObject;
 
-import java.awt.*;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.text.DateFormat;
 import java.time.Instant;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 
 public class AirUtils {
@@ -31,6 +26,8 @@ public class AirUtils {
     public static List<String> whiteList = new ArrayList<>();
     public static List<String> blackList = new ArrayList<>();
     public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
+    // get a random thing
+    public static Random rand = new Random();
 
     /**
      * The default way to display a nice embedded message

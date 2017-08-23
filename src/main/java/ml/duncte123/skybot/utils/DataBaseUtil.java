@@ -7,10 +7,10 @@ public class DataBaseUtil {
 
     public static Connection getConnection() {
         try {
-            String dbHost = DbSettings.getProperty("host");
-            String user = DbSettings.getProperty("username");
-            String pass = DbSettings.getProperty("password");
-            String dbName = DbSettings.getProperty("dbname");
+            String dbHost = ResourceUtil.getDBProperty("host");
+            String user = ResourceUtil.getDBProperty("username");
+            String pass = ResourceUtil.getDBProperty("password");
+            String dbName = ResourceUtil.getDBProperty("dbname");
             Class.forName("com.mysql.jdbc.Driver");
             return DriverManager
                     .getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName +"?"
@@ -23,6 +23,6 @@ public class DataBaseUtil {
     }
 
     public static String getDbName() {
-        return DbSettings.getProperty("dbname");
+        return ResourceUtil.getDBProperty("dbname");
     }
 }

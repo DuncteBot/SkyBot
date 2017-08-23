@@ -8,13 +8,13 @@ public class Config {
     //This is the base url from the custom api
     public static String apiBase = "https://bot.duncte123.ml/api";
     // This is the token from your bot
-    public static final String token = "";
+    public static final String token = "MjE1MDExOTkyMjc1MTI0MjI1.CpRVDg.soJg8TeV0NvyhemtFNxkdrBH4_A";
     //The api key for http://thecatapi.com/, optional
     public static String catAPIKey = "";
     // This is the prefix that your bot has, by default is the /
-    public static final String prefix = "/";
+    public static final String prefix = "!";
     // This is the version of the bot
-    public static final String version = "3.37.1";
+    public static final String version = "3.38.0";
     // This is the name that your bot has
     public static final String defaultName = "DuncteBot";
     // This is the title from the player embed

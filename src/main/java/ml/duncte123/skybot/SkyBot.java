@@ -1,6 +1,5 @@
 package ml.duncte123.skybot;
 
-import ch.qos.logback.core.db.dialect.DBUtil;
 import ml.duncte123.skybot.commands.*;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
@@ -18,34 +17,31 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
 import java.util.HashMap;
-import java.util.Random;
 
 
 public class SkyBot {
 
-    // get a random thing
-    public static Random rand = new Random();
-
     public static JDA jda;
     public static AudioUtils au;
 
-    public static HashMap<String, Command> commands = new HashMap<String, Command>();
+    public static HashMap<String, Command> commands = new HashMap<>();
 
-    private static String[] messages = {
-            "#HYPESQUAD",
-            "use " + Config.prefix + "help",
-            "V"+Config.version,
-            "duncte123.ml",
-            "Subscribe???"
+    private static Game[] messages = {
+            Game.of("#HYPESQUAD", "https://twitch.tv/duncte123"),
+            Game.of("use " + Config.prefix + "help"),
+            Game.of( "V"+Config.version),
+            Game.of("duncte123.ml", "https://twitch.tv/duncte123"),
+            Game.of("Subscribe???"),
+            Game.of("#HYPESQUAD")
     };
     private static int messageIndex = 0;
 
 
-    public static void main(String[] args) {
-        if(DbSettings.getProperty("host").isEmpty() ||
-                DbSettings.getProperty("username").isEmpty() ||
-                DbSettings.getProperty("password").isEmpty() ||
-                DbSettings.getProperty("dbname").isEmpty() ) {
+    public static void main(String[] args) throws Exception {
+        if(ResourceUtil.getDBProperty("host").isEmpty() ||
+                ResourceUtil.getDBProperty("username").isEmpty() ||
+                ResourceUtil.getDBProperty("password").isEmpty() ||
+                ResourceUtil.getDBProperty("dbname").isEmpty() ) {
             AirUtils.log(CustomLog.Level.FATAL, "DB SETTINGS ARE DOWN ABORTING");
             System.exit(0);
             return;
@@ -56,24 +52,20 @@ public class SkyBot {
         SimpleLog.LEVEL = SimpleLog.Level.OFF;
         SimpleLog.addListener(new CloudLogListener());
         // log in and set up the api
-        try{
-            jda = new JDABuilder(AccountType.BOT)
-                    .setBulkDeleteSplittingEnabled(false)
-                    .setAudioEnabled(true)
-                    .addEventListener(new BotListener())
-                    .setToken(Config.token)
-                    .setStatus(OnlineStatus.ONLINE)
-                    .setGame(Game.of(messages[messageIndex]))
-                    .buildBlocking();
-            jda.setAutoReconnect(true);
-            au = new AudioUtils();
-            //After we have logged in check for people that have added the bot while it was offline.
-            AirUtils.checkGuildsOnWhitelist(jda);
-        }catch (Exception e) {
-            e.printStackTrace();
-        }
+        jda = new JDABuilder(AccountType.BOT)
+                .setBulkDeleteSplittingEnabled(false)
+                .setAudioEnabled(true)
+                .addEventListener(new BotListener())
+                .setToken(Config.token)
+                .setStatus(OnlineStatus.ONLINE)
+                .setGame(messages[messageIndex])
+                .buildBlocking();
+        jda.setAutoReconnect(true);
+        au = new AudioUtils();
+        //After we have logged in check for people that have added the bot while it was offline.
+        AirUtils.checkGuildsOnWhitelist(jda);
 
-        //setup commands
+        //Register all the commands commands
         setupCommands();
     }
 
@@ -85,10 +77,13 @@ public class SkyBot {
         if(messageIndex == messages.length){
             messageIndex = 0;
         }
-        jda.getPresence().setGame(Game.of(messages[messageIndex]));
+        jda.getPresence().setGame(messages[messageIndex]);
     }
 
-    // handle the commands
+    /**
+     * This will handle and pars all the commands
+     * @param cmd The command that is ran
+     */
     public static void handleCommand(CommandParser.CommandContainer cmd){
         if(commands.containsKey(cmd.invoke)){
             boolean safe = commands.get(cmd.invoke).called(cmd.args, cmd.event);

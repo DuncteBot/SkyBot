@@ -28,6 +28,7 @@ public class EvalCommand extends Command {
                     "Packages.net.dv8tion.jda.core.managers.impl," +
                     "Packages.net.dv8tion.jda.core.utils," +
                     "Packages.ml.duncte123.skybot.utils);");
+
         }
         catch (ScriptException e) {
             e.printStackTrace();
@@ -56,25 +57,28 @@ public class EvalCommand extends Command {
             }
 
             Object out = engine.eval(
-                    "(function() {" +
-                                "with (imports) {" +
-                                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()) +
-                                "}" +
-                            "})();");
-            event.getChannel().sendMessage(out == null ? "Executed without error." : out.toString()).queue();
+                    "function sendMsg(msg) {" +
+                            "channel.sendMessage(msg).queue();" +
+                        "}" +
+                        "(function() {" +
+                            "with (imports) {" +
+                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()) +
+                            "}" +
+                        "})();");
+           sendMsg(event, out == null ? "Executed without error." : out.toString());
         }
         catch (ScriptException e1) {
             sendMsg(event, e1.getMessage());
             e1.printStackTrace();
         }
         catch (Exception e) {
-            sendMsg(event, e.getMessage());
+            event.getChannel().sendMessage(e.getMessage()).queue();
             e.printStackTrace();
         }
     }
 
     @Override
     public String help() {
-        return "A simple eval command (Inspired off yuis one)";
+        return "A simple eval command (Inspired off of yuis one)";
     }
 }
