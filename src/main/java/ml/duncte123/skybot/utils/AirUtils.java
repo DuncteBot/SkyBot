@@ -125,7 +125,7 @@ public class AirUtils {
     public static void checkGuildsOnWhitelist(JDA jda) {
         for(Guild guild : jda.getGuilds()) {
             if(!whiteList.contains(guild.getId())) {
-                log(CustomLog.Level.INFO, "Leaving " + (guild.getName() == null ? "No Name" : guild.getName() ));
+                log(CustomLog.Level.INFO, "Leaving " + (guild.getName() == null ? "No Name" : guild.getName() ) + ". Guild not on whitelist.");
                 guild.getTextChannels().get(0).sendMessage("I'm sorry but this guild is not on the current whitelist, " +
                         "if you want this guild to be on the whitelist please contact _duncte123#1245_!").queue(
                                 channel -> channel.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)

@@ -3,6 +3,7 @@ package ml.duncte123.skybot.commands;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
@@ -44,7 +45,7 @@ public class BotinfoCommand extends Command {
                 .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
                 .addField("Bot Id", u.getId(), true)
                 .addField("Game", m.getGame().getName(), true)
-                .addField("Nickname", (m.getNickname() == null ? "**_NO NICKNAME_**" : m.getNickname()), true)
+                .addField("Version", Config.version, true)
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Online Status", m.getOnlineStatus().name(), true)

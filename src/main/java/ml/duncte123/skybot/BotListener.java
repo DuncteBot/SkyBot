@@ -129,6 +129,9 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
 
+        AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ". " +
+                (AirUtils.whiteList.contains(event.getGuild().getId()) ? "Guild is on whitelist." : "Guild is not on whitelist, leaving."));
+
         if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
 
         event.getGuild().getPublicChannel().sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
