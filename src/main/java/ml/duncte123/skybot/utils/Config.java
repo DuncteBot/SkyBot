@@ -8,7 +8,7 @@ public class Config {
     //This is the base url from the custom api
     public static String apiBase = "https://bot.duncte123.ml/api";
     // This is the token from your bot
-    public static final String token = "MjE1MDExOTkyMjc1MTI0MjI1.CpRVDg.soJg8TeV0NvyhemtFNxkdrBH4_A";
+    public static final String token = "";
     //The api key for http://thecatapi.com/, optional
     public static String catAPIKey = "";
     // This is the prefix that your bot has, by default is the /
