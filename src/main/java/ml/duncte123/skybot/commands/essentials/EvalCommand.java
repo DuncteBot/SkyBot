@@ -58,14 +58,14 @@ public class EvalCommand extends Command {
 
             Object out = engine.eval(
                     "function sendMsg(msg) {" +
-                            "channel.sendMessage(msg).queue();" +
+                            "channel.sendMessage(msg.split(jda.getToken()).join('Not Today')).queue();" +
                         "}" +
                         "(function() {" +
                             "with (imports) {" +
                                 event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()) +
                             "}" +
                         "})();");
-           sendMsg(event, out == null ? "Executed without error." : out.toString());
+           sendMsg(event, out == null ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
         }
         catch (ScriptException e1) {
             sendMsg(event, e1.getMessage());
