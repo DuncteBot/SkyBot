@@ -28,12 +28,13 @@ public class DialogCommand extends Command {
                 .append("```")
                 .append("╔═══════════════════════════╗ \n")
                 .append("║ Alert                     ║\n")
-                .append("╠═══════════════════════════╣\n");
-                //.append("║ " + StringUtils.join(args, " ").replaceAll("`", "") + " ║\n")
+                .append("╠═══════════════════════════╣\n")
+                .append("║ " + StringUtils.join(args, " ").replaceAll("`", ""));
                 for(int i=0; i<25-lines.length; i++) {
                     sb.append(' ');
                 }
-                sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
+                sb.append(" ║\n")
+                .append("║  ┌─────────┐  ┌────────┐  ║\n")
                 .append("║  │   Yes   │  │   No   │  ║\n")
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
