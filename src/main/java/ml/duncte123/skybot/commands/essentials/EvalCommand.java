@@ -67,10 +67,6 @@ public class EvalCommand extends Command {
                         "})();");
            sendMsg(event, out == null ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
         }
-        catch (ScriptException e1) {
-            sendMsg(event, e1.getMessage());
-            e1.printStackTrace();
-        }
         catch (Exception e) {
             event.getChannel().sendMessage(e.getMessage()).queue();
             e.printStackTrace();
