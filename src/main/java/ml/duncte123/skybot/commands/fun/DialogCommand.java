@@ -22,18 +22,14 @@ public class DialogCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
 
-        String[] lines = WordUtils.wrap(StringUtils.join(args, " ").replaceAll("`", ""), 25, null, true).split("\n");
+        String lines = StringUtils.join(args, " ").replaceAll("`", "");
 
         StringBuilder sb = new StringBuilder()
                 .append("```")
                 .append("╔═══════════════════════════╗ \n")
                 .append("║ Alert                     ║\n")
                 .append("╠═══════════════════════════╣\n")
-                .append("║ " + StringUtils.join(args, " ").replaceAll("`", ""));
-                for(int i=0; i<25-lines.length; i++) {
-                    sb.append(' ');
-                }
-                sb.append(" ║\n")
+                .append("║ " + String.format("%-25s", lines) + " ║\n") //Thnx Kantenkugel#1568 you're awesome
                 .append("║  ┌─────────┐  ┌────────┐  ║\n")
                 .append("║  │   Yes   │  │   No   │  ║\n")
                 .append("║  └─────────┘  └────────┘  ║\n")

@@ -17,6 +17,7 @@ public class EvalCommand extends Command {
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
+            engine.put("commands", SkyBot.commands);
             engine.eval("var imports = new JavaImporter(" +
                     "java.io," +
                     "java.lang," +
@@ -49,7 +50,6 @@ public class EvalCommand extends Command {
             engine.put("channel", event.getChannel());
             engine.put("args", args);
             engine.put("jda", event.getJDA());
-            engine.put("commands", SkyBot.commands);
 
             if (event.isFromType(ChannelType.TEXT)) {
                 engine.put("guild", event.getGuild());
@@ -62,7 +62,7 @@ public class EvalCommand extends Command {
                         "}" +
                         "(function() {" +
                             "with (imports) {" +
-                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getName") +
+                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getPresence") +
                             "}" +
                         "})();");
            sendMsg(event, out == null ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
