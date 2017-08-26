@@ -50,7 +50,7 @@ public abstract class Command {
      * @param msg the message to send
      */
     public void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
-        event.getChannel().sendMessage(msg).queue();
+        sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
     }
 
     /**
