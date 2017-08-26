@@ -2,6 +2,7 @@ package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -20,22 +21,12 @@ public class LeaveCommand extends Command {
             botInChannel = true;
 
             if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-                EmbedBuilder eb = new EmbedBuilder()
-                        .setColor(Config.defaultColour)
-                .addField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands", false);
-                eb.setFooter(Config.defaultName, Config.defaultIcon)
-                .setTimestamp(Instant.now());
-                event.getChannel().sendMessage(eb.build()).queue();
+                event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
                 return false;
             }
 
         }else{
-            EmbedBuilder eb = new EmbedBuilder()
-                    .setColor(Config.defaultColour)
-                    .addField(SkyBot.au.embedTitle, "I'm not in a channel atm", false)
-                    .setFooter(Config.defaultName, Config.defaultIcon)
-                    .setTimestamp(Instant.now());
-            event.getChannel().sendMessage(eb.build()).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a channel atm")).queue();
         }
 
 
