@@ -21,11 +21,23 @@ import java.util.HashMap;
 
 public class SkyBot {
 
+    /**
+     * This is a reference to our api
+     */
     public static JDA jda;
+    /**
+     * This is our audio handler
+     */
     public static AudioUtils au;
 
+    /**
+     * This stores all our commands
+     */
     public static HashMap<String, Command> commands = new HashMap<>();
 
+    /**
+     * This stores the values for the {@link ml.duncte123.skybot.BotListener#timer StatusLoop}
+     */
     private static Game[] messages = {
             Game.of("#HYPESQUAD", "https://twitch.tv/duncte123"),
             Game.of("use " + Config.prefix + "help"),
@@ -34,9 +46,17 @@ public class SkyBot {
             Game.of("Subscribe???"),
             Game.of("#HYPESQUAD")
     };
+    /**
+     * This keeps track of where we are with the loop
+     */
     private static int messageIndex = 0;
 
 
+    /**
+     * This is our main method
+     * @param args The args passed in while running the bot
+     * @throws Exception When you mess something up
+     */
     public static void main(String[] args) throws Exception {
         if(ResourceUtil.getDBProperty("host").isEmpty() ||
                 ResourceUtil.getDBProperty("username").isEmpty() ||

@@ -21,13 +21,27 @@ import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
 
+    /**
+     * This is our 'custom' swearword filter
+     */
     private final BadWordFilter filter = new BadWordFilter();
+    /**
+     * This is the command parser
+     */
     private static CommandParser parser = new CommandParser();
+    /**
+     * When a command gets ran, it'll be stored in here
+     */
     private static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<>();
 
 
-
+    /**
+     * This timer is responsible for our status updates
+     */
     private static Timer timer = new Timer();
+    /**
+     * This timer is for checking unbans
+     */
     private static Timer unbanTimer = new Timer();
 
     /**

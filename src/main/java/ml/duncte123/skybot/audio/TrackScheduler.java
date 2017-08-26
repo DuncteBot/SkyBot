@@ -12,11 +12,27 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 
 public class TrackScheduler extends AudioEventAdapter {
 
+    /**
+     * Are we repeating the track
+     */
     private boolean repeating = false;
+    /**
+     * Hey look at that, it's our player
+     */
     final AudioPlayer player;
+    /**
+     * this stores our queue
+     */
     public final Queue<AudioTrack> queue;
+    /**
+     * This is the last playing track
+     */
     AudioTrack lastTrack;
 
+    /**
+     * This instantiates our player
+     * @param player Our audio player
+     */
     public TrackScheduler(AudioPlayer player){
         this.player = player;
         this.queue = new LinkedList<>();

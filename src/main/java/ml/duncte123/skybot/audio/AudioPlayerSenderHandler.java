@@ -8,7 +8,13 @@ import net.dv8tion.jda.core.audio.AudioSendHandler;
 public class AudioPlayerSenderHandler implements AudioSendHandler {
 
 
+    /**
+     * This is our audio player
+     */
     private final  AudioPlayer audioPlayer;
+    /**
+     * I don't know what this does but it seems important
+     */
     private AudioFrame lastFrame;
 
     public AudioPlayerSenderHandler(AudioPlayer audioPlayer){
@@ -27,6 +33,10 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
       return lastFrame != null;
     }
 
+    /**
+     * This <em>should</em> gives us our audio
+     * @return The audio in some nice bytes
+     */
     @Override
     public byte[] provide20MsAudio() {
 

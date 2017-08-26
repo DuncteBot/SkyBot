@@ -250,8 +250,8 @@ public class AirUtils {
      * @param userName The username from the banned user
      * @param userDiscriminator the discriminator from the user
      * @param userId the id from the banned users
-     * @param unbanDate
-     * @param guildId
+     * @param unbanDate When we need to unban the user
+     * @param guildId What guild the user got banned in
      */
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
         try {
