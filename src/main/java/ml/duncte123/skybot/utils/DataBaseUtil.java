@@ -5,6 +5,10 @@ import java.sql.DriverManager;
 
 public class DataBaseUtil {
 
+    /**
+     * This will connect to the database for us and return the connection
+     * @return The connection to the database
+     */
     public static Connection getConnection() {
         try {
             String dbHost = ResourceUtil.getDBProperty("host");
@@ -22,7 +26,19 @@ public class DataBaseUtil {
         }
     }
 
+    /**
+     * This will give the database name that we specified in the config
+     * @return the database name
+     */
     public static String getDbName() {
         return ResourceUtil.getDBProperty("dbname");
+    }
+
+    /**
+     * This will check if the database is connected
+     * @return true if we are connected
+     */
+    public static boolean checkDbConn() {
+        return getConnection() != null;
     }
 }

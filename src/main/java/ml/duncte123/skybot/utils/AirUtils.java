@@ -23,10 +23,21 @@ import java.util.concurrent.TimeUnit;
 
 public class AirUtils {
 
+    /**
+     * This contains the guilds that the bot is allowed to join
+     */
     public static List<String> whiteList = new ArrayList<>();
+    /**
+     * This contains the guilds that we don't want the swearfilter/welcome messages to happen
+     */
     public static List<String> blackList = new ArrayList<>();
+    /**
+     * This is our custom logging
+     */
     public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
-    // get a random thing
+    /**
+     * This helps us to make the coinflip work
+     */
     public static Random rand = new Random();
 
     /**

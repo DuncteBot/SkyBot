@@ -47,7 +47,7 @@ public class JoinCommand extends Command {
 
 
         if(event.getGuild().getAudioManager().isConnected() && !mng.player.getPlayingTrack().equals(null)){
-            event.getChannel().sendMessage(AirUtils.embedMessage("I'm already in a channel.")).queue();
+            event.getChannel().sendMessage("I'm already in a channel.").queue();
             return;
         }
 

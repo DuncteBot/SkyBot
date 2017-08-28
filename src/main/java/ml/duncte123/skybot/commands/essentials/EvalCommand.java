@@ -3,8 +3,10 @@ package ml.duncte123.skybot.commands.essentials;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.Config;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -17,7 +19,6 @@ public class EvalCommand extends Command {
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
-            engine.put("commands", SkyBot.commands);
             engine.eval("var imports = new JavaImporter(" +
                     "java.io," +
                     "java.lang," +
@@ -38,37 +39,41 @@ public class EvalCommand extends Command {
 
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
-        return event.getAuthor().getId().equals(Config.ownerId);
+        return true;
     }
 
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
 
         try {
-            engine.put("event", event);
-            engine.put("message", event.getMessage());
-            engine.put("channel", event.getChannel());
-            engine.put("args", args);
-            engine.put("jda", event.getJDA());
 
-            if (event.isFromType(ChannelType.TEXT)) {
+            if(event.getAuthor().getId().equals(Config.ownerId) || PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
+                engine.put("event", event);
+                engine.put("message", event.getMessage());
+                engine.put("channel", event.getChannel());
                 engine.put("guild", event.getGuild());
                 engine.put("member", event.getMember());
+                engine.eval("event.getJDA() = null;");
+            }
+            if(event.getAuthor().getId().equals(Config.ownerId)){
+                engine.put("jda", event.getJDA());
+                engine.put("commands", SkyBot.commands);
             }
 
-            Object out = engine.eval(
-                    "function sendMsg(msg) {" +
-                            "channel.sendMessage(msg).queue();" +
-                        "}" +
-                        "(function() {" +
+            engine.eval(
+            "function sendMsg(msg) {" +
+                "channel.sendMessage(msg).queue();" +
+            "}");
+            engine.put("args", args);
+            Object out = engine.eval("(function() {" +
                             "with (imports) {" +
-                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getPresence") +
+                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser") +
                             "}" +
                         "})();");
-           sendMsg(event, out == null ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
+           sendMsg(event, out == null ? "Executed without error." : "Result: " + out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
         }
         catch (Exception e) {
-            event.getChannel().sendMessage(e.getMessage()).queue();
+            event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
             e.printStackTrace();
         }
     }

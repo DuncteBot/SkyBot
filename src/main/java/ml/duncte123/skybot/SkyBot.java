@@ -66,11 +66,16 @@ public class SkyBot {
             System.exit(0);
             return;
         }
+        if(!DataBaseUtil.checkDbConn()) {
+            AirUtils.log(CustomLog.Level.FATAL, "Can't connect to database");
+            System.exit(1);
+            return;
+        }
         // Load the whit and black list first
         AirUtils.getWhiteAndBlackList();
         // Register our custom logger and turn the default off
         SimpleLog.LEVEL = SimpleLog.Level.OFF;
-        SimpleLog.addListener(new CloudLogListener());
+        SimpleLog.addListener(new CloudListener());
         // log in and set up the api
         jda = new JDABuilder(AccountType.BOT)
                 .setBulkDeleteSplittingEnabled(false)

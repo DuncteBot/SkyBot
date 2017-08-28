@@ -25,13 +25,28 @@ import java.util.logging.Level;
 
 public class AudioUtils {
 
+    /**
+     * This is the default volume that the player will play at
+     */
     private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
 
+    /**
+     * This will hold the manager for the audio player
+     */
     private final AudioPlayerManager playerManager;
+    /**
+     * This will store all the music managers for all the guilds that we are playing music in
+     */
     private final Map<String, GuildMusicManager> musicManagers;
 
+    /**
+     * This is the title that you see in the embeds from the player
+     */
     public final String embedTitle = Config.playerTitle;
 
+    /**
+     * This will set everything up and get the player ready
+     */
     public AudioUtils(){
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
 
@@ -93,13 +108,16 @@ public class AudioUtils {
 
                 if(addPlayList){
                     msg = "Adding **"+playlist.getTracks().size()+"** tracks to queue from playlist: "+playlist.getName();
+                    if(mng.player.getPlayingTrack() == null){
+                        msg += "\nand the Player has started playing;";
+                    }
                     tracks.forEach(mng.scheduler::queue);
                 }else{
                     msg = "Adding to queue "+ firstTrack.getInfo().title+" (first track of playlist "+playlist.getName()+")";
+                    if(mng.player.getPlayingTrack() == null){
+                        msg += "\nand the Player has started playing;";
+                    }
                     mng.scheduler.queue(firstTrack);
-                }
-                if(mng.player.getPlayingTrack() == null){
-                    msg += "\nand the Player has started playing;";
                 }
                 channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
             }
@@ -109,7 +127,7 @@ public class AudioUtils {
              */
             @Override
             public void noMatches() {
-                channel.sendMessage(AirUtils.embedField(embedTitle, "Nothing found by ["+trackUrl+"]("+trackUrl+")")).queue();
+                channel.sendMessage(AirUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_")).queue();
             }
 
             /**
@@ -125,8 +143,11 @@ public class AudioUtils {
         });
     }
 
-
-
+    /**
+     * This will get the music manager for the guild or register it if we don't have it yet
+     * @param guild The guild that we need the manager for
+     * @return The music manager for that guild
+     */
     public synchronized GuildMusicManager getMusicManager(Guild guild){
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
@@ -141,6 +162,11 @@ public class AudioUtils {
         return mng;
     }
 
+    /**
+     * This will return the formatted timestamp for the current playing track
+     * @param miliseconds the miliseconds that the track is at
+     * @return a formatted time
+     */
     public static String getTimestamp(long miliseconds){
         int seconds = (int) (miliseconds / 1000) % 60;
         int minutes = (int) ((miliseconds / (1000 * 60)) % 60);
