@@ -10,3 +10,6 @@ and
 
 # live demo
 You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
+
+# ToDo list
+- [ ] Make kpop command take in a search term (name/id)
