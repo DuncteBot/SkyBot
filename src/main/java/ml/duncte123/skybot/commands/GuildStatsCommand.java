@@ -2,8 +2,11 @@ package ml.duncte123.skybot.commands;
 
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.time.format.DateTimeFormatter;
 
@@ -34,19 +37,23 @@ public class GuildStatsCommand extends Command {
     public void action(String[] args, GuildMessageReceivedEvent event){
         Guild g = event.getGuild();
         try {
-            event.getChannel().sendMessage(AirUtils.defaultEmbed()
+
+            EmbedBuilder eb = AirUtils.defaultEmbed()
                     .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
                     .addField("Total Members", g.getMembers().size() + "", true)
                     .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
                     .addField("Guild Name", g.getName(), true)
                     .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                    .addField("Guild Region", g.getRegion().getName(), true)
-                    .addField("Guild Invite",
+                    .addField("Guild Region", g.getRegion().getName(), true);
+                    if(PermissionUtil.checkPermission(g.getSelfMember(), Permission.MANAGE_SERVER)) {
+                        eb.addField("Guild Invite",
                             "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
-                                    "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
-                            true)
-                    .setThumbnail(event.getGuild().getIconUrl())
-                    .build()).queue();
+                                "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
+                                true);
+                    }
+                   eb.setThumbnail(event.getGuild().getIconUrl());
+
+            event.getChannel().sendMessage(eb.build()).queue();
         }
         catch (Exception e){
             event.getChannel().sendMessage("OOPS, something went wrong: " + e.getMessage()).queue();
