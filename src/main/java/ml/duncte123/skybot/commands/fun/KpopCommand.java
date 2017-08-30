@@ -5,6 +5,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -17,9 +18,16 @@ public class KpopCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
-            String url = Config.apiBase + "/kpop.php";
+            String query = "";
+
+            if(args.length > 0) {
+                query = "?search=" + StringUtils.join(args, " ");
+            }
+
+            String url = Config.apiBase + "/kpop.php" + query;
             Document raw = Jsoup.connect(url).get();
 
+            String id = raw.body().select("id").text();
             String name = raw.body().select("name").text();
             String group = raw.body().select("band").text();
             String imgUrl = raw.body().select("picture").text();
@@ -27,7 +35,8 @@ public class KpopCommand extends Command {
             EmbedBuilder eb = AirUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group " + group)
                     .addField("Name of the member", name, false)
-                    .setImage(imgUrl);
+                    .setImage(imgUrl)
+                    .setFooter("Query id: " + id, Config.defaultIcon);
             event.getChannel().sendMessage(eb.build()).queue();
         }
         catch (Exception e) {
@@ -38,6 +47,6 @@ public class KpopCommand extends Command {
 
     @Override
     public String help() {
-        return "Gives you a random kpop member, command idea by Exa";
+        return "Gives you a random kpop member, command idea by Exa\nUsage: " + Config.prefix + "kpop [search term]";
     }
 }
