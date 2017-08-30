@@ -3,10 +3,7 @@ package ml.duncte123.skybot.commands.essentials;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.ChannelType;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -30,6 +27,7 @@ public class EvalCommand extends Command {
                     "Packages.net.dv8tion.jda.core.managers.impl," +
                     "Packages.net.dv8tion.jda.core.utils," +
                     "Packages.ml.duncte123.skybot.utils);");
+            engine.put("commands", SkyBot.commands);
 
         }
         catch (ScriptException e) {
@@ -39,26 +37,19 @@ public class EvalCommand extends Command {
 
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
-        return true;
+        return event.getAuthor().getId().equals(Config.ownerId);
     }
 
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
 
         try {
-
-            if(event.getAuthor().getId().equals(Config.ownerId) || PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
-                engine.put("event", event);
-                engine.put("message", event.getMessage());
-                engine.put("channel", event.getChannel());
-                engine.put("guild", event.getGuild());
-                engine.put("member", event.getMember());
-                engine.eval("event.getJDA() = null;");
-            }
-            if(event.getAuthor().getId().equals(Config.ownerId)){
-                engine.put("jda", event.getJDA());
-                engine.put("commands", SkyBot.commands);
-            }
+            engine.put("message", event.getMessage());
+            engine.put("channel", event.getChannel());
+            engine.put("guild", event.getGuild());
+            engine.put("member", event.getMember());
+            engine.put("jda", event.getJDA());
+            engine.put("event", event);
 
             engine.eval(
             "function sendMsg(msg) {" +

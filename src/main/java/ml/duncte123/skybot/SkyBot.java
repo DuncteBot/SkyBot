@@ -46,6 +46,7 @@ public class SkyBot {
             Game.of("Subscribe???"),
             Game.of("#HYPESQUAD")
     };
+
     /**
      * This keeps track of where we are with the loop
      */
