@@ -72,7 +72,7 @@ public class SkyBot {
             System.exit(1);
             return;
         }
-        // Load the whit and black list first
+        // Load the white and black list first
         AirUtils.getWhiteAndBlackList();
         // Register our custom logger and turn the default off
         SimpleLog.LEVEL = SimpleLog.Level.OFF;

@@ -13,6 +13,9 @@ public class EvalCommand extends Command {
 
     private ScriptEngine engine;
 
+    /**
+     * This initialises the engine
+     */
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("nashorn");
         try {
@@ -35,11 +38,22 @@ public class EvalCommand extends Command {
         }
     }
 
+    /**
+     * This is a check to see if the command is save to execute
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @return true if we are the command is safe to run
+     */
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
         return event.getAuthor().getId().equals(Config.ownerId);
     }
 
+    /**
+     * This is the action of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
 
@@ -69,6 +83,10 @@ public class EvalCommand extends Command {
         }
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public String help() {
         return "A simple eval command (Inspired off of yuis one)";

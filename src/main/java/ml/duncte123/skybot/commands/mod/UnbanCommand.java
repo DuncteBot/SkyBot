@@ -12,6 +12,13 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
 import java.util.List;
 
 public class UnbanCommand extends Command {
+
+    /**
+     * This is a check to see if the command is save to execute
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @return true if we are the command is safe to run
+     */
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
         Permission[] perms = {
@@ -32,6 +39,10 @@ public class UnbanCommand extends Command {
         return true;
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
@@ -53,6 +64,10 @@ public class UnbanCommand extends Command {
         }
     }
 
+    /**
+     * The usage instructions of the command
+     * @return a String
+     */
     @Override
     public String help() {
         return "Unbans a user";

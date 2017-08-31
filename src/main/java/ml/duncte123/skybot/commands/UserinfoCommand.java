@@ -16,11 +16,17 @@ import java.util.List;
  */
 public class UserinfoCommand extends Command {
 
+    /**
+     * this is the user object
+     */
     User u;
+    /**
+     * this is the member object
+     */
     Member m;
     /**
      * This is a check to see if the command is save to execute
-     * @param args The command agruments
+     * @param args The command arguments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      * @return true if we are the command is safe to run
      */

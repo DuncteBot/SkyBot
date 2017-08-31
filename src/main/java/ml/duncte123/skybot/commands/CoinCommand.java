@@ -8,7 +8,13 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 public class CoinCommand extends Command {
 
     public final static String help = "flips a coin.";
+    /**
+     * this is where the coins are stored
+     */
     private final String coinUrl = "https://dshelmondgames.ml/img/coin/";
+    /**
+     * this are our images
+     */
     private final String[] imagesArr = { "heads.png", "tails.png" };
     /**
      * This is a check to see if the command is save to execute
