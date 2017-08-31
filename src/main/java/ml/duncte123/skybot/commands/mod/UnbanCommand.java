@@ -40,8 +40,9 @@ public class UnbanCommand extends Command {
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * This is the action of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
