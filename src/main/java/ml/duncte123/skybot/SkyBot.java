@@ -151,6 +151,9 @@ public class SkyBot {
         commands.put("kitty", new KittyCommand());
         commands.put("dog", new DogCommand());
         commands.put("alpaca", new AlpacaCommand());
+        SealCommand seal = new SealCommand();
+        commands.put("seal", seal);
+        commands.put("zeehond", seal);
 
         //essentials commands
         commands.put("whitelist", new WhitelistCommand());
