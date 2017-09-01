@@ -4,6 +4,7 @@ import ml.duncte123.skybot.commands.*;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
 import ml.duncte123.skybot.commands.essentials.EvalCommand;
+import ml.duncte123.skybot.commands.essentials.ScreamToDuncteCommand;
 import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.mod.*;
@@ -159,6 +160,9 @@ public class SkyBot {
         commands.put("whitelist", new WhitelistCommand());
         commands.put("blacklist", new BlacklistCommand());
         commands.put("eval", new EvalCommand());
+        ScreamToDuncteCommand scream = new ScreamToDuncteCommand();
+        commands.put("screamatduncte", scream);
+        commands.put("scream", scream);
 
 
         //music commands

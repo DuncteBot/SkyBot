@@ -458,10 +458,10 @@ public class AirUtils {
         for(MessageEmbed.Field f : embed.getFields()) {
             msg += "__"+f.getName()+"__\n"+f.getValue()+"\n\n";
         }
-        if(!embed.getImage().getUrl().isEmpty()) {
+        if(embed.getImage()!=null) {
             msg+= embed.getImage().getUrl();
         }
-        if(!embed.getFooter().getText().isEmpty()) {
+        if(embed.getFooter()!=null) {
             msg += embed.getFooter().getText();
         }
         if(embed.getTimestamp() != null) {

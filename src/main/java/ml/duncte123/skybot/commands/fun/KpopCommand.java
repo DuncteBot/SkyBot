@@ -33,7 +33,7 @@ public class KpopCommand extends Command {
             String query = "";
 
             if(args.length > 0) {
-                query = "?search=" + StringUtils.join(args, " ");
+                query = "?search=" + StringUtils.join(args, "%20");
             }
 
             String url = Config.apiBase + "/kpop.php" + query;
