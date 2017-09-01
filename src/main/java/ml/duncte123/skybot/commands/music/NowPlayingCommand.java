@@ -47,7 +47,7 @@ public class NowPlayingCommand extends Command {
 
             msg = String.format("**Playing:** %s\n**Time:** [%s / %s]",
                     title, position, duration);
-            msg = AirUtils.playerEmbed(guild);
+            msg = "**Playing** " + title + "\n" + AirUtils.playerEmbed(mng);
         }else{
             msg = "The player is not currently playing anything!";
         }

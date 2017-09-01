@@ -381,9 +381,7 @@ public class AirUtils {
      * @param g the {@link net.dv8tion.jda.core.entities.Guild Guild} that we need the info for
      * @return the String that we can place in our embed
      */
-    public static String playerEmbed(Guild g) {
-
-        GuildMusicManager mng = SkyBot.au.getMusicManager(g);
+    public static String playerEmbed(GuildMusicManager mng) {
 
         return (mng.player.isPaused()?"\u23F8":"\u25B6")+" "+ generateProgressBar((double)mng.player.getPlayingTrack().getPosition()/mng.player.getPlayingTrack().getDuration())
                 +" `["+formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) +"]` "
@@ -440,5 +438,36 @@ public class AirUtils {
         long minutes = seconds/60;
         seconds %= 60;
         return (hours>0 ? hours+":" : "") + (minutes<10 ? "0"+minutes : minutes) + ":" + (seconds<10 ? "0"+seconds : seconds);
+    }
+
+    /**
+     * This will convert our embeds for if the bot is not able to send embeds
+     * @param embed the {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} that we are trying to send
+     * @return the converted embed
+     */
+    public static String embedToMessage(MessageEmbed embed) {
+
+        String msg = "";
+
+        if(embed.getAuthor() != null) {
+            msg += "***"+embed.getAuthor().getName()+"***\n\n";
+        }
+        if(!embed.getDescription().isEmpty()) {
+            msg += "_"+embed.getDescription()+"_\n\n";
+        }
+        for(MessageEmbed.Field f : embed.getFields()) {
+            msg += "__"+f.getName()+"__\n"+f.getValue()+"\n\n";
+        }
+        if(!embed.getImage().getUrl().isEmpty()) {
+            msg+= embed.getImage().getUrl();
+        }
+        if(!embed.getFooter().getText().isEmpty()) {
+            msg += embed.getFooter().getText();
+        }
+        if(embed.getTimestamp() != null) {
+            msg += "|"+embed.getTimestamp();
+        }
+
+        return msg;
     }
 }

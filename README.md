@@ -13,6 +13,6 @@ You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 
 # ToDo list
 - [x] Make kpop command take in a search term (name/id)
-- [ ] Make the nowplaying command show the title of the song in the embed
+- [X] Make the nowplaying command show the title of the song in the embed
 - [ ] Create a random seal command
 
