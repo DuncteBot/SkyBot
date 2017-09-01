@@ -28,7 +28,7 @@ public class LlamaCommand extends Command {
     public void action(String[] args, GuildMessageReceivedEvent event) {
         try {
             String theLlama = (args.length<1 ? "random" : args[0]);
-            String jsonString = URLConnectionReader.getText("https://lucoa.systemexit.co.uk/animals/api/llama/" + theLlama);
+            String jsonString = URLConnectionReader.getText("https://api.systemexit.co.uk/animals/llama/" + theLlama);
             JSONObject jsonObject = new JSONObject(jsonString);
             event.getChannel().sendMessage(AirUtils.embedImage(jsonObject.getString("file"))).queue();
         }

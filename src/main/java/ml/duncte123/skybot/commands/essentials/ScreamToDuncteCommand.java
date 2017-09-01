@@ -21,6 +21,12 @@ public class ScreamToDuncteCommand extends Command {
      */
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
+
+        if(args.length < 1) {
+            sendMsg(event, "WHAT THE HELL AM I SUPPOSED TO SCREAM???\nUsage: "+Config.prefix+"scream [words]");
+            return false;
+        }
+
         return true;
     }
 
@@ -32,7 +38,7 @@ public class ScreamToDuncteCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
         User duncte = event.getJDA().getUserById(Config.ownerId);
-        String from = event.getAuthor().getName()+"#"+event.getAuthor().getDiscriminator();
+        String from = event.getAuthor().getName()+"#"+event.getAuthor().getDiscriminator()+"("+event.getAuthor().getId()+")";
         String message = StringUtils.join(args, " ");
 
         duncte.openPrivateChannel().queue(
