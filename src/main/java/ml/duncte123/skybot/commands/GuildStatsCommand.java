@@ -5,6 +5,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
@@ -53,7 +54,13 @@ public class GuildStatsCommand extends Command {
                     }
                    eb.setThumbnail(event.getGuild().getIconUrl());
 
-            event.getChannel().sendMessage(eb.build()).queue();
+            MessageEmbed messageEmbed = eb.build();
+
+            if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+                event.getChannel().sendMessage(AirUtils.embedToMessage(messageEmbed)).queue();
+                return;
+            }
+            event.getChannel().sendMessage(messageEmbed).queue();
         }
         catch (Exception e){
             event.getChannel().sendMessage("OOPS, something went wrong: " + e.getMessage()).queue();

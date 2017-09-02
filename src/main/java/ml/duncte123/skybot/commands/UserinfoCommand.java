@@ -3,9 +3,12 @@ package ml.duncte123.skybot.commands;
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -69,7 +72,7 @@ public class UserinfoCommand extends Command {
 
         u = m.getUser();
       
-        EmbedBuilder eb = AirUtils.defaultEmbed()
+        MessageEmbed eb = AirUtils.defaultEmbed()
                 .setColor(m.getColor())
                 .setDescription("Userinfo for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
@@ -80,8 +83,14 @@ public class UserinfoCommand extends Command {
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
-                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true);
-        event.getChannel().sendMessage(eb.build()).queue();
+                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
+                .build();
+
+        if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+            event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
+            return;
+        }
+        event.getChannel().sendMessage(eb).queue();
     }
 
     /**

@@ -2,8 +2,11 @@ package ml.duncte123.skybot.commands;
 
 import ml.duncte123.skybot.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class CoinCommand extends Command {
 
@@ -38,7 +41,12 @@ public class CoinCommand extends Command {
 
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();
-        event.getChannel().sendMessage(AirUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)])).queue();
+        MessageEmbed eb = AirUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)]);
+        if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+            event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
+            return;
+        }
+        event.getChannel().sendMessage(eb).queue();
     }
 
     /**
