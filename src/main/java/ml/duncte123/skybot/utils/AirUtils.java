@@ -5,10 +5,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.*;
 
@@ -469,5 +466,19 @@ public class AirUtils {
         }
 
         return msg;
+    }
+
+    /**
+     * This will get the first channel of a guild that we can write in/should be able to write in
+     * @param guild The guild that we want to get the main channel from
+     * @return the Text channel that we can send our messages in.
+     */
+    public static TextChannel getFirstGuildChann(Guild guild) {
+
+       if(guild.getTextChannelById(guild.getId())==null) {
+           return guild.getTextChannels().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+       }
+
+        return guild.getTextChannelById(guild.getId());
     }
 }

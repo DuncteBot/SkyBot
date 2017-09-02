@@ -26,7 +26,7 @@ public class Config {
     /**
      * This is the version of the bot
      */
-    public static final String version = "3.39.2";
+    public static final String version = "3.40.0";
     /**
      * This is the name that your bot has
      */

@@ -114,7 +114,7 @@ public class OLD_BanCommand extends Command {
                             }
                         }
                 );
-                event.getGuild().getPublicChannel().sendMessage("User " + toBan.getName() + "#"
+                AirUtils.getFirstGuildChann(event.getGuild()).sendMessage("User " + toBan.getName() + "#"
                         + toBan.getDiscriminator() + " got bent.").queue();
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue();

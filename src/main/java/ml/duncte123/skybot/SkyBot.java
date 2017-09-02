@@ -19,6 +19,9 @@ import net.dv8tion.jda.core.utils.SimpleLog;
 
 import java.util.HashMap;
 
+/**
+ * NOTE TO SELF String.format("%#s", userObject)
+ */
 
 public class SkyBot {
 

@@ -102,8 +102,8 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(CustomLog.Level.INFO, "Logged in as " + event.getJDA().getSelfUser().getName());
-        //event.getJDA().getGuilds().get(0).getPublicChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
+        AirUtils.log(CustomLog.Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
+        //event.getJDA().getGuilds().get(0).getDefaultChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
         TimerTask myTask = new TimerTask() {
             @Override
             public void run() {
@@ -112,13 +112,14 @@ public class BotListener extends ListenerAdapter {
         };
         timer.schedule(myTask, 60*1000, 60*1000);
 
+        //smth
         TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
                 AirUtils.checkUnbans();
             }
         };
-        unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
+        //unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
 
     }
 
@@ -131,7 +132,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.blackList.contains(event.getGuild().getId())) return;
 
-        TextChannel publicChannel = event.getGuild().getPublicChannel();
+        TextChannel publicChannel = AirUtils.getFirstGuildChann(event.getGuild());
         String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
         publicChannel.sendMessage(msg).queue();
     }
@@ -148,7 +149,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
 
-        event.getGuild().getPublicChannel().sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
+        AirUtils.getFirstGuildChann(event.getGuild()).sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
                 + ", I'm not made to be in this guild and will leave it in 20 seconds")
                 .queue(
                     (m) -> event.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
