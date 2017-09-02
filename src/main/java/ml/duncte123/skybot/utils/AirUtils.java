@@ -452,7 +452,7 @@ public class AirUtils {
         if(embed.getAuthor() != null) {
             msg += "***"+embed.getAuthor().getName()+"***\n\n";
         }
-        if(!embed.getDescription().isEmpty()) {
+        if(embed.getDescription()!=null) {
             msg += "_"+embed.getDescription()+"_\n\n";
         }
         for(MessageEmbed.Field f : embed.getFields()) {

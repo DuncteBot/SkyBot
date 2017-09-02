@@ -42,7 +42,7 @@ public class CoinCommand extends Command {
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();
         MessageEmbed eb = AirUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)]);
-        if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+        if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
             event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
             return;
         }

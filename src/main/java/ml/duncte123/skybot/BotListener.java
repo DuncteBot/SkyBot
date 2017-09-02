@@ -131,9 +131,9 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.blackList.contains(event.getGuild().getId())) return;
 
-        TextChannel t = event.getGuild().getPublicChannel();
+        TextChannel publicChannel = event.getGuild().getPublicChannel();
         String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
-        t.sendMessage(msg).queue();
+        publicChannel.sendMessage(msg).queue();
     }
 
     /**

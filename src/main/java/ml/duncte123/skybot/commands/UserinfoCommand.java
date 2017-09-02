@@ -86,7 +86,7 @@ public class UserinfoCommand extends Command {
                 .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
                 .build();
 
-        if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+        if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
             event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
             return;
         }

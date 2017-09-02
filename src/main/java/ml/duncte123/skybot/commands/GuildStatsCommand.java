@@ -56,7 +56,7 @@ public class GuildStatsCommand extends Command {
 
             MessageEmbed messageEmbed = eb.build();
 
-            if(PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+            if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
                 event.getChannel().sendMessage(AirUtils.embedToMessage(messageEmbed)).queue();
                 return;
             }
@@ -64,6 +64,7 @@ public class GuildStatsCommand extends Command {
         }
         catch (Exception e){
             event.getChannel().sendMessage("OOPS, something went wrong: " + e.getMessage()).queue();
+            e.printStackTrace();
         }
     }
 
