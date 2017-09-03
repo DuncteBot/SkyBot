@@ -8,18 +8,21 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
+import java.util.Arrays;
+import java.util.List;
 
 public class EvalCommand extends Command {
 
     private ScriptEngine engine;
+    private List<String> imports;
 
     /**
      * This initialises the engine
      */
     public EvalCommand() {
-        engine = new ScriptEngineManager().getEngineByName("nashorn");
+        engine = new ScriptEngineManager().getEngineByName("groovy");
         try {
-            engine.eval("var imports = new JavaImporter(" +
+            /*engine.eval("var imports = new JavaImporter(" +
                     "java.io," +
                     "java.lang," +
                     "java.util," +
@@ -29,11 +32,21 @@ public class EvalCommand extends Command {
                     "Packages.net.dv8tion.jda.core.managers," +
                     "Packages.net.dv8tion.jda.core.managers.impl," +
                     "Packages.net.dv8tion.jda.core.utils," +
-                    "Packages.ml.duncte123.skybot.utils);");
+                    "Packages.ml.duncte123.skybot.utils);");*/
+            imports =  Arrays.asList("java.io",
+                    "java.lang",
+                    "java.util",
+                    "net.dv8tion.jda.core",
+                    "net.dv8tion.jda.core.entities",
+                    "net.dv8tion.jda.core.entities.impl",
+                    "net.dv8tion.jda.core.managers",
+                    "net.dv8tion.jda.core.managers.impl",
+                    "net.dv8tion.jda.core.utils",
+                    "ml.duncte123.skybot.utils");
             engine.put("commands", SkyBot.commands);
 
         }
-        catch (ScriptException e) {
+        catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -66,18 +79,25 @@ public class EvalCommand extends Command {
             engine.put("event", event);
 
             engine.eval(
-            "function sendMsg(msg) {" +
+            "public void sendMsg(String msg) {" +
                 "channel.sendMessage(msg).queue();" +
             "}");
             engine.put("args", args);
-            Object out = engine.eval("(function() {" +
+            /*Object out = engine.eval("(function() {" +
                             "with (imports) {" +
                                 event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser") +
                             "}" +
-                        "})();");
-           sendMsg(event, out == null ? "Executed without error." : "Result: " + out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
+                        "})();");*/
+
+            String importString = "";
+            for (final String s : imports) {
+                importString += "import " + s + ".*;";
+            }
+            Object out = engine.eval(importString + event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser"));
+           sendMsg(event, out == null || String.valueOf(out).isEmpty() ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
         }
         catch (Exception e) {
+            System.out.println(e.getMessage());
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
             e.printStackTrace();
         }

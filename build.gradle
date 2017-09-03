@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.40.0'
+version '3.41.0'
 
 sourceCompatibility = 1.8
 
@@ -24,6 +24,7 @@ dependencies {
     compile 'org.jsoup:jsoup:1.10.3'
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java
     compile 'mysql:mysql-connector-java:5.1.6'
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.9'
     compile 'ch.qos.logback:logback-classic:1.2.1'
     compile 'ch.qos.logback:logback-core:1.2.1'
 
