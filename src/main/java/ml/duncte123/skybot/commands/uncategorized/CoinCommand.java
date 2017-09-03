@@ -1,6 +1,6 @@
-package ml.duncte123.skybot.commands;
+package ml.duncte123.skybot.commands.uncategorized;
 
-import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.commands.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;

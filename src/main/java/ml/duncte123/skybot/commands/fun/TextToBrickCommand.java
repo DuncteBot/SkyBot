@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.commands.fun;
 
-import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.commands.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;

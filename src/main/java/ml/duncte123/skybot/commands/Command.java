@@ -1,4 +1,4 @@
-package ml.duncte123.skybot;
+package ml.duncte123.skybot.commands;
 
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Message;

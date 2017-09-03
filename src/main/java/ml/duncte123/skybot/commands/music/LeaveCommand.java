@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.commands.music;
 
-import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.commands.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;

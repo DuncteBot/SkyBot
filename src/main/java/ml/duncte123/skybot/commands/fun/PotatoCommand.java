@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.commands.fun;
 
-import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.commands.Command;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 

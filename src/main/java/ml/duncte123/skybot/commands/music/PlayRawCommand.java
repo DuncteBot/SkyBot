@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import ml.duncte123.skybot.Command;
+import ml.duncte123.skybot.commands.Command;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
