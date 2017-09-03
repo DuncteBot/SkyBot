@@ -22,17 +22,6 @@ public class EvalCommand extends Command {
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("groovy");
         try {
-            /*engine.eval("var imports = new JavaImporter(" +
-                    "java.io," +
-                    "java.lang," +
-                    "java.util," +
-                    "Packages.net.dv8tion.jda.core," +
-                    "Packages.net.dv8tion.jda.core.entities," +
-                    "Packages.net.dv8tion.jda.core.entities.impl," +
-                    "Packages.net.dv8tion.jda.core.managers," +
-                    "Packages.net.dv8tion.jda.core.managers.impl," +
-                    "Packages.net.dv8tion.jda.core.utils," +
-                    "Packages.ml.duncte123.skybot.utils);");*/
             imports =  Arrays.asList("java.io",
                     "java.lang",
                     "java.util",
@@ -83,11 +72,6 @@ public class EvalCommand extends Command {
                 "channel.sendMessage(msg).queue();" +
             "}");
             engine.put("args", args);
-            /*Object out = engine.eval("(function() {" +
-                            "with (imports) {" +
-                                event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser") +
-                            "}" +
-                        "})();");*/
 
             String importString = "";
             for (final String s : imports) {
