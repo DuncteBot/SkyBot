@@ -1,6 +1,6 @@
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.commands.*;
+import ml.duncte123.skybot.commands.Command;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
 import ml.duncte123.skybot.commands.essentials.EvalCommand;
@@ -9,6 +9,7 @@ import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.mod.*;
 import ml.duncte123.skybot.commands.music.*;
+import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
