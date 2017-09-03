@@ -195,6 +195,6 @@ public class SkyBot {
         CleenupCommand cleanupcmd = new CleenupCommand();
         commands.put("cleanup", cleanupcmd);
         commands.put("clear", cleanupcmd);
-        commands.put("annouce", new AnnounceCommand());
+        commands.put("announce", new AnnounceCommand());
     }
 }
