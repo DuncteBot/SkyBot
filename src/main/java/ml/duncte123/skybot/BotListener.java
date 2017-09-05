@@ -9,6 +9,7 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
@@ -38,11 +39,11 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is responsible for our status updates
      */
-    private static Timer timer = new Timer();
+    private Timer timer = new Timer();
     /**
      * This timer is for checking unbans
      */
-    private static Timer unbanTimer = new Timer();
+    private Timer unbanTimer = new Timer();
 
     /**
      * Listen for messages send to the bot
@@ -124,7 +125,7 @@ public class BotListener extends ListenerAdapter {
     }
 
     /**
-     * This will fire when a new member joins
+     * This will fire when a new member joins, if the guild is not on the {@link ml.duncte123.skybot.utils.AirUtils#blackList blackList} we will send a message
      * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent GuildMemberJoinEvent}
      */
     @Override
@@ -172,6 +173,44 @@ public class BotListener extends ListenerAdapter {
                 if(event.getGuild().getAudioManager().isConnected()){
                     event.getGuild().getAudioManager().closeAudioConnection();
                     event.getGuild().getAudioManager().setSendingHandler(null);
+                }
+            }
+        }
+    }
+
+    /**
+     * This will fire when a member moves from channel, if a member moves we will check if our channel is empty
+     * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent GuildVoiceMoveEvent}
+     */
+    @Override
+    public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+        if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
+
+            if(event.getChannelLeft()!=null) {
+                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
+                if(event.getChannelLeft().getMembers().size() <= 1){
+                    SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
+                    SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
+                    SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                    lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                    if(event.getGuild().getAudioManager().isConnected()){
+                        event.getGuild().getAudioManager().closeAudioConnection();
+                        event.getGuild().getAudioManager().setSendingHandler(null);
+                    }
+                }
+            }
+
+            if(event.getChannelJoined()!=null) {
+                if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
+                if(event.getChannelJoined().getMembers().size() <= 1){
+                    SkyBot.au.getMusicManager(event.getGuild()).player.stopTrack();
+                    SkyBot.au.getMusicManager(event.getGuild()).player.setPaused(false);
+                    SkyBot.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                    lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                    if(event.getGuild().getAudioManager().isConnected()){
+                        event.getGuild().getAudioManager().setSendingHandler(null);
+                        event.getGuild().getAudioManager().closeAudioConnection();
+                    }
                 }
             }
         }
