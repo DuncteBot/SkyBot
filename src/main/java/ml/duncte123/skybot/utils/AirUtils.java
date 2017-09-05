@@ -375,12 +375,13 @@ public class AirUtils {
 
     /**
      * This will generate a nice player embed for us
-     * @param g the {@link net.dv8tion.jda.core.entities.Guild Guild} that we need the info for
+     * @param mng the {@link net.dv8tion.jda.core.entities.Guild Guild} that we need the info for
      * @return the String that we can place in our embed
      */
     public static String playerEmbed(GuildMusicManager mng) {
 
-        return (mng.player.isPaused()?"\u23F8":"\u25B6")+" "+ generateProgressBar((double)mng.player.getPlayingTrack().getPosition()/mng.player.getPlayingTrack().getDuration())
+        return (mng.player.isPaused()?"\u23F8":"\u25B6")+" "+
+                generateProgressBar((double)mng.player.getPlayingTrack().getPosition()/mng.player.getPlayingTrack().getDuration())
                 +" `["+formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) +"]` "
                 + getVolumeIcon(mng.player.getVolume());
     }
@@ -475,10 +476,12 @@ public class AirUtils {
      */
     public static TextChannel getFirstGuildChann(Guild guild) {
 
-       if(guild.getTextChannelById(guild.getId())==null) {
+        TextChannel pubChann = guild.getTextChannelById(guild.getId());
+
+       if(pubChann==null) {
            return guild.getTextChannels().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
        }
 
-        return guild.getTextChannelById(guild.getId());
+        return pubChann;
     }
 }
