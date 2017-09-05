@@ -22,23 +22,16 @@ public class EvalCommand extends Command {
      */
     public EvalCommand() {
         engine = new ScriptEngineManager().getEngineByName("groovy");
-        try {
-            packageImports =  Arrays.asList("java.io",
-                    "java.lang",
-                    "java.util",
-                    "net.dv8tion.jda.core",
-                    "net.dv8tion.jda.core.entities",
-                    "net.dv8tion.jda.core.entities.impl",
-                    "net.dv8tion.jda.core.managers",
-                    "net.dv8tion.jda.core.managers.impl",
-                    "net.dv8tion.jda.core.utils",
-                    "ml.duncte123.skybot.utils");
-
-            engine.put("commands", SkyBot.commands);
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
+        packageImports =  Arrays.asList("java.io",
+                "java.lang",
+                "java.util",
+                "net.dv8tion.jda.core",
+                "net.dv8tion.jda.core.entities",
+                "net.dv8tion.jda.core.entities.impl",
+                "net.dv8tion.jda.core.managers",
+                "net.dv8tion.jda.core.managers.impl",
+                "net.dv8tion.jda.core.utils",
+                "ml.duncte123.skybot.utils");
     }
 
     /**
@@ -63,6 +56,8 @@ public class EvalCommand extends Command {
         try {
 
             Bindings bindings = engine.createBindings();
+
+            bindings.put("commands", SkyBot.commands);
 
             bindings.put("message", event.getMessage());
             bindings.put("channel", event.getChannel());
