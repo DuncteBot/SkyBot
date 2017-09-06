@@ -474,7 +474,7 @@ public class AirUtils {
      * @param guild The guild that we want to get the main channel from
      * @return the Text channel that we can send our messages in.
      */
-    public static TextChannel getFirstGuildChann(Guild guild) {
+    public static TextChannel getGuildPublicChan(Guild guild) {
 
         TextChannel pubChann = guild.getTextChannelById(guild.getId());
 

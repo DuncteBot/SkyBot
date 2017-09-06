@@ -13,7 +13,6 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -133,7 +132,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.blackList.contains(event.getGuild().getId())) return;
 
-        TextChannel publicChannel = AirUtils.getFirstGuildChann(event.getGuild());
+        TextChannel publicChannel = AirUtils.getGuildPublicChan(event.getGuild());
         String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
         publicChannel.sendMessage(msg).queue();
     }
@@ -150,7 +149,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
 
-        AirUtils.getFirstGuildChann(event.getGuild()).sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
+        AirUtils.getGuildPublicChan(event.getGuild()).sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
                 + ", I'm not made to be in this guild and will leave it in 20 seconds")
                 .queue(
                     (m) -> event.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
