@@ -66,11 +66,13 @@ public class EvalCommand extends Command {
             bindings.put("jda", event.getJDA());
             bindings.put("event", event);
 
-            engine.eval(
-            "public void sendMsg(String msg) {" +
-                "channel.sendMessage(msg).queue();" +
-            "}");
             bindings.put("args", args);
+
+
+            engine.eval(
+                "public void sendMsg(String msg) {" +
+                        "channel.sendMessage(msg).queue();" +
+                    "}", bindings);
 
             String importString = "";
             for (final String s : packageImports) {
