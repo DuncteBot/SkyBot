@@ -130,11 +130,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
-        if (AirUtils.blackList.contains(event.getGuild().getId())) return;
-
-        TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
-        String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
-        publicChannel.sendMessage(msg).queue();
+        if (AirUtils.guildSettings.get(event.getGuild().getId()).isEnableJoinMessage()) {
+            TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
+            String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
+            publicChannel.sendMessage(msg).queue();
+        }
     }
 
     /**
@@ -144,7 +144,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
 
-        AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ". " +
+        /*AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ". " +
                 (AirUtils.whiteList.contains(event.getGuild().getId()) ? "Guild is on whitelist." : "Guild is not on whitelist, leaving."));
 
         if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
@@ -153,7 +153,9 @@ public class BotListener extends ListenerAdapter {
                 + ", I'm not made to be in this guild and will leave it in 20 seconds")
                 .queue(
                     (m) -> event.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
-        );
+        );*/
+        AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
+        AirUtils.registerNewGuild(event.getGuild().getId());
     }
 
     /**

@@ -11,6 +11,7 @@ import ml.duncte123.skybot.commands.guild.GuildStatsCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
@@ -78,8 +79,6 @@ public class SkyBot {
             System.exit(1);
             return;
         }
-        // Load the white and black list first
-        AirUtils.getWhiteAndBlackList();
         //Load the settings before loading the bot
         AirUtils.loadSettings();
         // Register our custom logger and turn the default off
@@ -96,8 +95,6 @@ public class SkyBot {
                 .buildBlocking();
         jda.setAutoReconnect(true);
         au = new AudioUtils();
-        //After we have logged in check for people that have added the bot while it was offline.
-        AirUtils.checkGuildsOnWhitelist(jda);
 
         //Register all the commands commands
         setupCommands();

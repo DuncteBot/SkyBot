@@ -3,11 +3,16 @@ package ml.duncte123.skybot.commands.guild.owner;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingsCommand extends Command {
 
@@ -20,7 +25,7 @@ public class SettingsCommand extends Command {
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
+        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR) || event.getAuthor().getId().equals(Config.ownerId)) {
             sendMsg(event, "You don't have permission to run this command");
             return false;
         }
@@ -42,10 +47,45 @@ public class SettingsCommand extends Command {
             //true ✅
             //false ❌
             MessageEmbed message = AirUtils.embedMessage("Here are the settings from this guild.\n" +
-                            "Join messages: " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
+                            "Show join messages: " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
                             "Swearword filter: " + (settings.isEnableSwearFilter() ? "✅" : "❌")
             );
+            sendMsg(event, message);
             return;
+        }
+
+        if(args.length > 2) {
+            sendMsg(event, "Incorrect usage: `" + Config.prefix + "settings [module] [status]`");
+            return;
+        }
+
+        if(args.length > 1) {
+            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter");
+            String module = args[0];
+            boolean enableStatus;
+            try {
+                enableStatus = (1>=Integer.parseInt(args[1]));
+            }
+            catch (NumberFormatException e) {
+                sendMsg(event, "Incorrect usage, status must be either 0 (to disable) or 1 (to enable)");
+                return;
+            }
+            if(modules.contains(module)) {
+                switch (module) {
+                    case "showJoinMessage" :
+                        settings.setEnableJoinMessage(enableStatus);
+                        break;
+                    case "swearFilter":
+                        settings.setEnableSwearFilter(enableStatus);
+                        break;
+
+                    default:
+                        break;
+                }
+
+            } else {
+                sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ",") + "`");
+            }
         }
 
     }

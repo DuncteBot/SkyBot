@@ -176,8 +176,25 @@ public class AirUtils {
         }
     }
 
-    public static void updateSettings(GuildSettings settings) throws Exception {
+    public static void registerNewGuild(String guildId) {
+        boolean joinMsg = false;
+        boolean swearFilter = false;
+        GuildSettings newGuildSettings = new GuildSettings(guildId)
+                .setEnableJoinMessage(joinMsg)
+                .setEnableSwearFilter(swearFilter);
+        guildSettings.put(guildId, newGuildSettings);
 
+        try {
+            String dbName = db.getName();
+
+            Connection database = db.getConnection();
+            Statement smt = database.createStatement();
+
+            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + guildId + "', default, default)");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     /**
