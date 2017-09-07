@@ -13,6 +13,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+import org.apache.commons.lang3.time.DateUtils;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -56,6 +57,12 @@ public class BotListener extends ListenerAdapter {
             timer.cancel();
             unbanTimer.cancel();
             event.getJDA().shutdown();
+            try {
+                AirUtils.db.getConnection().close();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+            }
             return;
         }
         if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
@@ -110,16 +117,15 @@ public class BotListener extends ListenerAdapter {
                 SkyBot.updateStatus();
             }
         };
-        timer.schedule(myTask, 60*1000, 60*1000);
+        timer.schedule(myTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
 
-        //smth
         TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
                 AirUtils.checkUnbans();
             }
         };
-        //unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
+        unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
 
     }
 

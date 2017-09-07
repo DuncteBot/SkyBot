@@ -7,6 +7,9 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
 
 public class SoftbanCommand extends Command {
 
@@ -51,8 +54,11 @@ public class SoftbanCommand extends Command {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
-            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName()).queue();
-            event.getGuild().getController().unban(toBan.getId()).reason("Kicked by: " + event.getAuthor().getName()).queue();
+            String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName()).queue(
+                    (noting) -> AirUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild())
+            );
+            event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
         }
         catch (Exception e) {
             e.printStackTrace();

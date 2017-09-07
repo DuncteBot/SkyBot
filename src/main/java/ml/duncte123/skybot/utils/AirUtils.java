@@ -2,6 +2,8 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.ConsoleUser;
+import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import ml.duncte123.skybot.utils.db.DbManager;
@@ -14,6 +16,7 @@ import okhttp3.*;
 
 import java.net.URL;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
@@ -115,11 +118,11 @@ public class AirUtils {
      */
     public static void getWhiteAndBlackList(){
         log(CustomLog.Level.INFO, "Loading black and whitelist.");
+
+        String dbName = db.getName();
+        Connection database = db.getConnection();
+
         try {
-
-            String dbName = db.getName();
-
-            Connection database = db.getConnection();
             Statement smt = database.createStatement();
 
             ResultSet resWhiteList = smt.executeQuery("SELECT * FROM " + dbName + ".whiteList");
@@ -146,12 +149,12 @@ public class AirUtils {
      */
     public static void loadSettings() {
         log(CustomLog.Level.INFO, "Loading settings.");
+
+        String dbName = db.getName();
+
+        Connection database = db.getConnection();
         try {
             int guilds = 0;
-
-            String dbName = db.getName();
-
-            Connection database = db.getConnection();
             Statement smt = database.createStatement();
 
             ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
@@ -176,18 +179,45 @@ public class AirUtils {
         }
     }
 
+    public static void updateGuildSettings(GuildSettings settings) {
+        String guildId = settings.getGuildId();
+        boolean joinmsg = settings.isEnableJoinMessage();
+        boolean swearfilter = settings.isEnableSwearFilter();
+
+
+        String dbName = db.getName();
+        Connection database = db.getConnection();
+
+        try{
+            PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
+                    "enableJoinMessage= ? , " +
+                    "enableSwearFilter= ? " +
+                    "WHERE guildId='"+guildId+"'");
+            preparedStatement.setBoolean(1, joinmsg);
+            preparedStatement.setBoolean(2, swearfilter);
+            preparedStatement.executeUpdate();
+
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
     public static void registerNewGuild(String guildId) {
-        boolean joinMsg = false;
-        boolean swearFilter = false;
+        boolean ENABLE_JOIN_MSG = false;
+        boolean ENABLE_SWEAR_FILTER = false;
         GuildSettings newGuildSettings = new GuildSettings(guildId)
-                .setEnableJoinMessage(joinMsg)
-                .setEnableSwearFilter(swearFilter);
+                .setEnableJoinMessage(ENABLE_JOIN_MSG)
+                .setEnableSwearFilter(ENABLE_SWEAR_FILTER);
         guildSettings.put(guildId, newGuildSettings);
 
-        try {
-            String dbName = db.getName();
 
-            Connection database = db.getConnection();
+        String dbName = db.getName();
+
+        Connection database = db.getConnection();
+
+        try {
             Statement smt = database.createStatement();
 
             smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + guildId + "', default, default)");
@@ -286,13 +316,13 @@ public class AirUtils {
      * @param punishment The type of punishment
      * @param reason The reason of the punishment
      * @param time How long it takes for the punishment to get removed
-     * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param g A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, GuildMessageReceivedEvent event){
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         String length = "";
-        if (!time.isEmpty()) { length = " lasting " + time + ""; }
+        if (time!=null &&!time.isEmpty()) { length = " lasting " + time + ""; }
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
-        MessageChannel modLogChannel = event.getGuild().getTextChannelsByName("modlog", true).get(0);
+        MessageChannel modLogChannel = g.getTextChannelsByName("modlog", true).get(0);
         modLogChannel.sendMessage(embedField(punishedUser.getName() + " " + punishment, punishment
                 + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
@@ -300,16 +330,16 @@ public class AirUtils {
     }
 
     /**
-     * A version of {@link AirUtils#modLog(User, User, String, String, String, GuildMessageReceivedEvent)} but without the time
+     * A version of {@link AirUtils#modLog(User, User, String, String, String, Guild)} but without the time
      *
      * @param mod The mod that performed the punishment
      * @param punishedUser The user that got punished
      * @param punishment The type of punishment
      * @param reason The reason of the punishment
-     * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param g A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, GuildMessageReceivedEvent event) {
-        modLog(mod, punishedUser, punishment, reason, "", event);
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
+        modLog(mod, punishedUser, punishment, reason, "", g);
     }
 
     /**
@@ -317,10 +347,10 @@ public class AirUtils {
      * @param mod The mod that permed the action
      * @param unbannedUser The user that the action is for
      * @param punishment The type of punishment that got removed
-     * @param event A instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+     * @param g A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
-    public static void modLog(User mod, User unbannedUser, String punishment, GuildMessageReceivedEvent event) {
-        modLog(mod, unbannedUser, punishment, "", event);
+    public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
+        modLog(mod, unbannedUser, punishment, "", g);
     }
 
     /**
@@ -362,11 +392,13 @@ public class AirUtils {
      * This will check if there are users that can be unbanned
      */
     public static void checkUnbans() {
+
+
+        String dbName = db.getName();
+        Connection database = db.getConnection();
+
         try {
 
-            String dbName = db.getName();
-
-            Connection database = db.getConnection();
             Statement smt = database.createStatement();
 
             ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".bans");
@@ -380,8 +412,12 @@ public class AirUtils {
                     SkyBot.jda.getGuildById(
                             res.getString("guildId")
                     ).getController().unban(
-                            res.getString("guildId")
+                            res.getString("userId")
                     ).reason("Ban expired").queue();
+                    modLog(new ConsoleUser(),
+                            new FakeUser(res.getString("Username"),
+                                    res.getString("userId"), res.getString("discriminator")), "unbanned",
+                            SkyBot.jda.getGuildById(res.getString("guildId")));
                 }
             }
 
@@ -401,6 +437,16 @@ public class AirUtils {
             new URL(url);
             return true;
         } catch (Exception e) {
+            return false;
+        }
+    }
+
+    public static boolean isInt(String isint) {
+        try {
+            Integer.parseInt(isint);
+            return true;
+        }
+        catch (NumberFormatException e) {
             return false;
         }
     }

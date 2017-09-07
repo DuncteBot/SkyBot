@@ -25,7 +25,7 @@ public class SettingsCommand extends Command {
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR) || event.getAuthor().getId().equals(Config.ownerId)) {
+        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR) || !event.getAuthor().getId().equals(Config.ownerId)) {
             sendMsg(event, "You don't have permission to run this command");
             return false;
         }
@@ -64,7 +64,7 @@ public class SettingsCommand extends Command {
             String module = args[0];
             boolean enableStatus;
             try {
-                enableStatus = (1>=Integer.parseInt(args[1]));
+                enableStatus = (Integer.parseInt(args[1]) >= 1);
             }
             catch (NumberFormatException e) {
                 sendMsg(event, "Incorrect usage, status must be either 0 (to disable) or 1 (to enable)");
@@ -73,10 +73,12 @@ public class SettingsCommand extends Command {
             if(modules.contains(module)) {
                 switch (module) {
                     case "showJoinMessage" :
-                        settings.setEnableJoinMessage(enableStatus);
+                        AirUtils.updateGuildSettings(settings.setEnableJoinMessage(enableStatus));
+                        sendMsg(event, AirUtils.embedMessage("Settings have been updated."));
                         break;
                     case "swearFilter":
-                        settings.setEnableSwearFilter(enableStatus);
+                        AirUtils.updateGuildSettings(settings.setEnableSwearFilter(enableStatus));
+                        sendMsg(event, AirUtils.embedMessage("Settings have been updated."));
                         break;
 
                     default:
@@ -84,7 +86,7 @@ public class SettingsCommand extends Command {
                 }
 
             } else {
-                sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ",") + "`");
+                sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ", ") + "`");
             }
         }
 

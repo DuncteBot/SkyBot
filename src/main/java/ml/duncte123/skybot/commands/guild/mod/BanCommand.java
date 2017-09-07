@@ -57,14 +57,17 @@ public class BanCommand extends Command {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
-            if(args.length > 2) {
+            if(args.length > 1) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                String[] timeParts = args[1].split("(?<=\\D)(?=\\d)"); //Split the string into ints and letters
+                String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
-                if(timeParts[0].isEmpty() || timeParts[1].isEmpty()) {
+                if(timeParts == null || !AirUtils.isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                            (voidMethod) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event)
+                            (voidMethod) -> {
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
+                            }
                     );
                     return;
                 }
@@ -78,6 +81,10 @@ public class BanCommand extends Command {
 
                     switch (timeParts[1]) {
                         case "m":
+                            if(Integer.parseInt(timeParts[0]) < 10 ) {
+                                sendMsg(event, "The minimum time for minutes is 10.");
+                                return;
+                            }
                             DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "d":
@@ -94,7 +101,7 @@ public class BanCommand extends Command {
                             break;
 
                         default:
-                            event.getChannel().sendMessage("Please choose from m, d, w, M or Y").queue();
+                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, w, M or Y").queue();
                             return;
                     }
                     unbanDate = df.format(dt);
@@ -103,19 +110,21 @@ public class BanCommand extends Command {
                 final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty() ? "" : unbanDate);
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
-                            if (Integer.parseInt(timeParts[1]) > 0) {
+                            if (Integer.parseInt(timeParts[0]) > 0) {
                                 AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event);
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
                             } else {
                                 final String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                             }
                         }
                 );
                 AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
             } else {
-                event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue();
+                event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
+                        (voidm) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                );
             }
         }
         catch (Exception e) {

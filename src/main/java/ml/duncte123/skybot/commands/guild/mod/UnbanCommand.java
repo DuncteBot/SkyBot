@@ -53,7 +53,7 @@ public class UnbanCommand extends Command {
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
                     event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.").queue();
-                    AirUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event);
+                    AirUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
                     return;
                 }
             }
