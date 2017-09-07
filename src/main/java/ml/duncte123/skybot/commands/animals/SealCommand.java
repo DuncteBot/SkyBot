@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.commands.animals;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;

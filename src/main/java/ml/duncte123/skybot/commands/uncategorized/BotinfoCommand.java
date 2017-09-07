@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.JDAInfo;

@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;

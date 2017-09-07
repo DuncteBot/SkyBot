@@ -1,4 +1,6 @@
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot.utils.db;
+
+import ml.duncte123.skybot.utils.ResourceUtil;
 
 import java.sql.Connection;
 import java.sql.DriverManager;

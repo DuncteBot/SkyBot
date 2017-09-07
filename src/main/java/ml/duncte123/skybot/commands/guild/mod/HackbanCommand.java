@@ -1,17 +1,13 @@
-package ml.duncte123.skybot.commands.mod;
+package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-
-public class BanCommand extends Command {
+public class HackbanCommand extends Command {
 
     /**
      * This is a check to see if the command is save to execute
@@ -31,8 +27,8 @@ public class BanCommand extends Command {
             return false;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "ban <@user> [Resson]")).queue();
+        if (args.length < 1) {
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "hackban <userId>")).queue();
             return false;
         }
 
@@ -46,21 +42,15 @@ public class BanCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-
-        final User toBan = event.getMessage().getMentionedUsers().get(0);
-        if(toBan.equals(event.getAuthor()) &&
-                !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan)) ) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
-            return;
+        try {
+            event.getGuild().getController().ban(args[0], 0).queue( (v) -> {
+                event.getChannel().sendMessage(AirUtils.embedMessage("User has been banned!")).queue();
+            } );
         }
-
-
-        String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-
-        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                (smt) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, event)
-        );
-
+        catch (Exception e) {
+            e.printStackTrace();
+            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+        }
     }
 
     /**
@@ -69,6 +59,6 @@ public class BanCommand extends Command {
      */
     @Override
     public String help() {
-        return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**";
+        return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + "hackban <userId>";
     }
 }

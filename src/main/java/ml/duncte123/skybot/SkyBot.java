@@ -1,13 +1,14 @@
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
 import ml.duncte123.skybot.commands.essentials.EvalCommand;
 import ml.duncte123.skybot.commands.essentials.ScreamToDuncteCommand;
 import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
-import ml.duncte123.skybot.commands.mod.*;
+import ml.duncte123.skybot.commands.guild.GuildStatsCommand;
+import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.utils.*;
@@ -72,13 +73,15 @@ public class SkyBot {
             System.exit(0);
             return;
         }
-        if(!DataBaseUtil.checkDbConn()) {
+        if(!AirUtils.db.isConnected()) {
             AirUtils.log(CustomLog.Level.FATAL, "Can't connect to database");
             System.exit(1);
             return;
         }
         // Load the white and black list first
         AirUtils.getWhiteAndBlackList();
+        //Load the settings before loading the bot
+        AirUtils.loadSettings();
         // Register our custom logger and turn the default off
         SimpleLog.LEVEL = SimpleLog.Level.OFF;
         SimpleLog.addListener(new CloudListener());
@@ -188,7 +191,7 @@ public class SkyBot {
         commands.put("playrw", new PlayRawCommand());
 
         //mod commands
-        commands.put("ban", new OLD_BanCommand());
+        commands.put("ban", new BanCommand());
         commands.put("hackban", new HackbanCommand());
         commands.put("softban", new SoftbanCommand());
         commands.put("unban", new UnbanCommand());

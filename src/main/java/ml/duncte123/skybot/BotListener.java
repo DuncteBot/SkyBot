@@ -132,7 +132,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.blackList.contains(event.getGuild().getId())) return;
 
-        TextChannel publicChannel = AirUtils.getGuildPublicChan(event.getGuild());
+        TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
         String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
         publicChannel.sendMessage(msg).queue();
     }
@@ -149,7 +149,7 @@ public class BotListener extends ListenerAdapter {
 
         if (AirUtils.whiteList.contains(event.getGuild().getId())) return;
 
-        AirUtils.getGuildPublicChan(event.getGuild()).sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
+        AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " + event.getGuild().getOwner().getAsMention()
                 + ", I'm not made to be in this guild and will leave it in 20 seconds")
                 .queue(
                     (m) -> event.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)

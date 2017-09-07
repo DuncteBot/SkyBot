@@ -1,13 +1,15 @@
-package ml.duncte123.skybot.commands.mod;
+package ml.duncte123.skybot.commands.guild.owner;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
-public class HackbanCommand extends Command {
+public class SettingsCommand extends Command {
 
     /**
      * This is a check to see if the command is save to execute
@@ -17,18 +19,9 @@ public class HackbanCommand extends Command {
      */
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
 
-        if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
-            return false;
-        }
-
-        if (args.length < 1) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "hackban <userId>")).queue();
+        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
+            sendMsg(event, "You don't have permission to run this command");
             return false;
         }
 
@@ -42,15 +35,19 @@ public class HackbanCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-        try {
-            event.getGuild().getController().ban(args[0], 0).queue( (v) -> {
-                event.getChannel().sendMessage(AirUtils.embedMessage("User has been banned!")).queue();
-            } );
+
+        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+
+        if(args.length < 1) {
+            //true ✅
+            //false ❌
+            MessageEmbed message = AirUtils.embedMessage("Here are the settings from this guild.\n" +
+                            "Join messages: " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
+                            "Swearword filter: " + (settings.isEnableSwearFilter() ? "✅" : "❌")
+            );
+            return;
         }
-        catch (Exception e) {
-            e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
-        }
+
     }
 
     /**
@@ -59,6 +56,6 @@ public class HackbanCommand extends Command {
      */
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + "hackban <userId>";
+        return "Modify the settings on the bot";
     }
 }

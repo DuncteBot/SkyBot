@@ -2,6 +2,9 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.db.DataBaseUtil;
+import ml.duncte123.skybot.utils.db.DbManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -15,6 +18,7 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
 import java.util.concurrent.TimeUnit;
@@ -37,6 +41,16 @@ public class AirUtils {
      * This helps us to make the coinflip work
      */
     public static Random rand = new Random();
+
+    /**
+     * This is our database manager, it is a util for the connection
+     */
+    public static DbManager db = new DbManager();
+
+    /**
+     * This will store the settings for every guild that we are in
+     */
+    public static HashMap<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * The default way to display a nice embedded message
@@ -103,10 +117,10 @@ public class AirUtils {
         log(CustomLog.Level.INFO, "Loading black and whitelist.");
         try {
 
-            String dbName = DataBaseUtil.getDbName();
+            String dbName = db.getName();
 
-            Connection db = DataBaseUtil.getConnection();
-            Statement smt = db.createStatement();
+            Connection database = db.getConnection();
+            Statement smt = database.createStatement();
 
             ResultSet resWhiteList = smt.executeQuery("SELECT * FROM " + dbName + ".whiteList");
 
@@ -125,6 +139,45 @@ public class AirUtils {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * This will get the settings from our database and store them in the {@link ml.duncte123.skybot.utils.AirUtils#guildSettings settings}
+     */
+    public static void loadSettings() {
+        log(CustomLog.Level.INFO, "Loading settings.");
+        try {
+            int guilds = 0;
+
+            String dbName = db.getName();
+
+            Connection database = db.getConnection();
+            Statement smt = database.createStatement();
+
+            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
+
+            while (resSettings.next()) {
+                String guildId = resSettings.getString("guildId");
+                boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
+                boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
+
+                GuildSettings settings = new GuildSettings(guildId)
+                        .setEnableJoinMessage(enableJoinMsg)
+                        .setEnableSwearFilter(enableSwearFilter);
+
+                guildSettings.put(guildId, settings);
+                guilds++;
+            }
+
+            log(CustomLog.Level.INFO, "Loaded settings for "+guilds+" guilds.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void updateSettings(GuildSettings settings) throws Exception {
+
     }
 
     /**
@@ -294,10 +347,10 @@ public class AirUtils {
     public static void checkUnbans() {
         try {
 
-            String dbName = DataBaseUtil.getDbName();
+            String dbName = db.getName();
 
-            Connection db = DataBaseUtil.getConnection();
-            Statement smt = db.createStatement();
+            Connection database = db.getConnection();
+            Statement smt = database.createStatement();
 
             ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".bans");
 
@@ -474,7 +527,7 @@ public class AirUtils {
      * @param guild The guild that we want to get the main channel from
      * @return the Text channel that we can send our messages in.
      */
-    public static TextChannel getGuildPublicChan(Guild guild) {
+    public static TextChannel getPublicChannel(Guild guild) {
 
         TextChannel pubChann = guild.getTextChannelById(guild.getId());
 

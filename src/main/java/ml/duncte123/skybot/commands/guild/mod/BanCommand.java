@@ -1,6 +1,6 @@
-package ml.duncte123.skybot.commands.mod;
+package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.commands.Command;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.Permission;
@@ -15,7 +15,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 
-public class OLD_BanCommand extends Command {
+public class BanCommand extends Command {
 
     /**
      * This is a check to see if the command is save to execute
@@ -35,9 +35,8 @@ public class OLD_BanCommand extends Command {
             return false;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "ban <@user> <time (set to 0 for perm)> " +
-                    "[days? months? years?] [Resson]")).queue();
+        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "ban <@user> <time><m/d/w/M/Y> [Reason]")).queue();
             return false;
         }
 
@@ -58,44 +57,44 @@ public class OLD_BanCommand extends Command {
                 event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this action.")).queue();
                 return;
             }
-            if(args.length > 3) {
-                String reason = StringUtils.join(Arrays.copyOfRange(args, 3, args.length), " ");
-                String time = args[1] + " " + args[2];
+            if(args.length > 2) {
+                String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                String[] timeParts = args[1].split("(?<=\\D)(?=\\d)"); //Split the string into ints and letters
+
+                if(timeParts[0].isEmpty() || timeParts[1].isEmpty()) {
+                    String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                    event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+                            (voidMethod) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event)
+                    );
+                    return;
+                }
+
                 String unbanDate = "";
-                if (Integer.parseInt(args[1]) > 0) {
+                if (Integer.parseInt(timeParts[0]) > 0) {
                     //TODO make ban timed
 
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date dt = new Date(System.currentTimeMillis());
 
-                    switch (args[2]) {
-                        case "minute":
-                            DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                    switch (timeParts[1]) {
+                        case "m":
+                            DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
                             break;
-                        case "minutes":
-                            DateUtils.addMinutes(dt, Integer.parseInt(args[1]));
+                        case "d":
+                            DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
                             break;
-                        case "day":
-                            DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                        case "w":
+                            DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
                             break;
-                        case "days":
-                            DateUtils.addDays(dt, Integer.parseInt(args[1]));
+                        case "M":
+                            DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
                             break;
-                        case "week":
-                            DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
-                            break;
-                        case "weeks":
-                            DateUtils.addWeeks(dt, Integer.parseInt(args[1]));
-                            break;
-                        case "month":
-                            DateUtils.addMonths(dt, Integer.parseInt(args[1]));
-                            break;
-                        case "months":
-                            DateUtils.addMonths(dt, Integer.parseInt(args[1]));
+                        case "Y":
+                            DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
                             break;
 
                         default:
-                            event.getChannel().sendMessage("Please choose from day, minute, week or month").queue();
+                            event.getChannel().sendMessage("Please choose from m, d, w, M or Y").queue();
                             return;
                     }
                     unbanDate = df.format(dt);
@@ -103,19 +102,18 @@ public class OLD_BanCommand extends Command {
 
                 final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty() ? "" : unbanDate);
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (noting) -> {
-                            if (Integer.parseInt(args[1]) > 0) {
+                        (voidMethod) -> {
+                            if (Integer.parseInt(timeParts[1]) > 0) {
                                 AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, time, event);
+                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event);
                             } else {
-                                final String newReason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                                final String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                                 AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event);
                             }
                         }
                 );
-                AirUtils.getGuildPublicChan(event.getGuild()).sendMessage("User " + toBan.getName() + "#"
-                        + toBan.getDiscriminator() + " got bent.").queue();
+                AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue();
             }
@@ -132,6 +130,7 @@ public class OLD_BanCommand extends Command {
      */
     @Override
     public String help() {
-        return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**";
+        return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
+                "Usage: `" + Config.prefix + "ban <@user> <time><m/d/w/M/Y> [Reason]`";
     }
 }
