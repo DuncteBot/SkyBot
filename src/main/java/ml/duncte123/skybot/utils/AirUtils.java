@@ -179,6 +179,10 @@ public class AirUtils {
         }
     }
 
+    /**
+     * This will save the settings into the database when the guild owner/admin updates it
+     * @param settings the new settings
+     */
     public static void updateGuildSettings(GuildSettings settings) {
         String guildId = settings.getGuildId();
         boolean joinmsg = settings.isEnableJoinMessage();
@@ -204,7 +208,14 @@ public class AirUtils {
 
     }
 
+    /**
+     * This will register a new guild with their settings on bot join
+     * @param guildId the id of the guild that we are joining
+     */
     public static void registerNewGuild(String guildId) {
+
+        if(guildSettings.containsKey(guildId)) { return; }
+
         boolean ENABLE_JOIN_MSG = false;
         boolean ENABLE_SWEAR_FILTER = false;
         GuildSettings newGuildSettings = new GuildSettings(guildId)
@@ -418,6 +429,7 @@ public class AirUtils {
                             new FakeUser(res.getString("Username"),
                                     res.getString("userId"), res.getString("discriminator")), "unbanned",
                             SkyBot.jda.getGuildById(res.getString("guildId")));
+                    smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
 
@@ -441,6 +453,11 @@ public class AirUtils {
         }
     }
 
+    /**
+     * This will check if the number that we are trying to parse is an int
+     * @param isint the int to check
+     * @return true if it is an int
+     */
     public static boolean isInt(String isint) {
         try {
             Integer.parseInt(isint);

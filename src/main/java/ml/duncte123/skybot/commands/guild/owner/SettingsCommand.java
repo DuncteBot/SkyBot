@@ -25,10 +25,6 @@ public class SettingsCommand extends Command {
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
 
-        if(event.getAuthor().getId().equals(Config.ownerId)) {
-            return true;
-        }
-
         if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
             sendMsg(event, "You don't have permission to run this command");
             return false;
