@@ -136,9 +136,22 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event){
 
+        /*
+        {{USER_MENTION}} = mention user
+        {{USER_NAME}} = return username
+        {{GUILD_NAME}} = the name of the guild
+        {{GUILD_USER_COUNT}} = member count
+        {{GUILD_OWNER_MENTION}} = mention the guild owner
+        {{GUILD_OWNER_NAME}} = return the name form the owner
+         */
+
         if (AirUtils.guildSettings.get(event.getGuild().getId()).isEnableJoinMessage()) {
             TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
-            String msg = "Welcome " + event.getMember().getAsMention() + ", to the official " + event.getGuild().getName() + " guild.";
+            String msg = AirUtils.guildSettings.get(event.getGuild().getId()).getCustomJoinMessage()
+                    .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
+                    .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
+                    .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
+                    .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMembers().size() + "");
             publicChannel.sendMessage(msg).queue();
         }
     }

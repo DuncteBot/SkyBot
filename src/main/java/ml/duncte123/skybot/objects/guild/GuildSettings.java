@@ -17,6 +17,10 @@ public class GuildSettings {
      * if we should enable the swear filter
      */
     private boolean enableSwearFilter = false;
+    /**
+     * This will hold the custom join message
+     */
+    private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
 
     /**
      * This will init everything
@@ -29,6 +33,7 @@ public class GuildSettings {
     /**
      * We use this to update if the join message should display
      * @param enableJoinMessage whether we should display the join message
+     * @return The current {@link GuildSettings}
      */
     public GuildSettings setEnableJoinMessage(boolean enableJoinMessage){
         this.enableJoinMessage = enableJoinMessage;
@@ -38,9 +43,20 @@ public class GuildSettings {
     /**
      * We use this to update if we should block swearwords
      * @param enableSwearFilter whether we should block swearing
+     * @return The current {@link GuildSettings}
      */
     public GuildSettings setEnableSwearFilter(boolean enableSwearFilter) {
         this.enableSwearFilter = enableSwearFilter;
+        return this;
+    }
+
+    /**
+     * This will set the custom join for the corresponding guild
+     * @param customJoinMessage The new join message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomJoinMessage(String customJoinMessage) {
+        this.customJoinMessage = customJoinMessage;
         return this;
     }
 
@@ -66,5 +82,13 @@ public class GuildSettings {
      */
     public String getGuildId() {
         return guildId;
+    }
+
+    /**
+     * This will return the cutstom join message set for that guild
+     * @return The custom join message
+     */
+    public String getCustomJoinMessage() {
+        return customJoinMessage;
     }
 }

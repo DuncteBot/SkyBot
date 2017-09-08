@@ -51,28 +51,24 @@ public class SettingsCommand extends Command {
             //true ✅
             //false ❌
             MessageEmbed message = AirUtils.embedMessage("Here are the settings from this guild.\n" +
-                            "Show join messages: " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
-                            "Swearword filter: " + (settings.isEnableSwearFilter() ? "✅" : "❌")
+                            "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
+                            "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
+                            "**Join message:** " + settings.getCustomJoinMessage()
             );
             sendMsg(event, message);
-            return;
-        }
-
-        if(args.length > 2) {
-            sendMsg(event, "Incorrect usage: `" + Config.prefix + "settings [module] [status]`");
-            return;
-        }
-
-        if(args.length > 1) {
-            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter");
+        } else if(args.length == 1) {
+            sendMsg(event, "Incorrect usage: `" + Config.prefix + "settings [module] [status/options]`");
+        } else {
+            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage");
             String module = args[0];
-            boolean enableStatus;
-            try {
-                enableStatus = (Integer.parseInt(args[1]) >= 1);
-            }
-            catch (NumberFormatException e) {
-                sendMsg(event, "Incorrect usage, status must be either 0 (to disable) or 1 (to enable)");
-                return;
+            boolean enableStatus = false;
+            if(args.length == 2) {
+                try {
+                    enableStatus = (Integer.parseInt(args[1]) >= 1);
+                } catch (NumberFormatException e) {
+                    sendMsg(event, "Incorrect usage, status must be either 0 (to disable) or 1 (to enable)");
+                    return;
+                }
             }
             if(modules.contains(module)) {
                 switch (module) {
@@ -82,6 +78,11 @@ public class SettingsCommand extends Command {
                         break;
                     case "swearFilter":
                         AirUtils.updateGuildSettings(settings.setEnableSwearFilter(enableStatus));
+                        sendMsg(event, AirUtils.embedMessage("Settings have been updated."));
+                        break;
+                    case "setJoinMessage":
+                        String newJoinMsg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                        AirUtils.updateGuildSettings(settings.setCustomJoinMessage(newJoinMsg));
                         sendMsg(event, AirUtils.embedMessage("Settings have been updated."));
                         break;
 

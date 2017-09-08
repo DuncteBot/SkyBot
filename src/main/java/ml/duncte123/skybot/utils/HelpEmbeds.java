@@ -51,11 +51,12 @@ public class HelpEmbeds {
             .build();
 
     public static MessageEmbed modCommands = AirUtils.defaultEmbed()
-            .setDescription("**Mod Commands!!**")
+            .setDescription("**Mod/admin Commands!!**")
             .addField(Config.prefix + "ban", getHelp("ban"), INLINE)
             .addField(Config.prefix + "softban", getHelp("softban"), INLINE)
             .addField(Config.prefix + "unban", getHelp("unban"), INLINE)
             .addField(Config.prefix + "kick", getHelp("kick"), INLINE)
+            .addField(Config.prefix + "settings", getHelp("settings"), INLINE)
             .build();
 
     private static String getHelp(String cmd) {

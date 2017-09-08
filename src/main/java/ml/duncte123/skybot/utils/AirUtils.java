@@ -163,10 +163,12 @@ public class AirUtils {
                 String guildId = resSettings.getString("guildId");
                 boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
+                String joinmsg = resSettings.getString("customWelcomeMessage");
 
                 GuildSettings settings = new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
-                        .setEnableSwearFilter(enableSwearFilter);
+                        .setEnableSwearFilter(enableSwearFilter)
+                        .setCustomJoinMessage(joinmsg);
 
                 guildSettings.put(guildId, settings);
                 guilds++;
@@ -185,8 +187,9 @@ public class AirUtils {
      */
     public static void updateGuildSettings(GuildSettings settings) {
         String guildId = settings.getGuildId();
-        boolean joinmsg = settings.isEnableJoinMessage();
-        boolean swearfilter = settings.isEnableSwearFilter();
+        boolean enableJoinMessage = settings.isEnableJoinMessage();
+        boolean enableSwearFilter = settings.isEnableSwearFilter();
+        String customJoinMessage = settings.getCustomJoinMessage();
 
 
         String dbName = db.getName();
@@ -195,10 +198,12 @@ public class AirUtils {
         try{
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
                     "enableJoinMessage= ? , " +
-                    "enableSwearFilter= ? " +
+                    "enableSwearFilter= ? ," +
+                    "customWelcomeMessage= ? " +
                     "WHERE guildId='"+guildId+"'");
-            preparedStatement.setBoolean(1, joinmsg);
-            preparedStatement.setBoolean(2, swearfilter);
+            preparedStatement.setBoolean(1, enableJoinMessage);
+            preparedStatement.setBoolean(2, enableSwearFilter);
+            preparedStatement.setString(3, customJoinMessage);
             preparedStatement.executeUpdate();
 
         }
@@ -218,9 +223,11 @@ public class AirUtils {
 
         boolean ENABLE_JOIN_MSG = false;
         boolean ENABLE_SWEAR_FILTER = false;
+        String defaultMsg = "Welcome {{USER_MENTION}}, to the official {{GUILD_NAME}} guild.";
         GuildSettings newGuildSettings = new GuildSettings(guildId)
                 .setEnableJoinMessage(ENABLE_JOIN_MSG)
-                .setEnableSwearFilter(ENABLE_SWEAR_FILTER);
+                .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
+                .setCustomJoinMessage(defaultMsg);
         guildSettings.put(guildId, newGuildSettings);
 
 
@@ -231,7 +238,7 @@ public class AirUtils {
         try {
             Statement smt = database.createStatement();
 
-            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + guildId + "', default, default)");
+            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + guildId + "', default, default, '"+defaultMsg+"')");
         }
         catch (Exception e) {
             e.printStackTrace();
