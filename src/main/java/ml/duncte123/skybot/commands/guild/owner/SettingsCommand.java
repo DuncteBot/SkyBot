@@ -41,6 +41,10 @@ public class SettingsCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
 
+        if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
+            AirUtils.registerNewGuild(event.getGuild().getId());
+        }
+
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
 
         if(args.length < 1) {
