@@ -39,13 +39,15 @@ public class GuildStatsCommand extends Command {
         Guild g = event.getGuild();
         try {
 
+            double[] ratio = AirUtils.getBotRatio(g);
             EmbedBuilder eb = AirUtils.defaultEmbed()
                     .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
                     .addField("Total Members", g.getMembers().size() + "", true)
                     .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
                     .addField("Guild Name", g.getName(), true)
                     .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                    .addField("Guild Region", g.getRegion().getName(), true);
+                    .addField("Guild Region", g.getRegion().getName(), true)
+                    .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users "+g.getMembers().size()+")", true);
                     if(PermissionUtil.checkPermission(g.getSelfMember(), Permission.MANAGE_SERVER)) {
                         eb.addField("Guild Invite",
                             "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +

@@ -610,6 +610,37 @@ public class AirUtils {
     }
 
     /**
+     * This will calculate the bot to user ratio
+     * @param g the {@link net.dv8tion.jda.core.entities.Guild Guild} that we want to check
+     * @return the percentage of users and the percentage of bots in a nice compact array
+     */
+    public static double[] getBotRatio(Guild g) {
+
+        double totalCount = g.getMembers().size();
+        double botCount = 0;
+        double userCount = 0;
+
+        for(Member m : g.getMembers()) {
+            if(m.getUser().isBot()) {
+                botCount++;
+            } else {
+                userCount++;
+            }
+        }
+
+        //percent in users
+        double userCountP = (userCount/totalCount)*100;
+
+        //percent in bots
+        double botCountP = (botCount/totalCount)*100;
+
+        log(CustomLog.Level.INFO,
+                "In the guild " + g.getName() + "("+totalCount+" Members), " +userCountP+ "% are users, " +botCountP+ "% are bots");
+
+        return new double[] {Math.round(userCountP), Math.round(botCountP)};
+    }
+
+    /**
      * This will get the first channel of a guild that we can write in/should be able to write in
      * @param guild The guild that we want to get the main channel from
      * @return the Text channel that we can send our messages in.

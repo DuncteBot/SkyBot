@@ -163,6 +163,17 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
 
+        //if 60 of a guild is bots, we'll leave it
+        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+        if(botToUserRatio[1] > 60) {
+            AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
+                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+botToUserRatio[0]+"% are users btw). " +
+                    "I'm outta here").queue(
+                            message -> message.getGuild().leave().queue()
+            );
+            return;
+        }
+
         /*AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ". " +
                 (AirUtils.whiteList.contains(event.getGuild().getId()) ? "Guild is on whitelist." : "Guild is not on whitelist, leaving."));
 

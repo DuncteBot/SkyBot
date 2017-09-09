@@ -87,13 +87,11 @@ public class SkyBot {
         // log in and set up the api
         jda = new JDABuilder(AccountType.BOT)
                 .setBulkDeleteSplittingEnabled(false)
-                .setAudioEnabled(true)
                 .addEventListener(new BotListener())
                 .setToken(Config.token)
                 .setStatus(OnlineStatus.ONLINE)
                 .setGame(messages[messageIndex])
                 .buildBlocking();
-        jda.setAutoReconnect(true);
         au = new AudioUtils();
 
         //Register all the commands commands

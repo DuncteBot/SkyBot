@@ -48,8 +48,6 @@ public class BotinfoCommand extends Command {
                 .addField("Bot Id", u.getId(), true)
                 .addField("Game", m.getGame().getName(), true)
                 .addField("Version", Config.version, true)
-                .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Online Status", m.getOnlineStatus().name(), true)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
                 .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
