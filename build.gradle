@@ -16,7 +16,7 @@ repositories {
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.3.0_262'
+    compile 'net.dv8tion:JDA:3.3.0_263'
     compile 'com.sedmelluq:lavaplayer:1.2.43'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile 'org.apache.commons:commons-lang3:3.1'
