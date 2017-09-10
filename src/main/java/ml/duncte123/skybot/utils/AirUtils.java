@@ -164,11 +164,13 @@ public class AirUtils {
                 boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
                 String joinmsg = resSettings.getString("customWelcomeMessage");
+                String prefix = resSettings.getString("prefix");
 
                 GuildSettings settings = new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
                         .setEnableSwearFilter(enableSwearFilter)
-                        .setCustomJoinMessage(joinmsg);
+                        .setCustomJoinMessage(joinmsg)
+                        .setCustomPrefix(prefix);
 
                 guildSettings.put(guildId, settings);
                 guilds++;
@@ -186,10 +188,18 @@ public class AirUtils {
      * @param settings the new settings
      */
     public static void updateGuildSettings(GuildSettings settings) {
+
+
+        if(!guildSettings.containsKey(settings.getGuildId())) {
+            registerNewGuild(settings.getGuildId());
+            return;
+        }
+
         String guildId = settings.getGuildId();
         boolean enableJoinMessage = settings.isEnableJoinMessage();
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
+        String newPrefix = settings.getCustomPrefix();
 
 
         String dbName = db.getName();
@@ -199,11 +209,13 @@ public class AirUtils {
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
                     "enableJoinMessage= ? , " +
                     "enableSwearFilter= ? ," +
-                    "customWelcomeMessage= ? " +
+                    "customWelcomeMessage= ? ," +
+                    "prefix= ? " +
                     "WHERE guildId='"+guildId+"'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);
+            preparedStatement.setString(4, newPrefix);
             preparedStatement.executeUpdate();
 
         }

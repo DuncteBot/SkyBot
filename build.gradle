@@ -6,20 +6,20 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.44.0'
+version '3.45.0'
 
 sourceCompatibility = 1.8
 
 repositories {
+    maven { url 'https://jitpack.io' }
     jcenter()
-    //maven { url 'https://jitpack.io' }
 }
 
 dependencies {
-    compile 'net.dv8tion:JDA:3.3.0_263'
+    compile 'net.dv8tion:JDA:3.3.0_264'
     compile 'com.sedmelluq:lavaplayer:1.2.43'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
-    compile 'org.apache.commons:commons-lang3:3.1'
+    compile 'org.apache.commons:commons-lang3:3.6'
     // jsoup HTML parser library @ https://jsoup.org/
     compile 'org.jsoup:jsoup:1.10.3'
     // https://mvnrepository.com/artifact/mysql/mysql-connector-java

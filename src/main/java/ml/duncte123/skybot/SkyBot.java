@@ -8,7 +8,7 @@ import ml.duncte123.skybot.commands.essentials.EvalCommand;
 import ml.duncte123.skybot.commands.essentials.ScreamToDuncteCommand;
 import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
-import ml.duncte123.skybot.commands.guild.GuildStatsCommand;
+import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
@@ -141,7 +141,7 @@ public class SkyBot {
         commands.put("wam", new WamCommand());
         commands.put("cookie", new CookieCommand());
         commands.put("potato", new PotatoCommand());
-        commands.put("guildinfo", new GuildStatsCommand());
+        commands.put("guildinfo", new GuildInfoCommand());
         commands.put("userinfo", new UserinfoCommand());
         commands.put("ttb", new TextToBrickCommand());
         commands.put("botinfo", new BotinfoCommand());

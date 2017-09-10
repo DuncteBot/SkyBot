@@ -1,6 +1,7 @@
 package ml.duncte123.skybot.commands.guild;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -15,7 +16,7 @@ import java.time.format.DateTimeFormatter;
  * Created by Duncan on 2-7-2017.
  */
 
-public class GuildStatsCommand extends Command {
+public class GuildInfoCommand extends Command {
 
     /**
      * This is a check to see if the command is save to execute
@@ -37,6 +38,7 @@ public class GuildStatsCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event){
         Guild g = event.getGuild();
+        GuildSettings settings = AirUtils.guildSettings.get(g.getId());
         try {
 
             double[] ratio = AirUtils.getBotRatio(g);
@@ -45,6 +47,7 @@ public class GuildStatsCommand extends Command {
                     .addField("Total Members", g.getMembers().size() + "", true)
                     .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
                     .addField("Guild Name", g.getName(), true)
+                    .addField("Guild prefix", settings.getCustomPrefix(), true)
                     .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                     .addField("Guild Region", g.getRegion().getName(), true)
                     .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users "+g.getMembers().size()+")", true);

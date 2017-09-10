@@ -21,6 +21,10 @@ public class GuildSettings {
      * This will hold the custom join message
      */
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
+    /**
+     * This will hold the custom prefix if the guild has set one
+     */
+    private String customPrefix = "/";
 
     /**
      * This will init everything
@@ -61,6 +65,16 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom prefix for the corresponding guild
+     * @param customPrefix The new prefix
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomPrefix(String customPrefix) {
+        this.customPrefix = customPrefix;
+        return this;
+    }
+
+    /**
      * this will check if the join message is enabled
      * @return true if the join message is enabled
      */
@@ -90,5 +104,13 @@ public class GuildSettings {
      */
     public String getCustomJoinMessage() {
         return customJoinMessage;
+    }
+
+    /**
+     * Ths will return the prefix that the guild is using
+     * @return The prefix that the guild is using
+     */
+    public String getCustomPrefix() {
+        return customPrefix;
     }
 }

@@ -1,5 +1,6 @@
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -91,9 +92,18 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
+        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+        if(event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())) {
+            // run the a command
+            lastGuildChannel.put(event.getGuild(), event.getChannel());
+            SkyBot.handleCommand(parser.parse(event.getMessage().getRawContent()
+                    .replaceFirst(settings.getCustomPrefix(), Config.prefix), event));
+            return;
+        }
+
 
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            if(event.getMessage().getRawContent().split(" ").length > 1){
+            if(event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) && event.getMessage().getRawContent().split(" ").length > 1){
                 lastGuildChannel.put(event.getGuild(), event.getChannel());
                 SkyBot.handleCommand(parser.parse(event.getMessage().getRawContent().replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
                 return;
