@@ -53,6 +53,10 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
 
+        if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
+            AirUtils.registerNewGuild(event.getGuild().getId());
+        }
+
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
             AirUtils.log(CustomLog.Level.INFO,"Shutting down!!!");
             timer.cancel();
