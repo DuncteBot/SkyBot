@@ -7,6 +7,7 @@ import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import ml.duncte123.skybot.utils.db.DbManager;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -258,88 +259,6 @@ public class AirUtils {
     }
 
     /**
-     * This will loop through all of the guild and checks if they are on the whitelist, if not leave the guilds and leave a message
-     * @param jda The current instance of the api
-     */
-    public static void checkGuildsOnWhitelist(JDA jda) {
-        for(Guild guild : jda.getGuilds()) {
-            if(!whiteList.contains(guild.getId())) {
-                log(CustomLog.Level.INFO, "Leaving " + (guild.getName() == null ? "No Name" : guild.getName() ) + ". Guild not on whitelist.");
-                guild.getTextChannels().get(0).sendMessage("I'm sorry but this guild is not on the current whitelist, " +
-                        "if you want this guild to be on the whitelist please contact _duncte123#1245_!").queue(
-                                channel -> channel.getGuild().leave().queueAfter(20, TimeUnit.SECONDS)
-                );
-            }
-        }
-    }
-
-    /**
-     * This will update the whitelist and the blacklist depending on what <em>whatList</em> is
-     * @param guildId The id from the guild to add
-     * @param guildName The name from the guild to add
-     * @param whatlist What list to add it to
-     * @param a1234567890 This is a special auth token
-     * @return The response from the api or NULL if the response is "ok"
-     */
-    public static String insertIntoWhiteOrBlacklist(String guildId, String guildName, String whatlist, String a1234567890) {
-        try {
-            OkHttpClient client = new OkHttpClient();
-
-            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "guildID=" + guildId
-                    + "&guildName=" + guildName
-                    + "&type=" + whatlist
-                    + "&a1234567890=" + a1234567890
-                    + "&tk=" + SkyBot.jda.getToken().split(" ")[1]
-            );
-            Request request = new Request.Builder()
-                    .url(Config.apiBase + "/updateWhiteAndBlacklist.php")
-                    .post(body)
-                    .addHeader("content-type", "application/x-www-form-urlencoded")
-                    .addHeader("cache-control", "no-cache")
-                    .build();
-            Response response = client.newCall(request).execute();
-            String returnData = response.body().source().readUtf8();
-
-            response.body().close();
-
-            if(!returnData.equals("ok") ) {
-                return returnData;
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return e.getMessage();
-        }
-
-        return "";
-    }
-
-    /**
-     * THis is a shortcut to insert a guild into the whitelist
-     * @param guildId The id from the guild to add
-     * @param guildName The name from the guild to add
-     * @param a1234567890 This is a special auth token
-     * @return The response from the api or NULL if the response is "ok"
-     */
-    public static String insetIntoWhitelist(String guildId, String guildName, String a1234567890) {
-        whiteList.add(guildId);
-        return insertIntoWhiteOrBlacklist(guildId, guildName, "whiteList", a1234567890);
-    }
-
-    /**
-     * THis is a shortcut to insert a guild into the blacklist
-     * @param guildId The id from the guild to add
-     * @param guildName The name from the guild to add
-     * @param a1234567890 This is a special auth token
-     * @return The response from the api or NULL if the response is "ok"
-     */
-    public static String insetIntoBlacklist(String guildId, String guildName, String a1234567890) {
-        blackList.add(guildId);
-        return insertIntoWhiteOrBlacklist(guildId, guildName, "blackList", a1234567890);
-    }
-
-    /**
      * This will send a message to a channel called modlog
      * @param mod The mod that performed the punishment
      * @param punishedUser The user that got punished
@@ -421,8 +340,7 @@ public class AirUtils {
     /**
      * This will check if there are users that can be unbanned
      */
-    public static void checkUnbans() {
-
+    public static void checkUnbans(ShardManager jda) {
 
         String dbName = db.getName();
         Connection database = db.getConnection();
@@ -439,7 +357,7 @@ public class AirUtils {
 
                 if(currDate.after(unbanDate)) {
                     log(CustomLog.Level.INFO, "Unbanning " + res.getString("Username"));
-                    SkyBot.jda.getGuildById(
+                    jda.getGuildById(
                             res.getString("guildId")
                     ).getController().unban(
                             res.getString("userId")
@@ -447,7 +365,7 @@ public class AirUtils {
                     modLog(new ConsoleUser(),
                             new FakeUser(res.getString("Username"),
                                     res.getString("userId"), res.getString("discriminator")), "unbanned",
-                            SkyBot.jda.getGuildById(res.getString("guildId")));
+                            jda.getGuildById(res.getString("guildId")));
                     smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }

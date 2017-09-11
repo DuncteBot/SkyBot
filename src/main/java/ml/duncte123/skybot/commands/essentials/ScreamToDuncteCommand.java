@@ -31,7 +31,7 @@ public class ScreamToDuncteCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-        User duncte = event.getJDA().getUserById(Config.ownerId);
+        User duncte = event.getJDA().asBot().getShardManager().getUserById(Config.ownerId);
         String from = event.getAuthor().getName()+"#"+event.getAuthor().getDiscriminator()+"("+event.getAuthor().getId()+")";
         String message = StringUtils.join(args, " ");
 

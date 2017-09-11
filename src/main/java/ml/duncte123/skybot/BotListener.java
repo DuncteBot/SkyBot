@@ -2,6 +2,7 @@ package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -35,12 +36,6 @@ public class BotListener extends ListenerAdapter {
      * When a command gets ran, it'll be stored in here
      */
     private static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<>();
-
-
-    /**
-     * This timer is responsible for our status updates
-     */
-    private Timer timer = new Timer();
     /**
      * This timer is for checking unbans
      */
@@ -59,9 +54,13 @@ public class BotListener extends ListenerAdapter {
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
             AirUtils.log(CustomLog.Level.INFO,"Shutting down!!!");
-            timer.cancel();
             unbanTimer.cancel();
-            event.getJDA().shutdown();
+            //event.getJDA().shutdown();
+            ShardManager manager = event.getJDA().asBot().getShardManager();
+            for(int i = 0; i < manager.getShardsTotal(); i++) {
+                manager.getShard(i).shutdown();
+                AirUtils.log(CustomLog.Level.INFO,"Shard " + i + " has been shut down");
+            }
             try {
                 AirUtils.db.getConnection().close();
             }
@@ -125,18 +124,13 @@ public class BotListener extends ListenerAdapter {
     public void onReady(ReadyEvent event){
         AirUtils.log(CustomLog.Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
         //event.getJDA().getGuilds().get(0).getDefaultChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
-        TimerTask myTask = new TimerTask() {
-            @Override
-            public void run() {
-                SkyBot.updateStatus();
-            }
-        };
-        timer.schedule(myTask, DateUtils.MILLIS_PER_MINUTE, DateUtils.MILLIS_PER_MINUTE);
+
+        ShardManager manager = event.getJDA().asBot().getShardManager();
 
         TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
-                AirUtils.checkUnbans();
+                AirUtils.checkUnbans(manager);
             }
         };
         unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);

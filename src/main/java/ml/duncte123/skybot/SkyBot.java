@@ -3,24 +3,25 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.commands.animals.*;
-import ml.duncte123.skybot.commands.essentials.BlacklistCommand;
 import ml.duncte123.skybot.commands.essentials.EvalCommand;
 import ml.duncte123.skybot.commands.essentials.ScreamToDuncteCommand;
-import ml.duncte123.skybot.commands.essentials.WhitelistCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.bot.sharding.ShardManagerBuilder;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.JDABuilder;
-import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.requests.SessionReconnectQueue;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
 import java.util.HashMap;
+import java.util.List;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -41,23 +42,6 @@ public class SkyBot {
      * This stores all our commands
      */
     public static HashMap<String, Command> commands = new HashMap<>();
-
-    /**
-     * This stores the values for the {@link ml.duncte123.skybot.BotListener#timer StatusLoop}
-     */
-    private static Game[] messages = {
-            Game.of("#HYPESQUAD", "https://twitch.tv/duncte123"),
-            Game.of("use " + Config.prefix + "help"),
-            Game.of( "V"+Config.version),
-            Game.of("duncte123.ml", "https://twitch.tv/duncte123"),
-            Game.of("Subscribe???"),
-            Game.of("#HYPESQUAD")
-    };
-
-    /**
-     * This keeps track of where we are with the loop
-     */
-    private static int messageIndex = 0;
 
 
     /**
@@ -85,28 +69,33 @@ public class SkyBot {
         SimpleLog.LEVEL = SimpleLog.Level.OFF;
         SimpleLog.addListener(new CloudListener());
         // log in and set up the api
-        jda = new JDABuilder(AccountType.BOT)
+        /*JDA jda = new JDABuilder(AccountType.BOT)
                 .setBulkDeleteSplittingEnabled(false)
                 .addEventListener(new BotListener())
                 .setToken(Config.token)
-                .setStatus(OnlineStatus.ONLINE)
-                .setGame(messages[messageIndex])
-                .buildBlocking();
+                .setGame(Game.of("Use " + Config.prefix + "help"))
+                .buildBlocking();*/
+
+        //But this time we are going to shard it
+        int TOTAL_SHARDS = 5;
+
+        ShardManager shardBuilder = new ShardManagerBuilder().setToken(Config.token).setReconnectQueue(new SessionReconnectQueue())
+                .addEventListener(new BotListener()).setShardTotal(TOTAL_SHARDS)
+                .setGame(Game.of("Sharding Test"))
+                .buildAsync();
+
+        /*for (int i = 0; i < TOTAL_SHARDS; i++) {
+            shardBuilder
+                    .setGame(Game.of("Shard " + i))
+                    .setShardTotal(TOTAL_SHARDS)
+                    .buildAsync();
+            Thread.sleep(5000); //sleep 5 seconds between each login
+        }*/
+
         au = new AudioUtils();
 
         //Register all the commands commands
         setupCommands();
-    }
-
-    /**
-     * This is our status loop function
-     */
-    public static void updateStatus(){
-        messageIndex++;
-        if(messageIndex == messages.length){
-            messageIndex = 0;
-        }
-        jda.getPresence().setGame(messages[messageIndex]);
     }
 
     /**
@@ -159,8 +148,6 @@ public class SkyBot {
         commands.put("zeehond", seal);
 
         //essentials commands
-        commands.put("whitelist", new WhitelistCommand());
-        commands.put("blacklist", new BlacklistCommand());
         commands.put("eval", new EvalCommand());
         ScreamToDuncteCommand scream = new ScreamToDuncteCommand();
         commands.put("screamatduncte", scream);
