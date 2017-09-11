@@ -79,40 +79,18 @@ public class SkyBot {
         //But this time we are going to shard it
         int TOTAL_SHARDS = 5;
 
-        ShardManager shardBuilder = new ShardManagerBuilder().setToken(Config.token).setReconnectQueue(new SessionReconnectQueue())
-                .addEventListener(new BotListener()).setShardTotal(TOTAL_SHARDS)
-                .setGame(Game.of("Sharding Test"))
+        ShardManager shardBuilder = new ShardManagerBuilder()
+                .setToken(Config.token)
+                .setReconnectQueue(new SessionReconnectQueue())
+                .addEventListener(new BotListener())
+                .setShardTotal(TOTAL_SHARDS)
+                .setGame(Game.of("Use " + Config.prefix + "help"))
                 .buildAsync();
-
-        /*for (int i = 0; i < TOTAL_SHARDS; i++) {
-            shardBuilder
-                    .setGame(Game.of("Shard " + i))
-                    .setShardTotal(TOTAL_SHARDS)
-                    .buildAsync();
-            Thread.sleep(5000); //sleep 5 seconds between each login
-        }*/
 
         au = new AudioUtils();
 
         //Register all the commands commands
         setupCommands();
-    }
-
-    /**
-     * This will handle and pars all the commands
-     * @param cmd The command that is ran
-     */
-    public static void handleCommand(CommandParser.CommandContainer cmd){
-        if(commands.containsKey(cmd.invoke)){
-            boolean safe = commands.get(cmd.invoke).called(cmd.args, cmd.event);
-
-            if(!safe){
-                commands.get(cmd.invoke).executed(safe, cmd.event);
-                return;
-            }
-            commands.get(cmd.invoke).action(cmd.args, cmd.event);
-            commands.get(cmd.invoke).executed(safe, cmd.event);
-        }
     }
 
     /**

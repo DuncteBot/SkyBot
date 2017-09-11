@@ -9,6 +9,11 @@ import org.apache.commons.lang3.StringUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
+
 public class KpopCommand extends Command {
 
     /**
@@ -29,20 +34,43 @@ public class KpopCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
+        String id = "";
+        String name = "";
+        String group = "";
+        String imgUrl = "";
         try {
-            String query = "";
+            String dbName = AirUtils.db.getName();
+            Connection database = AirUtils.db.getConnection();
+            database.createStatement().execute("SET CHARACTER SET utf8");
 
             if(args.length > 0) {
-                query = "?search=" + StringUtils.join(args, "%20");
+
+                PreparedStatement statement = database.prepareStatement("SELECT * FROM " + dbName + ".kpop WHERE name LIKE ? OR id= ? LIMIT 1");
+                statement.setString(1, "%"+StringUtils.join(args, " ")+"%");
+                statement.setString(2, StringUtils.join(args, " "));
+
+                ResultSet res = statement.executeQuery();
+
+                while (res.next()) {
+                    id = res.getString("id");
+                    name = res.getString("name");
+                    group = res.getString("band");
+                    imgUrl = res.getString("img");
+                }
+
+            } else {
+
+                Statement statement = database.createStatement();
+
+                ResultSet res = statement.executeQuery("SELECT * FROM " + dbName + ".kpop ORDER BY RAND() LIMIT 1");
+
+                while (res.next()) {
+                    id = res.getString("id");
+                    name = res.getString("name");
+                    group = res.getString("band");
+                    imgUrl = res.getString("img");
+                }
             }
-
-            String url = Config.apiBase + "/kpop.php" + query;
-            Document raw = Jsoup.connect(url).get();
-
-            String id = raw.body().select("id").text();
-            String name = raw.body().select("name").text();
-            String group = raw.body().select("band").text();
-            String imgUrl = raw.body().select("picture").text();
 
             EmbedBuilder eb = AirUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group " + group)

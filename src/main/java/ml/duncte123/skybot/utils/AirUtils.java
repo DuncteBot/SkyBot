@@ -585,4 +585,21 @@ public class AirUtils {
 
         return pubChann;
     }
+
+    /**
+     * This will handle and pars all the commands
+     * @param cmd The command that is ran
+     */
+    public static void handleCommand(CommandParser.CommandContainer cmd){
+        if(SkyBot.commands.containsKey(cmd.invoke)){
+            boolean safe = SkyBot.commands.get(cmd.invoke).called(cmd.args, cmd.event);
+
+            if(!safe){
+                SkyBot.commands.get(cmd.invoke).executed(safe, cmd.event);
+                return;
+            }
+            SkyBot.commands.get(cmd.invoke).action(cmd.args, cmd.event);
+            SkyBot.commands.get(cmd.invoke).executed(safe, cmd.event);
+        }
+    }
 }
