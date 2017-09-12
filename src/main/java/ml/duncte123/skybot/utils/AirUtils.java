@@ -5,14 +5,11 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import ml.duncte123.skybot.utils.db.DbManager;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.*;
 
 import java.net.URL;
@@ -25,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Random;
-import java.util.concurrent.TimeUnit;
 
 public class AirUtils {
 
@@ -111,37 +107,6 @@ public class AirUtils {
 
             default:
                 return "<:offline:313956277237710868>";
-        }
-    }
-
-    /**
-     * This will fetch the white and black list and put the right id's in the {@link AirUtils#whiteList whitelist} or the {@link AirUtils#blackList blacklist}.
-     */
-    public static void getWhiteAndBlackList(){
-        log(CustomLog.Level.INFO, "Loading black and whitelist.");
-
-        String dbName = db.getName();
-        Connection database = db.getConnection();
-
-        try {
-            Statement smt = database.createStatement();
-
-            ResultSet resWhiteList = smt.executeQuery("SELECT * FROM " + dbName + ".whiteList");
-
-            while (resWhiteList.next()) {
-                whiteList.add(resWhiteList.getString("guildId"));
-            }
-
-            ResultSet resBlackList = smt.executeQuery("SELECT * FROM " + dbName + ".blackList");
-
-            while (resBlackList.next()) {
-                blackList.add(resBlackList.getString("guildId"));
-            }
-
-            log(CustomLog.Level.INFO, "Loaded black and whitelist.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
         }
     }
 
