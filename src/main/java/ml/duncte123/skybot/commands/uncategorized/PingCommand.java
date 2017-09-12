@@ -40,4 +40,14 @@ public class PingCommand extends Command {
     public String help() {
         return help;
     }
+
+    @Override
+    public String getName() {
+        return "ping";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"pong"};
+    }
 }

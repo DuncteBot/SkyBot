@@ -1,8 +1,7 @@
 package ml.duncte123.skybot.commands.music;
 
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -51,7 +50,7 @@ public class JoinCommand extends Command {
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
         VoiceChannel vc = null;
-        AudioUtils au = SkyBot.au;
+        AudioUtils au = AirUtils.au;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
@@ -95,5 +94,10 @@ public class JoinCommand extends Command {
     public String help() {
         // TODO Auto-generated method stub
         return help;
+    }
+
+    @Override
+    public String getName() {
+        return "join";
     }
 }

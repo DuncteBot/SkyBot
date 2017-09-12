@@ -4,7 +4,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -98,6 +97,16 @@ public class SettingsCommand extends Command {
     @Override
     public String help() {
         return "Modify the settings on the bot";
+    }
+
+    @Override
+    public String getName() {
+        return "settings";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"options"};
     }
 
     private boolean checkStatus(String toCHeck) {

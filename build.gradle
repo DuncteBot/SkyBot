@@ -6,12 +6,15 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.45.1'
+version '3.46.0'
 
 sourceCompatibility = 1.8
 
 repositories {
-    maven { url 'https://jitpack.io' }
+    maven {
+        name 'jitpack'
+        url 'https://jitpack.io'
+    }
     jcenter()
 }
 
@@ -20,6 +23,7 @@ dependencies {
     //Beta build with ShardManager
     compile 'com.github.DV8FromTheWorld:JDA:ee833a6'
     compile 'com.sedmelluq:lavaplayer:1.2.43'
+    compile 'com.sedmelluq:jda-nas:1.0.5'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
     compile 'org.apache.commons:commons-lang3:3.6'
     // jsoup HTML parser library @ https://jsoup.org/
@@ -35,6 +39,7 @@ dependencies {
 
 javadoc {
     options.encoding = 'UTF-8'
+    exclude('ml/duncte123/skybot/commands')
 }
 
 libsDirName = '../'

@@ -82,4 +82,14 @@ public class GuildInfoCommand extends Command {
         // TODO Auto-generated method stub
         return "Show some stats";
     }
+
+    @Override
+    public String getName() {
+        return "guildinfo";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"serverinfo"};
+    }
 }

@@ -53,4 +53,9 @@ public class DogCommand extends Command {
         // TODO Auto-generated method stub
         return "here is a dog.";
     }
+
+    @Override
+    public String getName() {
+        return "dog";
+    }
 }

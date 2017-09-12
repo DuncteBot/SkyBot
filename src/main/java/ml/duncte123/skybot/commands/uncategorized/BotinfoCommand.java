@@ -12,8 +12,6 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 
-import java.time.format.DateTimeFormatter;
-
 /**
  * Created by Duncan on 11-7-2017.
  */
@@ -44,13 +42,11 @@ public class BotinfoCommand extends Command {
         MessageEmbed eb = AirUtils.defaultEmbed()
                 .setDescription("Bot information.")
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
-                .addField("Bot Id", u.getId(), true)
-                .addField("Game", m.getGame().getName(), true)
+                .addField("Created by", "duncte123#1245", true)
                 .addField("Version", Config.version, true)
-                .addField("Online Status", m.getOnlineStatus().name(), true)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
                 .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
+                .addField("Donate", "If you want to help me out and support the bot please consider to [https://paypal.me/duncte123](donate) any amount.", false)
                 .build();
         if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
             event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
@@ -66,5 +62,15 @@ public class BotinfoCommand extends Command {
     @Override
     public String help() {
         return "Get's some info about the bot";
+    }
+
+    @Override
+    public String getName() {
+        return "botinfo";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"about"};
     }
 }

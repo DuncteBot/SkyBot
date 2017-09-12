@@ -39,4 +39,9 @@ public class TriggerCommand extends Command {
         // TODO Auto-generated method stub
         return help;
     }
+
+    @Override
+    public String getName() {
+        return "trigger";
+    }
 }

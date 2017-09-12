@@ -32,7 +32,7 @@ public class UnbanCommand extends Command {
         }
 
         if (args[0].isEmpty()) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "unban <username>")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <username>")).queue();
             return false;
         }
 
@@ -74,4 +74,8 @@ public class UnbanCommand extends Command {
         return "Unbans a user";
     }
 
+    @Override
+    public String getName() {
+        return "unban";
+    }
 }

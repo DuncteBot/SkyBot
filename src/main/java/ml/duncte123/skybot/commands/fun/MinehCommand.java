@@ -47,4 +47,9 @@ public class MinehCommand extends Command {
         return help;
     }
 
+    @Override
+    public String getName() {
+        return "mineh";
+    }
+
 }

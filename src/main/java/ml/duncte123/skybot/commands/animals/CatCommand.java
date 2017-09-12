@@ -55,4 +55,9 @@ public class CatCommand extends Command {
         // TODO Auto-generated method stub
         return help;
     }
+
+    @Override
+    public String getName() {
+        return "cat";
+    }
 }

@@ -51,4 +51,9 @@ public class KittyCommand extends Command {
     public String help() {
         return "A alternative cat command with more kitties";
     }
+
+    @Override
+    public String getName() {
+        return "kitty";
+    }
 }

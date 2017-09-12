@@ -1,10 +1,9 @@
 package ml.duncte123.skybot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.Config;
@@ -26,12 +25,12 @@ public class PlayRawCommand extends Command {
     @Override
     public boolean called(String[] args, GuildMessageReceivedEvent event) {
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm not in a voice channel, use `"+ Config.prefix+"join` to make me join a channel")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a voice channel, use `"+ Config.prefix+"join` to make me join a channel")).queue();
             return false;
         }
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(SkyBot.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
             return false;
         }
 
@@ -45,7 +44,7 @@ public class PlayRawCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = SkyBot.au;
+        AudioUtils au = AirUtils.au;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
@@ -79,6 +78,11 @@ public class PlayRawCommand extends Command {
     public String help() {
         // TODO Auto-generated method stub
         return help;
+    }
+
+    @Override
+    public String getName() {
+        return "playrw";
     }
 
 }

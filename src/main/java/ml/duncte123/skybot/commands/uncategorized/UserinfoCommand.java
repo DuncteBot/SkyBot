@@ -100,4 +100,9 @@ public class UserinfoCommand extends Command {
     public String help() {
         return "Get the userinfo from yourself or from another user.";
     }
+
+    @Override
+    public String getName() {
+        return "userinfo";
+    }
 }

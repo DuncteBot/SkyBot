@@ -1,9 +1,10 @@
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.CommandSetup;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.db.DbManager;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -18,21 +19,17 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Random;
+
+import static ml.duncte123.skybot.utils.Config.prefix;
 
 public class AirUtils {
 
     /**
-     * This contains the guilds that the bot is allowed to join
+     * This will hold the command setup and the registered commands
      */
-    public static List<String> whiteList = new ArrayList<>();
-    /**
-     * This contains the guilds that we don't want the swearfilter/welcome messages to happen
-     */
-    public static List<String> blackList = new ArrayList<>();
+    public static CommandSetup commandSetup = new CommandSetup();
     /**
      * This is our custom logging
      */
@@ -51,6 +48,10 @@ public class AirUtils {
      * This will store the settings for every guild that we are in
      */
     public static HashMap<String, GuildSettings> guildSettings = new HashMap<>();
+    /**
+     * This is our audio handler
+     */
+    public static AudioUtils au = new AudioUtils();
 
     /**
      * The default way to display a nice embedded message
@@ -304,6 +305,7 @@ public class AirUtils {
 
     /**
      * This will check if there are users that can be unbanned
+     * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
 
@@ -556,15 +558,23 @@ public class AirUtils {
      * @param cmd The command that is ran
      */
     public static void handleCommand(CommandParser.CommandContainer cmd){
-        if(SkyBot.commands.containsKey(cmd.invoke)){
-            boolean safe = SkyBot.commands.get(cmd.invoke).called(cmd.args, cmd.event);
 
-            if(!safe){
-                SkyBot.commands.get(cmd.invoke).executed(safe, cmd.event);
+        final String message = cmd.event.getMessage().getRawContent();
+
+        for (Command c : commandSetup.getCommands()) {
+            if (message.toLowerCase().startsWith(prefix.toLowerCase() + c.getName().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + c.getName())) {
+                commandSetup.runCommand(cmd, c);
                 return;
+            } else {
+                for (final String alias : c.getAliases()) {
+                    if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
+                        commandSetup.runCommand(cmd, c);
+                        return;
+                    }
+                }
             }
-            SkyBot.commands.get(cmd.invoke).action(cmd.args, cmd.event);
-            SkyBot.commands.get(cmd.invoke).executed(safe, cmd.event);
         }
     }
+
+
 }

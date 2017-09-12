@@ -36,7 +36,7 @@ public class BanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "ban <@user> <time><m/d/w/M/Y> [Reason]")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]")).queue();
             return false;
         }
 
@@ -140,6 +140,11 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                "Usage: `" + Config.prefix + "ban <@user> <time><m/d/w/M/Y> [Reason]`";
+                "Usage: `" + Config.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]`";
+    }
+
+    @Override
+    public String getName() {
+        return "ban";
     }
 }

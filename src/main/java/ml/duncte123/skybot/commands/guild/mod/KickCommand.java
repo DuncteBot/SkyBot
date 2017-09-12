@@ -33,7 +33,7 @@ public class KickCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "kick <@user> [Resson]")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <@user> [Resson]")).queue();
             return false;
         }
 
@@ -77,5 +77,10 @@ public class KickCommand extends Command {
     @Override
     public String help() {
         return "Kicks a user.";
+    }
+
+    @Override
+    public String getName() {
+        return "kick";
     }
 }

@@ -32,7 +32,7 @@ public class AnnounceCommand extends Command {
         }
 
         if(event.getMessage().getMentionedChannels().size() < 1) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Correct usage is `" + Config.prefix + "announce [#Channel] [Message]`")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Correct usage is `" + Config.prefix + getName() + " [#Channel] [Message]`")).queue();
             return false;
         }
 
@@ -67,5 +67,10 @@ public class AnnounceCommand extends Command {
     @Override
     public String help() {
         return "Announces a message.";
+    }
+
+    @Override
+    public String getName() {
+        return "announce";
     }
 }

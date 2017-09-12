@@ -58,4 +58,14 @@ public class CoinCommand extends Command {
         // TODO Auto-generated method stub
         return help;
     }
+
+    @Override
+    public String getName() {
+        return "coin";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"flip"};
+    }
 }

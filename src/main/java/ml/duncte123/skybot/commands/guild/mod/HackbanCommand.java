@@ -28,7 +28,7 @@ public class HackbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "hackban <userId>")).queue();
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <userId>")).queue();
             return false;
         }
 
@@ -59,6 +59,11 @@ public class HackbanCommand extends Command {
      */
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + "hackban <userId>";
+        return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + getName() + " <userId>";
+    }
+
+    @Override
+    public String getName() {
+        return "hackban";
     }
 }

@@ -38,4 +38,9 @@ public class CookieCommand extends Command {
         return "blobnomcookie";
     }
 
+    @Override
+    public String getName() {
+        return "cookie";
+    }
+
 }

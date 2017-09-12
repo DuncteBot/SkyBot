@@ -40,4 +40,9 @@ public class SpamCommand extends Command {
         return help;
     }
 
+    @Override
+    public String getName() {
+        return "spam";
+    }
+
 }

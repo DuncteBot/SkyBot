@@ -2,6 +2,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -57,7 +58,7 @@ public class EvalCommand extends Command {
 
             Bindings bindings = engine.createBindings();
 
-            bindings.put("commands", SkyBot.commands);
+            bindings.put("commands", AirUtils.commandSetup.getCommands());
 
             bindings.put("message", event.getMessage());
             bindings.put("channel", event.getChannel());
@@ -101,5 +102,10 @@ public class EvalCommand extends Command {
     @Override
     public String help() {
         return "A simple eval command (Inspired off of yuis one)";
+    }
+
+    @Override
+    public String getName() {
+        return "eval";
     }
 }

@@ -49,4 +49,9 @@ public class AlpacaCommand extends Command {
     public String help() {
         return "Here is a alpaca";
     }
+
+    @Override
+    public String getName() {
+        return "alpaca";
+    }
 }

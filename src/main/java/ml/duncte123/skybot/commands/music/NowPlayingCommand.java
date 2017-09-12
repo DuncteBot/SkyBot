@@ -2,9 +2,8 @@ package ml.duncte123.skybot.commands.music;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
@@ -31,7 +30,7 @@ public class NowPlayingCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = SkyBot.au;
+        AudioUtils au = AirUtils.au;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
@@ -63,6 +62,16 @@ public class NowPlayingCommand extends Command {
     public String help() {
         // TODO Auto-generated method stub
         return "Prints information about the currently playing song (title, current time)";
+    }
+
+    @Override
+    public String getName() {
+        return "nowplaying";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"np"};
     }
 
 }

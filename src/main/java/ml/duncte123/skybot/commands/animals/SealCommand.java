@@ -54,4 +54,14 @@ public class SealCommand extends Command {
     public String help() {
         return "Here is a nice seal";
     }
+
+    @Override
+    public String getName() {
+        return "seal";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"zeehond"};
+    }
 }

@@ -1,8 +1,8 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.CustomLog;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.CustomLog;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
@@ -17,7 +17,7 @@ public class CleenupCommand extends Command {
 
     private int deletedMsg = 0;
 
-    public final static String help = "performs a cleanup in the channel where the command is run. (MOD or higher ONLY!)";
+    public final static String help = "performs a cleanup in the channel where the command is run.";
     /**
      * This is a check to see if the command is save to execute
      * @param args The command agruments
@@ -84,4 +84,13 @@ public class CleenupCommand extends Command {
         return help;
     }
 
+    @Override
+    public String getName() {
+        return "cleanup";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"clear"};
+    }
 }

@@ -37,4 +37,9 @@ public class PotatoCommand extends Command {
         // TODO Auto-generated method stub
         return "POTATO!!!!";
     }
+
+    @Override
+    public String getName() {
+        return "potato";
+    }
 }

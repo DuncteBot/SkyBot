@@ -32,7 +32,7 @@ public class SoftbanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 3) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + "softban <@user> <time (set to 0 for perm)> " +
+            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <@user> <time (set to 0 for perm)> " +
                     "[days? months? years?] [Resson]")).queue();
             return false;
         }
@@ -73,5 +73,10 @@ public class SoftbanCommand extends Command {
     @Override
     public String help() {
         return "Kicks a user from the guild **(THIS WILL DELETE MESSAGES)**";
+    }
+
+    @Override
+    public String getName() {
+        return "softban";
     }
 }

@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.utils;
 
-import java.awt.Color;
+import java.awt.*;
 
 public class Config {
     /**
@@ -26,7 +26,7 @@ public class Config {
     /**
      * This is the version of the bot
      */
-    public static final String version = "3.45.1";
+    public static final String version = "3.46.0";
     /**
      * This is the name that your bot has
      */

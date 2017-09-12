@@ -46,4 +46,9 @@ public class LlamaCommand extends Command {
     public String help() {
         return "Here is a llama";
     }
+
+    @Override
+    public String getName() {
+        return "llama";
+    }
 }
