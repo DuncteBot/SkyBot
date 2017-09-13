@@ -95,7 +95,7 @@ public class CommandSetup {
      * @return true if the command is added
      */
     public boolean addCommand(Command command) {
-        if (command.getName().contains(" ")) {
+        if (!command.getName().contains(" ")) {
             throw new IllegalArgumentException("Name can't have spaces!");
         }
         if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {
