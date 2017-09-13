@@ -562,12 +562,12 @@ public class AirUtils {
         final String message = cmd.event.getMessage().getRawContent();
 
         for (Command c : commandSetup.getCommands()) {
-            if (message.toLowerCase().startsWith(prefix.toLowerCase() + c.getName().toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + c.getName())) {
+            if (cmd.invoke.toLowerCase().startsWith(c.getName().toLowerCase() + ' ') || cmd.invoke.equalsIgnoreCase(c.getName())) {
                 commandSetup.runCommand(cmd, c);
                 return;
             } else {
                 for (final String alias : c.getAliases()) {
-                    if (message.toLowerCase().startsWith(prefix.toLowerCase() + alias.toLowerCase() + ' ') || message.equalsIgnoreCase(prefix + alias)) {
+                    if (cmd.invoke.toLowerCase().startsWith(alias.toLowerCase() + ' ') || cmd.invoke.equalsIgnoreCase(alias)) {
                         commandSetup.runCommand(cmd, c);
                         return;
                     }

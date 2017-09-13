@@ -89,7 +89,7 @@ public class BotListener extends ListenerAdapter {
             }
         }
 
-        if(event.getMessage().getContent().startsWith(Config.prefix) && event.getMessage().getAuthor().getId() != event.getJDA().getSelfUser().getId()){
+        if(event.getMessage().getContent().startsWith(Config.prefix) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())){
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
             AirUtils.handleCommand(parser.parse(event.getMessage().getRawContent(), event));
