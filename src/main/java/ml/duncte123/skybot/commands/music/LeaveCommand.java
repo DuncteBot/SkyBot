@@ -2,11 +2,7 @@ package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-
-import java.time.Instant;
 
 public class LeaveCommand extends Command {
 
@@ -26,12 +22,12 @@ public class LeaveCommand extends Command {
             botInChannel = true;
 
             if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-                event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+               sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands"));
                 return false;
             }
 
         }else{
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a channel atm")).queue();
+            sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a channel atm"));
         }
 
 
@@ -45,15 +41,15 @@ public class LeaveCommand extends Command {
      */
     @Override
     public void action(String[] args, GuildMessageReceivedEvent event) {
-        AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
-        event.getGuild().getAudioManager().setSendingHandler(null);
-        event.getGuild().getAudioManager().closeAudioConnection();
-        EmbedBuilder eb = new EmbedBuilder()
-                .setColor(Config.defaultColour)
-                .addField(AirUtils.au.embedTitle, "Leaving your channel", false)
-                .setFooter(Config.defaultName, Config.defaultIcon)
-                .setTimestamp(Instant.now());
-        event.getChannel().sendMessage(eb.build()).queue();
+        if(event.getGuild().getAudioManager().isConnected()) {
+            AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
+            event.getGuild().getAudioManager().setSendingHandler(null);
+            event.getGuild().getAudioManager().closeAudioConnection();
+            sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "Leaving your channel"));
+        } else {
+            sendMsg(event, "I'm not connected to any channels.");
+        }
+
 
     }
 
