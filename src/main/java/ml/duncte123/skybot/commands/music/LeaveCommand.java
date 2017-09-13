@@ -71,4 +71,9 @@ public class LeaveCommand extends Command {
     public String getName() {
         return "leave";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"disconnect"};
+    }
 }
