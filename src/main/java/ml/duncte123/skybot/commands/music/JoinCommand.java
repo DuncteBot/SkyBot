@@ -18,13 +18,13 @@ public class JoinCommand extends Command {
     private String chanId = "";
 
     /**
-     * This is a check to see if the command is save to execute
+     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+
         boolean inChannel = false;
 
         for(VoiceChannel chan : event.getGuild().getVoiceChannels()){
@@ -37,18 +37,9 @@ public class JoinCommand extends Command {
 
         if(!inChannel){
             event.getChannel().sendMessage("You are not in a voice channel").queue();
+            return;
         }
 
-        return inChannel;
-    }
-
-    /**
-     * This is the action of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
-    @Override
-    public void action(String[] args, GuildMessageReceivedEvent event) {
         VoiceChannel vc = null;
         AudioUtils au = AirUtils.au;
 

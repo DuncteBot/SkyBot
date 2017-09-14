@@ -26,14 +26,14 @@ public class UserinfoCommand extends Command {
      * this is the member object
      */
     Member m;
+
     /**
-     * This is a check to see if the command is save to execute
-     * @param args The command arguments
+     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param args The command agruments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length == 0) {
             u = event.getAuthor();
@@ -55,19 +55,8 @@ public class UserinfoCommand extends Command {
 
         if (m == null) {
             event.getChannel().sendMessage("This user could not be found.").queue();
-            return false;
+            return;
         }
-
-        return true;
-    }
-
-    /**
-     * This is the action of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     */
-    @Override
-    public void action(String[] args, GuildMessageReceivedEvent event) {
 
         u = m.getUser();
       

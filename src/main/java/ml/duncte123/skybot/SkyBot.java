@@ -44,7 +44,7 @@ public class SkyBot {
                 .addEventListener(new BotListener())
                 .setToken(Config.token)
                 .setGame(Game.of("Use " + Config.prefix + "help"))
-                .buildBlocking();*/
+                .buildAsync();*/
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = 5;
@@ -57,7 +57,5 @@ public class SkyBot {
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Config.prefix + "help"))
                 .buildAsync();
-
-        //AirUtils.au = new AudioUtils();
     }
 }

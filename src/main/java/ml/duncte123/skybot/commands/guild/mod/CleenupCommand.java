@@ -15,50 +15,37 @@ import java.util.concurrent.TimeUnit;
 
 public class CleenupCommand extends Command {
 
-    private int deletedMsg = 0;
-
     public final static String help = "performs a cleanup in the channel where the command is run.";
     /**
-     * This is a check to see if the command is save to execute
+     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     * @return true if we are the command is safe to run
+     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public boolean called(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+
 
         Permission[] permissions = {
                 Permission.MESSAGE_MANAGE,
                 Permission.MESSAGE_HISTORY
         };
-
-        if(event.getAuthor().isBot()){return false;}
         if(!PermissionUtil.checkPermission(event.getMember(), permissions )){
             event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command!")).queue();
-            return false;
+            return;
         }
-        return true;
-    }
 
-    /**
-     * This is the action of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
-     */
-    @Override
-    public void action(String[] args, GuildMessageReceivedEvent event) {
-
+        int deletedMsg = 0;
         int total = 5;
 
         if(args.length > 0){
             total = Integer.parseInt(args[0]);
           if (total < 2 || total > 100) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Error: count must be minimal 2 and maximal 100")).queue(
-               (message) -> { message.delete().queueAfter(5, TimeUnit.SECONDS); }
+                event.getChannel().sendMessage(AirUtils.embedMessage("Error: count must be minimal 2 and maximal 100")).queue(
+               message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
             );
-      return;
+            return;
           }
-            }
+        }
     
         try {
           MessageHistory mh = new MessageHistory(event.getChannel());
@@ -66,7 +53,7 @@ public class CleenupCommand extends Command {
           event.getChannel().deleteMessages(msgLst).queue();
           deletedMsg = msgLst.size();
                 event.getChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
-             (message) -> { message.delete().queueAfter(5, TimeUnit.SECONDS); }
+             message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
           );
                 AirUtils.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getChannel().getName());
         }

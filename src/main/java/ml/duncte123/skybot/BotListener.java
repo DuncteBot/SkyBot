@@ -92,7 +92,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getContent().startsWith(Config.prefix) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())){
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
-            AirUtils.handleCommand(parser.parse(event.getMessage().getRawContent(), event));
+            AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent(), event));
             return;
         }
 
@@ -100,7 +100,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())) {
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
-            AirUtils.handleCommand(parser.parse(event.getMessage().getRawContent()
+            AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
                     .replaceFirst(settings.getCustomPrefix(), Config.prefix), event));
             return;
         }
@@ -109,7 +109,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
             if(event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) && event.getMessage().getRawContent().split(" ").length > 0){
                 lastGuildChannel.put(event.getGuild(), event.getChannel());
-                AirUtils.handleCommand(parser.parse(event.getMessage().getRawContent().replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
+                AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent().replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
                 return;
             }
             event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();

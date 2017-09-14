@@ -14,13 +14,12 @@ import java.util.Arrays;
 public class AnnounceCommand extends Command {
 
     /**
-     * This is a check to see if the command is save to execute
+     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @return true if we are the command is safe to run
      */
     @Override
-    public boolean called(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         Permission[] perms = {
                 Permission.ADMINISTRATOR
@@ -28,24 +27,14 @@ public class AnnounceCommand extends Command {
 
         if(!PermissionUtil.checkPermission(event.getMember(), perms)) {
             event.getChannel().sendMessage(AirUtils.embedMessage("I'm sorry but you don't have permission to run this command.")).queue();
-            return false;
+            return;
         }
 
         if(event.getMessage().getMentionedChannels().size() < 1) {
             event.getChannel().sendMessage(AirUtils.embedMessage("Correct usage is `" + Config.prefix + getName() + " [#Channel] [Message]`")).queue();
-            return false;
+            return;
         }
 
-        return true;
-    }
-
-    /**
-     * This is the action of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
-    @Override
-    public void action(String[] args, GuildMessageReceivedEvent event) {
         try{
 
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);

@@ -259,8 +259,8 @@ public class AirUtils {
 
     /**
      * To log a unban or a unmute
-     * @param mod The mod that permed the action
-     * @param unbannedUser The user that the action is for
+     * @param mod The mod that permed the executeCommand
+     * @param unbannedUser The user that the executeCommand is for
      * @param punishment The type of punishment that got removed
      * @param g A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
@@ -557,7 +557,7 @@ public class AirUtils {
      * This will handle and pars all the commands
      * @param cmd The command that is ran
      */
-    public static void handleCommand(CommandParser.CommandContainer cmd){
+    /*public static void handleCommand(CommandParser.CommandContainer cmd){
 
         final String message = cmd.event.getMessage().getRawContent();
 
@@ -574,7 +574,7 @@ public class AirUtils {
                 }
             }
         }
-    }
+    }*/
 
 
 }

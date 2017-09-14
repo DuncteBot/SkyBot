@@ -17,25 +17,13 @@ import net.dv8tion.jda.core.utils.PermissionUtil;
  */
 public class BotinfoCommand extends Command {
 
-
     /**
-     * This is a check to see if the command is save to execute
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     * @return true if we are the command is safe to run
-     */
-    @Override
-    public boolean called(String[] args, GuildMessageReceivedEvent event) {
-        return true;
-    }
-
-    /**
-     * This is the action of the command, the thing you want the command to to needs to be in here
+     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
      * @param args The command agruments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void action(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
         User u = event.getJDA().getSelfUser();
         Member m = event.getGuild().getMemberById(u.getId());
 
