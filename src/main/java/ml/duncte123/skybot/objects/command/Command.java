@@ -9,7 +9,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 public abstract class Command {
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * This is the action of the command, this will hold what the commands needs to to
      * @param args The command agruments
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */

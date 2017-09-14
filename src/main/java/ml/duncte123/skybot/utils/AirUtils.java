@@ -553,28 +553,4 @@ public class AirUtils {
         return pubChann;
     }
 
-    /**
-     * This will handle and pars all the commands
-     * @param cmd The command that is ran
-     */
-    /*public static void handleCommand(CommandParser.CommandContainer cmd){
-
-        final String message = cmd.event.getMessage().getRawContent();
-
-        for (Command c : commandSetup.getCommands()) {
-            if (cmd.invoke.toLowerCase().startsWith(c.getName().toLowerCase() + ' ') || cmd.invoke.equalsIgnoreCase(c.getName())) {
-                commandSetup.runCommand(cmd, c);
-                return;
-            } else {
-                for (final String alias : c.getAliases()) {
-                    if (cmd.invoke.toLowerCase().startsWith(alias.toLowerCase() + ' ') || cmd.invoke.equalsIgnoreCase(alias)) {
-                        commandSetup.runCommand(cmd, c);
-                        return;
-                    }
-                }
-            }
-        }
-    }*/
-
-
 }

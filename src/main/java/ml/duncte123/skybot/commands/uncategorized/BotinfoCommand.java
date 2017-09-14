@@ -28,7 +28,7 @@ public class BotinfoCommand extends Command {
         Member m = event.getGuild().getMemberById(u.getId());
 
         MessageEmbed eb = AirUtils.defaultEmbed()
-                .setDescription("Bot information.")
+                .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Created by", "duncte123#1245", true)
                 .addField("Version", Config.version, true)
