@@ -152,13 +152,14 @@ public class AirUtils {
 
     /**
      * This will save the settings into the database when the guild owner/admin updates it
+     * @param guild The guild to update it for
      * @param settings the new settings
      */
-    public static void updateGuildSettings(GuildSettings settings) {
+    public static void updateGuildSettings(Guild guild, GuildSettings settings) {
 
 
         if(!guildSettings.containsKey(settings.getGuildId())) {
-            registerNewGuild(settings.getGuildId());
+            registerNewGuild(guild);
             return;
         }
 
@@ -194,20 +195,21 @@ public class AirUtils {
 
     /**
      * This will register a new guild with their settings on bot join
-     * @param guildId the id of the guild that we are joining
+     * @param g The guild that we are joining
      */
-    public static void registerNewGuild(String guildId) {
+    public static void registerNewGuild(Guild g) {
 
-        if(guildSettings.containsKey(guildId)) { return; }
+        if(guildSettings.containsKey(g.getId())) { return; }
 
         boolean ENABLE_JOIN_MSG = false;
         boolean ENABLE_SWEAR_FILTER = false;
         String defaultMsg = "Welcome {{USER_MENTION}}, to the official {{GUILD_NAME}} guild.";
-        GuildSettings newGuildSettings = new GuildSettings(guildId)
+        GuildSettings newGuildSettings = new GuildSettings(g.getId())
                 .setEnableJoinMessage(ENABLE_JOIN_MSG)
                 .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
-                .setCustomJoinMessage(defaultMsg);
-        guildSettings.put(guildId, newGuildSettings);
+                .setCustomJoinMessage(defaultMsg)
+                .setCustomPrefix(Config.prefix);
+        guildSettings.put(g.getId(), newGuildSettings);
 
 
         String dbName = db.getName();
@@ -217,7 +219,7 @@ public class AirUtils {
         try {
             Statement smt = database.createStatement();
 
-            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + guildId + "', default, default, '"+defaultMsg+"')");
+            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "', '"+g.getName()+"', default, default, default, '"+defaultMsg+"')");
         }
         catch (Exception e) {
             e.printStackTrace();

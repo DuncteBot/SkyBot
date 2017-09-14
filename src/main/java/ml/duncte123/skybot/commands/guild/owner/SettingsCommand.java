@@ -29,7 +29,7 @@ public class SettingsCommand extends Command {
         }
 
         if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            AirUtils.registerNewGuild(event.getGuild().getId());
+            AirUtils.registerNewGuild(event.getGuild());
         }
 
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
@@ -52,18 +52,18 @@ public class SettingsCommand extends Command {
             if(modules.contains(module)) {
                 switch (module) {
                     case "showJoinMessage" :
-                        AirUtils.updateGuildSettings(settings.setEnableJoinMessage(checkStatus(args[1])));
+                        AirUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
                         break;
                     case "swearFilter":
-                        AirUtils.updateGuildSettings(settings.setEnableSwearFilter(checkStatus(args[1])));
+                        AirUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
                         break;
                     case "setJoinMessage":
                         String newJoinMsg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        AirUtils.updateGuildSettings(settings.setCustomJoinMessage(newJoinMsg));
+                        AirUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
                         break;
                     case "setPrefix":
                         String newPrefix = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        AirUtils.updateGuildSettings(settings.setCustomPrefix(newPrefix));
+                        AirUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                         break;
 
                     default:

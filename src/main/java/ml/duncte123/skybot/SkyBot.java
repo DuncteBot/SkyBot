@@ -2,7 +2,7 @@ package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.bot.sharding.ShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.SessionReconnectQueue;
 import net.dv8tion.jda.core.utils.SimpleLog;
@@ -49,13 +49,14 @@ public class SkyBot {
         //But this time we are going to shard it
         int TOTAL_SHARDS = 5;
 
-        new ShardManagerBuilder()
-                .setToken(Config.token)
+        new DefaultShardManagerBuilder()
                 .setReconnectQueue(new SessionReconnectQueue())
                 .addEventListener(new BotListener())
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Config.prefix + "help"))
+                .setToken(Config.token)
+                .setLoginBackoff(550)
                 .buildAsync();
     }
 }

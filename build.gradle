@@ -21,7 +21,7 @@ repositories {
 dependencies {
     //compile 'net.dv8tion:JDA:3.3.0_265'
     //Beta build with ShardManager
-    compile 'com.github.DV8FromTheWorld:JDA:ee833a6'
+    compile 'com.github.DV8FromTheWorld:JDA:6ed20a3'
     compile 'com.sedmelluq:lavaplayer:1.2.43'
     compile 'com.sedmelluq:jda-nas:1.0.5'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3

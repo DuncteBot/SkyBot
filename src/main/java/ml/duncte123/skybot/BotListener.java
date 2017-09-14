@@ -53,7 +53,7 @@ public class BotListener extends ListenerAdapter {
         }
 
         if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            AirUtils.registerNewGuild(event.getGuild().getId());
+            AirUtils.registerNewGuild(event.getGuild());
         }
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
@@ -183,7 +183,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
-        AirUtils.registerNewGuild(event.getGuild().getId());
+        AirUtils.registerNewGuild(event.getGuild());
     }
 
     /**
