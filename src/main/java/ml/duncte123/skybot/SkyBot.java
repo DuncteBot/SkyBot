@@ -50,7 +50,6 @@ public class SkyBot {
         int TOTAL_SHARDS = 5;
 
         new DefaultShardManagerBuilder()
-                .setReconnectQueue(new SessionReconnectQueue())
                 .addEventListener(new BotListener())
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardTotal(TOTAL_SHARDS)
