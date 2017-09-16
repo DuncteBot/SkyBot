@@ -2,13 +2,13 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.logging.CustomLog;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+import org.slf4j.event.Level;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
@@ -55,7 +55,7 @@ public class CleenupCommand extends Command {
                 event.getChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
              message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
           );
-                AirUtils.log(CustomLog.Level.INFO, deletedMsg+" removed in channel "+event.getChannel().getName());
+                AirUtils.log(Level.INFO, deletedMsg+" messages removed in channel "+event.getChannel().getName());
         }
         catch (Exception e) {
           event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();

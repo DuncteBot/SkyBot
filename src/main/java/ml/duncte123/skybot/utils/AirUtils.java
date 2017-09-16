@@ -12,6 +12,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import okhttp3.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.slf4j.event.Level;
 
 import java.net.URL;
 import java.sql.Connection;
@@ -30,8 +33,14 @@ public class AirUtils {
     public static CommandSetup commandSetup = new CommandSetup();
     /**
      * This is our custom logging
+     * @deprecated don't use it anymore plx
      */
+    @Deprecated
     public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
+    /**
+     * This is a new logger using slf4j
+     */
+    public static Logger logger = LoggerFactory.getLogger(Config.defaultName);
     /**
      * This helps us to make the coinflip work
      */
@@ -113,7 +122,7 @@ public class AirUtils {
      * This will get the settings from our database and store them in the {@link ml.duncte123.skybot.utils.AirUtils#guildSettings settings}
      */
     public static void loadSettings() {
-        log(CustomLog.Level.INFO, "Loading settings.");
+        log(Level.INFO, "Loading settings.");
 
         String dbName = db.getName();
 
@@ -141,7 +150,7 @@ public class AirUtils {
                 guilds++;
             }
 
-            log(CustomLog.Level.INFO, "Loaded settings for "+guilds+" guilds.");
+            log(Level.INFO, "Loaded settings for "+guilds+" guilds.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -323,7 +332,7 @@ public class AirUtils {
                 java.util.Date currDate = new java.util.Date();
 
                 if(currDate.after(unbanDate)) {
-                    log(CustomLog.Level.INFO, "Unbanning " + res.getString("Username"));
+                    log(Level.INFO, "Unbanning " + res.getString("Username"));
                     jda.getGuildById(
                             res.getString("guildId")
                     ).getController().unban(
@@ -392,22 +401,41 @@ public class AirUtils {
 
     /**
      * Logs a message to the console
-     * @param lvl The {@link CustomLog#level level} to log the message at
+     * @param lvl The {{@link org.slf4j.event.Level level} to log the message at
      * @param message The message to log
      */
-    public static void log(CustomLog.Level lvl, String message){
+    public static void log(Level lvl, String message){
         log(Config.defaultName, lvl, message);
     }
 
     /**
      * Logs a message to the console
      * @param name The name of the class that is calling it
-     * @param lvl The {@link CustomLog#level level} to log the message at
+     * @param lvl The {@link org.slf4j.event.Level level} to log the message at
      * @param message The message to log
      */
-    public static void log(String name, CustomLog.Level lvl, Object message){
-        logger2 = CustomLog.getLog(name);
-        logger2.log(lvl, message);
+    public static void log(String name, Level lvl, Object message){
+        logger = LoggerFactory.getLogger(name);
+
+        String msg = String.valueOf(message);
+
+        switch (lvl) {
+            case ERROR:
+                logger.error(msg);
+                break;
+            case WARN:
+                logger.warn(msg);
+                break;
+            case INFO:
+                logger.info(msg);
+                break;
+            case DEBUG:
+                logger.debug(msg);
+                break;
+            case TRACE:
+                logger.trace(msg);
+                break;
+        }
     }
 
     /**
@@ -531,7 +559,7 @@ public class AirUtils {
         //percent in bots
         double botCountP = (botCount/totalCount)*100;
 
-        log(CustomLog.Level.INFO,
+        log(Level.INFO,
                 "In the guild " + g.getName() + "("+totalCount+" Members), " +userCountP+ "% are users, " +botCountP+ "% are bots");
 
         return new double[] {Math.round(userCountP), Math.round(botCountP)};

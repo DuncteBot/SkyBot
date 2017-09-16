@@ -17,6 +17,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.event.Level;
 
 import java.util.HashMap;
 import java.util.Timer;
@@ -58,13 +59,13 @@ public class BotListener extends ListenerAdapter {
         }
 
         if(event.getMessage().getContent().equals(Config.prefix + "shutdown") && event.getAuthor().getId().equals(Config.ownerId)){
-            AirUtils.log(CustomLog.Level.INFO,"Shutting down!!!");
+            AirUtils.log(Level.INFO,"Shutting down!!!");
             unbanTimer.cancel();
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for(int i = 0; i < manager.getShardsTotal(); i++) {
                 manager.getShard(i).shutdown();
-                AirUtils.log(CustomLog.Level.INFO,"Shard " + i + " has been shut down");
+                AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
             }
             try {
                 AirUtils.db.getConnection().close();
@@ -124,7 +125,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(CustomLog.Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
         //event.getJDA().getGuilds().get(0).getDefaultChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
 
         ShardManager manager = event.getJDA().asBot().getShardManager();
@@ -183,7 +184,7 @@ public class BotListener extends ListenerAdapter {
             );
             return;
         }
-        AirUtils.log("DuncteBotGuildJoin", CustomLog.Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
+        AirUtils.log("DuncteBotGuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         AirUtils.registerNewGuild(event.getGuild());
     }
 

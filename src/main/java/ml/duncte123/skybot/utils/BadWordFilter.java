@@ -1,6 +1,6 @@
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.logging.CustomLog;
+import org.slf4j.event.Level;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -42,7 +42,7 @@ public class BadWordFilter {
                 }
 
             }
-            AirUtils.log(CustomLog.Level.INFO, "Loaded " + counter + " words to filter out");
+            AirUtils.log(Level.INFO, "Loaded " + counter + " words to filter out");
         } catch (IOException e) {
             e.printStackTrace();
         }
