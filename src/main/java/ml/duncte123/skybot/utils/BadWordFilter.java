@@ -1,5 +1,7 @@
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.logging.CustomLog;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;

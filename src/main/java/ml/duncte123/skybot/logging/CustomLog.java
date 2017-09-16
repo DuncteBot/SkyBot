@@ -1,4 +1,4 @@
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot.logging;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
 
