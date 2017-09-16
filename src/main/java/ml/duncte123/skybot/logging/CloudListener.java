@@ -1,6 +1,7 @@
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot.logging;
 
 import ml.duncte123.skybot.logging.CustomLog;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.utils.SimpleLog;
 
 public class CloudListener implements SimpleLog.LogListener{
