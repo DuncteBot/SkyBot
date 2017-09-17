@@ -38,12 +38,10 @@ public class AirUtils {
      * This helps us to make the coinflip work
      */
     public static Random rand = new Random();
-
     /**
      * This is our database manager, it is a util for the connection
      */
     public static DbManager db = new DbManager();
-
     /**
      * This will store the settings for every guild that we are in
      */

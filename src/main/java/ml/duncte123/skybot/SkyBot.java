@@ -21,7 +21,9 @@ public class SkyBot {
      * This is our main method
      * @param args The args passed in while running the bot
      * @throws Exception When you mess something up
+     * @deprecated Because I can lol
      */
+    @Deprecated
     public static void main(String[] args) throws Exception {
         if(ResourceUtil.getDBProperty("host").isEmpty() ||
                 ResourceUtil.getDBProperty("username").isEmpty() ||
