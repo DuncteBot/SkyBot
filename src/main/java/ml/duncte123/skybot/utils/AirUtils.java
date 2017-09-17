@@ -2,7 +2,6 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandSetup;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.logging.CustomLog;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -32,13 +31,7 @@ public class AirUtils {
      */
     public static CommandSetup commandSetup = new CommandSetup();
     /**
-     * This is our custom logging
-     * @deprecated don't use it anymore plx
-     */
-    @Deprecated
-    public static CustomLog logger2 = CustomLog.getLog(Config.defaultName);
-    /**
-     * This is a new logger using slf4j
+     * We are using slf4j to log things to the console
      */
     public static Logger logger = LoggerFactory.getLogger(Config.defaultName);
     /**

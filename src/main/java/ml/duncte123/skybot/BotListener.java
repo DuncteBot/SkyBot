@@ -1,6 +1,5 @@
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.logging.CustomLog;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;

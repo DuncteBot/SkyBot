@@ -10,10 +10,16 @@ import java.util.List;
 
 public class FakeUser implements User {
 
-    final String name;
-    final String id;
-    final String discrm;
+    private final String name;
+    private final String id;
+    private final String discrm;
 
+    /**
+     * This will create a user based on the things that we put in
+     * @param name The name that the user has
+     * @param id The user id
+     * @param discrm The discriminator that the user has
+     */
     public FakeUser(String name, String id, String discrm) {
         this.name = name;
         this.id = id;
