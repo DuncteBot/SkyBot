@@ -45,7 +45,8 @@ public class GuildInfoCommand extends Command {
                                 "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
                                 true);
                     }
-                   eb.setThumbnail(event.getGuild().getIconUrl());
+                    //If the guild doesn't have a icon we show a nice blob
+                   eb.setThumbnail(event.getGuild().getIconUrl() != null  ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
             MessageEmbed messageEmbed = eb.build();
 
