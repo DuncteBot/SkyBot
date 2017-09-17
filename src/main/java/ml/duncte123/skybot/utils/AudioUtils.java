@@ -70,10 +70,20 @@ public class AudioUtils {
      * Loads a track and plays it if the bot isn't playing
      * @param mng The {@link GuildMusicManager MusicManager} for the guild
      * @param channel The {@link net.dv8tion.jda.core.entities.MessageChannel channel} that the bot needs to send the messages to
-     * @param trackUrl The url from the track to play
+     * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrl, final boolean addPlayList){
+    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList){
+
+        final String trackUrl;
+
+        //Strip <>'s that prevent discord from embedding link resources
+        if (trackUrlRaw.startsWith("<") && trackUrlRaw.endsWith(">")) {
+            trackUrl = trackUrlRaw.substring(1, trackUrlRaw.length() - 1);
+        } else {
+            trackUrl = trackUrlRaw;
+        }
+
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler(){
 
             /**

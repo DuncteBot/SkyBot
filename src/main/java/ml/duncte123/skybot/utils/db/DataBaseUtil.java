@@ -18,9 +18,7 @@ public class DataBaseUtil {
             String pass = ResourceUtil.getDBProperty("password");
             String dbName = ResourceUtil.getDBProperty("dbname");
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager
-                    .getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName +"?"
-                            + "user="+ user +"&password=" + pass);
+            return DriverManager.getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName, user , pass);
         }
         catch (Exception e) {
             e.printStackTrace();

@@ -78,6 +78,6 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"serverinfo"};
+        return new String[]{"serverinfo", "server"};
     }
 }
