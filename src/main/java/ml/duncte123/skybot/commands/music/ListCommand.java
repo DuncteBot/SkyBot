@@ -29,7 +29,7 @@ public class ListCommand extends Command {
         Queue<AudioTrack> queue = scheduler.queue;
         synchronized (queue) {
             if (queue.isEmpty()) {
-                event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue is currently empty!")).queue();
+                sendEmbed(AirUtils.embedField(au.embedTitle, "The queue is currently empty!"), event);
             } else {
                 int trackCount = 0;
                 long queueLength = 0;
