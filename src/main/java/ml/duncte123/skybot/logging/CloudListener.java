@@ -8,6 +8,9 @@ public class CloudListener implements SimpleLog.LogListener{
     @Override
     public void onLog(SimpleLog log, SimpleLog.Level logLevel, Object message) {
         if(logLevel.getPriority() > 2) {
+            if(logLevel.isError()) {
+                AirUtils.log(log.name, Level.ERROR, message);
+            }
             AirUtils.log(log.name, Level.valueOf(logLevel.name()), message);
         }
     }
