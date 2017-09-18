@@ -34,7 +34,7 @@ public class DialogCommand extends Command {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```");
-        event.getChannel().sendMessage(AirUtils.embedMessage(sb.toString())).queue();
+        sendEmbed(AirUtils.embedMessage(sb.toString()), event);
 
     }
 

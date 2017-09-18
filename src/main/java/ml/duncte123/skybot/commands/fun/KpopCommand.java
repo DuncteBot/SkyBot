@@ -64,10 +64,10 @@ public class KpopCommand extends Command {
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
                     .setFooter("Query id: " + id, Config.defaultIcon);
-            event.getChannel().sendMessage(eb.build()).queue();
+            sendEmbed(eb.build(), event);
         }
         catch (Exception e) {
-            event.getChannel().sendMessage("SCREAM THIS TO _duncte123#1245_: " + e.getMessage()).queue();
+           sendMsg(event, "SCREAM THIS TO _duncte123#1245_: " + e.getMessage());
             e.printStackTrace();
         }
     }

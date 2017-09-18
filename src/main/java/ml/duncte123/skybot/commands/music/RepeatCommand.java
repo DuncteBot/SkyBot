@@ -20,12 +20,12 @@ public class RepeatCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
             return;
         }
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
@@ -37,7 +37,7 @@ public class RepeatCommand extends Command {
 
         scheduler.setRepeating(!scheduler.isRepeating());
 
-        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**")).queue();
+        sendMsg(event, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**");
 
     }
 

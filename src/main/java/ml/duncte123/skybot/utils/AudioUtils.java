@@ -15,8 +15,13 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -98,7 +103,7 @@ public class AudioUtils {
                 }
 
                 mng.scheduler.queue(track);
-                channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
+                sendEmbed(AirUtils.embedField(embedTitle, msg), channel);
 
             }
 
@@ -129,7 +134,7 @@ public class AudioUtils {
                     }
                     mng.scheduler.queue(firstTrack);
                 }
-                channel.sendMessage(AirUtils.embedField(embedTitle, msg)).queue();
+                sendEmbed(AirUtils.embedField(embedTitle, msg), channel);
             }
 
             /**
@@ -137,7 +142,7 @@ public class AudioUtils {
              */
             @Override
             public void noMatches() {
-                channel.sendMessage(AirUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_")).queue();
+                sendEmbed(AirUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_"), channel);
             }
 
             /**
@@ -146,7 +151,7 @@ public class AudioUtils {
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-                channel.sendMessage(AirUtils.embedField(embedTitle, "Could not play: "+exception.getMessage())).queue();
+               sendEmbed(AirUtils.embedField(embedTitle, "Could not play: "+exception.getMessage()), channel);
 
             }
 
@@ -170,6 +175,20 @@ public class AudioUtils {
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
 
         return mng;
+    }
+
+    /**
+     * {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
+     * @param embed {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
+     * @param channel {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
+     */
+    private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
+        TextChannel tc = (TextChannel) channel;
+        if(!PermissionUtil.checkPermission(tc.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+             channel.sendMessage(AirUtils.embedToMessage(embed)).queue();
+            return;
+        }
+        channel.sendMessage(embed).queue();
     }
 
     /**

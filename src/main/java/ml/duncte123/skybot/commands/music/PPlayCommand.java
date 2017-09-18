@@ -24,17 +24,17 @@ public class PPlayCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
             return;
         }
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
         if(args.length < 1){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "To few arguments, use `"+Config.prefix+"pplay <media link>`")).queue();
+            sendMsg(event, "To few arguments, use `"+Config.prefix+"pplay <media link>`");
             return;
         }
 

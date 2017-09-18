@@ -19,10 +19,9 @@ public class MinehCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
-        event.getChannel().sendTyping();
-        event.getChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queueAfter(4, TimeUnit.SECONDS);
-        event.getChannel().sendTyping();
-        event.getChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")).queueAfter(4, TimeUnit.SECONDS);
+        event.getChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queue(
+                m -> sendEmbed(AirUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"), event)
+        );
     }
 
     /**

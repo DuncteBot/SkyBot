@@ -30,7 +30,7 @@ public class CleenupCommand extends Command {
                 Permission.MESSAGE_HISTORY
         };
         if(!PermissionUtil.checkPermission(event.getMember(), permissions )){
-            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command!")).queue();
+            sendMsg(event, "You don't have permission to run this command!");
             return;
         }
 
@@ -40,7 +40,7 @@ public class CleenupCommand extends Command {
         if(args.length > 0){
             total = Integer.parseInt(args[0]);
           if (total < 2 || total > 100) {
-                event.getChannel().sendMessage(AirUtils.embedMessage("Error: count must be minimal 2 and maximal 100")).queue(
+                event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
                message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
             );
             return;
@@ -52,7 +52,7 @@ public class CleenupCommand extends Command {
           List<Message> msgLst =  mh.retrievePast(total).complete();
           event.getChannel().deleteMessages(msgLst).queue();
           deletedMsg = msgLst.size();
-                event.getChannel().sendMessage(AirUtils.embedMessage("Removed "+deletedMsg+" messages!")).queue(
+                event.getChannel().sendMessage("Removed "+deletedMsg+" messages!").queue(
              message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
           );
                 AirUtils.log(Level.INFO, deletedMsg+" messages removed in channel "+event.getChannel().getName());

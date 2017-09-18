@@ -44,7 +44,7 @@ public class ListCommand extends Command {
                     }
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength));
-                event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, sb.toString())).queue();
+               sendEmbed(AirUtils.embedField(au.embedTitle, sb.toString()), event);
             }
         }
     }

@@ -29,7 +29,7 @@ public class CatCommand extends Command {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("OOPS: " + e.getMessage())).queue();
+            sendEmbed(AirUtils.embedMessage("OOPS: " + e.getMessage()), event);
         }
 
     }

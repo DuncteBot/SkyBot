@@ -72,7 +72,7 @@ public class JoinCommand extends Command {
                 eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
             }
         }
-        event.getChannel().sendMessage(eb.build()).queue();
+        sendEmbed(eb.build(), event);
 
 
     }

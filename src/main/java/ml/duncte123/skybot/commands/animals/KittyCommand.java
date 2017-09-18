@@ -27,7 +27,7 @@ public class KittyCommand extends Command {
                     "Kitty_" + System.currentTimeMillis() + ".png", null).queue();
         }
         catch (Exception e) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+            sendEmbed(AirUtils.embedMessage("ERROR: " + e.getMessage()), event);
             e.printStackTrace();
         }
     }

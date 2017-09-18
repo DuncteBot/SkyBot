@@ -36,11 +36,7 @@ public class BotinfoCommand extends Command {
                 .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to [https://paypal.me/duncte123](donate) any amount.", false)
                 .build();
-        if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
-            event.getChannel().sendMessage(AirUtils.embedToMessage(eb)).queue();
-            return;
-        }
-        event.getChannel().sendMessage(eb).queue();
+        sendEmbed(eb, event);
     }
 
     /**

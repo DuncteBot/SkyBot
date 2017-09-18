@@ -26,12 +26,12 @@ public class AnnounceCommand extends Command {
         };
 
         if(!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("I'm sorry but you don't have permission to run this command.")).queue();
+            sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
 
         if(event.getMessage().getMentionedChannels().size() < 1) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Correct usage is `" + Config.prefix + getName() + " [#Channel] [Message]`")).queue();
+            sendMsg(event, "Correct usage is `" + Config.prefix + getName() + " [#Channel] [Message]`");
             return;
         }
 
@@ -40,11 +40,11 @@ public class AnnounceCommand extends Command {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
 
-            chann.sendMessage(AirUtils.embedMessage(msg)).queue();
+            sendEmbed(AirUtils.embedMessage(msg), event);
 
         }
         catch (Exception e) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("WHOOPS: " + e.getMessage())).queue();
+            sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }
     }

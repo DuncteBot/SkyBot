@@ -18,12 +18,12 @@ public class LeaveCommand extends Command {
 
         if(event.getGuild().getAudioManager().isConnected()){
             if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-                sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands"));
+                sendMsg(event,"I'm sorry, but you have to be in the same channel as me to use any music related commands");
                 return;
             }
 
         }else{
-            sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a channel atm"));
+            sendMsg(event,"I'm not in a channel atm");
             return;
         }
 
@@ -31,7 +31,7 @@ public class LeaveCommand extends Command {
             AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
             event.getGuild().getAudioManager().setSendingHandler(null);
             event.getGuild().getAudioManager().closeAudioConnection();
-            sendMsg(event, AirUtils.embedField(AirUtils.au.embedTitle, "Leaving your channel"));
+           sendEmbed(AirUtils.embedField(AirUtils.au.embedTitle, "Leaving your channel"), event);
         } else {
             sendMsg(event, "I'm not connected to any channels.");
         }

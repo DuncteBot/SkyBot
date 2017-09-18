@@ -5,6 +5,7 @@ import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -23,19 +24,24 @@ public class SkipCommand extends Command {
         GuildMusicManager mng = au.getMusicManager(guild);
         TrackScheduler scheduler = mng.scheduler;
 
+        if(!event.getGuild().getAudioManager().isConnected()){
+            sendMsg(event, "I'm not in a voice channel, use `"+ Config.prefix+"join` to make me join a channel");
+            return;
+        }
+
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
         if(mng.player.getPlayingTrack() == null){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player is not playing.")).queue();
+            sendMsg(event, "The player is not playing.");
             return;
         }
 
         scheduler.nextTrack();
 
-        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The current track was skipped.")).queue();
+        sendMsg(event,"The current track was skipped.");
     }
 
     /**

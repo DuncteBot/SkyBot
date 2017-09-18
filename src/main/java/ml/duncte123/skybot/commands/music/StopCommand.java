@@ -21,7 +21,12 @@ public class StopCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
+            return;
+        }
+
+        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
@@ -33,14 +38,14 @@ public class StopCommand extends Command {
         TrackScheduler scheduler = mng.scheduler;
 
         if(mng.player.getPlayingTrack() == null){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player is not playing.")).queue();
+            sendMsg(event, "The player is not playing.");
             return;
         }
 
         scheduler.queue.clear();
         player.stopTrack();
         player.setPaused(false);
-        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Playback has been completely stopped and the queue has been cleared")).queue();
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared");
     }
 
     /**

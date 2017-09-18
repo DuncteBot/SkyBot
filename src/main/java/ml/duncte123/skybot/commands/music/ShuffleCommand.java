@@ -25,23 +25,23 @@ public class ShuffleCommand extends Command {
         TrackScheduler scheduler = mng.scheduler;
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel")).queue();
+            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
             return;
         }
 
-        if (!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())) {
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
         if(scheduler.queue.isEmpty()){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "There are no songs to shuffle")).queue();
+           sendMsg(event, "There are no songs to shuffle");
             return;
         }
 
         scheduler.shuffle();
 
-        event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The queue has been shuffled!")).queue();
+        sendMsg(event, "The queue has been shuffled!");
 
     }
 

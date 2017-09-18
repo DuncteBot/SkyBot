@@ -50,14 +50,10 @@ public class GuildInfoCommand extends Command {
 
             MessageEmbed messageEmbed = eb.build();
 
-            if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
-                event.getChannel().sendMessage(AirUtils.embedToMessage(messageEmbed)).queue();
-                return;
-            }
-            event.getChannel().sendMessage(messageEmbed).queue();
+            sendEmbed(messageEmbed, event);
         }
         catch (Exception e){
-            event.getChannel().sendMessage("OOPS, something went wrong: " + e.getMessage()).queue();
+            sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
         }
     }

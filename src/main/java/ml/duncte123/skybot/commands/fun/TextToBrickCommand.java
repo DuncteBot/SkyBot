@@ -36,7 +36,7 @@ public class TextToBrickCommand extends Command {
                 }
             }
 
-        event.getChannel().sendMessage(AirUtils.embedMessage( sb.toString() )).queue();
+        sendEmbed(AirUtils.embedMessage( sb.toString() ), event);
     }
 
     /**

@@ -38,7 +38,7 @@ public class NowPlayingCommand extends Command {
         }else{
             msg = "The player is not currently playing anything!";
         }
-        event.getChannel().sendMessage(AirUtils.embedMessage(msg)).queue();
+        sendEmbed(AirUtils.embedMessage(msg), event);
 
     }
 

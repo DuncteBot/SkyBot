@@ -12,7 +12,7 @@ public class CookieCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        event.getChannel().sendMessage("<:blobnomcookie_secret:317636549342789632>").queue();
+        sendMsg(event, "<:blobnomcookie_secret:317636549342789632>");
 
     }
 

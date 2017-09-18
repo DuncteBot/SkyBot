@@ -27,12 +27,12 @@ public class SoftbanCommand extends Command {
         };
 
         if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
+            sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <@user> [Resson]")).queue();
+            sendMsg(event, "Usage is " + Config.prefix + getName() +" <@user> [Resson]");
             return;
         }
 
@@ -40,7 +40,7 @@ public class SoftbanCommand extends Command {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if(toBan.equals(event.getAuthor()) &&
                     !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan)) ) {
-                event.getChannel().sendMessage(AirUtils.embedMessage("You are not permitted to perform this executeCommand.")).queue();
+                sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
@@ -51,7 +51,7 @@ public class SoftbanCommand extends Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+            sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

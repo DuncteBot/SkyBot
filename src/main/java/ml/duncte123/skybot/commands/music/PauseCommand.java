@@ -19,7 +19,7 @@ public class PauseCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
@@ -30,15 +30,15 @@ public class PauseCommand extends Command {
         AudioPlayer player = mng.player;
 
         if (player.getPlayingTrack() == null){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "Cannot pause or resume player because no track is loaded for playing.")).queue();
+            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.");
             return;
         }
 
         player.setPaused(!player.isPaused());
         if (player.isPaused()){
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player has been paused.")).queue();
+            sendMsg(event, "The player has been paused.");
         }else{
-            event.getChannel().sendMessage(AirUtils.embedField(au.embedTitle, "The player has resumed playing.")).queue();
+            sendMsg(event, "The player has resumed playing.");
         }
     }
 

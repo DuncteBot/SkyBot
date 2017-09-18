@@ -25,12 +25,12 @@ public class PlayRawCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm not in a voice channel, use `"+ Config.prefix+"join` to make me join a channel")).queue();
+            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
             return;
         }
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
-            event.getChannel().sendMessage(AirUtils.embedField(AirUtils.au.embedTitle, "I'm sorry, but you have to be in the same channel as me to use any music related commands")).queue();
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
@@ -52,7 +52,7 @@ public class PlayRawCommand extends Command {
             }else if(scheduler.queue.isEmpty()){
                 eb.addField(au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
             }
-            event.getChannel().sendMessage(eb.build()).queue();
+            sendEmbed(eb.build(), event);
         }else{
             String toPlay = StringUtils.join(args, " ");
             au.loadAndPlay(mng, event.getChannel(), toPlay, false);

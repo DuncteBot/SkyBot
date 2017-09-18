@@ -26,7 +26,7 @@ public class AlpacaCommand extends Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+            sendEmbed(AirUtils.embedMessage("ERROR: " + e.getMessage()), event);
         }
     }
 

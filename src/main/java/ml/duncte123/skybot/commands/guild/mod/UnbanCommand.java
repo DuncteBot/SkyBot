@@ -27,12 +27,12 @@ public class UnbanCommand extends Command {
         };
 
         if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("You don't have permission to run this command")).queue();
+            sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (args[0].isEmpty()) {
-            event.getChannel().sendMessage(AirUtils.embedMessage("Usage is " + Config.prefix + getName() +" <username>")).queue();
+            sendMsg(event, "Usage is " + Config.prefix + getName() +" <username>");
             return;
         }
 
@@ -51,7 +51,7 @@ public class UnbanCommand extends Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            event.getChannel().sendMessage(AirUtils.embedMessage("ERROR: " + e.getMessage())).queue();
+            sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

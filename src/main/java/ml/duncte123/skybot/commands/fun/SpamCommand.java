@@ -15,7 +15,7 @@ public class SpamCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        event.getChannel().sendMessage(AirUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg")).queue();
+        sendEmbed(AirUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg"), event);
     }
 
     /**

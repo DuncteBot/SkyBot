@@ -1,10 +1,13 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public abstract class Command {
 
@@ -41,6 +44,19 @@ public abstract class Command {
      */
     protected SkyBot getBot() {
         return new SkyBot();
+    }
+
+    /**
+     * This will chcek if we can send a embed and convert it to a message if we can't send embeds
+     * @param embed The embed to send
+     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     */
+    protected void sendEmbed(MessageEmbed embed, GuildMessageReceivedEvent event) {
+        if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+            sendMsg(event, AirUtils.embedToMessage(embed));
+            return;
+        }
+        sendMsg(event, embed);
     }
 
     /**
