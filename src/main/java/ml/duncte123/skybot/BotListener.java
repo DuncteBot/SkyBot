@@ -90,15 +90,9 @@ public class BotListener extends ListenerAdapter {
             }
         }
 
-        if(event.getMessage().getContent().startsWith(Config.prefix) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())){
-            // run the a command
-            lastGuildChannel.put(event.getGuild(), event.getChannel());
-            AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent(), event));
-            return;
-        }
-
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
-        if(event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) && !event.getMessage().getAuthor().getId().equals(event.getJDA().getSelfUser().getId())) {
+
+        if(event.getMessage().getContent().startsWith(Config.prefix) || event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
             AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
@@ -106,11 +100,11 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
             if(event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) && event.getMessage().getRawContent().split(" ").length > 0){
                 lastGuildChannel.put(event.getGuild(), event.getChannel());
-                AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent().replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
+                AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
+                        .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Config.prefix), event));
                 return;
             }
             event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Config.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
@@ -125,7 +119,6 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
-        //event.getJDA().getGuilds().get(0).getDefaultChannel().sendMessage(Main.defaultName+" V" + Config.version +" has been restarted.").queue();
 
         ShardManager manager = event.getJDA().asBot().getShardManager();
 
@@ -177,13 +170,13 @@ public class BotListener extends ListenerAdapter {
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
         if(botToUserRatio[1] > 60) {
             AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+botToUserRatio[0]+"% are users btw). " +
+                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+event.getGuild().getMembers().size()+" is the total btw). " +
                     "I'm outta here").queue(
                             message -> message.getGuild().leave().queue()
             );
             return;
         }
-        AirUtils.log("DuncteBotGuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
+        AirUtils.log(Config.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         AirUtils.registerNewGuild(event.getGuild());
     }
 
@@ -230,7 +223,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            if(event.getChannelJoined()!=null) {
+            /*if(event.getChannelJoined()!=null) {
                 if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelJoined().getMembers().size() <= 1){
                     AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
@@ -242,7 +235,7 @@ public class BotListener extends ListenerAdapter {
                         event.getGuild().getAudioManager().closeAudioConnection();
                     }
                 }
-            }
+            }*/
         }
     }
 
