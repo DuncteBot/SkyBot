@@ -72,7 +72,7 @@ public class BadWordFilter {
         input = input.replaceAll("9","g");
 
         ArrayList<String> badWords = new ArrayList<>();
-        input = input.toLowerCase().replaceAll("[^a-zA-Z]", "");
+        input = input.toLowerCase().replaceAll("[^a-zA-Z ]", "");
 
         // iterate over each letter in the word
         for(int start = 0; start < input.length(); start++) {
@@ -96,10 +96,6 @@ public class BadWordFilter {
             }
         }
 
-
-        /*for(String s: badWords) {
-            Server.getSlackManager().queue(s + " qualified as a bad word in a username");
-        }*/
         return badWords;
 
     }
@@ -111,9 +107,6 @@ public class BadWordFilter {
      */
     public final boolean filterText(String input) {
         ArrayList<String> badWords = badWordsFound(input);
-        if(badWords.size() > 0) {
-            return true;
-        }
-        return false;
+        return badWords.size() > 0;
     }
 }
