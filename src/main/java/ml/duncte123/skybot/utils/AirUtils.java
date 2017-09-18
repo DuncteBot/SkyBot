@@ -217,7 +217,7 @@ public class AirUtils {
         try {
             Statement smt = database.createStatement();
 
-            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "', '"+g.getName()+"', default, default, default, '"+defaultMsg+"')");
+            smt.execute("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "', '"+g.getName().replaceAll("'", "''")+"', default, default, default, '"+defaultMsg+"')");
         }
         catch (Exception e) {
             e.printStackTrace();
