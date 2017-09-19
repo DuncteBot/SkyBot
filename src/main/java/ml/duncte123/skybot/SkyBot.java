@@ -1,13 +1,11 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.logging.CloudListener;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Config;
 import ml.duncte123.skybot.utils.ResourceUtil;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.utils.SimpleLog;
 import org.slf4j.event.Level;
 
 /**
@@ -40,9 +38,6 @@ public class SkyBot {
         }
         //Load the settings before loading the bot
         AirUtils.loadSettings();
-        // Register our custom logger and turn the default off
-        SimpleLog.LEVEL = SimpleLog.Level.OFF;
-        SimpleLog.addListener(new CloudListener());
 
         // log in and set up the api
         /*jda = new JDABuilder(AccountType.BOT)
