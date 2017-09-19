@@ -296,7 +296,7 @@ public class AirUtils {
                     .addHeader("cache-control", "no-cache")
                     .build();
             Response response = client.newCall(request).execute();
-            response.body().close();
+            response.close();
         }
         catch (Exception e) {
             e.printStackTrace();

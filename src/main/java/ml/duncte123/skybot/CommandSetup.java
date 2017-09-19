@@ -31,17 +31,16 @@ public class CommandSetup {
         this.addCommand(new PingCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new TriggerCommand());
-        this.addCommand(new SpamCommand());
         this.addCommand(new MinehCommand());
         this.addCommand(new WamCommand());
         this.addCommand(new CookieCommand());
-        this.addCommand(new PotatoCommand());
         this.addCommand(new GuildInfoCommand());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new TextToBrickCommand());
         this.addCommand(new BotinfoCommand());
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
+        this.addCommand(new BlobCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
