@@ -25,8 +25,19 @@ public class HelpCommand extends Command {
 
             for(Command cmd : AirUtils.commandSetup.getCommands()) {
                 if(cmd.getName().equals(toSearch)) {
-                    sendMsg(event, "Command help for "+toSearch+" :\n" + cmd.help());
+                    sendMsg(event, "Command help for "+toSearch+" :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                     return;
+                } else {
+
+                    for(String alias : cmd.getAliases()) {
+
+                        if(alias.equals(toSearch)) {
+                            sendMsg(event, "Command help for "+toSearch+" :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
+                            return;
+                        }
+
+                    }
+
                 }
             }
 

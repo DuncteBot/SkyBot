@@ -119,7 +119,6 @@ public class AirUtils {
 
         Connection database = db.getConnection();
         try {
-            int guilds = 0;
             Statement smt = database.createStatement();
 
             ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
@@ -138,10 +137,9 @@ public class AirUtils {
                         .setCustomPrefix(prefix);
 
                 guildSettings.put(guildId, settings);
-                guilds++;
             }
 
-            log(Level.INFO, "Loaded settings for "+guilds+" guilds.");
+            log(Level.INFO, "Loaded settings for "+guildSettings.keySet().size()+" guilds.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -566,10 +564,10 @@ public class AirUtils {
      */
     public static TextChannel getPublicChannel(Guild guild) {
 
-        TextChannel pubChann = guild.getTextChannelById(guild.getId());
+        TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
 
        if(pubChann==null) {
-           return guild.getTextChannels().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+           return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
        }
 
         return pubChann;
