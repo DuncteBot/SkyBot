@@ -62,8 +62,8 @@ public class BotListener extends ListenerAdapter {
             unbanTimer.cancel();
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
-            for(int i = 0; i < manager.getShardsTotal(); i++) {
-                manager.getShard(i).shutdown();
+            for(int i = 0; i < manager.getAmountTotalShards(); i++) {
+                manager.getShardById(i).shutdown();
                 AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
             }
             try {
@@ -154,7 +154,7 @@ public class BotListener extends ListenerAdapter {
                     .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                     .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
                     .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
-                    .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMembers().size() + "");
+                    .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
             publicChannel.sendMessage(msg).queue();
         }
     }
@@ -170,7 +170,7 @@ public class BotListener extends ListenerAdapter {
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
         if(botToUserRatio[1] > 60) {
             AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+event.getGuild().getMembers().size()+" is the total btw). " +
+                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+event.getGuild().getMemberCache().size()+" is the total btw). " +
                     "I'm outta here").queue(
                             message -> message.getGuild().leave().queue()
             );

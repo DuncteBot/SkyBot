@@ -30,17 +30,14 @@ public class CommandSetup {
         this.addCommand(new HelpCommand());
         this.addCommand(new PingCommand());
         this.addCommand(new CoinCommand());
-        this.addCommand(new TriggerCommand());
-        this.addCommand(new MinehCommand());
-        this.addCommand(new WamCommand());
-        this.addCommand(new CookieCommand());
-        this.addCommand(new GuildInfoCommand());
         this.addCommand(new UserinfoCommand());
-        this.addCommand(new TextToBrickCommand());
         this.addCommand(new BotinfoCommand());
+
+        //fun commands
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
         this.addCommand(new BlobCommand());
+        this.addCommand(new TextToBrickCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
@@ -67,6 +64,9 @@ public class CommandSetup {
         this.addCommand(new ShuffleCommand());
         this.addCommand(new RepeatCommand());
         this.addCommand(new PlayRawCommand());
+
+        //guild commands
+        this.addCommand(new GuildInfoCommand());
 
         //mod commands
         this.addCommand(new BanCommand());

@@ -236,8 +236,11 @@ public class AirUtils {
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         String length = "";
         if (time!=null &&!time.isEmpty()) { length = " lasting " + time + ""; }
+
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
+
         MessageChannel modLogChannel = g.getTextChannelsByName("modlog", true).get(0);
+
         modLogChannel.sendMessage(embedField(punishedUser.getName() + " " + punishment, punishment
                 + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
@@ -324,7 +327,7 @@ public class AirUtils {
 
                 if(currDate.after(unbanDate)) {
                     log(Level.INFO, "Unbanning " + res.getString("Username"));
-                    jda.getGuildById(
+                    jda.getGuildCache().getElementById(
                             res.getString("guildId")
                     ).getController().unban(
                             res.getString("userId")
