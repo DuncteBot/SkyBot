@@ -213,9 +213,18 @@ public class AirUtils {
         Connection database = db.getConnection();
 
         try {
-            PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '"+defaultMsg+"')");
-            smt.setString(1, g.getName());
-            smt.execute();
+
+            ResultSet resultSet = database.createStatement().executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='"+g.getId()+"'");
+            int rows = 0;
+            while (resultSet.next()) {
+                rows++;
+            }
+
+            if( rows == 0) {
+                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '" + defaultMsg + "')");
+                smt.setString(1, g.getName());
+                smt.execute();
+            }
         }
         catch (Exception e) {
             e.printStackTrace();
