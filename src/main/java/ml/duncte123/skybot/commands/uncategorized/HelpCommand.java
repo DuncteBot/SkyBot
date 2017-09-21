@@ -10,7 +10,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public class HelpCommand extends Command {
 
-    public final static String help = "shows a list of all the commands.";
+    public final static String help = "Shows a list of all the commands.\nUsage: `" +Config.prefix + "help [command]`";
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
@@ -25,14 +25,14 @@ public class HelpCommand extends Command {
 
             for(Command cmd : AirUtils.commandSetup.getCommands()) {
                 if(cmd.getName().equals(toSearch)) {
-                    sendMsg(event, "Command help for "+toSearch+" :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
+                    sendMsg(event, "Command help for `"+ cmd.getName()+"` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                     return;
                 } else {
 
                     for(String alias : cmd.getAliases()) {
 
                         if(alias.equals(toSearch)) {
-                            sendMsg(event, "Command help for "+toSearch+" :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
+                            sendMsg(event, "Command help for `"+cmd.getName()+"` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                             return;
                         }
 

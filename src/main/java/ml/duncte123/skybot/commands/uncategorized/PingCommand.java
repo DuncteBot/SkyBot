@@ -1,12 +1,13 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class PingCommand extends Command {
 
-    public final static String help = "PONG!";
+    public final static String help = "Shows the delay from the bot to the discord servers.\nUsage: `"+ Config.prefix+"ping`";
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here

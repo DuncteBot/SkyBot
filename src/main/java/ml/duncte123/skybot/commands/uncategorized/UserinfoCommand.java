@@ -2,6 +2,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Config;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -83,7 +84,7 @@ public class UserinfoCommand extends Command {
      */
     @Override
     public String help() {
-        return "Get the userinfo from yourself or from another user.";
+        return "Get information from yourself or from another user.\nUsage: `"+ Config.prefix+getName()+" [username]`";
     }
 
     @Override
