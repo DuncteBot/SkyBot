@@ -54,7 +54,7 @@ public class SkyBot {
                 .buildAsync();*/
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = 1;
+        int TOTAL_SHARDS = 5;
 
         new DefaultShardManagerBuilder()
                 .addEventListener(new BotListener())
