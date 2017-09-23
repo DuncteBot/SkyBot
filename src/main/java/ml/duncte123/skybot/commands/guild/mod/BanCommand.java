@@ -2,7 +2,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -36,7 +36,7 @@ public class BanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Config.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]");
             return;
         }
 
@@ -130,7 +130,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                "Usage: `" + Config.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]`";
+                "Usage: `" + Settings.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]`";
     }
 
     @Override

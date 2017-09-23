@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -10,7 +10,6 @@ import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.IOException;
-import java.io.InputStream;
 
 public class BlobCommand extends Command {
     @Override
@@ -57,7 +56,7 @@ public class BlobCommand extends Command {
     @Override
     public String help() {
         return "Gives you a blob.\n" +
-                "Usage: `" + Config.prefix+getName() + " [blob name]`";
+                "Usage: `" + Settings.prefix+getName() + " [blob name]`";
     }
 
     @Override

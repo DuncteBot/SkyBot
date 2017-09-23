@@ -2,13 +2,12 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
-import net.dv8tion.jda.core.Permission;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -61,7 +60,7 @@ public class UserinfoCommand extends Command {
 
         u = m.getUser();
       
-        MessageEmbed eb = AirUtils.defaultEmbed()
+        MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setColor(m.getColor())
                 .setDescription("Userinfo for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
@@ -84,7 +83,7 @@ public class UserinfoCommand extends Command {
      */
     @Override
     public String help() {
-        return "Get information from yourself or from another user.\nUsage: `"+ Config.prefix+getName()+" [username]`";
+        return "Get information from yourself or from another user.\nUsage: `"+ Settings.prefix+getName()+" [username]`";
     }
 
     @Override

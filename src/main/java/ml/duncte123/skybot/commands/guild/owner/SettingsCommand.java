@@ -3,7 +3,9 @@ package ml.duncte123.skybot.commands.guild.owner;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.SettingsUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -29,7 +31,7 @@ public class SettingsCommand extends Command {
         }
 
         if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            AirUtils.registerNewGuild(event.getGuild());
+            SettingsUtils.registerNewGuild(event.getGuild());
         }
 
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
@@ -37,7 +39,7 @@ public class SettingsCommand extends Command {
         if(args.length < 1) {
             //true ✅
             //false ❌
-            MessageEmbed message = AirUtils.embedMessage("Here are the settings from this guild.\n" +
+            MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
                             "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
                             "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
                             "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
@@ -45,31 +47,31 @@ public class SettingsCommand extends Command {
             );
             sendEmbed(message, event);
         } else if(args.length == 1) {
-            sendMsg(event, "Incorrect usage: `" + Config.prefix + "settings [module] [status/options]`");
+            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`");
         } else {
             List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
             String module = args[0];
             if(modules.contains(module)) {
                 switch (module) {
                     case "showJoinMessage" :
-                        AirUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
+                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
                         break;
                     case "swearFilter":
-                        AirUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
+                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
                         break;
                     case "setJoinMessage":
                         String newJoinMsg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        AirUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
+                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
                         break;
                     case "setPrefix":
                         String newPrefix = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        AirUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
+                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                         break;
 
                     default:
                         return;
                 }
-                sendEmbed(AirUtils.embedMessage("Settings have been updated."), event);
+                sendEmbed(EmbedUtils.embedMessage("Settings have been updated."), event);
 
             } else {
                 sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ", ") + "`");

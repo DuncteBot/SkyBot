@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -53,7 +53,7 @@ public abstract class Command {
      */
     protected void sendEmbed(MessageEmbed embed, GuildMessageReceivedEvent event) {
         if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
-            sendMsg(event, AirUtils.embedToMessage(embed));
+            sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;
         }
         sendMsg(event, embed);

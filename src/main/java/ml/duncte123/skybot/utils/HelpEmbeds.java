@@ -12,8 +12,8 @@ public class HelpEmbeds {
     /**
      * This is the embed containing all the commands
      */
-    public static MessageEmbed commandList = AirUtils.defaultEmbed()
-            .setDescription("Use `"+Config.prefix+"help [command]` to get more info about a command")
+    public static MessageEmbed commandList = EmbedUtils.defaultEmbed()
+            .setDescription("Use `"+ Settings.prefix+"help [command]` to get more info about a command")
             .addField("Main commands", generateCommands(new String[]{"help", "about", "clear", "coin", "ping", "guildinfo", "userinfo"}), INLINE)
             .addField("Music commands", generateCommands(new String[]{"join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"}), INLINE)
             .addField("Fun commands", generateCommands(new String[]{"kpop", "seal", "kitty", "dog", "cookie", "llama", "alpaca", "dialog", "ttb", "blob"}), INLINE)
@@ -30,7 +30,7 @@ public class HelpEmbeds {
         StringBuilder out = new StringBuilder();
 
         for (String name : cmdNames) {
-            out.append("`").append(Config.prefix).append(name).append("`\n");
+            out.append("`").append(Settings.prefix).append(name).append("`\n");
         }
 
         return out.toString();

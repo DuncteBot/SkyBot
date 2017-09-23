@@ -8,7 +8,7 @@ import java.util.Arrays;
 public class CommandParser {
 
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
-        final String[] split = rw.replaceFirst(Config.prefix, "").split(" ");
+        final String[] split = rw.replaceFirst(Settings.prefix, "").split(" ");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
 

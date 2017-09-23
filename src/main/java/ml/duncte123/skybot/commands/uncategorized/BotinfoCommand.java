@@ -2,15 +2,13 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.JDAInfo;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -27,11 +25,11 @@ public class BotinfoCommand extends Command {
         User u = event.getJDA().getSelfUser();
         Member m = event.getGuild().getMemberById(u.getId());
 
-        MessageEmbed eb = AirUtils.defaultEmbed()
+        MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Created by", "duncte123#1245", true)
-                .addField("Version", Config.version, true)
+                .addField("Version", Settings.version, true)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
                 .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to [https://paypal.me/duncte123](donate) any amount.", false)
@@ -45,7 +43,7 @@ public class BotinfoCommand extends Command {
      */
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `"+Config.prefix+getName()+"`";
+        return "Gets some info about the bot\nUsage: `"+ Settings.prefix+getName()+"`";
     }
 
     @Override

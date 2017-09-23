@@ -3,6 +3,7 @@ package ml.duncte123.skybot.commands.guild;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -30,7 +31,7 @@ public class GuildInfoCommand extends Command {
         try {
 
             double[] ratio = AirUtils.getBotRatio(g);
-            EmbedBuilder eb = AirUtils.defaultEmbed()
+            EmbedBuilder eb = EmbedUtils.defaultEmbed()
                     .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
                     .addField("Total Members", g.getMembers().size() + "", true)
                     .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)

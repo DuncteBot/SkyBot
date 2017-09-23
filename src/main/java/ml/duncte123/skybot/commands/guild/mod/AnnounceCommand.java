@@ -1,8 +1,8 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -31,7 +31,7 @@ public class AnnounceCommand extends Command {
         }
 
         if(event.getMessage().getMentionedChannels().size() < 1) {
-            sendMsg(event, "Correct usage is `" + Config.prefix + getName() + " [#Channel] [Message]`");
+            sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
             return;
         }
 
@@ -40,7 +40,7 @@ public class AnnounceCommand extends Command {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
 
-            sendEmbed(AirUtils.embedMessage(msg), event);
+            sendEmbed(EmbedUtils.embedMessage(msg), event);
 
         }
         catch (Exception e) {

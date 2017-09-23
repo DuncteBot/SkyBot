@@ -4,6 +4,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -60,7 +61,7 @@ public class JoinCommand extends Command {
         }
 
 
-        EmbedBuilder eb = AirUtils.defaultEmbed();
+        EmbedBuilder eb = EmbedUtils.defaultEmbed();
         try{
             if(event.getGuild().getAudioManager().isConnected()){
                 event.getGuild().getAudioManager().closeAudioConnection();

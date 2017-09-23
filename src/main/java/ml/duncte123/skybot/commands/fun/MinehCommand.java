@@ -1,11 +1,9 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-
-import java.util.concurrent.TimeUnit;
 
 public class MinehCommand extends Command {
 
@@ -20,7 +18,7 @@ public class MinehCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         event.getChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queue(
-                m -> sendEmbed(AirUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"), event)
+                m -> sendEmbed(EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"), event)
         );
     }
 

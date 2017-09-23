@@ -6,6 +6,7 @@ import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -29,7 +30,7 @@ public class ListCommand extends Command {
         Queue<AudioTrack> queue = scheduler.queue;
         synchronized (queue) {
             if (queue.isEmpty()) {
-                sendEmbed(AirUtils.embedField(au.embedTitle, "The queue is currently empty!"), event);
+                sendEmbed(EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"), event);
             } else {
                 int trackCount = 0;
                 long queueLength = 0;
@@ -44,7 +45,7 @@ public class ListCommand extends Command {
                     }
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength));
-               sendEmbed(AirUtils.embedField(au.embedTitle, sb.toString()), event);
+               sendEmbed(EmbedUtils.embedField(au.embedTitle, sb.toString()), event);
             }
         }
     }

@@ -1,8 +1,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
@@ -28,7 +27,7 @@ public class HackbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Config.prefix + getName() +" <userId>");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <userId>");
             return;
         }
 
@@ -49,7 +48,7 @@ public class HackbanCommand extends Command {
      */
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Config.prefix + getName() + " <userId>";
+        return "Ban a user before he/she can join your guild.\nUsage: " + Settings.prefix + getName() + " <userId>";
     }
 
     @Override

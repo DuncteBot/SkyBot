@@ -2,7 +2,7 @@ package ml.duncte123.skybot.utils;
 
 import java.awt.*;
 
-public class Config {
+public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
@@ -12,21 +12,13 @@ public class Config {
      */
     public static String apiBase = "https://bot.duncte123.ml/api";
     /**
-     * This is the token from your bot
-     */
-    public static final String token = "";
-    /**
-     * The api key for http://thecatapi.com/, optional
-     */
-    public static String catAPIKey = "";
-    /**
      * This is the prefix that your bot has, by default is the /
      */
     public static final String prefix = "/";
     /**
      * This is the version of the bot
      */
-    public static final String version = "3.47.3";
+    public static final String version = "3.47.4";
     /**
      * This is the name that your bot has
      */

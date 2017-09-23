@@ -2,7 +2,8 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -59,11 +60,11 @@ public class KpopCommand extends Command {
                 }
             }
 
-            EmbedBuilder eb = AirUtils.defaultEmbed()
+            EmbedBuilder eb = EmbedUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group " + group)
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
-                    .setFooter("Query id: " + id, Config.defaultIcon);
+                    .setFooter("Query id: " + id, Settings.defaultIcon);
             sendEmbed(eb.build(), event);
         }
         catch (Exception e) {
@@ -78,7 +79,7 @@ public class KpopCommand extends Command {
      */
     @Override
     public String help() {
-        return "Gives you a random kpop member, command idea by Exa\nUsage: " + Config.prefix + getName() +" [search term]";
+        return "Gives you a random kpop member, command idea by Exa\nUsage: " + Settings.prefix + getName() +" [search term]";
     }
 
     @Override

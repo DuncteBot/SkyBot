@@ -6,6 +6,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -34,11 +35,11 @@ public class NowPlayingCommand extends Command {
 
             msg = String.format("**Playing:** %s\n**Time:** [%s / %s]",
                     title, position, duration);
-            msg = "**Playing** " + title + "\n" + AirUtils.playerEmbed(mng);
+            msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
         }else{
             msg = "The player is not currently playing anything!";
         }
-        sendEmbed(AirUtils.embedMessage(msg), event);
+        sendEmbed(EmbedUtils.embedMessage(msg), event);
 
     }
 

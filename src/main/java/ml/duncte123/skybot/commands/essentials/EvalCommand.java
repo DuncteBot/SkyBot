@@ -1,9 +1,8 @@
 package ml.duncte123.skybot.commands.essentials;
 
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.script.Bindings;
@@ -43,8 +42,8 @@ public class EvalCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!event.getAuthor().getId().equals(Config.ownerId)) {
-            sendMsg(event, "You have to be the bot owner to use " + Config.prefix + getName());
+        if(!event.getAuthor().getId().equals(Settings.ownerId)) {
+            sendMsg(event, "You have to be the bot owner to use " + Settings.prefix + getName());
             return;
         }
 

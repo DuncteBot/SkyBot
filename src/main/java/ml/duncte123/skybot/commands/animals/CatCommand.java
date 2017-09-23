@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
@@ -29,7 +29,7 @@ public class CatCommand extends Command {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(AirUtils.embedMessage("OOPS: " + e.getMessage()), event);
+            sendEmbed(EmbedUtils.embedMessage("OOPS: " + e.getMessage()), event);
         }
 
     }

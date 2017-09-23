@@ -5,7 +5,7 @@ import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -20,7 +20,7 @@ public class RepeatCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().isConnected()){
-            sendMsg(event, "I'm not in a voice channel, use `"+Config.prefix+"join` to make me join a channel");
+            sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
             return;
         }
 

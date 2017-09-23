@@ -2,7 +2,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -32,7 +32,7 @@ public class SoftbanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Config.prefix + getName() +" <@user> [Resson]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Resson]");
             return;
         }
 

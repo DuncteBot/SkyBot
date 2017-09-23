@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class WamCommand extends Command {
@@ -15,7 +15,7 @@ public class WamCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        sendEmbed(AirUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"), event);
+        sendEmbed(EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"), event);
     }
 
     /**

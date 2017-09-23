@@ -1,8 +1,8 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Config;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,7 +17,7 @@ public class DialogCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length < 1) {
-            event.getChannel().sendMessage("Correct usage: `"+ Config.prefix+getName()+" <words>`").queue();
+            event.getChannel().sendMessage("Correct usage: `"+ Settings.prefix+getName()+" <words>`").queue();
             return;
         }
 
@@ -34,7 +34,7 @@ public class DialogCommand extends Command {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```");
-        sendEmbed(AirUtils.embedMessage(sb.toString()), event);
+        sendEmbed(EmbedUtils.embedMessage(sb.toString()), event);
 
     }
 

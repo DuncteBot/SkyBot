@@ -47,7 +47,7 @@ public class AudioUtils {
     /**
      * This is the title that you see in the embeds from the player
      */
-    public final String embedTitle = Config.playerTitle;
+    public final String embedTitle = Settings.playerTitle;
 
     /**
      * This will set everything up and get the player ready
@@ -103,7 +103,7 @@ public class AudioUtils {
                 }
 
                 mng.scheduler.queue(track);
-                sendEmbed(AirUtils.embedField(embedTitle, msg), channel);
+                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
 
             }
 
@@ -134,7 +134,7 @@ public class AudioUtils {
                     }
                     mng.scheduler.queue(firstTrack);
                 }
-                sendEmbed(AirUtils.embedField(embedTitle, msg), channel);
+                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
             }
 
             /**
@@ -142,7 +142,7 @@ public class AudioUtils {
              */
             @Override
             public void noMatches() {
-                sendEmbed(AirUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_"), channel);
+                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_"), channel);
             }
 
             /**
@@ -151,7 +151,7 @@ public class AudioUtils {
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-               sendEmbed(AirUtils.embedField(embedTitle, "Could not play: "+exception.getMessage()), channel);
+               sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: "+exception.getMessage()), channel);
 
             }
 
@@ -185,7 +185,7 @@ public class AudioUtils {
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
         if(!PermissionUtil.checkPermission(tc.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
-             channel.sendMessage(AirUtils.embedToMessage(embed)).queue();
+             channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
             return;
         }
         channel.sendMessage(embed).queue();

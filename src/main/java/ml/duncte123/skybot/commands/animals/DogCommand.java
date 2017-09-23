@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -20,14 +20,14 @@ public class DogCommand extends Command {
             String finalS = base + jsonString;
 
             if (finalS.contains(".mp4")) {
-               sendEmbed(AirUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"), event);
+               sendEmbed(EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"), event);
             } else {
-                sendEmbed(AirUtils.embedImage(finalS), event);
+                sendEmbed(EmbedUtils.embedImage(finalS), event);
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(AirUtils.embedMessage("**[OOPS]** Something broke, blame duncte"), event);
+            sendEmbed(EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"), event);
         }
 
     }

@@ -1,0 +1,14 @@
+{
+  "discord": {
+    "token": ""
+  },
+  "sql": {
+    "host": "",
+    "username": "",
+    "password": "",
+    "database": ""
+  },
+  "apis" : {
+    "thecatapi": ""
+  }
+}

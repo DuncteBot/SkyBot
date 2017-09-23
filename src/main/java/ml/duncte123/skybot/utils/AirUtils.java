@@ -2,6 +2,8 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandSetup;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.config.Config;
+import ml.duncte123.skybot.config.ConfigLoader;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -15,6 +17,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
+import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -26,6 +29,7 @@ import java.util.Random;
 
 public class AirUtils {
 
+    public static Config config = new ConfigUtils().getConfig();
     /**
      * This will hold the command setup and the registered commands
      */
@@ -33,7 +37,7 @@ public class AirUtils {
     /**
      * We are using slf4j to log things to the console
      */
-    public static Logger logger = LoggerFactory.getLogger(Config.defaultName);
+    public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
     /**
      * This helps us to make the coinflip work
      */
@@ -50,45 +54,6 @@ public class AirUtils {
      * This is our audio handler
      */
     public static AudioUtils au = new AudioUtils();
-
-    /**
-     * The default way to display a nice embedded message
-     * @param message The message to display
-     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedMessage(String message) {
-        return defaultEmbed().setDescription(message).build();
-    }
-
-    /**
-     * The default way to send a embedded message to the channel with a field in it
-     * @param title The title of the field
-     * @param message The message to display
-     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedField(String title, String message){
-        return defaultEmbed().addField(title, message, false).build();
-    }
-
-    /**
-     * The default way to send a embedded image to the channel
-     * @param imageURL The url from the image
-     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedImage(String imageURL) {
-        return defaultEmbed().setImage(imageURL).build();
-    }
-
-    /**
-     * The default embed layout that all of the embeds are based off
-     * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
-     */
-    public static EmbedBuilder defaultEmbed(){
-        return new EmbedBuilder()
-                .setColor(Config.defaultColour)
-                .setFooter(Config.defaultName, Config.defaultIcon)
-                .setTimestamp(Instant.now());
-    }
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -110,128 +75,6 @@ public class AirUtils {
     }
 
     /**
-     * This will get the settings from our database and store them in the {@link ml.duncte123.skybot.utils.AirUtils#guildSettings settings}
-     */
-    public static void loadSettings() {
-        log(Level.INFO, "Loading settings.");
-
-        String dbName = db.getName();
-
-        Connection database = db.getConnection();
-        try {
-            Statement smt = database.createStatement();
-
-            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
-
-            while (resSettings.next()) {
-                String guildId = resSettings.getString("guildId");
-                boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
-                boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
-                String joinmsg = resSettings.getString("customWelcomeMessage");
-                String prefix = resSettings.getString("prefix");
-
-                GuildSettings settings = new GuildSettings(guildId)
-                        .setEnableJoinMessage(enableJoinMsg)
-                        .setEnableSwearFilter(enableSwearFilter)
-                        .setCustomJoinMessage(joinmsg)
-                        .setCustomPrefix(prefix);
-
-                guildSettings.put(guildId, settings);
-            }
-
-            log(Level.INFO, "Loaded settings for "+guildSettings.keySet().size()+" guilds.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will save the settings into the database when the guild owner/admin updates it
-     * @param guild The guild to update it for
-     * @param settings the new settings
-     */
-    public static void updateGuildSettings(Guild guild, GuildSettings settings) {
-
-
-        if(!guildSettings.containsKey(settings.getGuildId())) {
-            registerNewGuild(guild);
-            return;
-        }
-
-        String guildId = settings.getGuildId();
-        boolean enableJoinMessage = settings.isEnableJoinMessage();
-        boolean enableSwearFilter = settings.isEnableSwearFilter();
-        String customJoinMessage = settings.getCustomJoinMessage();
-        String newPrefix = settings.getCustomPrefix();
-
-
-        String dbName = db.getName();
-        Connection database = db.getConnection();
-
-        try{
-            PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                    "enableJoinMessage= ? , " +
-                    "enableSwearFilter= ? ," +
-                    "customWelcomeMessage= ? ," +
-                    "prefix= ? " +
-                    "WHERE guildId='"+guildId+"'");
-            preparedStatement.setBoolean(1, enableJoinMessage);
-            preparedStatement.setBoolean(2, enableSwearFilter);
-            preparedStatement.setString(3, customJoinMessage);
-            preparedStatement.setString(4, newPrefix);
-            preparedStatement.executeUpdate();
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
-    /**
-     * This will register a new guild with their settings on bot join
-     * @param g The guild that we are joining
-     */
-    public static void registerNewGuild(Guild g) {
-
-        if(guildSettings.containsKey(g.getId())) { return; }
-
-        boolean ENABLE_JOIN_MSG = false;
-        boolean ENABLE_SWEAR_FILTER = false;
-        String defaultMsg = "Welcome {{USER_MENTION}}, to the official {{GUILD_NAME}} guild.";
-        GuildSettings newGuildSettings = new GuildSettings(g.getId())
-                .setEnableJoinMessage(ENABLE_JOIN_MSG)
-                .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
-                .setCustomJoinMessage(defaultMsg)
-                .setCustomPrefix(Config.prefix);
-        guildSettings.put(g.getId(), newGuildSettings);
-
-
-        String dbName = db.getName();
-
-        Connection database = db.getConnection();
-
-        try {
-
-            ResultSet resultSet = database.createStatement().executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='"+g.getId()+"'");
-            int rows = 0;
-            while (resultSet.next()) {
-                rows++;
-            }
-
-            if( rows == 0) {
-                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '" + defaultMsg + "')");
-                smt.setString(1, g.getName());
-                smt.execute();
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
      * This will send a message to a channel called modlog
      * @param mod The mod that performed the punishment
      * @param punishedUser The user that got punished
@@ -248,7 +91,7 @@ public class AirUtils {
 
         MessageChannel modLogChannel = g.getTextChannelsByName("modlog", true).get(0);
 
-        modLogChannel.sendMessage(embedField(punishedUser.getName() + " " + punishment, punishment
+        modLogChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
                 + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
         );
@@ -300,7 +143,7 @@ public class AirUtils {
                     + "&guildId=" + guildId
             );
             Request request = new Request.Builder()
-                    .url(Config.apiBase + "/ban.php")
+                    .url(Settings.apiBase + "/ban.php")
                     .post(body)
                     .addHeader("content-type", "application/x-www-form-urlencoded")
                     .addHeader("cache-control", "no-cache")
@@ -406,7 +249,7 @@ public class AirUtils {
      * @param message The message to log
      */
     public static void log(Level lvl, String message){
-        log(Config.defaultName, lvl, message);
+        log(Settings.defaultName, lvl, message);
     }
 
     /**
@@ -437,102 +280,6 @@ public class AirUtils {
                 logger.trace(msg);
                 break;
         }
-    }
-
-    /**
-     * This will generate a nice player embed for us
-     * @param mng the {@link net.dv8tion.jda.core.entities.Guild Guild} that we need the info for
-     * @return the String that we can place in our embed
-     */
-    public static String playerEmbed(GuildMusicManager mng) {
-
-        return (mng.player.isPaused()?"\u23F8":"\u25B6")+" "+
-                generateProgressBar((double)mng.player.getPlayingTrack().getPosition()/mng.player.getPlayingTrack().getDuration())
-                +" `["+formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) +"]` "
-                + getVolumeIcon(mng.player.getVolume());
-    }
-
-    /**
-     * This will calculate the progressbar for us
-     * @param percent how far we are in the audio track
-     * @return the progressbar
-     */
-    public static String generateProgressBar(double percent) {
-        String str = "";
-        for(int i=0; i<8; i++) {
-            if (i == (int) (percent * 8)) {
-                str += "\uD83D\uDD18";
-            } else {
-                str += "▬";
-            }
-        }
-        return str;
-    }
-
-    /**
-     * This will give a nice emote depending on how loud we are sending the music
-     * @param volume the volume of our player
-     * @return the volume icon emote
-     */
-    public static String getVolumeIcon(int volume) {
-        if(volume == 0) {
-            return "\uD83D\uDD07";
-        }
-        if(volume < 30) {
-            return "\uD83D\uDD08";
-        }
-        if(volume < 70) {
-            return "\uD83D\uDD09";
-        }
-        return "\uD83D\uDD0A";
-    }
-
-    /**
-     * This wil format our current player time in this format: hh:mm:ss
-     * @param duration how far we are in the track
-     * @return our formatted time
-     */
-    public static String formatTime(long duration) {
-        if(duration == Long.MAX_VALUE) {
-            return "LIVE";
-        }
-        long seconds = Math.round(duration/1000.0);
-        long hours = seconds/(60*60);
-        seconds %= 60*60;
-        long minutes = seconds/60;
-        seconds %= 60;
-        return (hours>0 ? hours+":" : "") + (minutes<10 ? "0"+minutes : minutes) + ":" + (seconds<10 ? "0"+seconds : seconds);
-    }
-
-    /**
-     * This will convert our embeds for if the bot is not able to send embeds
-     * @param embed the {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} that we are trying to send
-     * @return the converted embed
-     */
-    public static String embedToMessage(MessageEmbed embed) {
-
-        String msg = "";
-
-        if(embed.getAuthor() != null) {
-            msg += "***"+embed.getAuthor().getName()+"***\n\n";
-        }
-        if(embed.getDescription()!=null) {
-            msg += "_"+embed.getDescription()+"_\n\n";
-        }
-        for(MessageEmbed.Field f : embed.getFields()) {
-            msg += "__"+f.getName()+"__\n"+f.getValue()+"\n\n";
-        }
-        if(embed.getImage()!=null) {
-            msg+= embed.getImage().getUrl();
-        }
-        if(embed.getFooter()!=null) {
-            msg += embed.getFooter().getText();
-        }
-        if(embed.getTimestamp() != null) {
-            msg += "|"+embed.getTimestamp();
-        }
-
-        return msg;
     }
 
     /**
