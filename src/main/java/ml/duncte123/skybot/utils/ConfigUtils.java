@@ -12,8 +12,8 @@ public class ConfigUtils {
 
     public ConfigUtils() {
         try {
-
             config = ConfigLoader.getConfig(new File("config.json"));
+            AirUtils.log(Level.INFO, "Loading config.json");
         } catch (Exception e) {
             AirUtils.log(Level.ERROR, "Could not load config, aborting");
             System.exit(-1);
