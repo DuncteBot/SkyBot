@@ -92,4 +92,9 @@ public class JoinCommand extends Command {
     public String getName() {
         return "join";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"summon"};
+    }
 }

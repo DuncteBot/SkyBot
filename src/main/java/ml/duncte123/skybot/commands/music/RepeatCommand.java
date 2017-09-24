@@ -56,4 +56,8 @@ public class RepeatCommand extends Command {
         return "repeat";
     }
 
+    @Override
+    public String[] getAliases() {
+        return new String[]{"loop"};
+    }
 }

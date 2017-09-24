@@ -29,6 +29,7 @@ public class BotinfoCommand extends Command {
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Created by", "duncte123#1245", true)
+                .addField("Invite", "[https://bots.discord.pw/bots/210363111729790977](You can invite me by clicking here)", true)
                 .addField("Version", Settings.version, true)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
                 .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
