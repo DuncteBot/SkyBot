@@ -66,7 +66,7 @@ public class JoinCommand extends Command {
             if(event.getGuild().getAudioManager().isConnected()){
                 event.getGuild().getAudioManager().closeAudioConnection();
             }
-            vc.getGuild().getAudioManager().openAudioConnection(vc);
+            event.getGuild().getAudioManager().openAudioConnection(vc);
             eb.addField("", "Joining `" + vc.getName() + "`.", false);
         }catch(PermissionException e){
             if(e.getPermission() == Permission.VOICE_CONNECT){

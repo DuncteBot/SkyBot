@@ -29,7 +29,6 @@ public class KpopCommand extends Command {
         try {
             String dbName = AirUtils.db.getName();
             Connection database = AirUtils.db.getConnection();
-            database.createStatement().execute("SET CHARACTER SET utf8");
 
             if(args.length > 0) {
 

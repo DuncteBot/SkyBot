@@ -1,5 +1,6 @@
 package ml.duncte123.skybot;
 
+import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.config.ConfigLoader;
@@ -10,6 +11,7 @@ import ml.duncte123.skybot.utils.SettingsUtils;
 import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.File;
@@ -29,6 +31,10 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String[] args) throws Exception {
+        //Set the logger to only info by default
+        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        l.setLevel(ch.qos.logback.classic.Level.INFO);
+
         if(!DataBaseUtil.hasSettings()) {
             AirUtils.log(Level.ERROR, "DB SETTINGS ARE DOWN ABORTING");
             System.exit(-2);
@@ -39,6 +45,10 @@ public class SkyBot {
             System.exit(-3);
             return;
         }
+
+        //Set database to UTF-8
+        AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
+
         //Load the settings before loading the bot
         SettingsUtils.loadSettings();
 
@@ -54,7 +64,7 @@ public class SkyBot {
                 .buildAsync();*/
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = 5;
+        int TOTAL_SHARDS = 2;
 
         new DefaultShardManagerBuilder()
                 .addEventListener(new BotListener())

@@ -6,7 +6,7 @@ plugins {
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.47.4'
+version '3.47.5'
 
 sourceCompatibility = 1.8
 
@@ -20,7 +20,7 @@ repositories {
 
 dependencies {
     //compile 'net.dv8tion:JDA:3.3.0_271'
-    compile 'com.github.DV8FromTheWorld:JDA:e92e0ae' //Beta build with ShardManager
+    compile 'com.github.DV8FromTheWorld:JDA:1ca8582' //Beta build with ShardManager
     //Lavaplayer
     compile 'com.sedmelluq:lavaplayer:1.2.43'
     //jda-nas
@@ -36,9 +36,9 @@ dependencies {
     //groovy
     compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.9'
     //logback
-    compile 'ch.qos.logback:logback-classic:1.2.1'
+    compile 'ch.qos.logback:logback-classic:1.2.3'
     //logback classic
-    compile 'ch.qos.logback:logback-core:1.2.1'
+    compile 'ch.qos.logback:logback-core:1.2.3'
 
 
 }

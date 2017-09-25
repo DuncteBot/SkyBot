@@ -7,6 +7,12 @@ import java.io.*;
 
 public class ConfigLoader {
 
+    /**
+     * This will attempt to load the config and create it if it is not there
+     * @param file the file to load
+     * @return the loaded config
+     * @throws Exception if something goes wrong
+     */
     public static Config getConfig(final File file) throws Exception{
         if (!file.exists()) {
             file.createNewFile();

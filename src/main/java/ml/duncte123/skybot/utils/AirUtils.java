@@ -1,15 +1,12 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandSetup;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.config.Config;
-import ml.duncte123.skybot.config.ConfigLoader;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.db.DbManager;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import okhttp3.*;
@@ -17,19 +14,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.io.File;
 import java.net.URL;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
-import java.time.Instant;
 import java.util.HashMap;
 import java.util.Random;
 
 public class AirUtils {
 
-    public static Config config = new ConfigUtils().getConfig();
+    public static Config config = new ConfigUtils().loadConfig();
     /**
      * This will hold the command setup and the registered commands
      */

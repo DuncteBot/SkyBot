@@ -6,6 +6,9 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.time.Instant;
 
+/**
+ * A simple class to help me build embeds
+ */
 public class EmbedUtils {
     /**
      * The default way to send a embedded message to the channel with a field in it
