@@ -1,7 +1,7 @@
 package ml.duncte123.skybot.config;
 
 import com.google.gson.*;
-import org.apache.commons.lang3.text.translate.UnicodeUnescaper;
+import org.apache.commons.text.translate.UnicodeUnescaper;
 
 import java.io.*;
 
