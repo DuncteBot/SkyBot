@@ -1,13 +1,18 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.PermissionUtil;
+
+import java.util.HashMap;
 
 public abstract class Command {
 
@@ -44,6 +49,33 @@ public abstract class Command {
      */
     protected SkyBot getBot() {
         return new SkyBot();
+    }
+
+    /**
+     * This returns the settings for the given guild
+     * @param guildId the id if the guild that we need the settings for
+     * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
+     */
+    protected GuildSettings getSettings(String guildId) {
+        return AirUtils.guildSettings.get(guildId);
+    }
+
+    /**
+     * This will react with a ❌ if the user doesn't have permission to run the command
+     * @param message the message to add the reaction to
+     */
+    protected void sendError(Message message)
+    {
+        message.addReaction("❌").queue();
+    }
+
+    /**
+     * This will react with a ✅ if the user doesn't have permission to run the command
+     * @param message the message to add the reaction to
+     */
+    protected void sendSuccess(Message message)
+    {
+        message.addReaction("✅").queue();
     }
 
     /**

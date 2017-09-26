@@ -43,7 +43,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getAuthor().getId().equals(Settings.ownerId)) {
-            sendMsg(event, "You have to be the bot owner to use " + Settings.prefix + getName());
+            sendError(event.getMessage());
             return;
         }
 
@@ -68,14 +68,14 @@ public class EvalCommand extends Command {
                         "channel.sendMessage(msg).queue();" +
                     "}", bindings);
 
-            String importString = "";
+            StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
-                importString += "import " + s + ".*;";
+                importStringBuilder.append("import ").append(s).append(".*;");
             }
-            Object out = engine.eval(importString +
+            Object out = engine.eval(importStringBuilder.toString() +
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
             , bindings);
-           sendMsg(event, out == null || String.valueOf(out).isEmpty() ? "Executed without error." : out.toString().replaceAll(event.getJDA().getToken(), "Not Today"));
+           sendMsg(event, out == null || String.valueOf(out).isEmpty() ? "Executed without error." : out.toString());
         }
         catch (ScriptException e) {
             System.out.println(e.getMessage());
@@ -94,7 +94,7 @@ public class EvalCommand extends Command {
      */
     @Override
     public String help() {
-        return "A simple eval command (Inspired off of yuis one)";
+        return "A simple eval command";
     }
 
     @Override

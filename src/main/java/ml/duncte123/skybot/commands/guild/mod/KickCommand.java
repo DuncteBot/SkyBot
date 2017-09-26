@@ -32,7 +32,7 @@ public class KickCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Resson]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Reason]");
             return;
         }
 
@@ -46,8 +46,11 @@ public class KickCommand extends Command {
             }
                                            //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-            event.getGuild().getController().kick(toKick.getId(), reason + "\nKicked by " + event.getAuthor().getName()).queue(
-                    (noting) -> AirUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild())
+            event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
+                    (noting) -> {
+                        AirUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());
+                        sendSuccess(event.getMessage());
+                    }
             );
         }
         catch (Exception e) {

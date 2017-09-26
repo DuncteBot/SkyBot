@@ -12,28 +12,53 @@ public class HelpEmbeds {
     /**
      * This is the embed containing all the commands
      */
-    public static MessageEmbed commandList = EmbedUtils.defaultEmbed()
-            .setDescription("Use `"+ Settings.prefix+"help [command]` to get more info about a command")
-            .addField("Main commands", generateCommands(new String[]{"help", "about", "clear", "coin", "ping", "guildinfo", "userinfo"}), INLINE)
-            .addField("Music commands", generateCommands(new String[]{"join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"}), INLINE)
-            .addField("Fun commands", generateCommands(new String[]{"kpop", "seal", "kitty", "dog", "cookie", "llama", "alpaca", "dialog", "ttb", "blob"}), INLINE)
-            .addField("Mod/Admin commands", generateCommands(new String[]{"ban", "softban", "unban", "kick", "settings"}), INLINE)
-            .build();
+    public static MessageEmbed commandList = getCommandList();
 
     /**
-     * if you enter a list of commands in here it will generate a string containing all the co
+     * This will return a embed containing all the commands
+     * @return a embed containing all the commands
+     */
+    public static MessageEmbed getCommandList() {
+        return getCommandListWithPrefix(Settings.prefix);
+    }
+
+    /**
+     * This will return a embed containing all the commands
+     * @param prefix the prefix that we need
+     * @return a embed containing all the commands
+     */
+    public static MessageEmbed getCommandListWithPrefix(String prefix) {
+        return EmbedUtils.defaultEmbed()
+                .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
+                .addField("Main commands", generateCommandsWithPrefix(prefix, new String[]{"help", "about", "clear", "coin", "ping", "guildinfo", "userinfo"}), INLINE)
+                .addField("Music commands", generateCommandsWithPrefix(prefix, new String[]{"join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"}), INLINE)
+                .addField("Fun commands", generateCommandsWithPrefix(prefix, new String[]{"kpop", "seal", "kitty", "dog", "cookie", "llama", "alpaca", "dialog", "ttb", "blob"}), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, new String[]{"ban", "softban", "unban", "kick", "settings"}), INLINE)
+                .build();
+    }
+
+    /**
+     * if you enter a list of commands in here it will generate a string containing all the commands
+     * @param prefix The prefix that will be in frond of the commands
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
-    private static String generateCommands(String[] cmdNames) {
-
+    public static String generateCommandsWithPrefix(String prefix, String[] cmdNames) {
         StringBuilder out = new StringBuilder();
 
         for (String name : cmdNames) {
-            out.append("`").append(Settings.prefix).append(name).append("`\n");
+            out.append("`").append(prefix).append(name).append("`\n");
         }
 
         return out.toString();
     }
 
+    /**
+     * if you enter a list of commands in here it will generate a string containing all the commands
+     * @param cmdNames the commands that should be added to the list
+     * @return a concatenated string of the commands that we entered
+     */
+    public static String generateCommands(String[] cmdNames) {
+        return generateCommandsWithPrefix(Settings.prefix, cmdNames);
+    }
 }

@@ -12,10 +12,6 @@ public class CoinCommand extends Command {
 
     public final static String help = "flips a coin.\nUsage: `"+ Settings.prefix+"coin`";
     /**
-     * this is where the coins are stored
-     */
-    private final String coinUrl = "https://dshelmondgames.ml/img/coin/";
-    /**
      * this are our images
      */
     private final String[] imagesArr = { "heads.png", "tails.png" };
@@ -27,6 +23,7 @@ public class CoinCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+        String coinUrl = "https://dshelmondgames.ml/img/coin/";
 
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();

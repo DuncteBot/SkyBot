@@ -147,9 +147,11 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        if (AirUtils.guildSettings.get(event.getGuild().getId()).isEnableJoinMessage()) {
+        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+
+        if (settings.isEnableJoinMessage()) {
             TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
-            String msg = AirUtils.guildSettings.get(event.getGuild().getId()).getCustomJoinMessage()
+            String msg = settings.getCustomJoinMessage()
                     .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                     .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
                     .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())

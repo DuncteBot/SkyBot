@@ -20,7 +20,7 @@ public class KittyCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
         try {
-            String apiKey = AirUtils.config.getString("apis.thecatapi");
+            String apiKey = AirUtils.config.getString("apis.thecatapi", "");
             System.out.println(apiKey);
             Document raw = Jsoup.connect("http://thecatapi.com/api/images/get?" +
                     (!apiKey.isEmpty()? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();

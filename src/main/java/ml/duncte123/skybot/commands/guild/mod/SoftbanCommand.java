@@ -32,7 +32,7 @@ public class SoftbanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Resson]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Reason]");
             return;
         }
 
@@ -44,8 +44,11 @@ public class SoftbanCommand extends Command {
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName()).queue(
-                    (noting) -> AirUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild())
+            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
+                    nothing -> {
+                        AirUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
+                        sendSuccess(event.getMessage());
+                    }
             );
             event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
         }

@@ -28,12 +28,13 @@ public class BotinfoCommand extends Command {
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Created by", "duncte123#1245", true)
-                .addField("Invite", "[https://bots.discord.pw/bots/210363111729790977](You can invite me by clicking here)", true)
-                .addField("Version", Settings.version, true)
+                .addField("General info", "**Creator:** duncte123#1245\n" +
+                        "**Invite:** [https://bots.discord.pw/bots/210363111729790977](You can invite me by clicking here)\n" +
+                        "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
+                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() +
+                        "**Bot version:** " + Settings.version, true)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
-                .addField("Github repo", "[https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)", false)
-                .addField("Donate", "If you want to help me out and support the bot please consider to [https://paypal.me/duncte123](donate) any amount.", false)
+                .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
         sendEmbed(eb, event);
     }

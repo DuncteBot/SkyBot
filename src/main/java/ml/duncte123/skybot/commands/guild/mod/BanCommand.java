@@ -56,6 +56,7 @@ public class BanCommand extends Command {
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (voidMethod) -> {
                                 AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                sendSuccess(event.getMessage());
                                 AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
                             }
                     );

@@ -27,7 +27,7 @@ public class GuildInfoCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event){
         Guild g = event.getGuild();
-        GuildSettings settings = AirUtils.guildSettings.get(g.getId());
+        GuildSettings settings = getSettings(g.getId());
         try {
 
             double[] ratio = AirUtils.getBotRatio(g);

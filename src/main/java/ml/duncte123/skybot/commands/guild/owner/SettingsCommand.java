@@ -30,11 +30,7 @@ public class SettingsCommand extends Command {
             return;
         }
 
-        if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            GuildSettingsUtils.registerNewGuild(event.getGuild());
-        }
-
-        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+        GuildSettings settings = getSettings(event.getGuild().getId());
 
         if(args.length < 1) {
             //true ✅
