@@ -49,12 +49,13 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
 
+        //We only want to respond to members/users
         if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
             return;
         }
 
         if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            SettingsUtils.registerNewGuild(event.getGuild());
+            GuildSettingsUtils.registerNewGuild(event.getGuild());
         }
 
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
@@ -97,10 +98,8 @@ public class BotListener extends ListenerAdapter {
             lastGuildChannel.put(event.getGuild(), event.getChannel());
             AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
                     .replaceFirst(settings.getCustomPrefix(), Settings.prefix), event));
-            return;
-        }
-
-        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+            //return;
+        } else if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
             if(event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) && event.getMessage().getRawContent().split(" ").length > 0){
                 lastGuildChannel.put(event.getGuild(), event.getChannel());
                 AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
@@ -177,7 +176,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
-        SettingsUtils.registerNewGuild(event.getGuild());
+        GuildSettingsUtils.registerNewGuild(event.getGuild());
     }
 
     /**

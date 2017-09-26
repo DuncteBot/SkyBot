@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.Statement;
 
-public class SettingsUtils {
+public class GuildSettingsUtils {
     /**
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */

@@ -2,19 +2,14 @@ package ml.duncte123.skybot;
 
 import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.config.Config;
-import ml.duncte123.skybot.config.ConfigLoader;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
-import ml.duncte123.skybot.utils.ResourceUtil;
-import ml.duncte123.skybot.utils.SettingsUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-
-import java.io.File;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -36,12 +31,12 @@ public class SkyBot {
         l.setLevel(ch.qos.logback.classic.Level.INFO);
 
         if(!DataBaseUtil.hasSettings()) {
-            AirUtils.log(Level.ERROR, "DB SETTINGS ARE DOWN ABORTING");
+            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "DB SETTINGS ARE DOWN ABORTING");
             System.exit(-2);
             return;
         }
         if(!AirUtils.db.isConnected()) {
-            AirUtils.log(Level.ERROR, "Can't connect to database");
+            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database");
             System.exit(-3);
             return;
         }
@@ -50,7 +45,7 @@ public class SkyBot {
         AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
 
         //Load the settings before loading the bot
-        SettingsUtils.loadSettings();
+        GuildSettingsUtils.loadSettings();
 
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");

@@ -5,7 +5,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
-import ml.duncte123.skybot.utils.SettingsUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -31,7 +31,7 @@ public class SettingsCommand extends Command {
         }
 
         if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            SettingsUtils.registerNewGuild(event.getGuild());
+            GuildSettingsUtils.registerNewGuild(event.getGuild());
         }
 
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
@@ -54,18 +54,18 @@ public class SettingsCommand extends Command {
             if(modules.contains(module)) {
                 switch (module) {
                     case "showJoinMessage" :
-                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
                         break;
                     case "swearFilter":
-                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
                         break;
                     case "setJoinMessage":
                         String newJoinMsg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
                         break;
                     case "setPrefix":
                         String newPrefix = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                        SettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                         break;
 
                     default:

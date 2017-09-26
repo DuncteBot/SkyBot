@@ -15,4 +15,6 @@ You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 - [x] Make kpop command take in a search term (name/id)
 - [X] Make the nowplaying command show the title of the song in the embed
 - [X] Create a random seal command
+- [X] Create new way to load the bot token
+- [ ] Add a wiki that explains how to set the bot up yourself
 
