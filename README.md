@@ -12,9 +12,11 @@ and
 You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 
 # ToDo list
-- [x] Make kpop command take in a search term (name/id)
-- [X] Make the nowplaying command show the title of the song in the embed
-- [X] Create a random seal command
-- [X] Create new way to load the bot token
+- [ ] Create Joke command
+- [ ] Fix timed bans in the ban command
 - [ ] Add a wiki that explains how to set the bot up yourself
+- [X] Create new way to load the bot token
+- [X] Create a random seal command
+- [X] Make the nowplaying command show the title of the song in the embed
+- [x] Make kpop command take in a search term (name/id)
 
