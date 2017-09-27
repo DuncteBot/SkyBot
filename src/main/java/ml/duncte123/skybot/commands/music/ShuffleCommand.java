@@ -52,7 +52,7 @@ public class ShuffleCommand extends Command {
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Makes the player repeat the currently playing song";
+        return "Shuffles the current queue";
     }
 
     @Override

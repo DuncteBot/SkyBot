@@ -7,21 +7,22 @@ import java.sql.DriverManager;
 
 public class DataBaseUtil {
 
+    private static String dbHost;
+    private static String user;
+    private static String pass;
+    private static String dbName;
+
     /**
      * This will connect to the database for us and return the connection
      * @return The connection to the database
      */
     public static Connection getConnection() {
-        String dbHost = AirUtils.config.getString("sql.host");
-        String user = AirUtils.config.getString("sql.username");
-        String pass = AirUtils.config.getString("sql.password");
-        String dbName = AirUtils.config.getString("sql.database");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             return DriverManager.getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName, user , pass);
         }
         catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }
@@ -31,7 +32,7 @@ public class DataBaseUtil {
      * @return the database name
      */
     public static String getDbName() {
-        return AirUtils.config.getString("sql.database");
+        return dbName;
     }
 
     /**
@@ -47,10 +48,10 @@ public class DataBaseUtil {
      * @return true if every sql field is set
      */
     public static boolean hasSettings() {
-        String dbHost = AirUtils.config.getString("sql.host");
-        String user = AirUtils.config.getString("sql.username");
-        String pass = AirUtils.config.getString("sql.password");
-        String dbName = AirUtils.config.getString("sql.database");
+        dbHost = AirUtils.config.getString("sql.host");
+        user = AirUtils.config.getString("sql.username");
+        pass = AirUtils.config.getString("sql.password");
+        dbName = AirUtils.config.getString("sql.database");
         try {
             return !dbHost.isEmpty() && !user.isEmpty() && !pass.isEmpty() && !dbName.isEmpty();
         }
