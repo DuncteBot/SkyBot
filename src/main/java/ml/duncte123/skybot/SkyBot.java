@@ -51,6 +51,7 @@ public class SkyBot {
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
         // log in and set up the api
+        //Still need to remove this
         /*jda = new JDABuilder(AccountType.BOT)
                 .setBulkDeleteSplittingEnabled(false)
                 .addEventListener(new BotListener())

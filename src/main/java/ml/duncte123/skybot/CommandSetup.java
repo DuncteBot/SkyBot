@@ -38,6 +38,7 @@ public class CommandSetup {
         this.addCommand(new KpopCommand());
         this.addCommand(new BlobCommand());
         this.addCommand(new TextToBrickCommand());
+        this.addCommand(new JokeCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());

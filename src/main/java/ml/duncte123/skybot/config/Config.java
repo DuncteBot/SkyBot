@@ -52,7 +52,7 @@ public class Config {
             return this.getJsonElement(key).getAsJsonPrimitive();
         }
         catch (final Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }
@@ -92,7 +92,7 @@ public class Config {
             return value;
         }
         catch (final Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             return null;
         }
     }

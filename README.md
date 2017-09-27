@@ -12,7 +12,7 @@ and
 You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 
 # ToDo list
-- [ ] Create Joke command
+- [X] Create Joke command
 - [X] Fix timed bans in the ban command (Turned out to be a backend issue)
 - [ ] Add a wiki that explains how to set the bot up yourself
 - [X] Create new way to load the bot token

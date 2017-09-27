@@ -32,7 +32,7 @@ public class HelpEmbeds {
                 .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
                 .addField("Main commands", generateCommandsWithPrefix(prefix, new String[]{"help", "about", "coin", "ping", "guildinfo", "userinfo"}), INLINE)
                 .addField("Music commands", generateCommandsWithPrefix(prefix, new String[]{"join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"}), INLINE)
-                .addField("Fun commands", generateCommandsWithPrefix(prefix, new String[]{"kpop", "seal", "kitty", "dog", "llama", "alpaca", "dialog", "ttb", "blob"}), INLINE)
+                .addField("Fun commands", generateCommandsWithPrefix(prefix, new String[]{"joke", "kpop", "seal", "kitty", "dog", "llama", "alpaca", "dialog", "ttb", "blob"}), INLINE)
                 .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, new String[]{"ban", "clear", "softban", "unban", "kick", "settings"}), INLINE)
                 .build();
     }
