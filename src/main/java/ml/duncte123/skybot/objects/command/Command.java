@@ -4,15 +4,11 @@ import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
-
-import java.util.HashMap;
 
 public abstract class Command {
 
@@ -84,7 +80,7 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     protected void sendEmbed(MessageEmbed embed, GuildMessageReceivedEvent event) {
-        if(!PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+        if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;
         }

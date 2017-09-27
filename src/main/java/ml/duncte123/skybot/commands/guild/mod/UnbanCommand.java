@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.List;
 
@@ -26,7 +25,7 @@ public class UnbanCommand extends Command {
                 Permission.BAN_MEMBERS
         };
 
-        if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
+        if (!event.getMember().hasPermission(perms)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }

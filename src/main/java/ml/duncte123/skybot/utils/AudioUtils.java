@@ -21,7 +21,6 @@ import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.util.HashMap;
 import java.util.List;
@@ -184,7 +183,7 @@ public class AudioUtils {
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
-        if(!PermissionUtil.checkPermission(tc.getGuild().getSelfMember(), Permission.MESSAGE_EMBED_LINKS)) {
+        if(!tc.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
              channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
             return;
         }

@@ -7,7 +7,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.slf4j.event.Level;
 
 import java.util.List;
@@ -29,7 +28,7 @@ public class CleenupCommand extends Command {
                 Permission.MESSAGE_MANAGE,
                 Permission.MESSAGE_HISTORY
         };
-        if(!PermissionUtil.checkPermission(event.getMember(), permissions )){
+        if(!event.getMember().hasPermission(permissions)){
             sendMsg(event, "You don't have permission to run this command!");
             return;
         }

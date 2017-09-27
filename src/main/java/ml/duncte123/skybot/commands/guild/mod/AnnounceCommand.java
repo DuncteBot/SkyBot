@@ -6,7 +6,6 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -25,7 +24,7 @@ public class AnnounceCommand extends Command {
                 Permission.ADMINISTRATOR
         };
 
-        if(!PermissionUtil.checkPermission(event.getMember(), perms)) {
+        if(!event.getMember().hasPermission(perms)) {
             sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }

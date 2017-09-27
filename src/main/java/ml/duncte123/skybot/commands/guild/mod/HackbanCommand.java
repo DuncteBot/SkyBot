@@ -4,7 +4,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 public class HackbanCommand extends Command {
 
@@ -21,7 +20,7 @@ public class HackbanCommand extends Command {
                 Permission.BAN_MEMBERS
         };
 
-        if (!PermissionUtil.checkPermission(event.getMember(), perms)) {
+        if (!event.getMember().hasPermission(perms)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }

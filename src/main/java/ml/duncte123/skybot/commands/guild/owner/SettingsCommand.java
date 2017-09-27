@@ -2,14 +2,12 @@ package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -25,7 +23,7 @@ public class SettingsCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!PermissionUtil.checkPermission(event.getMember(), Permission.ADMINISTRATOR)) {
+        if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }

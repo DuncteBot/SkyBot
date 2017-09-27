@@ -3,7 +3,6 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.net.URL;
 
@@ -23,7 +22,7 @@ public class SealCommand extends Command {
             String idStr = ("0000" + String.valueOf(sealID)).substring(String.valueOf(sealID).length());
             String sealLoc = "https://randomse.al/seals/" + idStr + ".jpg";
 
-            if (PermissionUtil.checkPermission(event.getGuild().getSelfMember(), Permission.MESSAGE_ATTACH_FILES)) {
+            if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
                 event.getChannel().sendFile(new URL(sealLoc).openStream(), "Seal_"+System.currentTimeMillis()+".jpg", null).queue();
             } else {
                 sendMsg(event, sealLoc);

@@ -9,7 +9,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 
 import java.time.format.DateTimeFormatter;
 
@@ -40,7 +39,7 @@ public class GuildInfoCommand extends Command {
                     .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                     .addField("Guild Region", g.getRegion().getName(), true)
                     .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users "+g.getMembers().size()+")", true);
-                    if(PermissionUtil.checkPermission(g.getSelfMember(), Permission.MANAGE_SERVER)) {
+                    if(g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                         eb.addField("Guild Invite",
                             "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
                                 "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",

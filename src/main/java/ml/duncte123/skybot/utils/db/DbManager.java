@@ -21,8 +21,9 @@ public class DbManager {
      * This will set our stuff up
      */
     public DbManager() {
-        this.name = DataBaseUtil.getDbName();
+        new DataBaseUtil();
         this.isConnected = DataBaseUtil.checkDbConn();
+        this.name = DataBaseUtil.getDbName();
         this.connection = DataBaseUtil.getConnection();
     }
 

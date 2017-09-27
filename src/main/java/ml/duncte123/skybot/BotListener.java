@@ -14,7 +14,6 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.utils.PermissionUtil;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.event.Level;
 
@@ -79,8 +78,8 @@ public class BotListener extends ListenerAdapter {
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
-        if(PermissionUtil.checkPermission(event.getChannel(), event.getGuild().getSelfMember(), adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
-            if (!PermissionUtil.checkPermission(event.getMember(), adminPerms)) {
+        if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
+            if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
