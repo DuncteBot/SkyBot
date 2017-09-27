@@ -13,7 +13,7 @@ You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 
 # ToDo list
 - [ ] Create Joke command
-- [ ] Fix timed bans in the ban command
+- [X] Fix timed bans in the ban command (Turned out to be a backend issue)
 - [ ] Add a wiki that explains how to set the bot up yourself
 - [X] Create new way to load the bot token
 - [X] Create a random seal command
