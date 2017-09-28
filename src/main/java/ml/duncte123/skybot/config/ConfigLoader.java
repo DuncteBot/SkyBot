@@ -23,7 +23,7 @@ public class ConfigLoader {
         return new BlankConfig(file);
     }
 
-    private static class BlankConfig extends Config {
+    public static class BlankConfig extends Config {
 
         private final File configFile;
 

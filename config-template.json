@@ -1,6 +1,8 @@
 {
   "discord": {
-    "token": ""
+    "token": "",
+    "prefix": "/",
+    "totalShards": 1
   },
   "sql": {
     "host": "",

@@ -10,11 +10,11 @@ public class Settings {
     /**
      * This is the base url from the custom api
      */
-    public static String apiBase = "https://bot.duncte123.ml/api";
+    public static final String apiBase = "https://bot.duncte123.ml/api";
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String prefix = "/";
+    public static final String prefix = AirUtils.config.getString("discord.prefix", "/");
     /**
      * This is the version of the bot
      */

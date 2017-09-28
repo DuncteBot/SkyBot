@@ -1,9 +1,6 @@
 package ml.duncte123.skybot.config;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.google.gson.*;
 
 import java.io.File;
 
@@ -33,13 +30,29 @@ public class Config {
      * @return the value of the setting
      */
     public final String getString(final String key, final String defaultValue) {
-        if (!this.hasKey(key))
+        if (!this.hasKey(key)) {
             this.put(key, defaultValue);
+        }
         try {
             return this.getString(key);
         } catch (Exception e) {
             return defaultValue;
         }
+    }
+
+    public int getInt(final String key) throws NumberFormatException {
+        try {
+            return this.getJsonPrimitive(key).getAsInt();
+        }
+        catch (final NumberFormatException e) {
+            throw e;
+        }
+    }
+
+    public final int getInt(final String key, final int defaultValue) {
+        if (!this.hasKey(key))
+            this.put(key, defaultValue);
+        return this.getInt(key);
     }
 
     /**
@@ -61,13 +74,14 @@ public class Config {
      * This will load from our config with the key
      * @param key the key to find
      * @return a nice JsonElement
-     * @throws Exception When things are about too go down
+     * @throws NullPointerException When things are about too go down
      */
-    public JsonElement getJsonElement(final String key) throws Exception  {
+    public JsonElement getJsonElement(final String key) throws NullPointerException {
         final String[] path = key.split("\\.");
         JsonElement value = this.config;
         try {
             for (String element : path)  {
+               // System.out.println(element);
                 if (element.trim().isEmpty())
                     continue;
                 if (element.endsWith("]") && element.contains("[")) {
@@ -88,11 +102,11 @@ public class Config {
                     value = value.getAsJsonObject().get(element);
             }
             if (value == null)
-                throw new NullPointerException();
+                throw new NullPointerException("Key '" + key + "' has no value or doesn't exists, trying to add it");
             return value;
         }
-        catch (final Exception e) {
-            //e.printStackTrace();
+        catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -104,21 +118,20 @@ public class Config {
      */
     public boolean hasKey(final String key)  {
         try {
-            this.getJsonElement(key);
+            return this.getJsonElement(key) != null;
         }
-        catch (final Exception e) {
+        catch (NullPointerException e) {
             return false;
         }
-        return true;
     }
 
     /**
      * This will attempt to put a value is the config
      * @param key the key to add the value under
-     * @param value the value that we need to add, in the form of a {@link com.google.gson.JsonElement JsonElement}
+     * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
      * @throws Exception when we fail
      */
-    public void put(String key, final JsonElement value) throws Exception {
+    public void put(String key, JsonElement value) throws Exception {
         final String finalKey = key.substring(key.lastIndexOf(".") + 1);
         key = replaceLast(key, finalKey, "");
         if (key.endsWith("."))
@@ -163,10 +176,14 @@ public class Config {
             }
         }
         catch (final Exception e) {
+            e.printStackTrace();
             throw e;
         }
         current.add(finalKey, value);
+        this.save();
     }
+
+    //public void put(String key, JsonElement value) { System.out.println("Key: " + key+" val: "+value); }
 
     /**
      * This will attempt to put a value is the config
@@ -174,6 +191,19 @@ public class Config {
      * @param value the value that we need to add
      */
     public void put(final String key, final String value) {
+        try {
+            this.put(key, new JsonPrimitive(value));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This will attempt to put a value is the config
+     * @param key the key to add the value under
+     * @param value the value that we need to add
+     */
+    public void put(final String key, final Number value) {
         try {
             this.put(key, new JsonPrimitive(value));
         } catch (Exception e) {

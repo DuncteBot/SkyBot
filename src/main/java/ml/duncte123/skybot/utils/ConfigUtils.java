@@ -8,7 +8,7 @@ import java.io.File;
 
 public class ConfigUtils {
 
-    private static Config config;
+    private Config config;
 
     /**
      * This will try to load the bot config and kill the program if it fails
@@ -16,7 +16,8 @@ public class ConfigUtils {
     public ConfigUtils() {
         try {
             AirUtils.log(Level.INFO, "Loading config.json");
-            config = ConfigLoader.getConfig(new File("config.json"));
+            this.config = ConfigLoader.getConfig(new File("config.json"));
+            AirUtils.log(Level.INFO, "Loaded config.json");
         } catch (Exception e) {
             AirUtils.log(Level.ERROR, "Could not load config, aborting");
             System.exit(-1);

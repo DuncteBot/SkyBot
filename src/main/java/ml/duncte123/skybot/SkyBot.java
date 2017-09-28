@@ -3,8 +3,8 @@ package ml.duncte123.skybot;
 import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.db.DataBaseUtil;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
@@ -60,7 +60,7 @@ public class SkyBot {
                 .buildAsync();*/
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = 2;
+        int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 2);
 
         new DefaultShardManagerBuilder()
                 .addEventListener(new BotListener())
