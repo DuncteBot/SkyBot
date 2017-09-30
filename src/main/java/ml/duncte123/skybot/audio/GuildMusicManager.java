@@ -19,7 +19,7 @@ public class GuildMusicManager {
     public final AudioPlayerSenderHandler sendHandler;
 
     /**
-     *
+     * Constructor
      * @param manager The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager AudioPlayerManager} for the corresponding guild
      */
     public GuildMusicManager(AudioPlayerManager manager){

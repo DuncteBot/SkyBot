@@ -50,7 +50,7 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     }
 
     /**
-     * "Chceks" if this audio is opus
+     * "Checks" if this audio is opus
      * @return always true
      */
     @Override
