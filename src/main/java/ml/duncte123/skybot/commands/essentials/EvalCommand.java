@@ -64,20 +64,22 @@ public class EvalCommand extends Command {
 
 
             engine.eval(
-                "public void sendMsg(String msg) {" +
-                        "channel.sendMessage(msg).queue();" +
-                    "}", bindings);
+                    "public void sendMsg(String msg) {" +
+                            "channel.sendMessage(msg).queue();" +
+                            "}", bindings);
 
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
             Object out = engine.eval(importStringBuilder.toString() +
-                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
-            , bindings);
-            if (out == null || String.valueOf(out).isEmpty() ) {
+                                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
+                            , bindings);
+
+            if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
             }
+
         }
         catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
