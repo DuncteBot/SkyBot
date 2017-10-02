@@ -75,17 +75,18 @@ public class EvalCommand extends Command {
             Object out = engine.eval(importStringBuilder.toString() +
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
             , bindings);
-           sendMsg(event, out == null || String.valueOf(out).isEmpty() ? "Executed without error." : out.toString());
+            if (out == null || String.valueOf(out).isEmpty() ) {
+                sendMsg(event, out.toString());
+            }
         }
         catch (ScriptException e) {
-            System.out.println(e.getMessage());
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
-            e.printStackTrace();
         }
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
             e1.printStackTrace();
         }
+        sendSuccess(event.getMessage());
     }
 
     /**

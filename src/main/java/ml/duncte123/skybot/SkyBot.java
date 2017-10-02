@@ -63,7 +63,7 @@ public class SkyBot {
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 2);
 
         new DefaultShardManagerBuilder()
-                .addEventListener(new BotListener())
+                .addEventListener(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Settings.prefix + "help"))

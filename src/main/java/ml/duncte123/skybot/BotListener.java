@@ -62,7 +62,7 @@ public class BotListener extends ListenerAdapter {
             unbanTimer.cancel();
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
-            for(int i = 0; i < manager.getAmountTotalShards(); i++) {
+            for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
                 manager.getShardById(i).shutdown();
                 AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
             }
@@ -120,12 +120,8 @@ public class BotListener extends ListenerAdapter {
 
         ShardManager manager = event.getJDA().asBot().getShardManager();
 
-        TimerTask unbanTask = new TimerTask() {
-            @Override
-            public void run() {
-                AirUtils.checkUnbans(manager);
-            }
-        };
+        TimerTask unbanTask = new TimerTask() { public void run() { AirUtils.checkUnbans(manager); } };
+
         unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
 
     }
@@ -174,6 +170,7 @@ public class BotListener extends ListenerAdapter {
                     "I'm outta here").queue(
                             message -> message.getGuild().leave().queue()
             );
+            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
             return;
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
