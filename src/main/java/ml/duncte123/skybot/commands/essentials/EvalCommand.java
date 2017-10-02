@@ -72,8 +72,6 @@ public class EvalCommand extends Command {
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
-
-
             Object out = engine.eval(importStringBuilder.toString() +
                                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
                             , bindings);
