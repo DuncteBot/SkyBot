@@ -73,8 +73,6 @@ public class EvalCommand extends Command {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
 
-            Object out_ = null;
-
             Thread thread = new Thread(() -> {
                 Object out = null;
                 try {
@@ -91,12 +89,6 @@ public class EvalCommand extends Command {
                 }
             });
             thread.run();
-            // Object out = engine.eval(importStringBuilder.toString() +
-            //       event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
-            //, bindings);
-            if (out_ != null || String.valueOf(out_).isEmpty() ) {
-                sendMsg(event, out_.toString());
-            }
         }
         catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
