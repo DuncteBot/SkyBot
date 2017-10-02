@@ -1,5 +1,7 @@
 package ml.duncte123.skybot.objects.guild;
 
+import ml.duncte123.skybot.utils.Settings;
+
 /**
  * This class will hold the settings for a guild
  */
@@ -24,7 +26,7 @@ public class GuildSettings {
     /**
      * This will hold the custom prefix if the guild has set one
      */
-    private String customPrefix = "/";
+    private String customPrefix = Settings.prefix;
 
     /**
      * This will init everything

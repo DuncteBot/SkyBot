@@ -73,22 +73,15 @@ public class EvalCommand extends Command {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
 
-            Thread thread = new Thread(() -> {
-                Object out = null;
-                try {
-                    out = engine.eval(importStringBuilder.toString() +
+
+            Object out = engine.eval(importStringBuilder.toString() +
                                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
                             , bindings);
 
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    sendMsg(event, e.getMessage());
-                }
-                if (out != null && !String.valueOf(out).isEmpty() ) {
-                    sendMsg(event, out.toString());
-                }
-            });
-            thread.run();
+            if (out != null && !String.valueOf(out).isEmpty() ) {
+                sendMsg(event, out.toString());
+            }
+
         }
         catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
