@@ -64,19 +64,38 @@ public class EvalCommand extends Command {
 
 
             engine.eval(
-                "public void sendMsg(String msg) {" +
-                        "channel.sendMessage(msg).queue();" +
-                    "}", bindings);
+                    "public void sendMsg(String msg) {" +
+                            "channel.sendMessage(msg).queue();" +
+                            "}", bindings);
 
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
-            Object out = engine.eval(importStringBuilder.toString() +
-                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
-            , bindings);
-            if (out == null || String.valueOf(out).isEmpty() ) {
-                sendMsg(event, out.toString());
+
+            Object out_ = null;
+
+            Thread thread = new Thread(() -> {
+                Object out = null;
+                try {
+                    out = engine.eval(importStringBuilder.toString() +
+                                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
+                            , bindings);
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    sendMsg(event, e.getMessage());
+                }
+                if (out != null && !String.valueOf(out).isEmpty() ) {
+                    sendMsg(event, out.toString());
+                }
+            });
+            thread.run();
+            // Object out = engine.eval(importStringBuilder.toString() +
+            //       event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
+            //, bindings);
+            if (out_ != null || String.valueOf(out_).isEmpty() ) {
+                sendMsg(event, out_.toString());
             }
         }
         catch (ScriptException e) {
