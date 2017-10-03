@@ -2,10 +2,10 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandSetup;
 import ml.duncte123.skybot.config.Config;
+import ml.duncte123.skybot.connections.database.DbManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.db.DbManager;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;

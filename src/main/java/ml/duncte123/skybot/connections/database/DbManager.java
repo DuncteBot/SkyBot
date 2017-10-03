@@ -1,4 +1,4 @@
-package ml.duncte123.skybot.utils.db;
+package ml.duncte123.skybot.connections.database;
 
 import java.sql.Connection;
 
@@ -17,14 +17,16 @@ public class DbManager {
      */
     private final Connection connection;
 
+    public final DatabaseConnectionManager connManager;
+
     /**
      * This will set our stuff up
      */
     public DbManager() {
-        new DataBaseUtil();
-        this.isConnected = DataBaseUtil.checkDbConn();
-        this.name = DataBaseUtil.getDbName();
-        this.connection = DataBaseUtil.getConnection();
+        this.connManager = new DatabaseConnectionManager();
+        this.isConnected = connManager.checkDbConn();
+        this.name = connManager.getDbName();
+        this.connection = connManager.getConnection();
     }
 
     /**

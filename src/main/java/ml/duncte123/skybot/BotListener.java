@@ -73,6 +73,7 @@ public class BotListener extends ListenerAdapter {
             catch (Exception e) {
                 e.printStackTrace();
             }
+            System.exit(0);
             return;
         }
 
