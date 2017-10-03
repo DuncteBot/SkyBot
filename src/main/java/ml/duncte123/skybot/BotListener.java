@@ -121,7 +121,12 @@ public class BotListener extends ListenerAdapter {
 
         ShardManager manager = event.getJDA().asBot().getShardManager();
 
-        TimerTask unbanTask = new TimerTask() { public void run() { AirUtils.checkUnbans(manager); } };
+        TimerTask unbanTask = new TimerTask() {
+            @Override
+            public void run() {
+                AirUtils.checkUnbans(manager);
+            }
+        };
 
         unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
 
