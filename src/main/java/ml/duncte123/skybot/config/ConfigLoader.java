@@ -20,14 +20,14 @@ public class ConfigLoader {
             writer.write("{}");
             writer.close();
         }
-        return new BlankConfig(file);
+        return new MainConfig(file);
     }
 
-    public static class BlankConfig extends Config {
+    public static class MainConfig extends Config {
 
         private final File configFile;
 
-        BlankConfig(final File file) throws Exception {
+        MainConfig(final File file) throws Exception {
             super(null, new JsonParser().parse(new FileReader(file)).getAsJsonObject());
             this.configFile = file;
         }
