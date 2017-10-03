@@ -9,7 +9,7 @@ import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.CommandParser;
+import ml.duncte123.skybot.parsers.CommandParser;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;

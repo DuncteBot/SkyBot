@@ -11,7 +11,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Duncan on 9-7-2017.
@@ -59,6 +63,31 @@ public class UserinfoCommand extends Command {
         }
 
         u = m.getUser();
+
+        String str = "";
+
+        //event.getGuild().getMember(u).j
+        List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
+        joins.sort((Member a, Member b) -> a.getJoinDate().compareTo(b.getJoinDate()));
+        int index = joins.indexOf(m);
+        index-=3;
+        if(index<0)
+            index=0;
+        str+="\n"+"Join Order: ";
+        if(joins.get(index).equals(m))
+            str+="**"+joins.get(index).getEffectiveName()+"**";
+        else
+            str+=joins.get(index).getEffectiveName();
+        for(int i=index+1;i<index+7;i++) {
+            if(i>=joins.size())
+                break;
+            Member usr = joins.get(i);
+            String name = usr.getEffectiveName();
+            if(usr.equals(m))
+                name="[**"+name+"**](.)";
+            str+=" > "+name;
+        }
+        System.out.println(str);
       
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setColor(m.getColor())
