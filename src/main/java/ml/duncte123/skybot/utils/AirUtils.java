@@ -33,10 +33,6 @@ public class AirUtils {
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
     /**
-     * This helps us to make the coinflip work
-     */
-    public static Random rand = new Random();
-    /**
      * This is our database manager, it is a util for the connection
      */
     public static DbManager db = new DbManager();
@@ -47,7 +43,7 @@ public class AirUtils {
     /**
      * This is our audio handler
      */
-    public static AudioUtils au = new AudioUtils();
+    public static AudioUtils audioUtils = new AudioUtils();
 
     /**
      * This converts the online status of a user to a fancy emote

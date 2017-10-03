@@ -193,9 +193,9 @@ public class BotListener extends ListenerAdapter {
         if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()){
             if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
             if(event.getChannelLeft().getMembers().size() <= 1){
-                AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
-                AirUtils.au.getMusicManager(event.getGuild()).player.setPaused(false);
-                AirUtils.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
+                AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
+                AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                 lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                 if(event.getGuild().getAudioManager().isConnected()){
                     event.getGuild().getAudioManager().closeAudioConnection();
@@ -216,9 +216,9 @@ public class BotListener extends ListenerAdapter {
             if(event.getChannelLeft()!=null) {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelLeft().getMembers().size() <= 1){
-                    AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
-                    AirUtils.au.getMusicManager(event.getGuild()).player.setPaused(false);
-                    AirUtils.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                     lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                     if(event.getGuild().getAudioManager().isConnected()){
                         event.getGuild().getAudioManager().closeAudioConnection();
@@ -230,9 +230,9 @@ public class BotListener extends ListenerAdapter {
             /*if(event.getChannelJoined()!=null) {
                 if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelJoined().getMembers().size() <= 1){
-                    AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
-                    AirUtils.au.getMusicManager(event.getGuild()).player.setPaused(false);
-                    AirUtils.au.getMusicManager(event.getGuild()).scheduler.queue.clear();
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
+                    AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                     lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                     if(event.getGuild().getAudioManager().isConnected()){
                         event.getGuild().getAudioManager().setSendingHandler(null);

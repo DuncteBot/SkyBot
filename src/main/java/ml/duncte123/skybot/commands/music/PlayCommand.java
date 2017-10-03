@@ -35,7 +35,7 @@ public class PlayCommand extends Command {
             return;
         }
 
-        AudioUtils au = AirUtils.au;
+        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);

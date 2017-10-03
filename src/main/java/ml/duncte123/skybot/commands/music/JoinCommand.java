@@ -42,7 +42,7 @@ public class JoinCommand extends Command {
         }
 
         VoiceChannel vc = null;
-        AudioUtils au = AirUtils.au;
+        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
