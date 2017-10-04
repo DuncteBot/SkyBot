@@ -174,7 +174,9 @@ public class AirUtils {
                     ).reason("Ban expired").queue();
                     modLog(new ConsoleUser(),
                             new FakeUser(res.getString("Username"),
-                                    res.getString("userId"), res.getString("discriminator")), "unbanned",
+                                    res.getString("userId"),
+                                    res.getString("discriminator")),
+                            "unbanned",
                             jda.getGuildById(res.getString("guildId")));
                     smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
                 }

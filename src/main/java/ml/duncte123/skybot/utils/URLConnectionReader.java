@@ -38,9 +38,46 @@ public class URLConnectionReader {
     }
 
     /**
+     * This makes a get request to the specified website
+     * @param url The website to post to
+     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @return The {@link okhttp3.Response Response} from the webserver
+     */
+    public static Response getRequest(String url, AcceptType accept) {
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url(url)
+                .get()
+                .addHeader("User-Agent", "DiscordBot (https://bot.duncte123.ml/)")
+                .addHeader("Accept", accept.getType())
+                .addHeader("cache-control", "no-cache")
+                .build();
+
+        try {
+            return client.newCall(request).execute();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    /**
      * This makes a post request to the specified website
      * @param url The website to post to
-     * @param postFields the params for the post
+     * @return The {@link okhttp3.Response Response} from the webserver
+     */
+    public static Response getRequest(String url) {
+
+        return getRequest(url, AcceptType.TEXT_JSON);
+    }
+
+    /**
+     * This makes a post request to the specified website
+     * @param url The website to post to
+     * @param postFields the params for the post 
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
