@@ -83,10 +83,14 @@ public class EvalCommand extends Command {
         }
         catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
+            sendError(event.getMessage());
+            return;
         }
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
+            sendError(event.getMessage());
             e1.printStackTrace();
+            return;
         }
         sendSuccess(event.getMessage());
     }
