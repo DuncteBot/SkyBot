@@ -94,7 +94,7 @@ public class BotListener extends ListenerAdapter {
 
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
 
-        if(event.getMessage().getContent().startsWith(Settings.prefix) || event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
+        if(event.getMessage().getRawContent().startsWith(Settings.prefix) || event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
             // run the a command
             lastGuildChannel.put(event.getGuild(), event.getChannel());
             AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
