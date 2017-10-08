@@ -64,7 +64,7 @@ public class KpopCommand extends Command {
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
                     .setFooter("Query id: " + id, Settings.defaultIcon);
-            sendEmbed(eb.build(), event);
+            sendEmbed(event, eb.build());
         }
         catch (Exception e) {
            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: " + e.getMessage());

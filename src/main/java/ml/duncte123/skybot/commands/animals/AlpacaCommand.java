@@ -26,7 +26,7 @@ public class AlpacaCommand extends Command {
         }
         catch (Exception e) {
             e.printStackTrace();
-            sendEmbed(EmbedUtils.embedMessage("ERROR: " + e.getMessage()), event);
+            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }
 

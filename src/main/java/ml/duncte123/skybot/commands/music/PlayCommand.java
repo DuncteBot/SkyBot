@@ -53,7 +53,7 @@ public class PlayCommand extends Command {
             }else if(scheduler.queue.isEmpty()){
                 eb.addField(au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
             }
-            sendEmbed(eb.build(), event);
+            sendEmbed(event, eb.build());
         }else{
             String toPlay = StringUtils.join(args, " ");
             if(!AirUtils.isURL(toPlay)){

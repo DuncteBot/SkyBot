@@ -20,14 +20,14 @@ public class DogCommand extends Command {
             String finalS = base + jsonString;
 
             if (finalS.contains(".mp4")) {
-               sendEmbed(EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"), event);
+               sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
             } else {
-                sendEmbed(EmbedUtils.embedImage(finalS), event);
+                sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"), event);
+            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
         }
 
     }

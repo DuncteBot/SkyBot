@@ -76,10 +76,10 @@ public abstract class Command {
 
     /**
      * This will chcek if we can send a embed and convert it to a message if we can't send embeds
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param embed The embed to send
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    protected void sendEmbed(MessageEmbed embed, GuildMessageReceivedEvent event) {
+    protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
         if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;

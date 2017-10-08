@@ -15,7 +15,7 @@ public class WamCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        sendEmbed(EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"), event);
+        sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"));
     }
 
     /**

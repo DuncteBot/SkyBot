@@ -39,7 +39,7 @@ public class AnnounceCommand extends Command {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
 
-            sendEmbed(EmbedUtils.embedMessage(msg), event);
+            sendEmbed(event, EmbedUtils.embedMessage(msg));
 
         }
         catch (Exception e) {

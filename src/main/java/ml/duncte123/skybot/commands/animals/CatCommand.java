@@ -29,7 +29,7 @@ public class CatCommand extends Command {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(EmbedUtils.embedMessage("OOPS: " + e.getMessage()), event);
+            sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
         }
 
     }

@@ -32,7 +32,7 @@ public class LeaveCommand extends Command {
             AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
             event.getGuild().getAudioManager().setSendingHandler(null);
             event.getGuild().getAudioManager().closeAudioConnection();
-           sendEmbed(EmbedUtils.embedField(AirUtils.audioUtils.embedTitle, "Leaving your channel"), event);
+           sendEmbed(event, EmbedUtils.embedField(AirUtils.audioUtils.embedTitle, "Leaving your channel"));
         } else {
             sendMsg(event, "I'm not connected to any channels.");
         }

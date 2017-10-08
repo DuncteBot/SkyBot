@@ -73,7 +73,7 @@ public class JoinCommand extends Command {
                 eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
             }
         }
-        sendEmbed(eb.build(), event);
+        sendEmbed(event, eb.build());
 
 
     }

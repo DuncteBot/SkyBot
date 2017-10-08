@@ -39,7 +39,7 @@ public class NowPlayingCommand extends Command {
         }else{
             msg = "The player is not currently playing anything!";
         }
-        sendEmbed(EmbedUtils.embedMessage(msg), event);
+        sendEmbed(event, EmbedUtils.embedMessage(msg));
 
     }
 

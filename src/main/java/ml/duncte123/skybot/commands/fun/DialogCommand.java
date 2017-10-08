@@ -34,7 +34,7 @@ public class DialogCommand extends Command {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```");
-        sendEmbed(EmbedUtils.embedMessage(sb.toString()), event);
+        sendEmbed(event, EmbedUtils.embedMessage(sb.toString()));
 
     }
 

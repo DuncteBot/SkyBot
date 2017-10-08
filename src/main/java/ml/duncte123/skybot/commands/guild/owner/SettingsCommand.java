@@ -39,7 +39,7 @@ public class SettingsCommand extends Command {
                             "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                             "**Current prefix:** " + settings.getCustomPrefix()
             );
-            sendEmbed(message, event);
+            sendEmbed(event, message);
         } else if(args.length == 1) {
             sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`");
         } else {
@@ -65,7 +65,7 @@ public class SettingsCommand extends Command {
                     default:
                         return;
                 }
-                sendEmbed(EmbedUtils.embedMessage("Settings have been updated."), event);
+                sendEmbed(event, EmbedUtils.embedMessage("Settings have been updated."));
 
             } else {
                 sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ", ") + "`");

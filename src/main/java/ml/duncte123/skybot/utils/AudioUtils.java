@@ -177,9 +177,9 @@ public class AudioUtils {
     }
 
     /**
-     * {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
-     * @param embed {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
-     * @param channel {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(MessageEmbed, GuildMessageReceivedEvent)}
+     * {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param embed {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param channel {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;

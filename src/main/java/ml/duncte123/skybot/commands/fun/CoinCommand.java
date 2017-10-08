@@ -1,7 +1,6 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -35,7 +34,7 @@ public class CoinCommand extends Command {
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();
         MessageEmbed eb = EmbedUtils.embedImage(coinUrl+imagesArr[rand.nextInt(2)]);
-        sendEmbed(eb, event);
+        sendEmbed(event, eb);
     }
 
     /**

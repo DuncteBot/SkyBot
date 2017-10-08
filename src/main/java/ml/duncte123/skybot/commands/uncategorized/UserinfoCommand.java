@@ -100,7 +100,7 @@ public class UserinfoCommand extends Command {
                 .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
                 .build();
 
-        sendEmbed(eb, event);
+        sendEmbed(event, eb);
     }
 
     /**
