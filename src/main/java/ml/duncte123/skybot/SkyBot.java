@@ -6,9 +6,13 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
+
+import java.util.TimerTask;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -48,25 +52,31 @@ public class SkyBot {
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
-        // log in and set up the api
-        //Still need to remove this
-        /*jda = new JDABuilder(AccountType.BOT)
-                .setBulkDeleteSplittingEnabled(false)
-                .addEventListener(new BotListener())
-                .setToken(token)
-                .setGame(Game.of("Use " + Settings.prefix + "help"))
-                .buildAsync();*/
-
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 2);
 
-        new DefaultShardManagerBuilder()
-                .addEventListener(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
+        //Set up the listener in an variable
+        BotListener listener = new BotListener();
+
+        //Set up sharding for the bot
+        ShardManager mnrg = new DefaultShardManagerBuilder()
+                .addEventListener(listener) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Settings.prefix + "help"))
                 .setToken(token)
                 .setLoginBackoff(550)
                 .buildAsync();
+
+        //Register the timer for the auto unbans
+        //I moved the timer here to make sure that every running jar has this only once
+        TimerTask unbanTask = new TimerTask() {
+            @Override
+            public void run() {
+                AirUtils.checkUnbans(mnrg);
+            }
+        };
+
+        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
     }
 }

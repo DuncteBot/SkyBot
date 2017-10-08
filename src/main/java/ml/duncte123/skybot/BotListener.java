@@ -15,12 +15,10 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.event.Level;
 
 import java.util.HashMap;
 import java.util.Timer;
-import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
 public class BotListener extends ListenerAdapter {
@@ -40,7 +38,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is for checking unbans
      */
-    private Timer unbanTimer = new Timer();
+    public Timer unbanTimer = new Timer();
 
     /**
      * Listen for messages send to the bot
@@ -64,7 +62,7 @@ public class BotListener extends ListenerAdapter {
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
-                manager.getShardById(i).shutdown();
+                manager.getShardCache().getElementById(i).shutdown();
                 AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
             }
             try {
@@ -119,18 +117,6 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()));
-
-        ShardManager manager = event.getJDA().asBot().getShardManager();
-
-        TimerTask unbanTask = new TimerTask() {
-            @Override
-            public void run() {
-                AirUtils.checkUnbans(manager);
-            }
-        };
-
-        unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
-
     }
 
     /**
