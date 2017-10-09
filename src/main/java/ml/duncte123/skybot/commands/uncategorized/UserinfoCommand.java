@@ -11,6 +11,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,20 +62,21 @@ public class UserinfoCommand extends Command {
 
         u = m.getUser();
 
-        String str = "";
+        StringBuilder joinOrder = new StringBuilder();
 
         //event.getGuild().getMember(u).j
         List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        joins.sort((Member a, Member b) -> a.getJoinDate().compareTo(b.getJoinDate()));
+        //joins.sort((Member a, Member b) -> a.getJoinDate().compareTo(b.getJoinDate()));
+        joins.sort( Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
         if(index<0)
             index=0;
-        str+="\n"+"Join Order: ";
+        joinOrder.append("\n"+"Join Order: ");
         if(joins.get(index).equals(m))
-            str+="**"+joins.get(index).getEffectiveName()+"**";
+            joinOrder.append("[**").append(joins.get(index).getEffectiveName()).append("**](.)");
         else
-            str+=joins.get(index).getEffectiveName();
+            joinOrder.append(joins.get(index).getEffectiveName());
         for(int i=index+1;i<index+7;i++) {
             if(i>=joins.size())
                 break;
@@ -82,13 +84,12 @@ public class UserinfoCommand extends Command {
             String name = usr.getEffectiveName();
             if(usr.equals(m))
                 name="[**"+name+"**](.)";
-            str+=" > "+name;
+            joinOrder.append(" > ").append(name);
         }
-        System.out.println(str);
       
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setColor(m.getColor())
-                .setDescription("Userinfo for " + u.getName() + "#" + u.getDiscriminator())
+                .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
                 .addField("User Id", u.getId(), true)
@@ -96,6 +97,7 @@ public class UserinfoCommand extends Command {
                 .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                .addField("Join order", joinOrder.toString(), true)
                 .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
                 .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
                 .build();
@@ -115,5 +117,10 @@ public class UserinfoCommand extends Command {
     @Override
     public String getName() {
         return "userinfo";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"user", "i"};
     }
 }
