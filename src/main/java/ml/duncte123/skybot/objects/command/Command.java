@@ -40,14 +40,6 @@ public abstract class Command {
     }
 
     /**
-     * This will return our bot instance
-     * @return the main class
-     */
-    protected SkyBot getBot() {
-        return new SkyBot();
-    }
-
-    /**
      * This returns the settings for the given guild
      * @param guildId the id if the guild that we need the settings for
      * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
