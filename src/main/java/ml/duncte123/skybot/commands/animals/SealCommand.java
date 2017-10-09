@@ -9,9 +9,7 @@ import java.net.URL;
 public class SealCommand extends Command {
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -36,19 +34,24 @@ public class SealCommand extends Command {
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
         return "Here is a nice seal";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "seal";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getAliases() {
         return new String[]{"zeehond"};

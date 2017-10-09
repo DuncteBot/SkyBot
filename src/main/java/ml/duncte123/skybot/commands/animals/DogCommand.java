@@ -8,9 +8,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 public class DogCommand extends Command {
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -33,8 +31,7 @@ public class DogCommand extends Command {
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
@@ -42,6 +39,9 @@ public class DogCommand extends Command {
         return "here is a dog.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "dog";

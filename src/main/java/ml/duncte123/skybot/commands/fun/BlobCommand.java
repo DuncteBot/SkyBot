@@ -13,6 +13,9 @@ import org.apache.commons.lang3.StringUtils;
 import java.io.IOException;
 
 public class BlobCommand extends Command {
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
@@ -34,12 +37,18 @@ public class BlobCommand extends Command {
             event.getChannel().sendFile(responseBody.byteStream(), "blob.png", null).queue();
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String help() {
         return "Gives you a blob.\n" +
                 "Usage: `" + Settings.prefix+getName() + " [blob name]`";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "blob";

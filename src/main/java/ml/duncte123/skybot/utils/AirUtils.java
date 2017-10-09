@@ -14,6 +14,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
+import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
@@ -202,9 +203,10 @@ public class AirUtils {
      */
     public static boolean isURL(String url) {
         try {
-            new URL(url);
+            URL u = new URL(url);
+            u.openConnection();
             return true;
-        } catch (Exception e) {
+        } catch (IOException e) {
             return false;
         }
     }

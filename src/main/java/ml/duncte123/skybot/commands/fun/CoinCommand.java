@@ -23,9 +23,7 @@ public class CoinCommand extends Command {
     private final String[] imagesArr = { "heads.png", "tails.png" };
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -38,8 +36,7 @@ public class CoinCommand extends Command {
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
@@ -47,11 +44,17 @@ public class CoinCommand extends Command {
         return help;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "coin";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getAliases() {
         return new String[]{"flip"};
