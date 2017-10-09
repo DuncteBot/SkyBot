@@ -2,7 +2,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.CommandSetup;
 import ml.duncte123.skybot.config.Config;
-import ml.duncte123.skybot.connections.database.DbManager;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -17,9 +17,9 @@ import org.slf4j.event.Level;
 import java.net.URL;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
-import java.util.Random;
 
 public class AirUtils {
 
@@ -35,7 +35,7 @@ public class AirUtils {
     /**
      * This is our database manager, it is a util for the connection
      */
-    public static DbManager db = new DbManager();
+    public static DBManager db = new DBManager();
     /**
      * This will store the settings for every guild that we are in
      */
@@ -153,7 +153,7 @@ public class AirUtils {
     public static void checkUnbans(ShardManager jda) {
 
         String dbName = db.getName();
-        Connection database = db.getConnection();
+        Connection database = db.getConnManager().getConnection();
 
         try {
 
@@ -185,6 +185,13 @@ public class AirUtils {
         }
         catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 

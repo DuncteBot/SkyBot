@@ -2,7 +2,7 @@ package ml.duncte123.skybot.connections.database;
 
 import java.sql.Connection;
 
-public class DbManager {
+public class DBManager {
 
     /**
      * This is the database name
@@ -22,7 +22,7 @@ public class DbManager {
     /**
      * This will set our stuff up
      */
-    public DbManager() {
+    public DBManager() {
         this.connManager = new DatabaseConnectionManager();
         this.isConnected = connManager.checkDbConn();
         this.name = connManager.getDbName();
@@ -48,8 +48,19 @@ public class DbManager {
     /**
      * This will get the connection for us
      * @return the connection, will we null if we aren't connected
+     *
+     * @deprecated use {@link #getConnManager()} instead
      */
+    @Deprecated
     public Connection getConnection() {
         return this.connection;
+    }
+
+    /**
+     * Returns the connection manager
+     * @return the {@link ml.duncte123.skybot.connections.database.DatabaseConnectionManager DatabaseConnectionManager}
+     */
+    public DatabaseConnectionManager getConnManager() {
+        return connManager;
     }
 }

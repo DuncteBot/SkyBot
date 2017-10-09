@@ -33,18 +33,18 @@ public class SkyBot {
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
         if(!AirUtils.db.connManager.hasSettings()) {
-            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "DB SETTINGS ARE DOWN ABORTING");
+            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
             System.exit(-2);
             return;
         }
         if(!AirUtils.db.isConnected()) {
-            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database");
+            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database. ABORTING!!!!!");
             System.exit(-3);
             return;
         }
 
         //Set database to UTF-8
-        AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
+        //AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
 
         //Load the settings before loading the bot
         GuildSettingsUtils.loadSettings();
@@ -53,13 +53,13 @@ public class SkyBot {
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 2);
+        int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
 
         //Set up the listener in an variable
         BotListener listener = new BotListener();
 
         //Set up sharding for the bot
-        ShardManager mnrg = new DefaultShardManagerBuilder()
+        ShardManager mgr = new DefaultShardManagerBuilder()
                 .addEventListener(listener) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardTotal(TOTAL_SHARDS)
@@ -73,7 +73,7 @@ public class SkyBot {
         TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
-                AirUtils.checkUnbans(mnrg);
+                AirUtils.checkUnbans(mgr);
             }
         };
 

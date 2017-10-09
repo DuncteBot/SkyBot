@@ -22,9 +22,9 @@ repositories {
 
 dependencies {
     //compile 'net.dv8tion:JDA:3.3.0_271'
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '6d5f0cc' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '5945aad' //Beta build with ShardManager
     //Lavaplayer
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.43'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
     //jda-nas
     compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.5'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3

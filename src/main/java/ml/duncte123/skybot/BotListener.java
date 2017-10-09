@@ -65,12 +65,6 @@ public class BotListener extends ListenerAdapter {
                 manager.getShardCache().getElementById(i).shutdown();
                 AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
             }
-            try {
-                AirUtils.db.getConnection().close();
-            }
-            catch (Exception e) {
-                e.printStackTrace();
-            }
             System.exit(0);
             return;
         }

@@ -24,13 +24,9 @@ public class DatabaseConnectionManager {
      * @return The connection to the database
      */
     public Connection getConnection() {
-        /*String dbHost = AirUtils.config.getString("sql.host", "host");
-        String user = AirUtils.config.getString("sql.username", "usn");
-        String pass = AirUtils.config.getString("sql.password", "pass");
-        String dbName = AirUtils.config.getString("sql.database", "db");*/
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName, user , pass);
+            return DriverManager.getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName + "?useUnicode=true&characterEncoding=UTF-8", user , pass);
         }
         catch (Exception e) {
             //e.printStackTrace();
@@ -43,7 +39,6 @@ public class DatabaseConnectionManager {
      * @return the database name
      */
     public String getDbName() {
-        //return AirUtils.config.getString("sql.database", "db");
         return dbName;
     }
 
@@ -60,10 +55,6 @@ public class DatabaseConnectionManager {
      * @return true if every sql field is set
      */
     public boolean hasSettings() {
-        /*String dbHost = AirUtils.config.getString("sql.host", "host");
-        String user = AirUtils.config.getString("sql.username", "usn");
-        String pass = AirUtils.config.getString("sql.password", "pass");
-        String dbName = AirUtils.config.getString("sql.database", "db");*/
         try {
             return !dbHost.isEmpty() && !user.isEmpty() && !pass.isEmpty() && !dbName.isEmpty();
         }
