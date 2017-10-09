@@ -288,7 +288,7 @@ public class AirUtils {
      */
     public static double[] getBotRatio(Guild g) {
 
-        double totalCount = g.getMembers().size();
+        double totalCount = g.getMemberCache().size();
         double botCount = 0;
         double userCount = 0;
 
