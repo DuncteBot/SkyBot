@@ -21,7 +21,7 @@ repositories {
 }
 
 dependencies {
-    //compile 'net.dv8tion:JDA:3.3.0_271'
+    //JDA (java discord api)
     compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '5945aad' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
