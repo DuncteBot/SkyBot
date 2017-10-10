@@ -60,12 +60,6 @@ public class EvalCommand extends Command {
 
             bindings.put("args", args);
 
-
-            engine.eval(
-                    "public void sendMsg(String msg) {" +
-                            "channel.sendMessage(msg).queue();" +
-                            "}", bindings);
-
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
