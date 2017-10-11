@@ -16,13 +16,13 @@ public class GuildSettingsUtils {
     }
 
     /**
-     * This will load all the footer quotes from the database and store them in
+     * This will load all the footer quotes from the database and store them in the {@link EmbedUtils#footerQuotes footerQuotes}
      */
     public static void loadFooterQuotes() {
         AirUtils.logger.info("Loading footer quotes");
         //TODO: connect to database and load data from table called "footerQuotes"
         //One default quote for now
-        EmbedUtils.footerQuotes.add("I want your quotes");
+        EmbedUtils.footerQuotes.add("I want your quotes - duncte123");
 
         AirUtils.logger.info("Nothing loaded (yet)");
     }
