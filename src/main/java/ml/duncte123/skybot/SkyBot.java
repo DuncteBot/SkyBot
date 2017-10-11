@@ -28,7 +28,7 @@ public class SkyBot {
      * @deprecated Because I can lol
      */
     @Deprecated
-    public static void main(String[] args) throws Exception {
+    public static void main(String... args) throws Exception {
         //Set the logger to only info by default
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
@@ -47,7 +47,7 @@ public class SkyBot {
         //AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadSettings();
+        GuildSettingsUtils.loadAllSettings();
 
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");

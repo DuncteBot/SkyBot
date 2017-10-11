@@ -8,10 +8,30 @@ import java.sql.*;
 
 public class GuildSettingsUtils {
     /**
+     * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
+     */
+    public static void loadAllSettings() {
+        loadGuildSettings();
+        loadFooterQuotes();
+    }
+
+    /**
+     * This will load all the footer quotes from the database and store them in
+     */
+    public static void loadFooterQuotes() {
+        AirUtils.logger.info("Loading footer quotes");
+        //TODO: connect to database and load data from table called "footerQuotes"
+        //One default quote for now
+        EmbedUtils.footerQuotes.add("I want your quotes");
+
+        AirUtils.logger.info("Nothing loaded (yet)");
+    }
+
+    /**
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */
-    public static void loadSettings() {
-        AirUtils.log(Level.INFO, "Loading settings.");
+    public static void loadGuildSettings() {
+        AirUtils.log(Level.INFO, "Loading Guild settings.");
 
         String dbName = AirUtils.db.getName();
 

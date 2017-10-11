@@ -5,11 +5,16 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.time.Instant;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * A simple class to help me build embeds
  */
 public class EmbedUtils {
+
+    public static Set<String> footerQuotes = new HashSet<>();
+
     /**
      * The default way to send a embedded message to the channel with a field in it
      * @param title The title of the field
@@ -43,10 +48,17 @@ public class EmbedUtils {
      * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed(){
+        //Get a random index from the quotes
+        int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+        //Get the quote as a string
+        String quote = String.valueOf(footerQuotes.toArray()[randomIndex]);
+
         return new EmbedBuilder()
                 .setColor(Settings.defaultColour)
-                .setFooter(Settings.defaultName, Settings.defaultIcon)
-                .setTimestamp(Instant.now());
+                //Set the quote in the footer
+                .setFooter(quote, Settings.defaultIcon);
+                //.setFooter(Settings.defaultName, Settings.defaultIcon)
+                //.setTimestamp(Instant.now());
     }
 
     /**

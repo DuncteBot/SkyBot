@@ -21,6 +21,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Random;
 
 public class AirUtils {
 
@@ -45,6 +46,10 @@ public class AirUtils {
      * This is our audio handler
      */
     public static AudioUtils audioUtils = new AudioUtils();
+    /**
+     * This helps us to make the coinflip command and the footer quotes work
+     */
+    public static Random rand = new Random();
 
     /**
      * This converts the online status of a user to a fancy emote
