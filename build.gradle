@@ -52,11 +52,6 @@ javadoc {
     exclude('ml/duncte123/skybot/commands')
 }
 
-//Relocate the JDA, just to relocate something
-shadowJar {
-    relocate 'net.dv8tion.jda', 'ml.duncte123.jda'
-}
-
 libsDirName = '../'
 
 compileJava.options.encoding = 'UTF-8'
