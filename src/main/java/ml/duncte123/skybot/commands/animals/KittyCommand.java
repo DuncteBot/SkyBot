@@ -19,7 +19,6 @@ public class KittyCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
         try {
             String apiKey = AirUtils.config.getString("apis.thecatapi", "");
-            System.out.println(apiKey);
             Document raw = Jsoup.connect("http://thecatapi.com/api/images/get?" +
                     (!apiKey.isEmpty()? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();
             Document doc = Jsoup.parse(raw.getAllElements().html(), "", Parser.xmlParser());
@@ -27,7 +26,7 @@ public class KittyCommand extends Command {
                     "Kitty_" + System.currentTimeMillis() + ".png", null).queue();
         }
         catch (Exception e) {
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
+            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getCause().toString()));
             e.printStackTrace();
         }
     }
