@@ -20,11 +20,35 @@ public class GuildSettingsUtils {
      */
     public static void loadFooterQuotes() {
         AirUtils.logger.info("Loading footer quotes");
-        //TODO: connect to database and load data from table called "footerQuotes"
+        
         //One default quote for now
         EmbedUtils.footerQuotes.add("I want your quotes - duncte123");
 
-        AirUtils.logger.info("Nothing loaded (yet)");
+        String dbName = AirUtils.db.getName();
+
+        Connection database = AirUtils.db.getConnManager().getConnection();
+        try {
+            Statement smt = database.createStatement();
+
+            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".footerQuotes");
+
+            while (resSettings.next()) {
+                String quote = resSettings.getString("quote");
+                EmbedUtils.footerQuotes.add(quote);
+            }
+
+            AirUtils.log(Level.INFO, "Loaded "+ EmbedUtils.footerQuotes.size() +" quotes.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
     }
 
     /**
