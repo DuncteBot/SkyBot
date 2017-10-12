@@ -5,7 +5,9 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.time.Instant;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -13,7 +15,8 @@ import java.util.Set;
  */
 public class EmbedUtils {
 
-    public static Set<String> footerQuotes = new HashSet<>();
+                    // Quote, User
+    public static Map<String,String> footerQuotes = new HashMap<>();
 
     /**
      * The default way to send a embedded message to the channel with a field in it
@@ -51,12 +54,14 @@ public class EmbedUtils {
         //Get a random index from the quotes
         int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
         //Get the quote as a string
-        String quote = String.valueOf(footerQuotes.toArray()[randomIndex]);
+        String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
+        String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
+        String finalQuote = quote + " - " + user;
 
         return new EmbedBuilder()
                 .setColor(Settings.defaultColour)
                 //Set the quote in the footer
-                .setFooter(quote, Settings.defaultIcon);
+                .setFooter(finalQuote, Settings.defaultIcon);
                 //.setFooter(Settings.defaultName, Settings.defaultIcon)
                 //.setTimestamp(Instant.now());
     }

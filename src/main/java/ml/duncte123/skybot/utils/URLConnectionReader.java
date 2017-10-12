@@ -94,8 +94,6 @@ public class URLConnectionReader {
 
         RequestBody body = RequestBody.create(mediaType, postParams.toString());
 
-        System.out.println(postParams.toString());
-
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
@@ -139,7 +137,7 @@ public class URLConnectionReader {
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url) {
-        return postRequest(url,new HashMap<>());
+        return postRequest(url,AcceptType.TEXT_JSON);
     }
 
     /**

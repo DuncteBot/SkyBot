@@ -22,7 +22,7 @@ public class GuildSettingsUtils {
         AirUtils.logger.info("Loading footer quotes");
         
         //One default quote for now
-        EmbedUtils.footerQuotes.add("I want your quotes - duncte123");
+        EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");
 
         String dbName = AirUtils.db.getName();
 
@@ -34,7 +34,8 @@ public class GuildSettingsUtils {
 
             while (resSettings.next()) {
                 String quote = resSettings.getString("quote");
-                EmbedUtils.footerQuotes.add(quote);
+                String user = resSettings.getString("name");
+                EmbedUtils.footerQuotes.put(quote, user);
             }
 
             AirUtils.log(Level.INFO, "Loaded "+ EmbedUtils.footerQuotes.size() +" quotes.");

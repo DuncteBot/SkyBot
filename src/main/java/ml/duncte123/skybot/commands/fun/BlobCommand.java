@@ -31,10 +31,19 @@ public class BlobCommand extends Command {
 
             if(responseBody.contentLength() <= 0) {
                 sendMsg(event, "This blob was not found on the server!!!");
+                if(response != null) {
+                    response.close();
+                }
                 return;
             }
 
-            event.getChannel().sendFile(responseBody.byteStream(), "blob.png", null).queue();
+            event.getChannel().sendFile(responseBody.byteStream(), "blob.png", null).queue(
+                    unused -> {
+                        if(response != null) {
+                            response.close();
+                        }
+                    }
+            );
     }
 
     /**
