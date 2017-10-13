@@ -85,10 +85,10 @@ public class EvalCommand extends Command {
                 return;
             }
             catch (TimeoutException | InterruptedException e) {
+                future.cancel(true);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
                 e.printStackTrace();
                 sendError(event.getMessage());
-                future.cancel(true);
                 return;
             }
 
