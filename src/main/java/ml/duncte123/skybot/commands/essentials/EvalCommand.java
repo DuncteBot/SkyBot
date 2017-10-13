@@ -70,7 +70,7 @@ public class EvalCommand extends Command {
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
-            ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+            ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
 
             Object out = null;
             int timeout = 10;
