@@ -86,21 +86,28 @@ public class BotListener extends ListenerAdapter {
 
         GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
 
-        if(event.getMessage().getRawContent().startsWith(Settings.prefix) || event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
-            // run the a command
-            lastGuildChannel.put(event.getGuild(), event.getChannel());
-            AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
-                    .replaceFirst(settings.getCustomPrefix(), Settings.prefix), event));
-            //return;
-        } else if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            if(event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) && event.getMessage().getRawContent().split(" ").length > 0){
-                lastGuildChannel.put(event.getGuild(), event.getChannel());
-                AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
-                        .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix), event));
+        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+
+            if(event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
+                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
                 return;
             }
-            event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
+
+            if( event.getMessage().getRawContent().split(" ").length >= 0 && !event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) ){
+                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
+                return;
+            }
+
+        } else if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
+            return;
         }
+
+            // run the a command
+        lastGuildChannel.put(event.getGuild(), event.getChannel());
+        AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
+                .replaceFirst(settings.getCustomPrefix(), Settings.prefix)
+                        .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
+                , event));
 
     }
 
