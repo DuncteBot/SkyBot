@@ -8,14 +8,15 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.concurrent.*;
 
 public class EvalCommand extends Command {
 
     private ScriptEngine engine;
     private List<String> packageImports;
+    private final static ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
 
     /**
      * This initialises the engine
@@ -64,20 +65,43 @@ public class EvalCommand extends Command {
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
             }
-            Object out = engine.eval(importStringBuilder.toString() +
-                                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser")
-                            , bindings);
+
+            String script = importStringBuilder.toString() +
+                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
+                            .replaceAll("getToken", "getSelfUser");
+
+            ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+
+            Object out = null;
+            int timeout = 10;
+
+            try {
+                out = future.get(timeout, TimeUnit.SECONDS);
+            }
+            catch (ExecutionException e)  {
+                event.getChannel().sendMessage("Error: " + e.getCause().toString()).queue();
+                e.printStackTrace();
+                sendError(event.getMessage());
+                return;
+            }
+            catch (TimeoutException | InterruptedException e) {
+                future.cancel(true);
+                event.getChannel().sendMessage("Error: " + e.toString()).queue();
+                e.printStackTrace();
+                sendError(event.getMessage());
+                return;
+            }
 
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
             }
 
         }
-        catch (ScriptException e) {
+        /*catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
             sendError(event.getMessage());
             return;
-        }
+        }*/
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
             sendError(event.getMessage());
