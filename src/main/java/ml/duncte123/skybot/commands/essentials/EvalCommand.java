@@ -8,7 +8,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
-import javax.script.ScriptException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
@@ -68,7 +67,8 @@ public class EvalCommand extends Command {
             }
 
             String script = importStringBuilder.toString() +
-                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length()).replaceAll("getToken", "getSelfUser");
+                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
+                            .replaceAll("getToken", "getSelfUser");
 
             ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
 
