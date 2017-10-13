@@ -32,7 +32,7 @@ public class SkyBot {
         //Set the logger to only info by default
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
-        if(!AirUtils.db.connManager.hasSettings()) {
+        /*if(!AirUtils.db.connManager.hasSettings()) {
             AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
             System.exit(-2);
             return;
@@ -41,13 +41,13 @@ public class SkyBot {
             AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database. ABORTING!!!!!");
             System.exit(-3);
             return;
-        }
+        }*/
 
         //Set database to UTF-8
         //AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings();
+        //GuildSettingsUtils.loadAllSettings();
 
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
@@ -77,6 +77,6 @@ public class SkyBot {
             }
         };
 
-        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
+     //   listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
     }
 }
