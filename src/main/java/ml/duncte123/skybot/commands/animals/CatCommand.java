@@ -13,9 +13,7 @@ public class CatCommand extends Command {
     public final static String help = "here is a cat.";
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -29,14 +27,13 @@ public class CatCommand extends Command {
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(EmbedUtils.embedMessage("OOPS: " + e.getMessage()), event);
+            sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
         }
 
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
@@ -44,6 +41,9 @@ public class CatCommand extends Command {
         return help;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "cat";

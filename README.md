@@ -4,8 +4,8 @@ SkyBot is a discord bot with music and mod commands
 # Libs
 The following libraries are used:
 [_JDA_](https://github.com/DV8FromTheWorld/JDA) 
-and 
-[_LavaPlayer_](https://github.com/sedmelluq/lavaplayer)
+,[_LavaPlayer_](https://github.com/sedmelluq/lavaplayer)
+,[_jda-nas_](https://github.com/sedmelluq/jda-nas), commons-lang3, commons-text, jsoup, mysql-connector-java, gson, groovy-jsr223 and logback-classic
 
 
 # live demo

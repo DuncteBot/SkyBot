@@ -42,7 +42,7 @@ public class JoinCommand extends Command {
         }
 
         VoiceChannel vc = null;
-        AudioUtils au = AirUtils.au;
+        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
@@ -73,7 +73,7 @@ public class JoinCommand extends Command {
                 eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
             }
         }
-        sendEmbed(eb.build(), event);
+        sendEmbed(event, eb.build());
 
 
     }

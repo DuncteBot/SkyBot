@@ -40,14 +40,6 @@ public abstract class Command {
     }
 
     /**
-     * This will return our bot instance
-     * @return the main class
-     */
-    protected SkyBot getBot() {
-        return new SkyBot();
-    }
-
-    /**
      * This returns the settings for the given guild
      * @param guildId the id if the guild that we need the settings for
      * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
@@ -76,10 +68,10 @@ public abstract class Command {
 
     /**
      * This will chcek if we can send a embed and convert it to a message if we can't send embeds
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param embed The embed to send
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    protected void sendEmbed(MessageEmbed embed, GuildMessageReceivedEvent event) {
+    protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
         if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;

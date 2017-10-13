@@ -50,7 +50,7 @@ public class GuildInfoCommand extends Command {
 
             MessageEmbed messageEmbed = eb.build();
 
-            sendEmbed(messageEmbed, event);
+            sendEmbed(event, messageEmbed);
         }
         catch (Exception e){
             sendMsg(event, "OOPS, something went wrong: " + e.getMessage());

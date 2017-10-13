@@ -35,9 +35,7 @@ public class EvalCommand extends Command {
     }
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -62,12 +60,6 @@ public class EvalCommand extends Command {
 
             bindings.put("args", args);
 
-
-            engine.eval(
-                    "public void sendMsg(String msg) {" +
-                            "channel.sendMessage(msg).queue();" +
-                            "}", bindings);
-
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
                 importStringBuilder.append("import ").append(s).append(".*;");
@@ -83,23 +75,29 @@ public class EvalCommand extends Command {
         }
         catch (ScriptException e) {
             event.getChannel().sendMessage("Error: " + e.getMessage()).queue();
+            sendError(event.getMessage());
+            return;
         }
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
+            sendError(event.getMessage());
             e1.printStackTrace();
+            return;
         }
         sendSuccess(event.getMessage());
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
         return "A simple eval command";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "eval";

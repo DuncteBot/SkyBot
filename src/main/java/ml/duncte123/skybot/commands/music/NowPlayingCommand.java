@@ -19,7 +19,7 @@ public class NowPlayingCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = AirUtils.au;
+        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);
@@ -39,7 +39,7 @@ public class NowPlayingCommand extends Command {
         }else{
             msg = "The player is not currently playing anything!";
         }
-        sendEmbed(EmbedUtils.embedMessage(msg), event);
+        sendEmbed(event, EmbedUtils.embedMessage(msg));
 
     }
 

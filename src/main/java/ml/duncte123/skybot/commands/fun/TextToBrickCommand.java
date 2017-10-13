@@ -36,7 +36,7 @@ public class TextToBrickCommand extends Command {
                 }
             }
 
-        sendEmbed(EmbedUtils.embedMessage( sb.toString() ), event);
+        sendEmbed(event, EmbedUtils.embedMessage( sb.toString() ));
     }
 
     /**

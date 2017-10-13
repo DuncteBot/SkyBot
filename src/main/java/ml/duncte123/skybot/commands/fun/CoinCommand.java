@@ -1,11 +1,10 @@
-package ml.duncte123.skybot.commands.uncategorized;
+package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class CoinCommand extends Command {
@@ -17,9 +16,7 @@ public class CoinCommand extends Command {
     private final String[] imagesArr = { "heads.png", "tails.png" };
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -28,12 +25,11 @@ public class CoinCommand extends Command {
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();
         MessageEmbed eb = EmbedUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)]);
-        sendEmbed(eb, event);
+        sendEmbed(event, eb);
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
@@ -41,11 +37,17 @@ public class CoinCommand extends Command {
         return help;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "coin";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String[] getAliases() {
         return new String[]{"flip"};

@@ -4,21 +4,63 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.slf4j.event.Level;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class GuildSettingsUtils {
     /**
-     * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
+     * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
      */
-    public static void loadSettings() {
-        AirUtils.log(Level.INFO, "Loading settings.");
+    public static void loadAllSettings() {
+        loadGuildSettings();
+        loadFooterQuotes();
+    }
+
+    /**
+     * This will load all the footer quotes from the database and store them in the {@link EmbedUtils#footerQuotes footerQuotes}
+     */
+    public static void loadFooterQuotes() {
+        AirUtils.logger.info("Loading footer quotes");
+        
+        //One default quote for now
+        EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");
 
         String dbName = AirUtils.db.getName();
 
-        Connection database = AirUtils.db.getConnection();
+        Connection database = AirUtils.db.getConnManager().getConnection();
+        try {
+            Statement smt = database.createStatement();
+
+            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".footerQuotes");
+
+            while (resSettings.next()) {
+                String quote = resSettings.getString("quote");
+                String user = resSettings.getString("name");
+                EmbedUtils.footerQuotes.put(quote, user);
+            }
+
+            AirUtils.log(Level.INFO, "Loaded "+ EmbedUtils.footerQuotes.size() +" quotes.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
+     */
+    public static void loadGuildSettings() {
+        AirUtils.log(Level.INFO, "Loading Guild settings.");
+
+        String dbName = AirUtils.db.getName();
+
+        Connection database = AirUtils.db.getConnManager().getConnection();
         try {
             Statement smt = database.createStatement();
 
@@ -44,6 +86,13 @@ public class GuildSettingsUtils {
         }
         catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 
@@ -68,7 +117,7 @@ public class GuildSettingsUtils {
 
 
         String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnection();
+        Connection database = AirUtils.db.getConnManager().getConnection();
 
         try{
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
@@ -86,6 +135,13 @@ public class GuildSettingsUtils {
         }
         catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
 
     }
@@ -111,7 +167,7 @@ public class GuildSettingsUtils {
 
         String dbName = AirUtils.db.getName();
 
-        Connection database = AirUtils.db.getConnection();
+        Connection database = AirUtils.db.getConnManager().getConnection();
 
         try {
 
@@ -129,6 +185,13 @@ public class GuildSettingsUtils {
         }
         catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 }

@@ -46,7 +46,7 @@ public class JokeCommand extends Command {
             String text = postData.getString("selftext");
             String url = postData.getString("url");
 
-            sendEmbed(EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build(), event );
+            sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build());
 
         }
         catch (Exception e) {

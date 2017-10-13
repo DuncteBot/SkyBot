@@ -29,10 +29,10 @@ public class LeaveCommand extends Command {
         }
 
         if(event.getGuild().getAudioManager().isConnected()) {
-            AirUtils.au.getMusicManager(event.getGuild()).player.stopTrack();
+            AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
             event.getGuild().getAudioManager().setSendingHandler(null);
             event.getGuild().getAudioManager().closeAudioConnection();
-           sendEmbed(EmbedUtils.embedField(AirUtils.au.embedTitle, "Leaving your channel"), event);
+           sendEmbed(event, EmbedUtils.embedField(AirUtils.audioUtils.embedTitle, "Leaving your channel"));
         } else {
             sendMsg(event, "I'm not connected to any channels.");
         }

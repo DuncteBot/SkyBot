@@ -115,4 +115,12 @@ public class GuildSettings {
     public String getCustomPrefix() {
         return customPrefix;
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public String toString() {
+        return "GuildSettings["+guildId+"](prefix="+customPrefix+", Swearword filter="+enableSwearFilter+", Join message="+enableJoinMessage+")";
+    }
 }

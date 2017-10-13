@@ -8,10 +8,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 
 public class KpopCommand extends Command {
 
@@ -26,9 +23,10 @@ public class KpopCommand extends Command {
         String name = "";
         String group = "";
         String imgUrl = "";
+
+        String dbName = AirUtils.db.getName();
+        Connection database = AirUtils.db.getConnManager().getConnection();
         try {
-            String dbName = AirUtils.db.getName();
-            Connection database = AirUtils.db.getConnection();
 
             if(args.length > 0) {
 
@@ -64,11 +62,18 @@ public class KpopCommand extends Command {
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
                     .setFooter("Query id: " + id, Settings.defaultIcon);
-            sendEmbed(eb.build(), event);
+            sendEmbed(event, eb.build());
         }
         catch (Exception e) {
            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: " + e.getMessage());
             e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
         }
     }
 

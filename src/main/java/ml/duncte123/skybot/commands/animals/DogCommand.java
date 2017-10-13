@@ -8,9 +8,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 public class DogCommand extends Command {
 
     /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * {@inheritDoc}
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
@@ -20,21 +18,20 @@ public class DogCommand extends Command {
             String finalS = base + jsonString;
 
             if (finalS.contains(".mp4")) {
-               sendEmbed(EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"), event);
+               sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
             } else {
-                sendEmbed(EmbedUtils.embedImage(finalS), event);
+                sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
-            sendEmbed(EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"), event);
+            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
         }
 
     }
 
     /**
-     * The usage instructions of the command
-     * @return a String
+     * {@inheritDoc}
      */
     @Override
     public String help() {
@@ -42,6 +39,9 @@ public class DogCommand extends Command {
         return "here is a dog.";
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public String getName() {
         return "dog";

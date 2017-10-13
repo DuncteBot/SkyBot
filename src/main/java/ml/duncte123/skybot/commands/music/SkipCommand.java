@@ -18,7 +18,7 @@ public class SkipCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = AirUtils.au;
+        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
         GuildMusicManager mng = au.getMusicManager(guild);

@@ -8,7 +8,7 @@ group = 'ml.duncte123'
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.47.9'
+version '3.48.1'
 
 sourceCompatibility = 1.8
 
@@ -21,10 +21,10 @@ repositories {
 }
 
 dependencies {
-    //compile 'net.dv8tion:JDA:3.3.0_271'
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '6d5f0cc' //Beta build with ShardManager
+    //JDA (java discord api)
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '5945aad' //Beta build with ShardManager
     //Lavaplayer
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.43'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
     //jda-nas
     compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.5'
     // https://mvnrepository.com/artifact/org.apache.commons/commons-lang3
@@ -50,11 +50,6 @@ dependencies {
 javadoc {
     options.encoding = 'UTF-8'
     exclude('ml/duncte123/skybot/commands')
-}
-
-//Relocate the JDA, just to relocate something
-shadowJar {
-    relocate 'net.dv8tion.jda', 'ml.duncte123.jda'
 }
 
 libsDirName = '../'
