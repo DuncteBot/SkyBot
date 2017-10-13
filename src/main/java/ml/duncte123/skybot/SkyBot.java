@@ -43,9 +43,6 @@ public class SkyBot {
             return;
         }
 
-        //Set database to UTF-8
-        //AirUtils.db.getConnection().createStatement().execute("SET CHARACTER SET utf8");
-
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
 
@@ -77,6 +74,6 @@ public class SkyBot {
             }
         };
 
-        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
+     //   listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
     }
 }
