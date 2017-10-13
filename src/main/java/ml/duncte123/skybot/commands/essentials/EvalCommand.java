@@ -77,10 +77,8 @@ public class EvalCommand extends Command {
 
             try {
                 out = future.get(timeout, TimeUnit.SECONDS);
-                System.out.println(out);
             }
             catch (ExecutionException e)  {
-                //errorWriter.println(e.getCause().toString());
                 event.getChannel().sendMessage("Error: " + e.getCause().toString()).queue();
                 e.printStackTrace();
                 sendError(event.getMessage());
@@ -88,7 +86,6 @@ public class EvalCommand extends Command {
             }
             catch (TimeoutException | InterruptedException e) {
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
-                //errorWriter.println(e.toString());
                 e.printStackTrace();
                 sendError(event.getMessage());
                 future.cancel(true);
