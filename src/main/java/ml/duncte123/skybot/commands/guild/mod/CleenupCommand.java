@@ -47,7 +47,7 @@ public class CleenupCommand extends Command {
         }
     
         try {
-          MessageHistory mh = new MessageHistory(event.getChannel());
+          MessageHistory mh = event.getChannel().getHistory();
           List<Message> msgLst =  mh.retrievePast(total).complete();
           event.getChannel().deleteMessages(msgLst).queue();
           deletedMsg = msgLst.size();
