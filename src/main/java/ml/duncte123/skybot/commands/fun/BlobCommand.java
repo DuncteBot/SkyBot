@@ -1,16 +1,13 @@
 package ml.duncte123.skybot.commands.fun;
 
+import org.apache.commons.lang3.StringUtils;
+
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.URLConnectionReader;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 
 public class BlobCommand extends Command {
     /**

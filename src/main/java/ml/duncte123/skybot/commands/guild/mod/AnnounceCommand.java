@@ -4,7 +4,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -34,9 +33,8 @@ public class AnnounceCommand extends Command {
             return;
         }
 
-        try{
-
-            TextChannel chann = event.getMessage().getMentionedChannels().get(0);
+        try {
+            event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
 
             sendEmbed(event, EmbedUtils.embedMessage(msg));

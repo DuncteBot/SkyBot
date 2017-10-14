@@ -8,7 +8,6 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
@@ -67,6 +66,7 @@ public class SkyBot {
 
         //Register the timer for the auto unbans
         //I moved the timer here to make sure that every running jar has this only once
+        /*
         TimerTask unbanTask = new TimerTask() {
             @Override
             public void run() {
@@ -74,6 +74,7 @@ public class SkyBot {
             }
         };
 
-     //   listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
+        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
+        */
     }
 }

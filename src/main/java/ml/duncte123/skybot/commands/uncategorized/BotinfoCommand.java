@@ -5,7 +5,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.JDAInfo;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -22,9 +21,8 @@ public class BotinfoCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        User u = event.getJDA().getSelfUser();
-        Member m = event.getGuild().getMemberById(u.getId());
-
+    	User u = event.getAuthor();
+    	
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
