@@ -1,9 +1,13 @@
-package ml.duncte123.skybot.commands.essentials;
+package ml.duncte123.skybot.commands.essentials.eval;
 
+import groovy.lang.GroovyShell;
+import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -15,14 +19,20 @@ import java.util.concurrent.*;
 public class EvalCommand extends Command {
 
     private ScriptEngine engine;
+    private GroovyShell sh;
     private List<String> packageImports;
-    private final static ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private EvalFilter filter = new EvalFilter();
 
     /**
      * This initialises the engine
      */
     public EvalCommand() {
-        engine = new ScriptEngineManager().getEngineByName("groovy");
+        //engine = new ScriptEngineManager().getEngineByName("groovy");
+        sh = new GroovyShell(
+                new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer())
+        );
+        engine = new ScriptEngineManager(sh.getClassLoader()).getEngineByName("groovy");
         packageImports =  Arrays.asList("java.io",
                 "java.lang",
                 "java.util",
@@ -63,14 +73,21 @@ public class EvalCommand extends Command {
 
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
-                importStringBuilder.append("import ").append(s).append(".*;");
+                //importStringBuilder.append("import ").append(s).append(".*;");
             }
 
             String script = importStringBuilder.toString() +
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
-            ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+            //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+            ScheduledFuture<?> future = service.schedule(() -> { filter.register(); sh.evaluate(script); }, 0, TimeUnit.MILLISECONDS);
+            /*ScheduledFuture<?> future = service.schedule(new Runnable() {
+                @Override
+                public void run() {
+                    filter.register(); sh.evaluate(script);
+                }
+            }, 0, TimeUnit.MILLISECONDS);*/
 
             Object out = null;
             int timeout = 10;
