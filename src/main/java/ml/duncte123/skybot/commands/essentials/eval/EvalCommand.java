@@ -62,7 +62,7 @@ public class EvalCommand extends Command {
             bindings.put("channel", event.getChannel());
             bindings.put("guild", event.getGuild());
             bindings.put("member", event.getMember());
-            bindings.put("jda", new JDADelegate(event.getJDA()));
+            bindings.put("jda", event.getJDA());
             bindings.put("event", event);
 
             bindings.put("args", args);
@@ -78,17 +78,27 @@ public class EvalCommand extends Command {
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<Object> future;
+
+            if( script.contains("while(true)") || script.contains("for(;;)") ) {
+                sendError(event.getMessage());
+                return;
+            }
+
+
+            int timeout =5;
             if(event.getAuthor().getId().equals(Settings.ownerId)) {
+                timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
                 future = service.schedule(() -> {
                     filter.register();
                     return sh.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
+                //sendError(event.getMessage());
+                //return;
             }
 
             Object out = null;
-            int timeout = 10;
 
             try {
                 out = future.get(timeout, TimeUnit.SECONDS);
@@ -124,6 +134,7 @@ public class EvalCommand extends Command {
             sendError(event.getMessage());
             //e1.printStackTrace();/
         }
+        System.gc();
     }
 
     /**

@@ -1,5 +1,6 @@
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.objects.JDA.JDADelagteGuildMessageReceivedEvent;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
@@ -107,7 +108,7 @@ public class BotListener extends ListenerAdapter {
         AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
                 .replaceFirst(settings.getCustomPrefix(), Settings.prefix)
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
-                , event));
+                , new JDADelagteGuildMessageReceivedEvent(event.getJDA(), event.getResponseNumber(), event.getMessage())));
 
     }
 

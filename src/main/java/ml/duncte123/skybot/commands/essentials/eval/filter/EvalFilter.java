@@ -1,10 +1,10 @@
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import groovy.lang.Closure;
-import groovy.lang.Script;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
@@ -19,8 +19,8 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        if(o instanceof Script || o instanceof Closure)
-            return o;
+        /*if(o instanceof Script || o instanceof Closure)
+            return o;*/
         throw new SecurityException("Class not allowed: " + o);
     }
 
@@ -31,13 +31,7 @@ public class EvalFilter extends GroovyValueFilter {
             Double.class,
             Float.class,
             Short.class,
-            Byte.class,
-            Character.class,
-            Math.class,
-            Arrays.class,
-            ArrayList.class,
-            List.class
+            Character.class
     };
-
 
 }
