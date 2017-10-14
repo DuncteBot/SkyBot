@@ -1,9 +1,14 @@
-package ml.duncte123.skybot.commands.essentials;
+package ml.duncte123.skybot.commands.essentials.eval;
 
+import groovy.lang.GroovyShell;
+import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
+import ml.duncte123.skybot.objects.JDA.JDADelegate;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 import javax.script.Bindings;
 import javax.script.ScriptEngine;
@@ -15,14 +20,20 @@ import java.util.concurrent.*;
 public class EvalCommand extends Command {
 
     private ScriptEngine engine;
+    private GroovyShell sh;
     private List<String> packageImports;
-    private final static ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private EvalFilter filter = new EvalFilter();
 
     /**
      * This initialises the engine
      */
     public EvalCommand() {
-        engine = new ScriptEngineManager().getEngineByName("groovy");
+        //engine = new ScriptEngineManager().getEngineByName("groovy");
+        sh = new GroovyShell(
+                new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer())
+        );
+        engine = new ScriptEngineManager(sh.getClassLoader()).getEngineByName("groovy");
         packageImports =  Arrays.asList("java.io",
                 "java.lang",
                 "java.util",
@@ -41,11 +52,6 @@ public class EvalCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!event.getAuthor().getId().equals(Settings.ownerId)) {
-            sendError(event.getMessage());
-            return;
-        }
-
         try {
 
             Bindings bindings = engine.createBindings();
@@ -56,7 +62,7 @@ public class EvalCommand extends Command {
             bindings.put("channel", event.getChannel());
             bindings.put("guild", event.getGuild());
             bindings.put("member", event.getMember());
-            bindings.put("jda", event.getJDA());
+            bindings.put("jda", new JDADelegate(event.getJDA()));
             bindings.put("event", event);
 
             bindings.put("args", args);
@@ -70,7 +76,16 @@ public class EvalCommand extends Command {
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
-            ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+            //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+            ScheduledFuture<Object> future;
+            if(event.getAuthor().getId().equals(Settings.ownerId)) {
+                future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+            } else {
+                future = service.schedule(() -> {
+                    filter.register();
+                    return sh.evaluate(script);
+                }, 0, TimeUnit.MILLISECONDS);
+            }
 
             Object out = null;
             int timeout = 10;
@@ -80,20 +95,22 @@ public class EvalCommand extends Command {
             }
             catch (ExecutionException e)  {
                 event.getChannel().sendMessage("Error: " + e.getCause().toString()).queue();
-                e.printStackTrace();
+                //e.printStackTrace();
                 sendError(event.getMessage());
                 return;
             }
             catch (TimeoutException | InterruptedException e) {
                 future.cancel(true);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
-                e.printStackTrace();
+                //e.printStackTrace();
                 sendError(event.getMessage());
                 return;
             }
 
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
+            } else {
+                sendSuccess(event.getMessage());
             }
 
         }
@@ -105,10 +122,8 @@ public class EvalCommand extends Command {
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
             sendError(event.getMessage());
-            e1.printStackTrace();
-            return;
+            //e1.printStackTrace();/
         }
-        sendSuccess(event.getMessage());
     }
 
     /**
