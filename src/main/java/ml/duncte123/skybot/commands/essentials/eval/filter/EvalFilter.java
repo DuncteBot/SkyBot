@@ -4,9 +4,7 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
@@ -35,7 +33,10 @@ public class EvalFilter extends GroovyValueFilter {
             Short.class,
             Byte.class,
             Character.class,
-            Math.class
+            Math.class,
+            Arrays.class,
+            ArrayList.class,
+            List.class
     };
 
 
