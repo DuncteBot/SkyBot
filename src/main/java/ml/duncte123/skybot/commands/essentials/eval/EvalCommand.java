@@ -51,11 +51,6 @@ public class EvalCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!event.getAuthor().getId().equals(Settings.ownerId)) {
-            sendError(event.getMessage());
-            return;
-        }
-
         try {
 
             Bindings bindings = engine.createBindings();
@@ -81,13 +76,15 @@ public class EvalCommand extends Command {
                             .replaceAll("getToken", "getSelfUser");
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
-            ScheduledFuture<?> future = service.schedule(() -> { filter.register(); sh.evaluate(script); }, 0, TimeUnit.MILLISECONDS);
-            /*ScheduledFuture<?> future = service.schedule(new Runnable() {
-                @Override
-                public void run() {
-                    filter.register(); sh.evaluate(script);
-                }
-            }, 0, TimeUnit.MILLISECONDS);*/
+            ScheduledFuture<?> future;
+            if(event.getAuthor().getId().equals(Settings.ownerId)) {
+                future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+            } else {
+                future = service.schedule(() -> {
+                    filter.register();
+                    sh.evaluate(script);
+                }, 0, TimeUnit.MILLISECONDS);
+            }
 
             Object out = null;
             int timeout = 10;
