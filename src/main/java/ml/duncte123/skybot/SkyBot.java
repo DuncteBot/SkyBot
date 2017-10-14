@@ -73,7 +73,6 @@ public class SkyBot {
                 AirUtils.checkUnbans(mgr);
             }
         };
-
-     //   listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
+        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
     }
 }

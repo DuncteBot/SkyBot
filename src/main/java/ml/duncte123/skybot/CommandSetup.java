@@ -1,7 +1,7 @@
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.commands.animals.*;
-import ml.duncte123.skybot.commands.essentials.EvalCommand;
+import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
