@@ -76,13 +76,13 @@ public class EvalCommand extends Command {
                             .replaceAll("getToken", "getSelfUser");
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
-            ScheduledFuture<?> future;
+            ScheduledFuture<Object> future;
             if(event.getAuthor().getId().equals(Settings.ownerId)) {
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
                 future = service.schedule(() -> {
                     filter.register();
-                    sh.evaluate(script);
+                    return sh.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
             }
 
@@ -109,7 +109,7 @@ public class EvalCommand extends Command {
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
             } else {
-                sendMsg(event, "null");
+                sendSuccess(event.getMessage());
             }
 
         }
@@ -124,7 +124,6 @@ public class EvalCommand extends Command {
             e1.printStackTrace();
             return;
         }
-        sendSuccess(event.getMessage());
     }
 
     /**

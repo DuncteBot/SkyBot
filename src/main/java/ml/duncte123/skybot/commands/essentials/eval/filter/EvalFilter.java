@@ -23,7 +23,7 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         /*if(o instanceof Script || o instanceof Closure)
             return o;*/
-        throw new SecurityException("Class not allowed");
+        throw new SecurityException("Class not allowed: " + o.toString());
     }
 
     private static final Class[] ALLOWED_TYPES_LIST = {
@@ -34,7 +34,8 @@ public class EvalFilter extends GroovyValueFilter {
             Float.class,
             Short.class,
             Byte.class,
-            Character.class
+            Character.class,
+            Math.class
     };
 
 
