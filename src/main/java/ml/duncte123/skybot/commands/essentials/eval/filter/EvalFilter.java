@@ -17,11 +17,11 @@ public class EvalFilter extends GroovyValueFilter {
 
     @Override
     public final Object filter(Object o) {
-        if (o==null || ALLOWED_TYPES.contains(o) )
+        if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        /*if(o instanceof Script || o instanceof Closure)
-            return o;*/
-        throw new SecurityException("Class not allowed: " + o.toString());
+        if(o instanceof Script || o instanceof Closure)
+            return o;
+        throw new SecurityException("Class not allowed: " + o.getClass());
     }
 
     private static final Class[] ALLOWED_TYPES_LIST = {

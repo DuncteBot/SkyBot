@@ -94,14 +94,14 @@ public class EvalCommand extends Command {
             }
             catch (ExecutionException e)  {
                 event.getChannel().sendMessage("Error: " + e.getCause().toString()).queue();
-                e.printStackTrace();
+                //e.printStackTrace();
                 sendError(event.getMessage());
                 return;
             }
             catch (TimeoutException | InterruptedException e) {
                 future.cancel(true);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
-                e.printStackTrace();
+                //e.printStackTrace();
                 sendError(event.getMessage());
                 return;
             }
@@ -121,8 +121,7 @@ public class EvalCommand extends Command {
         catch (Exception e1) {
             event.getChannel().sendMessage("Error: " + e1.getMessage()).queue();
             sendError(event.getMessage());
-            e1.printStackTrace();
-            return;
+            //e1.printStackTrace();/
         }
     }
 
