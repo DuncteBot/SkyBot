@@ -21,7 +21,7 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         if(o instanceof Script || o instanceof Closure)
             return o;
-        throw new SecurityException("Class not allowed: " + o.getClass());
+        throw new SecurityException("Class not allowed: " + o);
     }
 
     private static final Class[] ALLOWED_TYPES_LIST = {
