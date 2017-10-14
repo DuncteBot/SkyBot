@@ -108,6 +108,8 @@ public class EvalCommand extends Command {
 
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
+            } else {
+                sendMsg(event, "null");
             }
 
         }
