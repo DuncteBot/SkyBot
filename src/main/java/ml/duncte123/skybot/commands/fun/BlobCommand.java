@@ -2,15 +2,11 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.Settings;
-import ml.duncte123.skybot.utils.URLConnectionReader;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
-
-import java.io.IOException;
 
 public class BlobCommand extends Command {
     /**
@@ -25,7 +21,7 @@ public class BlobCommand extends Command {
             blob = StringUtils.join(args);
         }
 
-            Response response = URLConnectionReader.getRequest("https://i.duncte123.ml/blob/" + blob + ".png");
+            Response response = WebUtils.getRequest("https://i.duncte123.ml/blob/" + blob + ".png");
 
             ResponseBody responseBody = response.body();
 

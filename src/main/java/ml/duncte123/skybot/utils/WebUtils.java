@@ -10,15 +10,15 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class URLConnectionReader {
+public class WebUtils {
 
     /**
      * Reads contents from a website and returns it to a string
      * @param url The url to read
      * @return The text contents
-     * @throws Exception When something broke
+     * @throws IOException When something broke
      */
-    public static String getText(String url) throws Exception {
+    public static String getText(String url) throws IOException {
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
         connection.addRequestProperty("User-Agent", "Binzy's personal pc");

@@ -2,7 +2,7 @@ package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.URLConnectionReader;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
 
@@ -20,7 +20,7 @@ public class CatCommand extends Command {
         // TODO Auto-generated method stub;
 
         try {
-            String jsonString = URLConnectionReader.getText("http://random.cat/meow");
+            String jsonString = WebUtils.getText("http://random.cat/meow");
             JSONObject jsonObject = new JSONObject(jsonString);
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();

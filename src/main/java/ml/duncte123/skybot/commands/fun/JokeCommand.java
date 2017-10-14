@@ -2,7 +2,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.URLConnectionReader;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -27,7 +27,7 @@ public class JokeCommand extends Command {
         String guildId = event.getGuild().getId();
 
         try {
-            String rawJSON = URLConnectionReader.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400");
+            String rawJSON = WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400");
             JSONObject jsonObject = new JSONObject(rawJSON);
             JSONObject data = jsonObject.getJSONObject("data");
             JSONArray children = data.getJSONArray("children");
