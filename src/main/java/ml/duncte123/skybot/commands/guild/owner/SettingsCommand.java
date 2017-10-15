@@ -40,6 +40,7 @@ public class SettingsCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+        List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
         if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             sendMsg(event, "You don't have permission to run this command");
@@ -59,9 +60,9 @@ public class SettingsCommand extends Command {
             );
             sendEmbed(event, message);
         } else if(args.length == 1) {
-            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`");
+            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`\n\n" +
+                    "The modules are: `" + StringUtils.join(modules, ", ") + "`");
         } else {
-            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
             String module = args[0];
             if(modules.contains(module)) {
                 switch (module) {
