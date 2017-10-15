@@ -2,7 +2,6 @@ package ml.duncte123.skybot.commands.essentials.eval;
 
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.objects.JDA.JDADelegate;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -22,7 +21,7 @@ public class EvalCommand extends Command {
     private ScriptEngine engine;
     private GroovyShell sh;
     private List<String> packageImports;
-    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private ScheduledExecutorService service/* = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"))*/;
     private EvalFilter filter = new EvalFilter();
 
     /**
@@ -53,6 +52,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         try {
+            this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
 
             Bindings bindings = engine.createBindings();
 
@@ -78,13 +78,6 @@ public class EvalCommand extends Command {
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<Object> future;
-
-            if( script.contains("while(true)") || script.contains("for(;;)") ) {
-                sendError(event.getMessage());
-                return;
-            }
-
-
             int timeout =5;
             if(event.getAuthor().getId().equals(Settings.ownerId)) {
                 timeout = 10;
@@ -134,6 +127,7 @@ public class EvalCommand extends Command {
             sendError(event.getMessage());
             //e1.printStackTrace();/
         }
+        service.shutdown();
         System.gc();
     }
 

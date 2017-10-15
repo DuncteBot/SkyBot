@@ -2,9 +2,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
@@ -31,7 +29,10 @@ public class EvalFilter extends GroovyValueFilter {
             Double.class,
             Float.class,
             Short.class,
-            Character.class
+            Character.class,
+            Arrays.class,
+            List.class,
+            ArrayList.class
     };
 
 }
