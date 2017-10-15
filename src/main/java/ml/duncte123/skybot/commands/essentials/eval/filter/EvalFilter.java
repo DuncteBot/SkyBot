@@ -66,6 +66,8 @@ public class EvalFilter extends GroovyValueFilter {
                 "byte\\s*[\\s*([0-9]*)\\s*]||" +
                 "Byte\\s*[\\s*([0-9]*)\\s*]||" +
                 "boolean\\s*[\\s*([0-9]*)\\s*]||" +
+                "ArrayList\\s*[\\s*([0-9]*)\\s*]||" +
+                "List\\s*[\\s*([0-9]*)\\s*]||" +
                 "char\\s*[\\s*([0-9]*)\\s*]").matcher(toFilter).matches();
     }
 
