@@ -667,6 +667,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -694,6 +695,8 @@ public class EvalFilter extends GroovyValueFilter {
             Double.class,
             Float.class,
             Short.class,
+            Long.class,
+            BigDecimal.class,
             Character.class,
             Arrays.class,
             List.class,
