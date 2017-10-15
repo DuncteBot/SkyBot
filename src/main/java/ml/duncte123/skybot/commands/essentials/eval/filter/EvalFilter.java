@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
+import groovy.lang.Closure;
+import groovy.lang.Script;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -45,8 +47,8 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        /*if(o instanceof Script || o instanceof Closure)
-            return o;*/
+        if(o instanceof Script || o instanceof Closure)
+            return o;
         if(filterArrays(String.valueOf(o)))
             throw new UnsupportedOperationException("Arrays are not allowed");
         throw new SecurityException("Class not allowed: " + o);
