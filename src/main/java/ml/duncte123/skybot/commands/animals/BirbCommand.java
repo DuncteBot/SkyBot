@@ -16,37 +16,40 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class CookieCommand extends Command {
+import java.io.IOException;
 
-    /**
-     * {@inheritDoc}
-     */
+public class BirbCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        sendMsg(event, "<:blobnomcookie_secret:317636549342789632>");
+        try {
+            String imgName = WebUtils.getText("https://proximyst.com:4500/random/path/text");
 
+            sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + imgName + "/image"));
+        }
+        catch (IOException e) {
+            sendMsg(event, "ERROR: " + e.getMessage());
+        }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
-        // TODO Auto-generated method stub
-        return "blobnomcookie";
+        return "Here is a Bitb";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
-        return "cookie";
+        return "birb";
     }
 
+    @Override
+    public String[] getAliases() {
+        return new String[] {"bird"};
+    }
 }

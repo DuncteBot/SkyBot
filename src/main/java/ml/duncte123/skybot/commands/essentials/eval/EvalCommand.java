@@ -1,8 +1,25 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.commands.essentials.eval;
 
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.objects.JDA.JDADelegate;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -22,7 +39,7 @@ public class EvalCommand extends Command {
     private ScriptEngine engine;
     private GroovyShell sh;
     private List<String> packageImports;
-    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
     private EvalFilter filter = new EvalFilter();
 
     /**
@@ -53,6 +70,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         try {
+            //this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
 
             Bindings bindings = engine.createBindings();
 
@@ -62,7 +80,7 @@ public class EvalCommand extends Command {
             bindings.put("channel", event.getChannel());
             bindings.put("guild", event.getGuild());
             bindings.put("member", event.getMember());
-            bindings.put("jda", new JDADelegate(event.getJDA()));
+            bindings.put("jda", event.getJDA());
             bindings.put("event", event);
 
             bindings.put("args", args);
@@ -78,17 +96,26 @@ public class EvalCommand extends Command {
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<Object> future;
+            int timeout =5;
             if(event.getAuthor().getId().equals(Settings.ownerId)) {
+                timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
+
+                if(script.contains("println")) { //CC VRCube
+                    sendError(event.getMessage());
+                    return;
+                }
+
                 future = service.schedule(() -> {
                     filter.register();
                     return sh.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
+                //sendError(event.getMessage());
+                //return;
             }
 
             Object out = null;
-            int timeout = 10;
 
             try {
                 out = future.get(timeout, TimeUnit.SECONDS);
@@ -101,8 +128,10 @@ public class EvalCommand extends Command {
             }
             catch (TimeoutException | InterruptedException e) {
                 future.cancel(true);
+                service.awaitTermination(0, TimeUnit.SECONDS);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
                 //e.printStackTrace();
+                if(!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
                 return;
             }
@@ -124,6 +153,8 @@ public class EvalCommand extends Command {
             sendError(event.getMessage());
             //e1.printStackTrace();/
         }
+        //service.shutdown();
+        System.gc();
     }
 
     /**

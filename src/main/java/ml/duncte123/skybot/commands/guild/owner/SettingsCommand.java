@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.Command;
@@ -22,6 +40,7 @@ public class SettingsCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+        List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
         if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             sendMsg(event, "You don't have permission to run this command");
@@ -41,9 +60,9 @@ public class SettingsCommand extends Command {
             );
             sendEmbed(event, message);
         } else if(args.length == 1) {
-            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`");
+            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`\n\n" +
+                    "The modules are: `" + StringUtils.join(modules, ", ") + "`");
         } else {
-            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
             String module = args[0];
             if(modules.contains(module)) {
                 switch (module) {

@@ -16,37 +16,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.objects.JDA;
 
-import ml.duncte123.skybot.objects.command.Command;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class CookieCommand extends Command {
+public class JDADelagteGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        sendMsg(event, "<:blobnomcookie_secret:317636549342789632>");
+    private final Message message;
 
+    public JDADelagteGuildMessageReceivedEvent(JDA api, long responseNumber, Message message) {
+        super(api, responseNumber, message);
+        this.message = message;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
-    public String help() {
-        // TODO Auto-generated method stub
-        return "blobnomcookie";
+    public JDA getJDA() {
+        return new JDADelegate(super.getJDA());
     }
 
-    /**
-     * {@inheritDoc}
-     */
-    @Override
-    public String getName() {
-        return "cookie";
+    public Message getMessage()  {
+        return message;
     }
 
+    public User getAuthor() {
+        return message.getAuthor();
+    }
+
+    public Member getMember() {
+        return getGuild().getMember(getAuthor());
+    }
 }
