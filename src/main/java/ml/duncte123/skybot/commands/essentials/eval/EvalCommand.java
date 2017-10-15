@@ -101,6 +101,12 @@ public class EvalCommand extends Command {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
+
+                if(script.contains("println")) { //CC VRCube
+                    sendError(event.getMessage());
+                    return;
+                }
+
                 future = service.schedule(() -> {
                     filter.register();
                     return sh.evaluate(script);
