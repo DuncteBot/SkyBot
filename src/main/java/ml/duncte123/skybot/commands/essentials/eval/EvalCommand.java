@@ -39,7 +39,7 @@ public class EvalCommand extends Command {
     private ScriptEngine engine;
     private GroovyShell sh;
     private List<String> packageImports;
-    private ScheduledExecutorService service/* = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"))*/;
+    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
     private EvalFilter filter = new EvalFilter();
 
     /**
@@ -70,7 +70,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
         try {
-            this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+            //this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
 
             Bindings bindings = engine.createBindings();
 
@@ -122,8 +122,10 @@ public class EvalCommand extends Command {
             }
             catch (TimeoutException | InterruptedException e) {
                 future.cancel(true);
+                service.awaitTermination(0, TimeUnit.SECONDS);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
                 //e.printStackTrace();
+                if(!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
                 return;
             }
@@ -145,7 +147,7 @@ public class EvalCommand extends Command {
             sendError(event.getMessage());
             //e1.printStackTrace();/
         }
-        service.shutdown();
+        //service.shutdown();
         System.gc();
     }
 
