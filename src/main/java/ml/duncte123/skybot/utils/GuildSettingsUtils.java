@@ -213,7 +213,7 @@ public class GuildSettingsUtils {
 
             if( rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '" + defaultMsg + "')");
-                smt.setString(1, g.getName());
+                smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.execute();
             }
         }
