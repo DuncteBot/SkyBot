@@ -49,8 +49,6 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         /*if(o instanceof Script || o instanceof Closure)
             return o;*/
-        if(filterArrays(String.valueOf(o)))
-            throw new UnsupportedOperationException("Arrays are not allowed");
         throw new SecurityException("Class not allowed: " + o);
     }
 
@@ -59,16 +57,8 @@ public class EvalFilter extends GroovyValueFilter {
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
-    private boolean filterArrays(String toFilter) {
-        return Pattern.compile("String\\s*[\\s*([0-9]*)\\s*]||" +
-                "int\\s*[\\s*([0-9]*)\\s*]||" +
-                "Integer\\s*[\\s*([0-9]*)\\s*]||" +
-                "byte\\s*[\\s*([0-9]*)\\s*]||" +
-                "Byte\\s*[\\s*([0-9]*)\\s*]||" +
-                "boolean\\s*[\\s*([0-9]*)\\s*]||" +
-                "ArrayList\\s*[\\s*([0-9]*)\\s*]||" +
-                "List\\s*[\\s*([0-9]*)\\s*]||" +
-                "char\\s*[\\s*([0-9]*)\\s*]").matcher(toFilter).matches();
+    public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+        return Pattern.compile(".*(\\[(\\s*)([0-9]*)(\\s*)\\])|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\]).*").matcher(toFilter).matches();
     }
 
     /**

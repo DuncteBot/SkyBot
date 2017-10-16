@@ -94,13 +94,17 @@ public class EvalCommand extends Command {
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
+
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<Object> future;
             int timeout =5;
-            if(event.getAuthor().getId().equals(Settings.ownerId)) {
+            if(event.getAuthor().getId().equals(Settings.ownerId + "randon")) {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
+
+                if(filter.filterArrays(script))
+                    throw new UnsupportedOperationException("Arrays are not allowed");
 
                 if(script.contains("println")) { //CC VRCube
                     sendError(event.getMessage());
