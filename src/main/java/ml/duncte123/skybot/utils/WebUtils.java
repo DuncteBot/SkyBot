@@ -30,6 +30,8 @@ import java.util.Map;
 
 public class WebUtils {
 
+    private static String USER_AGENT = "DiscordBot (https://bot.duncte123.ml/)";
+
     /**
      * Reads contents from a website and returns it to a string
      * @param url The url to read
@@ -68,7 +70,7 @@ public class WebUtils {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
-                .addHeader("User-Agent", "DiscordBot (https://bot.duncte123.ml/)")
+                .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Accept", accept.getType())
                 .addHeader("cache-control", "no-cache")
                 .build();
@@ -115,7 +117,7 @@ public class WebUtils {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", "DiscordBot (https://bot.duncte123.ml/)")
+                .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Accept", accept.getType())
                 .addHeader("cache-control", "no-cache")
                 .build();
