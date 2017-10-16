@@ -127,14 +127,15 @@ public class EvalCommand extends Command {
                 return;
             }
             catch (TimeoutException | InterruptedException e) {
-                future.cancel(true);
-                service.awaitTermination(0, TimeUnit.SECONDS);
+                service.awaitTermination(4, TimeUnit.SECONDS);
                 event.getChannel().sendMessage("Error: " + e.toString()).queue();
                 //e.printStackTrace();
                 if(!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
                 return;
             }
+
+            future.cancel(true);
 
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, out.toString());
