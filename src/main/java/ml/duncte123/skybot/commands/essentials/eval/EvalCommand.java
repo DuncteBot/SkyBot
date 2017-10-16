@@ -46,10 +46,11 @@ public class EvalCommand extends Command {
      * This initialises the engine
      */
     public EvalCommand() {
-        //engine = new ScriptEngineManager().getEngineByName("groovy");
+        //the GroovyShell is for the public eval
         sh = new GroovyShell(
                 new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer())
         );
+        //ScriptEngine for owner eval
         engine = new ScriptEngineManager(sh.getClassLoader()).getEngineByName("groovy");
         packageImports =  Arrays.asList("java.io",
                 "java.lang",
@@ -94,11 +95,10 @@ public class EvalCommand extends Command {
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
-
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<?> future;
             int timeout = 5;
-            if(event.getAuthor().getId().equals(Settings.ownerId + "randon")) {
+            if(event.getAuthor().getId().equals(Settings.ownerId)) {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
