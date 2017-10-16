@@ -20,7 +20,6 @@ package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
-
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 public class AudioPlayerSenderHandler implements AudioSendHandler {
