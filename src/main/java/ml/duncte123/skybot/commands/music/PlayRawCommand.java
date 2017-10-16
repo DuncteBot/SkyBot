@@ -63,16 +63,16 @@ public class PlayRawCommand extends MusicCommand {
         if(args.length == 0){
             if(player.isPaused()){
                 player.setPaused(false);
-                eb.addField(this.au.embedTitle, "Playback has been resumed.", false);
+                eb.addField(getAu().embedTitle, "Playback has been resumed.", false);
             }else if(player.getPlayingTrack() != null){
-                eb.addField(this.au.embedTitle, "Player is already playing!", false);
+                eb.addField(getAu().embedTitle, "Player is already playing!", false);
             }else if(scheduler.queue.isEmpty()){
-                eb.addField(this.au.embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
+                eb.addField(getAu().embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
             }
             sendEmbed(event, eb.build());
         }else{
             String toPlay = StringUtils.join(args, " ");
-            au.loadAndPlay(musicManager, event.getChannel(), toPlay, false);
+            getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, false);
         }
 
     }

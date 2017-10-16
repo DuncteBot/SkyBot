@@ -46,7 +46,7 @@ public class ListCommand extends MusicCommand {
         Queue<AudioTrack> queue = scheduler.queue;
         synchronized (queue) {
             if (queue.isEmpty()) {
-                sendEmbed(event, EmbedUtils.embedField(this.au.embedTitle, "The queue is currently empty!"));
+                sendEmbed(event, EmbedUtils.embedField(getAu().embedTitle, "The queue is currently empty!"));
             } else {
                 int trackCount = 0;
                 long queueLength = 0;
@@ -61,7 +61,7 @@ public class ListCommand extends MusicCommand {
                     }
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength));
-               sendEmbed(event, EmbedUtils.embedField(this.au.embedTitle, sb.toString()));
+               sendEmbed(event, EmbedUtils.embedField(getAu().embedTitle, sb.toString()));
             }
         }
     }

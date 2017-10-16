@@ -183,11 +183,16 @@ public class AudioUtils {
     public synchronized GuildMusicManager getMusicManager(Guild guild){
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
-            if(mng == null){
-                mng = new GuildMusicManager(playerManager);
-                mng.player.setVolume(DEFAULT_VOLUME);
-                musicManagers.put(guildId, mng);
+        if (mng == null) {
+            synchronized (musicManagers) {
+                mng = musicManagers.get(guildId);
+                if (mng == null) {
+                    mng = new GuildMusicManager(playerManager);
+                    mng.player.setVolume(DEFAULT_VOLUME);
+                    musicManagers.put(guildId, mng);
+                }
             }
+        }
 
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
 

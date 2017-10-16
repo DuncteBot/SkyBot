@@ -64,7 +64,7 @@ public class PPlayCommand extends MusicCommand {
             toPlay = "ytsearch: " + toPlay;
         }
 
-        au.loadAndPlay(musicManager, event.getChannel(), toPlay, true);
+        getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, true);
 
     }
 

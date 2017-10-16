@@ -27,9 +27,12 @@ import net.dv8tion.jda.core.managers.AudioManager;
 public abstract class MusicCommand extends Command {
 
     /**
-     * This holds the audio utils class
+     * Returns the autio utils
+     * @return the audio utils
      */
-    protected AudioUtils au = AirUtils.audioUtils;
+    protected AudioUtils getAu() {
+        return AirUtils.audioUtils;
+    }
 
     /**
      * This is a shortcut for getting the music manager
