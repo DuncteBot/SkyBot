@@ -61,7 +61,8 @@ public class EvalFilter extends GroovyValueFilter {
                 //for or while loop
                 "((while|for)" +
                 //Stuff in the brackets
-                "(\\s*)\\((\\s*)(([0-9A-Za-z=]*)|([0-9A-Za-z=\\s*;.<>+]*)|(\\s*[;])(\\s*[;]))(\\s*)\\))"
+                "(\\s*)\\((\\s*)(([0-9A-Za-z=]*)|([0-9A-Za-z=\\s*;.<>+]*)|(\\s*[;])(\\s*[;]))(\\s*)\\))|    " +
+                "(\\.step|\\.times|\\.upto)"
                     //match and find
                     ).matcher(toFilter).find();
     }
