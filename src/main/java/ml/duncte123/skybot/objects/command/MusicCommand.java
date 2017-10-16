@@ -26,12 +26,25 @@ import net.dv8tion.jda.core.managers.AudioManager;
 
 public abstract class MusicCommand extends Command {
 
+    /**
+     * This holds the audio utils class
+     */
     protected AudioUtils au = AirUtils.audioUtils;
 
+    /**
+     * This is a shortcut for getting the music manager
+     * @param guild the guild to get the music manager for
+     * @return the {@link ml.duncte123.skybot.audio.GuildMusicManager GuildMusicManager} for that guild
+     */
     protected GuildMusicManager getMusicManager(Guild guild) {
         return AirUtils.audioUtils.getMusicManager(guild);
     }
 
+    /**
+     * This is a shortcut for getting the audio manager
+     * @param guild the guild to get the audio manager for
+     * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
+     */
     protected AudioManager getAudioManager(Guild guild) {
         return guild.getAudioManager();
     }
