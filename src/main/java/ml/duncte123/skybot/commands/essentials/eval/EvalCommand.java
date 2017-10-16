@@ -98,13 +98,15 @@ public class EvalCommand extends Command {
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             ScheduledFuture<?> future;
             int timeout = 5;
-            if(event.getAuthor().getId().equals(Settings.ownerId)) {
+            if(event.getAuthor().getId().equals(Settings.ownerId + "bla")) {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
 
                 if(filter.filterArrays(script))
-                    throw new UnsupportedOperationException("Arrays are not allowed");
+                    throw new IllegalArgumentException("Arrays are not allowed");
+                if(filter.filterLoops(script))
+                    throw new IllegalArgumentException("Loops are not allowed");
 
                 if(script.contains("println")) { //CC VRCube
                     sendError(event.getMessage());

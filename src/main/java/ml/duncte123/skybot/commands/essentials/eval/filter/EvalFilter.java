@@ -52,18 +52,33 @@ public class EvalFilter extends GroovyValueFilter {
     }
 
     /**
+     * This checks if the script contains any loop
+     * @param toFilter the script to filter
+     * @return true if the script contains a loop
+     */
+    public boolean filterLoops(String toFilter) {
+        return Pattern.compile(
+                //for or while loop
+                "((while|for)" +
+                //Stuff in the brackets
+                "(\\s*)\\((\\s*)(([0-9A-Za-z=]*)|([0-9A-Za-z=\\s*;.<>+]*)|(\\s*[;])(\\s*[;]))(\\s*)\\))"
+                    //match and find
+                    ).matcher(toFilter).find();
+    }
+
+    /**
      * This checks if the script contains an array
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
     public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return Pattern.compile(
-        		// Decimals
-        		"(\\[(\\s*)([0-9]*)(\\s*)\\])"
-        		// Hex
-        		+ "|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\])"
-        		// Matcher and find ;)
-        				).matcher(toFilter).find();
+                // Decimals
+                "(\\[(\\s*)([0-9]*)(\\s*)\\])"
+                // Hex
+                + "|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\])"
+                // Matcher and find ;)
+                        ).matcher(toFilter).find();
     }
 
     /**
