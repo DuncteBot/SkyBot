@@ -21,14 +21,14 @@ package ml.duncte123.skybot.commands.music;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class NowPlayingCommand extends Command {
+public class NowPlayingCommand extends MusicCommand {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
@@ -37,10 +37,8 @@ public class NowPlayingCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = AirUtils.audioUtils;
-
         Guild guild = event.getGuild();
-        GuildMusicManager mng = au.getMusicManager(guild);
+        GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
 
         String msg = "";

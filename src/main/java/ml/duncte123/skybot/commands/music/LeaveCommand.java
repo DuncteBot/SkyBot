@@ -18,12 +18,13 @@
 
 package ml.duncte123.skybot.commands.music;
 
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.managers.AudioManager;
 
-public class LeaveCommand extends Command {
+public class LeaveCommand extends MusicCommand {
 
     public final static String help = "make the bot leave your channel.";
 
@@ -35,8 +36,10 @@ public class LeaveCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(event.getGuild().getAudioManager().isConnected()){
-            if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+        AudioManager manager = getAudioManager(event.getGuild());
+
+        if(manager.isConnected()){
+            if(!manager.getConnectedChannel().getMembers().contains(event.getMember())){
                 sendMsg(event,"I'm sorry, but you have to be in the same channel as me to use any music related commands");
                 return;
             }
@@ -46,10 +49,10 @@ public class LeaveCommand extends Command {
             return;
         }
 
-        if(event.getGuild().getAudioManager().isConnected()) {
-            AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
-            event.getGuild().getAudioManager().setSendingHandler(null);
-            event.getGuild().getAudioManager().closeAudioConnection();
+        if(manager.isConnected()) {
+            getMusicManager(event.getGuild()).player.stopTrack();
+            manager.setSendingHandler(null);
+            manager.closeAudioConnection();
            sendEmbed(event, EmbedUtils.embedField(AirUtils.audioUtils.embedTitle, "Leaving your channel"));
         } else {
             sendMsg(event, "I'm not connected to any channels.");

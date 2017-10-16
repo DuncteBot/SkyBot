@@ -71,9 +71,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            GuildSettingsUtils.registerNewGuild(event.getGuild());
-        }
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
             AirUtils.log(Level.INFO,"Shutting down!!!");
@@ -102,8 +100,6 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
-
-        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
 
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
 
@@ -155,7 +151,7 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
             TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());

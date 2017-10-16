@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -44,7 +45,7 @@ public class GuildInfoCommand extends Command {
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event){
         Guild g = event.getGuild();
-        GuildSettings settings = getSettings(g.getId());
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
 
             double[] ratio = AirUtils.getBotRatio(g);

@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -29,8 +29,9 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.PermissionException;
+import net.dv8tion.jda.core.managers.AudioManager;
 
-public class JoinCommand extends Command {
+public class JoinCommand extends MusicCommand {
 
     public final static String help = "makes the bot join the voice channel that you are in.";
 
@@ -60,13 +61,13 @@ public class JoinCommand extends Command {
         }
 
         VoiceChannel vc = null;
-        AudioUtils au = AirUtils.audioUtils;
 
         Guild guild = event.getGuild();
-        GuildMusicManager mng = au.getMusicManager(guild);
+        GuildMusicManager mng = getMusicManager(guild);
+        AudioManager audioManager = getAudioManager(guild);
 
 
-        if(event.getGuild().getAudioManager().isConnected() && !mng.player.getPlayingTrack().equals(null)){
+        if(audioManager.isConnected() && !mng.player.getPlayingTrack().equals(null)){
             event.getChannel().sendMessage("I'm already in a channel.").queue();
             return;
         }
@@ -81,10 +82,10 @@ public class JoinCommand extends Command {
 
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         try{
-            if(event.getGuild().getAudioManager().isConnected()){
-                event.getGuild().getAudioManager().closeAudioConnection();
+            if(audioManager.isConnected()){
+                audioManager.closeAudioConnection();
             }
-            event.getGuild().getAudioManager().openAudioConnection(vc);
+            audioManager.openAudioConnection(vc);
             eb.addField("", "Joining `" + vc.getName() + "`.", false);
         }catch(PermissionException e){
             if(e.getPermission() == Permission.VOICE_CONNECT){

@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.music;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -30,7 +30,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Queue;
 
-public class ListCommand extends Command {
+public class ListCommand extends MusicCommand {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
@@ -39,16 +39,14 @@ public class ListCommand extends Command {
      */
     @Override
     public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
-        AudioUtils au = AirUtils.audioUtils;
-
         Guild guild = event.getGuild();
-        GuildMusicManager mng = au.getMusicManager(guild);
+        GuildMusicManager mng = getMusicManager(guild);
         TrackScheduler scheduler = mng.scheduler;
 
         Queue<AudioTrack> queue = scheduler.queue;
         synchronized (queue) {
             if (queue.isEmpty()) {
-                sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"));
+                sendEmbed(event, EmbedUtils.embedField(this.au.embedTitle, "The queue is currently empty!"));
             } else {
                 int trackCount = 0;
                 long queueLength = 0;
@@ -63,7 +61,7 @@ public class ListCommand extends Command {
                     }
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength));
-               sendEmbed(event, EmbedUtils.embedField(au.embedTitle, sb.toString()));
+               sendEmbed(event, EmbedUtils.embedField(this.au.embedTitle, sb.toString()));
             }
         }
     }

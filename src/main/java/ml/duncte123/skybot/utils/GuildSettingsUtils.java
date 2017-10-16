@@ -115,6 +115,21 @@ public class GuildSettingsUtils {
     }
 
     /**
+     * This wil get a guild or register it if it's not there yet
+     * @param guild the guild to get
+     * @return the guild
+     */
+    public static GuildSettings getGuild(Guild guild) {
+
+        if(!AirUtils.guildSettings.containsKey(guild.getId())) {
+            return registerNewGuild(guild);
+        }
+
+        return AirUtils.guildSettings.get(guild.getId());
+
+    }
+
+    /**
      * This will save the settings into the database when the guild owner/admin updates it
      * @param guild The guild to update it for
      * @param settings the new settings
@@ -168,9 +183,11 @@ public class GuildSettingsUtils {
      * This will register a new guild with their settings on bot join
      * @param g The guild that we are joining
      */
-    public static void registerNewGuild(Guild g) {
+    public static GuildSettings registerNewGuild(Guild g) {
 
-        if(AirUtils.guildSettings.containsKey(g.getId())) { return; }
+        if(AirUtils.guildSettings.containsKey(g.getId())) {
+            return AirUtils.guildSettings.get(g.getId());
+        }
 
         boolean ENABLE_JOIN_MSG = false;
         boolean ENABLE_SWEAR_FILTER = false;
@@ -180,7 +197,6 @@ public class GuildSettingsUtils {
                 .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
                 .setCustomJoinMessage(defaultMsg)
                 .setCustomPrefix(Settings.prefix);
-        AirUtils.guildSettings.put(g.getId(), newGuildSettings);
 
 
         String dbName = AirUtils.db.getName();
@@ -211,5 +227,6 @@ public class GuildSettingsUtils {
                 e2.printStackTrace();
             }
         }
+        return AirUtils.guildSettings.put(g.getId(), newGuildSettings);
     }
 }

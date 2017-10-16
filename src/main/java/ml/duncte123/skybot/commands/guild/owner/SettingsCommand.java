@@ -47,7 +47,7 @@ public class SettingsCommand extends Command {
             return;
         }
 
-        GuildSettings settings = getSettings(event.getGuild().getId());
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if(args.length < 1) {
             //true ✅
