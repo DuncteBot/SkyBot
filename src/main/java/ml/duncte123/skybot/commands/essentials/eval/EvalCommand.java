@@ -96,8 +96,8 @@ public class EvalCommand extends Command {
 
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
-            ScheduledFuture<Object> future;
-            int timeout =5;
+            ScheduledFuture<?> future;
+            int timeout = 5;
             if(event.getAuthor().getId().equals(Settings.ownerId + "randon")) {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);

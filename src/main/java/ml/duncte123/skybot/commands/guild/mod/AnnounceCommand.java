@@ -52,8 +52,7 @@ public class AnnounceCommand extends Command {
             return;
         }
 
-        try{
-
+        try {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
 

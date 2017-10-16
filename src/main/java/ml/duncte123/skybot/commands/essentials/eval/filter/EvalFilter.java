@@ -22,14 +22,13 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
 
-    private static final Set<Class> ALLOWED_TYPES = new HashSet<>();
+    private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
 
     /**
      * Constructor
@@ -58,23 +57,47 @@ public class EvalFilter extends GroovyValueFilter {
      * @return true if the script contains an array
      */
     public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
-        return Pattern.compile(".*(\\[(\\s*)([0-9]*)(\\s*)\\])|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\]).*").matcher(toFilter).matches();
+        return Pattern.compile(
+        		// Decimals
+        		"(\\[(\\s*)([0-9]*)(\\s*)\\])"
+        		// Hex
+        		+ "|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\])"
+        		// Matcher and find ;)
+        				).matcher(toFilter).find();
     }
 
     /**
      * This contains a list of all the allowed classes
      */
-    private static final Class[] ALLOWED_TYPES_LIST = {
+    private static final Class<?>[] ALLOWED_TYPES_LIST = {
             String.class,
-            Integer.class,
+            
             Boolean.class,
-            Double.class,
-            Float.class,
-            Short.class,
-            Long.class,
-            BigDecimal.class,
+            boolean.class,
+            
+            Byte.class,
+            byte.class,
+            
             Character.class,
+            char.class,
+            
+            Short.class,
+            short.class,
+            
+            Integer.class,
+            int.class,
+            
+            Float.class,
+            float.class,
+            
+            Long.class,
+            long.class,
+            
+            Double.class,
+            double.class,
+            
             Arrays.class,
+            
             List.class,
             ArrayList.class
     };
