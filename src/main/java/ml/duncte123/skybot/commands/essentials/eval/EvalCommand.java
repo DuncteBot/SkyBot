@@ -82,7 +82,7 @@ public class EvalCommand extends Command {
             bindings.put("channel", event.getMessage().getTextChannel());
             bindings.put("guild", event.getGuild());
             bindings.put("member", event.getMember());
-            bindings.put("jda", new JDADelegate(event.getJDA()));
+            bindings.put("jda", event.getJDA());
             bindings.put("event", event);
 
             bindings.put("args", args);
@@ -109,7 +109,7 @@ public class EvalCommand extends Command {
                 if(filter.filterLoops(script))
                     throw new IllegalArgumentException("Loops are not allowed");
 
-                if(script.contains("println")) { //CC VRCube
+                if(script.contains("println") || script.contains("eval")) { //CC VRCube
                     sendError(event.getMessage());
                     return;
                 }

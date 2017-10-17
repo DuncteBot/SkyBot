@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.JDA;
+package ml.duncte123.skybot.objects.delegate.JDA;
 
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Member;
