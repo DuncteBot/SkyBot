@@ -108,11 +108,6 @@ public class EvalCommand extends Command {
                 if(filter.filterLoops(script))
                     throw new IllegalArgumentException("Loops are not allowed");
 
-                if(script.contains("println")) { //CC VRCube
-                    sendError(event.getMessage());
-                    return;
-                }
-
                 future = service.schedule(() -> {
                     filter.register();
                     return sh.evaluate(script);
