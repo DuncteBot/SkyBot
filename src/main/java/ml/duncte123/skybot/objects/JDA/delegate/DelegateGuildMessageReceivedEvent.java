@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.delegate.JDA;
+package ml.duncte123.skybot.objects.JDA.delegate;
 
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Member;
@@ -24,18 +24,13 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class JDADelagteGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
+public class DelegateGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
     private final Message message;
 
-    public JDADelagteGuildMessageReceivedEvent(JDA api, long responseNumber, Message message) {
+    public DelegateGuildMessageReceivedEvent(JDA api, long responseNumber, Message message) {
         super(api, responseNumber, message);
         this.message = message;
-    }
-
-    @Override
-    public JDA getJDA() {
-        return new JDADelegate(super.getJDA());
     }
 
     public Message getMessage()  {

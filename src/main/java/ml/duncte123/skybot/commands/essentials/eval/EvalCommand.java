@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.delegate.JDA.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;

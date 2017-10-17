@@ -16,29 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.delegate.JDA;
-
-import java.util.Collection;
-import java.util.List;
+package ml.duncte123.skybot.objects.JDA.delegate;
 
 import net.dv8tion.jda.bot.JDABot;
 import net.dv8tion.jda.client.JDAClient;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Category;
-import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.PrivateChannel;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.SelfUser;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import net.dv8tion.jda.core.managers.Presence;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
 import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
+
+import java.util.Collection;
+import java.util.List;
 
 public class JDADelegate
         implements JDA {
