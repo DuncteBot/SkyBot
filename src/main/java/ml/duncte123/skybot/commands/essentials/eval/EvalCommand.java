@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.delegate.JDA.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -78,10 +79,10 @@ public class EvalCommand extends Command {
             bindings.put("commands", AirUtils.commandSetup.getCommands());
 
             bindings.put("message", event.getMessage());
-            bindings.put("channel", event.getChannel());
+            bindings.put("channel", event.getMessage().getTextChannel());
             bindings.put("guild", event.getGuild());
             bindings.put("member", event.getMember());
-            bindings.put("jda", event.getJDA());
+            bindings.put("jda", new JDADelegate(event.getJDA()));
             bindings.put("event", event);
 
             bindings.put("args", args);

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.JDA;
+package ml.duncte123.skybot.objects.delegate.JDA;
 
 import java.util.Collection;
 import java.util.List;
