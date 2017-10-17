@@ -93,23 +93,26 @@ public class BanCommand extends Command {
                                 sendMsg(event, "The minimum time for minutes is 10.");
                                 return;
                             }
-                            DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
+                            break;
+                        case "h":
+                            dt = DateUtils.addHours(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "d":
-                            DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "w":
-                            DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "M":
-                            DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "Y":
-                            DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
                             break;
 
                         default:
-                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, w, M or Y").queue();
+                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, h, w, M or Y").queue();
                             return;
                     }
                     unbanDate = df.format(dt);
