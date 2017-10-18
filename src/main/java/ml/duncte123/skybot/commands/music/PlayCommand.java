@@ -23,9 +23,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -58,18 +56,16 @@ public class PlayCommand extends MusicCommand {
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
 
         if(args.length == 0){
             if(player.isPaused()){
                 player.setPaused(false);
-                eb.addField(getAu().embedTitle, "Playback has been resumed.", false);
+                sendMsg(event, "Playback has been resumed.");
             }else if(player.getPlayingTrack() != null){
-                eb.addField(getAu().embedTitle, "Player is already playing!", false);
+                sendMsg(event, "Player is already playing!");
             }else if(scheduler.queue.isEmpty()){
-                eb.addField(getAu().embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
+                sendMsg(event, "The current audio queue is empty! Add something to the queue first!");
             }
-            sendEmbed(event, eb.build());
         }else{
             String toPlay = StringUtils.join(args, " ");
             if(!AirUtils.isURL(toPlay)){

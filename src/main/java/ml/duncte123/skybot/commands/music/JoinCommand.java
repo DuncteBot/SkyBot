@@ -20,10 +20,6 @@ package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -67,7 +63,7 @@ public class JoinCommand extends MusicCommand {
         AudioManager audioManager = getAudioManager(guild);
 
 
-        if(audioManager.isConnected() && !mng.player.getPlayingTrack().equals(null)){
+        if(audioManager.isConnected() && mng.player.getPlayingTrack() != null){
             event.getChannel().sendMessage("I'm already in a channel.").queue();
             return;
         }
@@ -78,21 +74,17 @@ public class JoinCommand extends MusicCommand {
                 break;
             }
         }
-
-
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
         try{
             if(audioManager.isConnected()){
                 audioManager.closeAudioConnection();
             }
             audioManager.openAudioConnection(vc);
-            eb.addField("", "Joining `" + vc.getName() + "`.", false);
+           sendMsg(event, "Joining `" + vc.getName() + "`.");
         }catch(PermissionException e){
             if(e.getPermission() == Permission.VOICE_CONNECT){
-                eb.addField("", "I don't have permission to join `"+vc.getName()+"`", false);
+                sendMsg(event, "I don't have permission to join `"+vc.getName()+"`");
             }
         }
-        sendEmbed(event, eb.build());
 
 
     }
@@ -114,6 +106,6 @@ public class JoinCommand extends MusicCommand {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"summon"};
+        return new String[]{"summon", "connect"};
     }
 }

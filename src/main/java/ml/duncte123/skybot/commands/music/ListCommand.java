@@ -22,7 +22,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;

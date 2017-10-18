@@ -22,9 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -58,18 +56,15 @@ public class PlayRawCommand extends MusicCommand {
             return;
         }
 
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
-
         if(args.length == 0){
             if(player.isPaused()){
-                player.setPaused(false);
-                eb.addField(getAu().embedTitle, "Playback has been resumed.", false);
-            }else if(player.getPlayingTrack() != null){
-                eb.addField(getAu().embedTitle, "Player is already playing!", false);
-            }else if(scheduler.queue.isEmpty()){
-                eb.addField(getAu().embedTitle, "The current audio queue is empty! Add something to the queue first!", false);
-            }
-            sendEmbed(event, eb.build());
+            player.setPaused(false);
+            sendMsg(event, "Playback has been resumed.");
+        }else if(player.getPlayingTrack() != null){
+            sendMsg(event, "Player is already playing!");
+        }else if(scheduler.queue.isEmpty()){
+            sendMsg(event, "The current audio queue is empty! Add something to the queue first!");
+        }
         }else{
             String toPlay = StringUtils.join(args, " ");
             getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, false);
