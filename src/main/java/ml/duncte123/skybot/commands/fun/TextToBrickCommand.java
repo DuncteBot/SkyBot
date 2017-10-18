@@ -42,17 +42,17 @@ public class TextToBrickCommand extends Command {
             return;
         }
 
-            StringBuilder sb = new StringBuilder();
-            for (String a : StringUtils.join(args, " ").split("")) {
-                if (Character.isLetter(a.toLowerCase().charAt(0))) {
-                    sb.append(":regional_indicator_").append(a.toLowerCase()).append(":");
-                } else {
-                    if (" ".equals(a)) {
-                        sb.append(" ");
-                    }
-                    sb.append(a);
+        StringBuilder sb = new StringBuilder();
+        for (String a : StringUtils.join(args, " ").split("")) {
+            if (Character.isLetter(a.toLowerCase().charAt(0))) {
+                sb.append(":regional_indicator_").append(a.toLowerCase()).append(":");
+            } else {
+                if (" ".equals(a)) {
+                    sb.append(" ");
                 }
+                sb.append(a);
             }
+        }
 
         sendEmbed(event, EmbedUtils.embedMessage( sb.toString() ));
     }
