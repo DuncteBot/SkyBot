@@ -97,7 +97,7 @@ public class WebUtils {
     /**
      * This makes a post request to the specified website
      * @param url The website to post to
-     * @param postFields the params for the post
+     * @param postFields the params for the post (param name, param value)
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
