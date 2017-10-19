@@ -81,10 +81,7 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
 
         StringBuilder joinOrder = new StringBuilder();
-
-        //event.getGuild().getMember(u).j
         List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        //joins.sort((Member a, Member b) -> a.getJoinDate().compareTo(b.getJoinDate()));
         joins.sort( Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
@@ -92,7 +89,7 @@ public class UserinfoCommand extends Command {
             index=0;
         joinOrder.append("\n"+"Join Order: ");
         if(joins.get(index).equals(m))
-            joinOrder.append("[**").append(joins.get(index).getEffectiveName()).append("**](.)");
+            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("]()");
         else
             joinOrder.append(joins.get(index).getEffectiveName());
         for(int i=index+1;i<index+7;i++) {
@@ -101,7 +98,7 @@ public class UserinfoCommand extends Command {
             Member usr = joins.get(i);
             String name = usr.getEffectiveName();
             if(usr.equals(m))
-                name="[**"+name+"**](.)";
+                name="["+name+"]()";
             joinOrder.append(" > ").append(name);
         }
       
