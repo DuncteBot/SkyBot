@@ -37,7 +37,13 @@ public class PingCommand extends Command {
         long time = System.currentTimeMillis();
 
         event.getChannel().sendMessage("PONG!").queue( (message) ->
-            message.editMessageFormat("PONG!\nping is: %dms \nWebsocket ping: " + event.getJDA().getPing() + "ms", (System.currentTimeMillis() - time) ).queue());
+            message.editMessageFormat("PONG!" +
+                    "\nping is: %dms " +
+                    "\nWebsocket ping: %dms\n" +
+                    "Average ping: %dms",
+                    (System.currentTimeMillis() - time),
+                    event.getJDA().getPing(),
+                    event.getJDA().asBot().getShardManager().getAveragePing() ).queue());
 
     }
 
