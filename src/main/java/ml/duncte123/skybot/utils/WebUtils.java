@@ -41,7 +41,7 @@ public class WebUtils {
     public static String getText(String url) throws IOException {
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
-        connection.addRequestProperty("User-Agent", "Binzy's personal pc");
+        connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
                         connection.getInputStream()));
