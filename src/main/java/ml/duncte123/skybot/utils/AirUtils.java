@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.CommandSetup;
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -47,7 +47,7 @@ public class AirUtils {
     /**
      * This will hold the command setup and the registered commands
      */
-    public static CommandSetup commandSetup = new CommandSetup();
+    public static CommandManager commandManager = new CommandManager();
     /**
      * We are using slf4j to log things to the console
      */

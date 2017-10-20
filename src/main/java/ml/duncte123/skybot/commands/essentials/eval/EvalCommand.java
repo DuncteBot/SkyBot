@@ -75,7 +75,7 @@ public class EvalCommand extends Command {
 
             Bindings bindings = engine.createBindings();
 
-            bindings.put("commands", AirUtils.commandSetup.getCommands());
+            bindings.put("commands", AirUtils.commandManager.getCommands());
 
             bindings.put("message", event.getMessage());
             bindings.put("channel", event.getMessage().getTextChannel());

@@ -120,7 +120,7 @@ public class BotListener extends ListenerAdapter {
 
             // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
+        AirUtils.commandManager.runCommand(parser.parse(event.getMessage().getRawContent()
                 .replaceFirst(settings.getCustomPrefix(), Settings.prefix)
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 , new DelegateGuildMessageReceivedEvent(new JDADelegate(event.getJDA()), event.getResponseNumber(), event.getMessage())));

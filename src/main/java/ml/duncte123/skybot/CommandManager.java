@@ -32,7 +32,7 @@ import ml.duncte123.skybot.parsers.CommandParser;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
-public class CommandSetup {
+public class CommandManager {
 
     /**
      * This stores all our commands
@@ -42,7 +42,7 @@ public class CommandSetup {
     /**
      * This makes sure that all the commands are added
      */
-    public CommandSetup() {
+    public CommandManager() {
 
         // default commands
         this.addCommand(new HelpCommand());

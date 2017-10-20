@@ -42,7 +42,7 @@ public class HelpCommand extends Command {
         if(args.length > 0) {
             String toSearch = StringUtils.join(args, " ");
 
-            for(Command cmd : AirUtils.commandSetup.getCommands()) {
+            for(Command cmd : AirUtils.commandManager.getCommands()) {
                 if(cmd.getName().equals(toSearch)) {
                     sendMsg(event, "Command help for `"+ cmd.getName()+"` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                     return;
