@@ -53,8 +53,10 @@ public class BotinfoCommand extends Command {
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
         long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1000000;
         long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1000000;
-        long up = ManagementFactory.getRuntimeMXBean().getUptime();
-        Time upp = new Time(up - 3600000);
+        long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
+        Time uptimeTime = new Time(uptimeLong - 3600000);
+
+
 
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
@@ -65,7 +67,7 @@ public class BotinfoCommand extends Command {
                         "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.version, true)
                 .addField("System info", "**Operating System:** " + OS + "\n" +
-                        "**Uptime:** " + upp.toString() + "\n" +
+                        "**Uptime:** " + getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** "  + ram0 +"MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 +" Cores)" , false)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
@@ -91,5 +93,34 @@ public class BotinfoCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"about"};
+    }
+
+    public static String getUptime(long time) {
+        return getUptime(time, false);
+    }
+
+    public static String getUptime(long time, boolean withTime) {
+        //Like it's ever gonna be up for more then a week
+        long years = time / 31104000000L;
+        long months = time / 2592000000L % 12;
+        long days = time / 86400000L % 30;
+
+        //Remove the tings that we don't need
+        String uptimeString = "";
+        uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
+        uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
+        uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
+
+        if (withTime) {
+            long hours = time / 3600000L % 24;
+            long minutes = time / 60000L % 60;
+            long seconds = time / 1000L % 60;
+
+            uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "")) + ", ";
+            uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
+            uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
+        }
+
+        return uptimeString;
     }
 }
