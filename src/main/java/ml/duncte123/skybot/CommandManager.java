@@ -46,8 +46,8 @@ public class CommandManager {
 
         // default commands
         this.addCommand(new HelpCommand());
-        this.addCommand(new PingCommand());
-        this.addCommand(new CoinCommand());
+        //this.addCommand(new PingCommand());
+        this.addCommand(new OneLinerCommands());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
 
@@ -57,6 +57,7 @@ public class CommandManager {
         this.addCommand(new BlobCommand());
         this.addCommand(new TextToBrickCommand());
         this.addCommand(new JokeCommand());
+        this.addCommand(new CoinCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
