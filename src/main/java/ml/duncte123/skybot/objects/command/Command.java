@@ -21,8 +21,10 @@ package ml.duncte123.skybot.objects.command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -59,11 +61,11 @@ public abstract class Command {
 
     /**
      * This returns the settings for the given guild
-     * @param guildId the id if the guild that we need the settings for
+     * @param guild the guild that we need the settings for
      * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
      */
-    protected GuildSettings getSettings(String guildId) {
-        return AirUtils.guildSettings.get(guildId);
+    protected GuildSettings getSettings(Guild guild) {
+        return GuildSettingsUtils.getGuild(guild);
     }
 
     /**
