@@ -35,11 +35,12 @@ public class CleenupCommand extends Command {
     public final static String help = "performs a cleanup in the channel where the command is run.";
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param invoke
      * @param args The command agruments
      * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
 
         Permission[] permissions = {

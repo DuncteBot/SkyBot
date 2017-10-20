@@ -27,7 +27,7 @@ import java.io.IOException;
 
 public class BirbCommand extends Command {
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             String imgName = WebUtils.getText("https://proximyst.com:4500/random/path/text");
 

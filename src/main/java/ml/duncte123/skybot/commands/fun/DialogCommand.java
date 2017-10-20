@@ -33,7 +33,7 @@ public class DialogCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length < 1) {
             event.getChannel().sendMessage("Correct usage: `"+ Settings.prefix+getName()+" <words>`").queue();

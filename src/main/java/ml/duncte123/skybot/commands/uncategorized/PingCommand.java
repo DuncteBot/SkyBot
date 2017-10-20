@@ -29,11 +29,12 @@ public class PingCommand extends Command {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param invoke
      * @param args The command agruments
      * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         long time = System.currentTimeMillis();
 
         event.getChannel().sendMessage("PONG!").queue( (message) ->

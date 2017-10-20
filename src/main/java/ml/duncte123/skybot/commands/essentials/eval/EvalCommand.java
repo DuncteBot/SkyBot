@@ -68,7 +68,7 @@ public class EvalCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         try {
             //this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));

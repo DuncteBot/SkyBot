@@ -27,7 +27,7 @@ public class CookieCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         sendMsg(event, "<:blobnomcookie_secret:317636549342789632>");
 
     }

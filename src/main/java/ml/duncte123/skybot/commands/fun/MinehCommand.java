@@ -29,11 +29,12 @@ public class MinehCommand extends Command {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param invoke
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
         event.getChannel().sendMessage(new MessageBuilder().setTTS(true).append("Insert creepy music here").build()).queue(
                 m -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"))

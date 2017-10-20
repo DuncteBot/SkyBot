@@ -33,7 +33,7 @@ public class AlpacaCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
 

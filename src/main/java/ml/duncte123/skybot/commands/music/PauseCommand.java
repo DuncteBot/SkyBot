@@ -28,11 +28,12 @@ public class PauseCommand extends MusicCommand {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param invoke
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");

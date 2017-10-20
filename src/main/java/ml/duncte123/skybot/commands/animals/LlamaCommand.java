@@ -30,7 +30,7 @@ public class LlamaCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             String theLlama = (args.length<1 ? "random" : args[0]);
             String jsonString = WebUtils.getText("https://api.systemexit.co.uk/animals/llama/" + theLlama);

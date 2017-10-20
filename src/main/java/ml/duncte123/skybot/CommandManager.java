@@ -132,12 +132,12 @@ public class CommandManager {
 
         for (Command c : this.getCommands()) {
             if (parser.invoke.toLowerCase().startsWith(c.getName().toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(c.getName())) {
-                c.executeCommand(parser.args, parser.event);
+                c.executeCommand(parser.invoke, parser.args, parser.event);
                 return;
             } else {
                 for (final String alias : c.getAliases()) {
                     if (parser.invoke.toLowerCase().startsWith(alias.toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(alias)) {
-                        c.executeCommand(parser.args, parser.event);
+                        c.executeCommand(parser.invoke, parser.args, parser.event);
                         return;
                     }
                 }

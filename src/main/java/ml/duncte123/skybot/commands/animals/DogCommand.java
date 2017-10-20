@@ -29,7 +29,7 @@ public class DogCommand extends Command {
      * {@inheritDoc}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         String base = "https://random.dog/";
         try {
             String jsonString = WebUtils.getText(base + "woof");

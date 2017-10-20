@@ -34,11 +34,12 @@ public class PlayRawCommand extends MusicCommand {
 
     /**
      * This is the executeCommand of the command, the thing you want the command to to needs to be in here
+     * @param invoke
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);

@@ -40,7 +40,7 @@ public class JokeCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         String guildId = event.getGuild().getId();
 

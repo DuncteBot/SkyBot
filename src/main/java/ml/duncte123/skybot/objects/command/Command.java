@@ -31,10 +31,11 @@ public abstract class Command {
 
     /**
      * This is the action of the command, this will hold what the commands needs to to
+     * @param invoke The command that is ran
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    public abstract void executeCommand(String[] args, GuildMessageReceivedEvent event);
+    public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
 
     /**
      * The usage instructions of the command
