@@ -27,9 +27,7 @@ import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
 
 public class BlobCommand extends Command {
-    /**
-     * {@inheritDoc}
-     */
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -60,18 +58,12 @@ public class BlobCommand extends Command {
             );
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "Gives you a blob.\n" +
                 "Usage: `" + Settings.prefix+getName() + " [blob name]`";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "blob";

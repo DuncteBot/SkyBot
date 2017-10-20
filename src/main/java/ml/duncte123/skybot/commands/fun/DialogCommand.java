@@ -29,9 +29,6 @@ import java.util.Arrays;
 
 public class DialogCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -62,17 +59,11 @@ public class DialogCommand extends Command {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "Gives you a nice dialog";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "dialog";

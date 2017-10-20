@@ -26,9 +26,6 @@ import java.net.URL;
 
 public class SealCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -51,25 +48,16 @@ public class SealCommand extends Command {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "Here is a nice seal";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "seal";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String[] getAliases() {
         return new String[]{"zeehond"};

@@ -27,12 +27,6 @@ public class MinehCommand extends Command {
 
     public final static String help = "HERE COMES MINEH!";
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub
@@ -41,10 +35,6 @@ public class MinehCommand extends Command {
         );
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub

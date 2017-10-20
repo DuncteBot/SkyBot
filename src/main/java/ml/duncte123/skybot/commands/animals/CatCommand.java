@@ -30,9 +30,6 @@ public class CatCommand extends Command {
 
     public final static String help = "here is a cat.";
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         // TODO Auto-generated method stub;
@@ -50,18 +47,12 @@ public class CatCommand extends Command {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub
         return help;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "cat";

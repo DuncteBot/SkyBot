@@ -26,9 +26,6 @@ import org.json.JSONObject;
 
 public class LlamaCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
@@ -43,17 +40,11 @@ public class LlamaCommand extends Command {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "Here is a llama";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "llama";

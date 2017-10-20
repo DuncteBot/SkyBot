@@ -38,12 +38,6 @@ import java.text.DecimalFormat;
  */
 public class BotinfoCommand extends Command {
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         User u = event.getJDA().getSelfUser();
@@ -78,10 +72,6 @@ public class BotinfoCommand extends Command {
         sendEmbed(event, eb);
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         return "Gets some info about the bot\nUsage: `"+ Settings.prefix+getName()+"`";

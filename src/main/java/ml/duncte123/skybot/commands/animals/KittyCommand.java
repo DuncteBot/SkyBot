@@ -30,9 +30,6 @@ import java.net.URL;
 
 public class KittyCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
@@ -53,17 +50,11 @@ public class KittyCommand extends Command {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "A alternative cat command with more kitties";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "kitty";

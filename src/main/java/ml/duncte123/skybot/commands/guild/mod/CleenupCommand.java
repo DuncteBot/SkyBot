@@ -33,12 +33,7 @@ import java.util.concurrent.TimeUnit;
 public class CleenupCommand extends Command {
 
     public final static String help = "performs a cleanup in the channel where the command is run.";
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
-     */
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -80,10 +75,6 @@ public class CleenupCommand extends Command {
         }
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         return help;

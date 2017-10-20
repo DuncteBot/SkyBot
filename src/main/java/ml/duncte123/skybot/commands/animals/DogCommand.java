@@ -25,9 +25,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class DogCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         String base = "https://random.dog/";
@@ -48,18 +45,12 @@ public class DogCommand extends Command {
 
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub
         return "here is a dog.";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "dog";

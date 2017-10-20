@@ -29,12 +29,6 @@ import net.dv8tion.jda.core.managers.AudioManager;
 
 public class StopCommand extends MusicCommand {
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -65,10 +59,6 @@ public class StopCommand extends MusicCommand {
         sendMsg(event, "Playback has been completely stopped and the queue has been cleared");
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub

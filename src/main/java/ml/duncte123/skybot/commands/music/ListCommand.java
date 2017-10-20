@@ -31,12 +31,6 @@ import java.util.Queue;
 
 public class ListCommand extends MusicCommand {
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
@@ -66,10 +60,6 @@ public class ListCommand extends MusicCommand {
         }
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub

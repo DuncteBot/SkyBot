@@ -64,9 +64,6 @@ public class EvalCommand extends Command {
                 "ml.duncte123.skybot.utils");
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -159,17 +156,11 @@ public class EvalCommand extends Command {
         System.gc();
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "A simple eval command";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "eval";

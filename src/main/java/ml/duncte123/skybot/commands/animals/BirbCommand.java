@@ -40,7 +40,7 @@ public class BirbCommand extends Command {
 
     @Override
     public String help() {
-        return "Here is a Bitb";
+        return "Here is a Birb";
     }
 
     @Override

@@ -29,9 +29,6 @@ import java.net.URL;
 
 public class AlpacaCommand extends Command {
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
@@ -46,17 +43,11 @@ public class AlpacaCommand extends Command {
         }
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         return "Here is a alpaca";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "alpaca";

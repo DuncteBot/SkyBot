@@ -29,13 +29,10 @@ public class CoinCommand extends Command {
 
     public final static String help = "flips a coin.\nUsage: `"+ Settings.prefix+"coin`";
     /**
-     * this are our images
+     * these are our images
      */
     private final String[] imagesArr = { "heads.png", "tails.png" };
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         String coinUrl = "https://dshelmondgames.ml/img/coin/";
@@ -46,26 +43,17 @@ public class CoinCommand extends Command {
         sendEmbed(event, eb);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub
         return help;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String getName() {
         return "coin";
     }
 
-    /**
-     * {@inheritDoc}
-     */
     @Override
     public String[] getAliases() {
         return new String[]{"flip"};

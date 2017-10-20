@@ -31,12 +31,6 @@ public class HelpCommand extends Command {
 
     public final static String help = "Shows a list of all the commands.\nUsage: `" + Settings.prefix + "help [command]`";
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param invoke
-     * @param args The command agruments
-     * @param event a instance of {@link MessageReceivedEvent MessageReceivedEvent}
-     */
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -75,10 +69,6 @@ public class HelpCommand extends Command {
         );
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         // TODO Auto-generated method stub
