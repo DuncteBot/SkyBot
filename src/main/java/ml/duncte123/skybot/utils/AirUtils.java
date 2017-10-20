@@ -353,4 +353,43 @@ public class AirUtils {
         return pubChann;
     }
 
+    /**
+     * This will generate the uptime for us based on the time that we pass in
+     * @param time The time that the bot has been running for
+     * @return The uptime nicely formatted
+     */
+    public static String getUptime(long time) {
+        return getUptime(time, false);
+    }
+
+    /**
+     * This will generate the uptime for us based on the time that we pass in
+     * @param time The time that the bot has been running for
+     * @param withTime If we should add the seconds, minutes and hours to the time
+     * @return The uptime nicely formatted
+     */
+    public static String getUptime(long time, boolean withTime) {
+        //Like it's ever gonna be up for more then a week
+        long years = time / 31104000000L;
+        long months = time / 2592000000L % 12;
+        long days = time / 86400000L % 30;
+
+        //Remove the tings that we don't need
+        String uptimeString = "";
+        uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
+        uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
+        uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
+
+        if (withTime) {
+            long hours = time / 3600000L % 24;
+            long minutes = time / 60000L % 60;
+            long seconds = time / 1000L % 60;
+
+            uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", " );
+            uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
+            uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
+        }
+
+        return uptimeString.startsWith(",") ? uptimeString.replaceFirst(",", "") : uptimeString;
+    }
 }

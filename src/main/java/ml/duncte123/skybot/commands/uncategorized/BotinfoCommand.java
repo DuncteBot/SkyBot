@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.JDAInfo;
@@ -67,7 +68,7 @@ public class BotinfoCommand extends Command {
                         "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.version, true)
                 .addField("System info", "**Operating System:** " + OS + "\n" +
-                        "**Uptime:** " + getUptime(uptimeLong) + " " + uptimeTime + "\n" +
+                        "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** "  + ram0 +"MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 +" Cores)" , false)
                 .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
@@ -95,32 +96,4 @@ public class BotinfoCommand extends Command {
         return new String[]{"about"};
     }
 
-    public static String getUptime(long time) {
-        return getUptime(time, false);
-    }
-
-    public static String getUptime(long time, boolean withTime) {
-        //Like it's ever gonna be up for more then a week
-        long years = time / 31104000000L;
-        long months = time / 2592000000L % 12;
-        long days = time / 86400000L % 30;
-
-        //Remove the tings that we don't need
-        String uptimeString = "";
-        uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
-        uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
-        uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
-
-        if (withTime) {
-            long hours = time / 3600000L % 24;
-            long minutes = time / 60000L % 60;
-            long seconds = time / 1000L % 60;
-
-            uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "")) + ", ";
-            uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
-            uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
-        }
-
-        return uptimeString;
-    }
 }
