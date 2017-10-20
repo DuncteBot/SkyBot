@@ -96,6 +96,8 @@ public class UserinfoCommand extends Command {
                 name="["+name+"]()";
             joinOrder.append(" > ").append(name);
         }
+
+        //TODO: make request to discord profiles
       
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setColor(m.getColor())
