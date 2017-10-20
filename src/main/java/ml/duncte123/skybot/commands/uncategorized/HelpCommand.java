@@ -88,4 +88,9 @@ public class HelpCommand extends Command {
     public String getName() {
         return "help";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"commands"};
+    }
 }
