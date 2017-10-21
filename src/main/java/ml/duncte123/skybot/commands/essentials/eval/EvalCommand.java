@@ -27,7 +27,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
-import javax.script.Bindings;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.util.Arrays;
@@ -96,7 +95,7 @@ public class EvalCommand extends Command {
 
                 engine.put("args", args);
 
-                future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
+                future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             } else {
 
                 if(filter.filterArrays(script))
