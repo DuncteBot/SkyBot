@@ -59,6 +59,7 @@ public class BotListener extends ListenerAdapter {
      * This timer is for checking unbans
      */
     public Timer unbanTimer = new Timer();
+    public boolean unbanTimerRunning = false;
 
     /**
      * Listen for messages send to the bot
@@ -76,7 +77,7 @@ public class BotListener extends ListenerAdapter {
 
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
             AirUtils.log(Level.INFO,"Shutting down!!!");
-            unbanTimer.cancel();
+            if(this.unbanTimerRunning) this.unbanTimer.cancel();
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
