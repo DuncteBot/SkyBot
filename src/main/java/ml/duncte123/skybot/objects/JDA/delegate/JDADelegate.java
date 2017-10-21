@@ -32,6 +32,9 @@ import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
 import java.util.Collection;
 import java.util.List;
 
+/**
+ * @author Ramid Khan <https://github.com/ramidzkh>
+ */
 public class JDADelegate
         implements JDA {
 

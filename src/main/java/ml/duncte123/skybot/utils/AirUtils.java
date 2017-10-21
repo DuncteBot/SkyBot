@@ -369,17 +369,21 @@ public class AirUtils {
      * @return The uptime nicely formatted
      */
     public static String getUptime(long time, boolean withTime) {
+        /*
+        This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
+         */
         //Like it's ever gonna be up for more then a week
         long years = time / 31104000000L;
         long months = time / 2592000000L % 12;
         long days = time / 86400000L % 30;
 
-        //Remove the tings that we don't need
+        //Get the years, months and days
         String uptimeString = "";
         uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
         uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
         uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
 
+        //If we want the time added we pass in true
         if (withTime) {
             long hours = time / 3600000L % 24;
             long minutes = time / 60000L % 60;
@@ -390,6 +394,6 @@ public class AirUtils {
             uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
         }
 
-        return uptimeString.startsWith(",") ? uptimeString.replaceFirst(",", "") : uptimeString;
+        return uptimeString.replaceFirst(",", "");
     }
 }
