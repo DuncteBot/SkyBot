@@ -229,4 +229,31 @@ public class GuildSettingsUtils {
         }
         return AirUtils.guildSettings.put(g.getId(), newGuildSettings);
     }
+
+    /**
+     * This will attempt to remove a guild wen we leave it
+     * @param g the guild to remove from the database
+     */
+    public static void deleteGuild(Guild g) {
+        if(AirUtils.guildSettings.containsKey(g.getId())) {
+            AirUtils.guildSettings.remove(g.getId());
+        }
+        String dbName = AirUtils.db.getName();
+        Connection database = AirUtils.db.getConnManager().getConnection();
+
+        try {
+            Statement smt = database.createStatement();
+            smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='"+g.getId()+"'");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
 }

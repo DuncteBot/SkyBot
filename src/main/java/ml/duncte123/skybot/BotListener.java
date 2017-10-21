@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
@@ -186,6 +187,11 @@ public class BotListener extends ListenerAdapter {
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
+    }
+
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        GuildSettingsUtils.deleteGuild(event.getGuild());
     }
 
     /**
