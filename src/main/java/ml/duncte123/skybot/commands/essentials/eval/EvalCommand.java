@@ -83,20 +83,18 @@ public class EvalCommand extends Command {
             int timeout = 5;
             if(isRanByBotOwner) {
                 timeout = 10;
+                
+                engine.put("commands", AirUtils.commandManager.getCommands());
 
-                Bindings bindings = engine.createBindings();
+                engine.put("message", event.getMessage());
+                engine.put("channel", event.getMessage().getTextChannel());
+                engine.put("guild", event.getGuild());
+                engine.put("member", event.getMember());
+                engine.put("jda", event.getJDA());
+                engine.put("shardmanager", event.getJDA().asBot().getShardManager());
+                engine.put("event", event);
 
-                bindings.put("commands", AirUtils.commandManager.getCommands());
-
-                bindings.put("message", event.getMessage());
-                bindings.put("channel", event.getMessage().getTextChannel());
-                bindings.put("guild", event.getGuild());
-                bindings.put("member", event.getMember());
-                bindings.put("jda", event.getJDA());
-                bindings.put("shardmanager", event.getJDA().asBot().getShardManager());
-                bindings.put("event", event);
-
-                bindings.put("args", args);
+                engine.put("args", args);
 
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
