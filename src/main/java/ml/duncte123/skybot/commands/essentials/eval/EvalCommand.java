@@ -70,20 +70,6 @@ public class EvalCommand extends Command {
 
         ScheduledFuture<?> future = null;
         try {
-            //this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
-
-            Bindings bindings = engine.createBindings();
-
-            bindings.put("commands", AirUtils.commandManager.getCommands());
-
-            bindings.put("message", event.getMessage());
-            bindings.put("channel", event.getMessage().getTextChannel());
-            bindings.put("guild", event.getGuild());
-            bindings.put("member", event.getMember());
-            bindings.put("jda", event.getJDA());
-            bindings.put("event", event);
-
-            bindings.put("args", args);
 
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
@@ -94,10 +80,24 @@ public class EvalCommand extends Command {
                     event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
                             .replaceAll("getToken", "getSelfUser");
 
-            //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             int timeout = 5;
             if(isRanByBotOwner) {
                 timeout = 10;
+
+                Bindings bindings = engine.createBindings();
+
+                bindings.put("commands", AirUtils.commandManager.getCommands());
+
+                bindings.put("message", event.getMessage());
+                bindings.put("channel", event.getMessage().getTextChannel());
+                bindings.put("guild", event.getGuild());
+                bindings.put("member", event.getMember());
+                bindings.put("jda", event.getJDA());
+                bindings.put("shardmanager", event.getJDA().asBot().getShardManager());
+                bindings.put("event", event);
+
+                bindings.put("args", args);
+
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
 
@@ -122,19 +122,19 @@ public class EvalCommand extends Command {
 
         }
         catch (ExecutionException e1)  {
-            event.getChannel().sendMessage("Error: " + e1.getCause().toString()).queue();
+            event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
             //e.printStackTrace();
             sendError(event.getMessage());
         }
         catch (TimeoutException | InterruptedException e2) {
             future.cancel(true);
-            event.getChannel().sendMessage("Error: " + e2.toString()).queue();
+            event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
             //e.printStackTrace();
             if(!future.isCancelled()) future.cancel(true);
             sendError(event.getMessage());
         }
         catch (IllegalArgumentException e3) {
-            sendMsg(event, "ERROR: java.lang.IllegalArgumentException: " + e3.getMessage());
+            sendMsg(event, "ERROR: " + e3.toString());
         }
         //service.shutdown();
         System.gc();
