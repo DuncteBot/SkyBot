@@ -66,7 +66,7 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
+        boolean isRanByBotOwner = event.getAuthor().getId().equals(Settings.ownerId);
 
         ScheduledFuture<?> future = null;
         try {
@@ -96,7 +96,7 @@ public class EvalCommand extends Command {
 
             //ScheduledFuture<Object> future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
             int timeout = 5;
-            if(event.getAuthor().getId().equals(Settings.ownerId)) {
+            if(isRanByBotOwner) {
                 timeout = 10;
                 future = service.schedule(() -> engine.eval(script, bindings), 0, TimeUnit.MILLISECONDS);
             } else {
@@ -115,7 +115,7 @@ public class EvalCommand extends Command {
             Object out = future.get(timeout, TimeUnit.SECONDS);
 
             if (out != null && !String.valueOf(out).isEmpty() ) {
-                sendMsg(event, out.toString());
+                sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName() + ":** " : "") + out.toString());
             } else {
                 sendSuccess(event.getMessage());
             }
