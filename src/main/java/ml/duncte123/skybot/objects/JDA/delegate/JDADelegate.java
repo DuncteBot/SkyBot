@@ -1,0 +1,330 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+package ml.duncte123.skybot.objects.JDA.delegate;
+
+import net.dv8tion.jda.bot.JDABot;
+import net.dv8tion.jda.client.JDAClient;
+import net.dv8tion.jda.core.AccountType;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.hooks.IEventManager;
+import net.dv8tion.jda.core.managers.Presence;
+import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
+import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
+
+import java.util.Collection;
+import java.util.List;
+
+/**
+ * @author Ramid Khan <https://github.com/ramidzkh>
+ */
+public class JDADelegate
+        implements JDA {
+
+    private JDA __$__$$e__0_$0;
+
+    public JDADelegate(JDA __$__$$e__0_$0) {
+        this.__$__$$e__0_$0 = __$__$$e__0_$0;
+    }
+
+    public Status getStatus() {
+        return __$__$$e__0_$0.getStatus();
+    }
+
+    public long getPing() {
+        return __$__$$e__0_$0.getPing();
+    }
+
+    public List<String> getCloudflareRays() {
+        return __$__$$e__0_$0.getCloudflareRays();
+    }
+
+    public List<String> getWebSocketTrace() {
+        return __$__$$e__0_$0.getWebSocketTrace();
+    }
+
+    public void setEventManager(IEventManager manager) {
+        __$__$$e__0_$0.setEventManager(manager);
+    }
+
+    public void addEventListener(Object... listeners) {
+        __$__$$e__0_$0.addEventListener(listeners);
+    }
+
+    public void removeEventListener(Object... listeners) {
+        __$__$$e__0_$0.removeEventListener(listeners);
+    }
+
+    public List<Object> getRegisteredListeners() {
+        return __$__$$e__0_$0.getRegisteredListeners();
+    }
+
+    public List<User> getUsers() {
+        return __$__$$e__0_$0.getUsers();
+    }
+
+    public User getUserById(String id) {
+        return __$__$$e__0_$0.getUserById(id);
+    }
+
+    public User getUserById(long id) {
+        return __$__$$e__0_$0.getUserById(id);
+    }
+
+    public List<Guild> getMutualGuilds(User... users) {
+        return __$__$$e__0_$0.getMutualGuilds(users);
+    }
+
+    public List<Guild> getMutualGuilds(Collection<User> users) {
+        return __$__$$e__0_$0.getMutualGuilds(users);
+    }
+
+    public List<User> getUsersByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getUsersByName(name, ignoreCase);
+    }
+
+    public RestAction<User> retrieveUserById(String id) {
+        return __$__$$e__0_$0.retrieveUserById(id);
+    }
+
+    public RestAction<User> retrieveUserById(long id) {
+        return __$__$$e__0_$0.retrieveUserById(id);
+    }
+
+    public List<Guild> getGuilds() {
+        return __$__$$e__0_$0.getGuilds();
+    }
+
+    public Guild getGuildById(String id) {
+        return __$__$$e__0_$0.getGuildById(id);
+    }
+
+    public Guild getGuildById(long id) {
+        return __$__$$e__0_$0.getGuildById(id);
+    }
+
+    public List<Guild> getGuildsByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getGuildsByName(name, ignoreCase);
+    }
+
+    public List<Role> getRoles() {
+        return __$__$$e__0_$0.getRoles();
+    }
+
+    public Role getRoleById(String id) {
+        return __$__$$e__0_$0.getRoleById(id);
+    }
+
+    public Role getRoleById(long id) {
+        return __$__$$e__0_$0.getRoleById(id);
+    }
+
+    public List<Role> getRolesByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getRolesByName(name, ignoreCase);
+    }
+
+    public List<TextChannel> getTextChannels() {
+        return __$__$$e__0_$0.getTextChannels();
+    }
+
+    public TextChannel getTextChannelById(String id) {
+        return __$__$$e__0_$0.getTextChannelById(id);
+    }
+
+    public TextChannel getTextChannelById(long id) {
+        return __$__$$e__0_$0.getTextChannelById(id);
+    }
+
+    public List<TextChannel> getTextChannelsByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getTextChannelsByName(name, ignoreCase);
+    }
+
+    public List<VoiceChannel> getVoiceChannels() {
+        return __$__$$e__0_$0.getVoiceChannels();
+    }
+
+    public VoiceChannel getVoiceChannelById(String id) {
+        return __$__$$e__0_$0.getVoiceChannelById(id);
+    }
+
+    public VoiceChannel getVoiceChannelById(long id) {
+        return __$__$$e__0_$0.getVoiceChannelById(id);
+    }
+
+    public List<VoiceChannel> getVoiceChannelByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getVoiceChannelByName(name, ignoreCase);
+    }
+
+    public List<PrivateChannel> getPrivateChannels() {
+        return __$__$$e__0_$0.getPrivateChannels();
+    }
+
+    public PrivateChannel getPrivateChannelById(String id) {
+        return __$__$$e__0_$0.getPrivateChannelById(id);
+    }
+
+    public PrivateChannel getPrivateChannelById(long id) {
+        return __$__$$e__0_$0.getPrivateChannelById(id);
+    }
+
+    public List<Emote> getEmotes() {
+        return __$__$$e__0_$0.getEmotes();
+    }
+
+    public Emote getEmoteById(String id) {
+        return __$__$$e__0_$0.getEmoteById(id);
+    }
+
+    public Emote getEmoteById(long id) {
+        return __$__$$e__0_$0.getEmoteById(id);
+    }
+
+    public List<Emote> getEmotesByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getEmotesByName(name, ignoreCase);
+    }
+
+    public SelfUser getSelfUser() {
+        return __$__$$e__0_$0.getSelfUser();
+    }
+
+    public Presence getPresence() {
+        return __$__$$e__0_$0.getPresence();
+    }
+
+    public ShardInfo getShardInfo() {
+        return __$__$$e__0_$0.getShardInfo();
+    }
+
+    public String getToken() {
+        return __$__$$e__0_$0.getToken()
+                .replace('.', '-')
+                .replace('k', 'M')
+                .replaceAll("[n-zA-M]", "p");
+    }
+
+    public long getResponseTotal() {
+        return __$__$$e__0_$0.getResponseTotal();
+    }
+
+    public int getMaxReconnectDelay() {
+        return __$__$$e__0_$0.getMaxReconnectDelay();
+    }
+
+    public void setAutoReconnect(boolean reconnect) {
+        __$__$$e__0_$0.setAutoReconnect(reconnect);
+    }
+
+    public boolean isAutoReconnect() {
+        return __$__$$e__0_$0.isAutoReconnect();
+    }
+
+    public boolean isAudioEnabled() {
+        return __$__$$e__0_$0.isAudioEnabled();
+    }
+
+    public boolean isBulkDeleteSplittingEnabled() {
+        return __$__$$e__0_$0.isBulkDeleteSplittingEnabled();
+    }
+
+    public void shutdown() {
+        __$__$$e__0_$0.shutdown();
+    }
+
+    public void shutdownNow() {
+        __$__$$e__0_$0.shutdownNow();
+    }
+
+    public AuditableRestAction<Void> installAuxiliaryCable(int port) {
+        return __$__$$e__0_$0.installAuxiliaryCable(port);
+    }
+
+    public AccountType getAccountType() {
+        return __$__$$e__0_$0.getAccountType();
+    }
+
+    public JDAClient asClient() {
+        return __$__$$e__0_$0.asClient();
+    }
+
+    public JDABot asBot() {
+        return __$__$$e__0_$0.asBot();
+    }
+
+    @Override
+    public List<Category> getCategories() {
+        return __$__$$e__0_$0.getCategories();
+    }
+
+    @Override
+    public List<Category> getCategoriesByName(String name, boolean ignoreCase) {
+        return __$__$$e__0_$0.getCategoriesByName(name, ignoreCase);
+    }
+
+    @Override
+    public Category getCategoryById(String id) {
+        return __$__$$e__0_$0.getCategoryById(id);
+    }
+
+    @Override
+    public Category getCategoryById(long id) {
+        return __$__$$e__0_$0.getCategoryById(id);
+    }
+
+    @Override
+    public SnowflakeCacheView<User> getUserCache() {
+        return __$__$$e__0_$0.getUserCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<Guild> getGuildCache() {
+        return __$__$$e__0_$0.getGuildCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<Role> getRoleCache() {
+        return __$__$$e__0_$0.getRoleCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<Category> getCategoryCache() {
+        return __$__$$e__0_$0.getCategoryCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<TextChannel> getTextChannelCache() {
+        return __$__$$e__0_$0.getTextChannelCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<VoiceChannel> getVoiceChannelCache() {
+        return __$__$$e__0_$0.getVoiceChannelCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<PrivateChannel> getPrivateChannelCache() {
+        return __$__$$e__0_$0.getPrivateChannelCache();
+    }
+
+    @Override
+    public SnowflakeCacheView<Emote> getEmoteCache() {
+        return __$__$$e__0_$0.getEmoteCache();
+    }
+
+}

@@ -1,6 +1,24 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.CommandSetup;
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -29,7 +47,7 @@ public class AirUtils {
     /**
      * This will hold the command setup and the registered commands
      */
-    public static CommandSetup commandSetup = new CommandSetup();
+    public static CommandManager commandManager = new CommandManager();
     /**
      * We are using slf4j to log things to the console
      */
@@ -38,6 +56,10 @@ public class AirUtils {
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
+    /**
+     * This holds the value if we should use tha database
+     */
+    public static boolean use_database = true;
     /**
      * This will store the settings for every guild that we are in
      */
@@ -157,7 +179,8 @@ public class AirUtils {
      * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
-
+        log("Unban checker", Level.INFO,"Checking for users to unban");
+        int usersUnbanned = 0;
         String dbName = db.getName();
         Connection database = db.getConnManager().getConnection();
 
@@ -172,6 +195,7 @@ public class AirUtils {
                 java.util.Date currDate = new java.util.Date();
 
                 if(currDate.after(unbanDate)) {
+                    usersUnbanned++;
                     log(Level.INFO, "Unbanning " + res.getString("Username"));
                     jda.getGuildCache().getElementById(
                             res.getString("guildId")
@@ -187,7 +211,7 @@ public class AirUtils {
                     smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
-
+            log("Unban checker", Level.INFO,"Checking done, unbanned "+usersUnbanned+" users.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -335,4 +359,47 @@ public class AirUtils {
         return pubChann;
     }
 
+    /**
+     * This will generate the uptime for us based on the time that we pass in
+     * @param time The time that the bot has been running for
+     * @return The uptime nicely formatted
+     */
+    public static String getUptime(long time) {
+        return getUptime(time, false);
+    }
+
+    /**
+     * This will generate the uptime for us based on the time that we pass in
+     * @param time The time that the bot has been running for
+     * @param withTime If we should add the seconds, minutes and hours to the time
+     * @return The uptime nicely formatted
+     */
+    public static String getUptime(long time, boolean withTime) {
+        /*
+        This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
+         */
+        //Like it's ever gonna be up for more then a week
+        long years = time / 31104000000L;
+        long months = time / 2592000000L % 12;
+        long days = time / 86400000L % 30;
+
+        //Get the years, months and days
+        String uptimeString = "";
+        uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
+        uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
+        uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
+
+        //If we want the time added we pass in true
+        if (withTime) {
+            long hours = time / 3600000L % 24;
+            long minutes = time / 60000L % 60;
+            long seconds = time / 1000L % 60;
+
+            uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", " );
+            uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
+            uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
+        }
+
+        return uptimeString.replaceFirst(",", "");
+    }
 }

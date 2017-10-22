@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
@@ -16,13 +34,8 @@ import java.util.Date;
 
 public class BanCommand extends Command {
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
@@ -37,6 +50,10 @@ public class BanCommand extends Command {
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
             sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> <time><m/d/w/M/Y> [Reason]");
             return;
+        }
+
+        if(!AirUtils.use_database) {
+            sendMsg(event, "WARNING!! the bot is not connected to a database, which means that timed bans may not work.");
         }
 
         try {
@@ -75,23 +92,26 @@ public class BanCommand extends Command {
                                 sendMsg(event, "The minimum time for minutes is 10.");
                                 return;
                             }
-                            DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
+                            break;
+                        case "h":
+                            dt = DateUtils.addHours(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "d":
-                            DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "w":
-                            DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "M":
-                            DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
                             break;
                         case "Y":
-                            DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
                             break;
 
                         default:
-                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, w, M or Y").queue();
+                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, h, w, M or Y").queue();
                             return;
                     }
                     unbanDate = df.format(dt);
@@ -123,10 +143,6 @@ public class BanCommand extends Command {
         }
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +

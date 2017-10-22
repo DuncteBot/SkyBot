@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.utils;
 
 import okhttp3.*;
@@ -10,18 +28,20 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-public class URLConnectionReader {
+public class WebUtils {
+
+    private static String USER_AGENT = "DiscordBot (https://bot.duncte123.ml/)";
 
     /**
      * Reads contents from a website and returns it to a string
      * @param url The url to read
      * @return The text contents
-     * @throws Exception When something broke
+     * @throws IOException When something broke
      */
-    public static String getText(String url) throws Exception {
+    public static String getText(String url) throws IOException {
         URL website = new URL(url);
         URLConnection connection = website.openConnection();
-        connection.addRequestProperty("User-Agent", "Binzy's personal pc");
+        connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
         BufferedReader in = new BufferedReader(
                 new InputStreamReader(
                         connection.getInputStream()));
@@ -50,7 +70,7 @@ public class URLConnectionReader {
         Request request = new Request.Builder()
                 .url(url)
                 .get()
-                .addHeader("User-Agent", "DiscordBot (https://bot.duncte123.ml/)")
+                .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Accept", accept.getType())
                 .addHeader("cache-control", "no-cache")
                 .build();
@@ -77,7 +97,7 @@ public class URLConnectionReader {
     /**
      * This makes a post request to the specified website
      * @param url The website to post to
-     * @param postFields the params for the post
+     * @param postFields the params for the post (param name, param value)
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
@@ -97,7 +117,7 @@ public class URLConnectionReader {
         Request request = new Request.Builder()
                 .url(url)
                 .post(body)
-                .addHeader("User-Agent", "DiscordBot (https://bot.duncte123.ml/)")
+                .addHeader("User-Agent", USER_AGENT)
                 .addHeader("Accept", accept.getType())
                 .addHeader("cache-control", "no-cache")
                 .build();

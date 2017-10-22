@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
@@ -29,13 +47,8 @@ public class UserinfoCommand extends Command {
      */
     Member m;
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         if (args.length == 0) {
             u = event.getAuthor();
@@ -63,10 +76,7 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
 
         StringBuilder joinOrder = new StringBuilder();
-
-        //event.getGuild().getMember(u).j
         List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        //joins.sort((Member a, Member b) -> a.getJoinDate().compareTo(b.getJoinDate()));
         joins.sort( Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
@@ -74,7 +84,7 @@ public class UserinfoCommand extends Command {
             index=0;
         joinOrder.append("\n"+"Join Order: ");
         if(joins.get(index).equals(m))
-            joinOrder.append("[**").append(joins.get(index).getEffectiveName()).append("**](.)");
+            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("]()");
         else
             joinOrder.append(joins.get(index).getEffectiveName());
         for(int i=index+1;i<index+7;i++) {
@@ -83,9 +93,11 @@ public class UserinfoCommand extends Command {
             Member usr = joins.get(i);
             String name = usr.getEffectiveName();
             if(usr.equals(m))
-                name="[**"+name+"**](.)";
+                name="["+name+"]()";
             joinOrder.append(" > ").append(name);
         }
+
+        //TODO: make request to discord profiles
       
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setColor(m.getColor())
@@ -105,10 +117,6 @@ public class UserinfoCommand extends Command {
         sendEmbed(event, eb);
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         return "Get information from yourself or from another user.\nUsage: `"+ Settings.prefix+getName()+" [username]`";
