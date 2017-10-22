@@ -57,6 +57,10 @@ public class AirUtils {
      */
     public static DBManager db = new DBManager();
     /**
+     * This holds the value if we should use tha database
+     */
+    public static boolean use_database = true;
+    /**
      * This will store the settings for every guild that we are in
      */
     public static HashMap<String, GuildSettings> guildSettings = new HashMap<>();

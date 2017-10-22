@@ -47,18 +47,25 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        //we check if we need to use the db first
+        boolean useDatabase = AirUtils.config.getBoolean("use_databse", false);
+        //Set the value for other classes to use
+        AirUtils.use_database = useDatabase;
+
         //Set the logger to only info by default
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
-        if(!AirUtils.db.connManager.hasSettings()) {
-            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
-            System.exit(-2);
-            return;
-        }
-        if(!AirUtils.db.isConnected()) {
-            AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database. ABORTING!!!!!");
-            System.exit(-3);
-            return;
+        if(useDatabase) { //Don't try to connect if we don't want to
+            if (!AirUtils.db.connManager.hasSettings()) {
+                AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
+                System.exit(-2);
+                return;
+            }
+            if (!AirUtils.db.isConnected()) {
+                AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database. ABORTING!!!!!");
+                System.exit(-3);
+                return;
+            }
         }
 
         //Load the settings before loading the bot
@@ -83,15 +90,17 @@ public class SkyBot {
                 .setLoginBackoff(550)
                 .buildAsync();
 
-        //Register the timer for the auto unbans
-        //I moved the timer here to make sure that every running jar has this only once
-        TimerTask unbanTask = new TimerTask() {
-            @Override
-            public void run() {
-                AirUtils.checkUnbans(mgr);
-            }
-        };
-        listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE*10, DateUtils.MILLIS_PER_MINUTE*10);
-        listener.unbanTimerRunning = true;
+        if(useDatabase) {
+            //Register the timer for the auto unbans
+            //I moved the timer here to make sure that every running jar has this only once
+            TimerTask unbanTask = new TimerTask() {
+                @Override
+                public void run() {
+                    AirUtils.checkUnbans(mgr);
+                }
+            };
+            listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
+            listener.unbanTimerRunning = true;
+        }
     }
 }

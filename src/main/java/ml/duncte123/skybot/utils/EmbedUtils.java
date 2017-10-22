@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -73,12 +74,16 @@ public class EmbedUtils {
         String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
         String finalQuote = quote + " - " + user;
 
-        return new EmbedBuilder()
-                .setColor(Settings.defaultColour)
-                //Set the quote in the footer
-                .setFooter(finalQuote, Settings.defaultIcon);
-                //.setFooter(Settings.defaultName, Settings.defaultIcon)
-                //.setTimestamp(Instant.now());
+        EmbedBuilder eb = new EmbedBuilder()
+                .setColor(Settings.defaultColour);
+                if(AirUtils.use_database) {
+                    //Set the quote in the footer
+                    eb.setFooter(finalQuote, Settings.defaultIcon);
+                } else {
+                    eb.setFooter(Settings.defaultName, Settings.defaultIcon)
+                    .setTimestamp(Instant.now());
+                }
+        return eb;
     }
 
     /**
