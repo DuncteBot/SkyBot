@@ -23,7 +23,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import net.dv8tion.jda.core.events.message.MessageReceivedEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -71,7 +70,6 @@ public class HelpCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return help;
     }
 

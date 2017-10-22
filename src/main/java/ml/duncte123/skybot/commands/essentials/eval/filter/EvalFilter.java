@@ -18,13 +18,15 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import groovy.lang.Closure;
-import groovy.lang.Script;
-import org.kohsuke.groovy.sandbox.GroovyValueFilter;
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 public class EvalFilter extends GroovyValueFilter {
 

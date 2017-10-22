@@ -18,15 +18,12 @@
 
 package ml.duncte123.skybot.utils;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A simple class to help me build embeds
