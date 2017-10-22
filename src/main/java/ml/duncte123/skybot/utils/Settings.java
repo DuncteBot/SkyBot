@@ -36,7 +36,7 @@ public class Settings {
     /**
      * This is the version of the bot
      */
-    public static final String version = "3.49.0";
+    public static final String version = "3.49.1";
     /**
      * This is the name that your bot has
      */
