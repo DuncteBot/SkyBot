@@ -122,11 +122,6 @@ public class BotListener extends ListenerAdapter {
                 return;
             }
 
-            if( event.getMessage().getRawContent().split(" ").length >= 0 && !event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) ){
-                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
-                return;
-            }
-
         } else if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
             return;
         }
