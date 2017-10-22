@@ -146,4 +146,9 @@ public class EvalCommand extends Command {
     public String getName() {
         return "eval";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"eval™"};
+    }
 }
