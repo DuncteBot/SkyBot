@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -35,6 +36,12 @@ public class SettingsCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
+        if(!AirUtils.use_database) {
+            sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
+            return;
+        }
+
         List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
         if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
@@ -105,7 +112,7 @@ public class SettingsCommand extends Command {
 
     private boolean checkStatus(String toCHeck) {
         try {
-            return (Integer.parseInt(toCHeck) >= 1);
+            return (Integer.parseInt(toCHeck.replaceAll("[^0-9]", "")) >= 1);
         } catch (NumberFormatException e) {
             return false;
         }

@@ -226,7 +226,8 @@ public class GuildSettingsUtils {
                 }
             }
         }
-        return AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+        AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+        return newGuildSettings;
     }
 
     /**

@@ -67,16 +67,16 @@ public class EmbedUtils {
      * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed(){
-        //Get a random index from the quotes
-        int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
-        //Get the quote as a string
-        String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
-        String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
-        String finalQuote = quote + " - " + user;
 
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(Settings.defaultColour);
                 if(AirUtils.use_database) {
+                    //Get a random index from the quotes
+                    int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+                    //Get the quote as a string
+                    String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
+                    String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
+                    String finalQuote = quote + " - " + user;
                     //Set the quote in the footer
                     eb.setFooter(finalQuote, Settings.defaultIcon);
                 } else {

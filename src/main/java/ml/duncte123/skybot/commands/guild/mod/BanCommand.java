@@ -52,6 +52,10 @@ public class BanCommand extends Command {
             return;
         }
 
+        if(!AirUtils.use_database) {
+            sendMsg(event, "WARNING!! the bot is not connected to a database, which means that timed bans may not work.");
+        }
+
         try {
              final User toBan = event.getMessage().getMentionedUsers().get(0);
             if(toBan.equals(event.getAuthor()) &&

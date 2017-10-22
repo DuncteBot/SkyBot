@@ -47,14 +47,14 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        //Set the logger to only info by default
+        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        l.setLevel(ch.qos.logback.classic.Level.INFO);
+
         //we check if we need to use the db first
         boolean useDatabase = AirUtils.config.getBoolean("use_database", false);
         //Set the value for other classes to use
         AirUtils.use_database = useDatabase;
-
-        //Set the logger to only info by default
-        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        l.setLevel(ch.qos.logback.classic.Level.INFO);
         if(useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
@@ -66,6 +66,11 @@ public class SkyBot {
                 System.exit(-3);
                 return;
             }
+        } else {
+            AirUtils.logger.warn("No database connection is set up.");
+            AirUtils.logger.warn("Please note that is is not supported and will break many features.");
+            AirUtils.logger.warn("The bot will start in 15 seconds");
+            Thread.sleep(DateUtils.MILLIS_PER_SECOND * 15);
         }
 
         //Load the settings before loading the bot
