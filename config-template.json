@@ -5,6 +5,7 @@
     "totalShards": 1
   },
   "sql": {
+    "use_database": false,
     "host": "",
     "username": "",
     "password": "",
