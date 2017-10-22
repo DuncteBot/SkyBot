@@ -74,7 +74,7 @@ public class BotinfoCommand extends Command {
 
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `"+ Settings.prefix+getName()+"`";
+        return "Gets some info about the bot\nUsage: `"+this.PREFIX+getName()+"`";
     }
 
     @Override
