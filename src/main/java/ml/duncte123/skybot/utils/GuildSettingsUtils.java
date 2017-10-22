@@ -39,7 +39,9 @@ public class GuildSettingsUtils {
      * This will load all the footer quotes from the database and store them in the {@link EmbedUtils#footerQuotes footerQuotes}
      */
     public static void loadFooterQuotes() {
-        AirUtils.logger.info("Loading footer quotes");
+        AirUtils.log(Level.INFO, "Clearing footer quotes");
+        EmbedUtils.footerQuotes.clear();
+        AirUtils.log(Level.INFO, "Loading footer quotes");
         
         //One default quote for now
         EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");

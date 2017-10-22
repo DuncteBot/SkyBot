@@ -67,10 +67,11 @@ public class SkyBot {
                 return;
             }
         } else {
+            int startIn = 20;
             AirUtils.logger.warn("No database connection is set up.");
             AirUtils.logger.warn("Please note that is is not supported and will break many features.");
-            AirUtils.logger.warn("The bot will start in 15 seconds");
-            Thread.sleep(DateUtils.MILLIS_PER_SECOND * 15);
+            AirUtils.logger.warn("The bot will start in "+startIn+" seconds");
+            Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
         //Load the settings before loading the bot
@@ -102,6 +103,7 @@ public class SkyBot {
                 @Override
                 public void run() {
                     AirUtils.checkUnbans(mgr);
+                    GuildSettingsUtils.loadFooterQuotes();
                 }
             };
             listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);

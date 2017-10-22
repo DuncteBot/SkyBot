@@ -179,7 +179,8 @@ public class AirUtils {
      * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
-
+        log("Unban checker", Level.INFO,"Checking for users to unban");
+        int usersUnbanned = 0;
         String dbName = db.getName();
         Connection database = db.getConnManager().getConnection();
 
@@ -194,6 +195,7 @@ public class AirUtils {
                 java.util.Date currDate = new java.util.Date();
 
                 if(currDate.after(unbanDate)) {
+                    usersUnbanned++;
                     log(Level.INFO, "Unbanning " + res.getString("Username"));
                     jda.getGuildCache().getElementById(
                             res.getString("guildId")
@@ -209,7 +211,7 @@ public class AirUtils {
                     smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
-
+            log("Unban checker", Level.INFO,"Checking done, unbanned "+usersUnbanned+" users.");
         }
         catch (Exception e) {
             e.printStackTrace();

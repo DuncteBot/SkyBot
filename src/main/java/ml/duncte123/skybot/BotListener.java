@@ -60,7 +60,18 @@ public class BotListener extends ListenerAdapter {
      * This timer is for checking unbans
      */
     public Timer unbanTimer = new Timer();
+    /**
+     * This tells us if the {@link #unbanTimer unbanTimer} is running
+     */
     public boolean unbanTimerRunning = false;
+    /**
+     * This timer is for checking new quotes
+     */
+    public Timer quoteUpdateTimer = new Timer();
+    /**
+     * This tells us if the {@link #quoteUpdateTimer quoteUpdateTimer} is running
+     */
+    public boolean quoteUpdateTimerRunning = false;
 
     /**
      * Listen for messages send to the bot
