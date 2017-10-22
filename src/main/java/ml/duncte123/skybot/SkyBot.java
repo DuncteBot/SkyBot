@@ -48,7 +48,7 @@ public class SkyBot {
     @Deprecated
     public static void main(String... args) throws Exception {
         //we check if we need to use the db first
-        boolean useDatabase = AirUtils.config.getBoolean("use_databse", false);
+        boolean useDatabase = AirUtils.config.getBoolean("use_database", false);
         //Set the value for other classes to use
         AirUtils.use_database = useDatabase;
 
