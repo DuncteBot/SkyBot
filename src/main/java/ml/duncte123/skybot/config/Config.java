@@ -27,7 +27,7 @@ public class Config {
     private final Config parent;
     protected final JsonObject config;
 
-    protected Config(final Config parent, final JsonObject config) {
+    protected Config(Config parent, JsonObject config) {
         this.parent = parent;
         this.config = config;
     }
@@ -37,7 +37,7 @@ public class Config {
      * @param key the key where the setting is located
      * @return the value of the setting
      */
-    public String getString(final String key) {
+    public String getString(String key) {
         return this.getJsonPrimitive(key).getAsString();
     }
 
@@ -47,7 +47,7 @@ public class Config {
      * @param defaultValue If this can't be found we will create the option in the config
      * @return the value of the setting
      */
-    public final String getString(final String key, final String defaultValue) {
+    public final String getString(String key, String defaultValue) {
         if (!this.hasKey(key)) {
             this.put(key, defaultValue);
         }
@@ -58,7 +58,13 @@ public class Config {
         }
     }
 
-    public int getInt(final String key) throws NumberFormatException {
+    /**
+     * This will attempt to get an integer from the config file
+     * @param key The key to get the int from
+     * @return the int
+     * @throws NumberFormatException if the returned value isn't valis
+     */
+    public int getInt(String key) throws NumberFormatException {
         try {
             return this.getJsonPrimitive(key).getAsInt();
         }
@@ -67,10 +73,43 @@ public class Config {
         }
     }
 
-    public final int getInt(final String key, final int defaultValue) {
+    /**
+     * This will attempt to get an integer from the config file
+     * @param key The key to get the int from
+     * @param defaultValue the value to put it on if the int can't be found
+     * @return the int
+     */
+    public final int getInt(String key, int defaultValue) {
         if (!this.hasKey(key))
             this.put(key, defaultValue);
         return this.getInt(key);
+    }
+
+    /**
+     * This will attempt to get a boolean from the config file
+     * @param key the key to get the boolean from
+     * @return the boolean from the key
+     */
+    public boolean getBoolean(String key) {
+        try {
+            return this.getJsonPrimitive(key).getAsBoolean();
+        }
+        catch (final Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    /**
+     * This will attempt to get a boolean from the config file
+     * @param key the key to get the boolean from
+     * @param defaultValue the default value to put the boolean on when it can't be found
+     * @return the boolean from the key
+     */
+    public final boolean getBoolean(String key, boolean defaultValue)  {
+        if (!this.hasKey(key))
+            this.put(key, defaultValue);
+        return this.getBoolean(key);
     }
 
     /**
@@ -78,7 +117,7 @@ public class Config {
      * @param key the key to find
      * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
      */
-    public JsonPrimitive getJsonPrimitive(final String key) {
+    public JsonPrimitive getJsonPrimitive(String key) {
         try  {
             return this.getJsonElement(key).getAsJsonPrimitive();
         }
@@ -94,7 +133,7 @@ public class Config {
      * @return a nice JsonElement
      * @throws NullPointerException When things are about too go down
      */
-    public JsonElement getJsonElement(final String key) throws NullPointerException {
+    public JsonElement getJsonElement(String key) throws NullPointerException {
         final String[] path = key.split("\\.");
         JsonElement value = this.config;
         try {
@@ -134,7 +173,7 @@ public class Config {
      * @param key the key to find
      * @return true if the key is there
      */
-    public boolean hasKey(final String key)  {
+    public boolean hasKey(String key)  {
         try {
             return this.getJsonElement(key) != null;
         }
@@ -193,7 +232,7 @@ public class Config {
                 }
             }
         }
-        catch (final Exception e) {
+        catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
@@ -201,14 +240,12 @@ public class Config {
         this.save();
     }
 
-    //public void put(String key, JsonElement value) { System.out.println("Key: " + key+" val: "+value); }
-
     /**
      * This will attempt to put a value is the config
      * @param key the key to add the value under
      * @param value the value that we need to add
      */
-    public void put(final String key, final String value) {
+    public void put(String key, String value) {
         try {
             this.put(key, new JsonPrimitive(value));
         } catch (Exception e) {
@@ -221,7 +258,20 @@ public class Config {
      * @param key the key to add the value under
      * @param value the value that we need to add
      */
-    public void put(final String key, final Number value) {
+    public void put(String key, Number value) {
+        try {
+            this.put(key, new JsonPrimitive(value));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * This will attempt to put a value is the config
+     * @param key the key to add the value under
+     * @param value the value that we need to add
+     */
+    public void put(String key, boolean value) {
         try {
             this.put(key, new JsonPrimitive(value));
         } catch (Exception e) {
@@ -236,7 +286,7 @@ public class Config {
      * @param replacement what to replace it with
      * @return the replaced string
      */
-    public static String replaceLast(final String text, final String regex, final String replacement) {
+    public static String replaceLast(String text, String regex, String replacement) {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
 

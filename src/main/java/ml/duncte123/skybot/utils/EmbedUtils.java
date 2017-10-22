@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -66,19 +67,23 @@ public class EmbedUtils {
      * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed(){
-        //Get a random index from the quotes
-        int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
-        //Get the quote as a string
-        String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
-        String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
-        String finalQuote = quote + " - " + user;
 
-        return new EmbedBuilder()
-                .setColor(Settings.defaultColour)
-                //Set the quote in the footer
-                .setFooter(finalQuote, Settings.defaultIcon);
-                //.setFooter(Settings.defaultName, Settings.defaultIcon)
-                //.setTimestamp(Instant.now());
+        EmbedBuilder eb = new EmbedBuilder()
+                .setColor(Settings.defaultColour);
+                if(AirUtils.use_database) {
+                    //Get a random index from the quotes
+                    int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+                    //Get the quote as a string
+                    String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
+                    String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
+                    String finalQuote = quote + " - " + user;
+                    //Set the quote in the footer
+                    eb.setFooter(finalQuote, Settings.defaultIcon);
+                } else {
+                    eb.setFooter(Settings.defaultName, Settings.defaultIcon)
+                    .setTimestamp(Instant.now());
+                }
+        return eb;
     }
 
     /**

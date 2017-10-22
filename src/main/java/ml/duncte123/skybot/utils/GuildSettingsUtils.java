@@ -29,8 +29,10 @@ public class GuildSettingsUtils {
      * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
      */
     public static void loadAllSettings() {
-        loadGuildSettings();
-        loadFooterQuotes();
+        if(AirUtils.use_database) {
+            loadGuildSettings();
+            loadFooterQuotes();
+        }
     }
 
     /**
@@ -148,35 +150,33 @@ public class GuildSettingsUtils {
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
 
+        if(AirUtils.use_database) {
+            String dbName = AirUtils.db.getName();
+            Connection database = AirUtils.db.getConnManager().getConnection();
 
-        String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnManager().getConnection();
-
-        try{
-            PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                    "enableJoinMessage= ? , " +
-                    "enableSwearFilter= ? ," +
-                    "customWelcomeMessage= ? ," +
-                    "prefix= ? " +
-                    "WHERE guildId='"+guildId+"'");
-            preparedStatement.setBoolean(1, enableJoinMessage);
-            preparedStatement.setBoolean(2, enableSwearFilter);
-            preparedStatement.setString(3, customJoinMessage);
-            preparedStatement.setString(4, newPrefix);
-            preparedStatement.executeUpdate();
-
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
-                database.close();
-            }
-            catch (SQLException e2) {
-                e2.printStackTrace();
+                PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
+                        "enableJoinMessage= ? , " +
+                        "enableSwearFilter= ? ," +
+                        "customWelcomeMessage= ? ," +
+                        "prefix= ? " +
+                        "WHERE guildId='" + guildId + "'");
+                preparedStatement.setBoolean(1, enableJoinMessage);
+                preparedStatement.setBoolean(2, enableSwearFilter);
+                preparedStatement.setString(3, customJoinMessage);
+                preparedStatement.setString(4, newPrefix);
+                preparedStatement.executeUpdate();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
-
     }
 
     /**
@@ -198,36 +198,36 @@ public class GuildSettingsUtils {
                 .setCustomJoinMessage(defaultMsg)
                 .setCustomPrefix(Settings.prefix);
 
+        if(AirUtils.use_database) {
+            String dbName = AirUtils.db.getName();
 
-        String dbName = AirUtils.db.getName();
+            Connection database = AirUtils.db.getConnManager().getConnection();
 
-        Connection database = AirUtils.db.getConnManager().getConnection();
-
-        try {
-
-            ResultSet resultSet = database.createStatement().executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='"+g.getId()+"'");
-            int rows = 0;
-            while (resultSet.next()) {
-                rows++;
-            }
-
-            if( rows == 0) {
-                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '" + defaultMsg + "')");
-                smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
-                smt.execute();
-            }
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
-                database.close();
-            }
-            catch (SQLException e2) {
-                e2.printStackTrace();
+
+                ResultSet resultSet = database.createStatement().executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
+                int rows = 0;
+                while (resultSet.next()) {
+                    rows++;
+                }
+
+                if (rows == 0) {
+                    PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings VALUES(default, '" + g.getId() + "',  ? , default, default, default, '" + defaultMsg + "')");
+                    smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
+                    smt.execute();
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
-        return AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+        AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+        return newGuildSettings;
     }
 
     /**
@@ -238,22 +238,23 @@ public class GuildSettingsUtils {
         if(AirUtils.guildSettings.containsKey(g.getId())) {
             AirUtils.guildSettings.remove(g.getId());
         }
-        String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        if(AirUtils.use_database) {
+            String dbName = AirUtils.db.getName();
+            Connection database = AirUtils.db.getConnManager().getConnection();
 
-        try {
-            Statement smt = database.createStatement();
-            smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='"+g.getId()+"'");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
-                database.close();
-            }
-            catch (SQLException e2) {
-                e2.printStackTrace();
+                Statement smt = database.createStatement();
+                smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
     }
+
 }

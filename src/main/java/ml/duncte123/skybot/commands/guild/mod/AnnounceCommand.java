@@ -56,9 +56,11 @@ public class AnnounceCommand extends Command {
 
             if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
                 chann.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+                sendSuccess(event.getMessage());
                 return;
             }
             chann.sendMessage(embed).queue();
+            sendSuccess(event.getMessage());
 
         }
         catch (Exception e) {
