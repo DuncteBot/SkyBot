@@ -67,7 +67,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         boolean isRanByBotOwner = event.getAuthor().getId().equals(Settings.ownerId);
 
-        ScheduledFuture<?> future = null;
+        ScheduledFuture<Object> future = null;
         try {
 
             StringBuilder importStringBuilder = new StringBuilder();
@@ -133,6 +133,7 @@ public class EvalCommand extends Command {
         }
         catch (IllegalArgumentException e3) {
             sendMsg(event, "ERROR: " + e3.toString());
+            sendError(event.getMessage());
         }
         //service.shutdown();
         System.gc();

@@ -42,6 +42,7 @@ import org.slf4j.event.Level;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
@@ -131,7 +132,7 @@ public class BotListener extends ListenerAdapter {
             // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
         AirUtils.commandManager.runCommand(parser.parse(event.getMessage().getRawContent()
-                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.prefix)
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Matcher.quoteReplacement(Settings.prefix))
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 ,
                 new DelegateGuildMessageReceivedEvent(new JDADelegate(event.getJDA()), event.getResponseNumber(), new MessageDelegate(event.getMessage()) )
