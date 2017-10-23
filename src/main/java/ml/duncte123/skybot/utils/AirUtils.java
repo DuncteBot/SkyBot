@@ -436,7 +436,7 @@ public class AirUtils {
         engine.setAppID(appId);
 
         engine.setIP("0.0.0.0");
-        engine.setLocation("Seattle");
+        engine.setLocation("San Francisco");
         engine.setMetric(true);
         engine.setCountryCode("USA");
 
