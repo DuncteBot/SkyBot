@@ -417,30 +417,30 @@ public class AirUtils {
      * @return A possibly-null {@link WAEngine Wolfram|Alpha engine} instance configured with the
      * token
      */
-	private static WAEngine getWolframEngine() {
-		WAEngine engine = new WAEngine();
-		
-		String appId;
-		
-		appId = config.getString("api.wolframalpha", null);
-		
-		if(appId == null || "".equals(appId)) {
-			IllegalStateException e
-			   = new IllegalStateException("Wolfram Alpha App ID not specified."
-										   + " Please generate one at "
-										   + "https://developer.wolframalpha.com/portal/myapps/");
-			logger.error(e.getMessage(), e);
-			return null;
-		}
-		
-		engine.setAppID(appId);
-		
-		engine.setIP("0.0.0.0");
-		engine.setLocation("Seattle");
-		engine.setMetric(true);
-		engine.setCountryCode("USA");
-		
-		return engine;
-	}
+    private static WAEngine getWolframEngine() {
+        WAEngine engine = new WAEngine();
+
+        String appId;
+
+        appId = config.getString("api.wolframalpha", null);
+
+        if(appId == null || "".equals(appId)) {
+            IllegalStateException e
+               = new IllegalStateException("Wolfram Alpha App ID not specified."
+                                           + " Please generate one at "
+                                           + "https://developer.wolframalpha.com/portal/myapps/");
+            logger.error(e.getMessage(), e);
+            return null;
+        }
+
+        engine.setAppID(appId);
+
+        engine.setIP("0.0.0.0");
+        engine.setLocation("Seattle");
+        engine.setMetric(true);
+        engine.setCountryCode("USA");
+
+        return engine;
+    }
 
 }

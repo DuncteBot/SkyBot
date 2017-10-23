@@ -8,24 +8,24 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class WolframAlphaCommand extends Command {
 
-	@Override
-	public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-		WAEngine engine = AirUtils.alphaEngine;
-		engine.toString();
-	}
+    @Override
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        WAEngine engine = AirUtils.alphaEngine;
+        engine.toString();
+    }
 
-	@Override
-	public String help() {
-		return "Query Wolfram|Alpha with all your geeky questions";
-	}
+    @Override
+    public String help() {
+        return "Query Wolfram|Alpha with all your geeky questions";
+    }
 
-	@Override
-	public String getName() {
-		return "alpha";
-	}
+    @Override
+    public String getName() {
+        return "alpha";
+    }
 
-	@Override
-	public String[] getAliases() {
-		return new String[] {"wolfram", "wa", "wolframalpha"};
-	}
+    @Override
+    public String[] getAliases() {
+        return new String[] {"wolfram", "wa", "wolframalpha"};
+    }
 }
