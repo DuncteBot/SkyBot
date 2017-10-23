@@ -193,8 +193,6 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     }
     
     public void setLatLong(String latlong) throws IllegalArgumentException {
-        
-        // TODO: Better support for other type of spec, with minutes, etc.
         String[] parts = latlong.split(",");
         if (parts.length != 2)
             throw new IllegalArgumentException("latlong specification must be two numbers separated by a comma");
@@ -706,13 +704,13 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         List<String> location = parmsMap.get("location");
         if (location != null) setLocation(location.get(0));
         List<String> units = parmsMap.get("units");
-        if (units != null) setMetric(units.equals("metric"));
+        if (units != null) setMetric(units.contains("metric"));
         List<String> currency = parmsMap.get("currency");
         if (currency != null) setCurrency(currency.get(0));
         List<String> countryCode = parmsMap.get("countrycode");
         if ( countryCode != null) setCountryCode(countryCode.get(0));
         List<String> allowTranslation = parmsMap.get("translation");
-        if (allowTranslation != null) setAllowTranslation(allowTranslation.equals("true"));
+        if (allowTranslation != null) setAllowTranslation(allowTranslation.contains("true"));
         List<String> podTitles = parmsMap.get("podtitle");
         if (podTitles != null)
             for (String title : podTitles) addPodTitle(title);

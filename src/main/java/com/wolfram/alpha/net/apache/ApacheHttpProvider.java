@@ -26,7 +26,6 @@ import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.net.ProxySettings;
 import com.wolfram.alpha.net.impl.HttpTransaction;
 
-@SuppressWarnings("deprecation")
 public class ApacheHttpProvider implements HttpProvider {
 
     
@@ -68,8 +67,6 @@ public class ApacheHttpProvider implements HttpProvider {
         //httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, ProxySettings.getInstance());
     }
 
-    
-    // TODO: Prove that this modifies the value for future requests.
     public void setUserAgent(String agent) {
         HttpProtocolParams.setUserAgent(params, agent);
     }

@@ -22,7 +22,6 @@ import com.wolfram.alpha.net.ProxySettings;
 import com.wolfram.alpha.net.WAHttpException;
 import com.wolfram.alpha.net.impl.HttpTransaction;
 
-@SuppressWarnings("deprecation")
 public class ApacheHttpTransaction implements HttpTransaction {
 
     private HttpClient httpClient;
