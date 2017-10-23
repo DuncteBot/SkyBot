@@ -32,6 +32,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
+import com.wolfram.alpha.WAEngine;
+
 import java.io.IOException;
 import java.net.URL;
 import java.sql.Connection;
@@ -64,6 +66,11 @@ public class AirUtils {
      * This will store the settings for every guild that we are in
      */
     public static HashMap<String, GuildSettings> guildSettings = new HashMap<>();
+
+    /**
+     * The {@link WAEngine engine} to query Wolfram|Alpha
+     */
+    public static final WAEngine alphaEngine = getWolframEngine();
     /**
      * This is our audio handler
      */
@@ -260,17 +267,18 @@ public class AirUtils {
      * @param lvl The level to convert
      * @return The converted verification level
      */
+    // Null safety
     public static String verificationLvlToName(Guild.VerificationLevel lvl){
-        if(lvl.equals(Guild.VerificationLevel.LOW)){
+        if(Guild.VerificationLevel.LOW.equals(lvl)){
             return "Low";
-        }else if(lvl.equals(Guild.VerificationLevel.MEDIUM)){
+        } else if(Guild.VerificationLevel.MEDIUM.equals(lvl)){
             return "Medium";
-        }else if(lvl.equals(Guild.VerificationLevel.HIGH)){
+        } else if(Guild.VerificationLevel.HIGH.equals(lvl)){
             return "(╯°□°）╯︵ ┻━┻";
-        }else if(lvl.equals(Guild.VerificationLevel.VERY_HIGH)){
+        } else if(Guild.VerificationLevel.VERY_HIGH.equals(lvl)){
             return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
         }
-        return "none";
+        return "None";
     }
 
     /**
@@ -402,4 +410,32 @@ public class AirUtils {
 
         return uptimeString.replaceFirst(",", "");
     }
+
+	private static WAEngine getWolframEngine()
+	{
+		WAEngine engine = new WAEngine();
+		
+		String appId;
+		
+		appId = config.getString("api.wolframalpha", null);
+		
+		if(appId == null || "".equals(appId)) {
+			IllegalStateException e
+			   = new IllegalStateException("Wolfram Alpha App ID not specified."
+										   + " Please generate one at "
+										   + "https://developer.wolframalpha.com/portal/myapps/");
+			logger.error(e.getMessage(), e);
+			return null;
+		}
+		
+		engine.setAppID(appId);
+		
+		engine.setIP("0.0.0.0");
+		engine.setLocation("Seattle");
+		engine.setMetric(true);
+		engine.setCountryCode("USA");
+		
+		return engine;
+	}
+
 }

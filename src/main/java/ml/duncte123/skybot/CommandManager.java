@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.commands.animals.*;
+import ml.duncte123.skybot.commands.essentials.alpha.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
@@ -28,6 +29,7 @@ import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -70,8 +72,10 @@ public class CommandManager {
 
         //essentials commands
         this.addCommand(new EvalCommand());
-
-
+        
+        if(AirUtils.alphaEngine != null)
+        	this.addCommand(new WolframAlphaCommand());
+        
         //music commands
         this.addCommand(new JoinCommand());
         this.addCommand(new LeaveCommand());

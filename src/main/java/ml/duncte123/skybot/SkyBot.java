@@ -38,7 +38,6 @@ import java.util.TimerTask;
 
 public class SkyBot {
 
-
     /**
      * This is our main method
      * @param args The args passed in while running the bot
