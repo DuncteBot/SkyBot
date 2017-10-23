@@ -42,7 +42,6 @@ import org.slf4j.event.Level;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {

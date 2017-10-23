@@ -411,8 +411,13 @@ public class AirUtils {
         return uptimeString.replaceFirst(",", "");
     }
 
-	private static WAEngine getWolframEngine()
-	{
+    /**
+     * Gets a Wolfram|Alpha engine for creating and processing queries 
+     * 
+     * @return A possibly-null {@link WAEngine Wolfram|Alpha engine} instance configured with the
+     * token
+     */
+	private static WAEngine getWolframEngine() {
 		WAEngine engine = new WAEngine();
 		
 		String appId;
