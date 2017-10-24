@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import okhttp3.*;
 import org.slf4j.Logger;
@@ -360,7 +361,7 @@ public class AirUtils {
 
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
 
-       if(pubChann==null) {
+       if(pubChann == null || !guild.getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE)) {
            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
        }
 
@@ -414,7 +415,7 @@ public class AirUtils {
     /**
      * Gets a Wolfram|Alpha engine for creating and processing queries 
      * 
-     * @return A possibly-null {@link WAEngine Wolfram|Alpha engine} instance configured with the
+     * @return A possibly-null {@link com.wolfram.alpha.WAEngine Wolfram|Alpha engine} instance configured with the
      * token
      */
     private static WAEngine getWolframEngine() {
