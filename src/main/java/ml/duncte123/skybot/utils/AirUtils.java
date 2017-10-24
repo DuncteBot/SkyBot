@@ -361,7 +361,7 @@ public class AirUtils {
 
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
 
-       if(pubChann == null || !guild.getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE)) {
+       if(pubChann == null || !pubChann.canTalk()) {
            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
        }
 
