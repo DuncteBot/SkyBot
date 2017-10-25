@@ -40,7 +40,7 @@ public class CommandParser {
         return new CommandContainer(invoke, args, e);
     }
 
-     public class CommandContainer {
+     public static class CommandContainer {
          public final String invoke;
          public final String[] args;
          public final GuildMessageReceivedEvent event;
