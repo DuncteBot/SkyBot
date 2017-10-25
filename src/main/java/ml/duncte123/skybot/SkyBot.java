@@ -98,11 +98,12 @@ public class SkyBot {
         if(useDatabase) {
             //Register the timer for the auto unbans
             //I moved the timer here to make sure that every running jar has this only once
+            //We are updating everything every 10 minutes so we have the most up-to-date settings.
             TimerTask unbanTask = new TimerTask() {
                 @Override
                 public void run() {
                     AirUtils.checkUnbans(mgr);
-                    GuildSettingsUtils.loadFooterQuotes();
+                    GuildSettingsUtils.loadAllSettings();
                 }
             };
             listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
