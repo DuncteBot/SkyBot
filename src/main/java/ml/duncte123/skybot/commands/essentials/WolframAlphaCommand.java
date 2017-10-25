@@ -29,6 +29,7 @@ public class WolframAlphaCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         WAEngine engine = AirUtils.alphaEngine;
         engine.toString();
+        sendMsg(event, "This command is being worked on.");
     }
 
     @Override
