@@ -51,7 +51,7 @@ public class CommandParser {
           * @param args The arguments from the command
           * @param e A ninstance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
           */
-         public CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e){
+         private CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e){
              this.invoke = invoke;
              this.args = args;
              this.event = e;
