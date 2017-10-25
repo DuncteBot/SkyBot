@@ -23,6 +23,9 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+/**
+ * This class contains a bunch of commands that require little code to run, so we combine in this class
+ */
 public class OneLinerCommands extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
