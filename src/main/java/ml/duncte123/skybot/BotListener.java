@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.objects.JDA.delegate.DelegateGuildMessageReceivedEvent;
+import ml.duncte123.skybot.objects.JDA.delegate.MessageDelegate;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
@@ -131,8 +133,8 @@ public class BotListener extends ListenerAdapter {
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.prefix)
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 ,
-               event ));
-
+               new DelegateGuildMessageReceivedEvent(event.getJDA(), event.getResponseNumber(), new MessageDelegate(event.getMessage()))
+        ));
     }
 
     /**
@@ -141,7 +143,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " " + event.getJDA().getShardInfo());
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
     }
 
     /**

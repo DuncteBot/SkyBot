@@ -33,6 +33,11 @@ public class DelegateGuildMessageReceivedEvent extends GuildMessageReceivedEvent
         this.message = message;
     }
 
+    @Override
+    public JDA getJDA() {
+        return new JDADelegate(super.getJDA());
+    }
+
     public Message getMessage()  {
         return message;
     }
