@@ -66,11 +66,11 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is for checking new quotes
      */
-    public Timer quoteUpdateTimer = new Timer();
+    public Timer settingsUpdateTimer = new Timer();
     /**
-     * This tells us if the {@link #quoteUpdateTimer quoteUpdateTimer} is running
+     * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
      */
-    public boolean quoteUpdateTimerRunning = false;
+    public boolean settingsUpdateTimerRunning = false;
 
     /**
      * Listen for messages send to the bot
@@ -89,7 +89,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
             AirUtils.log(Level.INFO,"Shutting down!!!");
             if(this.unbanTimerRunning) this.unbanTimer.cancel();
-            //event.getJDA().shutdown();
+            if(this.settingsUpdateTimerRunning) this.settingsUpdateTimer.cancel();
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
                 manager.getShardCache().getElementById(i).shutdown();
