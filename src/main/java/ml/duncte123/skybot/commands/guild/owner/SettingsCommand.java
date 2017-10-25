@@ -44,12 +44,12 @@ public class SettingsCommand extends Command {
 
         List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
-        if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+        if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+        GuildSettings settings = getSettings(event.getGuild());
 
         if(args.length < 1) {
             //true ✅
