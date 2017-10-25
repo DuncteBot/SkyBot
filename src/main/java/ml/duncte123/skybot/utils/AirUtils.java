@@ -423,7 +423,7 @@ public class AirUtils {
 
         String appId;
 
-        appId = config.getString("api.wolframalpha", null);
+        appId = config.getString("apis.wolframalpha", "");
 
         if(appId == null || "".equals(appId)) {
             IllegalStateException e

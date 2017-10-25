@@ -18,9 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.objects.JDA.delegate.DelegateGuildMessageReceivedEvent;
-import ml.duncte123.skybot.objects.JDA.delegate.JDADelegate;
-import ml.duncte123.skybot.objects.JDA.delegate.MessageDelegate;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
@@ -134,8 +131,7 @@ public class BotListener extends ListenerAdapter {
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.prefix)
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 ,
-                new DelegateGuildMessageReceivedEvent(new JDADelegate(event.getJDA()), event.getResponseNumber(), new MessageDelegate(event.getMessage()) )
-        ));
+               event ));
 
     }
 
