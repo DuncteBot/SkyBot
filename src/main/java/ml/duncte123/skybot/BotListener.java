@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -10,6 +28,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
+import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
@@ -20,6 +39,7 @@ import org.slf4j.event.Level;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
 
@@ -39,6 +59,18 @@ public class BotListener extends ListenerAdapter {
      * This timer is for checking unbans
      */
     public Timer unbanTimer = new Timer();
+    /**
+     * This tells us if the {@link #unbanTimer unbanTimer} is running
+     */
+    public boolean unbanTimerRunning = false;
+    /**
+     * This timer is for checking new quotes
+     */
+    public Timer quoteUpdateTimer = new Timer();
+    /**
+     * This tells us if the {@link #quoteUpdateTimer quoteUpdateTimer} is running
+     */
+    public boolean quoteUpdateTimerRunning = false;
 
     /**
      * Listen for messages send to the bot
@@ -52,13 +84,11 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        if(!AirUtils.guildSettings.containsKey(event.getGuild().getId())) {
-            GuildSettingsUtils.registerNewGuild(event.getGuild());
-        }
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
             AirUtils.log(Level.INFO,"Shutting down!!!");
-            unbanTimer.cancel();
+            if(this.unbanTimerRunning) this.unbanTimer.cancel();
             //event.getJDA().shutdown();
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
@@ -84,16 +114,9 @@ public class BotListener extends ListenerAdapter {
             }
         }
 
-        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
-
         if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
 
             if(event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
-                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
-                return;
-            }
-
-            if( event.getMessage().getRawContent().split(" ").length >= 0 && !event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention()) ){
                 event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
                 return;
             }
@@ -104,11 +127,12 @@ public class BotListener extends ListenerAdapter {
 
             // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        AirUtils.commandSetup.runCommand(parser.parse(event.getMessage().getRawContent()
-                .replaceFirst(settings.getCustomPrefix(), Settings.prefix)
+        AirUtils.commandManager.runCommand(parser.parse(event.getMessage().getRawContent()
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.prefix)
                         .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
-                , event));
-
+                ,
+               event
+        ));
     }
 
     /**
@@ -117,7 +141,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " " + event.getJDA().getShardInfo());
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
     }
 
     /**
@@ -136,7 +160,7 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        GuildSettings settings = AirUtils.guildSettings.get(event.getGuild().getId());
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
             TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
@@ -169,6 +193,11 @@ public class BotListener extends ListenerAdapter {
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
+    }
+
+    @Override
+    public void onGuildLeave(GuildLeaveEvent event) {
+        GuildSettingsUtils.deleteGuild(event.getGuild());
     }
 
     /**

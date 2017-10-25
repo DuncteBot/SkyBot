@@ -1,14 +1,30 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.utils;
+
+import java.time.Instant;
+import java.util.HashMap;
+import java.util.Map;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-
-import java.time.Instant;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * A simple class to help me build embeds
@@ -51,19 +67,23 @@ public class EmbedUtils {
      * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed(){
-        //Get a random index from the quotes
-        int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
-        //Get the quote as a string
-        String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
-        String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
-        String finalQuote = quote + " - " + user;
 
-        return new EmbedBuilder()
-                .setColor(Settings.defaultColour)
-                //Set the quote in the footer
-                .setFooter(finalQuote, Settings.defaultIcon);
-                //.setFooter(Settings.defaultName, Settings.defaultIcon)
-                //.setTimestamp(Instant.now());
+        EmbedBuilder eb = new EmbedBuilder()
+                .setColor(Settings.defaultColour);
+                if(AirUtils.use_database) {
+                    //Get a random index from the quotes
+                    int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+                    //Get the quote as a string
+                    String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
+                    String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
+                    String finalQuote = quote + " - " + user;
+                    //Set the quote in the footer
+                    eb.setFooter(finalQuote, Settings.defaultIcon);
+                } else {
+                    eb.setFooter(Settings.defaultName, Settings.defaultIcon)
+                    .setTimestamp(Instant.now());
+                }
+        return eb;
     }
 
     /**

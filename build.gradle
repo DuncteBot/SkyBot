@@ -1,3 +1,21 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 plugins {
     id'java'
     id'application'
@@ -8,7 +26,7 @@ group = 'ml.duncte123'
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.48.3'
+version '3.49.1'
 
 sourceCompatibility = 1.8
 
@@ -22,7 +40,7 @@ repositories {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '5945aad' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '05666d5' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
     //jda-nas

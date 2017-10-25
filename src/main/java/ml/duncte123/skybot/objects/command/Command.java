@@ -1,23 +1,45 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public abstract class Command {
 
+    protected final String PREFIX = Settings.prefix;
+
     /**
      * This is the action of the command, this will hold what the commands needs to to
+     * @param invoke The command that is ran
      * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    public abstract void executeCommand(String[] args, GuildMessageReceivedEvent event);
+    public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
 
     /**
      * The usage instructions of the command
@@ -41,11 +63,11 @@ public abstract class Command {
 
     /**
      * This returns the settings for the given guild
-     * @param guildId the id if the guild that we need the settings for
+     * @param guild the guild that we need the settings for
      * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
      */
-    protected GuildSettings getSettings(String guildId) {
-        return AirUtils.guildSettings.get(guildId);
+    protected GuildSettings getSettings(Guild guild) {
+        return GuildSettingsUtils.getGuild(guild);
     }
 
     /**
@@ -106,4 +128,8 @@ public abstract class Command {
         event.getChannel().sendMessage(msg).queue();
     }
 
+    @Override
+    public String toString() {
+        return "Command[" + getName() + "]";
+    }
 }

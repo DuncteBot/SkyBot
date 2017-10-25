@@ -1,7 +1,26 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -15,20 +34,22 @@ import java.util.List;
 
 public class SettingsCommand extends Command {
 
-    /**
-     * This is the executeCommand of the command, the thing you want the command to to needs to be in here
-     * @param args The command agruments
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
     @Override
-    public void executeCommand(String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
+        if(!AirUtils.use_database) {
+            sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
+            return;
+        }
+
+        List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
         if(!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
-        GuildSettings settings = getSettings(event.getGuild().getId());
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if(args.length < 1) {
             //true ✅
@@ -41,9 +62,9 @@ public class SettingsCommand extends Command {
             );
             sendEmbed(event, message);
         } else if(args.length == 1) {
-            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`");
+            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`\n\n" +
+                    "The modules are: `" + StringUtils.join(modules, ", ") + "`");
         } else {
-            List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
             String module = args[0];
             if(modules.contains(module)) {
                 switch (module) {
@@ -74,10 +95,6 @@ public class SettingsCommand extends Command {
 
     }
 
-    /**
-     * The usage instructions of the command
-     * @return a String
-     */
     @Override
     public String help() {
         return "Modify the settings on the bot";
@@ -95,7 +112,7 @@ public class SettingsCommand extends Command {
 
     private boolean checkStatus(String toCHeck) {
         try {
-            return (Integer.parseInt(toCHeck) >= 1);
+            return (Integer.parseInt(toCHeck.replaceAll("[^0-9]", "")) >= 1);
         } catch (NumberFormatException e) {
             return false;
         }
