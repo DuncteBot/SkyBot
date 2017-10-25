@@ -105,6 +105,8 @@ public class EvalCommand extends Command {
 
                 future = service.schedule(() -> {
                     filter.register();
+                    sh.setVariable("alpacas", 1);
+                    sh.setVariable("llamas", 0);
                     return sh.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
             }
