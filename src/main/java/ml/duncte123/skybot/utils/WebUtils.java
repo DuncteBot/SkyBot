@@ -28,6 +28,11 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.net.ssl.HttpsURLConnection;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
+
 public class WebUtils {
 
     private static String USER_AGENT = "DiscordBot (https://bot.duncte123.ml/)";
@@ -160,6 +165,38 @@ public class WebUtils {
         return postRequest(url,AcceptType.TEXT_JSON);
     }
 
+    public static String shorten(String url) {
+        try {
+            HttpsURLConnection con
+                = (HttpsURLConnection)
+                    new URL("https://www.googleapis.com/urlshortener/v1/url?key="
+                            + AirUtils.config.getString("apis.googl"))
+                        .openConnection();
+            con.setRequestMethod("POST");
+            con.addRequestProperty("Content-Type", "application/json");
+            con.setDoOutput(true);
+            
+            JsonObject jo = new JsonObject();
+            
+            jo.addProperty("longUrl", url);
+            
+            System.out.println(jo.toString());
+            
+            con.getOutputStream().write(
+                    jo.toString().getBytes());
+            
+            return new JsonParser().parse(
+                    new InputStreamReader(con.getInputStream()))
+                    .getAsJsonObject().get("id").getAsString();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    public static void main(String[] args) {
+        System.out.println(shorten("https://google.com/"));
+    }
     /**
      * This holds some variables that we will accept
      */
