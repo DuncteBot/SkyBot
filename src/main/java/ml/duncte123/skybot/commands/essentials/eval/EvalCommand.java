@@ -127,7 +127,6 @@ public class EvalCommand extends Command {
         }
         catch (TimeoutException | InterruptedException e2) {
             future.cancel(true);
-            service.shutdownNow();
             event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
             //e.printStackTrace();
             if(!future.isCancelled()) future.cancel(true);
@@ -137,7 +136,6 @@ public class EvalCommand extends Command {
             sendMsg(event, "ERROR: " + e3.toString());
             sendError(event.getMessage());
         }
-        //service.shutdown();
         System.gc();
     }
 
