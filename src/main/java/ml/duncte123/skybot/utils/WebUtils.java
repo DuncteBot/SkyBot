@@ -194,9 +194,6 @@ public class WebUtils {
         }
     }
 
-    public static void main(String[] args) {
-        System.out.println(shorten("https://google.com/"));
-    }
     /**
      * This holds some variables that we will accept
      */
