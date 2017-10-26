@@ -59,6 +59,7 @@ public class CommandManager {
         this.addCommand(new TextToBrickCommand());
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
+        this.addCommand(new FlipCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());

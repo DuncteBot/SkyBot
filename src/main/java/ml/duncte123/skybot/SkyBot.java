@@ -92,7 +92,6 @@ public class SkyBot {
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Settings.prefix + "help"))
                 .setToken(token)
-                .setLoginBackoff(550)
                 .buildAsync();
 
         if(useDatabase) {
