@@ -48,6 +48,10 @@ public class AirUtils {
 
     public static Config config = new ConfigUtils().loadConfig();
     /**
+     * The {@link WAEngine engine} to query Wolfram|Alpha
+     */
+    public static final WAEngine alphaEngine = getWolframEngine();
+    /**
      * This will hold the command setup and the registered commands
      */
     public static CommandManager commandManager = new CommandManager();
@@ -67,11 +71,6 @@ public class AirUtils {
      * This will store the settings for every guild that we are in
      */
     public static Map<String, GuildSettings> guildSettings = new HashMap<>();
-
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     */
-    public static final WAEngine alphaEngine = getWolframEngine();
     /**
      * This is our audio handler
      */
