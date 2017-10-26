@@ -31,11 +31,12 @@ version '3.49.1'
 sourceCompatibility = 1.8
 
 repositories {
+    jcenter()
+    // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
     maven {
         name 'jitpack'
         url 'https://jitpack.io'
     }
-    jcenter()
 }
 
 dependencies {
@@ -63,8 +64,6 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     //logback classic
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
-
-
 }
 
 javadoc {
