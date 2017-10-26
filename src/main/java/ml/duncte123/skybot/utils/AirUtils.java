@@ -41,6 +41,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.Random;
 
 public class AirUtils {
@@ -65,7 +66,7 @@ public class AirUtils {
     /**
      * This will store the settings for every guild that we are in
      */
-    public static HashMap<String, GuildSettings> guildSettings = new HashMap<>();
+    public static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * The {@link WAEngine engine} to query Wolfram|Alpha
