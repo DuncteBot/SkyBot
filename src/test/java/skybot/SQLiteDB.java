@@ -18,7 +18,6 @@
 
 package skybot;
 
-import java.io.File;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.Statement;
@@ -27,11 +26,8 @@ public class SQLiteDB {
 
     public static void main(String[] args)
     throws Throwable {
-        // Get ../resources/test.db
         String url = "jdbc:sqlite:" +
-                   new File(new File(System.getProperty("user.dir"))
-                       .getParentFile(), "resources")
-                   + File.pathSeparator + "test.db";
+                   System.getProperty("user.dir") + "/src/test/resources/test.db";
         
         System.out.println(url);
         
