@@ -18,6 +18,55 @@
 
 package ml.duncte123.skybot.connections.database;
 
-public class SQLiteDatabaseConnectionManager {
+import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.util.Properties;
 
+import org.sqlite.JDBC;
+
+class SQLiteDatabaseConnectionManager
+implements DBConnectionManager {
+
+    private final String url;
+    private Connection con;
+
+    SQLiteDatabaseConnectionManager(File file) {
+        url = "jdbc:sqlite:" + file.getAbsolutePath();
+        try {
+            con = JDBC.createConnection(url, new Properties());
+            
+            con.getMetaData().getURL();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            con = null;
+        }
+    }
+
+    @Override
+    public Connection getConnection() {
+        return con;
+    }
+
+    @Override
+    public boolean isConnected() {
+        if(con == null)
+            return false;
+        try {
+            return !con.isClosed();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
+
+    @Override
+    public String getName() {
+        return url;
+    }
+
+    @Override
+    public boolean hasSettings() {
+        return con != null;
+    }
 }

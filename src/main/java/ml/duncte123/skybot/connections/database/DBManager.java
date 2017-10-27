@@ -18,7 +18,10 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import java.io.File;
 import java.sql.Connection;
+
+import ml.duncte123.skybot.utils.AirUtils;
 
 public class DBManager {
 
@@ -35,16 +38,21 @@ public class DBManager {
      */
     private final Connection connection;
 
-    public final DatabaseConnectionManager connManager;
+    public final DBConnectionManager connManager;
 
     /**
      * This will set our stuff up
      */
     public DBManager() {
-        this.connManager = new DatabaseConnectionManager();
-        this.isConnected = connManager.checkDbConn();
-        this.name = connManager.getDbName();
+        this.connManager = createDBManager();
+        this.isConnected = connManager.isConnected();
+        this.name = connManager.getName();
         this.connection = connManager.getConnection();
+    }
+
+    private static DBConnectionManager createDBManager() {
+        if(AirUtils.use_database) return new DatabaseConnectionManager();
+        return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
 
     /**
@@ -76,9 +84,9 @@ public class DBManager {
 
     /**
      * Returns the connection manager
-     * @return the {@link ml.duncte123.skybot.connections.database.DatabaseConnectionManager DatabaseConnectionManager}
+     * @return the {@link ml.duncte123.skybot.connections.database.DBConnectionManager DatabaseConnectionManager}
      */
-    public DatabaseConnectionManager getConnManager() {
+    public DBConnectionManager getConnManager() {
         return connManager;
     }
 }

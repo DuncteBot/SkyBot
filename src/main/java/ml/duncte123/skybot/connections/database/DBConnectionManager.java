@@ -40,4 +40,11 @@ public interface DBConnectionManager {
      * @return The name of the database
      */
     public String getName();
+
+    /**
+     * @return Does the database have settings, default to true
+     */
+    public default boolean hasSettings() {
+        return true;
+    }
 }
