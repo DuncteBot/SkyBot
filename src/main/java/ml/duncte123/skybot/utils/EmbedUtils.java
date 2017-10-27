@@ -70,7 +70,7 @@ public class EmbedUtils {
 
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(Settings.defaultColour);
-                if(AirUtils.db.isConnected()) {
+                if(AirUtils.use_database) {
                     //Get a random index from the quotes
                     int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
                     //Get the quote as a string

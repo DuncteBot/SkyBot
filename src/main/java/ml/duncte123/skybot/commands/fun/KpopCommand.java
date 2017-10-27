@@ -33,7 +33,7 @@ public class KpopCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        if(!AirUtils.db.isConnected()) {
+        if(!AirUtils.use_database) {
             sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
             return;
         }

@@ -64,9 +64,9 @@ public class AirUtils {
      */
     public static DBManager db = new DBManager();
     /**
-     * This holds the value if we should use a non-SQLite database
+     * This holds the value if we should use tha database
      */
-    public static boolean nonsqlite = true;
+    public static boolean use_database = true;
     /**
      * This will store the settings for every guild that we are in
      */
@@ -425,9 +425,11 @@ public class AirUtils {
         appId = config.getString("apis.wolframalpha", "");
 
         if(appId == null || "".equals(appId)) {
-            logger.error("Wolfram Alpha App ID not specified."
-                    + " Please generate one at "
-                    + "https://developer.wolframalpha.com/portal/myapps/");
+            IllegalStateException e
+               = new IllegalStateException("Wolfram Alpha App ID not specified."
+                                           + " Please generate one at "
+                                           + "https://developer.wolframalpha.com/portal/myapps/");
+            logger.error(e.getMessage(), e);
             return null;
         }
 

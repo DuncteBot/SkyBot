@@ -53,7 +53,7 @@ public class SkyBot {
         //we check if we need to use the db first
         boolean useDatabase = AirUtils.config.getBoolean("use_database", false);
         //Set the value for other classes to use
-        AirUtils.nonsqlite = useDatabase;
+        AirUtils.use_database = useDatabase;
         if(useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
@@ -66,10 +66,9 @@ public class SkyBot {
                 return;
             }
         } else {
-            int startIn = 5;
-            AirUtils.logger.warn("Using SQLite as the database");
-            AirUtils.logger.warn("Please note that is is not recommended and can break some features.");
-            AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
+            int startIn = 20;
+            AirUtils.logger.warn("No database connection is set up.");
+            AirUtils.logger.warn("Please note that is is not supported and will break many features.");
             AirUtils.logger.warn("The bot will start in "+startIn+" seconds");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
