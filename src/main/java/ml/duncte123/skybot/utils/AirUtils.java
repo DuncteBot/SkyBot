@@ -425,11 +425,9 @@ public class AirUtils {
         appId = config.getString("apis.wolframalpha", "");
 
         if(appId == null || "".equals(appId)) {
-            IllegalStateException e
-               = new IllegalStateException("Wolfram Alpha App ID not specified."
-                                           + " Please generate one at "
-                                           + "https://developer.wolframalpha.com/portal/myapps/");
-            logger.error(e.getMessage(), e);
+            logger.error("Wolfram Alpha App ID not specified."
+                    + " Please generate one at "
+                    + "https://developer.wolframalpha.com/portal/myapps/");
             return null;
         }
 
