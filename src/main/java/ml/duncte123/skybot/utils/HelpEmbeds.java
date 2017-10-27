@@ -48,10 +48,10 @@ public class HelpEmbeds {
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
                 .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
-                .addField("Main commands", generateCommandsWithPrefix(prefix, new String[]{"help", "about", "ping", "guildinfo", "userinfo"}), INLINE)
+                .addField("Main commands", generateCommandsWithPrefix(prefix, new String[]{"help", "about", "ping", "guildinfo", "userinfo", "alpha"}), INLINE)
                 .addField("Music commands", generateCommandsWithPrefix(prefix, new String[]{"join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"}), INLINE)
                 .addField("Fun commands", generateCommandsWithPrefix(prefix, new String[]{"alpaca", "birb", "blob", "coin", "joke", "kpop", "seal", "kitty", "dog", "llama", "dialog", "ttb"}), INLINE)
-                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, new String[]{"ban", "clear", "softban", "unban", "kick", "settings"}), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, new String[]{"announce", "ban", "clear", "softban", "unban", "kick", "settings"}), INLINE)
                 .build();
     }
 
