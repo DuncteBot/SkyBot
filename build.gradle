@@ -64,6 +64,9 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     //logback classic
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+    
+    // SQLite
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
 }
 
 javadoc {
