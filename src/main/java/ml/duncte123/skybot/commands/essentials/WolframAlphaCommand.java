@@ -18,13 +18,10 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import java.util.concurrent.TimeUnit;
-
 import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
-
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -34,17 +31,16 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        sendMsg(event, "This command is being worked on.");
         WAEngine engine = AirUtils.alphaEngine;
         
         if(engine == null) {
-            event.getChannel().sendMessage(":x: Wolfram|Alpha function unavailable!")
-                    .queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
+            sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
         
         if(args.length == 0) {
-            event.getChannel().sendMessage(":x: Must give a question!!!")
-                    .queue(m -> m.delete().queueAfter(5, TimeUnit.SECONDS));
+            sendMsg(event, ":x: Must give a question!!!");
             return;
         }
         
@@ -66,8 +62,6 @@ public class WolframAlphaCommand extends Command {
         }
         
         event.getChannel().sendMessage(generateEmbed(result)).queue();
-        
-        sendMsg(event, "This command is being worked on.");
     }
 
     // TODO: Displaying

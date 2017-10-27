@@ -81,7 +81,7 @@ public class EvalCommand extends Command {
 
             int timeout = 5;
             if(isRanByBotOwner) {
-                timeout = 10;
+                timeout = 60;
                 
                 engine.put("commands", AirUtils.commandManager.getCommands());
 
@@ -105,8 +105,6 @@ public class EvalCommand extends Command {
 
                 future = service.schedule(() -> {
                     filter.register();
-                    sh.setVariable("alpacas", 1);
-                    sh.setVariable("llamas", 0);
                     return sh.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
             }
@@ -127,7 +125,6 @@ public class EvalCommand extends Command {
         }
         catch (TimeoutException | InterruptedException e2) {
             future.cancel(true);
-            service.shutdownNow();
             event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
             //e.printStackTrace();
             if(!future.isCancelled()) future.cancel(true);
@@ -137,7 +134,6 @@ public class EvalCommand extends Command {
             sendMsg(event, "ERROR: " + e3.toString());
             sendError(event.getMessage());
         }
-        //service.shutdown();
         System.gc();
     }
 
