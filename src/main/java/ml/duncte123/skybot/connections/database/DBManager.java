@@ -29,6 +29,7 @@ public class DBManager {
      * This is the database name
      */
     private final String name;
+
     /**
      * This is true if we are connected to the database
      */

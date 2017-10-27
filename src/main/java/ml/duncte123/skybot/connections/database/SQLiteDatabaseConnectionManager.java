@@ -25,17 +25,36 @@ import java.util.Properties;
 
 import org.sqlite.JDBC;
 
+/**
+ * Represents an SQLite file database {@link DBConnectionManager connection manager}
+ * 
+ * @author ramidzkh
+ *
+ */
 class SQLiteDatabaseConnectionManager
 implements DBConnectionManager {
 
+    /**
+     * The URL of this database
+     */
     private final String url;
+
+    /**
+     * The associated connection object
+     */
     private Connection con;
 
+    /**
+     * Constructs a new SQLite file database
+     * 
+     * @param file The file where to create or load the database
+     */
     SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath();
         try {
             con = JDBC.createConnection(url, new Properties());
             
+            // Create it
             con.getMetaData().getURL();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -43,11 +62,17 @@ implements DBConnectionManager {
         }
     }
 
+    /**
+     * Gets the associated connection object
+     */
     @Override
     public Connection getConnection() {
         return con;
     }
 
+    /**
+     * @return Is the connection open
+     */
     @Override
     public boolean isConnected() {
         if(con == null)
@@ -60,11 +85,17 @@ implements DBConnectionManager {
         }
     }
 
+    /**
+     * @return The URL of this database
+     */
     @Override
     public String getName() {
         return url;
     }
 
+    /**
+     * @return If the connection is available, open or closed
+     */
     @Override
     public boolean hasSettings() {
         return con != null;
