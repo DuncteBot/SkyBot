@@ -33,10 +33,6 @@ public class DBManager {
      * This is true if we are connected to the database
      */
     private final boolean isConnected;
-    /**
-     * This will hold our connection
-     */
-    private final Connection connection;
 
     public final DBConnectionManager connManager;
 
@@ -47,7 +43,6 @@ public class DBManager {
         this.connManager = createDBManager();
         this.isConnected = connManager.isConnected();
         this.name = connManager.getName();
-        this.connection = connManager.getConnection();
     }
 
     private static DBConnectionManager createDBManager() {
@@ -79,7 +74,7 @@ public class DBManager {
      */
     @Deprecated
     public Connection getConnection() {
-        return this.connection;
+        return connManager.getConnection();
     }
 
     /**
