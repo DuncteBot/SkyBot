@@ -64,9 +64,9 @@ public class AirUtils {
      */
     public static DBManager db = new DBManager();
     /**
-     * This holds the value if we should use tha database
+     * This holds the value if we should use a non-SQLite database
      */
-    public static boolean use_database = true;
+    public static boolean nonsqlite = true;
     /**
      * This will store the settings for every guild that we are in
      */

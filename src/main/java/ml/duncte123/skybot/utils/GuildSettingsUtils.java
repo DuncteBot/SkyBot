@@ -29,7 +29,7 @@ public class GuildSettingsUtils {
      * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
      */
     public static void loadAllSettings() {
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             loadGuildSettings();
             loadFooterQuotes();
         }
@@ -152,7 +152,7 @@ public class GuildSettingsUtils {
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
 
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
             Connection database = AirUtils.db.getConnManager().getConnection();
 
@@ -200,7 +200,7 @@ public class GuildSettingsUtils {
                 .setCustomJoinMessage(defaultMsg)
                 .setCustomPrefix(Settings.prefix);
 
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
 
             Connection database = AirUtils.db.getConnManager().getConnection();
@@ -240,7 +240,7 @@ public class GuildSettingsUtils {
         if(AirUtils.guildSettings.containsKey(g.getId())) {
             AirUtils.guildSettings.remove(g.getId());
         }
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
             Connection database = AirUtils.db.getConnManager().getConnection();
 
