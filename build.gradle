@@ -64,6 +64,9 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     //logback classic
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
+
+    //test stufzz
+    testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
 javadoc {
