@@ -18,15 +18,12 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import ml.duncte123.skybot.exceptions.VRCubeException;
+import org.kohsuke.groovy.sandbox.GroovyValueFilter;
+
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
-import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 public class EvalFilter extends GroovyValueFilter {
 
@@ -50,7 +47,7 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         /*if(o instanceof Script || o instanceof Closure)
             return o;*/
-        throw new SecurityException("Class not allowed: " + o);
+        throw new VRCubeException("Class not allowed: " + o);
     }
 
     /**
