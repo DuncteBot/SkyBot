@@ -18,7 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
-import java.awt.*;
+import java.awt.Color;
+import static java.awt.Color.RED;
 
 public class Settings {
     /**
@@ -63,5 +64,5 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = Color.RED;
+    public static final Color defaultColour = RED;
 }
