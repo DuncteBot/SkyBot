@@ -132,7 +132,7 @@ public class EvalCommand extends Command {
             if(!future.isCancelled()) future.cancel(true);
             sendError(event.getMessage());
         }
-        catch (IllegalArgumentException e3) {
+        catch (IllegalArgumentException | VRCubeException e3) {
             sendMsg(event, "ERROR: " + e3.toString());
             sendError(event.getMessage());
         }
