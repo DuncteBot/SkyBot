@@ -66,7 +66,7 @@ public class SkyBot {
                 return;
             }
         } else {
-            int startIn = 20;
+            int startIn = 10;
             AirUtils.logger.warn("No database connection is set up.");
             AirUtils.logger.warn("Please note that is is not supported and will break many features.");
             AirUtils.logger.warn("The bot will start in "+startIn+" seconds");
