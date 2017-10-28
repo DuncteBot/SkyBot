@@ -16,33 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.essentials.alpha;
+package ml.duncte123.skybot.exceptions;
 
-import com.wolfram.alpha.WAEngine;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+/**
+ * @author Duncan "duncte123" Sterken
+ *
+ * Made this for the memes
+ */
+public class VRCubeException extends SecurityException {
 
-public class WolframAlphaCommand extends Command {
-
-    @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        WAEngine engine = AirUtils.alphaEngine;
-        engine.toString();
+    public VRCubeException() {
+        super();
     }
 
-    @Override
-    public String help() {
-        return "Query Wolfram|Alpha with all your geeky questions";
+    public VRCubeException(String message) {
+        super(message);
     }
 
-    @Override
-    public String getName() {
-        return "alpha";
+    public VRCubeException(String message, Throwable cause) {
+        super(message, cause);
     }
 
-    @Override
-    public String[] getAliases() {
-        return new String[] {"wolfram", "wa", "wolframalpha"};
+    public VRCubeException(Throwable cause) {
+        super(cause);
     }
+
 }

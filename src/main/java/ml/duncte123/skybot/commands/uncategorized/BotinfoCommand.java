@@ -58,6 +58,7 @@ public class BotinfoCommand extends Command {
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("General info", "**Creator:** duncte123#1245\n" +
+                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (⌛.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
                         "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
                         "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
                         "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +

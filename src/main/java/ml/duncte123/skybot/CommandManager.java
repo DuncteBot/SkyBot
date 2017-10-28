@@ -19,7 +19,7 @@
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.commands.animals.*;
-import ml.duncte123.skybot.commands.essentials.alpha.WolframAlphaCommand;
+import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
@@ -48,7 +48,6 @@ public class CommandManager {
 
         // default commands
         this.addCommand(new HelpCommand());
-        //this.addCommand(new PingCommand());
         this.addCommand(new OneLinerCommands());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
@@ -60,6 +59,7 @@ public class CommandManager {
         this.addCommand(new TextToBrickCommand());
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
+        this.addCommand(new FlipCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());

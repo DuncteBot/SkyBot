@@ -31,16 +31,17 @@ version '3.49.1'
 sourceCompatibility = 1.8
 
 repositories {
+    jcenter()
+    // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
     maven {
         name 'jitpack'
         url 'https://jitpack.io'
     }
-    jcenter()
 }
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '05666d5' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8503ed7b' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
     //jda-nas
@@ -64,7 +65,8 @@ dependencies {
     //logback classic
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
 
-
+    //test stufzz
+    testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
 javadoc {

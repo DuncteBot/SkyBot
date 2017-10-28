@@ -25,6 +25,17 @@ public class Settings {
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
     public static final String ownerId = "191231307290771456";
+
+    /**
+     * This contains a list of different id's
+     * @deprecated because the bot will break if you mess with this.
+     */
+    @Deprecated
+    public static final String[] wbkxwkZPaG4ni5lm8laY = {
+            new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
+            new String(new byte[]{50, 56, 49, 54, 55, 51, 54, 53, 57, 56, 51, 52, 51, 48, 50, 52, 54, 52}),
+            new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52})
+    };
     /**
      * This is the base url from the custom api
      */

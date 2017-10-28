@@ -92,7 +92,6 @@ public class SkyBot {
                 .setShardTotal(TOTAL_SHARDS)
                 .setGame(Game.of("Use " + Settings.prefix + "help"))
                 .setToken(token)
-                .setLoginBackoff(550)
                 .buildAsync();
 
         if(useDatabase) {
@@ -102,11 +101,20 @@ public class SkyBot {
                 @Override
                 public void run() {
                     AirUtils.checkUnbans(mgr);
-                    GuildSettingsUtils.loadFooterQuotes();
                 }
             };
             listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
             listener.unbanTimerRunning = true;
+
+            //This handles the updating from the setting and quotes
+            TimerTask settingsTask = new TimerTask() {
+                @Override
+                public void run() {
+                    GuildSettingsUtils.loadAllSettings();
+                }
+            };
+            listener.settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
+            listener.settingsUpdateTimerRunning = true;
         }
     }
 }

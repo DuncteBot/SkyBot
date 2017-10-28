@@ -12,6 +12,7 @@
     "database": ""
   },
   "apis" : {
+    "googl" : "",
     "thecatapi": "",
     "wolframalpha": ""
   }
