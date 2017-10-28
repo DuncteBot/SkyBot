@@ -23,7 +23,6 @@ import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
 
@@ -33,7 +32,7 @@ public class EvalFilter extends GroovyValueFilter {
      * Constructor
      */
     public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toList()));
+        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
     }
 
     /**
