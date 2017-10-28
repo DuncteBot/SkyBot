@@ -22,8 +22,10 @@ import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
+
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -61,7 +63,8 @@ public class WolframAlphaCommand extends Command {
             return;
         }
         
-        event.getChannel().sendMessage(generateEmbed(result)).queue();
+        
+        sendEmbed(event, generateEmbed(result));
     }
 
     // TODO: Displaying
@@ -69,6 +72,11 @@ public class WolframAlphaCommand extends Command {
     //       |-- Custom?
     //       |-- Must display everything?
     public static MessageEmbed generateEmbed(WAQueryResult result) {
+        EmbedBuilder eb = new EmbedBuilder();
+        
+        eb.setTitle("**Input:** " + result.getQuery().getInput(),
+                result.getQuery().toWebsiteURL());
+        
         return null;
     }
 

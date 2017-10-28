@@ -139,8 +139,6 @@ public class GuildSettingsUtils {
      * @param settings the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings) {
-
-
         if(!AirUtils.guildSettings.containsKey(settings.getGuildId())) {
             registerNewGuild(guild);
             return;
