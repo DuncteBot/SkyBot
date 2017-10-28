@@ -19,11 +19,13 @@
 package ml.duncte123.skybot.exceptions;
 
 /**
- * @author Duncan "duncte123" Sterken
- *
  * Made this for the memes
+ * 
+ * @author Duncan "duncte123" Sterken
  */
 public class VRCubeException extends SecurityException {
+
+    private static final long serialVersionUID = -1411788219603361967L;
 
     public VRCubeException() {
         super();
