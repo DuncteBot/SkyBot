@@ -46,8 +46,11 @@ public class WolframAlphaCommand extends Command {
             return;
         }
         
+        // Borrowed from EvalCommand ;p
         String queryString
-            = event.getMessage().getRawContent().substring(invoke.length() + 1);
+            = event.getMessage().getRawContent()
+                    .substring(event.getMessage().getRawContent()
+                            .split(" ")[0].length());
         
         WAQuery query = engine.createQuery(queryString);
         

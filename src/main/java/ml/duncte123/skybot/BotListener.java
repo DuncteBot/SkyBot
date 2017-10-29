@@ -103,6 +103,7 @@ public class BotListener extends ListenerAdapter {
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
+        
         if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();

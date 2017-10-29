@@ -71,7 +71,8 @@ public class EvalFilter extends GroovyValueFilter {
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
-    public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+    public boolean filterArrays(String toFilter) {
+        //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return Pattern.compile(
                 // Decimals
                 "(\\[(\\s*)([0-9]*)(\\s*)\\])"
