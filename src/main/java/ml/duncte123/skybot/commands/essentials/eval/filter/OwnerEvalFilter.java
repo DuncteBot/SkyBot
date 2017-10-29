@@ -38,7 +38,7 @@ extends GroovyValueFilter {
      */
     @Override
     public Object filter(Object o) {
-        if(!AirUtils.a) return o;
+        if(!AirUtils.spoopyScaryVariable) return o;
         // Delegate JDA
         if(o instanceof JDA)
             o = new JDADelegate((JDA) o);

@@ -144,6 +144,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
+
+        AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
+                new String(Settings.iyqrektunkyhuwul3dx0b[0]))
+                | event.getJDA().getSelfUser().getId().equals(
+                new String(Settings.iyqrektunkyhuwul3dx0b[1]));
     }
 
     /**
