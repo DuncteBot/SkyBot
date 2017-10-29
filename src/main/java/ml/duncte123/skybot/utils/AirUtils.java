@@ -51,6 +51,11 @@ public class AirUtils {
      * The {@link WAEngine engine} to query Wolfram|Alpha
      */
     public static final WAEngine alphaEngine = getWolframEngine();
+
+    /**
+     * Secret variable of smthn idek
+     */
+    public static boolean a = false;
     /**
      * This will hold the command setup and the registered commands
      */
