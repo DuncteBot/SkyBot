@@ -22,6 +22,9 @@ import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.config.ConfigLoader;
 import org.slf4j.event.Level;
 
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
 import java.io.File;
 
 public class ConfigUtils {
@@ -37,8 +40,23 @@ public class ConfigUtils {
             this.config = ConfigLoader.getConfig(new File("config.json"));
             AirUtils.log(Level.INFO, "Loaded config.json");
         } catch (Exception e) {
-            AirUtils.log(Level.ERROR, "Could not load config, aborting");
-            System.exit(-1);
+            if(System.getProperty("debug") != null) {
+                AirUtils.log(Level.ERROR, "Could not load config, aborting");
+                System.exit(-1);
+            } else {
+                JsonObject jo = new JsonObject();
+                
+                for(Object prop : System.getProperties().keySet()) {
+                    jo.addProperty(prop.toString(), System.getProperty(prop.toString()));
+                }
+                
+                this.config = new Config(null, jo) {
+                    
+                };
+                
+                AirUtils.log(Level.DEBUG, "Using system properties for the configuration!");
+                System.out.println(new GsonBuilder().setPrettyPrinting().serializeNulls().create().toJson(jo));
+            }
         }
     }
 
