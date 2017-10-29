@@ -19,38 +19,41 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class CoinCommand extends Command {
-
-    public final static String help = "flips a coin.\nUsage: `"+ Settings.prefix+"coin`";
-    /**
-     * these are our images
-     */
-    private final String[] imagesArr = { "heads.png", "tails.png" };
-
+public class TagCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        String coinUrl = "https://dshelmondgames.ml/img/coin/";
 
-        event.getChannel().sendTyping().queue();
-        event.getChannel().sendMessage("*Flips a coin*").queue();
-        MessageEmbed eb = EmbedUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)]);
-        sendEmbed(event, eb);
+        if(args.length == 1) {
+
+            if(args[0].equals("help") ||  args[0].equals("?")) {
+               //TODO: help
+            } else if(args[0].equals("who") || args[0].equals("author")) {
+                //TODO: who made it
+            } else {
+                //TODO: select tag
+            }
+
+        } else if(args.length > 3 && args[0].equals("create")) {
+            //TODO: create tag
+        }
+
     }
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
-        return help;
+        return "Save it in a tag\n" +
+                "Usage: `"+this.PREFIX+getName()+" <tag_name/help/create> [tag_name] [tag contents]`";
     }
 
     @Override
     public String getName() {
-        return "coin";
+        return "tag";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"pasta", "tags", "t"};
     }
 }
