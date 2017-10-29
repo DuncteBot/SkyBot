@@ -18,14 +18,26 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import java.time.OffsetDateTime;
+
 import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
+import com.wolfram.alpha.WAImage;
+import com.wolfram.alpha.WAInfo;
+import com.wolfram.alpha.WALink;
+import com.wolfram.alpha.WAPlainText;
+import com.wolfram.alpha.WAPod;
 import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryResult;
+import com.wolfram.alpha.WASound;
+import com.wolfram.alpha.WASubpod;
+import com.wolfram.alpha.visitor.Visitable;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -67,20 +79,78 @@ public class WolframAlphaCommand extends Command {
         }
         
         
-        sendEmbed(event, generateEmbed(result));
+        sendEmbed(event, generateEmbed(event, result));
     }
 
     // TODO: Displaying
     //       |-- Need some structure
     //       |-- Custom?
     //       |-- Must display everything?
-    public static MessageEmbed generateEmbed(WAQueryResult result) {
+    /**
+     * Generates an embed for the {@link WAQueryResult result of a computation}
+     * 
+     * @param event The event
+     * @param result The result generated
+     * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
+     */
+    public static MessageEmbed generateEmbed(
+            GuildMessageReceivedEvent event,
+            WAQueryResult result) {
+        Member m = event.getMember();
         EmbedBuilder eb = new EmbedBuilder();
         
         eb.setTitle("**Input:** " + result.getQuery().getInput(),
                 result.getQuery().toWebsiteURL());
         
-        return null;
+        eb.setTimestamp(OffsetDateTime.now());
+        eb.setAuthor(m.getEffectiveName(), null, m.getUser().getAvatarUrl());
+        
+        for(WAPod pod : result.getPods()) {
+            String name = pod.getTitle();
+            
+            StringBuilder embeds = new StringBuilder();
+            
+            for(WASubpod sp : pod.getSubpods()) {
+                StringBuilder e = new StringBuilder("```\n");
+                
+                e.append("  " + sp.getTitle());
+                
+                for(Visitable v : sp.getContents()) {
+                    String d = "    ";
+                    
+                    if(v instanceof WAImage) {
+                        WAImage i = (WAImage) v;
+                        d += i.getAlt() + ": "
+                                    + WebUtils.shorten(i.getURL());
+                    } else if(v instanceof WAInfo) {
+                        WAInfo i = (WAInfo) v;
+                        
+                        d += i.getText();
+                        
+                        // TODO: Display more...
+                    } else if(v instanceof WALink) {
+                        WALink l = (WALink) v;
+                        
+                        d += l.getText() + ": " +  WebUtils.shorten(l.getURL());
+                    } else if(v instanceof WAPlainText) {
+                        WAPlainText pt = (WAPlainText) v;
+                        
+                        d += pt.getText();
+                    } else if(v instanceof WASound) {
+                        WASound sound = (WASound) v;
+                        d += WebUtils.shorten(sound.getURL());
+                    }
+                    
+                    e.append(d + "\n\n");
+                }
+                
+                embeds.append(e.toString() + "\n```\n\n");
+            }
+            
+            eb.addField(new MessageEmbed.Field(name, embeds.toString().trim(), false));
+        }
+        
+        return eb.build();
     }
 
     @Override
