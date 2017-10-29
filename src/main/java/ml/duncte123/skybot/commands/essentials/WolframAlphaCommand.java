@@ -35,6 +35,7 @@ import com.wolfram.alpha.visitor.Visitable;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -97,7 +98,7 @@ public class WolframAlphaCommand extends Command {
             GuildMessageReceivedEvent event,
             WAQueryResult result) {
         Member m = event.getMember();
-        EmbedBuilder eb = new EmbedBuilder();
+        EmbedBuilder eb = EmbedUtils.defaultEmbed();
         
         eb.setTitle("**Input:** " + result.getQuery().getInput(),
                 result.getQuery().toWebsiteURL());

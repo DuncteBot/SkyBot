@@ -18,18 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials.eval;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.kohsuke.groovy.sandbox.SandboxTransformer;
-
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.commands.essentials.eval.filter.OwnerEvalFilter;
@@ -39,6 +27,12 @@ import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
+
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
 
 public class EvalCommand extends Command {
 

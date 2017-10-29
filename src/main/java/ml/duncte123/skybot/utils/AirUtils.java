@@ -55,7 +55,7 @@ public class AirUtils {
     /**
      * Secret variable of smthn idek
      */
-    public static boolean a = false;
+    public static boolean spoopyScaryVariable = false;
     /**
      * This will hold the command setup and the registered commands
      */

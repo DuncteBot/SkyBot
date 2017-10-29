@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.parsers;
 
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -33,10 +32,6 @@ public class CommandParser {
      * @return Our {@link ml.duncte123.skybot.parsers.CommandParser.CommandContainer CommandContainer}
      */
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
-        AirUtils.a = e.getJDA().getSelfUser().getId().equals(
-                        new String(Settings.iyqrektunkyhuwul3dx0b[0]))
-                | e.getJDA().getSelfUser().getId().equals(
-                        new String(Settings.iyqrektunkyhuwul3dx0b[1]));
         
         final String[] split = rw.replaceFirst(Settings.prefix, "").split("\\s+");
         final String invoke = split[0].toLowerCase();
