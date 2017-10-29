@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
+import groovy.lang.Closure;
+import groovy.lang.Script;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
@@ -44,8 +46,8 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        /*if(o instanceof Script || o instanceof Closure)
-            return o;*/
+        if(o instanceof Script || o instanceof Closure)
+            throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
         throw new VRCubeException("Class not allowed: " + o);
     }
 
