@@ -25,6 +25,7 @@ package ml.duncte123.skybot.objects;
  */
 public class Tag {
     private String author;
+    private String authorId;
     private String name;
     private String text;
 
@@ -34,8 +35,9 @@ public class Tag {
      * @param name What is the tag called
      * @param text What to put into the tag
      */
-    public Tag(String author, String name, String text) {
+    public Tag(String author, String authorId, String name, String text) {
         this.author = author;
+        this.authorId = authorId;
         this.name = name;
         this.text = text;
     }
@@ -54,6 +56,14 @@ public class Tag {
      */
     public String getAuthor() {
         return author;
+    }
+
+    /**
+     * Returns the user id of the author
+     * @return the user id of the author
+     */
+    public String getAuthorId() {
+        return authorId;
     }
 
     /**

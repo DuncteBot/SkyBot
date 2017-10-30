@@ -18,10 +18,17 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.Map;
+
 public class TagCommand extends Command {
+
+    private Map<String, Tag> tags = AirUtils.tagsList;
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -29,13 +36,29 @@ public class TagCommand extends Command {
 
             if(args[0].equals("help") ||  args[0].equals("?")) {
                //TODO: help
-            } else if(args[0].equals("who") || args[0].equals("author")) {
-                //TODO: who made it
             } else {
-                //TODO: select tag
+                if(!tags.containsKey(args[0])) {
+                    sendMsg(event, "The tag `"+args[0]+"` does not exist.");
+                    return;
+                }
+
+                sendMsg(event, tags.get(args[0]).getText());
             }
 
-        } else if(args.length > 3 && args[0].equals("create")) {
+        } else if(args.length == 2) {
+            if( (args[0].equals("who") || args[0].equals("author"))) {
+                if(!tags.containsKey(args[1])) {
+                    sendMsg(event, "The tag `"+args[1]+"` does not exist.");
+                    return;
+                }
+
+                Tag t = tags.get(args[1]);
+
+                sendMsg(event, "The tag `"+t.getName()+"` is created by `"+t.getAuthor()+"`.");
+            } else if(args[0].equals("delete") || args[0].equals("remove")) {
+                //TODO: delete
+            }
+        } else if(args.length >= 4 && args[0].equals("create")) {
             //TODO: create tag
         }
 
@@ -44,7 +67,7 @@ public class TagCommand extends Command {
     @Override
     public String help() {
         return "Save it in a tag\n" +
-                "Usage: `"+this.PREFIX+getName()+" <tag_name/help/create> [tag_name] [tag contents]`";
+                "Usage: `"+this.PREFIX+getName()+" <tag_name/author/delete/create/help> [tag_name] [tag contents]`";
     }
 
     @Override

@@ -461,4 +461,9 @@ public class AirUtils {
         return true;
     }
 
+    public static boolean deleteTag(Tag tag) {
+        //TODO: delete tag
+        return true;
+    }
+
 }
