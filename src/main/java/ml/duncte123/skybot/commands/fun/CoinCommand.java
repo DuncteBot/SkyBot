@@ -53,9 +53,4 @@ public class CoinCommand extends Command {
     public String getName() {
         return "coin";
     }
-
-    @Override
-    public String[] getAliases() {
-        return new String[]{"flip"};
-    }
 }
