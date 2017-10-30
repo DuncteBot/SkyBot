@@ -16,31 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.exceptions;
+package ml.duncte123.skybot.command;
 
-/**
- * Made this for the memes
- * 
- * @author Duncan "duncte123" Sterken
- */
-public class VRCubeException extends SecurityException {
+import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
+import org.junit.Test;
 
-    private static final long serialVersionUID = -1411788219603361967L;
+import static org.junit.Assert.assertEquals;
 
-    public VRCubeException() {
-        super();
+public class SkybotCommandTest {
+
+    @Test
+    public void testCommandGetter() {
+        CommandManager manager = new CommandManager();
+
+        String key = "help";
+        HelpCommand value = new HelpCommand();
+
+        assertEquals("Retrieved command does not match stored command for same key",
+                value, manager.getCommand(key));
     }
-
-    public VRCubeException(String message) {
-        super(message);
-    }
-
-    public VRCubeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public VRCubeException(Throwable cause) {
-        super(cause);
-    }
-
 }

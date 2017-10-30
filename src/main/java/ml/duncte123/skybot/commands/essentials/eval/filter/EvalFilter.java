@@ -18,12 +18,13 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
+import groovy.lang.Closure;
+import groovy.lang.Script;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.util.*;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
 
@@ -33,7 +34,7 @@ public class EvalFilter extends GroovyValueFilter {
      * Constructor
      */
     public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toList()));
+        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
     }
 
     /**
@@ -45,8 +46,8 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        /*if(o instanceof Script || o instanceof Closure)
-            return o;*/
+        if(o instanceof Script || o instanceof Closure)
+            throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
         throw new VRCubeException("Class not allowed: " + o);
     }
 
@@ -72,7 +73,8 @@ public class EvalFilter extends GroovyValueFilter {
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
-    public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+    public boolean filterArrays(String toFilter) {
+        //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return Pattern.compile(
                 // Decimals
                 "(\\[(\\s*)([0-9]*)(\\s*)\\])"

@@ -132,4 +132,18 @@ public abstract class Command {
     public String toString() {
         return "Command[" + getName() + "]";
     }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null) {
+            return false;
+        }
+        if (obj.getClass() != this.getClass()) {
+            return false;
+        }
+
+        Command command = (Command) obj;
+
+        return this.help().equals(command.help()) && this.getName().equals(command.getName());
+    }
 }

@@ -139,8 +139,6 @@ public class GuildSettingsUtils {
      * @param settings the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings) {
-
-
         if(!AirUtils.guildSettings.containsKey(settings.getGuildId())) {
             registerNewGuild(guild);
             return;
@@ -184,6 +182,7 @@ public class GuildSettingsUtils {
     /**
      * This will register a new guild with their settings on bot join
      * @param g The guild that we are joining
+     * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
 

@@ -20,24 +20,23 @@ package ml.duncte123.skybot.commands.essentials.eval;
 
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
+import ml.duncte123.skybot.commands.essentials.eval.filter.OwnerEvalFilter;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 
 public class EvalCommand extends Command {
 
-    private ScriptEngine engine;
-    private GroovyShell sh;
+    private GroovyShell protected_, owner;
     private List<String> packageImports;
     private ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
     private EvalFilter filter = new EvalFilter();
@@ -47,12 +46,13 @@ public class EvalCommand extends Command {
      */
     public EvalCommand() {
         //the GroovyShell is for the public eval
-        sh = new GroovyShell(
-                new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer())
-        );
-        //ScriptEngine for owner eval
-        engine = new ScriptEngineManager(sh.getClassLoader()).getEngineByName("groovy");
-        packageImports =  Arrays.asList("java.io",
+        protected_ = new GroovyShell(
+                new CompilerConfiguration()
+                .addCompilationCustomizers(new SandboxTransformer()));
+        // Protect owner eval
+        owner = new GroovyShell( new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
+        packageImports =  Arrays.asList(
+                "java.io",
                 "java.lang",
                 "java.util",
                 "net.dv8tion.jda.core",
@@ -66,38 +66,43 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId()) ||
-                new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}).equals(event.getAuthor().getId());
+        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
+                event.getAuthor().getId()) ||
+                Settings.wbkxwkZPaG4ni5lm8laY[0].equals(event.getAuthor().getId());
 
-        ScheduledFuture<Object> future = null;
+        ScheduledFuture<?> future = null;
         try {
-
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
-                importStringBuilder.append("import ").append(s).append(".*;");
+                importStringBuilder.append("import ").append(s).append(".*;\n");
             }
 
             String script = importStringBuilder.toString() +
-                    event.getMessage().getRawContent().substring(event.getMessage().getRawContent().split(" ")[0].length())
-                            .replaceAll("getToken", "getSelfUser");
-
+                    event.getMessage().getRawContent()
+                        .substring(event.getMessage().getRawContent()
+                                .split(" ")[0].length());
+            
             int timeout = 5;
             if(isRanByBotOwner) {
                 timeout = 60;
                 
-                engine.put("commands", AirUtils.commandManager.getCommands());
+                owner.setVariable("commands", AirUtils.commandManager.getCommands());
 
-                engine.put("message", event.getMessage());
-                engine.put("channel", event.getMessage().getTextChannel());
-                engine.put("guild", event.getGuild());
-                engine.put("member", event.getMember());
-                engine.put("jda", event.getJDA());
-                engine.put("shardmanager", event.getJDA().asBot().getShardManager());
-                engine.put("event", event);
+                owner.setVariable("message", event.getMessage());
+                owner.setVariable("channel", event.getMessage().getTextChannel());
+                owner.setVariable("guild", event.getGuild());
+                owner.setVariable("member", event.getMember());
+                owner.setVariable("jda", new JDADelegate(event.getJDA()));
+                owner.setVariable("shardmanager", event.getJDA().asBot().getShardManager());
+                owner.setVariable("event", event);
 
-                engine.put("args", args);
+                owner.setVariable("args", args);
 
-                future = service.schedule(() -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+                future = service.schedule(
+                        () -> {
+                            new OwnerEvalFilter().register();
+                            return owner.evaluate(script);
+                        }, 0, TimeUnit.MILLISECONDS);
             } else {
 
                 if(filter.filterArrays(script))
@@ -107,12 +112,12 @@ public class EvalCommand extends Command {
 
                 future = service.schedule(() -> {
                     filter.register();
-                    return sh.evaluate(script);
+                    return protected_.evaluate(script);
                 }, 0, TimeUnit.MILLISECONDS);
             }
 
             Object out = future.get(timeout, TimeUnit.SECONDS);
-
+            
             if (out != null && !String.valueOf(out).isEmpty() ) {
                 sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName() + ":** " : "") + out.toString());
             } else {
@@ -132,10 +137,13 @@ public class EvalCommand extends Command {
             if(!future.isCancelled()) future.cancel(true);
             sendError(event.getMessage());
         }
-        catch (IllegalArgumentException e3) {
-            sendMsg(event, "ERROR: " + e3.toString());
+        catch (IllegalArgumentException | VRCubeException e3) {
+            sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
             sendError(event.getMessage());
+        } finally {
+            // Clear variables in owner??
         }
+        
         System.gc();
     }
 

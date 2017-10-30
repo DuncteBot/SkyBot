@@ -23,7 +23,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
 
-
 public class CommandParser {
 
     /**
@@ -33,6 +32,7 @@ public class CommandParser {
      * @return Our {@link ml.duncte123.skybot.parsers.CommandParser.CommandContainer CommandContainer}
      */
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
+        
         final String[] split = rw.replaceFirst(Settings.prefix, "").split("\\s+");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
