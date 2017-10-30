@@ -71,6 +71,7 @@ dependencies {
 
 javadoc {
     options.encoding = 'UTF-8'
+    options.addStringOption('-html5')
     exclude('ml/duncte123/skybot/commands')
     //Exclude Wolfram|Alpha
     exclude('com/wolfram/alpha',
