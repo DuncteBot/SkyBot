@@ -39,7 +39,7 @@ public class SettingsCommand extends Command {
 
         if(!AirUtils.use_database) {
             sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
-            //return;
+            return;
         }
 
         if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
