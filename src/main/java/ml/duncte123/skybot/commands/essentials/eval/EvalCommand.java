@@ -50,8 +50,7 @@ public class EvalCommand extends Command {
                 new CompilerConfiguration()
                 .addCompilationCustomizers(new SandboxTransformer()));
         // Protect owner eval
-        owner = new GroovyShell(protected_.getClassLoader(),
-                new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
+        owner = new GroovyShell( new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
         packageImports =  Arrays.asList(
                 "java.io",
                 "java.lang",
@@ -69,9 +68,9 @@ public class EvalCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
-                Settings.wbkxwkZPaG4ni5lm8laY[0].equals(event.getAuthor().getId());
+                event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
 
-        ScheduledFuture<?> future = null;
+        ScheduledFuture<Object> future = null;
         try {
             StringBuilder importStringBuilder = new StringBuilder();
             for (final String s : packageImports) {
@@ -87,7 +86,7 @@ public class EvalCommand extends Command {
             if(isRanByBotOwner) {
                 timeout = 60;
                 
-                owner.setVariable("commands", AirUtils.commandManager.getCommands());
+                owner.setVariable("commandmanager", AirUtils.commandManager);
 
                 owner.setVariable("message", event.getMessage());
                 owner.setVariable("channel", event.getMessage().getTextChannel());
@@ -143,9 +142,14 @@ public class EvalCommand extends Command {
             sendError(event.getMessage());
         } finally {
             // Clear variables in owner??
+            owner.getContext().getVariables().clear();
         }
         
         System.gc();
+    }
+
+    public void shutdown() {
+        service.shutdownNow();
     }
 
     @Override
@@ -160,6 +164,6 @@ public class EvalCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"eval™"};
+        return new String[] {"eval™", "evaluate"};
     }
 }

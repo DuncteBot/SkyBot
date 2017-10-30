@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import java.awt.Color;
+import ml.duncte123.skybot.BuildConfig;
 
 import static java.awt.Color.RED;
 
@@ -65,7 +66,7 @@ public class Settings {
     /**
      * This is the version of the bot
      */
-    public static final String version = "3.49.1";
+    public static final String version = BuildConfig.VERSION;
     /**
      * This is the name that your bot has
      */

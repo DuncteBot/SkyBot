@@ -85,7 +85,7 @@ public class BotinfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"about"};
+        return new String[]{"about", "info"};
     }
 
 }

@@ -31,6 +31,8 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;
 
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -112,6 +114,28 @@ public class CommandManager {
      * @return A list of all the commands
      */
     public Set<Command> getCommands() { return commands; }
+
+    /**
+     * This tries to get a command with the provided name/alias
+     * @param name the name of the command
+     * @return a possible null command for the name
+     */
+    public Command getCommand(String name) {
+
+        Optional<Command> cmd = commands.stream().filter(c->c.getName().equals(name)).findFirst();
+
+        if(cmd.isPresent()) {
+            return cmd.get();
+        }
+
+        cmd = commands.stream().filter(c-> Arrays.asList(c.getAliases()).contains(name) ).findFirst();
+
+        if(cmd.isPresent()) {
+            return cmd.get();
+        }
+
+        return null;
+    }
 
     /**
      * This handles adding the command
