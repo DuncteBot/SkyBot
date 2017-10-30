@@ -256,19 +256,20 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            /*if(event.getChannelJoined()!=null) {
+            if(event.getChannelJoined()!=null) {
                 if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelJoined().getMembers().size() <= 1){
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                    lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                    lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                     if(event.getGuild().getAudioManager().isConnected()){
                         event.getGuild().getAudioManager().setSendingHandler(null);
                         event.getGuild().getAudioManager().closeAudioConnection();
                     }
                 }
-            }*/
+            }
+
         }
     }
 
