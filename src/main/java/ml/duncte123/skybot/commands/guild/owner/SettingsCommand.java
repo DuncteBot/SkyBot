@@ -39,7 +39,7 @@ public class SettingsCommand extends Command {
 
         if(!AirUtils.use_database) {
             sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
-            return;
+            //return;
         }
 
         if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
@@ -70,7 +70,7 @@ public class SettingsCommand extends Command {
             boolean isEnabled = settings.isEnableJoinMessage();
             GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                     settings.setEnableJoinMessage(!isEnabled));
-            sendMsg(event, "The join message has been " + (isEnabled ? "enabled" : "disabled") + ".");
+            sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
         } else if(invoke.equals("setjoinmessage")) {
             if(args.length < 1) {
                 sendMsg(event, "Correct usage is `"+this.PREFIX+"setJoinMessage <new join message>`");
@@ -83,7 +83,7 @@ public class SettingsCommand extends Command {
             boolean isEnabled = settings.isEnableSwearFilter();
             GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                     settings.setEnableSwearFilter(!isEnabled));
-            sendMsg(event, "The swearword filter has been " + (isEnabled ? "enabled" : "disabled") + ".");
+            sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
         }
     }
 
