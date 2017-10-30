@@ -50,8 +50,7 @@ public class EvalCommand extends Command {
                 new CompilerConfiguration()
                 .addCompilationCustomizers(new SandboxTransformer()));
         // Protect owner eval
-        owner = new GroovyShell(protected_.getClassLoader(),
-                new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
+        owner = new GroovyShell( new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
         packageImports =  Arrays.asList(
                 "java.io",
                 "java.lang",

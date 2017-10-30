@@ -91,6 +91,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId()) ){
             AirUtils.log(Level.INFO,"Initialising shutdown!!!");
             event.getJDA().asBot().getShardManager().shutdown();
+            System.exit(0);
             return;
         }
 
