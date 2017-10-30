@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -31,8 +33,6 @@ import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-
-import com.wolfram.alpha.WAEngine;
 
 import java.io.IOException;
 import java.net.URL;
@@ -43,6 +43,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class AirUtils {
 
@@ -51,7 +52,6 @@ public class AirUtils {
      * The {@link WAEngine engine} to query Wolfram|Alpha
      */
     public static final WAEngine alphaEngine = getWolframEngine();
-
     /**
      * Secret variable of smthn idek
      */
@@ -76,6 +76,10 @@ public class AirUtils {
      * This will store the settings for every guild that we are in
      */
     public static Map<String, GuildSettings> guildSettings = new HashMap<>();
+    /**
+     * This stores all the tags
+     */
+    public static Map<String, Tag> tagsList = new TreeMap<>();
     /**
      * This is our audio handler
      */
@@ -446,6 +450,15 @@ public class AirUtils {
         engine.setCountryCode("USA");
 
         return engine;
+    }
+
+    public static void loadAllTags() {
+        //TODO: load tags
+    }
+
+    public static boolean registerNewTag(User author, Tag tag) {
+        //TODO: register tag
+        return true;
     }
 
 }
