@@ -23,6 +23,7 @@ import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -144,6 +145,8 @@ public class BotListener extends ListenerAdapter {
                 new String(Settings.iyqrektunkyhuwul3dx0b[0]))
                 | event.getJDA().getSelfUser().getId().equals(
                 new String(Settings.iyqrektunkyhuwul3dx0b[1]));
+
+        event.getJDA().asBot().getShardManager().setGame(Game.of("Use " + Settings.prefix + "help"));
     }
 
     @Override
