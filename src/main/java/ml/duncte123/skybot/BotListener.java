@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -150,6 +150,7 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onShutdown(ShutdownEvent event) {
+        ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
         this.unbanTimer.cancel();
         this.settingsUpdateTimer.cancel();
         this.unbanTimer.purge();

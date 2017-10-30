@@ -148,6 +148,10 @@ public class EvalCommand extends Command {
         System.gc();
     }
 
+    public void shutdown() {
+        service.shutdownNow();
+    }
+
     @Override
     public String help() {
         return "A simple eval command";
