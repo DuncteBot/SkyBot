@@ -19,21 +19,41 @@
 package ml.duncte123.skybot.command;
 
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import org.junit.Test;
 
+import java.util.Random;
+
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class SkybotCommandTest {
 
-    @Test
-    public void testCommandGetter() {
-        CommandManager manager = new CommandManager();
+    private CommandManager manager = new CommandManager();
 
+    @Test
+    public void testCommandGetterForName() {
         String key = "help";
         HelpCommand value = new HelpCommand();
 
         assertEquals("Retrieved command does not match stored command for same key",
                 value, manager.getCommand(key));
+    }
+
+    @Test
+    public void testCommandGetterForAlias() {
+        String key = "evaluate";
+        EvalCommand value = new EvalCommand();
+
+        assertEquals("Retrieved command does not match stored command for same key",
+                value, manager.getCommand(key));
+    }
+
+    @Test
+    public void testCommandGetterForNullCommand() {
+        String key = "This_SHould_Allways_return_null_for_a_command" + new Random().nextInt();
+
+        assertNull(String.format("Command getter should return null for this name (%s)", key), manager.getCommand(key));
     }
 }

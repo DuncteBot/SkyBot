@@ -150,8 +150,10 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onShutdown(ShutdownEvent event) {
-        if(this.unbanTimerRunning) this.unbanTimer.cancel();
-        if(this.settingsUpdateTimerRunning) this.settingsUpdateTimer.cancel();
+        this.unbanTimer.cancel();
+        this.settingsUpdateTimer.cancel();
+        this.unbanTimer.purge();
+        this.settingsUpdateTimer.purge();
         AirUtils.log(Level.INFO,"Shard " + event.getJDA().getShardInfo().getShardId() + " has been shut down");
     }
 
