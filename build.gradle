@@ -72,6 +72,11 @@ dependencies {
 javadoc {
     options.encoding = 'UTF-8'
     exclude('ml/duncte123/skybot/commands')
+    //Exclude Wolfram|Alpha
+    exclude('com/wolfram/alpha',
+            'com/wolfram/alpha/net',
+            'com/wolfram/alpha/impl',
+            'com/wolfram/alpha/visitor')
 }
 
 libsDirName = '../'

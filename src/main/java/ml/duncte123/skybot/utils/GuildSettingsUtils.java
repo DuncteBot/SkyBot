@@ -182,6 +182,7 @@ public class GuildSettingsUtils {
     /**
      * This will register a new guild with their settings on bot join
      * @param g The guild that we are joining
+     * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
 
