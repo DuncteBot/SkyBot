@@ -323,6 +323,7 @@ public class AirUtils {
                 logger.trace(msg);
                 break;
         }
+        logger = LoggerFactory.getLogger(Settings.defaultName);
     }
 
     /**
