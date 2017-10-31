@@ -62,6 +62,7 @@ public class CommandManager {
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());
+        this.addCommand(new TagCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
