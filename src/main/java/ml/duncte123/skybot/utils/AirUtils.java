@@ -453,7 +453,42 @@ public class AirUtils {
     }
 
     public static void loadAllTags() {
-        //TODO: load tags
+        AirUtils.log(Level.INFO, "Loading tags.");
+
+        String dbName = AirUtils.db.getName();
+
+        Connection database = AirUtils.db.getConnManager().getConnection();
+        try {
+            Statement smt = database.createStatement();
+
+            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".tags");
+
+            while (resSettings.next()) {
+                String authorId = resSettings.getString("author");
+                String author = resSettings.getString("authorId");
+                String tagName = resSettings.getString("tagName");
+                String tagText = resSettings.getString("tagText");
+
+                tagsList.put(tagName, new Tag(
+                        author,
+                        authorId,
+                        tagName,
+                        tagText
+                ));
+            }
+
+            AirUtils.log(Level.INFO, "Loaded "+ tagsList.keySet().size()+" tags.");
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
     }
 
     public static boolean registerNewTag(User author, Tag tag) {
