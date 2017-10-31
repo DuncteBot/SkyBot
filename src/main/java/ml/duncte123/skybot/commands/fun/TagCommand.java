@@ -21,8 +21,11 @@ package ml.duncte123.skybot.commands.fun;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class TagCommand extends Command {
@@ -35,7 +38,12 @@ public class TagCommand extends Command {
         if(args.length == 1) {
 
             if(args[0].equals("help") ||  args[0].equals("?")) {
-               //TODO: help
+                MessageBuilder message = new MessageBuilder()
+                        .appendCodeBlock("help => shows this\n" +
+                                "delete => removes a tag\n" +
+                                "author => displays who made the tag\n" +
+                                "create => make a new tag", "cs");
+                sendMsg(event, message.build());
             } else {
                 if(!tags.containsKey(args[0])) {
                     sendMsg(event, "The tag `"+args[0]+"` does not exist.");
@@ -56,10 +64,43 @@ public class TagCommand extends Command {
 
                 sendMsg(event, "The tag `"+t.getName()+"` is created by `"+t.getAuthor()+"`.");
             } else if(args[0].equals("delete") || args[0].equals("remove")) {
-                //TODO: delete
+                if(!tags.containsKey(args[1])) {
+                    sendMsg(event, "The tag `"+args[1]+"` does not exist.");
+                    return;
+                }
+
+                Tag t = tags.get(args[1]);
+                if(!t.getAuthorId().equals(event.getAuthor().getId())) {
+                    sendMsg(event, "You do not own this tag.");
+                    return;
+                }
+                if(AirUtils.deleteTag(t)) {
+                    sendMsg(event, "Tag has been deleted successfully");
+                } else {
+                    sendMsg(event, "Failed to delete this tag");
+                }
+
             }
-        } else if(args.length >= 4 && args[0].equals("create")) {
-            //TODO: create tag
+        } else if(args.length >= 4 && (args[0].equals("create") || args[0].equals("new"))) {
+            if(!tags.containsKey(args[1])) {
+                sendMsg(event, "The tag `"+args[1]+"` does not exist.");
+                return;
+            } else if(args[1].length() > 10) {
+                sendMsg(event, "Tag name is too long.");
+                return;
+            }
+
+            Tag newTag = new Tag(
+                    String.format("%#s", event.getAuthor()),
+                    event.getAuthor().getId(),
+                    args[1],
+                    StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ")
+            );
+            if(AirUtils.registerNewTag(event.getAuthor(), newTag)) {
+                sendMsg(event, "Tag added successfully.");
+            } else {
+                sendMsg(event, "Failed to add tag.");
+            }
         }
 
     }

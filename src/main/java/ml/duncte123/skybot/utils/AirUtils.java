@@ -458,12 +458,16 @@ public class AirUtils {
 
     public static boolean registerNewTag(User author, Tag tag) {
         //TODO: register tag
+        if(tagsList.containsKey(tag.getName()))
+            return false;
+        //TODO: insert into database
+        tagsList.put(tag.getName(), tag);
         return true;
     }
 
     public static boolean deleteTag(Tag tag) {
         //TODO: delete tag
-        return true;
+        return false;
     }
 
 }
