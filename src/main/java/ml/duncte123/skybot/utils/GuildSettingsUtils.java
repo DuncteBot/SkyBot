@@ -95,13 +95,11 @@ public class GuildSettingsUtils {
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
 
-                GuildSettings settings = new GuildSettings(guildId)
+                AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
                         .setEnableSwearFilter(enableSwearFilter)
                         .setCustomJoinMessage(joinmsg)
-                        .setCustomPrefix(prefix);
-
-                AirUtils.guildSettings.put(guildId, settings);
+                        .setCustomPrefix(prefix));
             }
 
             AirUtils.log(Level.INFO, "Loaded settings for "+ AirUtils.guildSettings.keySet().size()+" guilds.");
