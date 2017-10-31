@@ -37,7 +37,7 @@ public class SkybotCommandTest {
         String key = "help";
         HelpCommand value = new HelpCommand();
 
-        assertEquals("Retrieved command does not match stored command for same key",
+        assertEquals("Retrieved command does not match stored command for same key (Name)",
                 value, manager.getCommand(key));
     }
 
@@ -46,7 +46,7 @@ public class SkybotCommandTest {
         String key = "evaluate";
         EvalCommand value = new EvalCommand();
 
-        assertEquals("Retrieved command does not match stored command for same key",
+        assertEquals("Retrieved command does not match stored command for same key (Alias)",
                 value, manager.getCommand(key));
     }
 
