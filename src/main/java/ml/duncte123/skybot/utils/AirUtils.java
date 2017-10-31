@@ -36,10 +36,8 @@ import org.slf4j.event.Level;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -197,14 +195,13 @@ public class AirUtils {
     public static void checkUnbans(ShardManager jda) {
         log("Unban checker", Level.INFO,"Checking for users to unban");
         int usersUnbanned = 0;
-        String dbName = db.getName();
         Connection database = db.getConnManager().getConnection();
 
         try {
 
             Statement smt = database.createStatement();
 
-            ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".bans");
+            ResultSet res = smt.executeQuery("SELECT * FROM " + db.getName() + ".bans");
 
             while (res.next()) {
                 java.util.Date unbanDate = res.getTimestamp("unban_date");
@@ -224,7 +221,7 @@ public class AirUtils {
                                     res.getString("discriminator")),
                             "unbanned",
                             jda.getGuildById(res.getString("guildId")));
-                    smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
+                    smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
             log("Unban checker", Level.INFO,"Checking done, unbanned "+usersUnbanned+" users.");
@@ -452,45 +449,50 @@ public class AirUtils {
         return engine;
     }
 
+    /**
+     * Attempts to load all the tags from the database
+     */
     public static void loadAllTags() {
-        AirUtils.log(Level.INFO, "Loading tags.");
+        if(use_database) {
+            AirUtils.log(Level.INFO, "Loading tags.");
 
-        String dbName = AirUtils.db.getName();
-
-        Connection database = AirUtils.db.getConnManager().getConnection();
-        try {
-            Statement smt = database.createStatement();
-
-            ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".tags");
-
-            while (resSettings.next()) {
-                String authorId = resSettings.getString("author");
-                String author = resSettings.getString("authorId");
-                String tagName = resSettings.getString("tagName");
-                String tagText = resSettings.getString("tagText");
-
-                tagsList.put(tagName, new Tag(
-                        author,
-                        authorId,
-                        tagName,
-                        tagText
-                ));
-            }
-
-            AirUtils.log(Level.INFO, "Loaded "+ tagsList.keySet().size()+" tags.");
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            Connection database = db.getConnManager().getConnection();
             try {
-                database.close();
-            }
-            catch (SQLException e2) {
-                e2.printStackTrace();
+                Statement smt = database.createStatement();
+
+                ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
+
+                while (resultSet.next()) {
+                    String tagName = resultSet.getString("tagName");
+
+                    tagsList.put(tagName, new Tag(
+                            resultSet.getInt("id"),
+                            resultSet.getString("author"),
+                            resultSet.getString("authorId"),
+                            tagName,
+                            resultSet.getString("tagText")
+                    ));
+                }
+
+                AirUtils.log(Level.INFO, "Loaded " + tagsList.keySet().size() + " tags.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
     }
 
+    /**
+     * Attempts to register a new tag
+     * @param author The user that created the tag
+     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to add
+     * @return True if the tag is added
+     */
     public static boolean registerNewTag(User author, Tag tag) {
         //TODO: register tag
         if(tagsList.containsKey(tag.getName()))
@@ -500,8 +502,36 @@ public class AirUtils {
         return true;
     }
 
+    /**
+     * Attempts to delete a tag
+     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to delete
+     * @return true if the tag is deleted
+     */
     public static boolean deleteTag(Tag tag) {
-        //TODO: delete tag
+
+        if(use_database) {
+
+            Connection database = db.getConnManager().getConnection();
+
+            try {
+                PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
+                statement.setString(1, tag.getName());
+                return statement.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    tagsList.remove(tag.getName());
+                    database.close();
+                    logger.info("Inside finally of deleteTag");
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }
+        } else {
+            tagsList.remove(tag.getName());
+            return true;
+        }
         return false;
     }
 

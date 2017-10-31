@@ -18,12 +18,15 @@
 
 package ml.duncte123.skybot.objects;
 
+import org.apache.commons.lang3.StringUtils;
+
 /**
  * @author duncte123
  *
  * This is the model that all the tags use
  */
 public class Tag {
+    private int tagId;
     private String author;
     private String authorId;
     private String name;
@@ -35,7 +38,8 @@ public class Tag {
      * @param name What is the tag called
      * @param text What to put into the tag
      */
-    public Tag(String author, String authorId, String name, String text) {
+    public Tag(int tagId, String author, String authorId, String name, String text) {
+        this.tagId = tagId;
         this.author = author;
         this.authorId = authorId;
         this.name = name;
@@ -72,5 +76,18 @@ public class Tag {
      */
     public String getText() {
         return text;
+    }
+
+    /**
+     * Returns the tag id
+     * @return the tag id
+     */
+    public int getTagId() {
+        return tagId;
+    }
+
+    @Override
+    public String toString() {
+        return "(Tag:" + name + "["+ StringUtils.abbreviate(text, 10)+"], Author:"+authorId+")";
     }
 }

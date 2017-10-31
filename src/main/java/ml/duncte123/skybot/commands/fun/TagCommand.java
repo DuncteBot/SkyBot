@@ -89,14 +89,12 @@ public class TagCommand extends Command {
                 sendMsg(event, "Tag name is too long.");
                 return;
             }
-
-            Tag newTag = new Tag(
+            if(AirUtils.registerNewTag(event.getAuthor(), new Tag(
+                    tags.keySet().size()+1,
                     String.format("%#s", event.getAuthor()),
                     event.getAuthor().getId(),
                     args[1],
-                    StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ")
-            );
-            if(AirUtils.registerNewTag(event.getAuthor(), newTag)) {
+                    StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ")))) {
                 sendMsg(event, "Tag added successfully.");
             } else {
                 sendMsg(event, "Failed to add tag.");
