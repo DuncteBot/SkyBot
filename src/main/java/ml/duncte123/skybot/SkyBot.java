@@ -76,6 +76,9 @@ public class SkyBot {
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
 
+        //Load the tags
+        AirUtils.loadAllTags();
+
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
