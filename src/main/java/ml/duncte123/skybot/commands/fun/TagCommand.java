@@ -30,12 +30,16 @@ import java.util.Map;
 
 public class TagCommand extends Command {
 
-    private Map<String, Tag> tags = AirUtils.tagsList;
-
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
-        if(args.length == 1) {
+        if(args.length == 0) {
+            MessageBuilder message = new MessageBuilder()
+                    .appendCodeBlock("help => shows this\n" +
+                            "delete => removes a tag\n" +
+                            "author => displays who made the tag\n" +
+                            "create => make a new tag", "cs");
+            sendMsg(event, message.build());
+        } else if(args.length == 1) {
 
             if(args[0].equals("help") ||  args[0].equals("?")) {
                 MessageBuilder message = new MessageBuilder()
@@ -44,53 +48,58 @@ public class TagCommand extends Command {
                                 "author => displays who made the tag\n" +
                                 "create => make a new tag", "cs");
                 sendMsg(event, message.build());
+            } else if(args[0].equals("list")) {
+                sendMsg(event, "Here is a list of all the tags: `" + StringUtils.join(AirUtils.tagsList.keySet(), "`, `") + "`");
             } else {
-                if(!tags.containsKey(args[0])) {
+                if(!AirUtils.tagsList.containsKey(args[0])) {
                     sendMsg(event, "The tag `"+args[0]+"` does not exist.");
                     return;
                 }
 
-                sendMsg(event, tags.get(args[0]).getText());
+                sendMsg(event, AirUtils.tagsList.get(args[0]).getText());
             }
 
         } else if(args.length == 2) {
             if( (args[0].equals("who") || args[0].equals("author"))) {
-                if(!tags.containsKey(args[1])) {
+                if(!AirUtils.tagsList.containsKey(args[1])) {
                     sendMsg(event, "The tag `"+args[1]+"` does not exist.");
                     return;
                 }
 
-                Tag t = tags.get(args[1]);
+                Tag t = AirUtils.tagsList.get(args[1]);
 
                 sendMsg(event, "The tag `"+t.getName()+"` is created by `"+t.getAuthor()+"`.");
             } else if(args[0].equals("delete") || args[0].equals("remove")) {
-                if(!tags.containsKey(args[1])) {
+                if(!AirUtils.tagsList.containsKey(args[1])) {
                     sendMsg(event, "The tag `"+args[1]+"` does not exist.");
                     return;
                 }
 
-                Tag t = tags.get(args[1]);
+                Tag t = AirUtils.tagsList.get(args[1]);
                 if(!t.getAuthorId().equals(event.getAuthor().getId())) {
                     sendMsg(event, "You do not own this tag.");
                     return;
                 }
                 if(AirUtils.deleteTag(t)) {
-                    sendMsg(event, "Tag has been deleted successfully");
+                    sendMsg(event, "Tag _"+args[1]+"_ has been deleted successfully");
                 } else {
                     sendMsg(event, "Failed to delete this tag");
                 }
 
             }
-        } else if(args.length >= 4 && (args[0].equals("create") || args[0].equals("new"))) {
-            if(!tags.containsKey(args[1])) {
-                sendMsg(event, "The tag `"+args[1]+"` does not exist.");
+        } else if(args.length >= 3 && (args[0].equals("create") || args[0].equals("new"))) {
+            if(AirUtils.tagsList.containsKey(args[1])) {
+                sendMsg(event, "The tag `"+args[1]+"` already exist.");
                 return;
             } else if(args[1].length() > 10) {
                 sendMsg(event, "Tag name is too long.");
                 return;
+            } else if(args[1].contains("who") || args[1].contains("author") || args[1].contains("help") ||  args[1].contains("list") || args[1].contains("?") || args[1].contains("delete")  || args[1].contains("remove") ) {
+                sendMsg(event, "The tag name can't be `"+args[1]+"`");
+                return;
             }
             if(AirUtils.registerNewTag(event.getAuthor(), new Tag(
-                    tags.keySet().size()+1,
+                    AirUtils.tagsList.keySet().size()+1,
                     String.format("%#s", event.getAuthor()),
                     event.getAuthor().getId(),
                     args[1],

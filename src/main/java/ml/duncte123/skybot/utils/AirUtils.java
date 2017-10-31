@@ -539,14 +539,14 @@ public class AirUtils {
             try {
                 PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
                 statement.setString(1, tag.getName());
-                return statement.execute();
+                statement.execute();
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 try {
                     tagsList.remove(tag.getName());
                     database.close();
-                    logger.info("Inside finally of deleteTag");
+                    return true;
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }

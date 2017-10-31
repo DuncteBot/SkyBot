@@ -88,6 +88,6 @@ public class Tag {
 
     @Override
     public String toString() {
-        return "(Tag:" + name + "["+ StringUtils.abbreviate(text, 10)+"], Author:"+authorId+")";
+        return "(Tag:" + name + "["+ StringUtils.abbreviate(text, 30)+"], Author:"+authorId+")";
     }
 }
