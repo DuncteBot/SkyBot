@@ -494,10 +494,33 @@ public class AirUtils {
      * @return True if the tag is added
      */
     public static boolean registerNewTag(User author, Tag tag) {
-        //TODO: register tag
-        if(tagsList.containsKey(tag.getName()))
+        if(tagsList.containsKey(tag.getName())) //Return false if the tag is already here
             return false;
-        //TODO: insert into database
+
+        if(use_database) {
+            Connection database = db.getConnManager().getConnection();
+
+            try {
+                PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags VALUES(default, ? , ? , ? , ?)");
+                statement.setString(1, String.format("%#s", author));
+                statement.setString(2, author.getId());
+                statement.setString(3, tag.getName());
+                statement.setString(4, tag.getText());
+                statement.execute();
+            }
+            catch (Exception e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                try {
+                    database.close();
+                }
+                catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }
+        }
+
         tagsList.put(tag.getName(), tag);
         return true;
     }
