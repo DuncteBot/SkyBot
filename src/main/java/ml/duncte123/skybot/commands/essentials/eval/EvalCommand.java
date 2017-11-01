@@ -101,10 +101,7 @@ public class EvalCommand extends Command {
                 engine.put("args", args);
 
                 future = service.schedule(() -> {
-                    Object o = engine.eval(script);
-                    if(o instanceof JDA && AirUtils.spoopyScaryVariable)
-                        o = new JDADelegate((JDA) o);
-                    return o;
+                     return engine.eval(script);
                 }, 0, TimeUnit.MILLISECONDS);
             } else {
 
