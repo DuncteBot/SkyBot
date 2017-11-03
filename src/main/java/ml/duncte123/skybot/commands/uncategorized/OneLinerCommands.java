@@ -19,9 +19,12 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+
+import java.lang.management.ManagementFactory;
 
 /**
  * This class contains a bunch of commands that require little code to run, so we combine in this class
@@ -61,6 +64,13 @@ public class OneLinerCommands extends Command {
                         m -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg"))
                 );
                 break;
+            case "invite":
+                sendMsg(event, "Invite me with this link:\n" +
+                        "<https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=8>");
+                break;
+            case "uptime":
+                sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().getUptime(), true));
+                break;
         }
 
     }
@@ -71,7 +81,9 @@ public class OneLinerCommands extends Command {
                 "`"+this.PREFIX+"cookie` => blobnomcookie.\n" +
                 "`"+this.PREFIX+"trigger` => use when you are triggered.\n" +
                 "`"+this.PREFIX+"wam` => you need more WAM!.\n" +
-                "`"+this.PREFIX+"mineh` => HERE COMES MINEH!";
+                "`"+this.PREFIX+"mineh` => HERE COMES MINEH!\n" +
+                "`"+this.PREFIX+"invite` => gives you the bot invite\n" +
+                "`"+this.PREFIX+"uptime` => shows the bot uptime";
     }
 
     @Override
@@ -81,6 +93,6 @@ public class OneLinerCommands extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"cookie", "trigger", "wam", "mineh"};
+        return new String[]{"cookie", "trigger", "wam", "mineh", "invite", "uptime"};
     }
 }

@@ -16,35 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
-
-import java.sql.Connection;
+package ml.duncte123.skybot.exceptions;
 
 /**
- * Use abstraction to easier handle {@link DatabaseConnectionManager} for
- * databases and {@link SQLiteDatabaseConnectionManager} for file databases
+ * Made this for the memes
+ * 
+ * @author Duncan "duncte123" Sterken
  */
-public interface DBConnectionManager {
+public class VRCubeException extends SecurityException {
 
-    /**
-     * @return The connection to use
-     */
-    public Connection getConnection();
+    private static final long serialVersionUID = -1411788219603361967L;
 
-    /**
-     * @return Is the connection opened
-     */
-    public boolean isConnected();
-
-    /**
-     * @return The name of the database
-     */
-    public String getName();
-
-    /**
-     * @return Does the database have settings, default to true
-     */
-    public default boolean hasSettings() {
-        return true;
+    public VRCubeException() {
+        super();
     }
+
+    public VRCubeException(String message) {
+        super(message);
+    }
+
+    public VRCubeException(String message, Throwable cause) {
+        super(message, cause);
+    }
+
+    public VRCubeException(Throwable cause) {
+        super(cause);
+    }
+
 }
