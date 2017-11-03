@@ -72,7 +72,7 @@ public class SkyBot {
             AirUtils.logger.warn("The bot will start in "+startIn+" seconds");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
-
+        
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
 
