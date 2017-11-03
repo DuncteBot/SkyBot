@@ -33,11 +33,6 @@ public class SettingsCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!AirUtils.use_database) {
-            sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
-            return;
-        }
-
         if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
