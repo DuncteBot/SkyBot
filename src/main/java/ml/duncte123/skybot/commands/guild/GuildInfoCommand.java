@@ -74,6 +74,7 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public String help() {
+        // TODO Auto-generated method stub
         return "Show some stats";
     }
 

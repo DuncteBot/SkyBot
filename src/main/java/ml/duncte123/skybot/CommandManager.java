@@ -31,8 +31,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;
 
-import java.util.Arrays;
-import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -62,7 +60,6 @@ public class CommandManager {
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());
-        this.addCommand(new TagCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
@@ -117,28 +114,6 @@ public class CommandManager {
     public Set<Command> getCommands() { return commands; }
 
     /**
-     * This tries to get a command with the provided name/alias
-     * @param name the name of the command
-     * @return a possible null command for the name
-     */
-    public Command getCommand(String name) {
-
-        Optional<Command> cmd = commands.stream().filter(c->c.getName().equals(name)).findFirst();
-
-        if(cmd.isPresent()) {
-            return cmd.get();
-        }
-
-        cmd = commands.stream().filter(c-> Arrays.asList(c.getAliases()).contains(name) ).findFirst();
-
-        if(cmd.isPresent()) {
-            return cmd.get();
-        }
-
-        return null;
-    }
-
-    /**
      * This handles adding the command
      * @param command The command to add
      * @return true if the command is added
@@ -161,12 +136,12 @@ public class CommandManager {
     public void runCommand(CommandParser.CommandContainer parser) {
 
         for (Command c : this.getCommands()) {
-            if (parser.invoke.equalsIgnoreCase(c.getName())) {
+            if (parser.invoke.toLowerCase().startsWith(c.getName().toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(c.getName())) {
                 c.executeCommand(parser.invoke, parser.args, parser.event);
                 return;
             } else {
                 for (final String alias : c.getAliases()) {
-                    if (parser.invoke.equalsIgnoreCase(alias)) {
+                    if (parser.invoke.toLowerCase().startsWith(alias.toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(alias)) {
                         c.executeCommand(parser.invoke, parser.args, parser.event);
                         return;
                     }

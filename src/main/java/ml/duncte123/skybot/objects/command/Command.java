@@ -94,7 +94,7 @@ public abstract class Command {
      * @param embed The embed to send
      */
     protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        if(!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
+        if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;
         }
@@ -131,19 +131,5 @@ public abstract class Command {
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
-    }
-
-    @Override
-    public boolean equals(Object obj) {
-        if (obj == null) {
-            return false;
-        }
-        if (obj.getClass() != this.getClass()) {
-            return false;
-        }
-
-        Command command = (Command) obj;
-
-        return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }
 }

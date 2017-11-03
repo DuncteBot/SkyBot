@@ -33,7 +33,7 @@ public class AlpacaCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
-            
+
             Element img = doc.select("img").first();
             event.getChannel().sendFile(new URL(img.attributes().get("src")).openStream(), "Alpaca_" + System.currentTimeMillis() + ".png", null).queue();
         }

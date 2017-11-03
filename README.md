@@ -12,7 +12,6 @@ The following libraries are used:
 You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
 
 # ToDo list
-- [ ] SQLlite as a fall back database
 - [X] Make database optional
 - [X] Create Joke command
 - [X] Fix timed bans in the ban command (Turned out to be a backend issue)

@@ -64,18 +64,16 @@ public class SkyBot {
                 return;
             }
         } else {
-            int startIn = 10;
-            AirUtils.logger.warn("No database connection is set up.");
-            AirUtils.logger.warn("Please note that is is not supported and will break many features.");
+            int startIn = 5;
+            AirUtils.logger.warn("Using SQLite as the database");
+            AirUtils.logger.warn("Please note that is is not recommended and can break some features.");
+            AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             AirUtils.logger.warn("The bot will start in "+startIn+" seconds");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
-
-        //Load the tags
-        AirUtils.loadAllTags();
 
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");

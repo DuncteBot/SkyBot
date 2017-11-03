@@ -37,7 +37,7 @@ public class URLFetcher {
     // WAHttpException, HttpException, IOException
     private volatile Exception exception = null;
     
-    public static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
+    private static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
     
     // Largest result that will be allowed to be returned as a byte[] instead of in a file.
     private static final int MAX_BUFFER_SIZE = 1000000;
@@ -124,10 +124,8 @@ public class URLFetcher {
             if (wasCancelled)
                 return;
             
-            //long start = System.currentTimeMillis();
-            
-            // TODO: Output?
-            // logger.info("Downloading url " + url);
+            long start = System.currentTimeMillis();
+            logger.info("Downloading url " + url);
             
             InputStream responseStream = null;
             OutputStream outStream = null; 
@@ -190,10 +188,9 @@ public class URLFetcher {
                     downloadedFile = null;
                 }
             }
-            
-            /*
+                        
             if (exception != null) {
-                // logger.warning("Exception downloading URL " + url + ". " + exception);
+                logger.warning("Exception downloading URL " + url + ". " + exception);
             }
             
             if (wasCancelled)
@@ -202,7 +199,6 @@ public class URLFetcher {
             else
                 logger.info("Finished downloading URL " + url +
                         ". Elapsed millis: " + (System.currentTimeMillis() - start));
-            */
         } finally {
             isFinished = true;
         }

@@ -16,32 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.essentials.eval.filter;
+package skybot;
 
-import org.kohsuke.groovy.sandbox.GroovyValueFilter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
 
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
-import ml.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.JDA;
+public class SQLiteDB {
 
-public class OwnerEvalFilter
-extends GroovyValueFilter {
-
-    /**
-     * Filter:<br>
-     * <table border="1">
-     *   <tr>
-     *     <td>{@link JDA}</td> <td>{@link JDADelegate}</td>
-     *   </tr>
-     * </table>
-     *   
-     */
-    @Override
-    public Object filter(Object o) {
-        if(!AirUtils.spoopyScaryVariable) return o;
-        // Delegate JDA
-        if(o instanceof JDA)
-            o = new JDADelegate((JDA) o);
-        return o;
+    public static void main(String[] args)
+    throws Throwable {
+        String url = "jdbc:sqlite:" +
+                   System.getProperty("user.dir") + "/src/test/resources/test.db";
+        
+        System.out.println(url);
+        
+        Connection con = DriverManager.getConnection(url);
+        
+        Statement s = con.createStatement();
+        
+        s.execute("CREATE TABLE IF NOT EXISTS test (id int PRIMARY KEY)");
+        
+        s.execute("DROP TABLE test");
+        
+        s.close();
+        
+        System.out.println(con);
+        
+        con.close();
     }
 }

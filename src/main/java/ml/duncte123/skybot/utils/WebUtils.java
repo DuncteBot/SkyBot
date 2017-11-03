@@ -106,7 +106,7 @@ public class WebUtils {
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
-    public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
+    public static Response postRequest(String url, Map<String, String> postFields, AcceptType accept) {
 
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(accept.getType());
@@ -142,7 +142,7 @@ public class WebUtils {
      * @param postFields the params for the post
      * @return The {@link okhttp3.Response Response} from the webserver
      */
-    public static Response postRequest(String url, Map<String, Object> postFields) {
+    public static Response postRequest(String url, Map<String, String> postFields) {
         return postRequest(url, postFields, AcceptType.TEXT_JSON);
     }
 

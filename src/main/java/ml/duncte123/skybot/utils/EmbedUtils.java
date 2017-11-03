@@ -170,7 +170,7 @@ public class EmbedUtils {
             msg += "__"+f.getName()+"__\n"+f.getValue()+"\n\n";
         }
         if(embed.getImage()!=null) {
-            msg+= embed.getImage().getUrl() + "\n";
+            msg+= embed.getImage().getUrl();
         }
         if(embed.getFooter()!=null) {
             msg += embed.getFooter().getText();

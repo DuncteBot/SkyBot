@@ -18,80 +18,86 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
-import org.apache.commons.lang3.StringUtils;
-
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.Arrays;
+import java.util.List;
 
 public class SettingsCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!AirUtils.use_database) {
+
+        if(!AirUtils.db.isConnected()) {
             sendMsg(event, "I'm sorry, but this command requires a database to be connected.");
             return;
         }
+
+        List<String> modules = Arrays.asList("showJoinMessage", "swearFilter", "setJoinMessage", "setPrefix");
 
         if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
+
         GuildSettings settings = getSettings(event.getGuild());
 
-        if(invoke.equals("settings") || invoke.equals("options")) {
+        if(args.length < 1) {
             //true ✅
             //false ❌
             MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                    "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
-                    "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
-                    "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-                    "**Current prefix:** " + settings.getCustomPrefix()
+                            "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
+                            "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
+                            "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
+                            "**Current prefix:** " + settings.getCustomPrefix()
             );
             sendEmbed(event, message);
-        } else if(invoke.equals("setprefix")) {
-            if(args.length < 1) {
-                sendMsg(event, "Correct usage is `"+this.PREFIX+"setPrefix <new prefix>`");
-                return;
+        } else if(args.length == 1) {
+            sendMsg(event, "Incorrect usage: `" + Settings.prefix + "settings [module] [status/options]`\n\n" +
+                    "The modules are: `" + StringUtils.join(modules, ", ") + "`");
+        } else {
+            String module = args[0];
+            if(modules.contains(module)) {
+                switch (module) {
+                    case "showJoinMessage" :
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableJoinMessage(checkStatus(args[1])));
+                        break;
+                    case "swearFilter":
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setEnableSwearFilter(checkStatus(args[1])));
+                        break;
+                    case "setJoinMessage":
+                        String newJoinMsg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMsg));
+                        break;
+                    case "setPrefix":
+                        String newPrefix = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                        GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
+                        break;
+
+                    default:
+                        return;
+                }
+                sendEmbed(event, EmbedUtils.embedMessage("Settings have been updated."));
+
+            } else {
+                sendMsg(event, "Module has not been reconsigned, please choose from: `" + StringUtils.join(modules, ", ") + "`");
             }
-            String newPrefix = StringUtils.join(args);
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
-            sendMsg(event, "New prefix has been set to `"+newPrefix+"`");
-        } else if(invoke.equals("enablejoinmessage") || invoke.equals("disablejoinmessage") || invoke.equals("togglejoinmessage")) {
-            boolean isEnabled = settings.isEnableJoinMessage();
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(),
-                    settings.setEnableJoinMessage(!isEnabled));
-            sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
-        } else if(invoke.equals("setjoinmessage")) {
-            if(args.length < 1) {
-                sendMsg(event, "Correct usage is `"+this.PREFIX+"setJoinMessage <new join message>`");
-                return;
-            }
-            String newJoinMessage = StringUtils.join(args);
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
-            sendMsg(event, "The new join message has been set to `"+newJoinMessage+"`");
-        } else if(invoke.equals("enableswearfilter") || invoke.equals("disableswearfilter") || invoke.equals("toggleswearfilter")) {
-            boolean isEnabled = settings.isEnableSwearFilter();
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(),
-                    settings.setEnableSwearFilter(!isEnabled));
-            sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
         }
+
     }
 
     @Override
     public String help() {
-        return "Modify the settings on the bot.\n" +
-                "`"+this.PREFIX+"settings` => Shows the current settings\n" +
-                "`"+this.PREFIX+"setPrefix <prefix>` => Sets the new prefix\n" +
-                "`"+this.PREFIX+"setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
-                "`"+this.PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
-                "`"+this.PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n"
-                ;
+        return "Modify the settings on the bot";
     }
 
     @Override
@@ -101,15 +107,14 @@ public class SettingsCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"options",
-                "enablejoinmessage",
-                "togglejoinmessage",
-                "disablejoinmessage",
-                "setjoinmessage",
-                "enableswearfilter",
-                "disableswearfilter",
-                "toggleswearfilter",
-                "setprefix"
-        };
+        return new String[]{"options"};
+    }
+
+    private boolean checkStatus(String toCHeck) {
+        try {
+            return (Integer.parseInt(toCHeck.replaceAll("[^0-9]", "")) >= 1);
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 }

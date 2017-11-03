@@ -23,7 +23,12 @@ import ml.duncte123.skybot.utils.AirUtils;
 import java.sql.Connection;
 import java.sql.DriverManager;
 
-public class DatabaseConnectionManager {
+/**
+ * Represents a server database
+ *
+ */
+class DatabaseConnectionManager
+implements DBConnectionManager {
 
     private final String dbHost;
     private final String user;
@@ -79,5 +84,15 @@ public class DatabaseConnectionManager {
         catch (Exception e) {
             return false;
         }
+    }
+
+    @Override
+    public boolean isConnected() {
+        return checkDbConn();
+    }
+
+    @Override
+    public String getName() {
+        return getDbName();
     }
 }

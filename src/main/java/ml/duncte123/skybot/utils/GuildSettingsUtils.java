@@ -29,7 +29,7 @@ public class GuildSettingsUtils {
      * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
      */
     public static void loadAllSettings() {
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             loadGuildSettings();
             loadFooterQuotes();
         }
@@ -95,11 +95,13 @@ public class GuildSettingsUtils {
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
 
-                AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
+                GuildSettings settings = new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
                         .setEnableSwearFilter(enableSwearFilter)
                         .setCustomJoinMessage(joinmsg)
-                        .setCustomPrefix(prefix));
+                        .setCustomPrefix(prefix);
+
+                AirUtils.guildSettings.put(guildId, settings);
             }
 
             AirUtils.log(Level.INFO, "Loaded settings for "+ AirUtils.guildSettings.keySet().size()+" guilds.");
@@ -137,6 +139,8 @@ public class GuildSettingsUtils {
      * @param settings the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings) {
+
+
         if(!AirUtils.guildSettings.containsKey(settings.getGuildId())) {
             registerNewGuild(guild);
             return;
@@ -148,7 +152,7 @@ public class GuildSettingsUtils {
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
 
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
             Connection database = AirUtils.db.getConnManager().getConnection();
 
@@ -180,7 +184,6 @@ public class GuildSettingsUtils {
     /**
      * This will register a new guild with their settings on bot join
      * @param g The guild that we are joining
-     * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
 
@@ -197,7 +200,7 @@ public class GuildSettingsUtils {
                 .setCustomJoinMessage(defaultMsg)
                 .setCustomPrefix(Settings.prefix);
 
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
 
             Connection database = AirUtils.db.getConnManager().getConnection();
@@ -237,7 +240,7 @@ public class GuildSettingsUtils {
         if(AirUtils.guildSettings.containsKey(g.getId())) {
             AirUtils.guildSettings.remove(g.getId());
         }
-        if(AirUtils.use_database) {
+        if(AirUtils.db.isConnected()) {
             String dbName = AirUtils.db.getName();
             Connection database = AirUtils.db.getConnManager().getConnection();
 
