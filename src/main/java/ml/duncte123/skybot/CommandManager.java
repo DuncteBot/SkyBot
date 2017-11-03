@@ -62,6 +62,7 @@ public class CommandManager {
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());
+        this.addCommand(new TagCommand());
 
         //animal commands
         this.addCommand(new LlamaCommand());
@@ -160,12 +161,12 @@ public class CommandManager {
     public void runCommand(CommandParser.CommandContainer parser) {
 
         for (Command c : this.getCommands()) {
-            if (parser.invoke.toLowerCase().startsWith(c.getName().toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(c.getName())) {
+            if (parser.invoke.equalsIgnoreCase(c.getName())) {
                 c.executeCommand(parser.invoke, parser.args, parser.event);
                 return;
             } else {
                 for (final String alias : c.getAliases()) {
-                    if (parser.invoke.toLowerCase().startsWith(alias.toLowerCase() + ' ') || parser.invoke.equalsIgnoreCase(alias)) {
+                    if (parser.invoke.equalsIgnoreCase(alias)) {
                         c.executeCommand(parser.invoke, parser.args, parser.event);
                         return;
                     }

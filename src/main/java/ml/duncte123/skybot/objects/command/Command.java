@@ -94,7 +94,7 @@ public abstract class Command {
      * @param embed The embed to send
      */
     protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
+        if(!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(event, EmbedUtils.embedToMessage(embed));
             return;
         }

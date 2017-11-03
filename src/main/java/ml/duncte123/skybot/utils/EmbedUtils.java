@@ -70,7 +70,7 @@ public class EmbedUtils {
 
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(Settings.defaultColour);
-                if(AirUtils.use_database) {
+                if(AirUtils.nonsqlite) {
                     //Get a random index from the quotes
                     int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
                     //Get the quote as a string
@@ -170,7 +170,7 @@ public class EmbedUtils {
             msg += "__"+f.getName()+"__\n"+f.getValue()+"\n\n";
         }
         if(embed.getImage()!=null) {
-            msg+= embed.getImage().getUrl();
+            msg+= embed.getImage().getUrl() + "\n";
         }
         if(embed.getFooter()!=null) {
             msg += embed.getFooter().getText();

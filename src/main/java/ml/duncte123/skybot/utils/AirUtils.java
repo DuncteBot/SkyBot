@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -32,17 +34,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import com.wolfram.alpha.WAEngine;
-
 import java.io.IOException;
 import java.net.URL;
+import java.sql.*;
 import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
+import java.util.TreeMap;
 
 public class AirUtils {
 
@@ -51,7 +50,6 @@ public class AirUtils {
      * The {@link WAEngine engine} to query Wolfram|Alpha
      */
     public static final WAEngine alphaEngine = getWolframEngine();
-
     /**
      * Secret variable of smthn idek
      */
@@ -65,17 +63,17 @@ public class AirUtils {
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
     /**
-     * This is our database manager, it is a util for the connection
+     * This holds the value if we should use a non-SQLite database
      */
-    public static DBManager db = new DBManager();
-    /**
-     * This holds the value if we should use tha database
-     */
-    public static boolean use_database = true;
+    public static boolean nonsqlite = config.getBoolean("use_database", false);;
     /**
      * This will store the settings for every guild that we are in
      */
     public static Map<String, GuildSettings> guildSettings = new HashMap<>();
+    /**
+     * This stores all the tags
+     */
+    public static Map<String, Tag> tagsList = new TreeMap<>();
     /**
      * This is our audio handler
      */
@@ -84,6 +82,10 @@ public class AirUtils {
      * This helps us to make the coinflip command and the footer quotes work
      */
     public static Random rand = new Random();
+    /**
+     * This is our database manager, it is a util for the connection
+     */
+    public static DBManager db = new DBManager();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -193,14 +195,13 @@ public class AirUtils {
     public static void checkUnbans(ShardManager jda) {
         log("Unban checker", Level.INFO,"Checking for users to unban");
         int usersUnbanned = 0;
-        String dbName = db.getName();
         Connection database = db.getConnManager().getConnection();
 
         try {
 
             Statement smt = database.createStatement();
 
-            ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".bans");
+            ResultSet res = smt.executeQuery("SELECT * FROM " + db.getName() + ".bans");
 
             while (res.next()) {
                 java.util.Date unbanDate = res.getTimestamp("unban_date");
@@ -220,7 +221,7 @@ public class AirUtils {
                                     res.getString("discriminator")),
                             "unbanned",
                             jda.getGuildById(res.getString("guildId")));
-                    smt.execute("DELETE FROM " + dbName + ".bans WHERE id="+res.getInt("id")+"");
+                    smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
             log("Unban checker", Level.INFO,"Checking done, unbanned "+usersUnbanned+" users.");
@@ -323,6 +324,7 @@ public class AirUtils {
                 logger.trace(msg);
                 break;
         }
+        logger = LoggerFactory.getLogger(Settings.defaultName);
     }
 
     /**
@@ -446,6 +448,106 @@ public class AirUtils {
         engine.setCountryCode("USA");
 
         return engine;
+    }
+
+    /**
+     * Attempts to load all the tags from the database
+     */
+    public static void loadAllTags() {
+        AirUtils.log(Level.INFO, "Loading tags.");
+
+        Connection database = db.getConnManager().getConnection();
+        try {
+            Statement smt = database.createStatement();
+
+            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
+
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("tagName");
+
+                tagsList.put(tagName, new Tag(
+                        resultSet.getInt("id"),
+                        resultSet.getString("author"),
+                        resultSet.getString("authorId"),
+                        tagName,
+                        resultSet.getString("tagText")
+                ));
+            }
+
+            AirUtils.log(Level.INFO, "Loaded " + tagsList.keySet().size() + " tags.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                database.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * Attempts to register a new tag
+     * @param author The user that created the tag
+     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to add
+     * @return True if the tag is added
+     */
+    public static boolean registerNewTag(User author, Tag tag) {
+        if(tagsList.containsKey(tag.getName())) //Return false if the tag is already here
+            return false;
+
+        Connection database = db.getConnManager().getConnection();
+
+        try {
+            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
+                    "VALUES(? , ? , ? , ?)");
+            statement.setString(1, String.format("%#s", author));
+            statement.setString(2, author.getId());
+            statement.setString(3, tag.getName());
+            statement.setString(4, tag.getText());
+            statement.execute();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                database.close();
+            }
+            catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+
+        tagsList.put(tag.getName(), tag);
+        return true;
+    }
+
+    /**
+     * Attempts to delete a tag
+     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to delete
+     * @return true if the tag is deleted
+     */
+    public static boolean deleteTag(Tag tag) {
+
+        Connection database = db.getConnManager().getConnection();
+
+        try {
+            PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
+            statement.setString(1, tag.getName());
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                tagsList.remove(tag.getName());
+                database.close();
+                return true;
+            } catch (SQLException e2) {
+                e2.printStackTrace();
+            }
+        }
+        return false;
     }
 
 }

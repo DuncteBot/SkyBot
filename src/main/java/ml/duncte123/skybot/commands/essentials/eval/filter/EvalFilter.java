@@ -31,6 +31,24 @@ public class EvalFilter extends GroovyValueFilter {
     private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
 
     /**
+     * Filter arrays of 
+     * 
+     * @author ramidzkh
+     */
+    public static final Pattern ARRAY_FILTER =
+            Pattern.compile(
+                    // Case insensitive
+                    "(?i)"
+                    // Decimals and Octals
+                    + "((\\[(\\s*[0-9]+\\s*)\\])"
+                    // Binary
+                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
+                    // Hexadecimal
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
+            MENTION_FILTER = 
+                Pattern.compile("<@[0-9]{18}>");
+
+    /**
      * Constructor
      */
     public EvalFilter() {
@@ -75,13 +93,7 @@ public class EvalFilter extends GroovyValueFilter {
      */
     public boolean filterArrays(String toFilter) {
         //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
-        return Pattern.compile(
-                // Decimals
-                "(\\[(\\s*)([0-9]*)(\\s*)\\])"
-                // Hex
-                + "|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\])"
-                // Matcher and find ;)
-                        ).matcher(toFilter).find();
+        return ARRAY_FILTER.matcher(toFilter).find();
     }
 
     /**
@@ -119,5 +131,9 @@ public class EvalFilter extends GroovyValueFilter {
             List.class,
             ArrayList.class
     };
+
+    public boolean containsMentions(String string) {
+        return MENTION_FILTER.matcher(string).find();
+    }
 
 }
