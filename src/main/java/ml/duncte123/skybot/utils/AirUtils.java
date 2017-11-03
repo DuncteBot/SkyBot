@@ -63,13 +63,9 @@ public class AirUtils {
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
     /**
-     * This is our database manager, it is a util for the connection
+     * This holds the value if we should use a non-SQLite database
      */
-    public static DBManager db = new DBManager();
-    /**
-     * This holds the value if we should use tha database
-     */
-    public static boolean use_database = true;
+    public static boolean nonsqlite = config.getBoolean("use_database", false);;
     /**
      * This will store the settings for every guild that we are in
      */
@@ -86,6 +82,10 @@ public class AirUtils {
      * This helps us to make the coinflip command and the footer quotes work
      */
     public static Random rand = new Random();
+    /**
+     * This is our database manager, it is a util for the connection
+     */
+    public static DBManager db = new DBManager();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -454,36 +454,34 @@ public class AirUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        if(use_database) {
-            AirUtils.log(Level.INFO, "Loading tags.");
+        AirUtils.log(Level.INFO, "Loading tags.");
 
-            Connection database = db.getConnManager().getConnection();
+        Connection database = db.getConnManager().getConnection();
+        try {
+            Statement smt = database.createStatement();
+
+            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
+
+            while (resultSet.next()) {
+                String tagName = resultSet.getString("tagName");
+
+                tagsList.put(tagName, new Tag(
+                        resultSet.getInt("id"),
+                        resultSet.getString("author"),
+                        resultSet.getString("authorId"),
+                        tagName,
+                        resultSet.getString("tagText")
+                ));
+            }
+
+            AirUtils.log(Level.INFO, "Loaded " + tagsList.keySet().size() + " tags.");
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             try {
-                Statement smt = database.createStatement();
-
-                ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
-
-                while (resultSet.next()) {
-                    String tagName = resultSet.getString("tagName");
-
-                    tagsList.put(tagName, new Tag(
-                            resultSet.getInt("id"),
-                            resultSet.getString("author"),
-                            resultSet.getString("authorId"),
-                            tagName,
-                            resultSet.getString("tagText")
-                    ));
-                }
-
-                AirUtils.log(Level.INFO, "Loaded " + tagsList.keySet().size() + " tags.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    database.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
+                database.close();
+            } catch (SQLException e2) {
+                e2.printStackTrace();
             }
         }
     }
@@ -498,27 +496,26 @@ public class AirUtils {
         if(tagsList.containsKey(tag.getName())) //Return false if the tag is already here
             return false;
 
-        if(use_database) {
-            Connection database = db.getConnManager().getConnection();
+        Connection database = db.getConnManager().getConnection();
 
+        try {
+            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
+                    "VALUES(? , ? , ? , ?)");
+            statement.setString(1, String.format("%#s", author));
+            statement.setString(2, author.getId());
+            statement.setString(3, tag.getName());
+            statement.setString(4, tag.getText());
+            statement.execute();
+        }
+        catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        } finally {
             try {
-                PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags VALUES(default, ? , ? , ? , ?)");
-                statement.setString(1, String.format("%#s", author));
-                statement.setString(2, author.getId());
-                statement.setString(3, tag.getName());
-                statement.setString(4, tag.getText());
-                statement.execute();
+                database.close();
             }
-            catch (Exception e) {
-                e.printStackTrace();
-                return false;
-            } finally {
-                try {
-                    database.close();
-                }
-                catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
+            catch (SQLException e2) {
+                e2.printStackTrace();
             }
         }
 
@@ -533,28 +530,22 @@ public class AirUtils {
      */
     public static boolean deleteTag(Tag tag) {
 
-        if(use_database) {
+        Connection database = db.getConnManager().getConnection();
 
-            Connection database = db.getConnManager().getConnection();
-
+        try {
+            PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
+            statement.setString(1, tag.getName());
+            statement.execute();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
             try {
-                PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
-                statement.setString(1, tag.getName());
-                statement.execute();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    tagsList.remove(tag.getName());
-                    database.close();
-                    return true;
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
+                tagsList.remove(tag.getName());
+                database.close();
+                return true;
+            } catch (SQLException e2) {
+                e2.printStackTrace();
             }
-        } else {
-            tagsList.remove(tag.getName());
-            return true;
         }
         return false;
     }
