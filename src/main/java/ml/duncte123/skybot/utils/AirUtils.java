@@ -60,13 +60,9 @@ public class AirUtils {
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
     /**
-     * This is our database manager, it is a util for the connection
-     */
-    public static DBManager db = new DBManager();
-    /**
      * This holds the value if we should use a non-SQLite database
      */
-    public static boolean nonsqlite = true;
+    public static boolean nonsqlite = config.getBoolean("use_database", false);;
     /**
      * This will store the settings for every guild that we are in
      */
@@ -79,6 +75,10 @@ public class AirUtils {
      * This helps us to make the coinflip command and the footer quotes work
      */
     public static Random rand = new Random();
+    /**
+     * This is our database manager, it is a util for the connection
+     */
+    public static DBManager db = new DBManager();
 
     /**
      * This converts the online status of a user to a fancy emote

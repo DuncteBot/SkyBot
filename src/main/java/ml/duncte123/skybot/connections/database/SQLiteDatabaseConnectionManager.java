@@ -20,8 +20,11 @@ package ml.duncte123.skybot.connections.database;
 
 import java.io.File;
 import java.sql.Connection;
+import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Properties;
+import java.util.regex.Pattern;
 
 import org.sqlite.JDBC;
 
@@ -50,13 +53,16 @@ implements DBConnectionManager {
      * @param file The file where to create or load the database
      */
     SQLiteDatabaseConnectionManager(File file) {
-        url = "jdbc:sqlite:" + file.getAbsolutePath();
+        url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
+            Class.forName("org.sqlite.JDBC");
             con = JDBC.createConnection(url, new Properties());
+            //con = DriverManager.getConnection(url);
             
             // Create it
             con.getMetaData().getURL();
-        } catch (SQLException e) {
+            innitDB(con);
+        } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
             con = null;
         }
@@ -67,7 +73,13 @@ implements DBConnectionManager {
      */
     @Override
     public Connection getConnection() {
-        return con;
+        try {
+            Class.forName("org.sqlite.JDBC");
+            return isConnected() ? con : JDBC.createConnection(url, new Properties());
+        } catch (ClassNotFoundException | SQLException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
     /**
@@ -90,7 +102,7 @@ implements DBConnectionManager {
      */
     @Override
     public String getName() {
-        return url;
+        return "main"; //SQLlite uses 'main' as name for the database
     }
 
     /**
@@ -99,5 +111,43 @@ implements DBConnectionManager {
     @Override
     public boolean hasSettings() {
         return con != null;
+    }
+
+    /**
+     * This sets up the database and inserts the tables if they are not there
+     * @param connection the connection to use
+     */
+    private void innitDB(Connection connection) {
+        try {
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS guildSettings " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guildId TEXT NOT NULL," +
+                    "guildName TEXT NOT NULL," +
+                    "prefix VARCHAR(255) NOT NULL DEFAULT '/'," +
+                    "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                    "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                    "customWelcomeMessage TEXT NOT NULL);" +
+
+                    "CREATE TABLE IF NOT EXISTS bans" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "modUserId VARCHAR(255) NOT NULL," +
+                    "userId VARCHAR(255) NOT NULL," +
+                    "Username VARCHAR(255) NOT NULL," +
+                    "discriminator VARCHAR(4) NOT NULL," +
+                    "ban_date DATETIME NOT NULL," +
+                    "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                    "guildId VARCHAR(255) nOT NULL);" +
+
+                    "CREATE TABLE IF NOT EXISTS tags" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "author VARCHAR(255) NOT NULL," +
+                    "authorId VARCHAR(255) NOT NULL," +
+                    "tagName VARCHAR(10) NOT NULL," +
+                    "tagText TEXT NOT NULL);"
+            );
+        }
+        catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

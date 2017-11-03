@@ -50,10 +50,8 @@ public class SkyBot {
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
 
-        //we check if we need to use the db first
-        boolean useDatabase = AirUtils.config.getBoolean("use_database", false);
         //Set the value for other classes to use
-        AirUtils.nonsqlite = useDatabase;
+        boolean useDatabase = AirUtils.nonsqlite;
         if(useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");

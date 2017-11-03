@@ -48,6 +48,7 @@ public class DBManager {
 
     private static DBConnectionManager createDBManager() {
         if(AirUtils.nonsqlite) return new DatabaseConnectionManager();
+        System.out.println("Using SQLite");
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
 
