@@ -28,7 +28,7 @@ group = 'ml.duncte123.skybot'
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.49.4'
+version '3.50.0'
 
 sourceCompatibility = 1.8
 
