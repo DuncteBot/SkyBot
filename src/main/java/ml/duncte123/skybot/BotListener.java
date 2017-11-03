@@ -18,15 +18,17 @@
 
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -36,6 +38,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.event.Level;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Timer;
 import java.util.concurrent.TimeUnit;
@@ -86,22 +89,16 @@ public class BotListener extends ListenerAdapter {
 
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
-        if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && event.getAuthor().getId().equals(Settings.ownerId)){
-            AirUtils.log(Level.INFO,"Shutting down!!!");
-            if(this.unbanTimerRunning) this.unbanTimer.cancel();
-            if(this.settingsUpdateTimerRunning) this.settingsUpdateTimer.cancel();
-            ShardManager manager = event.getJDA().asBot().getShardManager();
-            for(int i = 0; i < manager.getAmountOfTotalShards(); i++) {
-                manager.getShardCache().getElementById(i).shutdown();
-                AirUtils.log(Level.INFO,"Shard " + i + " has been shut down");
-            }
-            System.exit(0);
+        if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId()) ){
+            AirUtils.log(Level.INFO,"Initialising shutdown!!!");
+            event.getJDA().asBot().getShardManager().shutdown();
             return;
         }
 
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
+        
         if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();
@@ -142,6 +139,23 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
+
+        AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
+                new String(Settings.iyqrektunkyhuwul3dx0b[0]))
+                | event.getJDA().getSelfUser().getId().equals(
+                new String(Settings.iyqrektunkyhuwul3dx0b[1]));
+
+        event.getJDA().asBot().getShardManager().setGame(Game.of("Use " + Settings.prefix + "help"));
+    }
+
+    @Override
+    public void onShutdown(ShutdownEvent event) {
+        ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
+        this.unbanTimer.cancel();
+        this.settingsUpdateTimer.cancel();
+        this.unbanTimer.purge();
+        this.settingsUpdateTimer.purge();
+        AirUtils.log(Level.INFO,"Shard " + event.getJDA().getShardInfo().getShardId() + " has been shut down");
     }
 
     /**
@@ -243,19 +257,20 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            /*if(event.getChannelJoined()!=null) {
+            if(event.getChannelJoined()!=null) {
                 if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelJoined().getMembers().size() <= 1){
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                    lastGuildChannel.get(event.getGuild()).sendMessage(AirUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
+                    lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
                     if(event.getGuild().getAudioManager().isConnected()){
                         event.getGuild().getAudioManager().setSendingHandler(null);
                         event.getGuild().getAudioManager().closeAudioConnection();
                     }
                 }
-            }*/
+            }
+
         }
     }
 

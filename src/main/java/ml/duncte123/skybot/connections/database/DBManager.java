@@ -18,10 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import java.io.File;
 import java.sql.Connection;
-
-import ml.duncte123.skybot.utils.AirUtils;
 
 public class DBManager {
 
@@ -29,26 +26,25 @@ public class DBManager {
      * This is the database name
      */
     private final String name;
-
     /**
      * This is true if we are connected to the database
      */
     private final boolean isConnected;
+    /**
+     * This will hold our connection
+     */
+    private final Connection connection;
 
-    public final DBConnectionManager connManager;
+    public final DatabaseConnectionManager connManager;
 
     /**
      * This will set our stuff up
      */
     public DBManager() {
-        this.connManager = createDBManager();
-        this.isConnected = connManager.isConnected();
-        this.name = connManager.getName();
-    }
-
-    private static DBConnectionManager createDBManager() {
-        if(AirUtils.nonsqlite) return new DatabaseConnectionManager();
-        return new SQLiteDatabaseConnectionManager(new File("database.db"));
+        this.connManager = new DatabaseConnectionManager();
+        this.isConnected = connManager.checkDbConn();
+        this.name = connManager.getDbName();
+        this.connection = connManager.getConnection();
     }
 
     /**
@@ -75,14 +71,14 @@ public class DBManager {
      */
     @Deprecated
     public Connection getConnection() {
-        return connManager.getConnection();
+        return this.connection;
     }
 
     /**
      * Returns the connection manager
-     * @return the {@link ml.duncte123.skybot.connections.database.DBConnectionManager DatabaseConnectionManager}
+     * @return the {@link ml.duncte123.skybot.connections.database.DatabaseConnectionManager DatabaseConnectionManager}
      */
-    public DBConnectionManager getConnManager() {
+    public DatabaseConnectionManager getConnManager() {
         return connManager;
     }
 }

@@ -18,15 +18,17 @@
 
 plugins {
     id'java'
+    id'idea'
     id'application'
     id'com.github.johnrengelman.shadow' version '2.0.1'
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
-group = 'ml.duncte123'
+group = 'ml.duncte123.skybot'
 
 mainClassName = 'ml.duncte123.skybot.SkyBot'
 
-version '3.49.1'
+version '3.49.4'
 
 sourceCompatibility = 1.8
 
@@ -37,6 +39,14 @@ repositories {
         name 'jitpack'
         url 'https://jitpack.io'
     }
+}
+
+buildConfig {
+    appName = project.name
+    version = project.version
+    clsName = 'BuildConfig'
+    packageName = project.group
+    charset = 'UTF-8'
 }
 
 dependencies {
@@ -64,14 +74,20 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     //logback classic
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
-    
-    // SQLite
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
+
+    //test stufzz
+    testCompile group: 'junit', name: 'junit', version:'4.12'
 }
 
 javadoc {
     options.encoding = 'UTF-8'
+    options.addStringOption('-html5')
     exclude('ml/duncte123/skybot/commands')
+    //Exclude Wolfram|Alpha
+    exclude('com/wolfram/alpha',
+            'com/wolfram/alpha/net',
+            'com/wolfram/alpha/impl',
+            'com/wolfram/alpha/visitor')
 }
 
 libsDirName = '../'

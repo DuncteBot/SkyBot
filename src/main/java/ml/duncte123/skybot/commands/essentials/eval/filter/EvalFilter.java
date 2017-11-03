@@ -18,25 +18,41 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
-
+import groovy.lang.Closure;
+import groovy.lang.Script;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
+
+import java.util.*;
+import java.util.regex.Pattern;
 
 public class EvalFilter extends GroovyValueFilter {
 
     private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
 
     /**
+     * Filter arrays of 
+     * 
+     * @author ramidzkh
+     */
+    public static final Pattern ARRAY_FILTER =
+            Pattern.compile(
+                    // Case insensitive
+                    "(?i)"
+                    // Decimals and Octals
+                    + "((\\[(\\s*[0-9]+\\s*)\\])"
+                    // Binary
+                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
+                    // Hexadecimal
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
+            MENTION_FILTER = 
+                Pattern.compile("<@[0-9]{18}>");
+
+    /**
      * Constructor
      */
     public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toList()));
+        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
     }
 
     /**
@@ -48,9 +64,9 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        /*if(o instanceof Script || o instanceof Closure)
-            return o;*/
-        throw new SecurityException("Class not allowed: " + o);
+        if(o instanceof Script || o instanceof Closure)
+            throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
+        throw new VRCubeException("Class not allowed: " + o);
     }
 
     /**
@@ -75,14 +91,9 @@ public class EvalFilter extends GroovyValueFilter {
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
-    public boolean filterArrays(String toFilter) { //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
-        return Pattern.compile(
-                // Decimals
-                "(\\[(\\s*)([0-9]*)(\\s*)\\])"
-                // Hex
-                + "|(\\[(\\s*)(0(x|X)([0-9a-fA-F]*))(\\s*)\\])"
-                // Matcher and find ;)
-                        ).matcher(toFilter).find();
+    public boolean filterArrays(String toFilter) {
+        //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+        return ARRAY_FILTER.matcher(toFilter).find();
     }
 
     /**
@@ -120,5 +131,9 @@ public class EvalFilter extends GroovyValueFilter {
             List.class,
             ArrayList.class
     };
+
+    public boolean containsMentions(String string) {
+        return MENTION_FILTER.matcher(string).find();
+    }
 
 }
