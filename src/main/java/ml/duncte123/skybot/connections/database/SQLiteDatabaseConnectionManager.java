@@ -136,7 +136,7 @@ implements DBConnectionManager {
                     "discriminator VARCHAR(4) NOT NULL," +
                     "ban_date DATETIME NOT NULL," +
                     "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                    "guildId VARCHAR(255) nOT NULL);" +
+                    "guildId VARCHAR(255) NOT NULL);" +
 
                     "CREATE TABLE IF NOT EXISTS tags" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
