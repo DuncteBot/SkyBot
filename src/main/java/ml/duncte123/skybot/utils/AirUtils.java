@@ -499,7 +499,8 @@ public class AirUtils {
         Connection database = db.getConnManager().getConnection();
 
         try {
-            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags VALUES(default, ? , ? , ? , ?)");
+            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
+                    "VALUES(? , ? , ? , ?)");
             statement.setString(1, String.format("%#s", author));
             statement.setString(2, author.getId());
             statement.setString(3, tag.getName());

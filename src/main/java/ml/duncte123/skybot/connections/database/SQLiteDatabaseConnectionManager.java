@@ -118,6 +118,7 @@ implements DBConnectionManager {
      * @param connection the connection to use
      */
     private void innitDB(Connection connection) {
+        //Not to self: SQLite doesn't have multi line queries
         try {
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS guildSettings " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
@@ -126,9 +127,16 @@ implements DBConnectionManager {
                     "prefix VARCHAR(255) NOT NULL DEFAULT '/'," +
                     "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                     "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                    "customWelcomeMessage TEXT NOT NULL);" +
+                    "customWelcomeMessage TEXT NOT NULL);");
 
-                    "CREATE TABLE IF NOT EXISTS bans" +
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "author VARCHAR(255) NOT NULL," +
+                    "authorId VARCHAR(255) NOT NULL," +
+                    "tagName VARCHAR(10) NOT NULL," +
+                    "tagText TEXT NOT NULL);");
+
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "modUserId VARCHAR(255) NOT NULL," +
                     "userId VARCHAR(255) NOT NULL," +
@@ -136,15 +144,7 @@ implements DBConnectionManager {
                     "discriminator VARCHAR(4) NOT NULL," +
                     "ban_date DATETIME NOT NULL," +
                     "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                    "guildId VARCHAR(255) NOT NULL);" +
-
-                    "CREATE TABLE IF NOT EXISTS tags" +
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "author VARCHAR(255) NOT NULL," +
-                    "authorId VARCHAR(255) NOT NULL," +
-                    "tagName VARCHAR(10) NOT NULL," +
-                    "tagText TEXT NOT NULL);"
-            );
+                    "guildId VARCHAR(255) NOT NULL);");
         }
         catch (SQLException e) {
             e.printStackTrace();
