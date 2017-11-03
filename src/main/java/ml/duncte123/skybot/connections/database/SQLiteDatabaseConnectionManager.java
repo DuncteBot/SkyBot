@@ -57,10 +57,10 @@ implements DBConnectionManager {
         try {
             Class.forName("org.sqlite.JDBC");
             con = JDBC.createConnection(url, new Properties());
-            //con = DriverManager.getConnection(url);
             
             // Create it
             con.getMetaData().getURL();
+            //Try to construct the database if not there
             innitDB(con);
         } catch (ClassNotFoundException | SQLException e) {
             e.printStackTrace();
