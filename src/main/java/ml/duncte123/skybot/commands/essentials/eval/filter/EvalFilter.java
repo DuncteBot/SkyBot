@@ -44,7 +44,9 @@ public class EvalFilter extends GroovyValueFilter {
                     // Binary
                     + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
                     // Hexadecimal
-                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))");
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
+            MENTION_FILTER = 
+                Pattern.compile("<@[0-9]{18}>");
 
     /**
      * Constructor
@@ -129,5 +131,9 @@ public class EvalFilter extends GroovyValueFilter {
             List.class,
             ArrayList.class
     };
+
+    public boolean containsMentions(String string) {
+        return MENTION_FILTER.matcher(string).find();
+    }
 
 }
