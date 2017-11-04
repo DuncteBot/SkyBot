@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -29,6 +30,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.sql.*;
 
 public class KpopCommand extends Command {
+
+    public KpopCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

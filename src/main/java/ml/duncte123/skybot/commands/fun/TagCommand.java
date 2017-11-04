@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -28,6 +29,10 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 
 public class TagCommand extends Command {
+
+    public TagCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

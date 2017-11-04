@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -30,6 +31,10 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 public class CleenupCommand extends Command {
+
+    public CleenupCommand() {
+        this.category = CommandCategory.MOD_ADMIN;
+    }
 
     public final static String help = "performs a cleanup in the channel where the command is run.";
 

@@ -26,6 +26,10 @@ import net.dv8tion.jda.core.managers.AudioManager;
 
 public abstract class MusicCommand extends Command {
 
+    public MusicCommand() {
+        this.category = CommandCategory.MUSIC;
+    }
+
     /**
      * Returns the autio utils
      * @return the audio utils

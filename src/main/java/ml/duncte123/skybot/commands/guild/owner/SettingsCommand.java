@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import org.apache.commons.lang3.StringUtils;
 
 import ml.duncte123.skybot.objects.command.Command;
@@ -29,6 +30,10 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class SettingsCommand extends Command {
+
+    public SettingsCommand() {
+        this.category = CommandCategory.MOD_ADMIN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

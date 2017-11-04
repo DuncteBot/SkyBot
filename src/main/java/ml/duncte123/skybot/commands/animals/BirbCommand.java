@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -26,6 +27,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.io.IOException;
 
 public class BirbCommand extends Command {
+
+    public BirbCommand() {
+        this.category = CommandCategory.ANIMALS;
+    }
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {

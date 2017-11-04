@@ -207,9 +207,10 @@ public class GuildSettingsUtils {
             }
 
             if (rows == 0) {
-                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName, customWelcomeMessage) " +
-                        "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "')");
+                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName, customWelcomeMessage, prefix) " +
+                        "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
+                smt.setString(2, Settings.prefix);
                 smt.execute();
             }
         } catch (Exception e) {
