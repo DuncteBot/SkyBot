@@ -18,22 +18,26 @@
 
 package ml.duncte123.skybot.utils;
 
-import org.slf4j.event.Level;
-
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.event.Level;
+
 public class BadWordFilter {
+
     private static int largestWordLength = 0;
     private static Map<String, String[]> words = new HashMap<>();
-    public BadWordFilter() {
+
+    static {
         try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(new URL("https://docs.google.com/spreadsheets/d/1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv").openConnection().getInputStream()));
+            BufferedReader reader = new BufferedReader(
+                    new StringReader(WebUtils.getText(
+                            "https://docs.google.com/spreadsheets/d/"
+                            + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv")));
             String line = "";
             int counter = 0;
             while((line = reader.readLine()) != null) {
@@ -64,9 +68,7 @@ public class BadWordFilter {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }
-
 
     /**
      * Iterates over a String input and checks whether a cuss word was found in a list, then checks if the word should be ignored (e.g. bass contains the word *ss).
