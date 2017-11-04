@@ -22,6 +22,8 @@ import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -91,7 +93,11 @@ public class BotListener extends ListenerAdapter {
 
         if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId()) ){
             AirUtils.log(Level.INFO,"Initialising shutdown!!!");
-            event.getJDA().asBot().getShardManager().shutdown();
+            ShardManager manager = event.getJDA().asBot().getShardManager();
+            for(JDA shard : manager.getShards()) {
+                AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
+                shard.shutdown();
+            }
             return;
         }
 
@@ -151,11 +157,14 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onShutdown(ShutdownEvent event) {
         ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
-        this.unbanTimer.cancel();
-        this.settingsUpdateTimer.cancel();
-        this.unbanTimer.purge();
-        this.settingsUpdateTimer.purge();
-        AirUtils.log(Level.INFO,"Shard " + event.getJDA().getShardInfo().getShardId() + " has been shut down");
+        if(unbanTimerRunning) {
+            this.unbanTimer.cancel();
+            this.unbanTimer.purge();
+        }
+        if(settingsUpdateTimerRunning) {
+            this.settingsUpdateTimer.cancel();
+            this.settingsUpdateTimer.purge();
+        }
     }
 
     /**
