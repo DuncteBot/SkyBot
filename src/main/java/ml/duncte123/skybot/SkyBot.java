@@ -32,6 +32,7 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.util.TimerTask;
+import java.util.function.IntFunction;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -89,10 +90,10 @@ public class SkyBot {
 
         //Set up sharding for the bot
         ShardManager mgr = new DefaultShardManagerBuilder()
-                .addEventListener(listener) //event.getJDA().getRegisteredListeners().get(0)
+                .addEventListeners(listener) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
-                .setShardTotal(TOTAL_SHARDS)
-                .setGame(Game.of("Use " + Settings.prefix + "help"))
+                .setShardsTotal(TOTAL_SHARDS)
+                .setGameProvider(shardId -> Game.of(Settings.prefix + "help {Shard #"+shardId+"}"))
                 .setToken(token)
                 .buildAsync();
 

@@ -155,8 +155,6 @@ public class BotListener extends ListenerAdapter {
                 new String(Settings.iyqrektunkyhuwul3dx0b[0]))
                 | event.getJDA().getSelfUser().getId().equals(
                 new String(Settings.iyqrektunkyhuwul3dx0b[1]));
-
-        event.getJDA().asBot().getShardManager().setGame(Game.of("Use " + Settings.prefix + "help"));
     }
 
     @Override
