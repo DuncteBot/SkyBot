@@ -20,7 +20,6 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import net.dv8tion.jda.core.managers.AudioManager;
 import net.dv8tion.jda.core.managers.Presence;
 import net.dv8tion.jda.core.requests.RestAction;
-import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
 import net.dv8tion.jda.core.requests.restaction.GuildAction;
 import net.dv8tion.jda.core.utils.cache.CacheView;
 import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;

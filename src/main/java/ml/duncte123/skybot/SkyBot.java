@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.util.TimerTask;
-import java.util.function.IntFunction;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)

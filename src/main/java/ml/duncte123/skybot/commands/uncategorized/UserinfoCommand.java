@@ -31,25 +31,17 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Created by Duncan on 9-7-2017.
  */
 public class UserinfoCommand extends Command {
 
-    /**
-     * this is the user object
-     */
-    User u;
-    /**
-     * this is the member object
-     */
-    Member m;
-
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
+        User u;
+        Member m;
+        
         if (args.length == 0) {
             u = event.getAuthor();
             m = event.getGuild().getMemberById(u.getId());
@@ -76,8 +68,8 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
 
         StringBuilder joinOrder = new StringBuilder();
-        List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        joins.sort( Comparator.comparing(Member::getJoinDate));
+        List<Member> joins = event.getGuild().getMemberCache().asList();
+        joins.sort(Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
         if(index<0)
@@ -111,7 +103,7 @@ public class UserinfoCommand extends Command {
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Join order", joinOrder.toString(), true)
                 .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
-                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
+                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                 .build();
 
         sendEmbed(event, eb);
