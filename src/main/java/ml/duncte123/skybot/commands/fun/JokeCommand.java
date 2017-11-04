@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -36,6 +37,7 @@ public class JokeCommand extends Command {
     private Map<String, Integer> jokeIndex;
 
     public JokeCommand() {
+        this.category = CommandCategory.FUN;
         this.jokeIndex = new TreeMap<>();
     }
 

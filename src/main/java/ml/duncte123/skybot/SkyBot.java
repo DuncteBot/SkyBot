@@ -22,6 +22,7 @@ import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -117,5 +118,7 @@ public class SkyBot {
             listener.settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
             listener.settingsUpdateTimerRunning = true;
         }
+        //Load all the commands last
+        HelpEmbeds.init();
     }
 }

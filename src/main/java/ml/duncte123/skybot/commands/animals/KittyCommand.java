@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -29,6 +30,10 @@ import org.jsoup.parser.Parser;
 import java.net.URL;
 
 public class KittyCommand extends Command {
+
+    public KittyCommand() {
+        this.category = CommandCategory.ANIMALS;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

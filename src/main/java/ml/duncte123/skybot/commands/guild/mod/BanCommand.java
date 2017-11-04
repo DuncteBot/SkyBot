@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
@@ -33,6 +34,10 @@ import java.util.Arrays;
 import java.util.Date;
 
 public class BanCommand extends Command {
+
+    public BanCommand() {
+        this.category = CommandCategory.MOD_ADMIN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

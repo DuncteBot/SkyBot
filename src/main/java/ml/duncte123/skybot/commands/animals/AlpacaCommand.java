@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jsoup.Jsoup;
@@ -28,6 +29,10 @@ import org.jsoup.nodes.Element;
 import java.net.URL;
 
 public class AlpacaCommand extends Command {
+
+    public AlpacaCommand() {
+        this.category = CommandCategory.ANIMALS;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

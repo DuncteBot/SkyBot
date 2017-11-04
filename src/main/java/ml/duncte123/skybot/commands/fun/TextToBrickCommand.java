@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -28,6 +29,10 @@ import org.apache.commons.lang3.StringUtils;
  * Created by Duncan on 9-7-2017.
  */
 public class TextToBrickCommand extends Command {
+
+    public TextToBrickCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

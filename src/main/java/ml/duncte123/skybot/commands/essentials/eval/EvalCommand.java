@@ -30,6 +30,7 @@ import java.util.concurrent.TimeoutException;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
@@ -53,6 +54,7 @@ public class EvalCommand extends Command {
      * This initialises the engine
      */
     public EvalCommand() {
+        this.category = CommandCategory.NONE;
         //the GroovyShell is for the public eval
         protected_ = new GroovyShell(
                 new CompilerConfiguration()

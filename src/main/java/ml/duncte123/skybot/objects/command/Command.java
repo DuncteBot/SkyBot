@@ -31,7 +31,22 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public abstract class Command {
 
+    /**
+     * This holds the prefix for us
+     */
     protected final String PREFIX = Settings.prefix;
+    /**
+     * This holds the category
+     */
+    protected CommandCategory category = CommandCategory.MAIN;
+
+    /**
+     * Returns the current category of the command
+     * @return the current category of the command
+     */
+    public CommandCategory getCategory() {
+        return this.category;
+    }
 
     /**
      * This is the action of the command, this will hold what the commands needs to to
