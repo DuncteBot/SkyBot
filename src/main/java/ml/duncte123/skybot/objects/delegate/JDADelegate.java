@@ -242,10 +242,6 @@ implements JDA {
         __$__$$e__0_$0.shutdownNow();
     }
 
-    public AuditableRestAction<Void> installAuxiliaryCable(int port) {
-        return __$__$$e__0_$0.installAuxiliaryCable(port);
-    }
-
     public AccountType getAccountType() {
         return __$__$$e__0_$0.getAccountType();
     }
