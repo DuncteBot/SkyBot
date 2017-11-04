@@ -23,7 +23,6 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
 
 public class HelpEmbeds {
 
@@ -66,6 +65,8 @@ public class HelpEmbeds {
                 case NERD_STUFF:
                     nerdCommands.add(c.getName());
                     break;
+            default:
+                break;
             }
 
             for(String alias : c.getAliases()) {
@@ -88,6 +89,8 @@ public class HelpEmbeds {
                     case NERD_STUFF:
                         nerdCommands.add(alias);
                         break;
+                default:
+                    break;
                 }
             }
         }
@@ -145,7 +148,7 @@ public class HelpEmbeds {
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
-    public static String generateCommandsWithPrefix(String prefix, List cmdNames) {
+    public static String generateCommandsWithPrefix(String prefix, List<String> cmdNames) {
         String[] cmdArray = (String[]) cmdNames.toArray(new String[0]);
         return generateCommandsWithPrefix(prefix, cmdArray);
     }
