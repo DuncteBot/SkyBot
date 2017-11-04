@@ -22,6 +22,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class CommandParser {
 
@@ -33,7 +34,7 @@ public class CommandParser {
      */
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
         
-        final String[] split = rw.replaceFirst(Settings.prefix, "").split("\\s+");
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
 

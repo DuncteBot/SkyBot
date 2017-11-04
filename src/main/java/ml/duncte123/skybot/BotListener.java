@@ -98,6 +98,7 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
+            System.exit(0);
             return;
         }
 
@@ -130,9 +131,13 @@ public class BotListener extends ListenerAdapter {
 
             // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        AirUtils.commandManager.runCommand(parser.parse(event.getMessage().getRawContent()
-                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.prefix)
-                        .replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
+        String rw = event.getMessage().getRawContent();
+        if(!Settings.prefix.equals(settings.getCustomPrefix())) {
+            rw = rw.replaceFirst(
+                    Pattern.quote(settings.getCustomPrefix()),
+                    Settings.prefix);
+        }
+        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 ,
                event
         ));
