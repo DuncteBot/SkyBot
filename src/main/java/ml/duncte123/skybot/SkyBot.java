@@ -25,13 +25,10 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
-
-import java.util.TimerTask;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -84,41 +81,16 @@ public class SkyBot {
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
 
-        //Set up the listener in an variable
-        BotListener listener = new BotListener();
-
         //Set up sharding for the bot
-        ShardManager mgr = new DefaultShardManagerBuilder()
-                .addEventListeners(listener) //event.getJDA().getRegisteredListeners().get(0)
+        new DefaultShardManagerBuilder()
+                .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.of(Settings.prefix + "help {Shard #"+shardId+"}"))
                 .setToken(token)
                 .buildAsync();
 
-        if(useDatabase) {
-            //Register the timer for the auto unbans
-            //I moved the timer here to make sure that every running jar has this only once
-            TimerTask unbanTask = new TimerTask() {
-                @Override
-                public void run() {
-                    AirUtils.checkUnbans(mgr);
-                }
-            };
-            listener.unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
-            listener.unbanTimerRunning = true;
-
-            //This handles the updating from the setting and quotes
-            TimerTask settingsTask = new TimerTask() {
-                @Override
-                public void run() {
-                    GuildSettingsUtils.loadAllSettings();
-                }
-            };
-            listener.settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
-            listener.settingsUpdateTimerRunning = true;
-        }
-        //Load all the commands last
+        //Load all the commands for the help embed last
         HelpEmbeds.init();
     }
 }

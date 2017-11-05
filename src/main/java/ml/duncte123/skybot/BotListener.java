@@ -37,11 +37,13 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.event.Level;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -154,6 +156,33 @@ public class BotListener extends ListenerAdapter {
                 new String(Settings.iyqrektunkyhuwul3dx0b[0]))
                 | event.getJDA().getSelfUser().getId().equals(
                 new String(Settings.iyqrektunkyhuwul3dx0b[1]));
+
+        //Start the timers if they have not been started yet
+        if(!unbanTimerRunning && AirUtils.nonsqlite) {
+            AirUtils.log(Level.INFO, "Starting the unban timer.");
+            //Register the timer for the auto unbans
+            //I moved the timer here to make sure that every running jar has this only once
+            TimerTask unbanTask = new TimerTask() {
+                @Override
+                public void run() {
+                    AirUtils.checkUnbans(event.getJDA().asBot().getShardManager());
+                }
+            };
+            unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
+            unbanTimerRunning = true;
+        }
+        if(!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
+            AirUtils.log(Level.INFO, "Starting the settings timer.");
+            //This handles the updating from the setting and quotes
+            TimerTask settingsTask = new TimerTask() {
+                @Override
+                public void run() {
+                    GuildSettingsUtils.loadAllSettings();
+                }
+            };
+            settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
+            settingsUpdateTimerRunning = true;
+        }
     }
 
     @Override
