@@ -81,9 +81,9 @@ public class FakeInterface<T> {
      *
      */
     protected static class IH implements InvocationHandler {
-        private final Map<Method, InvocationFunction> handlers;
+        protected final Map<Method, InvocationFunction> handlers;
         
-        IH (Map<Method, InvocationFunction> handlers) {
+        protected IH (Map<Method, InvocationFunction> handlers) {
             this.handlers = handlers;
         }
         
