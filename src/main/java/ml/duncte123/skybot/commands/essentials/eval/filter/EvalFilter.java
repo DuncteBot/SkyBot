@@ -23,6 +23,8 @@ import groovy.lang.Script;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -115,6 +117,7 @@ public class EvalFilter extends GroovyValueFilter {
             short.class,
             
             Integer.class,
+            BigInteger.class,
             int.class,
             
             Float.class,
@@ -122,7 +125,8 @@ public class EvalFilter extends GroovyValueFilter {
             
             Long.class,
             long.class,
-            
+
+            BigDecimal.class,
             Double.class,
             double.class,
             
