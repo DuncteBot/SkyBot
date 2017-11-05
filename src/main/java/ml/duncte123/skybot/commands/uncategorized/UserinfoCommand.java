@@ -31,6 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.time.format.DateTimeFormatter;
 import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * Created by Duncan on 9-7-2017.
@@ -68,7 +69,7 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
 
         StringBuilder joinOrder = new StringBuilder();
-        List<Member> joins = event.getGuild().getMemberCache().asList();
+        List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
         joins.sort(Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
@@ -76,7 +77,7 @@ public class UserinfoCommand extends Command {
             index=0;
         joinOrder.append("\n"+"Join Order: ");
         if(joins.get(index).equals(m))
-            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("]()");
+            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("](https://bot.duncte123.me/)");
         else
             joinOrder.append(joins.get(index).getEffectiveName());
         for(int i=index+1;i<index+7;i++) {
@@ -85,7 +86,7 @@ public class UserinfoCommand extends Command {
             Member usr = joins.get(i);
             String name = usr.getEffectiveName();
             if(usr.equals(m))
-                name="["+name+"]()";
+                name="["+name+"](https://bot.duncte123.me/)";
             joinOrder.append(" > ").append(name);
         }
 
@@ -95,7 +96,7 @@ public class UserinfoCommand extends Command {
                 .setColor(m.getColor())
                 .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
+                .addField("Username + Discriminator", String.format("%#s", u), true)
                 .addField("User Id", u.getId(), true)
                 .addField("Playing", (m.getGame() == null ? "**_nothing_**" : m.getGame().getName()), true)
                 .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
