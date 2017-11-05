@@ -180,8 +180,6 @@ public class WebUtils {
             
             jo.addProperty("longUrl", url);
             
-            System.out.println(jo.toString());
-            
             con.getOutputStream().write(
                     jo.toString().getBytes());
             
