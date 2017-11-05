@@ -24,6 +24,8 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Settings;
 import org.sqlite.JDBC;
 
 /**
@@ -124,7 +126,7 @@ implements DBConnectionManager {
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId TEXT NOT NULL," +
                     "guildName TEXT NOT NULL," +
-                    "prefix VARCHAR(255) NOT NULL DEFAULT '/'," +
+                    "prefix VARCHAR(255) NOT NULL DEFAULT '"+ Settings.prefix +"'," +
                     "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                     "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
                     "customWelcomeMessage TEXT NOT NULL);");
