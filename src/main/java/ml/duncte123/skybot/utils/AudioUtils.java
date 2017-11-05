@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
@@ -83,7 +82,8 @@ public class AudioUtils {
         playerManager.registerSourceManager(new LocalAudioSourceManager());
 
         //AudioSourceManagers.registerRemoteSources(playerManager);
-        AudioSourceManagers.registerLocalSource(playerManager);
+        // No one plays audio from the host machine ;)
+        // AudioSourceManagers.registerLocalSource(playerManager);
 
         musicManagers = new HashMap<>();
     }
@@ -96,7 +96,6 @@ public class AudioUtils {
      * @param addPlayList If the url is a playlist
      */
     public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList){
-
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -106,7 +105,7 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler(){
+        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
 
             /**
              * fires when a track is loaded
@@ -171,7 +170,6 @@ public class AudioUtils {
                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: "+exception.getMessage()), channel);
 
             }
-
         });
     }
 
@@ -223,9 +221,9 @@ public class AudioUtils {
         int minutes = (int) ((miliseconds / (1000 * 60)) % 60);
         int hours = (int) ((miliseconds / (1000 * 60 * 60)) % 24);
 
-        if(hours > 0){
+        if(hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        }else{
+        } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
     }

@@ -31,7 +31,6 @@ public class FlipCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         User u = event.getAuthor();
         String flippedUser = "";
 
@@ -59,7 +58,6 @@ public class FlipCommand extends Command {
         }
 
         sendMsg(event, "(╯°□°）╯︵ " + flippedUser);
-
     }
 
     @Override

@@ -122,7 +122,6 @@ public class CommandManager {
      * @return a possible null command for the name
      */
     public Command getCommand(String name) {
-
         Optional<Command> cmd = commands.stream().filter(c->c.getName().equals(name)).findFirst();
 
         if(cmd.isPresent()) {
@@ -147,10 +146,12 @@ public class CommandManager {
         if (command.getName().contains(" ")) {
             throw new IllegalArgumentException("Name can't have spaces!");
         }
+        
         if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {
             return false;
         }
         this.commands.add(command);
+        
         return true;
     }
 
@@ -159,7 +160,6 @@ public class CommandManager {
      * @param parser The command parser used to parse the commands
      */
     public void runCommand(CommandParser.CommandContainer parser) {
-
         for (Command c : this.getCommands()) {
             if (parser.invoke.equalsIgnoreCase(c.getName())) {
                 c.executeCommand(parser.invoke, parser.args, parser.event);

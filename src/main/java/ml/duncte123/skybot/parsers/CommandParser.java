@@ -29,11 +29,10 @@ public class CommandParser {
     /**
      * This will split an command into the command and the args
      * @param rw the raw text
-     * @param e An instance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-     * @return Our {@link ml.duncte123.skybot.parsers.CommandParser.CommandContainer CommandContainer}
+     * @param e An instance of the {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @return Our {@link CommandContainer CommandContainer}
      */
-    public CommandContainer parse(String rw, GuildMessageReceivedEvent e){
-        
+    public CommandContainer parse(String rw, GuildMessageReceivedEvent e) {
         final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);

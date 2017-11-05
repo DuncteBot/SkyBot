@@ -37,7 +37,6 @@ public class KpopCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         String id = "";
         String name = "";
         String group = "";

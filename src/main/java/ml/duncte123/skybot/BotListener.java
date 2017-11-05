@@ -204,7 +204,6 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-
         //if 60 of a guild is bots, we'll leave it
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
         if(botToUserRatio[1] > 60) {
@@ -253,7 +252,6 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
-
             if(event.getChannelLeft()!=null) {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelLeft().getMembers().size() <= 1){
@@ -267,7 +265,7 @@ public class BotListener extends ListenerAdapter {
                     }
                 }
             }
-
+            
             if(event.getChannelJoined()!=null) {
                 if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
                 if(event.getChannelJoined().getMembers().size() <= 1){

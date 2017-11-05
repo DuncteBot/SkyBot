@@ -25,7 +25,6 @@ import java.sql.DriverManager;
 
 /**
  * Represents a server database
- *
  */
 class DatabaseConnectionManager
 implements DBConnectionManager {

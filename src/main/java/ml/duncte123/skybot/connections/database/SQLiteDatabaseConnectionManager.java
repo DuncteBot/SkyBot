@@ -114,6 +114,8 @@ implements DBConnectionManager {
     /**
      * This sets up the database and inserts the tables if they are not there
      * @param connection the connection to use
+     * 
+     * @author duncte123
      */
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries

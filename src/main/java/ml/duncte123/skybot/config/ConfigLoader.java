@@ -51,17 +51,21 @@ public class ConfigLoader {
         }
 
         @Override
-        public File getConfigFile()
-        {
+        public File getConfigFile() {
             return this.configFile;
         }
 
         @Override
         public void save() throws Exception {
-            final Gson gson = new GsonBuilder().serializeNulls().setPrettyPrinting().serializeSpecialFloatingPointValues().create();
+            final Gson gson = new GsonBuilder()
+                    .serializeNulls()
+                    .setPrettyPrinting()
+                    .serializeSpecialFloatingPointValues()
+                    .create();
             final String json = gson.toJson(this.config);
             try {
-                final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
+                final BufferedWriter writer = new BufferedWriter(
+                        new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
                 new UnicodeUnescaper().translate(json, writer);
                 writer.close();
             }
