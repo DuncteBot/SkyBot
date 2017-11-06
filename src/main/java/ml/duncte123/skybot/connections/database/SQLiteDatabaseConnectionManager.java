@@ -24,7 +24,6 @@ import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import org.sqlite.JDBC;
 

@@ -37,8 +37,6 @@ public class CatCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        // TODO Auto-generated method stub;
-
         try {
             String jsonString = WebUtils.getText("http://random.cat/meow");
             JSONObject jsonObject = new JSONObject(jsonString);

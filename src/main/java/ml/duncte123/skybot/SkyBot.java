@@ -26,6 +26,7 @@ import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
+
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -86,10 +87,11 @@ public class SkyBot {
                 .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.of(Settings.prefix + "help {Shard #"+shardId+"}"))
+                .setGameProvider(shardId -> Game.of(Settings.prefix
+                        + "help {Shard #" + (shardId + 1) + "}"))
                 .setToken(token)
                 .buildAsync();
-
+        
         //Load all the commands for the help embed last
         HelpEmbeds.init();
     }

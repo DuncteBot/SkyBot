@@ -42,6 +42,9 @@ import org.slf4j.event.Level;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -60,7 +63,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * When a command gets ran, it'll be stored in here
      */
-    private static HashMap<Guild, TextChannel> lastGuildChannel = new HashMap<>();
+    private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
     /**
      * This timer is for checking unbans
      */
@@ -78,13 +81,39 @@ public class BotListener extends ListenerAdapter {
      */
     public boolean settingsUpdateTimerRunning = false;
 
+    static {
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            Optional<JDA> j = BotListener.lastGuildChannel.keySet().stream()
+                    .filter(Objects::nonNull)
+                    .map(Guild::getJDA)
+                    .findFirst();
+            
+            System.out.println(j);
+            
+            j.ifPresent(jda -> {
+                ShardManager shards = jda.asBot().getShardManager();
+                
+                int shard = 0;
+                for(JDA jdas : shards.getShards()) {
+                    System.out.println("Shutting down " + jdas + "[#" + (++shard) + "]");
+                    jdas.shutdown();
+                    
+                    try {
+                        Thread.sleep(500L);
+                    } catch (InterruptedException e) {
+                        e.printStackTrace();
+                    }
+                }
+            });
+        }));
+    }
+
     /**
      * Listen for messages send to the bot
      * @param event The corresponding {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
-
         //We only want to respond to members/users
         if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
             return;

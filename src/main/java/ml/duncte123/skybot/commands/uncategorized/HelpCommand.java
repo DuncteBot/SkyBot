@@ -32,7 +32,6 @@ public class HelpCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         if(args.length > 0) {
             String toSearch = StringUtils.join(args, " ");
 
@@ -41,9 +40,7 @@ public class HelpCommand extends Command {
                     sendMsg(event, "Command help for `"+ cmd.getName()+"` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                     return;
                 } else {
-
                     for(String alias : cmd.getAliases()) {
-
                         if(alias.equals(toSearch)) {
                             sendMsg(event, "Command help for `"+cmd.getName()+"` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : "") );
                             return;
