@@ -117,12 +117,12 @@ public class HelpEmbeds {
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
                 .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
-                .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands), INLINE)
-                .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands), INLINE)
-                .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands), INLINE)
-                .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands), INLINE)
-                .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands), INLINE)
-                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands), INLINE)
+                .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
+                .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
+                .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
+                .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
+                .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
                 .build();
     }
 
@@ -140,17 +140,6 @@ public class HelpEmbeds {
         }
 
         return out.toString();
-    }
-
-    /**
-     * if you enter a list of commands in here it will generate a string containing all the commands
-     * @param prefix The prefix that will be in frond of the commands
-     * @param cmdNames the commands that should be added to the list
-     * @return a concatenated string of the commands that we entered
-     */
-    public static String generateCommandsWithPrefix(String prefix, List<String> cmdNames) {
-        String[] cmdArray = cmdNames.toArray(new String[0]);
-        return generateCommandsWithPrefix(prefix, cmdArray);
     }
 
     /**
