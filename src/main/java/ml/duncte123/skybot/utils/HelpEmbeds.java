@@ -149,7 +149,7 @@ public class HelpEmbeds {
      * @return a concatenated string of the commands that we entered
      */
     public static String generateCommandsWithPrefix(String prefix, List<String> cmdNames) {
-        String[] cmdArray = (String[]) cmdNames.toArray(new String[0]);
+        String[] cmdArray = cmdNames.toArray(new String[0]);
         return generateCommandsWithPrefix(prefix, cmdArray);
     }
 
