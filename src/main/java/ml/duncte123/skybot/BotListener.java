@@ -53,17 +53,15 @@ import java.util.regex.Pattern;
 public class BotListener extends ListenerAdapter {
 
     /**
-     * This is our 'custom' swearword filter
-     */
-    private final BadWordFilter filter = new BadWordFilter();
-    /**
      * This is the command parser
      */
     private static CommandParser parser = new CommandParser();
+
     /**
      * When a command gets ran, it'll be stored in here
      */
     private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
+
     /**
      * This timer is for checking unbans
      */
@@ -72,10 +70,12 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #unbanTimer unbanTimer} is running
      */
     public boolean unbanTimerRunning = false;
+
     /**
      * This timer is for checking new quotes
      */
     public Timer settingsUpdateTimer = new Timer();
+
     /**
      * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
      */
@@ -139,7 +139,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(messageToCheck.getRawContent())) {
+                if (BadWordFilter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
                     event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));

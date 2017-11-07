@@ -123,7 +123,7 @@ public class BadWordFilter {
      * @param input the sentence to check
      * @return true if it contains a bad word
      */
-    public final boolean filterText(String input) {
+    public static boolean filterText(String input) {
         ArrayList<String> badWords = badWordsFound(input);
         return badWords.size() > 0;
     }
