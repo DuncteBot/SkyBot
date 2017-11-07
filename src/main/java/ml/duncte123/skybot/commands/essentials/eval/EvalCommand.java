@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -26,6 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Supplier;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
@@ -47,7 +49,14 @@ public class EvalCommand extends Command {
     private GroovyShell protected_;
     private ScriptEngine engine;
     private List<String> packageImports;
-    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private List<ScheduledExecutorService> services = new ArrayList<>();
+    private Supplier<ScheduledExecutorService> service =
+            () -> {
+                ScheduledExecutorService service
+                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+                services.add(service);
+                return service;
+            };
     private EvalFilter filter = new EvalFilter();
 
     /**
@@ -78,97 +87,108 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
-
+        
+        ScheduledExecutorService service = this.service.get();
+        
         ScheduledFuture<Object> future = null;
+        
         try {
-            StringBuilder importStringBuilder = new StringBuilder();
-            for (final String s : packageImports) {
-                importStringBuilder.append("import ").append(s).append(".*;\n");
-            }
-
-            String script = importStringBuilder.toString() +
-                    event.getMessage().getRawContent()
-                        .substring(event.getMessage().getRawContent()
-                                .split(" ")[0].length());
-            
-            int timeout = 5;
-            if(isRanByBotOwner) {
-                timeout = 60;
-
-                engine.put("commandmanager", AirUtils.commandManager);
-
-                engine.put("message", event.getMessage());
-                engine.put("channel", event.getMessage().getTextChannel());
-                engine.put("guild", event.getGuild());
-                engine.put("member", event.getMember());
-                engine.put("jda", event.getJDA());
-                engine.put("shardmanager", event.getJDA().asBot().getShardManager());
-                engine.put("event", event);
-
-                engine.put("args", args);
-
-                future = service.schedule(() -> {
-                     return engine.eval(script);
-                }, 0, TimeUnit.MILLISECONDS);
-            } else {
-
-                if(filter.filterArrays(script))
-                    throw new VRCubeException("Arrays are not allowed");
-                if(filter.filterLoops(script))
-                    throw new VRCubeException("Loops are not allowed");
-
-                future = service.schedule(() -> {
-                    filter.register();
-                    return protected_.evaluate(script);
-                }, 0, TimeUnit.MILLISECONDS);
-            }
-
-            Object out = future.get(timeout, TimeUnit.SECONDS);
-            
-            if (out != null && !String.valueOf(out).isEmpty() ) {
-                if(isRanByBotOwner)
-                    sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName()
-                            + ":** " : "") + out.toString());
-                else {
-                    if(filter.containsMentions(out.toString())) {
-                        sendMsg(event, "**ERROR:** Mentioning people!");
-                        sendError(event.getMessage());
-                    } else {
-                        sendMsg(event, "**" + event.getAuthor().getName()
-                                + ":** " + out.toString());
-                    }
+            try {
+                StringBuilder importStringBuilder = new StringBuilder();
+                for (final String s : packageImports) {
+                    importStringBuilder.append("import ").append(s).append(".*;\n");
                 }
-            } else {
-                sendSuccess(event.getMessage());
+    
+                String script = importStringBuilder.toString() +
+                        event.getMessage().getRawContent()
+                            .substring(event.getMessage().getRawContent()
+                                    .split(" ")[0].length());
+                
+                int timeout = 5;
+                if(isRanByBotOwner) {
+                    timeout = 60;
+    
+                    engine.put("commandmanager", AirUtils.commandManager);
+    
+                    engine.put("message", event.getMessage());
+                    engine.put("channel", event.getMessage().getTextChannel());
+                    engine.put("guild", event.getGuild());
+                    engine.put("member", event.getMember());
+                    engine.put("jda", event.getJDA());
+                    engine.put("shardmanager", event.getJDA().asBot().getShardManager());
+                    engine.put("event", event);
+    
+                    engine.put("args", args);
+    
+                    future = service.schedule(
+                            () -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+                } else {
+    
+                    if(filter.filterArrays(script))
+                        throw new VRCubeException("Arrays are not allowed");
+                    if(filter.filterLoops(script))
+                        throw new VRCubeException("Loops are not allowed");
+    
+                    future = service.schedule(() -> {
+                        filter.register();
+                        return protected_.evaluate(script);
+                    }, 0, TimeUnit.MILLISECONDS);
+                }
+    
+                Object out = future.get(timeout, TimeUnit.SECONDS);
+                
+                if (out != null && !String.valueOf(out).isEmpty() ) {
+                    if(isRanByBotOwner)
+                        sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName()
+                                + ":** " : "") + out.toString());
+                    else {
+                        if(filter.containsMentions(out.toString())) {
+                            sendMsg(event, "**ERROR:** Mentioning people!");
+                            sendError(event.getMessage());
+                        } else {
+                            sendMsg(event, "**" + event.getAuthor().getName()
+                                    + ":** " + out.toString());
+                        }
+                    }
+                } else {
+                    sendSuccess(event.getMessage());
+                }
+    
             }
-
-        }
-        catch (ExecutionException e1)  {
-            event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
-            //e.printStackTrace();
-            sendError(event.getMessage());
-        }
-        catch (TimeoutException | InterruptedException e2) {
-            future.cancel(true);
-            event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
-            //e.printStackTrace();
-            if(!future.isCancelled()) future.cancel(true);
-            sendError(event.getMessage());
-        }
-        catch (IllegalArgumentException | VRCubeException e3) {
-            sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
-            sendError(event.getMessage());
+            catch (ExecutionException e1)  {
+                event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
+                //e.printStackTrace();
+                sendError(event.getMessage());
+            }
+            catch (TimeoutException | InterruptedException e2) {
+                future.cancel(true);
+                event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
+                //e.printStackTrace();
+                if(!future.isCancelled()) future.cancel(true);
+                sendError(event.getMessage());
+            }
+            catch (IllegalArgumentException | VRCubeException e3) {
+                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
+                sendError(event.getMessage());
+            }
+        } catch (Throwable thr) {
+            event.getChannel().sendMessage("ERROR: " + thr.getCause().toString()).queue();
+            thr.printStackTrace();
         } finally {
-            // Clear variables in owner??
-            //Unregister the filter
             filter.unregister();
+            
+            services.remove(service);
+            
+            // Just in case
+            service.shutdown();
         }
         
         System.gc();
     }
 
     public void shutdown() {
-        service.shutdownNow();
+        services.forEach(ScheduledExecutorService::shutdownNow);
+        services.clear();
     }
 
     @Override
