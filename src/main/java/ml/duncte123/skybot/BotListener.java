@@ -43,8 +43,6 @@ import org.slf4j.event.Level;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
@@ -80,33 +78,6 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
      */
     public boolean settingsUpdateTimerRunning = false;
-
-    static {
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            Optional<JDA> j = BotListener.lastGuildChannel.keySet().stream()
-                    .filter(Objects::nonNull)
-                    .map(Guild::getJDA)
-                    .findFirst();
-            
-            System.out.println(j);
-            
-            j.ifPresent(jda -> {
-                ShardManager shards = jda.asBot().getShardManager();
-                
-                int shard = 0;
-                for(JDA jdas : shards.getShards()) {
-                    System.out.println("Shutting down " + jdas + "[#" + (++shard) + "]");
-                    jdas.shutdown();
-                    
-                    try {
-                        Thread.sleep(500L);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }));
-    }
 
     /**
      * Listen for messages send to the bot
