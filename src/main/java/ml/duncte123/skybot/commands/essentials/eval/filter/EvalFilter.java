@@ -23,6 +23,8 @@ import groovy.lang.Script;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
+import com.google.gson.internal.Primitives;
+
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -64,6 +66,8 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
+        if(Primitives.unwrap(o.getClass()).isPrimitive()) return o;
+        
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
         if(o instanceof Script || o instanceof Closure)
@@ -71,6 +75,16 @@ public class EvalFilter extends GroovyValueFilter {
         throw new VRCubeException("Class not allowed: " + o);
     }
 
+    @Override
+    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) throws Throwable {
+        throw new VRCubeException(
+                String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
+                                receiver.toString(),
+                                receiver.getClass().getComponentType().getName(),
+                                index.toString(),
+                                value.toString()));
+    }
+    
     /**
      * This checks if the script contains any loop
      * @param toFilter the script to filter
@@ -117,7 +131,6 @@ public class EvalFilter extends GroovyValueFilter {
             short.class,
             
             Integer.class,
-            BigInteger.class,
             int.class,
             
             Float.class,
@@ -125,15 +138,17 @@ public class EvalFilter extends GroovyValueFilter {
             
             Long.class,
             long.class,
-
-            BigDecimal.class,
+            
             Double.class,
             double.class,
             
             Arrays.class,
             
             List.class,
-            ArrayList.class
+            ArrayList.class,
+            
+            BigDecimal.class,
+            BigInteger.class,
     };
 
     public boolean containsMentions(String string) {
