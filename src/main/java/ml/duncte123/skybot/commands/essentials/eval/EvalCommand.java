@@ -33,6 +33,7 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import net.dv8tion.jda.core.MessageBuilder;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
@@ -139,8 +140,10 @@ public class EvalCommand extends Command {
                 
                 if (out != null && !String.valueOf(out).isEmpty() ) {
                     if(isRanByBotOwner)
-                        sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName()
-                                + ":** " : "") + out.toString());
+                        (new MessageBuilder())
+                                .append(out.toString())
+                                .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                                .forEach(it -> event.getChannel().sendMessage(it).queue());
                     else {
                         if(filter.containsMentions(out.toString())) {
                             sendMsg(event, "**ERROR:** Mentioning people!");
@@ -172,7 +175,7 @@ public class EvalCommand extends Command {
                 sendError(event.getMessage());
             }
         } catch (Throwable thr) {
-            event.getChannel().sendMessage("ERROR: " + thr.getCause().toString()).queue();
+            sendMsg(event, "ERROR: " + thr.toString());
             thr.printStackTrace();
         } finally {
             filter.unregister();
