@@ -37,7 +37,7 @@ public class EvalFilter extends GroovyValueFilter {
      * 
      * @author ramidzkh
      */
-    public static final Pattern ARRAY_FILTER =
+    private static final Pattern ARRAY_FILTER =
             Pattern.compile(
                     // Case insensitive
                     "(?i)"
