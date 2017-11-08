@@ -20,7 +20,8 @@ package ml.duncte123.skybot.utils;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.StringReader;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -35,9 +36,10 @@ public class BadWordFilter {
     static {
         try {
             BufferedReader reader = new BufferedReader(
-                    new StringReader(WebUtils.getText(
-                            "https://docs.google.com/spreadsheets/d/"
-                            + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/export?format=csv")));
+                    new InputStreamReader(
+                            new URL("https://docs.google.com/spreadsheets/d/"
+                                    + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
+                                    + "export?format=csv").openConnection().getInputStream()));
             String line = "";
             int counter = 0;
             while((line = reader.readLine()) != null) {
