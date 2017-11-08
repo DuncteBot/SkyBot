@@ -18,7 +18,10 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonPrimitive;
 
 import java.io.File;
 
@@ -116,15 +119,10 @@ public class Config {
      * This will load from our config with the key
      * @param key the key to find
      * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
+     * @throws NullPointerException when the key is not found
      */
-    public JsonPrimitive getJsonPrimitive(String key) {
-        try  {
-            return this.getJsonElement(key).getAsJsonPrimitive();
-        }
-        catch (final Exception e) {
-            //e.printStackTrace();
-            return null;
-        }
+    public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
+        return this.getJsonElement(key).getAsJsonPrimitive();
     }
 
     /**

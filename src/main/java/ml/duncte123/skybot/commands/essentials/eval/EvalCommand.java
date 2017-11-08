@@ -18,32 +18,31 @@
 
 package ml.duncte123.skybot.commands.essentials.eval;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.function.Supplier;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import net.dv8tion.jda.core.MessageBuilder;
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.kohsuke.groovy.sandbox.SandboxTransformer;
-
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONArray;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class EvalCommand extends Command {
 
@@ -88,6 +87,14 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
+
+        if(!isRanByBotOwner && !hasUserUpvoted(event.getAuthor().getId())) {
+            sendError(event.getMessage());
+            sendEmbed(event, EmbedUtils.embedMessage("The eval command is locked for people who have not upvoted the bot," +
+                    " please consider to hit the upvote button over at " +
+                    "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
+            return;
+        }
         
         ScheduledExecutorService service = this.service.get();
         
@@ -192,6 +199,38 @@ public class EvalCommand extends Command {
     public void shutdown() {
         services.forEach(ScheduledExecutorService::shutdownNow);
         services.clear();
+    }
+
+    /**
+     * This will check if a user has pressed the upvote button on https://discordbots.org/bot/210363111729790977
+     * @param userId The id of the user to check
+     * @return true if we found a upvote
+     */
+    private boolean hasUserUpvoted(String userId) {
+        //The token to check if a user has pressed the upvote for the bot
+        String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
+
+        if(discordbotlistApiKey == null) {
+            return false;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                .get()
+                .addHeader("Authorization", discordbotlistApiKey)
+                .build();
+
+        try {
+            Response rawJsaonArray = client.newCall(request).execute();
+            JSONArray jsonArray = new JSONArray(rawJsaonArray.body().source().readUtf8());
+            return jsonArray.toList().contains(userId);
+        }
+        catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override
