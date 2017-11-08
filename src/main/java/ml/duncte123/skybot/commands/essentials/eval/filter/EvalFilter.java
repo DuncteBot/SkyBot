@@ -67,7 +67,7 @@ public class EvalFilter extends GroovyValueFilter {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
         if(o instanceof Script || o instanceof Closure)
-            throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
+            throw new VRCubeException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
         throw new VRCubeException("Class not allowed: " + o);
     }
 
