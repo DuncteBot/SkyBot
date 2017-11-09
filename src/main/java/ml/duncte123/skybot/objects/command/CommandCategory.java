@@ -25,5 +25,5 @@ public enum CommandCategory {
     MUSIC,
     MOD_ADMIN,
     NERD_STUFF,
-    NONE
+    UNLISTED
 }
