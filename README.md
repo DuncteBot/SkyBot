@@ -1,4 +1,4 @@
-# SkyBot
+# SkyBot [![Build Status](https://travis-ci.org/YannickFricke/SkyBot.svg?branch=travis)](https://travis-ci.org/YannickFricke/SkyBot)
 SkyBot is a discord bot with music and mod commands
 
 # Libs
