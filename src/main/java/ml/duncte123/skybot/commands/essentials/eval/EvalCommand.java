@@ -116,8 +116,8 @@ public class EvalCommand extends Command {
                     throw new VRCubeException("Loops are not allowed");
 
                 future = service.schedule(() -> {
-                    filter.register();
-                    return protected_.evaluate(script);
+                  //  filter.register();
+                    return engine.eval(script);
                 }, 0, TimeUnit.MILLISECONDS);
             }
 
