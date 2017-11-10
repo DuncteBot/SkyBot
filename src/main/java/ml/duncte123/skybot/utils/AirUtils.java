@@ -286,7 +286,12 @@ public class AirUtils {
         }
         return "None";
     }
-    
+
+    /**
+     * This converts the game that a user is playing into a nice and readable format
+     * @param g the {@link net.dv8tion.jda.core.entities.Game Game} that the {@link net.dv8tion.jda.core.entities.Member Member} has
+     * @return a nicely formatted game string
+     */
     public static String gameToString(Game g) {
         if(g == null) return "no game";
 
