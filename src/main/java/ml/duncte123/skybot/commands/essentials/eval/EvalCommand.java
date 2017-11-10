@@ -38,17 +38,18 @@ import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class EvalCommand extends Command {
 
     private GroovyShell protected_;
     private ScriptEngine engine;
     private List<String> packageImports;
+    //Less spam to the api if a user already upvoted the bot
+    private List<String> usersThatHaveUpvoted = new ArrayList<>();
     private List<ScheduledExecutorService> services = new ArrayList<>();
     private Supplier<ScheduledExecutorService> service =
             () -> {
@@ -209,6 +210,7 @@ public class EvalCommand extends Command {
      * @return true if we found a upvote
      */
     private boolean hasUserUpvoted(String userId) {
+        if(usersThatHaveUpvoted.contains(userId)) return true;
         //The token to check if a user has pressed the upvote for the bot
         String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
 
@@ -227,6 +229,8 @@ public class EvalCommand extends Command {
         try {
             Response rawJsaonArray = client.newCall(request).execute();
             JSONArray jsonArray = new JSONArray(rawJsaonArray.body().source().readUtf8());
+            usersThatHaveUpvoted.clear();
+            jsonArray.iterator().forEachRemaining(it -> usersThatHaveUpvoted.add(String.valueOf(it)));
             return jsonArray.toList().contains(userId);
         }
         catch (IOException | NullPointerException e) {
