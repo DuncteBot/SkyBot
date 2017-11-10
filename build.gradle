@@ -26,8 +26,6 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-mainClassName = 'ml.duncte123.skybot.SkyBot'
-
 version '3.50.3'
 
 sourceCompatibility = 1.8
@@ -92,6 +90,9 @@ javadoc {
             'com/wolfram/alpha/visitor')
 }
 
-libsDirName = '../'
+shadowJar {
+    mainClassName = "ml.duncte123.skybot.SkyBot"
+    libsDirName = "../"
+}
 
 compileJava.options.encoding = 'UTF-8'
