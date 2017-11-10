@@ -54,14 +54,13 @@ implements DBConnectionManager {
     SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
-            Class.forName("org.sqlite.JDBC");
             con = JDBC.createConnection(url, new Properties());
             
             // Create it
             con.getMetaData().getURL();
             //Try to construct the database if not there
             innitDB(con);
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
             con = null;
         }
@@ -73,9 +72,8 @@ implements DBConnectionManager {
     @Override
     public Connection getConnection() {
         try {
-            Class.forName("org.sqlite.JDBC");
             return isConnected() ? con : JDBC.createConnection(url, new Properties());
-        } catch (ClassNotFoundException | SQLException e) {
+        } catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -101,7 +99,7 @@ implements DBConnectionManager {
      */
     @Override
     public String getName() {
-        return "main"; //SQLlite uses 'main' as name for the database
+        return "main"; //SQLite uses 'main' as name for the database
     }
 
     /**
