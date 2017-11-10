@@ -286,6 +286,26 @@ public class AirUtils {
         }
         return "None";
     }
+    
+    public static String gameToString(Game g) {
+        if(g == null) return "no game";
+
+        String gameType = "Playing";
+
+        switch (g.getType().getKey()) {
+            case 1 :
+                gameType = "Streaming";
+                break;
+            case 2 :
+                gameType = "Listening to";
+                break;
+            case 3 :
+                gameType = "Watching";
+        }
+
+        String gameName = g.getName();
+        return gameType + " " + gameName;
+    }
 
     /**
      * Logs a message to the console
