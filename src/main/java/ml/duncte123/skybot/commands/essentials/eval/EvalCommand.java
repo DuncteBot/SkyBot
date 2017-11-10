@@ -24,6 +24,8 @@ import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
@@ -82,7 +84,7 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        boolean isRanByBotOwner = false;/*Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
+        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
 
@@ -92,7 +94,7 @@ public class EvalCommand extends Command {
                     " please consider to hit the upvote button over at " +
                     "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
             return;
-        }*/
+        }
         
         ScheduledExecutorService service = this.service.get();
         
@@ -206,7 +208,7 @@ public class EvalCommand extends Command {
      * @param userId The id of the user to check
      * @return true if we found a upvote
      */
-    public boolean hasUserUpvoted(String userId) {
+    private boolean hasUserUpvoted(String userId) {
         //The token to check if a user has pressed the upvote for the bot
         String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
 
