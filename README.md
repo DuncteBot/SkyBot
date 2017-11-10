@@ -1,4 +1,4 @@
-# SkyBot [![Build Status](https://travis-ci.org/YannickFricke/SkyBot.svg?branch=travis)](https://travis-ci.org/YannickFricke/SkyBot)
+# SkyBot [![Build Status](https://travis-ci.org/duncte123/SkyBot.svg?branch=travis)](https://travis-ci.org/YannickFricke/SkyBot)
 SkyBot is a discord bot with music and mod commands
 
 # Libs
@@ -9,7 +9,7 @@ The following libraries are used:
 
 # How to setup?
 ## Replace the X.X.X with the latest version
-Download the latest release here: [Releases](https://github.com/YannickFricke/SkyBot/releases)
+Download the latest release here: [Releases](https://github.com/duncte123/SkyBot/releases)
 You need the `skybot-X.X.X-all.jar`
 
 Execute the following command
