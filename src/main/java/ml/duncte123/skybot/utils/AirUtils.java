@@ -288,6 +288,31 @@ public class AirUtils {
     }
 
     /**
+     * This converts the game that a user is playing into a nice and readable format
+     * @param g the {@link net.dv8tion.jda.core.entities.Game Game} that the {@link net.dv8tion.jda.core.entities.Member Member} has
+     * @return a nicely formatted game string
+     */
+    public static String gameToString(Game g) {
+        if(g == null) return "no game";
+
+        String gameType = "Playing";
+
+        switch (g.getType().getKey()) {
+            case 1 :
+                gameType = "Streaming";
+                break;
+            case 2 :
+                gameType = "Listening to";
+                break;
+            case 3 :
+                gameType = "Watching";
+        }
+
+        String gameName = g.getName();
+        return gameType + " " + gameName;
+    }
+
+    /**
      * Logs a message to the console
      * @param lvl The {{@link org.slf4j.event.Level level} to log the message at
      * @param message The message to log

@@ -1,4 +1,4 @@
-# SkyBot [![Build Status](https://travis-ci.org/duncte123/SkyBot.svg?branch=travis)](https://travis-ci.org/duncte123/SkyBot)
+# SkyBot [![Build Status](https://travis-ci.org/duncte123/SkyBot.svg?branch=master)](https://travis-ci.org/duncte123/SkyBot)
 SkyBot is a discord bot with music and mod commands
 
 # Libs

@@ -98,7 +98,7 @@ public class UserinfoCommand extends Command {
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("Username + Discriminator", String.format("%#s", u), true)
                 .addField("User Id", u.getId(), true)
-                .addField("Playing", (m.getGame() == null ? "**_nothing_**" : m.getGame().getName()), true)
+                .addField("Status", AirUtils.gameToString(m.getGame()), true)
                 .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
                 .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
