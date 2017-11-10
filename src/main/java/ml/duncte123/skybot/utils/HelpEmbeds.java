@@ -18,7 +18,11 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class HelpEmbeds {
 
@@ -26,6 +30,71 @@ public class HelpEmbeds {
      * This tells the fields to be inline or not
      */
     private static boolean INLINE = false;
+
+    /**
+     * These lists hold the commands for each category
+     */
+    private static List<String> mainCommands = new ArrayList<>();
+    private static List<String> animalCommands = new ArrayList<>();
+    private static List<String> funCommands = new ArrayList<>();
+    private static List<String> musicCommands = new ArrayList<>();
+    private static List<String> nerdCommands = new ArrayList<>();
+    private static List<String> modAdminCommands = new ArrayList<>();
+
+    /**
+     * This loads all the commands in the lists
+     */
+    public static void init() {
+        for(Command c : AirUtils.commandManager.getCommands()) {
+            switch (c.getCategory()) {
+                case MAIN:
+                    mainCommands.add(c.getName());
+                    break;
+                case FUN:
+                    funCommands.add(c.getName());
+                    break;
+                case ANIMALS:
+                    animalCommands.add(c.getName());
+                    break;
+                case MUSIC:
+                    musicCommands.add(c.getName());
+                    break;
+                case MOD_ADMIN:
+                    modAdminCommands.add(c.getName());
+                    break;
+                case NERD_STUFF:
+                    nerdCommands.add(c.getName());
+                    break;
+            default:
+                break;
+            }
+
+            for(String alias : c.getAliases()) {
+                switch (c.getCategory()) {
+                    case MAIN:
+                        mainCommands.add(alias);
+                        break;
+                    case FUN:
+                        funCommands.add(alias);
+                        break;
+                    case ANIMALS:
+                        animalCommands.add(alias);
+                        break;
+                    case MUSIC:
+                        musicCommands.add(alias);
+                        break;
+                    case MOD_ADMIN:
+                        modAdminCommands.add(alias);
+                        break;
+                    case NERD_STUFF:
+                        nerdCommands.add(alias);
+                        break;
+                default:
+                    break;
+                }
+            }
+        }
+    }
 
     /**
      * This is the embed containing all the commands
@@ -48,10 +117,12 @@ public class HelpEmbeds {
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
                 .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
-                .addField("Main commands", generateCommandsWithPrefix(prefix, "help", "about", "ping", "guildinfo", "userinfo", "alpha"), INLINE)
-                .addField("Music commands", generateCommandsWithPrefix(prefix, "join", "leave", "play", "pplay", "pause", "repeat", "shuffle", "nowplaying", "skip", "stop"), INLINE)
-                .addField("Fun commands", generateCommandsWithPrefix(prefix, "alpaca", "birb", "blob", "coin", "joke", "kpop", "seal", "kitty", "dog", "llama", "dialog", "ttb"), INLINE)
-                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, "announce", "ban", "clear", "softban", "unban", "kick", "settings", "toggleJoinMessage", "setJoinMessage", "togglSswearFilter", "setPrefix"), INLINE)
+                .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
+                .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
+                .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
+                .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
+                .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
                 .build();
     }
 

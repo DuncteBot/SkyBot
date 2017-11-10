@@ -21,8 +21,12 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.objects.delegate.JDADelegate;
+import net.dv8tion.jda.core.JDA;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
 
@@ -35,7 +39,7 @@ public class EvalFilter extends GroovyValueFilter {
      * 
      * @author ramidzkh
      */
-    public static final Pattern ARRAY_FILTER =
+    private static final Pattern ARRAY_FILTER =
             Pattern.compile(
                     // Case insensitive
                     "(?i)"
@@ -62,13 +66,26 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
+        System.out.println("filter: " + o.toString());
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
+        if(o instanceof JDA)
+            return new JDADelegate((JDA) o);
         if(o instanceof Script || o instanceof Closure)
             throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
         throw new VRCubeException("Class not allowed: " + o);
     }
 
+    @Override
+    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) throws Throwable {
+        throw new VRCubeException(
+                String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
+                                receiver.toString(),
+                                receiver.getClass().getComponentType().getName(),
+                                index.toString(),
+                                value.toString()));
+    }
+    
     /**
      * This checks if the script contains any loop
      * @param toFilter the script to filter
@@ -79,7 +96,7 @@ public class EvalFilter extends GroovyValueFilter {
                 //for or while loop
                 "((while|for)" +
                 //Stuff in the brackets
-                "(\\s*)\\((\\s*)(([0-9A-Za-z=]*)|([0-9A-Za-z=\\s*;.<>+]*)|(\\s*[;])(\\s*[;]))(\\s*)\\))|" +
+                "\\s*\\(.*\\))|" +
                 // Other groovy loops
                 "(\\.step|\\.times|\\.upto|\\.each)"
                     //match and find
@@ -129,7 +146,12 @@ public class EvalFilter extends GroovyValueFilter {
             Arrays.class,
             
             List.class,
-            ArrayList.class
+            ArrayList.class,
+            
+            BigDecimal.class,
+            BigInteger.class,
+
+            JDADelegate.class
     };
 
     public boolean containsMentions(String string) {

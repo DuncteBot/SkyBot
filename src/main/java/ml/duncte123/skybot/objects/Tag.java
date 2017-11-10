@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
  * This is the model that all the tags use
  */
 public class Tag {
+
     private int tagId;
     private String author;
     private String authorId;
@@ -88,6 +89,6 @@ public class Tag {
 
     @Override
     public String toString() {
-        return "(Tag:" + name + "["+ StringUtils.abbreviate(text, 30)+"], Author:"+authorId+")";
+        return String.format("Tag[%s, %s, Author: %s]", name, StringUtils.abbreviate(text, 30), author);
     }
 }

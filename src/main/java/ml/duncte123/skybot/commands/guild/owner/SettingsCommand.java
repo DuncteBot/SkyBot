@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.Settings;
 import org.apache.commons.lang3.StringUtils;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;
@@ -31,50 +32,65 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class SettingsCommand extends Command {
 
+    public SettingsCommand() {
+        this.category = CommandCategory.MOD_ADMIN;
+    }
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!event.getMember().hasPermission(Permission.MANAGE_SERVER)) {
+        if(!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
-        GuildSettings settings = getSettings(event.getGuild());
 
-        if(invoke.equals("settings") || invoke.equals("options")) {
-            //true ✅
-            //false ❌
-            MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                    "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
-                    "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
-                    "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-                    "**Current prefix:** " + settings.getCustomPrefix()
-            );
-            sendEmbed(event, message);
-        } else if(invoke.equals("setprefix")) {
-            if(args.length < 1) {
-                sendMsg(event, "Correct usage is `"+this.PREFIX+"setPrefix <new prefix>`");
-                return;
-            }
-            String newPrefix = StringUtils.join(args);
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
-            sendMsg(event, "New prefix has been set to `"+newPrefix+"`");
-        } else if(invoke.equals("enablejoinmessage") || invoke.equals("disablejoinmessage") || invoke.equals("togglejoinmessage")) {
-            boolean isEnabled = settings.isEnableJoinMessage();
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(),
-                    settings.setEnableJoinMessage(!isEnabled));
-            sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
-        } else if(invoke.equals("setjoinmessage")) {
-            if(args.length < 1) {
-                sendMsg(event, "Correct usage is `"+this.PREFIX+"setJoinMessage <new join message>`");
-                return;
-            }
-            String newJoinMessage = StringUtils.join(args);
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
-            sendMsg(event, "The new join message has been set to `"+newJoinMessage+"`");
-        } else if(invoke.equals("enableswearfilter") || invoke.equals("disableswearfilter") || invoke.equals("toggleswearfilter")) {
-            boolean isEnabled = settings.isEnableSwearFilter();
-            GuildSettingsUtils.updateGuildSettings(event.getGuild(),
-                    settings.setEnableSwearFilter(!isEnabled));
-            sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+        GuildSettings settings = getSettings(event.getGuild());
+        boolean isEnabled;
+        switch (invoke) {
+            case "settings": case "options":
+                //true ✅
+                //false ❌
+                MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
+                        "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
+                        "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
+                        "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
+                        "**Current prefix:** " + settings.getCustomPrefix()
+                );
+                sendEmbed(event, message);
+                break;
+
+            case "setprefix":
+                if(args.length < 1) {
+                    sendMsg(event, "Correct usage is `"+this.PREFIX+"setPrefix <new prefix>`");
+                    return;
+                }
+                String newPrefix = StringUtils.join(args);
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
+                sendMsg(event, "New prefix has been set to `"+newPrefix+"`");
+                break;
+
+            case "setjoinmessage":
+                if(args.length < 1) {
+                    sendMsg(event, "Correct usage is `"+this.PREFIX+"setJoinMessage <new join message>`");
+                    return;
+                }
+                String newJoinMessage = StringUtils.join(args);
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
+                sendMsg(event, "The new join message has been set to `"+newJoinMessage+"`");
+                break;
+
+            case "enablejoinmessage": case "disablejoinmessage": case "togglejoinmessage":
+                isEnabled = settings.isEnableJoinMessage();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(),
+                        settings.setEnableJoinMessage(!isEnabled));
+                sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                break;
+
+            case "enableswearfilter": case "disableswearfilter": case "toggleswearfilter":
+                isEnabled = settings.isEnableSwearFilter();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(),
+                        settings.setEnableSwearFilter(!isEnabled));
+                sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                break;
         }
     }
 

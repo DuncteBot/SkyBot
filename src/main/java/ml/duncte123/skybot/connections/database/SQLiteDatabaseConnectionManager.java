@@ -20,12 +20,11 @@ package ml.duncte123.skybot.connections.database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.sql.Statement;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
+import ml.duncte123.skybot.utils.Settings;
 import org.sqlite.JDBC;
 
 /**
@@ -116,6 +115,8 @@ implements DBConnectionManager {
     /**
      * This sets up the database and inserts the tables if they are not there
      * @param connection the connection to use
+     * 
+     * @author duncte123
      */
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
@@ -124,7 +125,7 @@ implements DBConnectionManager {
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId TEXT NOT NULL," +
                     "guildName TEXT NOT NULL," +
-                    "prefix VARCHAR(255) NOT NULL DEFAULT '/'," +
+                    "prefix VARCHAR(255) NOT NULL DEFAULT '"+ Settings.prefix +"'," +
                     "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                     "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
                     "customWelcomeMessage TEXT NOT NULL);");

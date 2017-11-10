@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
@@ -26,6 +27,10 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class CoinCommand extends Command {
+
+    public CoinCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     public final static String help = "flips a coin.\nUsage: `"+ Settings.prefix+"coin`";
     /**

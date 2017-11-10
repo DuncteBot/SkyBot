@@ -18,41 +18,50 @@
 
 package ml.duncte123.skybot.commands.essentials.eval;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
-import org.codehaus.groovy.control.CompilerConfiguration;
-import org.kohsuke.groovy.sandbox.SandboxTransformer;
-
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
+import org.codehaus.groovy.control.CompilerConfiguration;
+import org.json.JSONArray;
+import org.kohsuke.groovy.sandbox.SandboxTransformer;
+
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.concurrent.*;
+import java.util.function.Supplier;
 
 public class EvalCommand extends Command {
 
     private GroovyShell protected_;
     private ScriptEngine engine;
     private List<String> packageImports;
-    private ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+    private List<ScheduledExecutorService> services = new ArrayList<>();
+    private Supplier<ScheduledExecutorService> service =
+            () -> {
+                ScheduledExecutorService service
+                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+                services.add(service);
+                return service;
+            };
     private EvalFilter filter = new EvalFilter();
 
     /**
      * This initialises the engine
      */
     public EvalCommand() {
+        this.category = CommandCategory.UNLISTED;
         //the GroovyShell is for the public eval
         protected_ = new GroovyShell(
                 new CompilerConfiguration()
@@ -73,100 +82,155 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
+        boolean isRanByBotOwner = false;/*Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
 
+        if(!isRanByBotOwner && !hasUserUpvoted(event.getAuthor().getId())) {
+            sendError(event.getMessage());
+            sendEmbed(event, EmbedUtils.embedMessage("The eval command is locked for people who have not upvoted the bot," +
+                    " please consider to hit the upvote button over at " +
+                    "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
+            return;
+        }*/
+        
+        ScheduledExecutorService service = this.service.get();
+        
         ScheduledFuture<Object> future = null;
+        
         try {
-            StringBuilder importStringBuilder = new StringBuilder();
-            for (final String s : packageImports) {
-                importStringBuilder.append("import ").append(s).append(".*;\n");
-            }
-
-            String script = importStringBuilder.toString() +
-                    event.getMessage().getRawContent()
-                        .substring(event.getMessage().getRawContent()
-                                .split(" ")[0].length());
-            
-            int timeout = 5;
-            if(isRanByBotOwner) {
-                timeout = 60;
-
-                engine.put("commandmanager", AirUtils.commandManager);
-
-                engine.put("message", event.getMessage());
-                engine.put("channel", event.getMessage().getTextChannel());
-                engine.put("guild", event.getGuild());
-                engine.put("member", event.getMember());
-                engine.put("jda", event.getJDA());
-                engine.put("shardmanager", event.getJDA().asBot().getShardManager());
-                engine.put("event", event);
-
-                engine.put("args", args);
-
-                future = service.schedule(() -> {
-                     return engine.eval(script);
-                }, 0, TimeUnit.MILLISECONDS);
-            } else {
-
-                if(filter.filterArrays(script))
-                    throw new VRCubeException("Arrays are not allowed");
-                if(filter.filterLoops(script))
-                    throw new VRCubeException("Loops are not allowed");
-
-                future = service.schedule(() -> {
-                    filter.register();
-                    return protected_.evaluate(script);
-                }, 0, TimeUnit.MILLISECONDS);
-            }
-
-            Object out = future.get(timeout, TimeUnit.SECONDS);
-            
-            if (out != null && !String.valueOf(out).isEmpty() ) {
-                if(isRanByBotOwner)
-                    sendMsg(event, (!isRanByBotOwner ? "**" + event.getAuthor().getName()
-                            + ":** " : "") + out.toString());
-                else {
-                    if(filter.containsMentions(out.toString())) {
-                        sendMsg(event, "**ERROR:** Mentioning people!");
-                        sendError(event.getMessage());
-                    } else {
-                        sendMsg(event, "**" + event.getAuthor().getName()
-                                + ":** " + out.toString());
-                    }
+            try {
+                StringBuilder importStringBuilder = new StringBuilder();
+                for (final String s : packageImports) {
+                    importStringBuilder.append("import ").append(s).append(".*;\n");
                 }
-            } else {
-                sendSuccess(event.getMessage());
-            }
+    
+                String script = importStringBuilder.toString() +
+                        event.getMessage().getRawContent()
+                            .substring(event.getMessage().getRawContent()
+                                    .split(" ")[0].length());
+                
+                int timeout = 5;
+                if(isRanByBotOwner) {
+                    timeout = 60;
+    
+                    engine.put("commandmanager", AirUtils.commandManager);
+    
+                    engine.put("message", event.getMessage());
+                    engine.put("channel", event.getMessage().getTextChannel());
+                    engine.put("guild", event.getGuild());
+                    engine.put("member", event.getMember());
+                    engine.put("jda", event.getJDA());
+                    engine.put("shardmanager", event.getJDA().asBot().getShardManager());
+                    engine.put("event", event);
+    
+                    engine.put("args", args);
+    
+                    future = service.schedule(
+                            () -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
+                } else {
+    
+                    if(filter.filterArrays(script))
+                        throw new VRCubeException("Arrays are not allowed");
+                    if(filter.filterLoops(script))
+                        throw new VRCubeException("Loops are not allowed");
 
-        }
-        catch (ExecutionException e1)  {
-            event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
-            //e.printStackTrace();
-            sendError(event.getMessage());
-        }
-        catch (TimeoutException | InterruptedException e2) {
-            future.cancel(true);
-            event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
-            //e.printStackTrace();
-            if(!future.isCancelled()) future.cancel(true);
-            sendError(event.getMessage());
-        }
-        catch (IllegalArgumentException | VRCubeException e3) {
-            sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
-            sendError(event.getMessage());
+                    protected_.setVariable("jda", event.getJDA());
+
+                    future = service.schedule(() -> {
+                        filter.register();
+                        return protected_.evaluate(script);
+                    }, 0, TimeUnit.MILLISECONDS);
+                }
+    
+                Object out = future.get(timeout, TimeUnit.SECONDS);
+                
+                if (out != null && !String.valueOf(out).isEmpty() ) {
+                    if(isRanByBotOwner)
+                        (new MessageBuilder())
+                                .append(out.toString())
+                                .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                                .forEach(it -> event.getChannel().sendMessage(it).queue());
+                    else {
+                        if(filter.containsMentions(out.toString())) {
+                            sendMsg(event, "**ERROR:** Mentioning people!");
+                            sendError(event.getMessage());
+                        } else {
+                            sendMsg(event, "**" + event.getAuthor().getName()
+                                    + ":** " + out.toString());
+                        }
+                    }
+                } else {
+                    sendSuccess(event.getMessage());
+                }
+    
+            }
+            catch (ExecutionException e1)  {
+                event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
+                //e.printStackTrace();
+                sendError(event.getMessage());
+            }
+            catch (TimeoutException | InterruptedException e2) {
+                future.cancel(true);
+                event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
+                //e.printStackTrace();
+                if(!future.isCancelled()) future.cancel(true);
+                sendError(event.getMessage());
+            }
+            catch (IllegalArgumentException | VRCubeException e3) {
+                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
+                sendError(event.getMessage());
+            }
+        } catch (Throwable thr) {
+            sendMsg(event, "ERROR: " + thr.toString());
+            thr.printStackTrace();
         } finally {
-            // Clear variables in owner??
-            //Unregister the filter
             filter.unregister();
+            
+            services.remove(service);
+            
+            // Just in case
+            service.shutdown();
         }
         
         System.gc();
     }
 
     public void shutdown() {
-        service.shutdownNow();
+        services.forEach(ScheduledExecutorService::shutdownNow);
+        services.clear();
+    }
+
+    /**
+     * This will check if a user has pressed the upvote button on https://discordbots.org/bot/210363111729790977
+     * @param userId The id of the user to check
+     * @return true if we found a upvote
+     */
+    private boolean hasUserUpvoted(String userId) {
+        //The token to check if a user has pressed the upvote for the bot
+        String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
+
+        if(discordbotlistApiKey == null) {
+            return false;
+        }
+
+        OkHttpClient client = new OkHttpClient();
+
+        Request request = new Request.Builder()
+                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                .get()
+                .addHeader("Authorization", discordbotlistApiKey)
+                .build();
+
+        try {
+            Response rawJsaonArray = client.newCall(request).execute();
+            JSONArray jsonArray = new JSONArray(rawJsaonArray.body().source().readUtf8());
+            return jsonArray.toList().contains(userId);
+        }
+        catch (IOException | NullPointerException e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 
     @Override

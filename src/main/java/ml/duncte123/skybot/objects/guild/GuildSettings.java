@@ -59,7 +59,7 @@ public class GuildSettings {
      * @param enableJoinMessage whether we should display the join message
      * @return The current {@link GuildSettings}
      */
-    public GuildSettings setEnableJoinMessage(boolean enableJoinMessage){
+    public GuildSettings setEnableJoinMessage(boolean enableJoinMessage) {
         this.enableJoinMessage = enableJoinMessage;
         return this;
     }
@@ -139,6 +139,8 @@ public class GuildSettings {
      */
     @Override
     public String toString() {
-        return "GuildSettings["+guildId+"](prefix="+customPrefix+", Swearword filter="+enableSwearFilter+", Join message="+enableJoinMessage+")";
+        return String.format("GuildSettings[%d](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
+                (enableSwearFilter ? "Enabled" : "Disabled"), customJoinMessage);
     }
+
 }

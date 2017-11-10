@@ -66,8 +66,7 @@ public class EmbedUtils {
      * The default embed layout that all of the embeds are based off
      * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
      */
-    public static EmbedBuilder defaultEmbed(){
-
+    public static EmbedBuilder defaultEmbed() {
         EmbedBuilder eb = new EmbedBuilder()
                 .setColor(Settings.defaultColour);
                 if(AirUtils.nonsqlite) {
@@ -92,7 +91,6 @@ public class EmbedUtils {
      * @return the String that we can place in our embed
      */
     public static String playerEmbed(GuildMusicManager mng) {
-
         return (mng.player.isPaused()?"\u23F8":"\u25B6")+" "+
                 generateProgressBar((double)mng.player.getPlayingTrack().getPosition()/mng.player.getPlayingTrack().getDuration())
                 +" `["+formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) +"]` "
@@ -157,7 +155,6 @@ public class EmbedUtils {
      * @return the converted embed
      */
     public static String embedToMessage(MessageEmbed embed) {
-
         String msg = "";
 
         if(embed.getAuthor() != null) {

@@ -38,18 +38,11 @@ import java.util.stream.Collectors;
  */
 public class UserinfoCommand extends Command {
 
-    /**
-     * this is the user object
-     */
-    User u;
-    /**
-     * this is the member object
-     */
-    Member m;
-
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
+        User u;
+        Member m;
+        
         if (args.length == 0) {
             u = event.getAuthor();
             m = event.getGuild().getMemberById(u.getId());
@@ -77,14 +70,14 @@ public class UserinfoCommand extends Command {
 
         StringBuilder joinOrder = new StringBuilder();
         List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        joins.sort( Comparator.comparing(Member::getJoinDate));
+        joins.sort(Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
         index-=3;
         if(index<0)
             index=0;
         joinOrder.append("\n"+"Join Order: ");
         if(joins.get(index).equals(m))
-            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("]()");
+            joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("](https://bot.duncte123.me/)");
         else
             joinOrder.append(joins.get(index).getEffectiveName());
         for(int i=index+1;i<index+7;i++) {
@@ -93,7 +86,7 @@ public class UserinfoCommand extends Command {
             Member usr = joins.get(i);
             String name = usr.getEffectiveName();
             if(usr.equals(m))
-                name="["+name+"]()";
+                name="["+name+"](https://bot.duncte123.me/)";
             joinOrder.append(" > ").append(name);
         }
 
@@ -103,7 +96,7 @@ public class UserinfoCommand extends Command {
                 .setColor(m.getColor())
                 .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Username + Discriminator", u.getName() + "#" + u.getDiscriminator(), true)
+                .addField("Username + Discriminator", String.format("%#s", u), true)
                 .addField("User Id", u.getId(), true)
                 .addField("Playing", (m.getGame() == null ? "**_nothing_**" : m.getGame().getName()), true)
                 .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
@@ -111,7 +104,7 @@ public class UserinfoCommand extends Command {
                 .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                 .addField("Join order", joinOrder.toString(), true)
                 .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
-                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot") + "", true)
+                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                 .build();
 
         sendEmbed(event, eb);

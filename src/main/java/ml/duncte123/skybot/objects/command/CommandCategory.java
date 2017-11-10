@@ -16,37 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
+package ml.duncte123.skybot.objects.command;
 
-import java.sql.Connection;
-
-/**
- * Use abstraction to easier handle {@link DatabaseConnectionManager} for
- * databases and {@link SQLiteDatabaseConnectionManager} for file databases
- * 
- * @author ramidzkh
- */
-public interface DBConnectionManager {
-
-    /**
-     * @return The connection to use
-     */
-    public Connection getConnection();
-
-    /**
-     * @return Is the connection opened
-     */
-    public boolean isConnected();
-
-    /**
-     * @return The name of the database
-     */
-    public String getName();
-
-    /**
-     * @return Does the database have settings, default to true
-     */
-    public default boolean hasSettings() {
-        return true;
-    }
+public enum CommandCategory {
+    ANIMALS,
+    MAIN,
+    FUN,
+    MUSIC,
+    MOD_ADMIN,
+    NERD_STUFF,
+    UNLISTED
 }

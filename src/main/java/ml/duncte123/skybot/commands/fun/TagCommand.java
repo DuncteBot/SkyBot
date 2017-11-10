@@ -20,14 +20,21 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
+import java.util.regex.Pattern;
 
 public class TagCommand extends Command {
+
+    public TagCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -43,9 +50,10 @@ public class TagCommand extends Command {
             if(args[0].equals("help") ||  args[0].equals("?")) {
                 MessageBuilder message = new MessageBuilder()
                         .appendCodeBlock("help => shows this\n" +
+                                "list => shows a list of the tags\n" +
                                 "delete => removes a tag\n" +
                                 "author => displays who made the tag\n" +
-                                "create => make a new tag", "cs");
+                                "create => make a new tag", "haskel");
                 sendMsg(event, message.build());
             } else if(args[0].equals("list")) {
                 sendMsg(event, "Here is a list of all the tags: `" + StringUtils.join(AirUtils.tagsList.keySet(), "`, `") + "`");
@@ -80,7 +88,7 @@ public class TagCommand extends Command {
                     return;
                 }
                 if(AirUtils.deleteTag(t)) {
-                    sendMsg(event, "Tag _"+args[1]+"_ has been deleted successfully");
+                    sendMsg(event, "Tag `"+args[1]+"` has been deleted successfully");
                 } else {
                     sendMsg(event, "Failed to delete this tag");
                 }
@@ -97,12 +105,13 @@ public class TagCommand extends Command {
                 sendMsg(event, "The tag name can't be `"+args[1]+"`");
                 return;
             }
+            String[] newTagContent = event.getMessage().getRawContent().replaceFirst(Pattern.quote(Settings.prefix), "").split(" ");
             if(AirUtils.registerNewTag(event.getAuthor(), new Tag(
                     AirUtils.tagsList.keySet().size()+1,
                     String.format("%#s", event.getAuthor()),
                     event.getAuthor().getId(),
                     args[1],
-                    StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ")))) {
+                    StringUtils.join(Arrays.copyOfRange(newTagContent, 3, newTagContent.length), " ")))) {
                 sendMsg(event, "Tag added successfully.");
             } else {
                 sendMsg(event, "Failed to add tag.");

@@ -16,37 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.connections.database;
+package ml.duncte123.skybot.objects;
 
-import java.sql.Connection;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Method;
+import java.lang.reflect.Proxy;
 
 /**
- * Use abstraction to easier handle {@link DatabaseConnectionManager} for
- * databases and {@link SQLiteDatabaseConnectionManager} for file databases
+ * An {@link InvocationFunction} is a {@link InvocationHandler} in its basic form
  * 
  * @author ramidzkh
+ *
  */
-public interface DBConnectionManager {
+@FunctionalInterface
+public interface InvocationFunction {
 
     /**
-     * @return The connection to use
+     * Handles a function
+     * 
+     * @param instance The {@link Proxy proxy} used
+     * @param method The method invoked
+     * @param args Parameters, if any
+     * @return The returned object. If the method needs to return a primitive type,
+     * its corresponding wrapper type must be returned
+     * @throws Throwable
      */
-    public Connection getConnection();
-
-    /**
-     * @return Is the connection opened
-     */
-    public boolean isConnected();
-
-    /**
-     * @return The name of the database
-     */
-    public String getName();
-
-    /**
-     * @return Does the database have settings, default to true
-     */
-    public default boolean hasSettings() {
-        return true;
-    }
+    public Object handle(Object instance, Method method, Object... args) throws Throwable;
 }

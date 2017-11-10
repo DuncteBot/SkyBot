@@ -20,7 +20,6 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import net.dv8tion.jda.core.managers.AudioManager;
 import net.dv8tion.jda.core.managers.Presence;
 import net.dv8tion.jda.core.requests.RestAction;
-import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
 import net.dv8tion.jda.core.requests.restaction.GuildAction;
 import net.dv8tion.jda.core.utils.cache.CacheView;
 import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
@@ -240,10 +239,6 @@ implements JDA {
 
     public void shutdownNow() {
         __$__$$e__0_$0.shutdownNow();
-    }
-
-    public AuditableRestAction<Void> installAuxiliaryCable(int port) {
-        return __$__$$e__0_$0.installAuxiliaryCable(port);
     }
 
     public AccountType getAccountType() {

@@ -19,13 +19,18 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class FlipCommand extends Command {
+
+    public FlipCommand() {
+        this.category = CommandCategory.FUN;
+    }
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         User u = event.getAuthor();
         String flippedUser = "";
 
@@ -53,7 +58,6 @@ public class FlipCommand extends Command {
         }
 
         sendMsg(event, "(╯°□°）╯︵ " + flippedUser);
-
     }
 
     @Override
