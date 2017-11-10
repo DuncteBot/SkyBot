@@ -16,7 +16,7 @@ Execute the following command
 ```shell
 java -jar skybot-X.X.X-all.jar
 ```
-The bot will create a file named `config-template.json`.
+The bot will create a file named `config.json`.
 
 Edit this file with your settings
 
