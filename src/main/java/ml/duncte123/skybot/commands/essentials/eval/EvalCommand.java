@@ -206,7 +206,7 @@ public class EvalCommand extends Command {
      * @param userId The id of the user to check
      * @return true if we found a upvote
      */
-    private boolean hasUserUpvoted(String userId) {
+    public boolean hasUserUpvoted(String userId) {
         //The token to check if a user has pressed the upvote for the bot
         String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
 
