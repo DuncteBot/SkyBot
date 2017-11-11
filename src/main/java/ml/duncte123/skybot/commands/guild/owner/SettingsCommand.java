@@ -20,9 +20,9 @@ package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.objects.command.Command;
 import org.apache.commons.lang3.StringUtils;
 
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;

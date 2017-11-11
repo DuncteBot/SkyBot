@@ -49,7 +49,7 @@ public class GuildMusicManager {
 
     /**
      * This will get our sendings handler
-     * @return The {@link ml.duncte123.skybot.audio.AudioPlayerSenderHandler thing} that sends our audio
+     * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
      */
     public AudioPlayerSenderHandler getSendHandler(){
         return sendHandler;

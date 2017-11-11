@@ -104,3 +104,5 @@ hs_err_pid*
 bin/
 
 logs\.txt
+
+\.idea/kotlinc\.xml

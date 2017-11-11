@@ -53,6 +53,7 @@ public class CommandManager {
         this.addCommand(new OneLinerCommands());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
+        this.addCommand(new OneLinerCommandsJava());
 
         //fun commands
         this.addCommand(new DialogCommand());
@@ -135,6 +136,10 @@ public class CommandManager {
         }
 
         return null;
+    }
+
+    public boolean removeCommand(String command) {
+        return commands.remove(getCommand(command));
     }
 
     /**

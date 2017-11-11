@@ -41,7 +41,7 @@ public abstract class MusicCommand extends Command {
     /**
      * This is a shortcut for getting the music manager
      * @param guild the guild to get the music manager for
-     * @return the {@link ml.duncte123.skybot.audio.GuildMusicManager GuildMusicManager} for that guild
+     * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
     protected GuildMusicManager getMusicManager(Guild guild) {
         return AirUtils.audioUtils.getMusicManager(guild);
