@@ -514,7 +514,7 @@ public class AirUtils {
     /**
      * Attempts to register a new tag
      * @param author The user that created the tag
-     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to add
+     * @param tag the {@link Tag Tag} to add
      * @return True if the tag is added
      */
     public static boolean registerNewTag(User author, Tag tag) {
@@ -550,7 +550,7 @@ public class AirUtils {
 
     /**
      * Attempts to delete a tag
-     * @param tag the {@link ml.duncte123.skybot.objects.Tag Tag} to delete
+     * @param tag the {@link Tag Tag} to delete
      * @return true if the tag is deleted
      */
     public static boolean deleteTag(Tag tag) {

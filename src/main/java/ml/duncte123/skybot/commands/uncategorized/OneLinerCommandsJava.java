@@ -29,7 +29,7 @@ import java.lang.management.ManagementFactory;
 /**
  * This class contains a bunch of commands that require little code to run, so we combine in this class
  */
-public class OneLinerCommands extends Command {
+public class OneLinerCommandsJava extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -41,7 +41,7 @@ public class OneLinerCommands extends Command {
                         message.editMessageFormat("PONG!" +
                                         "\nping is: %dms " +
                                         "\nWebsocket ping: %sms\n" +
-                                        "Average ping: %sms",
+                                        "Average shard ping: %sms",
                                 (System.currentTimeMillis() - time),
                                 event.getJDA().getPing(),
                                 event.getJDA().asBot().getShardManager().getAveragePing() ).queue());

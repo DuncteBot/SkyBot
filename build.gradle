@@ -16,13 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+buildscript {
+    ext.kotlin_version = '1.1.51'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
 plugins {
     id'java'
     id'idea'
     id'application'
     id'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'de.fuerstenau.buildconfig' version '1.1.8'
+    id'de.fuerstenau.buildconfig' version '1.1.8'
 }
+
+apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
@@ -49,6 +62,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'e11c97c'
     compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '022a16f' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
@@ -67,7 +81,7 @@ dependencies {
     //gson
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.9'
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.10'
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //logback
@@ -77,6 +91,7 @@ dependencies {
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version:'4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jre8:$kotlin_version"
 }
 
 javadoc {
@@ -96,3 +111,13 @@ shadowJar {
 }
 
 compileJava.options.encoding = 'UTF-8'
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}

@@ -32,6 +32,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageChannel;
@@ -198,9 +199,9 @@ public class AudioUtils {
     }
 
     /**
-     * {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param embed {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param channel {@link ml.duncte123.skybot.objects.command.Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param embed {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param channel {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;

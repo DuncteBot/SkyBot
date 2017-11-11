@@ -79,7 +79,7 @@ public abstract class Command {
     /**
      * This returns the settings for the given guild
      * @param guild the guild that we need the settings for
-     * @return the {@link ml.duncte123.skybot.objects.guild.GuildSettings GuildSettings} for the given guild
+     * @return the {@link GuildSettings GuildSettings} for the given guild
      */
     protected GuildSettings getSettings(Guild guild) {
         return GuildSettingsUtils.getGuild(guild);

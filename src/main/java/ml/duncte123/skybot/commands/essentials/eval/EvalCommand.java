@@ -38,10 +38,11 @@ import org.kohsuke.groovy.sandbox.SandboxTransformer;
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
-import java.util.stream.Collectors;
 
 public class EvalCommand extends Command {
 

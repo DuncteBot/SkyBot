@@ -86,10 +86,10 @@ public class SkyBot {
                 .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.of(Settings.prefix  + "help | Shard #" + (shardId + 1)))
+                //.setGameProvider(shardId -> Game.of(Settings.prefix  + "help | Shard #" + (shardId + 1)))
                 .setToken(token)
                 .buildAsync();
-        
+
         //Load all the commands for the help embed last
         HelpEmbeds.init();
     }

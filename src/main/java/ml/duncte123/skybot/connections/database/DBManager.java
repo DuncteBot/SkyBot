@@ -80,7 +80,7 @@ public class DBManager {
 
     /**
      * Returns the connection manager
-     * @return the {@link ml.duncte123.skybot.connections.database.DBConnectionManager DatabaseConnectionManager}
+     * @return the {@link DBConnectionManager DatabaseConnectionManager}
      */
     public DBConnectionManager getConnManager() {
         return connManager;
