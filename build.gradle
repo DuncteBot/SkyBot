@@ -107,6 +107,7 @@ javadoc {
 
 shadowJar {
     mainClassName = "ml.duncte123.skybot.SkyBot"
+    classifier = null
     libsDirName = "../"
 }
 
