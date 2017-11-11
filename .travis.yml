@@ -7,7 +7,7 @@ deploy:
   provider: releases
   skip_cleanup: true
   api_key:
-    secure: MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAtEDjQEZw9quTL0/YA0Tu\nzfPazwPahaeJXk4uz0izSJvF+Jb3L92tjjikE0YIXR3O2JPor5Pv8f2yrmI5jDQC\nxl3iBtu1QRGIHZon1SH1F/qDJL/QkJaAnNz+PZkvY+TndJEY/+K3uPeMSCIAPkWz\nkb6HHIY4EDZmiNrJtm105AunTA1QgXUvqow9WnjF1iXPJiQqcdNr8cIuJa4EfpdR\nIaA4KDqI44EkxJ7wfW6C57fq/llLwEre/0MrkDpbxuxCa3R+tV98DL1t9vhZJ4YM\nVRcF9l/IAOXJnfWKsrncZ9P7BX1K0KzWZXpnTv96+qmfHF4cP0VGETWhkAEFt83H\nMQ+rNPBI28UQWn1MYDK5OBCFTJg8bvUrBR/oozB8K3KAsPnLnoPRawQzGetgMcTJ\n+Ryb+9wEbVbuTG8IgCnBurQxGcHwNhngqh8ORy7AZ+yyzWJZL3fcawXDnKoFrTRL\n0jovqO5X8DwE/kS2syQTRsNe0SRhq2EuQI4jBUXmWzbuTmBIfGt2pHX9n1Vnyn9L\nnxDkt72xEA2TsTIzauJ1O06sHyUt9wr8biH27nxCg6g5jj60iNuRW8Mu9LTqQt/D\nJsbX+j9gQMssBXktXjvjpHZfopWaPdQB180lb3UpxiaR+paZb5P4bPRSQ1IpqwBX\nzlOSw89bIGG9HROSNsvTKxUCAwEAAQ==
+    secure: 6ce83e1e35dd846de73a0705ac2e33b1479b0068
   file:
     - skybot-3.50.3.jar
     - skybot-3.50.3-all.jar
