@@ -319,6 +319,8 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean temp = true;
+	 //We're beeing sneaky here because we are setting the game to something called "Listening to"
+	 //b1nzy if you see this, please don't b4nzy me
     private void setWatchingStatus(JDA jda) {
         System.out.println("checking");
         System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
