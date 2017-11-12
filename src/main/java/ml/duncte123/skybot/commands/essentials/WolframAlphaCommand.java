@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import java.time.OffsetDateTime;
-
 import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAImage;
@@ -104,12 +102,10 @@ public class WolframAlphaCommand extends Command {
             WAQueryResult result) {
     	Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
         
         eb.setTitle("**Input:** " + result.getQuery().getInput(),
                 result.getQuery().toWebsiteURL());
-        
-        eb.setTimestamp(OffsetDateTime.now());
-        eb.setAuthor(m.getEffectiveName(), null, m.getUser().getAvatarUrl());
         
         for(WAPod pod : result.getPods()) {
             String name = pod.getTitle();
@@ -153,7 +149,7 @@ public class WolframAlphaCommand extends Command {
                 embeds.append(e.toString().trim() + "\n\n\n");
             }
             
-            eb.addField(new MessageEmbed.Field(name, embeds.toString().trim(), false));
+            eb.addField(name, embeds.toString().trim(), false);
         }
         
         return eb.build();
