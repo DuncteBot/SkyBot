@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
@@ -48,7 +46,7 @@ public class LeaveCommand extends MusicCommand {
             getMusicManager(event.getGuild()).player.stopTrack();
             manager.setSendingHandler(null);
             manager.closeAudioConnection();
-           sendEmbed(event, EmbedUtils.embedField(AirUtils.audioUtils.embedTitle, "Leaving your channel"));
+           sendMsg(event,"Leaving your channel");
         } else {
             sendMsg(event, "I'm not connected to any channels.");
         }

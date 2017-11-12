@@ -61,8 +61,7 @@ public class PlayRawCommand extends MusicCommand {
             sendMsg(event, "The current audio queue is empty! Add something to the queue first!");
         }
         }else{
-            String toPlay = StringUtils.join(args, " ");
-            getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, false);
+            getAu().loadAndPlay(musicManager, event.getChannel(), StringUtils.join(args, " "), false);
         }
 
     }

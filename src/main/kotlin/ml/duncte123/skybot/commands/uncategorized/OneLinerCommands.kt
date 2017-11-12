@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
 
 class OneLinerCommands : Command() {
+
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
@@ -49,29 +50,24 @@ class OneLinerCommands : Command() {
             "wam" -> sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
 
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
-                    .queue { _ -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
+                    .queue {sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
 
-            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=8>")
+            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
         }
     }
 
-    override fun help(): String {
-        return "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
+    override fun help() =
+        "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
                 "`" + this.PREFIX + "cookie` => blobnomcookie.\n" +
                 "`" + this.PREFIX + "trigger` => use when you are triggered.\n" +
                 "`" + this.PREFIX + "wam` => you need more WAM!.\n" +
                 "`" + this.PREFIX + "mineh` => HERE COMES MINEH!\n" +
                 "`" + this.PREFIX + "invite` => gives you the bot invite\n" +
                 "`" + this.PREFIX + "uptime` => shows the bot uptime"
-    }
 
-    override fun getName(): String {
-        return "ping"
-    }
+    override fun getName() = "ping"
 
-    override fun getAliases(): Array<String> {
-        return arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
-    }
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
 }

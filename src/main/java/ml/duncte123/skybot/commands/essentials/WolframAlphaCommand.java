@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import java.time.OffsetDateTime;
-
 import com.wolfram.alpha.WAEngine;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAImage;
@@ -102,14 +100,12 @@ public class WolframAlphaCommand extends Command {
     public static MessageEmbed generateEmbed(
             GuildMessageReceivedEvent event,
             WAQueryResult result) {
-        Member m = event.getMember();
+    	Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
         
         eb.setTitle("**Input:** " + result.getQuery().getInput(),
                 result.getQuery().toWebsiteURL());
-        
-        eb.setTimestamp(OffsetDateTime.now());
-        eb.setAuthor(m.getEffectiveName(), null, m.getUser().getAvatarUrl());
         
         for(WAPod pod : result.getPods()) {
             String name = pod.getTitle();
@@ -117,17 +113,17 @@ public class WolframAlphaCommand extends Command {
             StringBuilder embeds = new StringBuilder();
             
             for(WASubpod sp : pod.getSubpods()) {
-                StringBuilder e = new StringBuilder("```\n");
+                StringBuilder e = new StringBuilder();
                 
-                e.append("  " + sp.getTitle());
+                e.append(sp.getTitle());
                 
                 for(Visitable v : sp.getContents()) {
-                    String d = "    ";
+                    String d = "";
                     
                     if(v instanceof WAImage) {
                         WAImage i = (WAImage) v;
                         d += i.getAlt() + ": "
-                                    + WebUtils.shorten(i.getURL());
+                                    + WebUtils.shortenUrl(i.getURL());
                     } else if(v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
                         
@@ -137,23 +133,23 @@ public class WolframAlphaCommand extends Command {
                     } else if(v instanceof WALink) {
                         WALink l = (WALink) v;
                         
-                        d += l.getText() + ": " +  WebUtils.shorten(l.getURL());
+                        d += l.getText() + ": " +  WebUtils.shortenUrl(l.getURL());
                     } else if(v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
                         
                         d += pt.getText();
                     } else if(v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += WebUtils.shorten(sound.getURL());
+                        d += WebUtils.shortenUrl(sound.getURL());
                     }
                     
-                    e.append(d + "\n\n");
+                    e.append(d).append("\n\n");
                 }
                 
-                embeds.append(e.toString() + "\n```\n\n");
+                embeds.append(e.toString().trim()).append("\n\n");
             }
             
-            eb.addField(new MessageEmbed.Field(name, embeds.toString().trim(), false));
+            eb.addField(name, embeds.toString().trim(), false);
         }
         
         return eb.build();

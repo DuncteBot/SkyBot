@@ -59,7 +59,7 @@ public class HelpCommand extends Command {
             pc -> pc.sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() ) ).queue(
                  msg ->  event.getChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue(),
                 //When sending fails, send to the channel
-                err -> event.getChannel().sendMessage(HelpEmbeds.commandList).complete().getChannel().sendMessage("Message could not be delivered to dm's and has been send in this channel.").queue()
+                err -> event.getChannel().sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()) ).complete().getChannel().sendMessage("Message could not be delivered to dm's and has been send in this channel.").queue()
             ),
             err -> event.getChannel().sendMessage("ERROR: " + err.getMessage()).queue()
         );
