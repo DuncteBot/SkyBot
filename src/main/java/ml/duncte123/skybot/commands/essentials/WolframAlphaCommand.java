@@ -147,10 +147,10 @@ public class WolframAlphaCommand extends Command {
                         d += WebUtils.shortenUrl(sound.getURL());
                     }
                     
-                    e.append(d + "\n\n");
+                    e.append(d).append("\n\n");
                 }
                 
-                embeds.append(e.toString().trim() + "\n\n\n");
+                embeds.append(e.toString().trim()).append("\n\n");
             }
             
             eb.addField(name, embeds.toString().trim(), false);
