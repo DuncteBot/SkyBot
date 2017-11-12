@@ -153,7 +153,7 @@ public class WolframAlphaCommand extends Command {
                 embeds.append(e.toString().trim() + "\n\n\n");
             }
             
-            eb.addField(new MessageEmbed.Field(name, embeds.toString().trim(), false));
+            eb.addField(name, embeds.toString().trim(), false);
         }
         
         return eb.build();
