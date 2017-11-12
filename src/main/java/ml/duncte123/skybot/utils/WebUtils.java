@@ -165,7 +165,7 @@ public class WebUtils {
         return postRequest(url,AcceptType.TEXT_JSON);
     }
 
-    public static String shorten(String url) {
+    public static String shortenUrl(String url) {
         try {
             HttpsURLConnection con
                 = (HttpsURLConnection)
