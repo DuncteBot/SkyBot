@@ -50,9 +50,9 @@ class OneLinerCommands : Command() {
             "wam" -> sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
 
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
-                    .queue { _ -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
+                    .queue {sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
 
-            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=8>")
+            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
         }
