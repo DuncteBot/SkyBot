@@ -42,9 +42,6 @@ public class NowPlayingCommand extends MusicCommand {
             String title = currentTrack.getInfo().title;
             String position = AudioUtils.getTimestamp(currentTrack.getPosition());
             String duration = AudioUtils.getTimestamp(currentTrack.getDuration());
-
-            msg = String.format("**Playing:** %s\n**Time:** [%s / %s]",
-                    title, position, duration);
             msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
         }else{
             msg = "The player is not currently playing anything!";
