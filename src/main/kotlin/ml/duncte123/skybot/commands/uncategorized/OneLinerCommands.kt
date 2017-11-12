@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
 
 class OneLinerCommands : Command() {
+
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
@@ -57,21 +58,16 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help(): String {
-        return "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
+    override fun help() =
+        "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
                 "`" + this.PREFIX + "cookie` => blobnomcookie.\n" +
                 "`" + this.PREFIX + "trigger` => use when you are triggered.\n" +
                 "`" + this.PREFIX + "wam` => you need more WAM!.\n" +
                 "`" + this.PREFIX + "mineh` => HERE COMES MINEH!\n" +
                 "`" + this.PREFIX + "invite` => gives you the bot invite\n" +
                 "`" + this.PREFIX + "uptime` => shows the bot uptime"
-    }
 
-    override fun getName(): String {
-        return "ping"
-    }
+    override fun getName() = "ping"
 
-    override fun getAliases(): Array<String> {
-        return arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
-    }
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
 }
