@@ -22,7 +22,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -40,8 +39,6 @@ public class NowPlayingCommand extends MusicCommand {
         AudioTrack currentTrack = player.getPlayingTrack();
         if (currentTrack != null){
             String title = currentTrack.getInfo().title;
-            String position = AudioUtils.getTimestamp(currentTrack.getPosition());
-            String duration = AudioUtils.getTimestamp(currentTrack.getDuration());
             msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
         }else{
             msg = "The player is not currently playing anything!";

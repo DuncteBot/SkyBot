@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
