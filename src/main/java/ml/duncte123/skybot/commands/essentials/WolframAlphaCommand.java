@@ -102,7 +102,7 @@ public class WolframAlphaCommand extends Command {
     public static MessageEmbed generateEmbed(
             GuildMessageReceivedEvent event,
             WAQueryResult result) {
-        Member m = event.getMember();
+    	Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         
         eb.setTitle("**Input:** " + result.getQuery().getInput(),
@@ -117,12 +117,12 @@ public class WolframAlphaCommand extends Command {
             StringBuilder embeds = new StringBuilder();
             
             for(WASubpod sp : pod.getSubpods()) {
-                StringBuilder e = new StringBuilder("```\n");
+                StringBuilder e = new StringBuilder();
                 
-                e.append("  " + sp.getTitle());
+                e.append(sp.getTitle());
                 
                 for(Visitable v : sp.getContents()) {
-                    String d = "    ";
+                    String d = "";
                     
                     if(v instanceof WAImage) {
                         WAImage i = (WAImage) v;
@@ -150,7 +150,7 @@ public class WolframAlphaCommand extends Command {
                     e.append(d + "\n\n");
                 }
                 
-                embeds.append(e.toString() + "\n```\n\n");
+                embeds.append(e.toString().trim() + "\n\n\n");
             }
             
             eb.addField(new MessageEmbed.Field(name, embeds.toString().trim(), false));
