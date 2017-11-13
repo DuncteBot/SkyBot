@@ -33,12 +33,12 @@ class TTBCommand : Command() {
 
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent?) {
         if (args == null || args.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.prefix + name + " <words>`")
+            sendMsg(event, "Correct usage: `${Settings.prefix}${invoke} <words>`")
             return
         }
 
         val sb = StringBuilder()
-        for (a in StringUtils.join(args, " ").split("".toRegex()).dropLastWhile { it.isEmpty() }.toTypedArray()) {
+        for (a in StringUtils.join(args, " ").toCharArray().map(Character::toString)) {
             if (Character.isLetter(a.toLowerCase()[0])) {
                 sb.append(":regional_indicator_").append(a.toLowerCase()).append(":")
             } else {

@@ -49,7 +49,7 @@ class BlobCommand : Command() {
             return
         }
 
-        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue { _ -> response.close() }
+        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue {response.close()}
     }
 
     override fun help() = "Gives you a blob.\n" +
