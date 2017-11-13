@@ -45,6 +45,9 @@ import java.util.TreeMap;
 
 public class AirUtils {
 
+    /**
+     * This is our config file
+     */
     public static Config config = new ConfigUtils().loadConfig();
     /**
      * The {@link WAEngine engine} to query Wolfram|Alpha
@@ -193,7 +196,7 @@ public class AirUtils {
      * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
-        log("Unban checker", Level.INFO,"Checking for users to unban");
+        log("Unban checker", Level.DEBUG,"Checking for users to unban");
         int usersUnbanned = 0;
         Connection database = db.getConnManager().getConnection();
 
@@ -224,7 +227,7 @@ public class AirUtils {
                     smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id="+res.getInt("id")+"");
                 }
             }
-            log("Unban checker", Level.INFO,"Checking done, unbanned "+usersUnbanned+" users.");
+            log("Unban checker", Level.DEBUG,"Checking done, unbanned "+usersUnbanned+" users.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -377,7 +380,7 @@ public class AirUtils {
         //percent in bots
         double botCountP = (botCount/totalCount)*100;
 
-        log(Level.INFO,
+        log(Level.DEBUG,
                 "In the guild " + g.getName() + "("+totalCount+" Members), " +userCountP+ "% are users, " +botCountP+ "% are bots");
 
         return new double[] {Math.round(userCountP), Math.round(botCountP)};
@@ -479,7 +482,7 @@ public class AirUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        AirUtils.log(Level.INFO, "Loading tags.");
+        AirUtils.log(Level.DEBUG, "Loading tags.");
 
         Connection database = db.getConnManager().getConnection();
         try {
@@ -499,7 +502,7 @@ public class AirUtils {
                 ));
             }
 
-            AirUtils.log(Level.INFO, "Loaded " + tagsList.keySet().size() + " tags.");
+            AirUtils.log(Level.DEBUG, "Loaded " + tagsList.keySet().size() + " tags.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -38,9 +38,9 @@ public class GuildSettingsUtils {
      */
     public static void loadFooterQuotes() {
         if(!AirUtils.nonsqlite) return;
-        AirUtils.log(Level.INFO, "Clearing footer quotes");
+        AirUtils.log(Level.DEBUG, "Clearing footer quotes");
         EmbedUtils.footerQuotes.clear();
-        AirUtils.log(Level.INFO, "Loading footer quotes");
+        AirUtils.log(Level.DEBUG, "Loading footer quotes");
         
         //One default quote for now
         EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");
@@ -59,7 +59,7 @@ public class GuildSettingsUtils {
                 EmbedUtils.footerQuotes.put(quote, user);
             }
 
-            AirUtils.log(Level.INFO, "Loaded "+ EmbedUtils.footerQuotes.size() +" quotes.");
+            AirUtils.log(Level.DEBUG, "Loaded "+ EmbedUtils.footerQuotes.size() +" quotes.");
         }
         catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class GuildSettingsUtils {
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */
     public static void loadGuildSettings() {
-        AirUtils.log(Level.INFO, "Loading Guild settings.");
+        AirUtils.log(Level.DEBUG, "Loading Guild settings.");
 
         String dbName = AirUtils.db.getName();
 
@@ -101,7 +101,7 @@ public class GuildSettingsUtils {
                         .setCustomPrefix(prefix));
             }
 
-            AirUtils.log(Level.INFO, "Loaded settings for "+ AirUtils.guildSettings.keySet().size()+" guilds.");
+            AirUtils.log(Level.DEBUG, "Loaded settings for "+ AirUtils.guildSettings.keySet().size()+" guilds.");
         }
         catch (Exception e) {
             e.printStackTrace();
