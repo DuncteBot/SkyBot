@@ -25,9 +25,11 @@ import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.WebSocketCode;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
@@ -37,14 +39,12 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import net.dv8tion.jda.core.managers.Presence;
 import org.apache.commons.lang3.time.DateUtils;
+import org.json.JSONObject;
 import org.slf4j.event.Level;
 
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -54,6 +54,11 @@ public class BotListener extends ListenerAdapter {
      * This is the command parser
      */
     private static CommandParser parser = new CommandParser();
+
+    /**
+     * This filter helps us to fiter out swearing
+     */
+    private BadWordFilter filter = new BadWordFilter();
 
     /**
      * When a command gets ran, it'll be stored in here
@@ -110,7 +115,7 @@ public class BotListener extends ListenerAdapter {
         if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();
-                if (BadWordFilter.filterText(messageToCheck.getRawContent())) {
+                if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
                     event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
@@ -150,6 +155,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
+        setWatchingStatus(event.getJDA());
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
 
         AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
@@ -310,6 +316,35 @@ public class BotListener extends ListenerAdapter {
             }
 
         }
+    }
+
+    private boolean temp = true;
+	 //We're beeing sneaky here because we are setting the game to something called "Listening to"
+	 //b1nzy if you see this, please don't b4nzy me
+    private void setWatchingStatus(JDA jda) {
+        System.out.println("checking");
+        System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
+        if(temp && (jda.asBot().getShardManager().getShards().size() != 2) ) {
+            System.out.println("not setting");
+            return;
+        }
+        System.out.println("Setting game for all shards");
+        Presence p = jda.getPresence();
+        JSONObject gameObj = new JSONObject();
+        gameObj.put("name", "Danny Phantom");
+        gameObj.put("type", 3);
+        JSONObject object = new JSONObject();
+        object.put("game", gameObj);
+        object.put("afk", p.isIdle());
+        object.put("status", p.getStatus().getKey());
+        object.put("since", System.currentTimeMillis());
+        for (JDA shard : jda.asBot().getShardManager().getShards())
+            ((JDAImpl) shard).getClient().send(new JSONObject()
+                    .put("d", object)
+                    .put("op", WebSocketCode.PRESENCE).toString()
+            );
+
+        temp = false;
     }
 
 }

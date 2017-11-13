@@ -33,7 +33,7 @@ public class BadWordFilter {
     private static int largestWordLength = 0;
     private static Map<String, String[]> words = new HashMap<>();
 
-    static {
+    public BadWordFilter() {
         try {
             BufferedReader reader = new BufferedReader(
                     new InputStreamReader(
@@ -125,7 +125,7 @@ public class BadWordFilter {
      * @param input the sentence to check
      * @return true if it contains a bad word
      */
-    public static boolean filterText(String input) {
+    public boolean filterText(String input) {
         ArrayList<String> badWords = badWordsFound(input);
         return badWords.size() > 0;
     }
