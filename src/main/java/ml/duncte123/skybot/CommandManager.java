@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import Java.lang.VRCubeException;
+import ml.duncte123.skybot.commands.TestGroovyCommand;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
@@ -54,6 +56,7 @@ public class CommandManager {
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
         this.addCommand(new OneLinerCommandsJava());
+        this.addCommand(new TestGroovyCommand());
 
         //fun commands
         this.addCommand(new DialogCommand());
@@ -149,7 +152,7 @@ public class CommandManager {
      */
     public boolean addCommand(Command command) {
         if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
+            throw new VRCubeException("Name can't have spaces!");
         }
         
         if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {
