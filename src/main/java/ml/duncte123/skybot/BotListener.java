@@ -252,11 +252,13 @@ public class BotListener extends ListenerAdapter {
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
+        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         GuildSettingsUtils.deleteGuild(event.getGuild());
+        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
 
     /**
