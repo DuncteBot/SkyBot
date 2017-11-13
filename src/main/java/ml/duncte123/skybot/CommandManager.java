@@ -59,7 +59,7 @@ public class CommandManager {
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
         this.addCommand(new BlobCommand());
-        this.addCommand(new TextToBrickCommand());
+        this.addCommand(new TTBCommand());
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());

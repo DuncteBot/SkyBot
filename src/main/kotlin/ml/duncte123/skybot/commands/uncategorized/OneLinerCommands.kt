@@ -32,9 +32,9 @@ class OneLinerCommands : Command() {
             "ping" -> {
                 val time = System.currentTimeMillis()
 
-                event.channel.sendMessage("PONG!").queue { message ->
-                    message.editMessageFormat("PONG!" +
-                            "\nping is: %dms " +
+                event.channel.sendMessage("PONG!").queue {
+                    it.editMessageFormat("PONG!" +
+                            "\nPing is: %dms " +
                             "\nWebsocket ping: %sms\n" +
                             "Average shard ping: %sms",
                             System.currentTimeMillis() - time,
@@ -58,8 +58,7 @@ class OneLinerCommands : Command() {
         }
     }
 
-    override fun help() =
-        "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
+    override fun help() = "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
                 "`" + this.PREFIX + "cookie` => blobnomcookie.\n" +
                 "`" + this.PREFIX + "trigger` => use when you are triggered.\n" +
                 "`" + this.PREFIX + "wam` => you need more WAM!.\n" +

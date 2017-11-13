@@ -27,9 +27,9 @@ import okhttp3.Response;
 import okhttp3.ResponseBody;
 import org.apache.commons.lang3.StringUtils;
 
-public class BlobCommand extends Command {
+public class BlobCommandJava extends Command {
 
-    public BlobCommand() {
+    public BlobCommandJava() {
         this.category = CommandCategory.FUN;
     }
 
