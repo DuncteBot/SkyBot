@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.exceptions;
+package Java.lang;
 
 /**
  * Made this for the memes

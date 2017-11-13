@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import net.dv8tion.jda.core.JDA;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
@@ -66,7 +66,6 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
-        System.out.println("filter: " + o.toString());
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
         if(o instanceof JDA)

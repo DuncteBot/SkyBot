@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.essentials.eval;
 
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
