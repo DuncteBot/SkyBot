@@ -33,13 +33,10 @@ class OneLinerCommands : Command() {
                 val time = System.currentTimeMillis()
 
                 event.channel.sendMessage("PONG!").queue {
-                    it.editMessageFormat("PONG!" +
-                            "\nPing is: %dms " +
-                            "\nWebsocket ping: %sms\n" +
-                            "Average shard ping: %sms",
-                            System.currentTimeMillis() - time,
-                            event.jda.ping,
-                            event.jda.asBot().shardManager.averagePing).queue()
+                    it.editMessage("PONG!\n" +
+                            "Ping is: ${System.currentTimeMillis() - time}ms\n" +
+                            "Websocket ping: ${event.jda.ping}ms\n" +
+                            "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
                 }
             }
 
@@ -52,19 +49,21 @@ class OneLinerCommands : Command() {
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
                     .queue {sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
 
+            // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
+            else -> println("Invoke was invalid: $invoke")
         }
     }
 
-    override fun help() = "`" + this.PREFIX + "ping` => Shows the delay from the bot to the discord servers.\n" +
-                "`" + this.PREFIX + "cookie` => blobnomcookie.\n" +
-                "`" + this.PREFIX + "trigger` => use when you are triggered.\n" +
-                "`" + this.PREFIX + "wam` => you need more WAM!.\n" +
-                "`" + this.PREFIX + "mineh` => HERE COMES MINEH!\n" +
-                "`" + this.PREFIX + "invite` => gives you the bot invite\n" +
-                "`" + this.PREFIX + "uptime` => shows the bot uptime"
+    override fun help() = "`${this.PREFIX}ping` => Shows the delay from the bot to the discord servers.\n" +
+                "`${this.PREFIX}cookie` => blobnomcookie.\n" +
+                "`${this.PREFIX}trigger` => use when you are triggered.\n" +
+                "`${this.PREFIX}wam` => you need more WAM!.\n" +
+                "`${this.PREFIX}mineh` => HERE COMES MINEH!\n" +
+                "`${this.PREFIX}invite` => gives you the bot invite\n" +
+                "`${this.PREFIX}uptime` => shows the bot uptime"
 
     override fun getName() = "ping"
 
