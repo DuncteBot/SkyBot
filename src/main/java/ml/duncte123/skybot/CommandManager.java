@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import Java.lang.VRCubeException;
 import ml.duncte123.skybot.commands.TestGroovyCommand;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
@@ -29,6 +28,7 @@ import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
 import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;

@@ -46,6 +46,10 @@ sourceCompatibility = 1.8
 
 repositories {
     jcenter()
+
+    mavenLocal()
+    mavenCentral()
+
     // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
     maven {
         name 'jitpack'
@@ -91,6 +95,7 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: kotlin_version
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.1.51'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version:'4.12'
