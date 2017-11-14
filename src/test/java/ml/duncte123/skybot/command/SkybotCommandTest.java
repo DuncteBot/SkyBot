@@ -61,10 +61,6 @@ public class SkybotCommandTest {
         manager.addCommand(new DummyCommand());
 
         assertNotNull("The dummy command is not registered", manager.getCommand("dummy"));
-    }
-
-    @Test
-    public void testCommandRemoving() {
         assertTrue("Could not remove the dummy command", manager.removeCommand("dummy"));
     }
 }
