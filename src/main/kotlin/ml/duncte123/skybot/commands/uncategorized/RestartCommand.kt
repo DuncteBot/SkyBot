@@ -19,22 +19,31 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.EmbedUtils
-import net.dv8tion.jda.core.MessageBuilder
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.*
 
- /*
-  * @author Sanduhr32
-  */
+/*
+ * @author Sanduhr32
+ */
   
 class RestartCommand : Command() {
 
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
-        if (invoke == null || Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id) ||
-            invoke?.isBlank()) return
-        val shardManager = event.getJDA().asBot().getShardManager()
-        if (args.length < 1) shardManager.restart()
-        if (args.length == 1) shardManager.restart(args[0].toInt())
+    init {
+        this.category = CommandCategory.UNLISTED
     }
+
+    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+        if (!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
+        val shardManager = event.jda.asBot().shardManager
+        if (args!!.size < 1) {
+            shardManager.restart()
+        } else if (args!!.size == 1) {
+            shardManager.restart(args[0].toInt())
+        }
+    }
+    override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"
+
+    override fun getName() = "restart"
 }
