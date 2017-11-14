@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -31,11 +32,11 @@ public class FlipCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        User u = event.getAuthor();
+        Member member = event.getMember();
         String flippedUser = "";
 
         if( event.getMessage().getMentionedUsers().size() > 0 ) {
-            u = event.getMessage().getMentionedUsers().get(0);
+            member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
         }
 
         String normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'";
@@ -47,7 +48,7 @@ public class FlipCommand extends Command {
         normal += "0123456789";
         split  += "0ƖᄅƐㄣϛ9ㄥ86";
 
-        String username = new StringBuilder().append(u.getName()).reverse().toString();
+        String username = new StringBuilder().append(member.getEffectiveName()).reverse().toString();
 
         char letter;
         for (int i=0; i< username.length(); i++) {

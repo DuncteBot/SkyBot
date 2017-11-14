@@ -67,7 +67,8 @@ public class BotinfoCommand extends Command {
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** "  + ram0 +"MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 +" Cores)" , false)
-                .addField("Lib info", "JDA version: " + JDAInfo.VERSION + "\nLavaPlayer version: " + PlayerLibrary.VERSION, false)
+                .addField("Lang & lib info", "**Coded in:** Java, Groovy and kotlin\n\n" +
+                        "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version:** " + PlayerLibrary.VERSION, false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
         sendEmbed(event, eb);
