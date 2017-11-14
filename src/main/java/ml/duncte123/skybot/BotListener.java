@@ -124,15 +124,15 @@ public class BotListener extends ListenerAdapter {
             }
         }
 
-        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+        if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())){
+            return;
+        } else if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
 
-            if(event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
+            if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
                 event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
                 return;
             }
 
-        } else if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
-            return;
         }
 
             // run the a command

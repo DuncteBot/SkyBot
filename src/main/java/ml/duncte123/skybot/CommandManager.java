@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.commands.TestGroovyCommand;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
@@ -27,7 +26,9 @@ import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
 import ml.duncte123.skybot.commands.music.*;
-import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
+import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
+import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
@@ -52,18 +53,12 @@ public class CommandManager {
 
         // default commands
         this.addCommand(new HelpCommand());
-        this.addCommand(new OneLinerCommands());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
-        this.addCommand(new OneLinerCommandsJava());
-        this.addCommand(new TestGroovyCommand());
-        this.addCommand(new ShortenCommand());
 
         //fun commands
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
-        this.addCommand(new BlobCommand());
-        this.addCommand(new TTBCommand());
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());

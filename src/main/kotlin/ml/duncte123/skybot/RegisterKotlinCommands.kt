@@ -16,25 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands
+package ml.duncte123.skybot
 
-import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.Settings
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import ml.duncte123.skybot.commands.`fun`.BlobCommand
+import ml.duncte123.skybot.commands.`fun`.TTBCommand
+import ml.duncte123.skybot.commands.essentials.RestartCommand
+import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
+import ml.duncte123.skybot.utils.AirUtils
+import org.slf4j.event.Level
 
-class TestGroovyCommand extends Command {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        sendMsg(event, "This is a test command in groovy, bot version: ${Settings.version}")
+class RegisterKotlinCommands {
+
+    val manager = AirUtils.commandManager
+
+    init {
+        AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
+        manager.addCommand(OneLinerCommands())
+        manager.addCommand(BlobCommand())
+        manager.addCommand(TTBCommand())
+        manager.addCommand(RestartCommand())
     }
 
-    @Override
-    String help() {
-        return null
-    }
-
-    @Override
-    String getName() {
-        return "groovy"
-    }
 }

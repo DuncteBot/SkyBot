@@ -42,6 +42,8 @@ group = 'ml.duncte123.skybot'
 
 version '3.50.6'
 
+compileGroovy.options.encoding = "UTF-8"
+
 sourceCompatibility = 1.8
 
 repositories {
