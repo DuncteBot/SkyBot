@@ -57,6 +57,7 @@ public class CommandManager {
         this.addCommand(new BotinfoCommand());
         this.addCommand(new OneLinerCommandsJava());
         this.addCommand(new TestGroovyCommand());
+        this.addCommand(new ShortenCommand());
 
         //fun commands
         this.addCommand(new DialogCommand());
@@ -134,13 +135,14 @@ public class CommandManager {
 
         cmd = commands.stream().filter(c-> Arrays.asList(c.getAliases()).contains(name) ).findFirst();
 
-        if(cmd.isPresent()) {
-            return cmd.get();
-        }
-
-        return null;
+        return cmd.isPresent() ? cmd.get() : null;
     }
 
+    /**
+     * This removes a command from the commands
+     * @param command the command to remove
+     * @return {@code true} on success
+     */
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
     }

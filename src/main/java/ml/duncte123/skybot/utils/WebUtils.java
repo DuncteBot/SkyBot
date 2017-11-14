@@ -107,7 +107,7 @@ public class WebUtils {
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
 
         OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse(accept.getType());
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
 
         StringBuilder postParams = new StringBuilder();
 
