@@ -66,9 +66,7 @@ class KotlinEvalFilter() : GroovyValueFilter() {
 		if(value == null) return null
 
 		if(value is Script || value is Closure<*>)
-			throw VRCubeException("Closures are not allowed, or the variable that you are looking for is not found")
-
-		println(value::class.java)
+			throw VRCubeException("Scrips and Closures are not allowed")
 
 		if(!filteredUsed.contains(value::class.java))
 			throw VRCubeException("Class not allowed: ${value::class.qualifiedName}")
