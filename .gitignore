@@ -106,3 +106,5 @@ bin/
 logs\.txt
 
 \.idea/kotlinc\.xml
+
+\.idea/
