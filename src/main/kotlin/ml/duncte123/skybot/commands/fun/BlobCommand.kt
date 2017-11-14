@@ -35,7 +35,7 @@ class BlobCommand : Command() {
 
         var blob = "blobnomcookie"
 
-        if (args.size > 0) {
+        if (args.isNotEmpty()) {
             blob = StringUtils.join(*args)
         }
 
@@ -53,7 +53,7 @@ class BlobCommand : Command() {
     }
 
     override fun help() = "Gives you a blob.\n" +
-                "Usage: `" + Settings.prefix + name + " [blob name]`"
+                "Usage: `${Settings.prefix}$name [blob name]`"
 
     override fun getName() = "blob"
 }
