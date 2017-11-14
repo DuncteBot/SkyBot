@@ -23,7 +23,7 @@ import java.math.BigInteger
 import java.math.BigDecimal
 import java.util.Arrays
 
-import ml.duncte123.skybot.exceptions.VRCubeException
+import Java.lang.VRCubeException
 import groovy.lang.Script
 import groovy.lang.Closure
 

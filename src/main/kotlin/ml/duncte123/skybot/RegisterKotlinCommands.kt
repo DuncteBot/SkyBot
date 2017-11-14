@@ -19,7 +19,6 @@
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.commands.`fun`.BlobCommand
-import ml.duncte123.skybot.commands.`fun`.TTBCommand
 import ml.duncte123.skybot.commands.essentials.RestartCommand
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.utils.AirUtils
@@ -33,7 +32,6 @@ class RegisterKotlinCommands {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
         manager.addCommand(OneLinerCommands())
         manager.addCommand(BlobCommand())
-        manager.addCommand(TTBCommand())
         manager.addCommand(RestartCommand())
     }
 

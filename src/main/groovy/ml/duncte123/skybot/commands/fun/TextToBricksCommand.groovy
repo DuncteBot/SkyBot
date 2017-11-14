@@ -14,45 +14,39 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.fun
 
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
-class TTBCommand : Command() {
+class TextToBricksCommand extends Command {
+    @Override
+    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-    init {
-        this.category = CommandCategory.FUN
-    }
-
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent?) {
-        if (args == null || args.isEmpty()) {
-            sendMsg(event, "Correct usage: `${Settings.prefix}${invoke} <words>`")
+        if (args.length < 1) {
+            sendMsg(event, "Correct usage: `${Settings.prefix}$invoke <words>`")
             return
         }
 
-        val sb = StringBuilder()
-        for (a in StringUtils.join(args, " ").toCharArray().map(Character::toString)) {
-            if (Character.isLetter(a.toLowerCase()[0])) {
-                sb.append(":regional_indicator_").append(a.toLowerCase()).append(":")
-            } else {
-                if (" " == a) {
-                    sb.append(" ")
-                }
-                sb.append(a)
-            }
-        }
-
-        sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
+        def output = StringUtils.join(args, " ")
+                .replaceAll("([a-zA-Z])", ":regional_indicator_\$1:")
+                .replaceAll("([0-9])", "\$1\u20E3")
+        sendEmbed(event, EmbedUtils.embedMessage(output))
     }
 
-    override fun help() = "ttb test in kotlin"
+    @Override
+    String help() {
+        return "Convert your text to bicks"
+    }
 
-    override fun getName() = "ttb"
+    @Override
+    String getName() {
+        return "ttb"
+    }
 }

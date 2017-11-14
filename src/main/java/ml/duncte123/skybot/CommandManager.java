@@ -29,7 +29,7 @@ import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;

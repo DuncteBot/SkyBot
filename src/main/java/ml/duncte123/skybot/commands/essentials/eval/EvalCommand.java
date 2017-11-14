@@ -20,11 +20,12 @@ package ml.duncte123.skybot.commands.essentials.eval;
 
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.delegate.JDADelegate;
+import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -86,7 +87,7 @@ public class EvalCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
+        boolean isRanByBotOwner = false;/*Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
 
@@ -96,7 +97,7 @@ public class EvalCommand extends Command {
                     " please consider to hit the upvote button over at " +
                     "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
             return;
-        }
+        }*/
         
         ScheduledExecutorService service = this.service.get();
         
@@ -139,7 +140,8 @@ public class EvalCommand extends Command {
                     if(filter.filterLoops(script))
                         throw new VRCubeException("Loops are not allowed");
 
-                    protected_.setVariable("jda", event.getJDA());
+                    protected_.setVariable("user", new UserDelegate(event.getAuthor()));
+                    protected_.setVariable("jda", new JDADelegate(event.getJDA()));
 
                     future = service.schedule(() -> {
                         filter.register();

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot
 
-
+import ml.duncte123.skybot.commands.fun.TextToBricksCommand
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
@@ -28,6 +28,7 @@ class RegisterGroovyCommands {
     RegisterGroovyCommands() {
         AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
         manager.addCommand(new ShortenCommand())
+        manager.addCommand(new TextToBricksCommand())
     }
 
 }
