@@ -123,6 +123,10 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
+        //If the topic contains -commands ignore it
+        if(event.getChannel().getTopic().contains("-commands")) {
+            return;
+        }
 
         if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())){
             return;
