@@ -34,5 +34,7 @@ class RestartCommand : Command() {
         if (invoke == null || Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id) ||
             invoke?.isBlank()) return
         val shardManager = event.getJDA().asBot().getShardManager()
+        if (args.length < 1) shardManager.restart()
+        if (args.length == 1) shardManager.restart(args[0].toInt())
     }
 }
