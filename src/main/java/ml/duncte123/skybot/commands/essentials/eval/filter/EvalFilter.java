@@ -21,9 +21,12 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import Java.lang.VRCubeException;
+import ml.duncte123.skybot.objects.delegate.GuildDelegate;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -71,6 +74,10 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         if(o instanceof JDA)
             return new JDADelegate((JDA) o);
+        if(o instanceof User)
+            return new UserDelegate((User) o);
+        if(o instanceof Guild)
+            return new GuildDelegate((Guild) o);
         if(o instanceof Script)
             return o;
         if(o instanceof Closure)

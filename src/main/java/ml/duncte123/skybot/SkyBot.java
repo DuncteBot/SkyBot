@@ -68,6 +68,10 @@ public class SkyBot {
             AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
+
+        //This is a little hack
+        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
+        Class.forName("ml.duncte123.skybot.RegisterKotlinCommands").newInstance();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
@@ -92,9 +96,5 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
-
-        //This is a little hack
-        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        Class.forName("ml.duncte123.skybot.RegisterKotlinCommands").newInstance();
     }
 }

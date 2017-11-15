@@ -142,6 +142,7 @@ public class EvalCommand extends Command {
 
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
+                    protected_.setVariable("jda", new JDADelegate(event.getJDA()));
 
                     future = service.schedule(() -> {
                         filter.register();
