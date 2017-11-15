@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -26,13 +27,15 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
-public class RepeatCommand extends MusicCommand {
+public class StopCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);
         AudioManager audioManager = getAudioManager(guild);
+        AudioPlayer player = musicManager.player;
         TrackScheduler scheduler = musicManager.scheduler;
 
         if(!audioManager.isConnected()){
@@ -45,25 +48,26 @@ public class RepeatCommand extends MusicCommand {
             return;
         }
 
-        scheduler.setRepeating(!scheduler.isRepeating());
+        if(musicManager.player.getPlayingTrack() == null){
+            sendMsg(event, "The player is not playing.");
+            return;
+        }
 
-        sendMsg(event, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**");
-
+        scheduler.queue.clear();
+        player.stopTrack();
+        player.setPaused(false);
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared");
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Makes the player repeat the currently playing song";
+        return "stops the music player.";
     }
 
     @Override
     public String getName() {
-        return "repeat";
+        return "stop";
     }
 
-    @Override
-    public String[] getAliases() {
-        return new String[]{"loop"};
-    }
 }

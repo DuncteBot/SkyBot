@@ -16,51 +16,57 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.managers.AudioManager;
 
-public class NowPlayingCommand extends MusicCommand {
+public class LeaveCommand extends MusicCommand {
+
+    public final static String help = "make the bot leave your channel.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        Guild guild = event.getGuild();
-        GuildMusicManager mng = getMusicManager(guild);
-        AudioPlayer player = mng.player;
 
-        String msg = "";
+        AudioManager manager = getAudioManager(event.getGuild());
 
-        AudioTrack currentTrack = player.getPlayingTrack();
-        if (currentTrack != null){
-            String title = currentTrack.getInfo().title;
-            msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
+        if(manager.isConnected()){
+            if(!manager.getConnectedChannel().getMembers().contains(event.getMember())){
+                sendMsg(event,"I'm sorry, but you have to be in the same channel as me to use any music related commands");
+                return;
+            }
+
         }else{
-            msg = "The player is not currently playing anything!";
+            sendMsg(event,"I'm not in a channel atm");
+            return;
         }
-        sendEmbed(event, EmbedUtils.embedMessage(msg));
+
+        if(manager.isConnected()) {
+            getMusicManager(event.getGuild()).player.stopTrack();
+            manager.setSendingHandler(null);
+            manager.closeAudioConnection();
+           sendMsg(event,"Leaving your channel");
+        } else {
+            sendMsg(event, "I'm not connected to any channels.");
+        }
+
 
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Prints information about the currently playing song (title, current time)";
+        return help;
     }
 
     @Override
     public String getName() {
-        return "nowplaying";
+        return "leave";
     }
 
     @Override
     public String[] getAliases() {
-        return new String[]{"np", "song"};
+        return new String[]{"disconnect"};
     }
-
 }

@@ -16,24 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
+import org.apache.commons.lang3.StringUtils;
 
-public class ShuffleCommand extends MusicCommand {
+import java.util.Arrays;
+
+public class PPlayCommand extends MusicCommand {
+
+    public final static String help = "add a playlist to the queue.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);
         AudioManager audioManager = getAudioManager(guild);
-        TrackScheduler scheduler = musicManager.scheduler;
 
         if(!audioManager.isConnected()){
             sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
@@ -45,26 +49,29 @@ public class ShuffleCommand extends MusicCommand {
             return;
         }
 
-        if(scheduler.queue.isEmpty()){
-           sendMsg(event, "There are no songs to shuffle");
+        if(args.length < 1){
+            sendMsg(event, "To few arguments, use `"+ Settings.prefix+"pplay <media link>`");
             return;
         }
 
-        scheduler.shuffle();
+        String toPlay = StringUtils.join(Arrays.asList(args), " ");
+        if(!AirUtils.isURL(toPlay)){
+            toPlay = "ytsearch: " + toPlay;
+        }
 
-        sendMsg(event, "The queue has been shuffled!");
+        getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, true);
 
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Shuffles the current queue";
+        return help;
     }
 
     @Override
     public String getName() {
-        return "shuffle";
+        return "pplay";
     }
 
 }

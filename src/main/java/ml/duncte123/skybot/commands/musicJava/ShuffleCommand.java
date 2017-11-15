@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
-public class SkipCommand extends MusicCommand {
+public class ShuffleCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -45,25 +45,26 @@ public class SkipCommand extends MusicCommand {
             return;
         }
 
-        if(musicManager.player.getPlayingTrack() == null){
-            sendMsg(event, "The player is not playing.");
+        if(scheduler.queue.isEmpty()){
+           sendMsg(event, "There are no songs to shuffle");
             return;
         }
 
-        scheduler.nextTrack();
+        scheduler.shuffle();
 
-        sendMsg(event,"The current track was skipped.");
+        sendMsg(event, "The queue has been shuffled!");
+
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "skips the current track";
+        return "Shuffles the current queue";
     }
 
     @Override
     public String getName() {
-        return "skip";
+        return "shuffle";
     }
 
 }

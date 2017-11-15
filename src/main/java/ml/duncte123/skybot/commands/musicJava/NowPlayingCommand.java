@@ -16,58 +16,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
 
-public class StopCommand extends MusicCommand {
+public class NowPlayingCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         Guild guild = event.getGuild();
-        GuildMusicManager musicManager = getMusicManager(guild);
-        AudioManager audioManager = getAudioManager(guild);
-        AudioPlayer player = musicManager.player;
-        TrackScheduler scheduler = musicManager.scheduler;
+        GuildMusicManager mng = getMusicManager(guild);
+        AudioPlayer player = mng.player;
 
-        if(!audioManager.isConnected()){
-            sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
-            return;
+        String msg = "";
+
+        AudioTrack currentTrack = player.getPlayingTrack();
+        if (currentTrack != null){
+            String title = currentTrack.getInfo().title;
+            msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
+        }else{
+            msg = "The player is not currently playing anything!";
         }
+        sendEmbed(event, EmbedUtils.embedMessage(msg));
 
-        if(!audioManager.getConnectedChannel().getMembers().contains(event.getMember())){
-            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
-            return;
-        }
-
-        if(musicManager.player.getPlayingTrack() == null){
-            sendMsg(event, "The player is not playing.");
-            return;
-        }
-
-        scheduler.queue.clear();
-        player.stopTrack();
-        player.setPaused(false);
-        sendMsg(event, "Playback has been completely stopped and the queue has been cleared");
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "stops the music player.";
+        return "Prints information about the currently playing song (title, current time)";
     }
 
     @Override
     public String getName() {
-        return "stop";
+        return "nowplaying";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"np", "song"};
     }
 
 }
