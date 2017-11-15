@@ -23,6 +23,7 @@ import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.delegate.GuildDelegate;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import ml.duncte123.skybot.utils.*;
@@ -140,7 +141,7 @@ public class EvalCommand extends Command {
                         throw new VRCubeException("Loops are not allowed");
 
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
-                    protected_.setVariable("jda", new JDADelegate(event.getJDA()));
+                    protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
 
                     future = service.schedule(() -> {
                         filter.register();
