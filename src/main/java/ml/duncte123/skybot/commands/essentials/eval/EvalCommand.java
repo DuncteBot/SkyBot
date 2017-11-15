@@ -162,7 +162,9 @@ public class EvalCommand extends Command {
                             sendError(event.getMessage());
                         } else {
                             sendMsg(event, "**" + event.getAuthor().getName()
-                                    + ":** " + out.toString());
+                                    + ":** " + out.toString()
+                                    .replaceAll("@here", "@h\u0435re")
+                                    .replaceAll("@everyone", "@\u0435veryone"));
                         }
                     }
                 } else {
