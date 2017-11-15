@@ -18,8 +18,11 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import okhttp3.*;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -28,14 +31,9 @@ import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.net.ssl.HttpsURLConnection;
-
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-
 public class WebUtils {
 
-    private static String USER_AGENT = "DiscordBot (https://bot.duncte123.ml/)";
+    private static String USER_AGENT = "DiscordBot (DuncteBot v"+Settings.version+", https://bot.duncte123.ml/)";
 
     /**
      * Reads contents from a website and returns it to a string
@@ -96,7 +94,7 @@ public class WebUtils {
      */
     public static Response getRequest(String url) {
 
-        return getRequest(url, AcceptType.TEXT_JSON);
+        return getRequest(url, AcceptType.URLENCODED);
     }
 
     /**
@@ -109,7 +107,7 @@ public class WebUtils {
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
 
         OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse(accept.getType());
+        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
 
         StringBuilder postParams = new StringBuilder();
 
@@ -143,7 +141,7 @@ public class WebUtils {
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields) {
-        return postRequest(url, postFields, AcceptType.TEXT_JSON);
+        return postRequest(url, postFields, AcceptType.URLENCODED);
     }
 
     /**
@@ -199,7 +197,8 @@ public class WebUtils {
         TEXT_PLAIN("text/plain"),
         TEXT_JSON("application/json"),
         TEXT_HTML("text/html"),
-        TEXT_XML("application/xml");
+        TEXT_XML("application/xml"),
+        URLENCODED("application/x-www-form-urlencoded");
 
         private String type;
 

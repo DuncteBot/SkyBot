@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.1.51'
+    ext.kotlin_version = '1.1.60'
 
     repositories {
         mavenCentral()
@@ -36,14 +36,22 @@ plugins {
     id'org.jetbrains.kotlin.jvm' version '1.1.51'
 }
 
+apply plugin: 'groovy'
+
 group = 'ml.duncte123.skybot'
 
-version '3.50.5'
+version '3.50.6'
+
+compileGroovy.options.encoding = "UTF-8"
 
 sourceCompatibility = 1.8
 
 repositories {
     jcenter()
+
+    mavenLocal()
+    mavenCentral()
+
     // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
     maven {
         name 'jitpack'
@@ -61,8 +69,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'e11c97c'
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '022a16f' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '3dc7fe2' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
     //jda-nas
@@ -80,8 +87,8 @@ dependencies {
     //gson
     compile group: 'com.google.code.gson', name: 'gson', version: '2.8.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.10'
-    //compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10'
+    //compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.10' //only for eval
+    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10' // to also compile it
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //logback
@@ -90,6 +97,7 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: kotlin_version
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.1.51'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version:'4.12'

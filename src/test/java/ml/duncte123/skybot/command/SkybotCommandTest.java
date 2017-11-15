@@ -25,8 +25,7 @@ import org.junit.Test;
 
 import java.util.Random;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.Assert.*;
 
 public class SkybotCommandTest {
 
@@ -55,5 +54,13 @@ public class SkybotCommandTest {
         String key = "This_SHould_Allways_return_null_for_a_command" + new Random().nextInt();
 
         assertNull(String.format("Command getter should return null for this name (%s)", key), manager.getCommand(key));
+    }
+
+    @Test
+    public void testCommandRegistering() {
+        manager.addCommand(new DummyCommand());
+
+        assertNotNull("The dummy command is not registered", manager.getCommand("dummy"));
+        assertTrue("Could not remove the dummy command", manager.removeCommand("dummy"));
     }
 }

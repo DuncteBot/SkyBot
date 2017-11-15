@@ -106,3 +106,7 @@ bin/
 logs\.txt
 
 \.idea/kotlinc\.xml
+
+\.idea/artifacts/
+
+\.idea/copyright/profiles_settings\.xml

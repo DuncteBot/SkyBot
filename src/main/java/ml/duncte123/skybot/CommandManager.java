@@ -26,7 +26,10 @@ import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
 import ml.duncte123.skybot.commands.music.*;
-import ml.duncte123.skybot.commands.uncategorized.*;
+import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
+import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
+import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -50,16 +53,12 @@ public class CommandManager {
 
         // default commands
         this.addCommand(new HelpCommand());
-        this.addCommand(new OneLinerCommands());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
-        this.addCommand(new OneLinerCommandsJava());
 
         //fun commands
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
-        this.addCommand(new BlobCommand());
-        this.addCommand(new TTBCommand());
         this.addCommand(new JokeCommand());
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());
@@ -131,13 +130,14 @@ public class CommandManager {
 
         cmd = commands.stream().filter(c-> Arrays.asList(c.getAliases()).contains(name) ).findFirst();
 
-        if(cmd.isPresent()) {
-            return cmd.get();
-        }
-
-        return null;
+        return cmd.isPresent() ? cmd.get() : null;
     }
 
+    /**
+     * This removes a command from the commands
+     * @param command the command to remove
+     * @return {@code true} on success
+     */
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
     }
@@ -149,7 +149,7 @@ public class CommandManager {
      */
     public boolean addCommand(Command command) {
         if (command.getName().contains(" ")) {
-            throw new IllegalArgumentException("Name can't have spaces!");
+            throw new VRCubeException("Name can't have spaces!");
         }
         
         if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {

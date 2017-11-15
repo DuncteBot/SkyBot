@@ -14,46 +14,39 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.fun
 
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
-import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
-class BlobCommand : Command() {
+class TextToBricksCommand extends Command {
+    @Override
+    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-    init {
-        this.category = CommandCategory.FUN
-    }
-
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-
-        var blob = "blobnomcookie"
-
-        if (args.isNotEmpty()) {
-            blob = StringUtils.join(*args)
-        }
-
-        val response = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png")
-
-        val responseBody = response!!.body()
-
-        if (responseBody!!.contentLength() <= 0) {
-            sendMsg(event, "This blob was not found on the server!!!")
-            response.close()
+        if (args.length < 1) {
+            sendMsg(event, "Correct usage: `${Settings.prefix}$invoke <words>`")
             return
         }
 
-        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue {response.close()}
+        def output = StringUtils.join(args, " ")
+                .replaceAll("([a-zA-Z])", ":regional_indicator_\$1:")
+                .replaceAll("([0-9])", "\$1\u20E3")
+        sendEmbed(event, EmbedUtils.embedMessage(output))
     }
 
-    override fun help() = "Gives you a blob.\n" +
-                "Usage: `${Settings.prefix}$name [blob name]`"
+    @Override
+    String help() {
+        return "Convert your text to bicks"
+    }
 
-    override fun getName() = "blob"
+    @Override
+    String getName() {
+        return "ttb"
+    }
 }

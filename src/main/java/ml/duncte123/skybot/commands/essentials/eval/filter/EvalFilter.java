@@ -20,8 +20,9 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
+import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import net.dv8tion.jda.core.JDA;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
@@ -66,13 +67,14 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
-        System.out.println("filter: " + o.toString());
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
         if(o instanceof JDA)
             return new JDADelegate((JDA) o);
-        if(o instanceof Script || o instanceof Closure)
-            throw new SecurityException("Scripts/Closures are not allowed, or the variable that you are looking for is not found");
+        if(o instanceof Script)
+            return o;
+        if(o instanceof Closure)
+            throw new SecurityException("Closures are not allowed.");
         throw new VRCubeException("Class not allowed: " + o);
     }
 
@@ -151,7 +153,8 @@ public class EvalFilter extends GroovyValueFilter {
             BigDecimal.class,
             BigInteger.class,
 
-            JDADelegate.class
+            JDADelegate.class,
+            UserDelegate.class
     };
 
     public boolean containsMentions(String string) {

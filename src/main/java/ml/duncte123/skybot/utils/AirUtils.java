@@ -27,9 +27,9 @@ import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
-import okhttp3.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -37,7 +37,6 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.sql.Connection;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -166,27 +165,18 @@ public class AirUtils {
      * @param guildId What guild the user got banned in
      */
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-        try {
-            OkHttpClient client = new OkHttpClient();
+        Map<String, Object> postFields = new TreeMap<>();
+        postFields.put("modId", modID);
+        postFields.put("username", userName);
+        postFields.put("discriminator", userDiscriminator);
+        postFields.put("userId", userId);
+        postFields.put("unbanDate", unbanDate);
+        postFields.put("guildId", guildId);
 
-            MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
-            RequestBody body = RequestBody.create(mediaType, "modId=" + modID
-                    + "&username=" + userName
-                    + "&discriminator=" + userDiscriminator
-                    + "&userId=" + userId
-                    + "&unbanDate=" + unbanDate
-                    + "&guildId=" + guildId
-            );
-            Request request = new Request.Builder()
-                    .url(Settings.apiBase + "/ban.php")
-                    .post(body)
-                    .addHeader("content-type", "application/x-www-form-urlencoded")
-                    .addHeader("cache-control", "no-cache")
-                    .build();
-            Response response = client.newCall(request).execute();
-            response.close();
+        try {
+            WebUtils.postRequest(Settings.apiBase + "/ban/", postFields).close();
         }
-        catch (Exception e) {
+        catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -578,4 +568,22 @@ public class AirUtils {
         return false;
     }
 
+    /**
+     * This sends a post request to the bot lists with the new guild count
+     * @param jda the jda instance for the token
+     * @param newGuildCount the new guild count
+     * @return the response from the server
+     */
+    public static String updateGuildCount(JDA jda, long newGuildCount) {
+        Map<String, Object> postFields = new TreeMap<>();
+        postFields.put("server_count", newGuildCount);
+        postFields.put("auth", jda.getToken());
+        try {
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+            return e.toString();
+        }
+    }
 }

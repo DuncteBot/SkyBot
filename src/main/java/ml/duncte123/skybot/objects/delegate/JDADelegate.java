@@ -220,11 +220,12 @@ implements JDA {
     }
 
     public String getToken() {
+        return "Bot Not_Today";
         // Token must be changed
-        return __$__$$e__0_$0.getToken()
-                .replace('.', '-')
-                .replace('k', 'M')
-                .replaceAll("[n-zA-M]", "p");
+        //return __$__$$e__0_$0.getToken()
+        //        .replace('.', '-')
+        //        .replace('k', 'M')
+        //        .replaceAll("[n-zA-M]", "p");
     }
 
     public long getResponseTotal() {

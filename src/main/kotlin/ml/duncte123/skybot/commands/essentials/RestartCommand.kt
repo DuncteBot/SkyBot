@@ -16,44 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.essentials
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
-import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
+import java.util.*
 
-class BlobCommand : Command() {
+/*
+ * @author Sanduhr32
+ */
+  
+class RestartCommand : Command() {
 
     init {
-        this.category = CommandCategory.FUN
+        this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-
-        var blob = "blobnomcookie"
-
-        if (args.isNotEmpty()) {
-            blob = StringUtils.join(*args)
+    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+        if (!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id as Array<out String>)) return
+        val shardManager = event.jda.asBot().shardManager
+        if (args!!.size < 1) {
+            shardManager.restart()
+        } else if (args!!.size == 1) {
+            shardManager.restart(args[0].toInt())
         }
-
-        val response = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png")
-
-        val responseBody = response!!.body()
-
-        if (responseBody!!.contentLength() <= 0) {
-            sendMsg(event, "This blob was not found on the server!!!")
-            response.close()
-            return
-        }
-
-        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue {response.close()}
     }
+    override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"
 
-    override fun help() = "Gives you a blob.\n" +
-                "Usage: `${Settings.prefix}$name [blob name]`"
-
-    override fun getName() = "blob"
+    override fun getName() = "restart"
 }

@@ -123,16 +123,20 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
+        //If the topic contains -commands ignore it
+        if(event.getChannel().getTopic().contains("-commands")) {
+            return;
+        }
 
-        if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+        if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())){
+            return;
+        } else if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
 
-            if(event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
+            if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
                 event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
                 return;
             }
 
-        } else if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix()) ){
-            return;
         }
 
             // run the a command
@@ -252,11 +256,13 @@ public class BotListener extends ListenerAdapter {
         }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
+        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         GuildSettingsUtils.deleteGuild(event.getGuild());
+        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
 
     /**

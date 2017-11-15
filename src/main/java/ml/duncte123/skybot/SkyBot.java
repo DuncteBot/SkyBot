@@ -92,5 +92,9 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+
+        //This is a little hack
+        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
+        Class.forName("ml.duncte123.skybot.RegisterKotlinCommands").newInstance();
     }
 }

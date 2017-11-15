@@ -16,43 +16,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.`fun`
+package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
-class TTBCommand : Command() {
+class ShortenCommand extends Command {
 
-    init {
-        this.category = CommandCategory.FUN
+    ShortenCommand() {
+        this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent?) {
-        if (args == null || args.isEmpty()) {
-            sendMsg(event, "Correct usage: `${Settings.prefix}${invoke} <words>`")
+    @Override
+    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        if(args.length < 1 || args[0].isEmpty()) {
+            sendMsg(event, "Incorrect usage: `${Settings.prefix}$name <link to shorten>`")
             return
         }
-
-        val sb = StringBuilder()
-        for (a in StringUtils.join(args, " ").toCharArray().map(Character::toString)) {
-            if (Character.isLetter(a.toLowerCase()[0])) {
-                sb.append(":regional_indicator_").append(a.toLowerCase()).append(":")
-            } else {
-                if (" " == a) {
-                    sb.append(" ")
-                }
-                sb.append(a)
-            }
-        }
-
-        sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
+        String shortenedUrl = WebUtils.shortenUrl(args[0])
+        sendMsg(event, "Here is your shortened url: <$shortenedUrl>")
     }
 
-    override fun help() = "ttb test in kotlin"
+    @Override
+    String help() {
+        return "Shortens a url\n" +
+                "Usage: `${Settings.prefix}$name <link to shorten>`"
+    }
 
-    override fun getName() = "ttb"
+    @Override
+    String getName() {
+        return "shorten"
+    }
+
+    @Override
+    String[] getAliases() {
+        return ["short", "url", "bitly"]
+    }
 }

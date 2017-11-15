@@ -16,31 +16,19 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.exceptions;
+package ml.duncte123.skybot
 
-/**
- * Made this for the memes
- * 
- * @author Duncan "duncte123" Sterken
- */
-public class VRCubeException extends SecurityException {
+import ml.duncte123.skybot.commands.fun.TextToBricksCommand
+import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
+import ml.duncte123.skybot.utils.AirUtils
+import org.slf4j.event.Level
 
-    private static final long serialVersionUID = -1411788219603361967L;
-
-    public VRCubeException() {
-        super();
-    }
-
-    public VRCubeException(String message) {
-        super(message);
-    }
-
-    public VRCubeException(String message, Throwable cause) {
-        super(message, cause);
-    }
-
-    public VRCubeException(Throwable cause) {
-        super(cause);
+class RegisterGroovyCommands {
+    static CommandManager manager = AirUtils.commandManager
+    RegisterGroovyCommands() {
+        AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
+        manager.addCommand(new ShortenCommand())
+        manager.addCommand(new TextToBricksCommand())
     }
 
 }
