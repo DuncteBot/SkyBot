@@ -14,8 +14,8 @@ The following libraries are used:
 
 Go to `https://discordapp.com/oauth2/authorize?&client_id=<CLIENT_ID>&scope=bot&permissions=0` and replace `<CLIENT_ID>` with the client id of the bot on the top of the page. Then you will be asked, on which server the bot should join.
 
-# live demo
-You can find a live demo [_here_](https://discord.gg/XBQ9xAT)
+# Support
+If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 # ToDo list
 - [X] SQLite as a fail over database
