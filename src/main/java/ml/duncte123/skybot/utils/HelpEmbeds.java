@@ -116,6 +116,7 @@ public class HelpEmbeds {
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
+                .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
                 .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
                 .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
                 .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
