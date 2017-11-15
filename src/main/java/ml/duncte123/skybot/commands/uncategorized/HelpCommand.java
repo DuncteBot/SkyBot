@@ -23,6 +23,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.HelpEmbeds;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
@@ -59,7 +60,9 @@ public class HelpCommand extends Command {
             pc -> pc.sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix() ) ).queue(
                  msg ->  event.getChannel().sendMessage(event.getMember().getAsMention() +" check your DM's").queue(),
                 //When sending fails, send to the channel
-                err -> event.getChannel().sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()) ).complete().getChannel().sendMessage("Message could not be delivered to dm's and has been send in this channel.").queue()
+                err -> event.getChannel().sendMessage( (new MessageBuilder())
+                        .append("Message could not be delivered to dm's and has been send in this channel.")
+                        .setEmbed(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).build() ).queue()
             ),
             err -> event.getChannel().sendMessage("ERROR: " + err.getMessage()).queue()
         );
