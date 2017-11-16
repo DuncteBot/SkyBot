@@ -575,13 +575,13 @@ public class AirUtils {
      * @return the response from the server
      */
     public static String updateGuildCount(JDA jda, long newGuildCount) {
-        Map<String, Object> postFields = new TreeMap<>();
+        Map<String, Object> postFields = new HashMap<>();
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount.php", postFields).body().source().readUtf8();
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
             return e.toString();
         }

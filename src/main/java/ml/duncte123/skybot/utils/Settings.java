@@ -58,7 +58,7 @@ public class Settings {
     /**
      * This is the base url from the custom api
      */
-    public static final String apiBase = "https://bot.duncte123.ml/api";
+    public static final String apiBase = "https://bot.duncte123.me/api";
     /**
      * This is the prefix that your bot has, by default is the /
      */
