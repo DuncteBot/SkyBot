@@ -105,6 +105,6 @@ class KotlinEvalFilter() : GroovyValueFilter() {
                 throw VRCubeException(
                         "Cannot create an instance of ${receiver.name}")
 
-        return invoker.call(receiver, null, args)
+        return invoker.call(receiver, null, *args)
     }
 }

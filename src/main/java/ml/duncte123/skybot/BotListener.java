@@ -44,6 +44,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONObject;
 import org.slf4j.event.Level;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -84,9 +85,15 @@ public class BotListener extends ListenerAdapter {
      */
     public boolean settingsUpdateTimerRunning = false;
 
+    public final boolean restart;
+    
+    BotListener(boolean restart) {
+        this.restart = restart;
+    }
+
     /**
      * Listen for messages send to the bot
-     * @param event The corresponding {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event The corresponding {@link GuildMessageReceivedEvent}
      */
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -104,6 +111,11 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
+            
+            try {
+                AirUtils.db.getConnManager().getConnection().close();
+            } catch (SQLException e) {}
+            
             System.exit(0);
             return;
         }
