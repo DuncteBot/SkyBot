@@ -44,6 +44,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONObject;
 import org.slf4j.event.Level;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -110,6 +111,11 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
+            
+            try {
+                AirUtils.db.getConnManager().getConnection().close();
+            } catch (SQLException e) {}
+            
             System.exit(0);
             return;
         }
