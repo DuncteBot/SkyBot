@@ -63,7 +63,7 @@ public abstract class MusicCommand extends Command {
      * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @return true if the checks pass
      */
-    protected boolean chennelChecks(GuildMessageReceivedEvent event) {
+    protected boolean channelChecks(GuildMessageReceivedEvent event) {
         AudioManager audioManager = getAudioManager(event.getGuild());
 
         if(!audioManager.isConnected()){

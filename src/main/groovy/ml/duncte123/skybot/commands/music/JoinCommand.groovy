@@ -19,21 +19,18 @@
 
 package ml.duncte123.skybot.commands.music
 
-import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.VoiceChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
-import net.dv8tion.jda.core.managers.AudioManager
 
 class JoinCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(chennelChecks(event)) {
+        if(channelChecks(event)) {
             boolean inChannel = false
-            VoiceChannel vc = null
+            def vc = null
 
             for(VoiceChannel chan : event.guild.voiceChannels) {
                 if(chan.members.contains(event.member)) {
@@ -47,9 +44,9 @@ class JoinCommand extends MusicCommand {
                 sendMsg(event, "You are not in a voice channel")
                 return
             }
-            Guild guild = event.guild
-            GuildMusicManager mng = getMusicManager(guild)
-            AudioManager audioManager = getAudioManager(guild)
+            def guild = event.guild
+            def mng = getMusicManager(guild)
+            def audioManager = getAudioManager(guild)
             if(audioManager.connected && mng.player.playingTrack != null){
                 sendMsg(event, "I'm already in a channel.")
                 return
@@ -60,8 +57,8 @@ class JoinCommand extends MusicCommand {
 
                 audioManager.openAudioConnection(vc)
             } catch (PermissionException e) {
-                if(e.getPermission() == Permission.VOICE_CONNECT){
-                    sendMsg(event, "I don't have permission to join `"+vc.getName()+"`")
+                if(e.permission == Permission.VOICE_CONNECT){
+                    sendMsg(event, "I don't have permission to join `${vc.name}`")
                 }
             }
 
@@ -70,7 +67,7 @@ class JoinCommand extends MusicCommand {
 
     @Override
     String help() {
-        return "makes the bot join the voice channel that you are in."
+        return "Makes the bot join the voice channel that you are in."
     }
 
     @Override

@@ -19,16 +19,21 @@
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.commands.fun.TextToBricksCommand
+import ml.duncte123.skybot.commands.music.JoinCommand
+import ml.duncte123.skybot.commands.music.LeaveCommand
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
-class RegisterGroovyCommands {
-    static CommandManager manager = AirUtils.commandManager
+class RegisterGroovyCommands extends CommandManager {
     RegisterGroovyCommands() {
         AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
-        manager.addCommand(new ShortenCommand())
-        manager.addCommand(new TextToBricksCommand())
+        this.addCommand(new ShortenCommand())
+        this.addCommand(new TextToBricksCommand())
+
+        //Add the music commands
+        this.addCommand(new JoinCommand())
+        this.addCommand(new LeaveCommand())
     }
 
 }
