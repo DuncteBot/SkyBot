@@ -24,13 +24,13 @@ import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
-class RegisterKotlinCommands : CommandManager() {
-
+class RegisterKotlinCommands {
+    val manager = AirUtils.commandManager
     init {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
-        this.addCommand(OneLinerCommands())
-        this.addCommand(BlobCommand())
-        this.addCommand(RestartCommand())
+        manager.addCommand(OneLinerCommands())
+        manager.addCommand(BlobCommand())
+        manager.addCommand(RestartCommand())
     }
 
 }

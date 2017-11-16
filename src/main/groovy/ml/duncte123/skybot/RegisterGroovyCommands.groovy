@@ -19,21 +19,32 @@
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.commands.fun.TextToBricksCommand
-import ml.duncte123.skybot.commands.music.JoinCommand
-import ml.duncte123.skybot.commands.music.LeaveCommand
+import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
-class RegisterGroovyCommands extends CommandManager {
+class RegisterGroovyCommands {
+    def manager = AirUtils.commandManager
     RegisterGroovyCommands() {
         AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
-        this.addCommand(new ShortenCommand())
-        this.addCommand(new TextToBricksCommand())
+
+        manager.addCommand(new ShortenCommand())
+        manager.addCommand(new TextToBricksCommand())
 
         //Add the music commands
-        this.addCommand(new JoinCommand())
-        this.addCommand(new LeaveCommand())
+        manager.addCommand(new JoinCommand())
+        manager.addCommand(new LeaveCommand())
+        manager.addCommand(new ListCommand())
+        manager.addCommand(new NowPlayingCommand())
+        manager.addCommand(new PauseCommand())
+        manager.addCommand(new PlayCommand())
+        manager.addCommand(new PlayRawCommand())
+        manager.addCommand(new PPlayCommand())
+        manager.addCommand(new RepeatCommand())
+        manager.addCommand(new ShuffleCommand())
+        manager.addCommand(new SkipCommand())
+        manager.addCommand(new StopCommand())
     }
 
 }
