@@ -586,4 +586,14 @@ public class AirUtils {
             return e.toString();
         }
     }
+    
+    public static void reload() {
+        try {
+            db.getConnManager().getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        
+    }
 }

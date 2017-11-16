@@ -18,8 +18,11 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import ml.duncte123.skybot.BotListener
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -37,10 +40,33 @@ class RestartCommand : Command() {
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
         if (!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id as Array<out String>)) return
         val shardManager = event.jda.asBot().shardManager
-        if (args!!.size < 1) {
-            shardManager.restart()
-        } else if (args!!.size == 1) {
-            shardManager.restart(args[0].toInt())
+
+        val list = event.jda.registeredListeners.filter { t -> t is BotListener}.map {t -> t as BotListener}
+
+        if(list.isEmpty()) {
+            sendMsg(event, "There are no command listeners in here?")
+            sendError(event.message)
+            return
+        }
+
+        val restart = list[0].restart
+
+        if(args!!.isEmpty()) {
+            // Stop all shards
+            shardManager.shutdown()
+            if (!restart) {
+                // Clean the variables
+                AirUtils.reload()
+                // Re-run the main command
+                SkyBot.main()
+            } else
+                // Magic code, send the restart signal to the executing program
+                System.exit(0x5454)
+        } else try {
+            shardManager.shutdown(args[0].toInt())
+        } catch (e: NumberFormatException) {
+            sendMsg(event, "Invalid shard number")
+            sendError(event.message)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"

@@ -44,6 +44,10 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        boolean restart = false;
+        if(args.length > 0)
+            restart = args[0].equals("--do-restart");
+        
         //Set the logger to only info by default
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
@@ -87,7 +91,7 @@ public class SkyBot {
 
         //Set up sharding for the bot
         new DefaultShardManagerBuilder()
-                .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
+                .addEventListeners(new BotListener(restart)) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.of(Settings.prefix  + "help | Shard #" + (shardId + 1)))
