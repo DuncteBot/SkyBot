@@ -16,28 +16,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
-import org.apache.commons.lang3.StringUtils;
 
-import java.util.Arrays;
-
-public class PPlayCommand extends MusicCommand {
-
-    public final static String help = "add a playlist to the queue.";
+public class SkipCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);
         AudioManager audioManager = getAudioManager(guild);
+        TrackScheduler scheduler = musicManager.scheduler;
 
         if(!audioManager.isConnected()){
             sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
@@ -49,29 +45,25 @@ public class PPlayCommand extends MusicCommand {
             return;
         }
 
-        if(args.length < 1){
-            sendMsg(event, "To few arguments, use `"+ Settings.prefix+"pplay <media link>`");
+        if(musicManager.player.getPlayingTrack() == null){
+            sendMsg(event, "The player is not playing.");
             return;
         }
 
-        String toPlay = StringUtils.join(Arrays.asList(args), " ");
-        if(!AirUtils.isURL(toPlay)){
-            toPlay = "ytsearch: " + toPlay;
-        }
+        scheduler.nextTrack();
 
-        getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, true);
-
+        sendMsg(event,"The current track was skipped.");
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return help;
+        return "skips the current track";
     }
 
     @Override
     public String getName() {
-        return "pplay";
+        return "skip";
     }
 
 }

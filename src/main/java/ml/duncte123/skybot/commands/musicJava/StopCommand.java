@@ -16,49 +16,58 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.managers.AudioManager;
 
-public class PauseCommand extends MusicCommand {
+public class StopCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+        Guild guild = event.getGuild();
+        GuildMusicManager musicManager = getMusicManager(guild);
+        AudioManager audioManager = getAudioManager(guild);
+        AudioPlayer player = musicManager.player;
+        TrackScheduler scheduler = musicManager.scheduler;
+
+        if(!audioManager.isConnected()){
+            sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
+            return;
+        }
+
+        if(!audioManager.getConnectedChannel().getMembers().contains(event.getMember())){
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return;
         }
 
-        Guild guild = event.getGuild();
-        GuildMusicManager mng = getMusicManager(guild);
-        AudioPlayer player = mng.player;
-
-        if (player.getPlayingTrack() == null){
-            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.");
+        if(musicManager.player.getPlayingTrack() == null){
+            sendMsg(event, "The player is not playing.");
             return;
         }
 
-        player.setPaused(!player.isPaused());
-        if (player.isPaused()){
-            sendMsg(event, "The player has been paused.");
-        }else{
-            sendMsg(event, "The player has resumed playing.");
-        }
+        scheduler.queue.clear();
+        player.stopTrack();
+        player.setPaused(false);
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared");
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "pauses the current song";
+        return "stops the music player.";
     }
 
     @Override
     public String getName() {
-        return "pause";
+        return "stop";
     }
+
 }

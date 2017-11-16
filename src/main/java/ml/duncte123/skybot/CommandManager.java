@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import Java.lang.VRCubeException;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
@@ -25,11 +26,9 @@ import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
-import ml.duncte123.skybot.commands.music.*;
 import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
-import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -78,20 +77,6 @@ public class CommandManager {
         
         if(AirUtils.alphaEngine != null)
         	this.addCommand(new WolframAlphaCommand());
-        
-        //music commands
-        this.addCommand(new JoinCommand());
-        this.addCommand(new LeaveCommand());
-        this.addCommand(new PlayCommand());
-        this.addCommand(new StopCommand());
-        this.addCommand(new PPlayCommand());
-        this.addCommand(new SkipCommand());
-        this.addCommand(new PauseCommand());
-        this.addCommand(new ListCommand());
-        this.addCommand(new NowPlayingCommand());
-        this.addCommand(new ShuffleCommand());
-        this.addCommand(new RepeatCommand());
-        this.addCommand(new PlayRawCommand());
 
         //guild commands
         this.addCommand(new GuildInfoCommand());

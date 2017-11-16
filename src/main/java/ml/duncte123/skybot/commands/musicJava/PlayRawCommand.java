@@ -16,8 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -25,14 +26,19 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
+import org.apache.commons.lang3.StringUtils;
 
-public class RepeatCommand extends MusicCommand {
+public class PlayRawCommand extends MusicCommand {
+
+    public final static String help = "make the bot play song.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);
         AudioManager audioManager = getAudioManager(guild);
+        AudioPlayer player = musicManager.player;
         TrackScheduler scheduler = musicManager.scheduler;
 
         if(!audioManager.isConnected()){
@@ -45,25 +51,30 @@ public class RepeatCommand extends MusicCommand {
             return;
         }
 
-        scheduler.setRepeating(!scheduler.isRepeating());
-
-        sendMsg(event, "Player was set to: **" + (scheduler.isRepeating() ? "repeat" : "not repeat") + "**");
+        if(args.length == 0){
+            if(player.isPaused()){
+            player.setPaused(false);
+            sendMsg(event, "Playback has been resumed.");
+        }else if(player.getPlayingTrack() != null){
+            sendMsg(event, "Player is already playing!");
+        }else if(scheduler.queue.isEmpty()){
+            sendMsg(event, "The current audio queue is empty! Add something to the queue first!");
+        }
+        }else{
+            getAu().loadAndPlay(musicManager, event.getChannel(), StringUtils.join(args, " "), false);
+        }
 
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Makes the player repeat the currently playing song";
+        return help;
     }
 
     @Override
     public String getName() {
-        return "repeat";
+        return "playrw";
     }
 
-    @Override
-    public String[] getAliases() {
-        return new String[]{"loop"};
-    }
 }
