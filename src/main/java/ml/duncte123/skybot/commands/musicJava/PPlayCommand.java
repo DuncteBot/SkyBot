@@ -16,30 +16,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.audio.TrackScheduler;
 import ml.duncte123.skybot.objects.command.MusicCommand;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 import org.apache.commons.lang3.StringUtils;
 
-public class PlayRawCommand extends MusicCommand {
+import java.util.Arrays;
 
-    public final static String help = "make the bot play song.";
+public class PPlayCommand extends MusicCommand {
+
+    public final static String help = "add a playlist to the queue.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
         Guild guild = event.getGuild();
         GuildMusicManager musicManager = getMusicManager(guild);
         AudioManager audioManager = getAudioManager(guild);
-        AudioPlayer player = musicManager.player;
-        TrackScheduler scheduler = musicManager.scheduler;
 
         if(!audioManager.isConnected()){
             sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
@@ -51,18 +49,17 @@ public class PlayRawCommand extends MusicCommand {
             return;
         }
 
-        if(args.length == 0){
-            if(player.isPaused()){
-            player.setPaused(false);
-            sendMsg(event, "Playback has been resumed.");
-        }else if(player.getPlayingTrack() != null){
-            sendMsg(event, "Player is already playing!");
-        }else if(scheduler.queue.isEmpty()){
-            sendMsg(event, "The current audio queue is empty! Add something to the queue first!");
+        if(args.length < 1){
+            sendMsg(event, "To few arguments, use `"+ Settings.prefix+"pplay <media link>`");
+            return;
         }
-        }else{
-            getAu().loadAndPlay(musicManager, event.getChannel(), StringUtils.join(args, " "), false);
+
+        String toPlay = StringUtils.join(Arrays.asList(args), " ");
+        if(!AirUtils.isURL(toPlay)){
+            toPlay = "ytsearch: " + toPlay;
         }
+
+        getAu().loadAndPlay(musicManager, event.getChannel(), toPlay, true);
 
     }
 
@@ -74,7 +71,7 @@ public class PlayRawCommand extends MusicCommand {
 
     @Override
     public String getName() {
-        return "playrw";
+        return "pplay";
     }
 
 }

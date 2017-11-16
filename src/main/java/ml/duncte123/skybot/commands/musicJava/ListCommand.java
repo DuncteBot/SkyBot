@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;

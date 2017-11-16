@@ -16,51 +16,49 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music;
+package ml.duncte123.skybot.commands.musicJava;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-public class NowPlayingCommand extends MusicCommand {
+public class PauseCommand extends MusicCommand {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
+        if(!event.getGuild().getAudioManager().getConnectedChannel().getMembers().contains(event.getMember())){
+            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+            return;
+        }
+
         Guild guild = event.getGuild();
         GuildMusicManager mng = getMusicManager(guild);
         AudioPlayer player = mng.player;
 
-        String msg = "";
-
-        AudioTrack currentTrack = player.getPlayingTrack();
-        if (currentTrack != null){
-            String title = currentTrack.getInfo().title;
-            msg = "**Playing** " + title + "\n" + EmbedUtils.playerEmbed(mng);
-        }else{
-            msg = "The player is not currently playing anything!";
+        if (player.getPlayingTrack() == null){
+            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.");
+            return;
         }
-        sendEmbed(event, EmbedUtils.embedMessage(msg));
 
+        player.setPaused(!player.isPaused());
+        if (player.isPaused()){
+            sendMsg(event, "The player has been paused.");
+        }else{
+            sendMsg(event, "The player has resumed playing.");
+        }
     }
 
     @Override
     public String help() {
         // TODO Auto-generated method stub
-        return "Prints information about the currently playing song (title, current time)";
+        return "pauses the current song";
     }
 
     @Override
     public String getName() {
-        return "nowplaying";
+        return "pause";
     }
-
-    @Override
-    public String[] getAliases() {
-        return new String[]{"np", "song"};
-    }
-
 }
