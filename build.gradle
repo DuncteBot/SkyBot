@@ -65,6 +65,8 @@ buildConfig {
     clsName = 'BuildConfig'
     packageName = project.group
     charset = 'UTF-8'
+
+    buildConfigField 'String', 'ownerId', '191231307290771456'
 }
 
 dependencies {
