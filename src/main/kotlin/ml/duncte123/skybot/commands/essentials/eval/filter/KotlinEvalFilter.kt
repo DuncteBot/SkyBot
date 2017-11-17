@@ -100,10 +100,9 @@ class KotlinEvalFilter() : GroovyValueFilter() {
 	}
 
     override fun onNewInstance(invoker: Invoker, receiver: Class<*>, vararg args: Any?): Any {
-        if(receiver != null)
-            if(!filteredConstructed.contains(receiver))
-                throw VRCubeException(
-                        "Cannot create an instance of ${receiver.name}")
+		if(!filteredConstructed.contains(receiver))
+			throw VRCubeException(
+					"Cannot create an instance of ${receiver.name}")
 
         return invoker.call(receiver, null, *args)
     }

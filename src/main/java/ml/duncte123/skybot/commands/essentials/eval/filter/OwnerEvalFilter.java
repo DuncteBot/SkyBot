@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.JDA;
 

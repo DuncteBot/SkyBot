@@ -21,11 +21,9 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
 import Java.lang.VRCubeException;
+import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.delegate.GuildDelegate;
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
-import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -180,6 +178,7 @@ public class EvalCommand extends Command {
                 sendError(event.getMessage());
             }
             catch (TimeoutException | InterruptedException e2) {
+                assert future != null;
                 future.cancel(true);
                 event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
                 //e.printStackTrace();
@@ -234,6 +233,7 @@ public class EvalCommand extends Command {
 
         try {
             Response rawJsaonArray = client.newCall(request).execute();
+            // AH MAY PRODUCE AN NPE!!!!
             JSONArray jsonArray = new JSONArray(rawJsaonArray.body().source().readUtf8());
             usersThatHaveUpvoted.clear();
             jsonArray.iterator().forEachRemaining(it -> usersThatHaveUpvoted.add(String.valueOf(it)));

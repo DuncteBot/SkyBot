@@ -21,9 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import Java.lang.VRCubeException;
-import ml.duncte123.skybot.objects.delegate.GuildDelegate;
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
-import ml.duncte123.skybot.objects.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.*;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
@@ -161,7 +159,8 @@ public class EvalFilter extends GroovyValueFilter {
             BigInteger.class,
 
             JDADelegate.class,
-            UserDelegate.class
+            UserDelegate.class,
+            GuildDelegate.class
     };
 
     public boolean containsMentions(String string) {
