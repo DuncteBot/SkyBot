@@ -23,6 +23,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.requests.RestAction;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 import java.util.List;
 
@@ -61,27 +62,27 @@ public class FakeUser implements User {
 
     @Override
     public String getAvatarId() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getAvatarUrl() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getDefaultAvatarId() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getDefaultAvatarUrl() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public String getEffectiveAvatarUrl() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -91,12 +92,12 @@ public class FakeUser implements User {
 
     @Override
     public RestAction<PrivateChannel> openPrivateChannel() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
     public List<Guild> getMutualGuilds() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -106,7 +107,7 @@ public class FakeUser implements User {
 
     @Override
     public JDA getJDA() {
-        return null;
+        throw new NotImplementedException();
     }
 
     @Override
@@ -121,6 +122,6 @@ public class FakeUser implements User {
 
     @Override
     public long getIdLong() {
-        return 0;
+        return Long.parseLong(this.id);
     }
 }

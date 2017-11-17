@@ -29,6 +29,10 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.io.File;
+import java.io.InputStream;
+import java.net.URL;
+
 public abstract class Command {
 
     /**
@@ -141,6 +145,18 @@ public abstract class Command {
      */
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
         event.getChannel().sendMessage(msg).queue();
+    }
+
+    /**
+     * This is a shortcut for sending an image inside an embed with using a dynamic url
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent}
+     * @param inStream is the input that will be uploaded.
+     * @param filename the filename with ending/type the file has.
+     * @see {@link java.io.FileInputStream#FileInputStream(java.io.File)} for getting an InputStream from a file
+     * @see {@link java.net.URL#openStream()} for opening an InputStream from an URL
+     */
+    protected void sendImageAsEmbed(GuildMessageReceivedEvent event, InputStream inStream, String filename) {
+        event.getChannel().sendFile(inStream, filename, new MessageBuilder().setEmbed(EmbedUtils.embedImage("attachment://"+filename)).build()).queue();
     }
 
     @Override

@@ -42,13 +42,14 @@ public class BotinfoCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         User u = event.getJDA().getSelfUser();
 
-        String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName();
-        OS = OS + " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() + " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
+        String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
+                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
+                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
         String cpu0 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getProcessCpuLoad());
         String cpu2 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad());
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
-        long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() / 1000000;
-        long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() / 1000000;
+        long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
+        long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
         long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
         Time uptimeTime = new Time(uptimeLong - 3600000);
 
@@ -68,7 +69,7 @@ public class BotinfoCommand extends Command {
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** "  + ram0 +"MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 +" Cores)" , false)
-                .addField("Lang & lib info", "**Coded in:** Java, Groovy and kotlin\n\n" +
+                .addField("Lang & lib info", "**Coded in:** Java, Groovy and Kotlin\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version:** " + PlayerLibrary.VERSION, false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
                 .build();

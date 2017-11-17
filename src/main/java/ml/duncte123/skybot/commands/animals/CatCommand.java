@@ -43,7 +43,6 @@ public class CatCommand extends Command {
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
         }
@@ -52,7 +51,6 @@ public class CatCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return help;
     }
 

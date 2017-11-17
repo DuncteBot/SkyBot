@@ -117,8 +117,7 @@ public class FakeInterface<T> {
             }
             
             // String
-            if(r == String.class
-                | r == CharSequence.class)
+            if(r == String.class | r == CharSequence.class)
                 return "";
             
             // Arrays
@@ -126,24 +125,20 @@ public class FakeInterface<T> {
                 return Array.newInstance(r.getComponentType(), 0);
             
             // List | ArrayList
-            if(r == List.class
-                | r == ArrayList.class)
+            if(r == List.class | r == ArrayList.class) //ArrayList extends List so we might use Collection for List, ArrayList, Set and HashSet.
                 return new ArrayList<>();
             
             // Set | HashSet
-            if(r == Set.class
-                | r == HashSet.class)
+            if(r == Set.class | r == HashSet.class)
                 return new HashSet<>();
             
             // Map | HashMap
-            if(r == Map.class
-                | r == HashMap.class)
+            if(r == Map.class | r == HashMap.class)
                 return new HashMap<>();
             
             // Entry | SimpleEntry
-            if(r == Map.Entry.class
-                | r == AbstractMap.SimpleEntry.class)
-                return new AbstractMap.SimpleEntry<Object, Object>(null, null);
+            if(r == Map.Entry.class | r == AbstractMap.SimpleEntry.class)
+                return new AbstractMap.SimpleEntry<>(null, null);
             
             // Create a fake for that interface
             if(r.isInterface() && !r.isAnnotation())
@@ -167,7 +162,7 @@ public class FakeInterface<T> {
                     try {
                         // Try to create
                         return c.newInstance();
-                    } catch (Throwable thr) {
+                    } catch (Error | RuntimeException ignored) {
                         // If we get an Error or RuntimeException, continue
                     }
             

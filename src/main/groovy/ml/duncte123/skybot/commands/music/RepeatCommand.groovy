@@ -30,7 +30,7 @@ class RepeatCommand extends MusicCommand {
             TrackScheduler scheduler = getMusicManager(event.guild).scheduler
 
             scheduler.setRepeating(!scheduler.repeating)
-            sendMsg(event, "Player was set to: **" + (scheduler.repeating ? "repeat" : "not repeat") + "**")
+            sendMsg(event, "Player was set to: **" + (scheduler.repeating ? "" : "not") + "repeat**")
         }
     }
 

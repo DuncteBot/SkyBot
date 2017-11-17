@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.Channel
 import net.dv8tion.jda.core.entities.VoiceChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
@@ -29,21 +30,13 @@ class JoinCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        boolean inChannel = false
-        def vc = null
-
-        for(VoiceChannel chan : event.guild.voiceChannels) {
-            if(chan.members.contains(event.member)) {
-                inChannel = true
-                vc = chan
-                break
-            }
-        }
+        boolean inChannel = event.member.voiceState.inVoiceChannel()
 
         if(!inChannel){
             sendMsg(event, "You are not in a voice channel")
             return
         }
+        def vc = event.member.voiceState.channel
         def guild = event.guild
         def mng = getMusicManager(guild)
         def audioManager = getAudioManager(guild)

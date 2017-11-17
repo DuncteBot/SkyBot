@@ -203,11 +203,8 @@ public class AirUtils {
                 if(currDate.after(unbanDate)) {
                     usersUnbanned++;
                     log(Level.INFO, "Unbanning " + res.getString("Username"));
-                    jda.getGuildCache().getElementById(
-                            res.getString("guildId")
-                    ).getController().unban(
-                            res.getString("userId")
-                    ).reason("Ban expired").queue();
+                    jda.getGuildCache().getElementById(res.getString("guildId")).getController()
+                            .unban(res.getString("userId")).reason("Ban expired").queue();
                     modLog(new ConsoleUser(),
                             new FakeUser(res.getString("Username"),
                                     res.getString("userId"),

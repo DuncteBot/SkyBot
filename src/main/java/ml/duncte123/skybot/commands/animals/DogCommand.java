@@ -43,7 +43,6 @@ public class DogCommand extends Command {
                 sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
         }
@@ -52,7 +51,6 @@ public class DogCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return "here is a dog.";
     }
 

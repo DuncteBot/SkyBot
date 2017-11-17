@@ -152,10 +152,7 @@ public class GuildSettingsUtils {
 
         try {
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                    "enableJoinMessage= ? , " +
-                    "enableSwearFilter= ? ," +
-                    "customWelcomeMessage= ? ," +
-                    "prefix= ? " +
+                    "enableJoinMessage= ? , " + "enableSwearFilter= ? ," + "customWelcomeMessage= ? ," + "prefix= ? " +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
@@ -207,8 +204,8 @@ public class GuildSettingsUtils {
             }
 
             if (rows == 0) {
-                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName, customWelcomeMessage, prefix) " +
-                        "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ?)");
+                PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
+                        "customWelcomeMessage, prefix) " + "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, Settings.prefix);
                 smt.execute();
