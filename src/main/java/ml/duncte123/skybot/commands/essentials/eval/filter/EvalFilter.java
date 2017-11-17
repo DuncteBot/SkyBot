@@ -24,9 +24,11 @@ import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.delegate.GuildDelegate;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.objects.delegate.UserDelegate;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.requests.RestAction;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -72,8 +74,12 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        if(o instanceof JDA)
-            return new JDADelegate((JDA) o);
+        
+        if(o instanceof RestAction)
+            throw new VRCubeException("Getting all spicy with the API?");
+        if(o instanceof JDA
+             | o instanceof ShardManager)
+            throw new VRCubeException("Like I'm going to give you access to that");
         if(o instanceof User)
             return new UserDelegate((User) o);
         if(o instanceof Guild)
