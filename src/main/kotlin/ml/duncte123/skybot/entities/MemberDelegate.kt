@@ -9,4 +9,8 @@ class MemberDelegate(val xH4z9a_Qe: Member) : MemberImpl {
     public fun getNickname(): String? = xH4z9a_Qe.nickname
     
     public fun getGame(): Game? = xH4z9a_Qe.game
+    
+    public fun getUser(): User = xH4z9a_Qe.user
+    
+    public fun getVoiceState(): GuildVoiceState = xH4z9a_Qe.voiceState
 }
