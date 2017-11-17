@@ -171,7 +171,6 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        setWatchingStatus(event.getJDA());
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
 
         AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
@@ -336,33 +335,5 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private boolean temp = true;
-	 //We're beeing sneaky here because we are setting the game to something called "Listening to"
-	 //b1nzy if you see this, please don't b4nzy me
-    private void setWatchingStatus(JDA jda) {
-        System.out.println("checking");
-        System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
-        if(temp && (jda.asBot().getShardManager().getShards().size() != 2) ) {
-            System.out.println("not setting");
-            return;
-        }
-        System.out.println("Setting game for all shards");
-        Presence p = jda.getPresence();
-        JSONObject gameObj = new JSONObject();
-        gameObj.put("name", "Danny Phantom");
-        gameObj.put("type", 3);
-        JSONObject object = new JSONObject();
-        object.put("game", gameObj);
-        object.put("afk", p.isIdle());
-        object.put("status", p.getStatus().getKey());
-        object.put("since", System.currentTimeMillis());
-        for (JDA shard : jda.asBot().getShardManager().getShards())
-            ((JDAImpl) shard).getClient().send(new JSONObject()
-                    .put("d", object)
-                    .put("op", WebSocketCode.PRESENCE).toString()
-            );
-
-        temp = false;
-    }
 
 }
