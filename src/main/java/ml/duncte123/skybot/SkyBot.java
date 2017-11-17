@@ -73,9 +73,9 @@ public class SkyBot {
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
-        //This is a little hack
+        //This is a little hack because we can't use groovy and kotlin in the same classes
         Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        Class.forName("ml.duncte123.skybot.RegisterKotlinCommands").newInstance();
+        new RegisterKotlinCommands();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
