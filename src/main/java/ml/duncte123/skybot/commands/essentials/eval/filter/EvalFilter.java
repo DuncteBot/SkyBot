@@ -78,7 +78,8 @@ public class EvalFilter extends GroovyValueFilter {
             BigInteger.class,
             
             JDADelegate.class,
-            UserDelegate.class
+            UserDelegate.class,
+            GuildDelegate.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.asList(ALLOWED_TYPES_LIST).stream().collect(Collectors.toSet());
@@ -116,15 +117,15 @@ public class EvalFilter extends GroovyValueFilter {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
         
-        if(o instanceof RestAction)
-            throw new VRCubeException("Getting all spicy with the API?");
-        if(o instanceof JDA
-             | o instanceof ShardManager)
-            throw new VRCubeException("Like I'm going to give you access to that");
+        //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
+        //because the class is not whitelisted
+        if(o instanceof JDA)
+            return new JDADelegate((JDA) o);
         if(o instanceof User)
             return new UserDelegate((User) o);
         if(o instanceof Guild)
             return new GuildDelegate((Guild) o);
+        ////////////////////////////////////////////
         if(o instanceof Script)
             return o;
         if(o instanceof Closure)
