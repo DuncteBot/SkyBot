@@ -35,10 +35,53 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
+    
+    /**
+     * This contains a list of all the allowed classes
+     */
+    private static final Class<?>[] ALLOWED_TYPES_LIST = {
+            String.class,
+            
+            Boolean.class,
+            boolean.class,
+            
+            Byte.class,
+            byte.class,
+            
+            Character.class,
+            char.class,
+            
+            Short.class,
+            short.class,
+            
+            Integer.class,
+            int.class,
+            
+            Float.class,
+            float.class,
+            
+            Long.class,
+            long.class,
+            
+            Double.class,
+            double.class,
+            
+            Arrays.class,
+            
+            List.class,
+            ArrayList.class,
+            
+            BigDecimal.class,
+            BigInteger.class,
+            
+            JDADelegate.class,
+            UserDelegate.class
+    };
 
-    private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
+    private static final Set<Class<?>> ALLOWED_TYPES = Arrays.asList(ALLOWED_TYPES_LIST).stream().collect(Collectors.toSet());
 
     /**
      * Filter arrays of 
@@ -55,15 +98,13 @@ public class EvalFilter extends GroovyValueFilter {
                     + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
                     // Hexadecimal
                     + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
-            MENTION_FILTER = 
-                Pattern.compile("<@[0-9]{18}>");
-
     /**
-     * Constructor
+     * Filter mentions
+     *
+     * @author ramidzkh
      */
-    public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
-    }
+            MENTION_FILTER = 
+                Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here");
 
     /**
      * This filters the script
@@ -127,48 +168,6 @@ public class EvalFilter extends GroovyValueFilter {
         //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return ARRAY_FILTER.matcher(toFilter).find();
     }
-
-    /**
-     * This contains a list of all the allowed classes
-     */
-    private static final Class<?>[] ALLOWED_TYPES_LIST = {
-            String.class,
-            
-            Boolean.class,
-            boolean.class,
-            
-            Byte.class,
-            byte.class,
-            
-            Character.class,
-            char.class,
-            
-            Short.class,
-            short.class,
-            
-            Integer.class,
-            int.class,
-            
-            Float.class,
-            float.class,
-            
-            Long.class,
-            long.class,
-            
-            Double.class,
-            double.class,
-            
-            Arrays.class,
-            
-            List.class,
-            ArrayList.class,
-            
-            BigDecimal.class,
-            BigInteger.class,
-
-            JDADelegate.class,
-            UserDelegate.class
-    };
 
     public boolean containsMentions(String string) {
         return MENTION_FILTER.matcher(string).find();
