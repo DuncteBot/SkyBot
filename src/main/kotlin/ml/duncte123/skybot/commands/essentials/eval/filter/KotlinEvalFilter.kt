@@ -26,6 +26,7 @@ import java.util.Arrays
 import Java.lang.VRCubeException
 import groovy.lang.Script
 import groovy.lang.Closure
+import java.util.regex.Pattern
 
 /**
  * Kotlin version of the eval filter
@@ -42,6 +43,14 @@ class KotlinEvalFilter : GroovyValueFilter() {
         // Disallow the utilities in Script and the execution of Closures
 		if(value is Script || value is Closure<*>)
             throw VRCubeException("Scrips and Closures are not allowed")
+
+        // Disallow mentioning
+        // Is String
+        if(value is String)
+            // Does match mention filter
+            if(mentionFilter.matcher(value).find())
+                // Error
+                throw VRCubeException("**ERROR:** Mentioning people!")
 
         // If not allowed block it
 		if(!filteredUsed.contains(value::class.java))
@@ -131,3 +140,5 @@ val filteredConstructed = listOf(
         BigDecimal::class.java,
         BigInteger::class.java
 )
+
+val mentionFilter = Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here")!!

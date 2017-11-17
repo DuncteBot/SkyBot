@@ -24,11 +24,9 @@ import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.delegate.GuildDelegate;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.objects.delegate.UserDelegate;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.requests.RestAction;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -85,24 +83,20 @@ public class EvalFilter extends GroovyValueFilter {
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
 
     /**
-     * Filter arrays of 
-     * 
-     * @author ramidzkh
+     * Filter arrays of
      */
     private static final Pattern ARRAY_FILTER =
             Pattern.compile(
                     // Case insensitive
                     "(?i)"
                     // Decimals and Octals
-                    + "((\\[(\\s*[0-9]+\\s*)\\])"
+                    + "((\\[(\\s*[0-9]+\\s*)])"
                     // Binary
-                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
+                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
                     // Hexadecimal
-                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
     /**
      * Filter mentions
-     *
-     * @author ramidzkh
      */
             MENTION_FILTER = 
                 Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here");
