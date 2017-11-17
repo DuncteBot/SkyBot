@@ -70,7 +70,10 @@ class RestartCommand : Command() {
 
         when (args.size) {
             0 -> shardManager.restart()
-            1 -> shardManager.restart(args[0].toInt())
+            1 -> {
+                if (args[0].matches(Regex("\\d+")))
+                    shardManager.restart(args[0].toInt())
+            }
             else -> sendError(event.message)
         }
     }

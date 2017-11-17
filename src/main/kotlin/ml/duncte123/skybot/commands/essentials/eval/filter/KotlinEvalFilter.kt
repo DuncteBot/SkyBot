@@ -26,24 +26,36 @@ import java.util.Arrays
 import Java.lang.VRCubeException
 import groovy.lang.Script
 import groovy.lang.Closure
+import ml.duncte123.skybot.entities.delegate.GuildDelegate
+import ml.duncte123.skybot.entities.delegate.JDADelegate
+import ml.duncte123.skybot.entities.delegate.MemberDelegate
+import ml.duncte123.skybot.entities.delegate.UserDelegate
 
-class KotlinEvalFilter() : GroovyValueFilter() {
+class KotlinEvalFilter : GroovyValueFilter() {
 
     /**
      * Typed that are allowed to be used
      */
-	val filteredUsed = listOf(
+	private val filteredUsed = listOf(
 			String::class.java,
             Math::class.java,
-			
+
             Boolean::class.java,
+            BooleanArray::class.java,
             Byte::class.java,
-            Character::class.java,
+            ByteArray::class.java,
+            Char::class.java,
+            CharArray::class.java,
             Short::class.java,
+            ShortArray::class.java,
             Integer::class.java,
+            IntArray::class.java,
             Float::class.java,
+            FloatArray::class.java,
             Long::class.java,
+            LongArray::class.java,
             Double::class.java,
+            DoubleArray::class.java,
             
             Arrays::class.java,
             
@@ -56,28 +68,42 @@ class KotlinEvalFilter() : GroovyValueFilter() {
     /**
      * Types that are allowed to be constructed
      */
-    val filteredConstructed = listOf(
+	private val filteredConstructed = listOf(
             String::class.java,
             Math::class.java,
 
             Boolean::class.java,
+            BooleanArray::class.java,
             Byte::class.java,
-            Character::class.java,
+            ByteArray::class.java,
+            Char::class.java,
+            CharArray::class.java,
             Short::class.java,
+            ShortArray::class.java,
             Integer::class.java,
+            IntArray::class.java,
             Float::class.java,
+            FloatArray::class.java,
             Long::class.java,
+            LongArray::class.java,
             Double::class.java,
+            DoubleArray::class.java,
 
             Arrays::class.java,
 
+            List::class.java,
             ArrayList::class.java,
             HashSet::class.java,
 
             // Want to add these?
             // Can have huge radix
             BigDecimal::class.java,
-            BigInteger::class.java
+            BigInteger::class.java,
+
+            GuildDelegate::class.java,
+            JDADelegate::class.java,
+            MemberDelegate::class.java,
+            UserDelegate::class.java
     )
 
 	override fun filter(value: Any?): Any? {
