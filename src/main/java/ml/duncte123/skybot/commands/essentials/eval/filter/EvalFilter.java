@@ -82,7 +82,7 @@ public class EvalFilter extends GroovyValueFilter {
             GuildDelegate.class
     };
 
-    private static final Set<Class<?>> ALLOWED_TYPES = Arrays.asList(ALLOWED_TYPES_LIST).stream().collect(Collectors.toSet());
+    private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
 
     /**
      * Filter arrays of 
@@ -116,7 +116,7 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-        
+
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
         if(o instanceof JDA)
