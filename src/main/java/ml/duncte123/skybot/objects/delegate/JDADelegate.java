@@ -41,6 +41,7 @@ import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.requests.restaction.GuildAction;
 import net.dv8tion.jda.core.utils.cache.CacheView;
 import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class JDADelegate
 implements JDA {
@@ -253,11 +254,11 @@ implements JDA {
     }
 
     public void shutdown() {
-        __$__$$e__0_$0.shutdown();
+       throw new NotImplementedException();
     }
 
     public void shutdownNow() {
-        __$__$$e__0_$0.shutdownNow();
+        throw new NotImplementedException();
     }
 
     public AccountType getAccountType() {
