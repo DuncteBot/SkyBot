@@ -89,8 +89,7 @@ public abstract class Command {
      * This will react with a ❌ if the user doesn't have permission to run the command
      * @param message the message to add the reaction to
      */
-    protected void sendError(Message message)
-    {
+    protected void sendError(Message message) {
         message.addReaction("❌").queue();
     }
 
@@ -98,8 +97,7 @@ public abstract class Command {
      * This will react with a ✅ if the user doesn't have permission to run the command
      * @param message the message to add the reaction to
      */
-    protected void sendSuccess(Message message)
-    {
+    protected void sendSuccess(Message message) {
         message.addReaction("✅").queue();
     }
 

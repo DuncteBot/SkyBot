@@ -85,12 +85,6 @@ public class BotListener extends ListenerAdapter {
      */
     public boolean settingsUpdateTimerRunning = false;
 
-    public final boolean restart;
-    
-    BotListener(boolean restart) {
-        this.restart = restart;
-    }
-
     /**
      * Listen for messages send to the bot
      * @param event The corresponding {@link GuildMessageReceivedEvent}
