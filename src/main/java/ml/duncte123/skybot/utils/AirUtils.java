@@ -67,7 +67,7 @@ public class AirUtils {
     /**
      * This holds the value if we should use a non-SQLite database
      */
-    public static boolean nonsqlite = config.getBoolean("use_database", false);;
+    public static boolean nonsqlite = config.getBoolean("use_database", false);
     /**
      * This will store the settings for every guild that we are in
      */
@@ -252,13 +252,7 @@ public class AirUtils {
      * @return true if it is an int
      */
     public static boolean isInt(String isint) {
-        try {
-            Integer.parseInt(isint);
-            return true;
-        }
-        catch (NumberFormatException e) {
-            return false;
-        }
+        return isint.matches("^\\d+$");
     }
 
     /**

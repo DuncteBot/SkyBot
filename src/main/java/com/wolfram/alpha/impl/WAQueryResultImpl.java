@@ -96,11 +96,12 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         this.bytes = bytes;
         this.tempDir = tempDir;
         try {
-            /*** OLD SAX style, abandoned
-            SAXParserFactory factory = SAXParserFactory.newInstance();
-            SAXParser parser = factory.newSAXParser();
-            AlphaSAXHandler handler = new AlphaSAXHandler(this);
-            parser.parse(new ByteArrayInputStream(bytes), handler);
+            /***
+             *  OLD SAX style, abandoned
+             *  SAXParserFactory factory = SAXParserFactory.newInstance();
+             *  SAXParser parser = factory.newSAXParser();
+             *  AlphaSAXHandler handler = new AlphaSAXHandler(this);
+             *  parser.parse(new ByteArrayInputStream(bytes), handler);
             ***/
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
@@ -110,16 +111,9 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             //NodeList queryResultNode = doc.getElementsByTagName("queryresult");
             createFromDOM(doc.getDocumentElement());
             
-        } catch (ParserConfigurationException e) {
+        } catch (ParserConfigurationException | FactoryConfigurationError | IOException | SAXException e) {
             // Probably impossible in any realistic circumstance.
-            throw new WAException(e);
-        } catch (FactoryConfigurationError e) {
-            // Probably impossible in any realistic circumstance.
-            throw new WAException(e);
-        } catch (IOException e) {
             // Don't think there can be an IOException on a ByteArrayInputStream.
-            throw new WAException(e);
-        } catch (SAXException e) {
             throw new WAException(e);
         }
     }
@@ -240,19 +234,16 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     public void finishAsync() {
         
         acquireImages();
-        List<Thread> runningThreads = new ArrayList<Thread>(pods.length);
+        List<Thread> runningThreads = new ArrayList<>(pods.length);
         WAPod[] pods = getPods();
-        for (int i = 0; i < pods.length; i++) {
-            final WAPod pod = pods[i];
+        for (final WAPod pod : pods) {
             if (pod.getAsyncURL() != null) {
-                Thread t = new Thread(new Runnable() {
-                    public void run() {
-                        try {
-                            pod.finishAsync();
-                        } catch (WAException e) {
-                            // TODO: What here?
-                        }
-                    }                     
+                Thread t = new Thread(() -> {
+                    try {
+                        pod.finishAsync();
+                    } catch (WAException ignored) {
+                        //TODO: just for now
+                    }
                 });
                 t.start();
                 runningThreads.add(t);
@@ -261,8 +252,8 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         for (Thread t : runningThreads) {
             try {
                 t.join();
-            } catch (InterruptedException e) {
-                // TODO: What here?
+            } catch (InterruptedException ignored) {
+                //TODO: just for now
             }
         }
     }
@@ -362,10 +353,10 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         } else {
             try {
                 timing = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException ignored) {}
             try {
                 parseTiming = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException ignored) {}
             version = thisElement.getAttribute("version");
             dataTypes = thisElement.getAttribute("datatypes").split(",");
             timedoutScanners = thisElement.getAttribute("timedout").split(",");
@@ -390,7 +381,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element warningsElement = (Element) warningsElements.item(0);
                 NodeList children = warningsElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> warningElements = new ArrayList<Element>();
+                ArrayList<Element> warningElements = new ArrayList<>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)
@@ -423,7 +414,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 int numTips = tipElements.size();
                 splatTips = new String[numTips];
                 for (int i = 0; i < numTips; i++)
-                    splatTips[i] = new String(tipElements.get(i).getAttribute("text"));
+                    splatTips[i] = tipElements.get(i).getAttribute("text");
             }
             
             NodeList relatedLinkElements = thisElement.getElementsByTagName("sidebarlink");
@@ -467,7 +458,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element sourcesElement = (Element) sourcesElements.item(0);
                 NodeList children = sourcesElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> sourceElements = new ArrayList<Element>();
+                ArrayList<Element> sourceElements = new ArrayList<>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)
@@ -476,7 +467,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 int numSources = sourceElements.size();
                 sources = new WASourceInfoImpl[numSources];
                 for (int i = 0; i < numSources; i++)
-                    sources[i] = new WASourceInfoImpl((Element) sourceElements.get(i));            
+                    sources[i] = new WASourceInfoImpl(sourceElements.get(i));
             }
             
             NodeList futureTopicElements = thisElement.getElementsByTagName("futuretopic");

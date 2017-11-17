@@ -44,8 +44,8 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
         if (description.equals("")) description = null;
         // These two will fall back to their default values if the attributes are not present. In the case of 'count' that
         // should never happen, although 'current' is often missing.
-        try { count = Integer.parseInt(thisElement.getAttribute("count")); } catch (NumberFormatException e) {}
-        try { current = Integer.parseInt(thisElement.getAttribute("current")); } catch (NumberFormatException e) {}
+        try { count = Integer.parseInt(thisElement.getAttribute("count")); } catch (NumberFormatException ignored) {}
+        try { current = Integer.parseInt(thisElement.getAttribute("current")); } catch (NumberFormatException ignored) {}
         
         NodeList valueElements = thisElement.getElementsByTagName("value");
         int numValueElements = valueElements.getLength();
@@ -60,7 +60,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
             inputs[i] = value.getAttribute("input");
             descriptions[i] = value.getAttribute("desc");
             words[i] = value.getAttribute("word");
-            valids[i] = value.getAttribute("valid").equals("false") ? false : true;
+            valids[i] = !value.getAttribute("valid").equals("false");
         }
     }
 

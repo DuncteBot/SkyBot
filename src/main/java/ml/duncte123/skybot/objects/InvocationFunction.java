@@ -39,7 +39,7 @@ public interface InvocationFunction {
      * @param args Parameters, if any
      * @return The returned object. If the method needs to return a primitive type,
      * its corresponding wrapper type must be returned
-     * @throws Throwable
+     * @throws Throwable so it can be any error java has
      */
-    public Object handle(Object instance, Method method, Object... args) throws Throwable;
+    Object handle(Object instance, Method method, Object... args) throws Throwable;
 }

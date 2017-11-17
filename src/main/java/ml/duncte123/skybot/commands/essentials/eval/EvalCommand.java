@@ -88,6 +88,7 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                 event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
+//        boolean isRanByBotOwner = false;
 
         if(!isRanByBotOwner && !hasUserUpvoted(event.getAuthor().getId())) {
             sendError(event.getMessage());
@@ -141,6 +142,7 @@ public class EvalCommand extends Command {
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
                     protected_.setVariable("jda", new JDADelegate(event.getJDA()));
+                    protected_.setVariable("member", new MemberDelegate(event.getMember()));
 
                     future = service.schedule(() -> {
                         filter.register();

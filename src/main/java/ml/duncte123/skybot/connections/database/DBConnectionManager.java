@@ -31,22 +31,22 @@ public interface DBConnectionManager {
     /**
      * @return The connection to use
      */
-    public Connection getConnection();
+    Connection getConnection();
 
     /**
      * @return Is the connection opened
      */
-    public boolean isConnected();
+    boolean isConnected();
 
     /**
      * @return The name of the database
      */
-    public String getName();
+    String getName();
 
     /**
      * @return Does the database have settings, default to true
      */
-    public default boolean hasSettings() {
+    default boolean hasSettings() {
         return true;
     }
 }

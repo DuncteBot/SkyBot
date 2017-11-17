@@ -114,8 +114,7 @@ public class ProxySettings {
                 URI uri = new URI(url);
                 List<Proxy> proxyList = ps.select(uri);
                 int len = proxyList.size();
-                for (int i = 0; i < len; i++) {
-                    Proxy p = (Proxy) proxyList.get (i);
+                for (Proxy p : proxyList) {
                     InetSocketAddress addr = (InetSocketAddress) p.address();
                     if (addr != null) {
                         host = addr.getHostName();
@@ -188,7 +187,7 @@ public class ProxySettings {
         // The list we return when we want to indicate to the caller that no proxy should be used.
         // In older versions of Java you could return an empty list, but in newer ones there is a bug
         // where the java.net code will throw a NullPointerException if you return an empty list.
-        private final List<Proxy> NO_PROXY_LIST = new ArrayList<Proxy>(1);
+        private final List<Proxy> NO_PROXY_LIST = new ArrayList<>(1);
 
         private MyProxySelector() {
             origSelector = ProxySelector.getDefault();
@@ -207,9 +206,9 @@ public class ProxySettings {
             if (useProxy == PROXY_AUTOMATIC)
                 return origSelector.select(uri);
             else if (useProxy == PROXY_MANUAL) {
-                Proxy p = (Proxy) ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
+                Proxy p = ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
                 if (p != null) {
-                    List<Proxy> proxies = new ArrayList<Proxy>(1);
+                    List<Proxy> proxies = new ArrayList<>(1);
                     proxies.add(p);
                     return proxies;
                 } else {

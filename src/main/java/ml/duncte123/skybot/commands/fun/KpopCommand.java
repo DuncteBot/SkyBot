@@ -41,6 +41,7 @@ public class KpopCommand extends Command {
         String name = "";
         String group = "";
         String imgUrl = "";
+        ResultSet res;
 
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
@@ -52,27 +53,20 @@ public class KpopCommand extends Command {
                 statement.setString(1, "%"+StringUtils.join(args, " ")+"%");
                 statement.setString(2, StringUtils.join(args, " "));
 
-                ResultSet res = statement.executeQuery();
-
-                while (res.next()) {
-                    id = res.getString("id");
-                    name = res.getString("name");
-                    group = res.getString("band");
-                    imgUrl = res.getString("img");
-                }
+                res = statement.executeQuery();
 
             } else {
 
                 Statement statement = database.createStatement();
 
-                ResultSet res = statement.executeQuery("SELECT * FROM " + dbName + ".kpop ORDER BY RAND() LIMIT 1");
+                res = statement.executeQuery("SELECT * FROM " + dbName + ".kpop ORDER BY RAND() LIMIT 1");
+            }
 
-                while (res.next()) {
-                    id = res.getString("id");
-                    name = res.getString("name");
-                    group = res.getString("band");
-                    imgUrl = res.getString("img");
-                }
+            while (res.next()) {
+                id = res.getString("id");
+                name = res.getString("name");
+                group = res.getString("band");
+                imgUrl = res.getString("img");
             }
 
             EmbedBuilder eb = EmbedUtils.defaultEmbed()

@@ -24,6 +24,7 @@ import Java.lang.VRCubeException;
 import ml.duncte123.skybot.entities.delegate.*;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
@@ -76,6 +77,8 @@ public class EvalFilter extends GroovyValueFilter {
             return new UserDelegate((User) o);
         if(o instanceof Guild)
             return new GuildDelegate((Guild) o);
+        if(o instanceof Member)
+            return new MemberDelegate((Member) o);
         if(o instanceof Script)
             return o;
         if(o instanceof Closure)
@@ -158,9 +161,10 @@ public class EvalFilter extends GroovyValueFilter {
             BigDecimal.class,
             BigInteger.class,
 
+            GuildDelegate.class,
             JDADelegate.class,
-            UserDelegate.class,
-            GuildDelegate.class
+            MemberDelegate.class,
+            UserDelegate.class
     };
 
     public boolean containsMentions(String string) {

@@ -34,7 +34,7 @@ class NowPlayingCommand extends MusicCommand {
         if (player.playingTrack != null){
             msg = "**Playing** " + player.playingTrack.info.title + "\n" + EmbedUtils.playerEmbed(mng)
         }else{
-            msg = "The player is not currently playing anything!";
+            msg = "The player is not currently playing anything!"
         }
         sendEmbed(event, EmbedUtils.embedMessage(msg))
     }

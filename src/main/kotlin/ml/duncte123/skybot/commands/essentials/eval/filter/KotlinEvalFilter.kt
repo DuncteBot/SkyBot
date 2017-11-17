@@ -91,6 +91,7 @@ class KotlinEvalFilter : GroovyValueFilter() {
 
             Arrays::class.java,
 
+			java.util.List::class.java,
             List::class.java,
             ArrayList::class.java,
             HashSet::class.java,
