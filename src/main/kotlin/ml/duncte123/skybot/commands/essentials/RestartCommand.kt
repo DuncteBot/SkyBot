@@ -69,7 +69,7 @@ class RestartCommand : Command() {
             sendError(event.message)
         }
     }
-    override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"
+    override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
     override fun getName() = "restart"
 }

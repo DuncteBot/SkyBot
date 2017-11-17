@@ -26,9 +26,9 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.IOException;
 
-public class BirbCommand extends Command {
+public class BirbCommandJava extends Command {
 
-    public BirbCommand() {
+    public BirbCommandJava() {
         this.category = CommandCategory.ANIMALS;
     }
 

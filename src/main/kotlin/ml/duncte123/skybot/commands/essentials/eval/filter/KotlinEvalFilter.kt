@@ -27,7 +27,7 @@ import Java.lang.VRCubeException
 import groovy.lang.Script
 import groovy.lang.Closure
 
-class KotlinEvalFilter() : GroovyValueFilter() {
+class KotlinEvalFilter : GroovyValueFilter() {
 
     /**
      * Typed that are allowed to be used

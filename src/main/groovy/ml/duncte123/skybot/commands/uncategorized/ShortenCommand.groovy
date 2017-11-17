@@ -36,8 +36,7 @@ class ShortenCommand extends Command {
             sendMsg(event, "Incorrect usage: `${Settings.prefix}$name <link to shorten>`")
             return
         }
-        String shortenedUrl = WebUtils.shortenUrl(args[0])
-        sendMsg(event, "Here is your shortened url: <$shortenedUrl>")
+        sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
     @Override

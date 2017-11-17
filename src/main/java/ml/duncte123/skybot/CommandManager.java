@@ -70,7 +70,6 @@ public class CommandManager {
         this.addCommand(new DogCommand());
         this.addCommand(new AlpacaCommand());
         this.addCommand(new SealCommand());
-        this.addCommand(new BirbCommand());
 
         //essentials commands
         this.addCommand(new EvalCommand());
