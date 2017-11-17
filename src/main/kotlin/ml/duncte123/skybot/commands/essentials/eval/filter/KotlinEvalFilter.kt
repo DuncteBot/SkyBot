@@ -27,84 +27,107 @@ import Java.lang.VRCubeException
 import groovy.lang.Script
 import groovy.lang.Closure
 
+/**
+ * Kotlin version of the eval filter
+ */
 class KotlinEvalFilter : GroovyValueFilter() {
 
     /**
-     * Typed that are allowed to be used
+     * Filter the normal stuff
      */
-	val filteredUsed = listOf(
-			String::class.java,
-            Math::class.java,
-			
-            Boolean::class.java,
-            Byte::class.java,
-            Character::class.java,
-            Short::class.java,
-            Integer::class.java,
-            Float::class.java,
-            Long::class.java,
-            Double::class.java,
-            
-            Arrays::class.java,
-            
-            List::class.java,
-            ArrayList::class.java,
-            
-            BigDecimal::class.java,
-            BigInteger::class.java)
-
-    /**
-     * Types that are allowed to be constructed
-     */
-    val filteredConstructed = listOf(
-            String::class.java,
-            Math::class.java,
-
-            Boolean::class.java,
-            Byte::class.java,
-            Character::class.java,
-            Short::class.java,
-            Integer::class.java,
-            Float::class.java,
-            Long::class.java,
-            Double::class.java,
-
-            Arrays::class.java,
-
-            ArrayList::class.java,
-            HashSet::class.java,
-
-            // Want to add these?
-            // Can have huge radix
-            BigDecimal::class.java,
-            BigInteger::class.java
-    )
-
 	override fun filter(value: Any?): Any? {
+        // If null, is null
 		if(value == null) return null
 
+        // Disallow the utilities in Script and the execution of Closures
 		if(value is Script || value is Closure<*>)
-			throw VRCubeException("Scrips and Closures are not allowed")
+            throw VRCubeException("Scrips and Closures are not allowed")
 
+        // If not allowed block it
 		if(!filteredUsed.contains(value::class.java))
 			throw VRCubeException("Class not allowed: ${value::class.qualifiedName}")
 
+        // If it's not filtered, allow
 		return value
 	}
 
+	/**
+	 * We will just return it without any filtering
+	 */
     override fun filterReceiver(receiver: Any?)= receiver
 
+    /**
+     * Disallow setting arrays
+     */
 	override fun onSetArray(invoker: Invoker, receiver: Any, index: Any, value: Any): Any {
 		throw VRCubeException(
                 "Cannot set array on $receiver, Class: ${receiver::class.java.componentType}, Index: $index, Value: $value")
 	}
 
+    /**
+     * Filter the creation of new instances
+     */
     override fun onNewInstance(invoker: Invoker, receiver: Class<*>, vararg args: Any?): Any {
-        if(receiver != null)
-            if(!filteredConstructed.contains(receiver))
-                throw VRCubeException(
-                        "Cannot create an instance of ${receiver.name}")
+        if(!filteredConstructed.contains(receiver))
+            throw VRCubeException(
+                    "Cannot create an instance of ${receiver.name}")
 
+        // Simple mistake, the make the Object... take in the args as elements, we need to use *
         return invoker.call(receiver, null, *args)
     }
 }
+
+/*
+ * These are outside of the class because they are static
+ */
+
+/**
+ * Typed that are allowed to be used
+ */
+val filteredUsed = listOf(
+        String::class.java,
+        Math::class.java,
+
+        Boolean::class.java,
+        Byte::class.java,
+        Character::class.java,
+        Short::class.java,
+        Integer::class.java,
+        Float::class.java,
+        Long::class.java,
+        Double::class.java,
+
+        Arrays::class.java,
+
+        List::class.java,
+        ArrayList::class.java,
+
+        BigDecimal::class.java,
+        BigInteger::class.java)
+
+/**
+ * Types that are allowed to be constructed
+ */
+val filteredConstructed = listOf(
+        String::class.java,
+        Math::class.java,
+
+        Boolean::class.java,
+        Byte::class.java,
+        Character::class.java,
+        Short::class.java,
+        Integer::class.java,
+        Float::class.java,
+        Long::class.java,
+        Double::class.java,
+
+        Arrays::class.java,
+
+        ArrayList::class.java,
+        HashSet::class.java,
+
+        // Want to add these?
+        // Can have huge radix
+        BigDecimal::class.java,
+        BigInteger::class.java
+)
