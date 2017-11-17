@@ -76,7 +76,7 @@ class RestartCommand : Command() {
         when (args.size) {
             0 -> shardManager.restart()
             1 -> shardManager.restart(args[0].toInt())
-            else -> sendError("Args is to big! Lenght: ${args.size}")
+            else -> sendError(event.message)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
