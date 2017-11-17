@@ -68,6 +68,16 @@ public class FakeInterface<T> {
         return handlers;
     }
 
+    public void populateHandlers(T object) {
+        for(Method m : type.getMethods()) {
+            handlers.putIfAbsent(m, (i, method, a) -> {
+                method.setAccessible(true);
+                
+                return method.invoke(object, a);
+            });
+        }
+    }
+
     @SuppressWarnings("unchecked")
     public T create() {
         return (T) Proxy.newProxyInstance(type.getClassLoader(),
@@ -143,7 +153,7 @@ public class FakeInterface<T> {
             // Entry | SimpleEntry
             if(r == Map.Entry.class
                 | r == AbstractMap.SimpleEntry.class)
-                return new AbstractMap.SimpleEntry<Object, Object>(null, null);
+                return new AbstractMap.SimpleEntry<>(null, null);
             
             // Create a fake for that interface
             if(r.isInterface() && !r.isAnnotation())

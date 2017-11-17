@@ -28,6 +28,7 @@ import java.util.Map;
 
 import ml.duncte123.skybot.objects.FakeInterface;
 import ml.duncte123.skybot.objects.InvocationFunction;
+import net.dv8tion.jda.core.entities.Guild;
 import org.junit.Test;
 
 import net.dv8tion.jda.core.JDA;
@@ -83,5 +84,18 @@ public class FakeTest {
         assertEquals(m.getIdLong(), 281673659834302464L);
         assertEquals(m.getId(), "281673659834302464");
         assertEquals(m.getName(), "ramidzkh");
+    }
+
+    @Test
+    public void delegate()
+    throws Throwable {
+        Map<Method, InvocationFunction> handlers = new HashMap<>();
+        
+        handlers.put(Guild.class.getMethod("getJDA"), (p, m, a) -> null);
+        
+        FakeInterface<Guild> guildFakeInterface = new FakeInterface<>(Guild.class, handlers);
+        guildFakeInterface.populateHandlers(guildFakeInterface.create());
+        
+        assertEquals(guildFakeInterface.create().getJDA(), null);
     }
 }
