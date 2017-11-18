@@ -42,7 +42,7 @@ class TextToBricksCommand extends Command {
 
     @Override
     String help() {
-        return "Convert your text to bicks"
+        return "Convert your text to bricks"
     }
 
     @Override

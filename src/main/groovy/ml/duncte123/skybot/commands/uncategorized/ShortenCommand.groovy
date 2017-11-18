@@ -52,6 +52,6 @@ class ShortenCommand extends Command {
 
     @Override
     String[] getAliases() {
-        return ["short", "url", "bitly"]
+        return ["short", "url", "bitly", "googl"]
     }
 }
