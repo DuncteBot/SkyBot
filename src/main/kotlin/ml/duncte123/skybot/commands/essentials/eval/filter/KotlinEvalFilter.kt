@@ -21,10 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter
 import Java.lang.VRCubeException
 import groovy.lang.Closure
 import groovy.lang.Script
-import ml.duncte123.skybot.entities.delegate.GuildDelegate
-import ml.duncte123.skybot.entities.delegate.JDADelegate
-import ml.duncte123.skybot.entities.delegate.MemberDelegate
-import ml.duncte123.skybot.entities.delegate.UserDelegate
+import ml.duncte123.skybot.entities.delegate.*
 import org.kohsuke.groovy.sandbox.GroovyValueFilter
 import java.math.BigDecimal
 import java.math.BigInteger
@@ -107,7 +104,8 @@ class KotlinEvalFilter : GroovyValueFilter() {
             GuildDelegate::class.java,
             JDADelegate::class.java,
             MemberDelegate::class.java,
-            UserDelegate::class.java
+            UserDelegate::class.java,
+            PresenceDelegate::class.java
     )
     
     override fun filter(v: Any?): Any? {
