@@ -26,11 +26,9 @@ import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.WebSocketCode;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
@@ -40,9 +38,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import net.dv8tion.jda.core.managers.Presence;
 import org.apache.commons.lang3.time.DateUtils;
-import org.json.JSONObject;
 import org.slf4j.event.Level;
 
 import java.sql.SQLException;
@@ -56,11 +52,15 @@ public class BotListener extends ListenerAdapter {
      * This is the command parser
      */
     private static CommandParser parser = new CommandParser();
+
+    /**
+     * This filter helps us to fiter out swearing
+     */
+    private BadWordFilter filter = new BadWordFilter();
     /**
      * When a command gets ran, it'll be stored in here
      */
     private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
-    public final boolean restart;
     /**
      * This timer is for checking unbans
      */

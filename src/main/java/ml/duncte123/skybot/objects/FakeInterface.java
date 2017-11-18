@@ -57,9 +57,6 @@ public class FakeInterface<T> {
     public Map<Method, InvocationFunction> getCustomHandlers() {
         return handlers;
     }
-<<<<<<< HEAD
-    
-=======
 
     public void populateHandlers(T object) {
         for(Method m : type.getMethods()) {
@@ -71,7 +68,6 @@ public class FakeInterface<T> {
         }
     }
 
->>>>>>> dev
     @SuppressWarnings("unchecked")
     public T create() {
         return (T) Proxy.newProxyInstance(type.getClassLoader(),
@@ -140,12 +136,8 @@ public class FakeInterface<T> {
                 return new HashMap<>();
             
             // Entry | SimpleEntry
-<<<<<<< HEAD
-            if (r == Map.Entry.class | r == AbstractMap.SimpleEntry.class)
-=======
             if(r == Map.Entry.class
                 | r == AbstractMap.SimpleEntry.class)
->>>>>>> dev
                 return new AbstractMap.SimpleEntry<>(null, null);
             
             // Create a fake for that interface

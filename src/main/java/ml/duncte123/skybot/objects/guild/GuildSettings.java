@@ -47,15 +47,10 @@ public class GuildSettings {
      * This will hold the custom prefix if the guild has set one
      */
     private String customPrefix = Settings.prefix;
-<<<<<<< HEAD
-    
-=======
     /**
      * This stores the channel that we log the bans in
      */
     private String logChannel = null;
-
->>>>>>> dev
     /**
      * This will init everything
      *
@@ -104,9 +99,6 @@ public class GuildSettings {
         this.enableSwearFilter = enableSwearFilter;
         return this;
     }
-<<<<<<< HEAD
-    
-=======
 
     /**
      * This will set the custom join for the corresponding guild
@@ -115,16 +107,6 @@ public class GuildSettings {
      */
     public GuildSettings setCustomJoinMessage(String customJoinMessage) {
         this.customJoinMessage = customJoinMessage;
-        return this;
-    }
-
-    /**
-     * This will set the custom prefix for the corresponding guild
-     * @param customPrefix The new prefix
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomPrefix(String customPrefix) {
-        this.customPrefix = customPrefix;
         return this;
     }
 
@@ -138,23 +120,6 @@ public class GuildSettings {
         return this;
     }
 
-    /**
-     * this will check if the join message is enabled
-     * @return true if the join message is enabled
-     */
-    public boolean isEnableJoinMessage() {
-        return enableJoinMessage;
-    }
-
-    /**
-     * This will check if the swear filter is enabled
-     * @return true if the filter is on for this guild
-     */
-    public boolean isEnableSwearFilter() {
-        return enableSwearFilter;
-    }
-
->>>>>>> dev
     /**
      * This will return the guild id that these options are for
      *
@@ -171,17 +136,6 @@ public class GuildSettings {
      */
     public String getCustomJoinMessage() {
         return customJoinMessage;
-    }
-    
-    /**
-     * This will set the custom join for the corresponding guild
-     *
-     * @param customJoinMessage The new join message
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomJoinMessage(String customJoinMessage) {
-        this.customJoinMessage = customJoinMessage;
-        return this;
     }
     
     /**

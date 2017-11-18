@@ -118,32 +118,19 @@ public class AirUtils {
      * @param time         How long it takes for the punishment to get removed
      * @param g            A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
-<<<<<<< HEAD
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
-=======
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
         if(logChannel==null || !logChannel.canTalk()) return;
->>>>>>> dev
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
         }
         
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
-<<<<<<< HEAD
-        
-        MessageChannel modLogChannel = g.getTextChannelsByName("modlog", true).get(0);
-        
-        modLogChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                                                                                                           + " by " + mod.getName() + length + (reason.isEmpty() ? "" : " for " + reason))).queue(
-                msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
-=======
 
         logChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
                 + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
->>>>>>> dev
         );
     }
     
@@ -597,14 +584,9 @@ public class AirUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-<<<<<<< HEAD
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount.php", postFields).body().source().readUtf8();
-        } catch (Exception e) {
-=======
             return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
         }
         catch (Exception e) {
->>>>>>> dev
             e.printStackTrace();
             return e.toString();
         }

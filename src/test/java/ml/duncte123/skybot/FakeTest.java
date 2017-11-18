@@ -22,6 +22,7 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.objects.FakeInterface;
 import ml.duncte123.skybot.objects.InvocationFunction;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import org.junit.Test;
@@ -31,19 +32,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-<<<<<<< HEAD
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
-=======
-import ml.duncte123.skybot.objects.FakeInterface;
-import ml.duncte123.skybot.objects.InvocationFunction;
-import net.dv8tion.jda.core.entities.Guild;
-import org.junit.Test;
-
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
->>>>>>> dev
 
 public class FakeTest {
     

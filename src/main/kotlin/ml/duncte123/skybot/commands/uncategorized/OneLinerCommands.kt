@@ -51,34 +51,16 @@ class OneLinerCommands : Command() {
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
                     .queue { sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
         
-<<<<<<< HEAD
-        // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
-            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
-=======
+
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
->>>>>>> dev
-            
+
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
             "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
             else -> println("Invoke was invalid: $invoke")
         }
     }
-    
-<<<<<<< HEAD
-    override fun help() = "`${this.PREFIX}ping` => Shows the delay from the bot to the discord servers.\n" +
-            "`${this.PREFIX}cookie` => blobnomcookie.\n" +
-            "`${this.PREFIX}trigger` => use when you are triggered.\n" +
-            "`${this.PREFIX}wam` => you need more WAM!.\n" +
-            "`${this.PREFIX}mineh` => HERE COMES MINEH!\n" +
-            "`${this.PREFIX}invite` => gives you the bot invite\n" +
-            "`${this.PREFIX}uptime` => shows the bot uptime"
-    
-    override fun getName() = "ping"
-    
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
-=======
     override fun help() = "`${PREFIX}ping` => Shows the delay from the bot to the discord servers.\n" +
             "`${PREFIX}cookie` => blobnomcookie.\n" +
             "`${PREFIX}trigger` => use when you are triggered.\n" +
@@ -91,5 +73,4 @@ class OneLinerCommands : Command() {
     override fun getName() = "ping"
     
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote")
->>>>>>> dev
 }

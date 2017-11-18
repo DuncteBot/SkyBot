@@ -38,20 +38,9 @@ public class GuildSettingsUtils {
      * This will load all the footer quotes from the database and store them in the {@link EmbedUtils#footerQuotes footerQuotes}
      */
     public static void loadFooterQuotes() {
-<<<<<<< HEAD
-        if (!AirUtils.nonsqlite) return;
-        AirUtils.log(Level.DEBUG, "Clearing footer quotes");
-        EmbedUtils.footerQuotes.clear();
-        AirUtils.log(Level.DEBUG, "Loading footer quotes");
-        
-        //One default quote for now
-        EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");
-        
-=======
         if(!AirUtils.nonsqlite) return;
         AirUtils.log(Level.DEBUG, "Loading footer quotes");
 
->>>>>>> dev
         String dbName = AirUtils.db.getName();
         
         Connection database = AirUtils.db.getConnManager().getConnection();
@@ -98,14 +87,6 @@ public class GuildSettingsUtils {
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
-<<<<<<< HEAD
-                
-                AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
-                                                            .setEnableJoinMessage(enableJoinMsg)
-                                                            .setEnableSwearFilter(enableSwearFilter)
-                                                            .setCustomJoinMessage(joinmsg)
-                                                            .setCustomPrefix(prefix));
-=======
                 String logChannel = resSettings.getString("logChannelId");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
@@ -115,7 +96,6 @@ public class GuildSettingsUtils {
                         .setCustomPrefix(prefix)
                         .setLogChannel(logChannel)
                 );
->>>>>>> dev
             }
             
             AirUtils.log(Level.DEBUG, "Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
@@ -163,28 +143,18 @@ public class GuildSettingsUtils {
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
-<<<<<<< HEAD
-        
-=======
         String chanId = settings.getLogChannel();
-
->>>>>>> dev
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
         try {
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-<<<<<<< HEAD
-                                                                                    "enableJoinMessage= ? , " + "enableSwearFilter= ? ," + "customWelcomeMessage= ? ," + "prefix= ? " +
-                                                                                    "WHERE guildId='" + guildId + "'");
-=======
                     "enableJoinMessage= ? , " +
                     "enableSwearFilter= ? ," +
                     "customWelcomeMessage= ? ," +
                     "prefix= ? ," +
                     "logChannelId= ?" +
                     "WHERE guildId='" + guildId + "'");
->>>>>>> dev
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);

@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.*
 
 /**
  * @author Sanduhr32
@@ -35,11 +36,7 @@ class RestartCommand : Command() {
     }
     
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
-<<<<<<< HEAD
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
-=======
         if (!Arrays.asList<String>(*Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
->>>>>>> dev
         val shardManager = event.jda.asBot().shardManager
 
 //        val list = event.jda.registeredListeners.filter { t -> t is BotListener}.map {t -> t as BotListener}
@@ -49,21 +46,6 @@ class RestartCommand : Command() {
 //            sendError(event.message)
 //            return
 //        }
-<<<<<<< HEAD
-//
-//        val restart = list[0].restart
-//
-//        if(args!!.isEmpty()) {
-//            // Stop all shards
-//            shardManager.shutdown()
-//            if (!restart) {
-//                // Clean the variables
-//                AirUtils.reload()
-//                // Re-run the main command
-//                SkyBot.main()
-//            } else
-//                // Magic code, send the restart signal to the executing program
-=======
 
 //        val restart = list[0].restart
 
@@ -77,7 +59,6 @@ class RestartCommand : Command() {
 //                SkyBot.main()
 //            } else
                 // Magic code, send the restart signal to the executing program
->>>>>>> dev
 //                System.exit(0x5454)
 //        } else try {
 //            shardManager.shutdown(args[0].toInt())
@@ -87,32 +68,16 @@ class RestartCommand : Command() {
 //        }
         if (args == null) {
             error("args is null?!")
-<<<<<<< HEAD
-=======
             return
->>>>>>> dev
         }
         
         when (args.size) {
             0 -> shardManager.restart()
-<<<<<<< HEAD
-            1 -> {
-                if (args[0].matches(Regex("\\d+")))
-                    shardManager.restart(args[0].toInt())
-            }
-            else -> sendError(event.message)
-        }
-    }
-    
-    override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"
-    
-=======
             1 -> shardManager.restart(args[0].toInt())
             else -> sendError(event.message)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
->>>>>>> dev
     override fun getName() = "restart"
 }

@@ -29,13 +29,8 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-<<<<<<< HEAD
-    public static final String ownerId = "191231307290771456";
-    
-=======
     public static final String ownerId = BuildConfig.ownerId;
 
->>>>>>> dev
     /**
      * This contains a list of different id's
      *
