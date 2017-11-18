@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,24 +14,53 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.objects.command;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.Response;
 
-import java.io.InputStream;
+import java.util.HashSet;
+import java.util.Set;
 
 public abstract class Command {
+    
+    /**
+     * A list of users that have upvoted the bot
+     */
+    protected static final Set<String> upvotedIds = new HashSet<String>() {
+        @Override
+        public boolean contains(Object o) {
+            if(o.getClass() != String.class) return false;
+            
+            boolean contains = super.contains(o);
+            
+            if(contains) return true;
+            
+            reloadUpvoted();
+            
+            return super.contains(o);
+        }
+    };
+    
+    static {
+        reloadUpvoted();
+    }
     
     /**
      * This holds the prefix for us
@@ -42,6 +71,44 @@ public abstract class Command {
      */
     protected CommandCategory category = CommandCategory.MAIN;
     
+    /**
+     * Reloads the list of people who have upvoted this bot
+     */
+    protected static void reloadUpvoted() {
+        try {
+            String token = AirUtils.config.getString("apis.discordbots_userToken");
+            
+            if (token == null) {
+                AirUtils.logger.warn("Discord Bots token not found");
+                return;
+            }
+            
+            Response response = new OkHttpClient()
+                                        .newCall(
+                                                new Request.Builder()
+                                                        .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                                                        .get()
+                                                        .addHeader("Authorization", token)
+                                                        .build())
+                                        .execute();
+            JsonArray json = new JsonParser().parse(response.body().source().readUtf8()).getAsJsonArray();
+            
+            upvotedIds.clear();
+            
+            for (JsonElement je : json)
+                upvotedIds.add(je.getAsString());
+        } catch (Exception e) {
+            AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
+        }
+    }
+    
+    /**
+     * Has this user upvoted the bot
+     */
+    public static boolean hasUpvoted(User user) {
+        return upvotedIds.contains(user.getId());
+    }
+
     /**
      * Returns the current category of the command
      *
@@ -153,19 +220,6 @@ public abstract class Command {
      */
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
         event.getChannel().sendMessage(msg).queue();
-    }
-    
-    /**
-     * This is a shortcut for sending an image inside an embed with using a dynamic url
-     *
-     * @param event    an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent}
-     * @param inStream is the input that will be uploaded.
-     * @param filename the filename with ending/type the file has.
-     * @see {@link java.io.FileInputStream#FileInputStream(java.io.File)} for getting an InputStream from a file
-     * @see {@link java.net.URL#openStream()} for opening an InputStream from an URL
-     */
-    protected void sendImageAsEmbed(GuildMessageReceivedEvent event, InputStream inStream, String filename) {
-        event.getChannel().sendFile(inStream, filename, new MessageBuilder().setEmbed(EmbedUtils.embedImage("attachment://" + filename)).build()).queue();
     }
     
     @Override

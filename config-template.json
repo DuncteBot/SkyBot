@@ -4,7 +4,7 @@
     "prefix": "/",
     "totalShards": 1
   },
-  //If you set this to false the bot will attempt to use SQLite
+  // If you set this to false the bot will attempt to use SQLite
   "use_database": false,
   "sql": {
     "host": "",
@@ -15,6 +15,7 @@
   "apis": {
     "googl": "",
     "thecatapi": "",
-    "wolframalpha": ""
+    "wolframalpha": "",
+    "discordbots_userToken": ""
   }
 }

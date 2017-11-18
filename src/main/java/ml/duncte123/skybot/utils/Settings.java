@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -28,8 +29,13 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
+<<<<<<< HEAD
     public static final String ownerId = "191231307290771456";
     
+=======
+    public static final String ownerId = BuildConfig.ownerId;
+
+>>>>>>> dev
     /**
      * This contains a list of different id's
      *

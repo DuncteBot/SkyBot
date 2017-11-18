@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -30,6 +31,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -37,10 +39,7 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class AirUtils {
     
@@ -119,19 +118,32 @@ public class AirUtils {
      * @param time         How long it takes for the punishment to get removed
      * @param g            A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
      */
+<<<<<<< HEAD
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
+=======
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
+        TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
+        if(logChannel==null || !logChannel.canTalk()) return;
+>>>>>>> dev
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
         }
         
         String punishedUserMention = "<@" + punishedUser.getId() + ">";
+<<<<<<< HEAD
         
         MessageChannel modLogChannel = g.getTextChannelsByName("modlog", true).get(0);
         
         modLogChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
                                                                                                            + " by " + mod.getName() + length + (reason.isEmpty() ? "" : " for " + reason))).queue(
                 msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
+=======
+
+        logChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
+                + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
+                        msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
+>>>>>>> dev
         );
     }
     
@@ -585,20 +597,33 @@ public class AirUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
+<<<<<<< HEAD
             return WebUtils.postRequest(Settings.apiBase + "/postGuildCount.php", postFields).body().source().readUtf8();
         } catch (Exception e) {
+=======
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
+        }
+        catch (Exception e) {
+>>>>>>> dev
             e.printStackTrace();
             return e.toString();
         }
     }
     
-    public static void reload() {
-        try {
-            db.getConnManager().getConnection().close();
-        } catch (SQLException e) {
-            e.printStackTrace();
+    public static TextChannel getLogChannel(String channelId, Guild guild) {
+        if(channelId == null) return getPublicChannel(guild);
+
+        TextChannel tc;
+        try{
+            tc = guild.getTextChannelById(channelId);
         }
-        
-        
+        catch (NumberFormatException e) {
+            List<TextChannel> tcl = guild.getTextChannelsByName(channelId, true);
+            if(tcl.size() > 0) {
+                tc = tcl.get(0);
+            } else return null;
+        }
+
+        return tc;
     }
 }

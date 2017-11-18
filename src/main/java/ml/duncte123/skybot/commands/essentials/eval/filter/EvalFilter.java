@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
@@ -35,28 +36,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
     
-    private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
-    
-    /**
-     * Filter arrays of
-     *
-     * @author ramidzkh
-     */
-    private static final Pattern ARRAY_FILTER =
-            Pattern.compile(
-                    // Case insensitive
-                    "(?i)"
-                            // Decimals and Octals
-                            + "((\\[(\\s*[0-9]+\\s*)\\])"
-                            // Binary
-                            + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
-                            // Hexadecimal
-                            + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
-            MENTION_FILTER =
-                    Pattern.compile("<@[0-9]{18}>");
     /**
      * This contains a list of all the allowed classes
      */
@@ -95,19 +78,32 @@ public class EvalFilter extends GroovyValueFilter {
             BigDecimal.class,
             BigInteger.class,
             
-            GuildDelegate.class,
             JDADelegate.class,
-            MemberDelegate.class,
-            UserDelegate.class
+            UserDelegate.class,
+            GuildDelegate.class
     };
-    
+
+    private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
+
     /**
-     * Constructor
+     * Filter arrays of
      */
-    public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
-    }
-    
+    private static final Pattern ARRAY_FILTER =
+            Pattern.compile(
+                    // Case insensitive
+                    "(?i)"
+                    // Decimals and Octals
+                    + "((\\[(\\s*[0-9]+\\s*)])"
+                    // Binary
+                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
+                    // Hexadecimal
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
+    /**
+     * Filter mentions
+     */
+            MENTION_FILTER = 
+                Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here");
+
     /**
      * This filters the script
      *
@@ -118,15 +114,17 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o == null || ALLOWED_TYPES.contains(o.getClass()))
             return o;
-        if (o instanceof JDA)
+
+        //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
+        //because the class is not whitelisted
+        if(o instanceof JDA)
             return new JDADelegate((JDA) o);
         if (o instanceof User)
             return new UserDelegate((User) o);
         if (o instanceof Guild)
             return new GuildDelegate((Guild) o);
-        if (o instanceof Member)
-            return new MemberDelegate((Member) o);
-        if (o instanceof Script)
+        ////////////////////////////////////////////
+        if(o instanceof Script)
             return o;
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
@@ -171,7 +169,7 @@ public class EvalFilter extends GroovyValueFilter {
         //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return ARRAY_FILTER.matcher(toFilter).find();
     }
-    
+
     public boolean containsMentions(String string) {
         return MENTION_FILTER.matcher(string).find();
     }

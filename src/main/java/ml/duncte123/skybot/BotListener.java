@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -78,16 +79,7 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
      */
     public boolean settingsUpdateTimerRunning = false;
-    /**
-     * This filter helps us to fiter out swearing
-     */
-    private BadWordFilter filter = new BadWordFilter();
-    private boolean temp = true;
-    
-    BotListener(boolean restart) {
-        this.restart = restart;
-    }
-    
+
     /**
      * Listen for messages send to the bot
      *
@@ -170,8 +162,7 @@ public class BotListener extends ListenerAdapter {
      * @param event The corresponding {@link net.dv8tion.jda.core.events.ReadyEvent ReadyEvent}
      */
     @Override
-    public void onReady(ReadyEvent event) {
-        setWatchingStatus(event.getJDA());
+    public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
         
         AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
@@ -345,33 +336,6 @@ public class BotListener extends ListenerAdapter {
             
         }
     }
-    
-    //We're beeing sneaky here because we are setting the game to something called "Listening to"
-    //b1nzy if you see this, please don't b4nzy me
-    private void setWatchingStatus(JDA jda) {
-        System.out.println("checking");
-        System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
-        if (temp && (jda.asBot().getShardManager().getShards().size() != 2)) {
-            System.out.println("not setting");
-            return;
-        }
-        System.out.println("Setting game for all shards");
-        Presence p = jda.getPresence();
-        JSONObject gameObj = new JSONObject();
-        gameObj.put("name", "Danny Phantom");
-        gameObj.put("type", 3);
-        JSONObject object = new JSONObject();
-        object.put("game", gameObj);
-        object.put("afk", p.isIdle());
-        object.put("status", p.getStatus().getKey());
-        object.put("since", System.currentTimeMillis());
-        for (JDA shard : jda.asBot().getShardManager().getShards())
-            ((JDAImpl) shard).getClient().send(new JSONObject()
-                                                       .put("d", object)
-                                                       .put("op", WebSocketCode.PRESENCE).toString()
-            );
-        
-        temp = false;
-    }
-    
+
+
 }

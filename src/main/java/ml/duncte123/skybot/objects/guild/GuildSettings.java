@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,11 +14,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.utils.Settings;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 /**
  * This class will hold the settings for a guild
@@ -45,7 +47,15 @@ public class GuildSettings {
      * This will hold the custom prefix if the guild has set one
      */
     private String customPrefix = Settings.prefix;
+<<<<<<< HEAD
     
+=======
+    /**
+     * This stores the channel that we log the bans in
+     */
+    private String logChannel = null;
+
+>>>>>>> dev
     /**
      * This will init everything
      *
@@ -94,7 +104,57 @@ public class GuildSettings {
         this.enableSwearFilter = enableSwearFilter;
         return this;
     }
+<<<<<<< HEAD
     
+=======
+
+    /**
+     * This will set the custom join for the corresponding guild
+     * @param customJoinMessage The new join message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomJoinMessage(String customJoinMessage) {
+        this.customJoinMessage = customJoinMessage;
+        return this;
+    }
+
+    /**
+     * This will set the custom prefix for the corresponding guild
+     * @param customPrefix The new prefix
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomPrefix(String customPrefix) {
+        this.customPrefix = customPrefix;
+        return this;
+    }
+
+    /**
+     * This will set the channel that we log all the mod stuff in
+     * @param tc the channel to log
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setLogChannel(String tc) {
+        this.logChannel = tc;
+        return this;
+    }
+
+    /**
+     * this will check if the join message is enabled
+     * @return true if the join message is enabled
+     */
+    public boolean isEnableJoinMessage() {
+        return enableJoinMessage;
+    }
+
+    /**
+     * This will check if the swear filter is enabled
+     * @return true if the filter is on for this guild
+     */
+    public boolean isEnableSwearFilter() {
+        return enableSwearFilter;
+    }
+
+>>>>>>> dev
     /**
      * This will return the guild id that these options are for
      *
@@ -144,6 +204,14 @@ public class GuildSettings {
         return this;
     }
     
+    /**
+     * Returns the channel to log in
+     * @return the channel to log in
+     */
+    public String getLogChannel() {
+        return logChannel;
+    }
+
     /**
      * {@inheritDoc}
      */

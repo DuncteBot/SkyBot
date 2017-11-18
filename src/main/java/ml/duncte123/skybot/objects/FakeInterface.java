@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.objects;
@@ -56,7 +57,21 @@ public class FakeInterface<T> {
     public Map<Method, InvocationFunction> getCustomHandlers() {
         return handlers;
     }
+<<<<<<< HEAD
     
+=======
+
+    public void populateHandlers(T object) {
+        for(Method m : type.getMethods()) {
+            handlers.putIfAbsent(m, (i, method, a) -> {
+                method.setAccessible(true);
+                
+                return method.invoke(object, a);
+            });
+        }
+    }
+
+>>>>>>> dev
     @SuppressWarnings("unchecked")
     public T create() {
         return (T) Proxy.newProxyInstance(type.getClassLoader(),
@@ -125,7 +140,12 @@ public class FakeInterface<T> {
                 return new HashMap<>();
             
             // Entry | SimpleEntry
+<<<<<<< HEAD
             if (r == Map.Entry.class | r == AbstractMap.SimpleEntry.class)
+=======
+            if(r == Map.Entry.class
+                | r == AbstractMap.SimpleEntry.class)
+>>>>>>> dev
                 return new AbstractMap.SimpleEntry<>(null, null);
             
             // Create a fake for that interface
