@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -38,12 +39,7 @@ public class GuildSettingsUtils {
      */
     public static void loadFooterQuotes() {
         if(!AirUtils.nonsqlite) return;
-        AirUtils.log(Level.DEBUG, "Clearing footer quotes");
-        EmbedUtils.footerQuotes.clear();
         AirUtils.log(Level.DEBUG, "Loading footer quotes");
-        
-        //One default quote for now
-        EmbedUtils.footerQuotes.put("I want your quotes", "duncte123");
 
         String dbName = AirUtils.db.getName();
 
@@ -93,12 +89,15 @@ public class GuildSettingsUtils {
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
+                String logChannel = resSettings.getString("logChannelId");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
                         .setEnableSwearFilter(enableSwearFilter)
                         .setCustomJoinMessage(joinmsg)
-                        .setCustomPrefix(prefix));
+                        .setCustomPrefix(prefix)
+                        .setLogChannel(logChannel)
+                );
             }
 
             AirUtils.log(Level.DEBUG, "Loaded settings for "+ AirUtils.guildSettings.keySet().size()+" guilds.");
@@ -146,6 +145,7 @@ public class GuildSettingsUtils {
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
+        String chanId = settings.getLogChannel();
 
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
@@ -155,12 +155,14 @@ public class GuildSettingsUtils {
                     "enableJoinMessage= ? , " +
                     "enableSwearFilter= ? ," +
                     "customWelcomeMessage= ? ," +
-                    "prefix= ? " +
+                    "prefix= ? ," +
+                    "logChannelId= ?" +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);
             preparedStatement.setString(4, newPrefix);
+            preparedStatement.setString(5, chanId);
             preparedStatement.executeUpdate();
 
         } catch (Exception e) {
