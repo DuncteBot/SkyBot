@@ -28,9 +28,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -41,7 +39,23 @@ import java.util.Set;
 
 public abstract class Command {
     
-    protected static final Set<String> upvotedIds = new HashSet<>();
+    /**
+     * A list of users that have upvoted the bot
+     */
+    protected static final Set<String> upvotedIds = new HashSet<String>() {
+        @Override
+        public boolean contains(Object o) {
+            if(o.getClass() != String.class) return false;
+            
+            boolean contains = super.contains(o);
+            
+            if(contains) return true;
+            
+            reloadUpvoted();
+            
+            return super.contains(o);
+        }
+    };
     
     static {
         reloadUpvoted();
@@ -56,6 +70,9 @@ public abstract class Command {
      */
     protected CommandCategory category = CommandCategory.MAIN;
     
+    /**
+     * Reloads the list of people who have upvoted this bot
+     */
     protected static void reloadUpvoted() {
         try {
             String token = AirUtils.config.getString("apis.discordbots_userToken");
@@ -84,6 +101,13 @@ public abstract class Command {
         }
     }
     
+    /**
+     * Has this user upvoted the bot
+     */
+    public static boolean hasUpvoted(User user) {
+        return upvotedIds.contains(user.getId());
+    }
+
     /**
      * Returns the current category of the command
      *
