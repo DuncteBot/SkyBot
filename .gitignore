@@ -114,3 +114,7 @@ logs\.txt
 \.idea/inspectionProfiles/
 
 \.idea/codeStyleSettings\.xml
+
+skybot-updater/\.idea/libraries/Gradle__com_google_code_gson_gson_2_8_2\.xml
+
+skybot-updater/\.idea/libraries/Gradle__com_squareup_okhttp3_okhttp_3_9_0\.xml
