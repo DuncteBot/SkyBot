@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
@@ -21,44 +22,85 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import Java.lang.VRCubeException;
+import ml.duncte123.skybot.objects.delegate.GuildDelegate;
 import ml.duncte123.skybot.objects.delegate.JDADelegate;
 import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
+    
+    /**
+     * This contains a list of all the allowed classes
+     */
+    private static final Class<?>[] ALLOWED_TYPES_LIST = {
+            String.class,
+            
+            Boolean.class,
+            boolean.class,
+            
+            Byte.class,
+            byte.class,
+            
+            Character.class,
+            char.class,
+            
+            Short.class,
+            short.class,
+            
+            Integer.class,
+            int.class,
+            
+            Float.class,
+            float.class,
+            
+            Long.class,
+            long.class,
+            
+            Double.class,
+            double.class,
+            
+            Arrays.class,
+            
+            List.class,
+            ArrayList.class,
+            
+            BigDecimal.class,
+            BigInteger.class,
+            
+            JDADelegate.class,
+            UserDelegate.class,
+            GuildDelegate.class
+    };
 
-    private static final Set<Class<?>> ALLOWED_TYPES = new HashSet<>();
+    private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
 
     /**
-     * Filter arrays of 
-     * 
-     * @author ramidzkh
+     * Filter arrays of
      */
     private static final Pattern ARRAY_FILTER =
             Pattern.compile(
                     // Case insensitive
                     "(?i)"
                     // Decimals and Octals
-                    + "((\\[(\\s*[0-9]+\\s*)\\])"
+                    + "((\\[(\\s*[0-9]+\\s*)])"
                     // Binary
-                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)\\])"
+                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
                     // Hexadecimal
-                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)\\]))"),
-            MENTION_FILTER = 
-                Pattern.compile("<@[0-9]{18}>");
-
+                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
     /**
-     * Constructor
+     * Filter mentions
      */
-    public EvalFilter() {
-        ALLOWED_TYPES.addAll(Arrays.asList(ALLOWED_TYPES_LIST));
-    }
+            MENTION_FILTER = 
+                Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here");
 
     /**
      * This filters the script
@@ -69,8 +111,16 @@ public class EvalFilter extends GroovyValueFilter {
     public final Object filter(Object o) {
         if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
+
+        //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
+        //because the class is not whitelisted
         if(o instanceof JDA)
             return new JDADelegate((JDA) o);
+        if(o instanceof User)
+            return new UserDelegate((User) o);
+        if(o instanceof Guild)
+            return new GuildDelegate((Guild) o);
+        ////////////////////////////////////////////
         if(o instanceof Script)
             return o;
         if(o instanceof Closure)
@@ -114,48 +164,6 @@ public class EvalFilter extends GroovyValueFilter {
         //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
         return ARRAY_FILTER.matcher(toFilter).find();
     }
-
-    /**
-     * This contains a list of all the allowed classes
-     */
-    private static final Class<?>[] ALLOWED_TYPES_LIST = {
-            String.class,
-            
-            Boolean.class,
-            boolean.class,
-            
-            Byte.class,
-            byte.class,
-            
-            Character.class,
-            char.class,
-            
-            Short.class,
-            short.class,
-            
-            Integer.class,
-            int.class,
-            
-            Float.class,
-            float.class,
-            
-            Long.class,
-            long.class,
-            
-            Double.class,
-            double.class,
-            
-            Arrays.class,
-            
-            List.class,
-            ArrayList.class,
-            
-            BigDecimal.class,
-            BigInteger.class,
-
-            JDADelegate.class,
-            UserDelegate.class
-    };
 
     public boolean containsMentions(String string) {
         return MENTION_FILTER.matcher(string).find();

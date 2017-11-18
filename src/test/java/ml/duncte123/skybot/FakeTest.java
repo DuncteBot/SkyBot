@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -28,6 +29,7 @@ import java.util.Map;
 
 import ml.duncte123.skybot.objects.FakeInterface;
 import ml.duncte123.skybot.objects.InvocationFunction;
+import net.dv8tion.jda.core.entities.Guild;
 import org.junit.Test;
 
 import net.dv8tion.jda.core.JDA;
@@ -83,5 +85,18 @@ public class FakeTest {
         assertEquals(m.getIdLong(), 281673659834302464L);
         assertEquals(m.getId(), "281673659834302464");
         assertEquals(m.getName(), "ramidzkh");
+    }
+
+    @Test
+    public void delegate()
+    throws Throwable {
+        Map<Method, InvocationFunction> handlers = new HashMap<>();
+        
+        handlers.put(Guild.class.getMethod("getJDA"), (p, m, a) -> null);
+        
+        FakeInterface<Guild> guildFakeInterface = new FakeInterface<>(Guild.class, handlers);
+        guildFakeInterface.populateHandlers(guildFakeInterface.create());
+        
+        assertEquals(guildFakeInterface.create().getJDA(), null);
     }
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -30,6 +31,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -37,10 +39,7 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
-import java.util.TreeMap;
+import java.util.*;
 
 public class AirUtils {
 
@@ -575,15 +574,32 @@ public class AirUtils {
      * @return the response from the server
      */
     public static String updateGuildCount(JDA jda, long newGuildCount) {
-        Map<String, Object> postFields = new TreeMap<>();
+        Map<String, Object> postFields = new HashMap<>();
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
             return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
         }
-        catch (IOException e) {
+        catch (Exception e) {
             e.printStackTrace();
             return e.toString();
         }
+    }
+    
+    public static TextChannel getLogChannel(String channelId, Guild guild) {
+        if(channelId == null) return getPublicChannel(guild);
+
+        TextChannel tc;
+        try{
+            tc = guild.getTextChannelById(channelId);
+        }
+        catch (NumberFormatException e) {
+            List<TextChannel> tcl = guild.getTextChannelsByName(channelId, true);
+            if(tcl.size() > 0) {
+                tc = tcl.get(0);
+            } else return null;
+        }
+
+        return tc;
     }
 }

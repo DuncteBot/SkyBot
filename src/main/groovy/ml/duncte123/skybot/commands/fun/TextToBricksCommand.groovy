@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -42,7 +42,7 @@ class TextToBricksCommand extends Command {
 
     @Override
     String help() {
-        return "Convert your text to bicks"
+        return "Convert your text to bricks"
     }
 
     @Override

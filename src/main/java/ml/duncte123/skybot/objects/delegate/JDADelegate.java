@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.objects.delegate;
@@ -41,6 +42,7 @@ import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.requests.restaction.GuildAction;
 import net.dv8tion.jda.core.utils.cache.CacheView;
 import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
+import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 
 public class JDADelegate
 implements JDA {
@@ -253,11 +255,11 @@ implements JDA {
     }
 
     public void shutdown() {
-        __$__$$e__0_$0.shutdown();
+       throw new NotImplementedException();
     }
 
     public void shutdownNow() {
-        __$__$$e__0_$0.shutdownNow();
+        throw new NotImplementedException();
     }
 
     public AccountType getAccountType() {

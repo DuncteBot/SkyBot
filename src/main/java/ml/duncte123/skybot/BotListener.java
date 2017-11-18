@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -44,6 +45,7 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.json.JSONObject;
 import org.slf4j.event.Level;
 
+import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
@@ -86,7 +88,7 @@ public class BotListener extends ListenerAdapter {
 
     /**
      * Listen for messages send to the bot
-     * @param event The corresponding {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event The corresponding {@link GuildMessageReceivedEvent}
      */
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event){
@@ -104,6 +106,11 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
+            
+            try {
+                AirUtils.db.getConnManager().getConnection().close();
+            } catch (SQLException e) {}
+            
             System.exit(0);
             return;
         }
@@ -124,7 +131,7 @@ public class BotListener extends ListenerAdapter {
             }
         }
         //If the topic contains -commands ignore it
-        if(event.getChannel().getTopic().contains("-commands")) {
+        if(event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
             return;
         }
 
@@ -159,7 +166,6 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        setWatchingStatus(event.getJDA());
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
 
         AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
@@ -324,33 +330,5 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private boolean temp = true;
-	 //We're beeing sneaky here because we are setting the game to something called "Listening to"
-	 //b1nzy if you see this, please don't b4nzy me
-    private void setWatchingStatus(JDA jda) {
-        System.out.println("checking");
-        System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
-        if(temp && (jda.asBot().getShardManager().getShards().size() != 2) ) {
-            System.out.println("not setting");
-            return;
-        }
-        System.out.println("Setting game for all shards");
-        Presence p = jda.getPresence();
-        JSONObject gameObj = new JSONObject();
-        gameObj.put("name", "Danny Phantom");
-        gameObj.put("type", 3);
-        JSONObject object = new JSONObject();
-        object.put("game", gameObj);
-        object.put("afk", p.isIdle());
-        object.put("status", p.getStatus().getKey());
-        object.put("since", System.currentTimeMillis());
-        for (JDA shard : jda.asBot().getShardManager().getShards())
-            ((JDAImpl) shard).getClient().send(new JSONObject()
-                    .put("d", object)
-                    .put("op", WebSocketCode.PRESENCE).toString()
-            );
-
-        temp = false;
-    }
 
 }

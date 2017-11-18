@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -44,6 +45,7 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        
         //Set the logger to only info by default
         Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
@@ -68,6 +70,10 @@ public class SkyBot {
             AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
+
+        //This is a little hack because we can't use groovy and kotlin in the same classes
+        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
+        new RegisterKotlinCommands();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
@@ -86,15 +92,11 @@ public class SkyBot {
                 .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.of(Settings.prefix  + "help | Shard #" + (shardId + 1)))
+                .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
                 .setToken(token)
                 .buildAsync();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
-
-        //This is a little hack
-        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        Class.forName("ml.duncte123.skybot.RegisterKotlinCommands").newInstance();
     }
 }

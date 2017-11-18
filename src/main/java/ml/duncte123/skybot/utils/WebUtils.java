@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -94,7 +95,7 @@ public class WebUtils {
      */
     public static Response getRequest(String url) {
 
-        return getRequest(url, AcceptType.URLENCODED);
+        return getRequest(url, AcceptType.TEXT_HTML);
     }
 
     /**
@@ -107,15 +108,15 @@ public class WebUtils {
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
 
         OkHttpClient client = new OkHttpClient();
-        MediaType mediaType = MediaType.parse("application/x-www-form-urlencoded");
+        MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
 
         StringBuilder postParams = new StringBuilder();
 
-        for (String field : postFields.keySet()) {
-            postParams.append(field).append("=").append(postFields.get(field)).append("&");
+        for (Map.Entry < String, Object > entry : postFields.entrySet()) {
+            postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
 
-        RequestBody body = RequestBody.create(mediaType, postParams.toString());
+        RequestBody body = RequestBody.create(mediaType, postParams.toString() + "dummy=param");
 
         Request request = new Request.Builder()
                 .url(url)
