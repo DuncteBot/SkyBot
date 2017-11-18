@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.uncategorized
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
@@ -50,10 +51,12 @@ class OneLinerCommands : Command() {
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
                     .queue { sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
         
-        // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
-            "invite" -> sendMsg(event, "Invite me with this link:\n" + "<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
+            // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
+            "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
             
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
+
+            "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
             else -> println("Invoke was invalid: $invoke")
         }
     }
@@ -64,9 +67,10 @@ class OneLinerCommands : Command() {
             "`${PREFIX}wam` => you need more WAM!.\n" +
             "`${PREFIX}mineh` => HERE COMES MINEH!\n" +
             "`${PREFIX}invite` => gives you the bot invite\n" +
-            "`${PREFIX}uptime` => shows the bot uptime"
-    
+            "`${PREFIX}uptime` => shows the bot uptime\n" +
+            "`${PREFIX}quote` => Shows an inspiring quote\n"
+
     override fun getName() = "ping"
     
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime")
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote")
 }
