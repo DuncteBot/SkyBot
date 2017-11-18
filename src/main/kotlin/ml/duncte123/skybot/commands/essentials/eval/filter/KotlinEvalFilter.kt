@@ -86,61 +86,64 @@ class KotlinEvalFilter : GroovyValueFilter() {
         // Simple mistake, the make the Object... take in the args as elements, we need to use *
         return invoker.call(receiver, null, *args)
     }
+
+    companion object {
+
+        /**
+         * Typed that are allowed to be used
+         */
+        @JvmStatic
+        val filteredUsed = listOf(
+                String::class.java,
+                Math::class.java,
+
+                Boolean::class.java,
+                Byte::class.java,
+                Character::class.java,
+                Short::class.java,
+                Integer::class.java,
+                Float::class.java,
+                Long::class.java,
+                Double::class.java,
+
+                Arrays::class.java,
+
+                List::class.java,
+                ArrayList::class.java,
+
+                BigDecimal::class.java,
+                BigInteger::class.java)
+
+        /**
+         * Types that are allowed to be constructed
+         */
+        @JvmStatic
+        val filteredConstructed = listOf(
+                String::class.java,
+                Math::class.java,
+
+                Boolean::class.java,
+                Byte::class.java,
+                Character::class.java,
+                Short::class.java,
+                Integer::class.java,
+                Float::class.java,
+                Long::class.java,
+                Double::class.java,
+
+                Arrays::class.java,
+
+                ArrayList::class.java,
+                HashSet::class.java,
+
+                // Want to add these?
+                // Can have huge radix
+                BigDecimal::class.java,
+                BigInteger::class.java
+        )
+
+        @JvmStatic
+        val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!
+    }
 }
 
-/*
- * These are outside of the class because they are static
- */
-
-/**
- * Typed that are allowed to be used
- */
-val filteredUsed = listOf(
-        String::class.java,
-        Math::class.java,
-
-        Boolean::class.java,
-        Byte::class.java,
-        Character::class.java,
-        Short::class.java,
-        Integer::class.java,
-        Float::class.java,
-        Long::class.java,
-        Double::class.java,
-
-        Arrays::class.java,
-
-        List::class.java,
-        ArrayList::class.java,
-
-        BigDecimal::class.java,
-        BigInteger::class.java)
-
-/**
- * Types that are allowed to be constructed
- */
-val filteredConstructed = listOf(
-        String::class.java,
-        Math::class.java,
-
-        Boolean::class.java,
-        Byte::class.java,
-        Character::class.java,
-        Short::class.java,
-        Integer::class.java,
-        Float::class.java,
-        Long::class.java,
-        Double::class.java,
-
-        Arrays::class.java,
-
-        ArrayList::class.java,
-        HashSet::class.java,
-
-        // Want to add these?
-        // Can have huge radix
-        BigDecimal::class.java,
-        BigInteger::class.java
-)
-
-val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!

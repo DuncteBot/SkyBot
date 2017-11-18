@@ -19,12 +19,16 @@
 
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.audio.hooks.ConnectionListener
+import net.dv8tion.jda.core.audio.hooks.ConnectionStatus
+import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
-class JoinCommand extends MusicCommand {
+class JoinCommand extends MusicCommand implements ConnectionListener {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
@@ -44,9 +48,11 @@ class JoinCommand extends MusicCommand {
         }
 
         try {
-            if (audioManager.connected) audioManager.closeAudioConnection()
+            if (audioManager.connected)
+                audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
+            audioManager.setConnectionListener(this)
         } catch (PermissionException e) {
             if (e.permission == Permission.VOICE_CONNECT) {
                 sendMsg(event, "I don't have permission to join `${vc.name}`")
@@ -68,5 +74,18 @@ class JoinCommand extends MusicCommand {
     @Override
     String[] getAliases() {
         return ["summon", "connect"]
+    }
+
+    @Override
+    void onPing(long ping) {
+        OneLinerCommands.pingHistory.add(ping, true)
+    }
+
+    @Override
+    void onStatusChange(ConnectionStatus status) {
+    }
+
+    @Override
+    void onUserSpeaking(User user, boolean speaking) {
     }
 }

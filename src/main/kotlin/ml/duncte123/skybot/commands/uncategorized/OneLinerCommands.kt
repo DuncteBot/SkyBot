@@ -19,6 +19,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import ml.duncte123.skybot.entities.SizedList
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -28,29 +29,35 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
 
 class OneLinerCommands : Command() {
+
+    companion object {
+        @JvmStatic
+        public val pingHistory: SizedList<Long> = SizedList(25)
+    }
     
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
                 val time = System.currentTimeMillis()
-                
+                val avg = if (getAverage() != Double.NaN) "\nAverage music ping: ${getAverage()}ms" else ""
+
                 event.channel.sendMessage("PONG!").queue {
                     it.editMessage("PONG!\n" +
                             "Ping is: ${System.currentTimeMillis() - time}ms\n" +
                             "Websocket ping: ${event.jda.ping}ms\n" +
-                            "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
+                            "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms$avg").queue()
                 }
             }
-            
+
             "cookie" -> sendMsg(event, "<:blobnomcookie_secret:317636549342789632>")
-            
+
             "trigger" -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif"))
-            
+
             "wam" -> sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
-            
+
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
                     .queue { sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
-        
+
 
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
@@ -73,4 +80,6 @@ class OneLinerCommands : Command() {
     override fun getName() = "ping"
     
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote")
+
+    private fun getAverage(): Double = pingHistory.map { it.toDouble() }.average()
 }
