@@ -141,4 +141,4 @@ val filteredConstructed = listOf(
         BigInteger::class.java
 )
 
-val mentionFilter = Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here")!!
+val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!
