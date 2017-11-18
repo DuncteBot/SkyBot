@@ -25,31 +25,31 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 public class KotlinFilterTest {
-
-	public static void main(String[] args) {
-		System.out.println(eval("2+2"));
-		System.out.println(eval("'memes'"));
-		System.out.println(eval("System.out"));
-		System.out.println(eval("java.math.BigInteger.valueOf(2)"));
-	}
-	
-	public static Object eval(String s) {
-		GroovyShell gs = new GroovyShell(new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
-		
-		KotlinEvalFilter filter = new KotlinEvalFilter();
-		
-		filter.register();
-		
-		Object o = null;
-		
-		try {
-			o = gs.evaluate(s);
-		} catch (Throwable thr) {
-			thr.printStackTrace();
-		} finally {
-			filter.unregister();
-		}
-		
-		return o;
-	}
+    
+    public static void main(String[] args) {
+        System.out.println(eval("2+2"));
+        System.out.println(eval("'memes'"));
+        System.out.println(eval("System.out"));
+        System.out.println(eval("java.math.BigInteger.valueOf(2)"));
+    }
+    
+    public static Object eval(String s) {
+        GroovyShell gs = new GroovyShell(new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
+        
+        KotlinEvalFilter filter = new KotlinEvalFilter();
+        
+        filter.register();
+        
+        Object o = null;
+        
+        try {
+            o = gs.evaluate(s);
+        } catch (Throwable thr) {
+            thr.printStackTrace();
+        } finally {
+            filter.unregister();
+        }
+        
+        return o;
+    }
 }

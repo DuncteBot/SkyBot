@@ -24,9 +24,9 @@
 package com.wolfram.alpha.net;
 
 
-import java.net.URL;
-
 import com.wolfram.alpha.net.impl.HttpTransaction;
+
+import java.net.URL;
 
 
 // IF thids never gets anything more than createTransaction(), it should probably be a class, HttpTransactionFactory.

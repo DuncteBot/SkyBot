@@ -23,10 +23,10 @@
  */
 package com.wolfram.alpha.net.impl;
 
+import com.wolfram.alpha.net.WAHttpException;
+
 import java.io.IOException;
 import java.io.InputStream;
-
-import com.wolfram.alpha.net.WAHttpException;
 
 
 public interface HttpTransaction {

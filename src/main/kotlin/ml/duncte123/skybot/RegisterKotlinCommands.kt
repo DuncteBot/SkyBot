@@ -29,6 +29,7 @@ import org.slf4j.event.Level
 
 class RegisterKotlinCommands {
     val manager = AirUtils.commandManager
+    
     init {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
         manager.addCommand(OneLinerCommands())
@@ -36,5 +37,5 @@ class RegisterKotlinCommands {
         manager.addCommand(RestartCommand())
         manager.addCommand(BirbCommand())
     }
-
+    
 }

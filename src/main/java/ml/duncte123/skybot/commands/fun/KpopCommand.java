@@ -42,55 +42,47 @@ public class KpopCommand extends Command {
         String name = "";
         String group = "";
         String imgUrl = "";
+        ResultSet res;
 
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         try {
 
-            if(args.length > 0) {
+            if (args.length > 0) {
 
                 PreparedStatement statement = database.prepareStatement("SELECT * FROM " + dbName + ".kpop WHERE name LIKE ? OR id= ? LIMIT 1");
-                statement.setString(1, "%"+StringUtils.join(args, " ")+"%");
+                statement.setString(1, "%" + StringUtils.join(args, " ") + "%");
                 statement.setString(2, StringUtils.join(args, " "));
 
-                ResultSet res = statement.executeQuery();
-
-                while (res.next()) {
-                    id = res.getString("id");
-                    name = res.getString("name");
-                    group = res.getString("band");
-                    imgUrl = res.getString("img");
-                }
+                res = statement.executeQuery();
 
             } else {
 
                 Statement statement = database.createStatement();
 
-                ResultSet res = statement.executeQuery("SELECT * FROM " + dbName + ".kpop ORDER BY RAND() LIMIT 1");
+                res = statement.executeQuery("SELECT * FROM " + dbName + ".kpop ORDER BY RAND() LIMIT 1");
+            }
 
-                while (res.next()) {
-                    id = res.getString("id");
-                    name = res.getString("name");
-                    group = res.getString("band");
-                    imgUrl = res.getString("img");
-                }
+            while (res.next()) {
+                id = res.getString("id");
+                name = res.getString("name");
+                group = res.getString("band");
+                imgUrl = res.getString("img");
             }
 
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                    .setDescription("Here is a kpop member from the group " + group)
-                    .addField("Name of the member", name, false)
-                    .setImage(imgUrl)
-                    .setFooter("Query id: " + id, Settings.defaultIcon);
+                                      .setDescription("Here is a kpop member from the group " + group)
+                                      .addField("Name of the member", name, false)
+                                      .setImage(imgUrl)
+                                      .setFooter("Query id: " + id, Settings.defaultIcon);
             sendEmbed(event, eb.build());
-        }
-        catch (Exception e) {
-           sendMsg(event, "SCREAM THIS TO _duncte123#1245_: " + e.getMessage());
+        } catch (Exception e) {
+            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: " + e.getMessage());
             e.printStackTrace();
         } finally {
             try {
                 database.close();
-            }
-            catch (SQLException e2) {
+            } catch (SQLException e2) {
                 e2.printStackTrace();
             }
         }
@@ -98,7 +90,7 @@ public class KpopCommand extends Command {
 
     @Override
     public String help() {
-        return "Gives you a random kpop member, command idea by Exa\nUsage: " + Settings.prefix + getName() +" [search term]";
+        return "Gives you a random kpop member, command idea by Exa\nUsage: " + Settings.prefix + getName() + " [search term]";
     }
 
     @Override

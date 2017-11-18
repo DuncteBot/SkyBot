@@ -19,29 +19,27 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import org.kohsuke.groovy.sandbox.GroovyValueFilter;
-
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.JDA;
+import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 public class OwnerEvalFilter
-extends GroovyValueFilter {
-
+        extends GroovyValueFilter {
+    
     /**
      * Filter:<br>
      * <table border="1">
-     *   <tr>
-     *     <td>{@link JDA}</td> <td>{@link JDADelegate}</td>
-     *   </tr>
+     * <tr>
+     * <td>{@link JDA}</td> <td>{@link JDADelegate}</td>
+     * </tr>
      * </table>
-     *   
      */
     @Override
     public Object filter(Object o) {
-        if(!AirUtils.spoopyScaryVariable) return o;
+        if (!AirUtils.spoopyScaryVariable) return o;
         // Delegate JDA
-        if(o instanceof JDA)
+        if (o instanceof JDA)
             o = new JDADelegate((JDA) o);
         return o;
     }

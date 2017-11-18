@@ -33,7 +33,7 @@ class ShortenCommand extends Command {
 
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(args.length < 1 || args[0].isEmpty()) {
+        if (args.length < 1 || args[0].isEmpty()) {
             sendMsg(event, "Incorrect usage: `${Settings.prefix}$name <link to shorten>`")
             return
         }

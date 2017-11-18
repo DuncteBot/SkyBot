@@ -23,30 +23,27 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAInfo;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class WAInfoImpl implements WAInfo, Serializable {
 
+    static final WAInfoImpl[] EMPTY_ARRAY = new WAInfoImpl[0];
+    private static final long serialVersionUID = 687066271144463657L;
     private String text;
     private Visitable[] contentElements = EMPTY_VISITABLE_ARRAY;
-    
-    static final WAInfoImpl[] EMPTY_ARRAY = new WAInfoImpl[0];
-
-    private static final long serialVersionUID = 687066271144463657L;
 
     
     WAInfoImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {

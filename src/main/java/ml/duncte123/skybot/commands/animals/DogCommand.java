@@ -39,12 +39,11 @@ public class DogCommand extends Command {
             String finalS = base + jsonString;
 
             if (finalS.contains(".mp4")) {
-               sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
+                sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
             } else {
                 sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
         }
@@ -53,7 +52,6 @@ public class DogCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return "here is a dog.";
     }
 

@@ -26,9 +26,9 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class ShuffleCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             TrackScheduler scheduler = getMusicManager(event.guild).scheduler
-            if(scheduler.queue.isEmpty()){
+            if (scheduler.queue.isEmpty()) {
                 sendMsg(event, "There are no songs to shuffle")
                 return
             }

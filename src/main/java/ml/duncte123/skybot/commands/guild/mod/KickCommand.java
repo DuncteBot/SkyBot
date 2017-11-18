@@ -50,19 +50,19 @@ public class KickCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Reason]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [Reason]");
             return;
         }
 
         try {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
-            if(toKick.equals(event.getAuthor()) &&
-                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toKick)) ) {
+            if (toKick.equals(event.getAuthor()) &&
+                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toKick))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-                                           //Arrays.copyOfRange(Array, From, to)
+            //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     (noting) -> {
@@ -70,8 +70,7 @@ public class KickCommand extends Command {
                         sendSuccess(event.getMessage());
                     }
             );
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

@@ -27,27 +27,41 @@ import com.google.gson.JsonPrimitive;
 import java.io.File;
 
 public class Config {
-
-    private final Config parent;
+    
     protected final JsonObject config;
-
+    private final Config parent;
+    
     protected Config(Config parent, JsonObject config) {
         this.parent = parent;
         this.config = config;
     }
-
+    
+    /**
+     * idk
+     *
+     * @param text        the text to replace
+     * @param regex       the regex or something
+     * @param replacement what to replace it with
+     * @return the replaced string
+     */
+    public static String replaceLast(String text, String regex, String replacement) {
+        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
+    }
+    
     /**
      * This will try to get data from the config file
+     *
      * @param key the key where the setting is located
      * @return the value of the setting
      */
     public String getString(String key) {
         return this.getJsonPrimitive(key).getAsString();
     }
-
+    
     /**
-     This will try to get data from the config file
-     * @param key the key where the setting is located
+     * This will try to get data from the config file
+     *
+     * @param key          the key where the setting is located
      * @param defaultValue If this can't be found we will create the option in the config
      * @return the value of the setting
      */
@@ -61,9 +75,10 @@ public class Config {
             return defaultValue;
         }
     }
-
+    
     /**
      * This will attempt to get an integer from the config file
+     *
      * @param key The key to get the int from
      * @return the int
      * @throws NumberFormatException if the returned value isn't valis
@@ -71,15 +86,15 @@ public class Config {
     public int getInt(String key) throws NumberFormatException {
         try {
             return this.getJsonPrimitive(key).getAsInt();
-        }
-        catch (final NumberFormatException e) {
+        } catch (final NumberFormatException e) {
             throw e;
         }
     }
-
+    
     /**
      * This will attempt to get an integer from the config file
-     * @param key The key to get the int from
+     *
+     * @param key          The key to get the int from
      * @param defaultValue the value to put it on if the int can't be found
      * @return the int
      */
@@ -88,36 +103,38 @@ public class Config {
             this.put(key, defaultValue);
         return this.getInt(key);
     }
-
+    
     /**
      * This will attempt to get a boolean from the config file
+     *
      * @param key the key to get the boolean from
      * @return the boolean from the key
      */
     public boolean getBoolean(String key) {
         try {
             return this.getJsonPrimitive(key).getAsBoolean();
-        }
-        catch (final Exception e) {
+        } catch (final Exception e) {
             e.printStackTrace();
             return false;
         }
     }
-
+    
     /**
      * This will attempt to get a boolean from the config file
-     * @param key the key to get the boolean from
+     *
+     * @param key          the key to get the boolean from
      * @param defaultValue the default value to put the boolean on when it can't be found
      * @return the boolean from the key
      */
-    public final boolean getBoolean(String key, boolean defaultValue)  {
+    public final boolean getBoolean(String key, boolean defaultValue) {
         if (!this.hasKey(key))
             this.put(key, defaultValue);
         return this.getBoolean(key);
     }
-
+    
     /**
      * This will load from our config with the key
+     *
      * @param key the key to find
      * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
      * @throws NullPointerException when the key is not found
@@ -125,9 +142,10 @@ public class Config {
     public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
         return this.getJsonElement(key).getAsJsonPrimitive();
     }
-
+    
     /**
      * This will load from our config with the key
+     *
      * @param key the key to find
      * @return a nice JsonElement
      * @throws NullPointerException When things are about too go down
@@ -136,8 +154,8 @@ public class Config {
         final String[] path = key.split("\\.");
         JsonElement value = this.config;
         try {
-            for (String element : path)  {
-               // System.out.println(element);
+            for (String element : path) {
+                // System.out.println(element);
                 if (element.trim().isEmpty())
                     continue;
                 if (element.endsWith("]") && element.contains("[")) {
@@ -145,45 +163,44 @@ public class Config {
                     int index;
                     try {
                         index = Integer.parseInt(element.substring(i).replace("[", "").replace("]", ""));
-                    }
-                    catch (final Exception e)  {
+                    } catch (final Exception e) {
                         index = 0;
                     }
                     element = element.substring(0, i);
-
+                    
                     value = value.getAsJsonObject().get(element);
                     value = value.getAsJsonArray().get(index);
-
+                    
                 } else
                     value = value.getAsJsonObject().get(element);
             }
             if (value == null)
                 throw new NullPointerException("Key '" + key + "' has no value or doesn't exists, trying to add it");
             return value;
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
-
+    
     /**
      * This will check if the key that we are looking for
+     *
      * @param key the key to find
      * @return true if the key is there
      */
-    public boolean hasKey(String key)  {
+    public boolean hasKey(String key) {
         try {
             return this.getJsonElement(key) != null;
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             return false;
         }
     }
-
+    
     /**
      * This will attempt to put a value is the config
-     * @param key the key to add the value under
+     *
+     * @param key   the key to add the value under
      * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
      * @throws Exception when we fail
      */
@@ -194,22 +211,21 @@ public class Config {
             key = replaceLast(key, ".", "");
         final String[] path = key.split("\\.");
         JsonObject current = this.config;
-
+        
         try {
-            for (String element : path)  {
+            for (String element : path) {
                 if (element.trim().isEmpty())
                     continue;
                 if (element.endsWith("]") && element.contains("[")) {
                     final int i = element.lastIndexOf("[");
                     int index;
-                    try  {
+                    try {
                         index = Integer.parseInt(element.substring(i).replace("[", "").replace("]", ""));
-                    }
-                    catch (final Exception e)  {
+                    } catch (final Exception e) {
                         index = -1;
                     }
                     element = element.substring(0, i);
-
+                    
                     if (!current.has(element))
                         current.add(element, new JsonArray());
                     final JsonArray array = current.get(element).getAsJsonArray();
@@ -217,31 +233,30 @@ public class Config {
                         final JsonObject object = new JsonObject();
                         array.add(object);
                         current = object;
-                    }
-                    else {
+                    } else {
                         if (index == array.size())
                             array.add(new JsonObject());
                         current = array.get(index).getAsJsonObject();
                     }
-
+                    
                 } else {
                     if (!current.has(element))
                         current.add(element, new JsonObject());
                     current = current.get(element).getAsJsonObject();
                 }
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
         current.add(finalKey, value);
         this.save();
     }
-
+    
     /**
      * This will attempt to put a value is the config
-     * @param key the key to add the value under
+     *
+     * @param key   the key to add the value under
      * @param value the value that we need to add
      */
     public void put(String key, String value) {
@@ -251,10 +266,11 @@ public class Config {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * This will attempt to put a value is the config
-     * @param key the key to add the value under
+     *
+     * @param key   the key to add the value under
      * @param value the value that we need to add
      */
     public void put(String key, Number value) {
@@ -264,10 +280,11 @@ public class Config {
             e.printStackTrace();
         }
     }
-
+    
     /**
      * This will attempt to put a value is the config
-     * @param key the key to add the value under
+     *
+     * @param key   the key to add the value under
      * @param value the value that we need to add
      */
     public void put(String key, boolean value) {
@@ -277,28 +294,19 @@ public class Config {
             e.printStackTrace();
         }
     }
-
-    /**
-     * idk
-     * @param text the text to replace
-     * @param regex the regex or something
-     * @param replacement what to replace it with
-     * @return the replaced string
-     */
-    public static String replaceLast(String text, String regex, String replacement) {
-        return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
-    }
-
+    
     /**
      * get the config as a file
+     *
      * @return the config as a file
      */
     public File getConfigFile() {
         return this.parent.getConfigFile();
     }
-
+    
     /**
      * save the config
+     *
      * @throws Exception when things break
      */
     public void save() throws Exception {
