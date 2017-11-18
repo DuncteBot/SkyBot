@@ -6,24 +6,24 @@ import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.managers.Presence
-import org.kohsuke.groovy.sandbox.GroovyValueFilter
 
-class KotlinMappingFilter : GroovyValueFilter() {
-    
-    override fun filter(o: Any?): Any? {
-        if (o == null) return null
+class KotlinMappingFilter {
+    companion object {
+        fun transform(o: Any?): Any? {
+            if(o == null) return null
+            
+            if (o is JDA)
+                return JDADelegate(o)
+            if (o is Guild)
+                return GuildDelegate(o)
+            if (o is Member)
+                return MemberDelegate(o)
+            if (o is Presence)
+                return PresenceDelegate(o)
+            if (o is User)
+                return UserDelegate(o)
         
-        if (o is JDA)
-            return JDADelegate(o)
-        if (o is Guild)
-            return GuildDelegate(o)
-        if (o is Member)
-            return MemberDelegate(o)
-        if (o is Presence)
-            return PresenceDelegate(o)
-        if (o is User)
-            return UserDelegate(o)
-        
-        return o
+            return o
+        }
     }
 }

@@ -110,10 +110,8 @@ class KotlinEvalFilter : GroovyValueFilter() {
             UserDelegate::class.java
     )
     
-    private val mappingFilter = KotlinMappingFilter()
-    
     override fun filter(v: Any?): Any? {
-        var value: Any? = mappingFilter.filter(v);
+        var value: Any? = KotlinMappingFilter.transform(v)
         if (value == null) return null
         
         // Allow delegates
@@ -143,6 +141,4 @@ class KotlinEvalFilter : GroovyValueFilter() {
         
         return invoker.call(receiver, null, *args)
     }
-    
-    protected fun finalize() = unregister()
 }
