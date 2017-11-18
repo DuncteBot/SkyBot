@@ -59,7 +59,7 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    private final Map<String, GuildMusicManager> musicManagers;
+    final Map<String, GuildMusicManager> musicManagers;
 
     /**
      * This is the title that you see in the embeds from the player

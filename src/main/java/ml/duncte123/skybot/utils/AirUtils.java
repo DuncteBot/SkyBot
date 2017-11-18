@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -587,13 +588,14 @@ public class AirUtils {
         }
     }
     
-    public static void reload() {
+    public static void stop() {
         try {
             db.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         
-        
+        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
     }
+
 }
