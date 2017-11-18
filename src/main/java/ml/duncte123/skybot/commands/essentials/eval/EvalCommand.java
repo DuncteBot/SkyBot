@@ -78,7 +78,9 @@ public class EvalCommand extends Command {
                 "net.dv8tion.jda.core.managers",
                 "net.dv8tion.jda.core.managers.impl",
                 "net.dv8tion.jda.core.utils",
-                "ml.duncte123.skybot.utils");
+                "ml.duncte123.skybot.utils",
+                "ml.duncte123.skybot.entities",
+                "ml.duncte123.skybot.entities.delegate");
     }
     
     @Override
@@ -107,10 +109,7 @@ public class EvalCommand extends Command {
                     importStringBuilder.append("import ").append(s).append(".*;\n");
                 }
                 
-                String script = importStringBuilder.toString() +
-                                    event.getMessage().getRawContent()
-                                        .substring(event.getMessage().getRawContent()
-                                                   .split(" ")[0].length());
+                String script = importStringBuilder.toString() + event.getMessage().getRawContent().split("\\s+",2)[1];
                 
                 int timeout = 5;
                 if (isRanByBotOwner) {
@@ -183,6 +182,8 @@ public class EvalCommand extends Command {
             } catch (IllegalArgumentException | VRCubeException e3) {
                 sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
                 sendError(event.getMessage());
+            } catch (ArrayIndexOutOfBoundsException e4) {
+                sendSuccess(event.getMessage());
             }
         } catch (Throwable thr) {
             sendMsg(event, "ERROR: " + thr.toString());

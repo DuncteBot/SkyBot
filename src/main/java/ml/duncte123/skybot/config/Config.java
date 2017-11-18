@@ -19,19 +19,18 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.File;
+import java.util.List;
 
 public class Config {
     
-    protected final JsonObject config;
+    protected final JSONObject config;
     private final Config parent;
     
-    protected Config(Config parent, JsonObject config) {
+    protected Config(Config parent, JSONObject config) {
         this.parent = parent;
         this.config = config;
     }
@@ -55,7 +54,7 @@ public class Config {
      * @return the value of the setting
      */
     public String getString(String key) {
-        return this.getJsonPrimitive(key).getAsString();
+        return this.config.getString(key);
     }
     
     /**
@@ -85,7 +84,7 @@ public class Config {
      */
     public int getInt(String key) throws NumberFormatException {
         try {
-            return this.getJsonPrimitive(key).getAsInt();
+            return this.config.getInt(key);
         } catch (final NumberFormatException e) {
             throw e;
         }
@@ -112,7 +111,7 @@ public class Config {
      */
     public boolean getBoolean(String key) {
         try {
-            return this.getJsonPrimitive(key).getAsBoolean();
+            return this.config.getBoolean(key);
         } catch (final Exception e) {
             e.printStackTrace();
             return false;
@@ -136,23 +135,12 @@ public class Config {
      * This will load from our config with the key
      *
      * @param key the key to find
-     * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
-     * @throws NullPointerException when the key is not found
-     */
-    public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
-        return this.getJsonElement(key).getAsJsonPrimitive();
-    }
-    
-    /**
-     * This will load from our config with the key
-     *
-     * @param key the key to find
      * @return a nice JsonElement
      * @throws NullPointerException When things are about too go down
      */
-    public JsonElement getJsonElement(String key) throws NullPointerException {
+    public Object getJsonElement(String key) throws NullPointerException {
         final String[] path = key.split("\\.");
-        JsonElement value = this.config;
+        Object value = this.config;
         try {
             for (String element : path) {
                 // System.out.println(element);
@@ -168,11 +156,11 @@ public class Config {
                     }
                     element = element.substring(0, i);
                     
-                    value = value.getAsJsonObject().get(element);
-                    value = value.getAsJsonArray().get(index);
+                    value = new JSONObject(value).get(element);
+                    value = ((List) new JSONObject(value).toMap().values()).get(index);
                     
                 } else
-                    value = value.getAsJsonObject().get(element);
+                    value = new JSONObject(value).get(element);
             }
             if (value == null)
                 throw new NullPointerException("Key '" + key + "' has no value or doesn't exists, trying to add it");
@@ -196,21 +184,14 @@ public class Config {
             return false;
         }
     }
-    
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
-     * @throws Exception when we fail
-     */
-    public void put(String key, JsonElement value) throws Exception {
+
+    public void put(String key, JSONObject value) throws Exception {
         final String finalKey = key.substring(key.lastIndexOf(".") + 1);
         key = replaceLast(key, finalKey, "");
         if (key.endsWith("."))
             key = replaceLast(key, ".", "");
         final String[] path = key.split("\\.");
-        JsonObject current = this.config;
+        JSONObject current = this.config;
         
         try {
             for (String element : path) {
@@ -227,29 +208,29 @@ public class Config {
                     element = element.substring(0, i);
                     
                     if (!current.has(element))
-                        current.add(element, new JsonArray());
-                    final JsonArray array = current.get(element).getAsJsonArray();
+                        current.put(element, new JSONArray());
+                    final JSONArray array = current.getJSONArray(element);
                     if (index == -1) {
-                        final JsonObject object = new JsonObject();
-                        array.add(object);
+                        final JSONObject object = new JSONObject();
+                        array.put(object);
                         current = object;
                     } else {
-                        if (index == array.size())
-                            array.add(new JsonObject());
-                        current = array.get(index).getAsJsonObject();
+                        if (index == array.length())
+                            array.put(new JSONObject());
+                        current = array.getJSONObject(index);
                     }
                     
                 } else {
                     if (!current.has(element))
-                        current.add(element, new JsonObject());
-                    current = current.get(element).getAsJsonObject();
+                        current.put(element, new JSONObject());
+                    current = current.getJSONObject(element);
                 }
             }
         } catch (Exception e) {
             e.printStackTrace();
             throw e;
         }
-        current.add(finalKey, value);
+        current.put(finalKey, value);
         this.save();
     }
     
@@ -261,7 +242,7 @@ public class Config {
      */
     public void put(String key, String value) {
         try {
-            this.put(key, new JsonPrimitive(value));
+            this.put(key, new JSONObject(value));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -275,7 +256,7 @@ public class Config {
      */
     public void put(String key, Number value) {
         try {
-            this.put(key, new JsonPrimitive(value));
+            this.put(key, new JSONObject(value));
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -289,7 +270,7 @@ public class Config {
      */
     public void put(String key, boolean value) {
         try {
-            this.put(key, new JsonPrimitive(value));
+            this.put(key, new JSONObject(value));
         } catch (Exception e) {
             e.printStackTrace();
         }

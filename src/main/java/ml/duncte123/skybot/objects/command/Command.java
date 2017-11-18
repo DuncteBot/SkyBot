@@ -19,9 +19,6 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -29,11 +26,15 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.json.JSONArray;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -91,12 +92,13 @@ public abstract class Command {
                                                         .addHeader("Authorization", token)
                                                         .build())
                                         .execute();
-            JsonArray json = new JsonParser().parse(response.body().source().readUtf8()).getAsJsonArray();
+            JSONArray json = new JSONArray(response.body().source().readUtf8());
             
             upvotedIds.clear();
-            
-            for (JsonElement je : json)
-                upvotedIds.add(je.getAsString());
+
+            for (int i = 0; i < json.length(); i++) {
+                upvotedIds.add(json.getString(i));
+            }
         } catch (Exception e) {
             AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
         }

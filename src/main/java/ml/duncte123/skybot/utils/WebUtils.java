@@ -19,9 +19,8 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import okhttp3.*;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -180,16 +179,14 @@ public class WebUtils {
             con.addRequestProperty("Content-Type", "application/json");
             con.setDoOutput(true);
             
-            JsonObject jo = new JsonObject();
+            JSONObject jo = new JSONObject();
             
-            jo.addProperty("longUrl", url);
+            jo.put("longUrl", url);
             
             con.getOutputStream().write(
                     jo.toString().getBytes());
             
-            return new JsonParser().parse(
-                    new InputStreamReader(con.getInputStream()))
-                           .getAsJsonObject().get("id").getAsString();
+            return String.valueOf(new JSONObject(new InputStreamReader(con.getInputStream())).get("id"));
         } catch (IOException e) {
             e.printStackTrace();
             return null;
