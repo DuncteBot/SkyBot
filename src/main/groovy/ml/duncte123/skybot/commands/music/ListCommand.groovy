@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class ListCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             def scheduler = getMusicManager(event.guild).scheduler
 
             Queue<AudioTrack> queue = scheduler.queue

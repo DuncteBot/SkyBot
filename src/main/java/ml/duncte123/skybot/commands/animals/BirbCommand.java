@@ -38,8 +38,7 @@ public class BirbCommand extends Command {
             String imgName = WebUtils.getText("https://proximyst.com:4500/random/path/text");
             
             sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + imgName + "/image"));
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
@@ -56,6 +55,6 @@ public class BirbCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"bird"};
+        return new String[]{"bird"};
     }
 }

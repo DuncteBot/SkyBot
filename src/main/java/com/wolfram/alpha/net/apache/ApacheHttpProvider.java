@@ -4,16 +4,11 @@
  */
 package com.wolfram.alpha.net.apache;
 
-import java.net.URL;
-
+import com.wolfram.alpha.net.HttpProvider;
+import com.wolfram.alpha.net.ProxySettings;
+import com.wolfram.alpha.net.impl.HttpTransaction;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpConnectionParams;
-import org.apache.http.params.HttpParams;
-import org.apache.http.params.HttpProtocolParams;
 import org.apache.http.conn.params.ConnManagerParams;
 import org.apache.http.conn.params.ConnPerRoute;
 import org.apache.http.conn.routing.HttpRoute;
@@ -21,17 +16,16 @@ import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
 import org.apache.http.conn.ssl.SSLSocketFactory;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
+import org.apache.http.params.HttpProtocolParams;
 
-import com.wolfram.alpha.net.HttpProvider;
-import com.wolfram.alpha.net.ProxySettings;
-import com.wolfram.alpha.net.impl.HttpTransaction;
+import java.net.URL;
 
 public class ApacheHttpProvider implements HttpProvider {
-
-    
-    private static HttpClient httpClient;
-    private static HttpParams params;
-    private int socketTimeoutMillis = SOCKET_TIMEOUT_MILLIS;
 
     
     // HttpClient configuration settings.
@@ -43,7 +37,9 @@ public class ApacheHttpProvider implements HttpProvider {
     // Default is 2.
     private static final int MAX_CONNECTIONS_PER_ROUTE = 8;
     private static final int MAX_RETRY_COUNT = 1;
-
+    private static HttpClient httpClient;
+    private static HttpParams params;
+    private static ProxySettings proxySettings;
 
     // This static block initializes Apache HttpClient.
     static {
@@ -53,7 +49,9 @@ public class ApacheHttpProvider implements HttpProvider {
         schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
         params = new BasicHttpParams();
         ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRoute() {
-            public int getMaxForRoute(HttpRoute route) { return MAX_CONNECTIONS_PER_ROUTE; }
+            public int getMaxForRoute(HttpRoute route) {
+                return MAX_CONNECTIONS_PER_ROUTE;
+            }
         });
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setUserAgent(params, DEFAULT_USER_AGENT);
@@ -67,6 +65,8 @@ public class ApacheHttpProvider implements HttpProvider {
         //httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, ProxySettings.getInstance());
     }
 
+    private int socketTimeoutMillis = SOCKET_TIMEOUT_MILLIS;
+
     public void setUserAgent(String agent) {
         HttpProtocolParams.setUserAgent(params, agent);
     }
@@ -76,17 +76,14 @@ public class ApacheHttpProvider implements HttpProvider {
     }
 
     
+    ///////////////  Whither these ????  ////////////////////////
+    
     public HttpClient getHttpClient() {
         return httpClient;
     }
 
-    
-    ///////////////  Whither these ????  ////////////////////////
-    
-    private static ProxySettings proxySettings;
-
     public void setProxyInfo(int useProxy, String httpProxyHost, int httpProxyPort,
-                                        String socksProxyHost, int socksProxyPort) {
+                             String socksProxyHost, int socksProxyPort) {
         proxySettings.setProxyInfo(useProxy, httpProxyHost, httpProxyPort);
     }
 

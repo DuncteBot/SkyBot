@@ -8,7 +8,7 @@ import com.wolfram.alpha.visitor.Visitable;
 
 
 public interface WAQueryResult extends Visitable {
-
+    
     // Can be null (if this is a recalc query, performed by WAEngine.performReclaculate()).
     WAQuery getQuery();
     
@@ -51,11 +51,11 @@ public interface WAQueryResult extends Visitable {
     WASourceInfo[] getSources();
     
     String[] getLanguageMessage();
-
+    
     WAFutureTopic getFutureTopic();
-
+    
     WAExamplePage getExamplePage();
-
+    
     void acquireImages();
     
     void finishAsync();
@@ -64,12 +64,12 @@ public interface WAQueryResult extends Visitable {
     
     String getXML();
     
-    void setUserData(Object obj);
-    
     Object getUserData();
     
+    void setUserData(Object obj);
+    
     void mergeRecalculateResult(WAQueryResult recalcQueryResult);
-
+    
     void mergePodstateResult(WAQueryResult podstateQueryResult);
-
+    
 }

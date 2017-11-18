@@ -4,6 +4,21 @@
  */
 package com.wolfram.alpha.impl;
 
+import com.wolfram.alpha.*;
+import com.wolfram.alpha.net.HttpProvider;
+import com.wolfram.alpha.net.URLFetcher;
+import com.wolfram.alpha.visitor.Visitable;
+import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
@@ -12,36 +27,15 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
-
-import com.wolfram.alpha.WAException;
-import com.wolfram.alpha.WAInfo;
-import com.wolfram.alpha.WAPod;
-import com.wolfram.alpha.WAPodState;
-import com.wolfram.alpha.WASound;
-import com.wolfram.alpha.WASubpod;
-import com.wolfram.alpha.net.HttpProvider;
-import com.wolfram.alpha.net.URLFetcher;
-import com.wolfram.alpha.visitor.Visitable;
-import com.wolfram.alpha.visitor.Visitor;
-
 // This class needs heavy synchronization because its contents can change during download of async content.
 // Subpods, in contrast, are almost immutable once created, except for the image download.
 
 public class WAPodImpl implements WAPod, Visitable, Serializable {
 
+    static final WAPodImpl[] EMPTY_ARRAY = new WAPodImpl[0];
+    private static final long serialVersionUID = 7267507688992616456L;
     private transient HttpProvider http;
     private transient File tempDir;
-    
     private String title;
     private boolean error;
     private String scanner;
@@ -53,12 +47,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     private WAPodStateImpl[] podstates = WAPodStateImpl.EMPTY_ARRAY;
     private WAInfoImpl[] infos = WAInfoImpl.EMPTY_ARRAY;
     private WASoundImpl[] sounds = WASoundImpl.EMPTY_ARRAY;
-    
     private transient Object userData;
-    
-    static final WAPodImpl[] EMPTY_ARRAY = new WAPodImpl[0];
-
-    private static final long serialVersionUID = 7267507688992616456L;
 
     
     WAPodImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
@@ -72,7 +61,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     private synchronized void createFromDOM(Element thisElement) throws WAException {
         
         // Get attribute values of <pod> element
-        error = thisElement.getAttribute("error").equals("true");    
+        error = thisElement.getAttribute("error").equals("true");
         // The only time error=true is for a pod obtained from an async URL. Normal pods are simply
         // absent if they have an error. Error pods are missing all other attributes and have no subelement content.
         if (!error) {
@@ -80,12 +69,13 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             scanner = thisElement.getAttribute("scanner");
             try {
                 position = Integer.parseInt(thisElement.getAttribute("position"));
-            } catch (NumberFormatException e) {}
+            } catch (NumberFormatException e) {
+            }
             id = thisElement.getAttribute("id");
             asyncURL = thisElement.getAttribute("async");
             if (asyncURL.equals(""))
                 asyncURL = null;
-           
+
             // subpods
             NodeList subpodElements = thisElement.getElementsByTagName("subpod");
             int numSubpods = subpodElements.getLength();
@@ -250,7 +240,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             try {
                 URLFetcher fetcher = new URLFetcher(new URL(url), null, http, null);
                 fetcher.fetch();
-                if (fetcher.wasCancelled())  
+                if (fetcher.wasCancelled())
                     throw new WAException("Download of url " + asyncURL + " was cancelled");
                 if (fetcher.getException() != null)
                     throw new WAException(fetcher.getException());
@@ -288,12 +278,12 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     // But the Android app is the main client for this feature, and the Android app needs synchronization, so
     // I'll put it in here.
     
-    public synchronized void setUserData(Object obj) {
-        userData = obj;
-    }
-    
     public synchronized Object getUserData() {
         return userData;
+    }
+    
+    public synchronized void setUserData(Object obj) {
+        userData = obj;
     }
 
     
@@ -312,7 +302,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     public synchronized int hashCode() {
         
         int result = 17;
-        result = 37*result + title.hashCode();
+        result = 37 * result + title.hashCode();
         // The only content that can change in this class is the error state and asyncException (these from
         // an async content download), the userData, and the contents of the subpods and the 
         // sounds. Both of those objects can change as their content is downloaded (e.g., image and sound URLs)
@@ -320,15 +310,15 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
         // considerations, we don't really care about sounds (their visual representation on screen is not
         // affected by whether the sound file has been downloaded or not), but for completeness and to
         // avoid possible future bugs, we include them.
-        result = 37*result + (error ? 1 : 0);
+        result = 37 * result + (error ? 1 : 0);
         if (asyncException != null)
-            result = 37*result + asyncException.hashCode();
+            result = 37 * result + asyncException.hashCode();
         if (userData != null)
-            result = 37*result + userData.hashCode();
+            result = 37 * result + userData.hashCode();
         for (WASubpod subpod : subpods)
-            result = 37*result + subpod.hashCode();
+            result = 37 * result + subpod.hashCode();
         for (WASound sound : sounds)
-            result = 37*result + sound.hashCode();
+            result = 37 * result + sound.hashCode();
         return result;
     }
     

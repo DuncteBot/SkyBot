@@ -18,13 +18,18 @@
 
 package ml.duncte123.skybot.commands.essentials.eval;
 
+import Java.lang.VRCubeException;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import Java.lang.VRCubeException;
-import ml.duncte123.skybot.entities.delegate.*;
+import ml.duncte123.skybot.entities.delegate.GuildDelegate;
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.MemberDelegate;
+import ml.duncte123.skybot.entities.delegate.UserDelegate;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
@@ -67,10 +72,10 @@ public class EvalCommand extends Command {
         this.category = CommandCategory.UNLISTED;
         //the GroovyShell is for the public eval
         protected_ = new GroovyShell(
-                new CompilerConfiguration()
-                .addCompilationCustomizers(new SandboxTransformer()));
+                                            new CompilerConfiguration()
+                                                    .addCompilationCustomizers(new SandboxTransformer()));
         engine = new ScriptEngineManager(protected_.getClassLoader()).getEngineByName("groovy");
-        packageImports =  Arrays.asList(
+        packageImports = Arrays.asList(
                 "java.io",
                 "java.lang",
                 "java.util",
@@ -87,14 +92,14 @@ public class EvalCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
-                event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
+                                          event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
 //        boolean isRanByBotOwner = false;
 
-        if(!isRanByBotOwner && !hasUserUpvoted(event.getAuthor().getId())) {
+        if (!isRanByBotOwner && !hasUserUpvoted(event.getAuthor().getId())) {
             sendError(event.getMessage());
             sendEmbed(event, EmbedUtils.embedMessage("The eval command is locked for people who have not upvoted the bot," +
-                    " please consider to hit the upvote button over at " +
-                    "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
+                                                             " please consider to hit the upvote button over at " +
+                                                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
             return;
         }
         
@@ -108,18 +113,18 @@ public class EvalCommand extends Command {
                 for (final String s : packageImports) {
                     importStringBuilder.append("import ").append(s).append(".*;\n");
                 }
-    
+
                 String script = importStringBuilder.toString() +
-                        event.getMessage().getRawContent()
-                            .substring(event.getMessage().getRawContent()
-                                    .split(" ")[0].length());
+                                        event.getMessage().getRawContent()
+                                                .substring(event.getMessage().getRawContent()
+                                                                   .split(" ")[0].length());
                 
                 int timeout = 5;
-                if(isRanByBotOwner) {
+                if (isRanByBotOwner) {
                     timeout = 60;
-    
+
                     engine.put("commandmanager", AirUtils.commandManager);
-    
+
                     engine.put("message", event.getMessage());
                     engine.put("channel", event.getMessage().getTextChannel());
                     engine.put("guild", event.getGuild());
@@ -127,16 +132,16 @@ public class EvalCommand extends Command {
                     engine.put("jda", event.getJDA());
                     engine.put("shardmanager", event.getJDA().asBot().getShardManager());
                     engine.put("event", event);
-    
+
                     engine.put("args", args);
-    
+
                     future = service.schedule(
                             () -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
                 } else {
-    
-                    if(filter.filterArrays(script))
+
+                    if (filter.filterArrays(script))
                         throw new VRCubeException("Arrays are not allowed");
-                    if(filter.filterLoops(script))
+                    if (filter.filterLoops(script))
                         throw new VRCubeException("Loops are not allowed");
 
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
@@ -149,45 +154,42 @@ public class EvalCommand extends Command {
                         return protected_.evaluate(script);
                     }, 0, TimeUnit.MILLISECONDS);
                 }
-    
+
                 Object out = future.get(timeout, TimeUnit.SECONDS);
                 
-                if (out != null && !String.valueOf(out).isEmpty() ) {
-                    if(isRanByBotOwner)
+                if (out != null && !String.valueOf(out).isEmpty()) {
+                    if (isRanByBotOwner)
                         (new MessageBuilder())
                                 .append(out.toString())
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
                                 .forEach(it -> event.getChannel().sendMessage(it).queue());
                     else {
-                        if(filter.containsMentions(out.toString())) {
+                        if (filter.containsMentions(out.toString())) {
                             sendMsg(event, "**ERROR:** Mentioning people!");
                             sendError(event.getMessage());
                         } else {
                             sendMsg(event, "**" + event.getAuthor().getName()
-                                    + ":** " + out.toString()
-                                    .replaceAll("@here", "@h\u0435re")
-                                    .replaceAll("@everyone", "@\u0435veryone"));
+                                                   + ":** " + out.toString()
+                                                                      .replaceAll("@here", "@h\u0435re")
+                                                                      .replaceAll("@everyone", "@\u0435veryone"));
                         }
                     }
                 } else {
                     sendSuccess(event.getMessage());
                 }
-    
-            }
-            catch (ExecutionException e1)  {
+
+            } catch (ExecutionException e1) {
                 event.getChannel().sendMessage("ERROR: " + e1.getCause().toString()).queue();
                 //e.printStackTrace();
                 sendError(event.getMessage());
-            }
-            catch (TimeoutException | InterruptedException e2) {
+            } catch (TimeoutException | InterruptedException e2) {
                 assert future != null;
                 future.cancel(true);
                 event.getChannel().sendMessage("ERROR: " + e2.toString()).queue();
                 //e.printStackTrace();
-                if(!future.isCancelled()) future.cancel(true);
+                if (!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
-            }
-            catch (IllegalArgumentException | VRCubeException e3) {
+            } catch (IllegalArgumentException | VRCubeException e3) {
                 sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
                 sendError(event.getMessage());
             }
@@ -213,25 +215,26 @@ public class EvalCommand extends Command {
 
     /**
      * This will check if a user has pressed the upvote button on https://discordbots.org/bot/210363111729790977
+     *
      * @param userId The id of the user to check
      * @return true if we found a upvote
      */
     private boolean hasUserUpvoted(String userId) {
-        if(usersThatHaveUpvoted.contains(userId)) return true;
+        if (usersThatHaveUpvoted.contains(userId)) return true;
         //The token to check if a user has pressed the upvote for the bot
         String discordbotlistApiKey = AirUtils.config.getString("apis.discordbots_userToken");
 
-        if(discordbotlistApiKey == null) {
+        if (discordbotlistApiKey == null) {
             return false;
         }
 
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
-                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                .get()
-                .addHeader("Authorization", discordbotlistApiKey)
-                .build();
+                                  .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                                  .get()
+                                  .addHeader("Authorization", discordbotlistApiKey)
+                                  .build();
 
         try {
             Response rawJsaonArray = client.newCall(request).execute();
@@ -240,8 +243,7 @@ public class EvalCommand extends Command {
             usersThatHaveUpvoted.clear();
             jsonArray.iterator().forEachRemaining(it -> usersThatHaveUpvoted.add(String.valueOf(it)));
             return jsonArray.toList().contains(userId);
-        }
-        catch (IOException | NullPointerException e) {
+        } catch (IOException | NullPointerException e) {
             e.printStackTrace();
             return false;
         }
@@ -259,6 +261,6 @@ public class EvalCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"eval™", "evaluate"};
+        return new String[]{"eval™", "evaluate"};
     }
 }

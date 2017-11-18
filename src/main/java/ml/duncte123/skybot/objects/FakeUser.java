@@ -28,15 +28,16 @@ import sun.reflect.generics.reflectiveObjects.NotImplementedException;
 import java.util.List;
 
 public class FakeUser implements User {
-
+    
     private final String name;
     private final String id;
     private final String discrm;
-
+    
     /**
      * This will create a user based on the things that we put in
-     * @param name The name that the user has
-     * @param id The user id
+     *
+     * @param name   The name that the user has
+     * @param id     The user id
      * @param discrm The discriminator that the user has
      */
     public FakeUser(String name, String id, String discrm) {
@@ -44,82 +45,82 @@ public class FakeUser implements User {
         this.id = id;
         this.discrm = discrm;
     }
-
+    
     @Override
     public String getName() {
         return this.name;
     }
-
+    
     @Override
     public String getDiscriminator() {
         return this.discrm;
     }
-
+    
     @Override
     public String getId() {
         return this.id;
     }
-
+    
     @Override
     public String getAvatarId() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public String getAvatarUrl() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public String getDefaultAvatarId() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public String getDefaultAvatarUrl() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public String getEffectiveAvatarUrl() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public boolean hasPrivateChannel() {
         return false;
     }
-
+    
     @Override
     public RestAction<PrivateChannel> openPrivateChannel() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public List<Guild> getMutualGuilds() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public boolean isBot() {
         return false;
     }
-
+    
     @Override
     public JDA getJDA() {
         throw new NotImplementedException();
     }
-
+    
     @Override
     public boolean isFake() {
         return false;
     }
-
+    
     @Override
     public String getAsMention() {
         return null;
     }
-
+    
     @Override
     public long getIdLong() {
         return Long.parseLong(this.id);

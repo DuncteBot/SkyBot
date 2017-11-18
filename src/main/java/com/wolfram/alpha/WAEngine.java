@@ -4,31 +4,29 @@
  */
 package com.wolfram.alpha;
 
+import com.wolfram.alpha.impl.WAQueryImpl;
+import com.wolfram.alpha.impl.WAQueryParametersImpl;
+import com.wolfram.alpha.impl.WAQueryResultImpl;
+import com.wolfram.alpha.net.HttpProvider;
+import com.wolfram.alpha.net.HttpProviderFactory;
+import com.wolfram.alpha.net.URLFetcher;
+
 import java.io.File;
 import java.net.MalformedURLException;
 import java.net.URL;
 
-import com.wolfram.alpha.impl.WAQueryImpl;
-import com.wolfram.alpha.impl.WAQueryParametersImpl;
-import com.wolfram.alpha.impl.WAQueryResultImpl;
-import com.wolfram.alpha.net.HttpProviderFactory;
-import com.wolfram.alpha.net.HttpProvider;
-import com.wolfram.alpha.net.URLFetcher;
-
 
 public class WAEngine extends WAQueryParametersImpl {
-
-    private static final long serialVersionUID = -5237279408150019312L;
     
+    private static final long serialVersionUID = -5237279408150019312L;
+    HttpProvider http;
+    File downloadDir;
     // These fields belong to the engine. They are not propagated to the WAQuery. If you want different values
     // for any of these in your app, create a differnt WAEngine. You can execute WAQuery objects created by one
     // WAEngine in another.
     private String server = "api.wolframalpha.com";
     private String path = "/v2/query";
     private String appid;
-
-    HttpProvider http;
-    File downloadDir;
     
     // TODO. These ctors are a total mess. Cut them down and add setters.
     
@@ -89,21 +87,20 @@ public class WAEngine extends WAQueryParametersImpl {
     public void setAppID(String appid) {
         this.appid = appid;
     }
-        
     
     
-    public WAQuery createQuery() {      
-        return new WAQueryImpl(this);    
+    public WAQuery createQuery() {
+        return new WAQueryImpl(this);
     }
     
-    public WAQuery createQuery(String input) {      
+    public WAQuery createQuery(String input) {
         WAQuery query = createQuery();
         query.setInput(input);
         return query;
     }
     
     // Parse from a URL, either http://api.wolframalpha.com/....?input=foo&appid=bar...  or just input=foo&appid=bar...
-    public WAQuery createQueryFromURL(String url) {      
+    public WAQuery createQueryFromURL(String url) {
         WAQuery query = createQuery();
         query.fillFromURL(url);
         return query;
@@ -122,14 +119,14 @@ public class WAEngine extends WAQueryParametersImpl {
         
         URLFetcher fetcher = new URLFetcher(url, null, http, null);
         fetcher.fetch();
-        if (fetcher.wasCancelled())  
+        if (fetcher.wasCancelled())
             throw new WAException("Download of url " + url + " was cancelled");
         if (fetcher.getException() != null)
             throw new WAException(fetcher.getException());
         return new WAQueryResultImpl(query, fetcher.getBytes(), http, downloadDir);
     }
     
-        
+    
     public WAQueryResult performRecalculate(String recalcURL) throws WAException {
         
         URL url;
@@ -142,14 +139,14 @@ public class WAEngine extends WAQueryParametersImpl {
         
         URLFetcher fetcher = new URLFetcher(url, null, http, null);
         fetcher.fetch();
-        if (fetcher.wasCancelled())  
+        if (fetcher.wasCancelled())
             throw new WAException("Download of url " + url + " was cancelled");
         if (fetcher.getException() != null)
             throw new WAException(fetcher.getException());
         return new WAQueryResultImpl(null, fetcher.getBytes(), http, downloadDir);
     }
     
-        
+    
     public String toURL(WAQuery query) {
         return "http://" + server + path + "?" + "appid=" + appid + query;
     }
@@ -160,10 +157,10 @@ public class WAEngine extends WAQueryParametersImpl {
     public HttpProvider getHttpProvider() {
         return http;
     }
- 
+    
     
     public File getDownloadDir() {
         return downloadDir;
     }
     
- }
+}

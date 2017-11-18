@@ -4,37 +4,30 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.File;
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASubpod;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.File;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class WASubpodImpl implements WASubpod, Visitable, Serializable {
 
+    static final WASubpodImpl[] EMPTY_ARRAY = new WASubpodImpl[0];
+    private static final long serialVersionUID = 7545052461156130238L;
     private String title;
-    
     private volatile boolean imageAcquired = false;
     private Object userData;
-    
     private transient HttpProvider http;
-
-       
     private Visitable[] contentElements = EMPTY_VISITABLE_ARRAY;
-    
-    static final WASubpodImpl[] EMPTY_ARRAY = new WASubpodImpl[0];
-    
-    private static final long serialVersionUID = 7545052461156130238L;
 
     
     WASubpodImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
@@ -69,12 +62,12 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
         return contentElements;
     }
     
-    public synchronized void setUserData(Object obj) {
-        userData = obj;
-    }
-    
     public synchronized Object getUserData() {
         return userData;
+    }
+    
+    public synchronized void setUserData(Object obj) {
+        userData = obj;
     }
 
     ////////////////////////  hashCode()  /////////////////////////
@@ -91,15 +84,15 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
     public synchronized int hashCode() {
         
         int result = 17;
-        result = 37*result + title.hashCode();
+        result = 37 * result + title.hashCode();
         for (Object obj : contentElements) {
             if (obj instanceof WAImageImpl) {
-                result = 37*result + obj.hashCode();
+                result = 37 * result + obj.hashCode();
                 break;
             }
         }
         if (userData != null)
-            result = 37*result + userData.hashCode();
+            result = 37 * result + userData.hashCode();
         return result;
     }
     

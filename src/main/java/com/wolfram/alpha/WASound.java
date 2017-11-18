@@ -4,9 +4,9 @@
  */
 package com.wolfram.alpha;
 
-import java.io.File;
-
 import com.wolfram.alpha.visitor.Visitable;
+
+import java.io.File;
 
 
 public interface WASound extends Visitable {
@@ -18,5 +18,5 @@ public interface WASound extends Visitable {
     File getFile();
     
     void acquireSound();
-
+    
 }

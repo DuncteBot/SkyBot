@@ -38,6 +38,7 @@ public class SkyBot {
 
     /**
      * This is our main method
+     *
      * @param args The args passed in while running the bot
      * @throws Exception When you mess something up
      * @deprecated Because I can lol
@@ -45,16 +46,16 @@ public class SkyBot {
     @Deprecated
     public static void main(String... args) throws Exception {
         boolean restart = false;
-        if(args.length > 0)
+        if (args.length > 0)
             restart = args[0].equals("--do-restart");
         
         //Set the logger to only info by default
-        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
-        if(useDatabase) { //Don't try to connect if we don't want to
+        if (useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
@@ -94,7 +95,7 @@ public class SkyBot {
                 .addEventListeners(new BotListener(restart)) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.of(Settings.prefix  + "help | Shard #" + (shardId + 1)))
+                .setGameProvider(shardId -> Game.of(Settings.prefix + "help | Shard #" + (shardId + 1)))
                 .setToken(token)
                 .buildAsync();
 

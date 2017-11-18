@@ -46,12 +46,15 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class AudioUtils {
-
+    
     /**
      * This is the default volume that the player will play at
      */
     private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
-
+    /**
+     * This is the title that you see in the embeds from the player
+     */
+    public final String embedTitle = Settings.playerTitle;
     /**
      * This will hold the manager for the audio player
      */
@@ -60,18 +63,13 @@ public class AudioUtils {
      * This will store all the music managers for all the guilds that we are playing music in
      */
     private final Map<String, GuildMusicManager> musicManagers;
-
-    /**
-     * This is the title that you see in the embeds from the player
-     */
-    public final String embedTitle = Settings.playerTitle;
-
+    
     /**
      * This will set everything up and get the player ready
      */
-    public AudioUtils(){
+    public AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-
+        
         this.playerManager = new DefaultAudioPlayerManager();
         playerManager.registerSourceManager(new YoutubeAudioSourceManager());
         playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
@@ -81,33 +79,52 @@ public class AudioUtils {
         playerManager.registerSourceManager(new BeamAudioSourceManager());
         //playerManager.registerSourceManager(new HttpAudioSourceManager());
         playerManager.registerSourceManager(new LocalAudioSourceManager());
-
+        
         //AudioSourceManagers.registerRemoteSources(playerManager);
         // No one plays audio from the host machine ;)
         // AudioSourceManagers.registerLocalSource(playerManager);
-
+        
         musicManagers = new HashMap<>();
     }
-
+    
+    /**
+     * This will return the formatted timestamp for the current playing track
+     *
+     * @param miliseconds the miliseconds that the track is at
+     * @return a formatted time
+     */
+    public static String getTimestamp(long miliseconds) {
+        int seconds = (int) (miliseconds / 1000) % 60;
+        int minutes = (int) ((miliseconds / (1000 * 60)) % 60);
+        int hours = (int) ((miliseconds / (1000 * 60 * 60)) % 24);
+        
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+    
     /**
      * Loads a track and plays it if the bot isn't playing
-     * @param mng The {@link GuildMusicManager MusicManager} for the guild
-     * @param channel The {@link net.dv8tion.jda.core.entities.MessageChannel channel} that the bot needs to send the messages to
+     *
+     * @param mng         The {@link GuildMusicManager MusicManager} for the guild
+     * @param channel     The {@link net.dv8tion.jda.core.entities.MessageChannel channel} that the bot needs to send the messages to
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList){
+    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList) {
         final String trackUrl;
-
+        
         //Strip <>'s that prevent discord from embedding link resources
         if (trackUrlRaw.startsWith("<") && trackUrlRaw.endsWith(">")) {
             trackUrl = trackUrlRaw.substring(1, trackUrlRaw.length() - 1);
         } else {
             trackUrl = trackUrlRaw;
         }
-
+        
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
-
+            
             /**
              * fires when a track is loaded
              * @param track The current {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack track} that has been loaded
@@ -115,15 +132,15 @@ public class AudioUtils {
             @Override
             public void trackLoaded(AudioTrack track) {
                 String msg = "Adding to queue: " + track.getInfo().title;
-                if(mng.player.getPlayingTrack() == null){
+                if (mng.player.getPlayingTrack() == null) {
                     msg += "\nand the Player has started playing;";
                 }
-
+                
                 mng.scheduler.queue(track);
                 sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
-
+                
             }
-
+            
             /**
              * Fires when a playlist is loaded
              * @param playlist The {@link com.sedmelluq.discord.lavaplayer.track.AudioPlaylist playlist} that has been loaded
@@ -132,54 +149,55 @@ public class AudioUtils {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
-
-                if(firstTrack == null){
+                
+                if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
                 String msg = "";
-
-                if(addPlayList){
-                    msg = "Adding **"+playlist.getTracks().size()+"** tracks to queue from playlist: "+playlist.getName();
-                    if(mng.player.getPlayingTrack() == null){
+                
+                if (addPlayList) {
+                    msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
+                    if (mng.player.getPlayingTrack() == null) {
                         msg += "\nand the Player has started playing;";
                     }
                     tracks.forEach(mng.scheduler::queue);
-                }else{
-                    msg = "Adding to queue "+ firstTrack.getInfo().title+" (first track of playlist "+playlist.getName()+")";
-                    if(mng.player.getPlayingTrack() == null){
+                } else {
+                    msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                    if (mng.player.getPlayingTrack() == null) {
                         msg += "\nand the Player has started playing;";
                     }
                     mng.scheduler.queue(firstTrack);
                 }
                 sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
             }
-
+            
             /**
              * When noting is found for the search
              */
             @Override
             public void noMatches() {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _"+trackUrl+"_"), channel);
+                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"), channel);
             }
-
+            
             /**
              * When something broke and you need to scream at <em>duncte123#1245</em>
              * @param exception A {@link com.sedmelluq.discord.lavaplayer.tools.FriendlyException FriendlyException}
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-               sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: "+exception.getMessage()), channel);
-
+                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()), channel);
+                
             }
         });
     }
-
+    
     /**
      * This will get the music manager for the guild or register it if we don't have it yet
+     *
      * @param guild The guild that we need the manager for
      * @return The music manager for that guild
      */
-    public synchronized GuildMusicManager getMusicManager(Guild guild){
+    public synchronized GuildMusicManager getMusicManager(Guild guild) {
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
@@ -192,41 +210,25 @@ public class AudioUtils {
                 }
             }
         }
-
+        
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
-
+        
         return mng;
     }
-
+    
     /**
      * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param embed {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     *
+     * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      * @param channel {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
-        if(!tc.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-             channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+        if (!tc.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
+            channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
             return;
         }
         channel.sendMessage(embed).queue();
     }
-
-    /**
-     * This will return the formatted timestamp for the current playing track
-     * @param miliseconds the miliseconds that the track is at
-     * @return a formatted time
-     */
-    public static String getTimestamp(long miliseconds){
-        int seconds = (int) (miliseconds / 1000) % 60;
-        int minutes = (int) ((miliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((miliseconds / (1000 * 60 * 60)) % 24);
-
-        if(hours > 0) {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
-    }
-
+    
 }

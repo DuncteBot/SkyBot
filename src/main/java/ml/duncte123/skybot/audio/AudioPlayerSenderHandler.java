@@ -28,36 +28,38 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     /**
      * This is our audio player
      */
-    private final  AudioPlayer audioPlayer;
+    private final AudioPlayer audioPlayer;
     /**
      * I don't know what this does but it seems important
      */
     private AudioFrame lastFrame;
 
-    public AudioPlayerSenderHandler(AudioPlayer audioPlayer){
+    public AudioPlayerSenderHandler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
     /**
      * Checks if the player can provide the song
+     *
      * @return true if we can provide something
      */
     @Override
     public boolean canProvide() {
-      if (lastFrame == null) {
-        lastFrame = audioPlayer.provide();
-      }
-      return lastFrame != null;
+        if (lastFrame == null) {
+            lastFrame = audioPlayer.provide();
+        }
+        return lastFrame != null;
     }
 
     /**
      * This <em>should</em> gives us our audio
+     *
      * @return The audio in some nice bytes
      */
     @Override
     public byte[] provide20MsAudio() {
 
-        if(lastFrame == null){
+        if (lastFrame == null) {
             lastFrame = audioPlayer.provide();
         }
 
@@ -68,10 +70,11 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
 
     /**
      * "Checks" if this audio is opus
+     *
      * @return always true
      */
     @Override
-    public boolean isOpus(){
+    public boolean isOpus() {
         return true;
     }
 

@@ -52,7 +52,7 @@ public class JokeCommand extends Command {
             JSONObject data = jsonObject.getJSONObject("data");
             JSONArray children = data.getJSONArray("children");
 
-            if(!jokeIndex.containsKey(guildId) || jokeIndex.get(guildId) >= children.length()){
+            if (!jokeIndex.containsKey(guildId) || jokeIndex.get(guildId) >= children.length()) {
                 jokeIndex.put(guildId, 0);
             }
 
@@ -68,8 +68,7 @@ public class JokeCommand extends Command {
 
             sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build());
 
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             sendMsg(event, "ERROR: " + e.getMessage());
             e.printStackTrace();
         }

@@ -28,8 +28,9 @@ public class CommandParser {
 
     /**
      * This will split an command into the command and the args
+     *
      * @param rw the raw text
-     * @param e An instance of the {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param e  An instance of the {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @return Our {@link CommandContainer CommandContainer}
      */
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e) {
@@ -40,22 +41,23 @@ public class CommandParser {
         return new CommandContainer(invoke, args, e);
     }
 
-     public static class CommandContainer {
-         public final String invoke;
-         public final String[] args;
-         public final GuildMessageReceivedEvent event;
+    public static class CommandContainer {
+        public final String invoke;
+        public final String[] args;
+        public final GuildMessageReceivedEvent event;
 
-         /**
-          * Puts the contents of a command in a simple class
-          * @param invoke The command that is ran
-          * @param args The arguments from the command
-          * @param e A ninstance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
-          */
-         private CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e){
-             this.invoke = invoke;
-             this.args = args;
-             this.event = e;
-         }
-     }
+        /**
+         * Puts the contents of a command in a simple class
+         *
+         * @param invoke The command that is ran
+         * @param args   The arguments from the command
+         * @param e      A ninstance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+         */
+        private CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e) {
+            this.invoke = invoke;
+            this.args = args;
+            this.event = e;
+        }
+    }
 
 }

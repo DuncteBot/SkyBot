@@ -4,53 +4,36 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.parsers.FactoryConfigurationError;
-import javax.xml.parsers.ParserConfigurationException;
-
+import com.wolfram.alpha.*;
+import com.wolfram.alpha.net.HttpProvider;
+import com.wolfram.alpha.visitor.Visitable;
+import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-import com.wolfram.alpha.WAAssumption;
-import com.wolfram.alpha.WAExamplePage;
-import com.wolfram.alpha.WAException;
-import com.wolfram.alpha.WAFutureTopic;
-import com.wolfram.alpha.WAPod;
-import com.wolfram.alpha.WAQuery;
-import com.wolfram.alpha.WAQueryResult;
-import com.wolfram.alpha.WARelatedExample;
-import com.wolfram.alpha.WARelatedLink;
-import com.wolfram.alpha.WASourceInfo;
-import com.wolfram.alpha.WAWarning;
-import com.wolfram.alpha.net.HttpProvider;
-import com.wolfram.alpha.visitor.Visitable;
-import com.wolfram.alpha.visitor.Visitor;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.FactoryConfigurationError;
+import javax.xml.parsers.ParserConfigurationException;
+import java.io.*;
+import java.util.ArrayList;
+import java.util.List;
 
 
 public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable {
     
+    private static final String[] EMPTY_STRING_ARRAY = new String[]{};
+    private static final long serialVersionUID = 6045494030310944812L;
     private transient WAQuery query;
     private byte[] bytes;
     private transient File tempDir;
     private transient HttpProvider http;
-    
     private transient Object userData;
-    
     //States
     private boolean imagesAcquired = false;
-    
     // Attributes
     private boolean success;
     private boolean error;
@@ -62,7 +45,6 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     private double parseTiming;
     private String version;
     private String recalcURL = "";
-    
     // Subelements
     private WAPodImpl[] pods = WAPodImpl.EMPTY_ARRAY;
     private WAAssumptionImpl[] assumptions = WAAssumptionImpl.EMPTY_ARRAY;
@@ -77,16 +59,11 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     private WAExamplePage examplePage;
     
     
-    private static final String[] EMPTY_STRING_ARRAY = new String[]{};
-
-    private static final long serialVersionUID = 6045494030310944812L;
-
-    
     // TODO: Provide soem way to release the bytes array. The only reason to keep it around is for
     // the getXML() method, but many users will never want to call that. Perhaps the ctor can take an
     // arg that says whether to store the byte array or not.
     
-   
+    
     // I _could_ lazily parse the bytes, but I think it's better to force parsing errors to
     // occur in a well-defined place, not potentially from every accessor.
     public WAQueryResultImpl(WAQuery query, byte[] bytes, HttpProvider http, File tempDir) throws WAException {
@@ -102,7 +79,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
              *  SAXParser parser = factory.newSAXParser();
              *  AlphaSAXHandler handler = new AlphaSAXHandler(this);
              *  parser.parse(new ByteArrayInputStream(bytes), handler);
-            ***/
+             ***/
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(bytes));
@@ -118,7 +95,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         }
     }
     
-
+    
     public boolean isSuccess() {
         return success;
     }
@@ -134,7 +111,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     public String getErrorMessage() {
         return errorMessage;
     }
-
+    
     
     // Can be null (if this is a recalc query, performed by WAEngine.performReclaculate(), or a deserialized instance).
     public WAQuery getQuery() {
@@ -194,11 +171,11 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     public WASourceInfo[] getSources() {
         return sources;
     }
-
+    
     public String[] getDidYouMeans() {
         return didYouMeans;
     }
-
+    
     public WARelatedExample[] getRelatedExamples() {
         return relatedExamples;
     }
@@ -206,12 +183,12 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     public String[] getLanguageMessage() {
         return languageMessage;
     }
-
+    
     public WAFutureTopic getFutureTopic() {
         return futureTopic;
     }
     
-    public  WAExamplePage getExamplePage() {
+    public WAExamplePage getExamplePage() {
         return examplePage;
     }
     
@@ -276,7 +253,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             pods = allPods;
         }
     }
-
+    
     public synchronized void mergePodstateResult(WAQueryResult podstateQueryResult) {
         
         WAPod[] newPods = podstateQueryResult.getPods();
@@ -293,8 +270,8 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             }
         }
     }
-
-
+    
+    
     public String getXML() {
         try {
             return new String(bytes, "ISO-8859-1");
@@ -303,28 +280,27 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             return null;
         }
     }
-
-
+    
+    
     public void release() {
         // Could do this like acquireImages, via explicit interface methods, or by a visitor.
         // Probably via visitor, since it doesnt seem likely that a user would want to release
         // a specific pod. Probably just want to throw away everything when done with a query.
     }
     
+    public Object getUserData() {
+        return userData;
+    }
     
     public void setUserData(Object obj) {
         userData = obj;
     }
     
-    public Object getUserData() {
-        return userData;
-    }
-
     
     ///////////////////////////  createFromDOM  ///////////////////////////////
     
     private void createFromDOM(Element thisElement) throws WAException {
-                
+        
         // Get attribute values of <queryresult> element
         success = thisElement.getAttribute("success").equals("true");
         error = thisElement.getAttribute("error").equals("true");
@@ -353,10 +329,12 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         } else {
             try {
                 timing = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             try {
                 parseTiming = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException ignored) {}
+            } catch (NumberFormatException ignored) {
+            }
             version = thisElement.getAttribute("version");
             dataTypes = thisElement.getAttribute("datatypes").split(",");
             timedoutScanners = thisElement.getAttribute("timedout").split(",");
@@ -421,15 +399,15 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             int numRelateds = relatedLinkElements.getLength();
             relatedLinks = new WARelatedLinkImpl[numRelateds];
             for (int i = 0; i < numRelateds; i++)
-                relatedLinks[i] = new WARelatedLinkImpl((Element) relatedLinkElements.item(i), http, tempDir);            
-
+                relatedLinks[i] = new WARelatedLinkImpl((Element) relatedLinkElements.item(i), http, tempDir);
+            
             NodeList didYouMeanElements = thisElement.getElementsByTagName("didyoumean");
             int numDidYouMeans = didYouMeanElements.getLength();
             if (numDidYouMeans > 0) {
                 didYouMeans = new String[numDidYouMeans];
                 for (int i = 0; i < numDidYouMeans; i++) {
                     Node textNode = didYouMeanElements.item(i).getFirstChild();
-                    didYouMeans[i] = textNode.getNodeValue(); 
+                    didYouMeans[i] = textNode.getNodeValue();
                 }
             }
             
@@ -438,9 +416,9 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             if (numRelatedExamples > 0) {
                 relatedExamples = new WARelatedExampleImpl[numRelatedExamples];
                 for (int i = 0; i < numRelatedExamples; i++)
-                    relatedExamples[i] = new WARelatedExampleImpl((Element) relatedExampleElements.item(i), http, tempDir);             
+                    relatedExamples[i] = new WARelatedExampleImpl((Element) relatedExampleElements.item(i), http, tempDir);
             }
-
+            
             NodeList languageMsgElements = thisElement.getElementsByTagName("languagemsg");
             int numLanugageMsgs = languageMsgElements.getLength();
             // Should be 0 or 1.
@@ -450,7 +428,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 String foreign = languageMsgElement.getAttribute("other");
                 languageMessage = new String[]{english, foreign};
             }
-
+            
             NodeList sourcesElements = thisElement.getElementsByTagName("sources");
             // There should be 0 or 1. This is the <sources> element, not the elements for each
             // individual <source>.)
@@ -473,12 +451,12 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             NodeList futureTopicElements = thisElement.getElementsByTagName("futuretopic");
             // There should be 0 or 1.
             if (futureTopicElements.getLength() > 0)
-                futureTopic = new WAFutureTopicImpl((Element) futureTopicElements.item(0));            
+                futureTopic = new WAFutureTopicImpl((Element) futureTopicElements.item(0));
             
             NodeList examplePageElements = thisElement.getElementsByTagName("examplepage");
             // There should be 0 or 1.
             if (examplePageElements.getLength() > 0)
-                examplePage = new WAExamplePageImpl((Element) examplePageElements.item(0));            
+                examplePage = new WAExamplePageImpl((Element) examplePageElements.item(0));
         }
     }
     
@@ -492,6 +470,6 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             pod.accept(v);
         }
     }
-
-
+    
+    
 }

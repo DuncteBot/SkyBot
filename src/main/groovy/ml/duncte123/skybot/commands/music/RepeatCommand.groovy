@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class RepeatCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             TrackScheduler scheduler = getMusicManager(event.guild).scheduler
 
             scheduler.setRepeating(!scheduler.repeating)

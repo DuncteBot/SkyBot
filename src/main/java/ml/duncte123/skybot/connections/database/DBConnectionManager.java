@@ -23,26 +23,26 @@ import java.sql.Connection;
 /**
  * Use abstraction to easier handle {@link DatabaseConnectionManager} for
  * databases and {@link SQLiteDatabaseConnectionManager} for file databases
- * 
+ *
  * @author ramidzkh
  */
 public interface DBConnectionManager {
-
+    
     /**
      * @return The connection to use
      */
     Connection getConnection();
-
+    
     /**
      * @return Is the connection opened
      */
     boolean isConnected();
-
+    
     /**
      * @return The name of the database
      */
     String getName();
-
+    
     /**
      * @return Does the database have settings, default to true
      */

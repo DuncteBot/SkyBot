@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.fun;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class FlipCommand extends Command {
@@ -35,23 +34,23 @@ public class FlipCommand extends Command {
         Member member = event.getMember();
         String flippedUser = "";
 
-        if( event.getMessage().getMentionedUsers().size() > 0 ) {
+        if (event.getMessage().getMentionedUsers().size() > 0) {
             member = event.getGuild().getMember(event.getMessage().getMentionedUsers().get(0));
         }
 
         String normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'";
-        String split  = "ɐqɔpǝɟbɥıظʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡/\\,";
+        String split = "ɐqɔpǝɟbɥıظʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡/\\,";
         //maj
         normal += "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        split  += "∀qϽᗡƎℲƃHIſʞ˥WNOԀὉᴚS⊥∩ΛMXʎZ";
+        split += "∀qϽᗡƎℲƃHIſʞ˥WNOԀὉᴚS⊥∩ΛMXʎZ";
         //number
         normal += "0123456789";
-        split  += "0ƖᄅƐㄣϛ9ㄥ86";
+        split += "0ƖᄅƐㄣϛ9ㄥ86";
 
         String username = new StringBuilder().append(member.getEffectiveName()).reverse().toString();
 
         char letter;
-        for (int i=0; i< username.length(); i++) {
+        for (int i = 0; i < username.length(); i++) {
             letter = username.charAt(i);
 
             int a = normal.indexOf(letter);
@@ -64,7 +63,7 @@ public class FlipCommand extends Command {
     @Override
     public String help() {
         return "Flips a user.\n" +
-                "Usage: `"+this.PREFIX+getName()+" [@user]`";
+                       "Usage: `" + this.PREFIX + getName() + " [@user]`";
     }
 
     @Override

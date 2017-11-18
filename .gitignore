@@ -112,3 +112,5 @@ logs\.txt
 \.idea/copyright/profiles_settings\.xml
 
 \.idea/inspectionProfiles/
+
+\.idea/codeStyleSettings\.xml

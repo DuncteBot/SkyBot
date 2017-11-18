@@ -29,22 +29,22 @@ import org.apache.commons.lang3.StringUtils
 class PlayRawCommand extends PlayCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             Guild guild = event.guild
             GuildMusicManager musicManager = getMusicManager(guild)
             AudioPlayer player = musicManager.player
             TrackScheduler scheduler = musicManager.scheduler
 
-            if(args?.length == 0){
-                if(player.paused){
+            if (args?.length == 0) {
+                if (player.paused) {
                     player.setPaused(false)
                     sendMsg(event, "Playback has been resumed.")
-                }else if(player.playingTrack != null){
+                } else if (player.playingTrack != null) {
                     sendMsg(event, "Player is already playing!")
-                }else if(scheduler.queue.empty){
+                } else if (scheduler.queue.empty) {
                     sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
                 }
-            }else{
+            } else {
                 getAu().loadAndPlay(musicManager, event.channel, StringUtils.join(args, " "), false)
             }
         }

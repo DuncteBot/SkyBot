@@ -29,11 +29,11 @@ import java.net.URL;
 
 public class CatCommand extends Command {
 
+    public final static String help = "here is a cat.";
+
     public CatCommand() {
         this.category = CommandCategory.ANIMALS;
     }
-
-    public final static String help = "here is a cat.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {

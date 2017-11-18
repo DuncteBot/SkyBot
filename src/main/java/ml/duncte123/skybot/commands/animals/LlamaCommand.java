@@ -34,12 +34,11 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String theLlama = (args.length<1 ? "random" : args[0]);
+            String theLlama = (args.length < 1 ? "random" : args[0]);
             String jsonString = WebUtils.getText("https://api.systemexit.co.uk/animals/llama/" + theLlama);
             JSONObject jsonObject = new JSONObject(jsonString);
             event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }

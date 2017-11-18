@@ -4,25 +4,23 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-
-import org.w3c.dom.Element;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WALink;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+
+import java.io.Serializable;
 
 
 public class WALinkImpl implements WALink, Serializable {
     
+    private static final long serialVersionUID = 8863194509191889875L;
     private String url;
     private String text;
     private String title;
-    
-    private static final long serialVersionUID = 8863194509191889875L;
 
     
-    WALinkImpl(Element thisElement) throws WAException {     
+    WALinkImpl(Element thisElement) throws WAException {
         url = thisElement.getAttribute("url");
         text = thisElement.getAttribute("text");
         title = thisElement.getAttribute("title");

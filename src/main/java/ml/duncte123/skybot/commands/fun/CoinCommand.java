@@ -28,15 +28,14 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class CoinCommand extends Command {
 
-    public CoinCommand() {
-        this.category = CommandCategory.FUN;
-    }
-
-    public final static String help = "flips a coin.\nUsage: `"+ Settings.prefix+"coin`";
+    public final static String help = "flips a coin.\nUsage: `" + Settings.prefix + "coin`";
     /**
      * these are our images
      */
-    private final String[] imagesArr = { "heads.png", "tails.png" };
+    private final String[] imagesArr = {"heads.png", "tails.png"};
+    public CoinCommand() {
+        this.category = CommandCategory.FUN;
+    }
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -44,7 +43,7 @@ public class CoinCommand extends Command {
 
         event.getChannel().sendTyping().queue();
         event.getChannel().sendMessage("*Flips a coin*").queue();
-        MessageEmbed eb = EmbedUtils.embedImage(coinUrl+imagesArr[AirUtils.rand.nextInt(2)]);
+        MessageEmbed eb = EmbedUtils.embedImage(coinUrl + imagesArr[AirUtils.rand.nextInt(2)]);
         sendEmbed(event, eb);
     }
 

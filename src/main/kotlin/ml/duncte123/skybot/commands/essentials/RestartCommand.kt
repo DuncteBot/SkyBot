@@ -26,13 +26,13 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 /**
  * @author Sanduhr32
  */
-  
-class RestartCommand : Command() {
 
+class RestartCommand : Command() {
+    
     init {
         this.category = CommandCategory.UNLISTED
     }
-
+    
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
         val shardManager = event.jda.asBot().shardManager
@@ -67,7 +67,7 @@ class RestartCommand : Command() {
         if (args == null) {
             error("args is null?!")
         }
-
+        
         when (args.size) {
             0 -> shardManager.restart()
             1 -> {
@@ -77,7 +77,8 @@ class RestartCommand : Command() {
             else -> sendError(event.message)
         }
     }
+    
     override fun help() = "Restart the bot or a shard\nUsage: ${this.PREFIX}$name [shard id]`"
-
+    
     override fun getName() = "restart"
 }

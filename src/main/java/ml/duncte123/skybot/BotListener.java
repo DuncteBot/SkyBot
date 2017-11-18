@@ -50,22 +50,16 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
-
+    
     /**
      * This is the command parser
      */
     private static CommandParser parser = new CommandParser();
-
-    /**
-     * This filter helps us to fiter out swearing
-     */
-    private BadWordFilter filter = new BadWordFilter();
-
     /**
      * When a command gets ran, it'll be stored in here
      */
     private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
-
+    public final boolean restart;
     /**
      * This timer is for checking unbans
      */
@@ -74,57 +68,62 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #unbanTimer unbanTimer} is running
      */
     public boolean unbanTimerRunning = false;
-
+    
     /**
      * This timer is for checking new quotes
      */
     public Timer settingsUpdateTimer = new Timer();
-
+    
     /**
      * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
      */
     public boolean settingsUpdateTimerRunning = false;
-
-    public final boolean restart;
+    /**
+     * This filter helps us to fiter out swearing
+     */
+    private BadWordFilter filter = new BadWordFilter();
+    private boolean temp = true;
     
     BotListener(boolean restart) {
         this.restart = restart;
     }
-
+    
     /**
      * Listen for messages send to the bot
+     *
      * @param event The corresponding {@link GuildMessageReceivedEvent}
      */
     @Override
-    public void onGuildMessageReceived(GuildMessageReceivedEvent event){
+    public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         //We only want to respond to members/users
-        if(event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember()==null){
+        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null) {
             return;
         }
-
+        
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
-
-        if(event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId()) ){
-            AirUtils.log(Level.INFO,"Initialising shutdown!!!");
+        
+        if (event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
+            AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
-            for(JDA shard : manager.getShards()) {
-                AirUtils.log(Level.INFO,"Shard " + shard.getShardInfo().getShardId() + " has been shut down");
+            for (JDA shard : manager.getShards()) {
+                AirUtils.log(Level.INFO, "Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
             
             try {
                 AirUtils.db.getConnManager().getConnection().close();
-            } catch (SQLException e) {}
+            } catch (SQLException e) {
+            }
             
             System.exit(0);
             return;
         }
-
+        
         Permission[] adminPerms = {
                 Permission.MESSAGE_MANAGE
         };
         
-        if(event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
+        if (event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(adminPerms)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
@@ -136,51 +135,52 @@ public class BotListener extends ListenerAdapter {
             }
         }
         //If the topic contains -commands ignore it
-        if(event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
+        if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
             return;
         }
-
-        if(!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())){
+        
+        if (!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())) {
             return;
-        } else if(event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-
+        } else if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
+            
             if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
                 event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
                 return;
             }
-
+            
         }
-
-            // run the a command
+        
+        // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
         String rw = event.getMessage().getRawContent();
-        if(!Settings.prefix.equals(settings.getCustomPrefix())) {
+        if (!Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
         AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
                 ,
-               event
+                event
         ));
     }
-
+    
     /**
      * When the bot is ready to go
+     *
      * @param event The corresponding {@link net.dv8tion.jda.core.events.ReadyEvent ReadyEvent}
      */
     @Override
-    public void onReady(ReadyEvent event){
+    public void onReady(ReadyEvent event) {
         setWatchingStatus(event.getJDA());
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
-
+        
         AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
                 new String(Settings.iyqrektunkyhuwul3dx0b[0]))
-                | event.getJDA().getSelfUser().getId().equals(
+                                               | event.getJDA().getSelfUser().getId().equals(
                 new String(Settings.iyqrektunkyhuwul3dx0b[1]));
-
+        
         //Start the timers if they have not been started yet
-        if(!unbanTimerRunning && AirUtils.nonsqlite) {
+        if (!unbanTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the unban timer.");
             //Register the timer for the auto unbans
             //I moved the timer here to make sure that every running jar has this only once
@@ -193,7 +193,7 @@ public class BotListener extends ListenerAdapter {
             unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
             unbanTimerRunning = true;
         }
-        if(!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
+        if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the settings timer.");
             //This handles the updating from the setting and quotes
             TimerTask settingsTask = new TimerTask() {
@@ -206,26 +206,27 @@ public class BotListener extends ListenerAdapter {
             settingsUpdateTimerRunning = true;
         }
     }
-
+    
     @Override
     public void onShutdown(ShutdownEvent event) {
         ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
-        if(unbanTimerRunning) {
+        if (unbanTimerRunning) {
             this.unbanTimer.cancel();
             this.unbanTimer.purge();
         }
-        if(settingsUpdateTimerRunning) {
+        if (settingsUpdateTimerRunning) {
             this.settingsUpdateTimer.cancel();
             this.settingsUpdateTimer.purge();
         }
     }
-
+    
     /**
      * This will fire when a new member joins
+     *
      * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent GuildMemberJoinEvent}
      */
     @Override
-    public void onGuildMemberJoin(GuildMemberJoinEvent event){
+    public void onGuildMemberJoin(GuildMemberJoinEvent event) {
 
         /*
         {{USER_MENTION}} = mention user
@@ -235,33 +236,34 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_MENTION}} = mention the guild owner
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
-
+        
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
-
+        
         if (settings.isEnableJoinMessage()) {
             TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
             String msg = settings.getCustomJoinMessage()
-                    .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
-                    .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-                    .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
-                    .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
+                                 .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
+                                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
+                                 .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
+                                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
             publicChannel.sendMessage(msg).queue();
         }
     }
-
+    
     /**
      * This will fire when the bot joins a guild and we check if we are allowed to join this guild
+     *
      * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.GuildJoinEvent GuildJoinEvent}
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         //if 60 of a guild is bots, we'll leave it
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-        if(botToUserRatio[1] > 60) {
+        if (botToUserRatio[1] > 60) {
             AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                    event.getGuild().getOwner().getAsMention() + ", "+botToUserRatio[1]+"% of this guild are bots ("+event.getGuild().getMemberCache().size()+" is the total btw). " +
-                    "I'm outta here").queue(
-                            message -> message.getGuild().leave().queue()
+                                                                            event.getGuild().getOwner().getAsMention() + ", " + botToUserRatio[1] + "% of this guild are bots (" + event.getGuild().getMemberCache().size() + " is the total btw). " +
+                                                                            "I'm outta here").queue(
+                    message -> message.getGuild().leave().queue()
             );
             AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
             return;
@@ -270,79 +272,86 @@ public class BotListener extends ListenerAdapter {
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
-
+    
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         GuildSettingsUtils.deleteGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
-
+    
     /**
      * This will fire when a member leaves a channel in a guild, we check if the channel is empty and if it is we leave it
+     *
      * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent GuildVoiceLeaveEvent}
      */
     @Override
-    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event){
-        if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()){
-            if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
-            if(event.getChannelLeft().getMembers().size() <= 1){
+    public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
+        if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
+            if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                return;
+            }
+            if (event.getChannelLeft().getMembers().size() <= 1) {
                 AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
                 AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
                 AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                 lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                if(event.getGuild().getAudioManager().isConnected()){
+                if (event.getGuild().getAudioManager().isConnected()) {
                     event.getGuild().getAudioManager().closeAudioConnection();
                     event.getGuild().getAudioManager().setSendingHandler(null);
                 }
             }
         }
     }
-
+    
     /**
      * This will fire when a member moves from channel, if a member moves we will check if our channel is empty
+     *
      * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent GuildVoiceMoveEvent}
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        if(!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
-            if(event.getChannelLeft()!=null) {
-                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
-                if(event.getChannelLeft().getMembers().size() <= 1){
+        if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
+            if (event.getChannelLeft() != null) {
+                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                    return;
+                }
+                if (event.getChannelLeft().getMembers().size() <= 1) {
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                     lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                    if(event.getGuild().getAudioManager().isConnected()){
+                    if (event.getGuild().getAudioManager().isConnected()) {
                         event.getGuild().getAudioManager().closeAudioConnection();
                         event.getGuild().getAudioManager().setSendingHandler(null);
                     }
                 }
             }
             
-            if(event.getChannelJoined()!=null) {
-                if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) { return; }
-                if(event.getChannelJoined().getMembers().size() <= 1){
+            if (event.getChannelJoined() != null) {
+                if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                    return;
+                }
+                if (event.getChannelJoined().getMembers().size() <= 1) {
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
                     lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                    if(event.getGuild().getAudioManager().isConnected()){
+                    if (event.getGuild().getAudioManager().isConnected()) {
                         event.getGuild().getAudioManager().setSendingHandler(null);
                         event.getGuild().getAudioManager().closeAudioConnection();
                     }
                 }
             }
-
+            
         }
     }
-
-    private boolean temp = true;
-	 //We're beeing sneaky here because we are setting the game to something called "Listening to"
-	 //b1nzy if you see this, please don't b4nzy me
+    
+    //We're beeing sneaky here because we are setting the game to something called "Listening to"
+    //b1nzy if you see this, please don't b4nzy me
     private void setWatchingStatus(JDA jda) {
         System.out.println("checking");
         System.out.println("shards is " + jda.asBot().getShardManager().getShards().size());
-        if(temp && (jda.asBot().getShardManager().getShards().size() != 2) ) {
+        if (temp && (jda.asBot().getShardManager().getShards().size() != 2)) {
             System.out.println("not setting");
             return;
         }
@@ -358,11 +367,11 @@ public class BotListener extends ListenerAdapter {
         object.put("since", System.currentTimeMillis());
         for (JDA shard : jda.asBot().getShardManager().getShards())
             ((JDAImpl) shard).getClient().send(new JSONObject()
-                    .put("d", object)
-                    .put("op", WebSocketCode.PRESENCE).toString()
+                                                       .put("d", object)
+                                                       .put("op", WebSocketCode.PRESENCE).toString()
             );
-
+        
         temp = false;
     }
-
+    
 }

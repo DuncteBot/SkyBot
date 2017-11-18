@@ -32,11 +32,11 @@ import java.util.concurrent.TimeUnit;
 
 public class CleenupCommand extends Command {
 
+    public final static String help = "performs a cleanup in the channel where the command is run.";
+
     public CleenupCommand() {
         this.category = CommandCategory.MOD_ADMIN;
     }
-
-    public final static String help = "performs a cleanup in the channel where the command is run.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -46,7 +46,7 @@ public class CleenupCommand extends Command {
                 Permission.MESSAGE_MANAGE,
                 Permission.MESSAGE_HISTORY
         };
-        if(!event.getMember().hasPermission(permissions)){
+        if (!event.getMember().hasPermission(permissions)) {
             sendMsg(event, "You don't have permission to run this command!");
             return;
         }
@@ -54,28 +54,27 @@ public class CleenupCommand extends Command {
         int deletedMsg = 0;
         int total = 5;
 
-        if(args.length > 0){
+        if (args.length > 0) {
             total = Integer.parseInt(args[0]);
-          if (total < 2 || total > 100) {
+            if (total < 2 || total > 100) {
                 event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
-               message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-            );
-            return;
-          }
+                        message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
+                );
+                return;
+            }
         }
-    
+
         try {
-          MessageHistory mh = event.getChannel().getHistory();
-          List<Message> msgLst =  mh.retrievePast(total).complete();
-          event.getChannel().deleteMessages(msgLst).queue();
-          deletedMsg = msgLst.size();
-                event.getChannel().sendMessage("Removed "+deletedMsg+" messages!").queue(
-             message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-          );
-                AirUtils.log(Level.INFO, deletedMsg+" messages removed in channel "+event.getChannel().getName());
-        }
-        catch (Exception e) {
-          event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();
+            MessageHistory mh = event.getChannel().getHistory();
+            List<Message> msgLst = mh.retrievePast(total).complete();
+            event.getChannel().deleteMessages(msgLst).queue();
+            deletedMsg = msgLst.size();
+            event.getChannel().sendMessage("Removed " + deletedMsg + " messages!").queue(
+                    message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
+            );
+            AirUtils.log(Level.INFO, deletedMsg + " messages removed in channel " + event.getChannel().getName());
+        } catch (Exception e) {
+            event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();
         }
     }
 

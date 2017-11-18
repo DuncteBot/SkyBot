@@ -26,18 +26,18 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class PauseCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             AudioPlayer player = getMusicManager(event.guild).player
 
-            if (player.playingTrack == null){
+            if (player.playingTrack == null) {
                 sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
                 return
             }
 
             player.setPaused(!player.paused)
-            if (player.paused){
+            if (player.paused) {
                 sendMsg(event, "The player has been paused.")
-            }else{
+            } else {
                 sendMsg(event, "The player has resumed playing.")
             }
         }

@@ -24,19 +24,18 @@ import java.lang.reflect.Proxy;
 
 /**
  * An {@link InvocationFunction} is a {@link InvocationHandler} in its basic form
- * 
- * @author ramidzkh
  *
+ * @author ramidzkh
  */
 @FunctionalInterface
 public interface InvocationFunction {
-
+    
     /**
      * Handles a function
-     * 
+     *
      * @param instance The {@link Proxy proxy} used
-     * @param method The method invoked
-     * @param args Parameters, if any
+     * @param method   The method invoked
+     * @param args     Parameters, if any
      * @return The returned object. If the method needs to return a primitive type,
      * its corresponding wrapper type must be returned
      * @throws Throwable so it can be any error java has

@@ -44,16 +44,15 @@ public class HackbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <userId>");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <userId>");
             return;
         }
 
         try {
-            event.getGuild().getController().ban(args[0], 0).queue( (v) -> {
+            event.getGuild().getController().ban(args[0], 0).queue((v) -> {
                 sendMsg(event, "User has been banned!");
-            } );
-        }
-        catch (Exception e) {
+            });
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

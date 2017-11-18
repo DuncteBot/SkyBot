@@ -31,54 +31,53 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Arrays;
 
 public class AnnounceCommand extends Command {
-
+    
     public AnnounceCommand() {
         this.category = CommandCategory.MOD_ADMIN;
     }
-
+    
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
+        
         Permission[] perms = {
                 Permission.ADMINISTRATOR
         };
-
-        if(!event.getMember().hasPermission(perms)) {
+        
+        if (!event.getMember().hasPermission(perms)) {
             sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
-
-        if(event.getMessage().getMentionedChannels().size() < 1) {
+        
+        if (event.getMessage().getMentionedChannels().size() < 1) {
             sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
             return;
         }
-
+        
         try {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
             String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-
+            
             MessageEmbed embed = EmbedUtils.embedMessage(msg);
-
-            if(!event.getGuild().getSelfMember().hasPermission( Permission.MESSAGE_EMBED_LINKS)) {
+            
+            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
                 chann.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
                 sendSuccess(event.getMessage());
                 return;
             }
             chann.sendMessage(embed).queue();
             sendSuccess(event.getMessage());
-
-        }
-        catch (Exception e) {
+            
+        } catch (Exception e) {
             sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }
     }
-
+    
     @Override
     public String help() {
         return "Announces a message.";
     }
-
+    
     @Override
     public String getName() {
         return "announce";

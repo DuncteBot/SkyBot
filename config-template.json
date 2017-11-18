@@ -12,8 +12,8 @@
     "password": "",
     "database": ""
   },
-  "apis" : {
-    "googl" : "",
+  "apis": {
+    "googl": "",
     "thecatapi": "",
     "wolframalpha": ""
   }

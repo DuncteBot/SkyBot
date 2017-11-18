@@ -4,32 +4,29 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.File;
-import java.io.Serializable;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAImage;
 import com.wolfram.alpha.WARelatedLink;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.File;
+import java.io.Serializable;
 
 // This is called sidebarlinks in the XML.
 
 public class WARelatedLinkImpl implements WARelatedLink, Serializable {
-
+    
+    static final WARelatedLinkImpl[] EMPTY_ARRAY = new WARelatedLinkImpl[0];
+    private static final long serialVersionUID = -4694106442074004620L;
     private String url;
     private String text;
     private String source;
     private String excerpt;
     private WAImage image;
-        
-    static final WARelatedLinkImpl[] EMPTY_ARRAY = new WARelatedLinkImpl[0];
-
-    private static final long serialVersionUID = -4694106442074004620L;
-
+    
     
     WARelatedLinkImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
         
@@ -56,35 +53,35 @@ public class WARelatedLinkImpl implements WARelatedLink, Serializable {
             image = new WAImageImpl(imgElement, http, tempDir);
         }
     }
-
-
+    
+    
     public String getSource() {
         return source;
     }
-
-
+    
+    
     public String getText() {
         return text;
     }
-
-
+    
+    
     public String getURL() {
         return url;
     }
-
-
+    
+    
     public String getExcerpt() {
         return excerpt;
     }
-
-
+    
+    
     public WAImage getImage() {
         return image;
     }
-
-
+    
+    
     public void accept(Visitor v) {
         v.visit(this);
     }
-
+    
 }

@@ -4,42 +4,39 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAPodState;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 // TODO: Synchronization needs work...
 
 public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
-
+    
+    static final WAPodStateImpl[] EMPTY_ARRAY = new WAPodStateImpl[0];
+    private static final String[] EMPTY_STRING_ARRAY = new String[]{};
+    private static final String[] DEFAULT_NAME_ARRAY = new String[]{""};
+    private static final long serialVersionUID = -253401729369983369L;
     private String[] names = EMPTY_STRING_ARRAY;
     private String[] inputs = EMPTY_STRING_ARRAY;
     private String current = null;
     private int currentIndex = -1;
     private long id = 0;
     
-    static final WAPodStateImpl[] EMPTY_ARRAY = new WAPodStateImpl[0];
-
-    private static final String[] EMPTY_STRING_ARRAY = new String[]{};
-    private static final String[] DEFAULT_NAME_ARRAY = new String[]{""};
-    
-    private static final long serialVersionUID = -253401729369983369L;
-
     
     WAPodStateImpl(Element thisElement) throws WAException {
         createFromDOM(thisElement);
     }
     
-    private WAPodStateImpl() {}
+    private WAPodStateImpl() {
+    }
     
     // Because all podstates stored in a WAQueryParameters are represented as WAPodStates, there is a need
     // to create a "dummy" podstate from just an input string. This is used by the addPodState(String) signature.
@@ -65,7 +62,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
         // <statelist count=n value="current">
         //    <state name="name" input="input"/>
         // </statelist>
-
+        
         String nodeName = thisElement.getNodeName();
         if ("state".equals(nodeName)) {
             String name = thisElement.getAttribute("name");
@@ -109,16 +106,16 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
             computeID();
         }
     }
-
+    
     
     public String[] getNames() {
         return names;
     }
-
+    
     public String[] getInputs() {
         return inputs;
     }
-
+    
     public int getCurrentIndex() {
         
         if (currentIndex >= 0) {
@@ -160,7 +157,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
         // The id is basically a hash of the input strings.
         id = 17;
         for (String s : inputs)
-            id += 37*id + s.hashCode();
+            id += 37 * id + s.hashCode();
     }
     
     ///////////////////////////  Visitor interface  ////////////////////////////
@@ -168,5 +165,5 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
     public void accept(Visitor v) {
         v.visit(this);
     }
-
+    
 }

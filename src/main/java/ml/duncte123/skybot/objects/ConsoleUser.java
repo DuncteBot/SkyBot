@@ -23,7 +23,7 @@ package ml.duncte123.skybot.objects;
  */
 
 public class ConsoleUser extends FakeUser {
-
+    
     public ConsoleUser() {
         super("Console", "0", "1337");
     }

@@ -18,37 +18,36 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.utils.Settings;
+import org.sqlite.JDBC;
+
 import java.io.File;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
-import ml.duncte123.skybot.utils.Settings;
-import org.sqlite.JDBC;
-
 /**
  * Represents an SQLite file database {@link DBConnectionManager connection manager}
- * 
- * @author ramidzkh
  *
+ * @author ramidzkh
  */
 class SQLiteDatabaseConnectionManager
-implements DBConnectionManager {
-
+        implements DBConnectionManager {
+    
     /**
      * The URL of this database
      */
     private final String url;
-
+    
     /**
      * The associated connection object
      */
     private Connection con;
-
+    
     /**
      * Constructs a new SQLite file database
-     * 
+     *
      * @param file The file where to create or load the database
      */
     SQLiteDatabaseConnectionManager(File file) {
@@ -65,7 +64,7 @@ implements DBConnectionManager {
             con = null;
         }
     }
-
+    
     /**
      * Gets the associated connection object
      */
@@ -78,13 +77,13 @@ implements DBConnectionManager {
             return null;
         }
     }
-
+    
     /**
      * @return Is the connection open
      */
     @Override
     public boolean isConnected() {
-        if(con == null)
+        if (con == null)
             return false;
         try {
             return !con.isClosed();
@@ -93,7 +92,7 @@ implements DBConnectionManager {
             return false;
         }
     }
-
+    
     /**
      * @return The URL of this database
      */
@@ -101,7 +100,7 @@ implements DBConnectionManager {
     public String getName() {
         return "main"; //SQLite uses 'main' as name for the database
     }
-
+    
     /**
      * @return If the connection is available, open or closed
      */
@@ -109,43 +108,42 @@ implements DBConnectionManager {
     public boolean hasSettings() {
         return con != null;
     }
-
+    
     /**
      * This sets up the database and inserts the tables if they are not there
+     *
      * @param connection the connection to use
-     * 
      * @author duncte123
      */
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
         try {
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS guildSettings " +
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "guildId TEXT NOT NULL," +
-                    "guildName TEXT NOT NULL," +
-                    "prefix VARCHAR(255) NOT NULL DEFAULT '"+ Settings.prefix +"'," +
-                    "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                    "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                    "customWelcomeMessage TEXT NOT NULL);");
-
+                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                                                         "guildId TEXT NOT NULL," +
+                                                         "guildName TEXT NOT NULL," +
+                                                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
+                                                         "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                                                         "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                                                         "customWelcomeMessage TEXT NOT NULL);");
+            
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "author VARCHAR(255) NOT NULL," +
-                    "authorId VARCHAR(255) NOT NULL," +
-                    "tagName VARCHAR(10) NOT NULL," +
-                    "tagText TEXT NOT NULL);");
-
+                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                                                         "author VARCHAR(255) NOT NULL," +
+                                                         "authorId VARCHAR(255) NOT NULL," +
+                                                         "tagName VARCHAR(10) NOT NULL," +
+                                                         "tagText TEXT NOT NULL);");
+            
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans" +
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "modUserId VARCHAR(255) NOT NULL," +
-                    "userId VARCHAR(255) NOT NULL," +
-                    "Username VARCHAR(255) NOT NULL," +
-                    "discriminator VARCHAR(4) NOT NULL," +
-                    "ban_date DATETIME NOT NULL," +
-                    "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                    "guildId VARCHAR(255) NOT NULL);");
-        }
-        catch (SQLException e) {
+                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                                                         "modUserId VARCHAR(255) NOT NULL," +
+                                                         "userId VARCHAR(255) NOT NULL," +
+                                                         "Username VARCHAR(255) NOT NULL," +
+                                                         "discriminator VARCHAR(4) NOT NULL," +
+                                                         "ban_date DATETIME NOT NULL," +
+                                                         "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                                                         "guildId VARCHAR(255) NOT NULL);");
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }

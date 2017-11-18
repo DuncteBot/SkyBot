@@ -24,7 +24,7 @@ import ml.duncte123.skybot.utils.Settings;
  * This class will hold the settings for a guild
  */
 public class GuildSettings {
-
+    
     /**
      * the id of the guild that the settings are for
      */
@@ -45,17 +45,28 @@ public class GuildSettings {
      * This will hold the custom prefix if the guild has set one
      */
     private String customPrefix = Settings.prefix;
-
+    
     /**
      * This will init everything
+     *
      * @param guildId the id of the guild that the settings are for
      */
     public GuildSettings(String guildId) {
         this.guildId = guildId;
     }
-
+    
+    /**
+     * this will check if the join message is enabled
+     *
+     * @return true if the join message is enabled
+     */
+    public boolean isEnableJoinMessage() {
+        return enableJoinMessage;
+    }
+    
     /**
      * We use this to update if the join message should display
+     *
      * @param enableJoinMessage whether we should display the join message
      * @return The current {@link GuildSettings}
      */
@@ -63,9 +74,19 @@ public class GuildSettings {
         this.enableJoinMessage = enableJoinMessage;
         return this;
     }
-
+    
+    /**
+     * This will check if the swear filter is enabled
+     *
+     * @return true if the filter is on for this guild
+     */
+    public boolean isEnableSwearFilter() {
+        return enableSwearFilter;
+    }
+    
     /**
      * We use this to update if we should block swearwords
+     *
      * @param enableSwearFilter whether we should block swearing
      * @return The current {@link GuildSettings}
      */
@@ -73,9 +94,28 @@ public class GuildSettings {
         this.enableSwearFilter = enableSwearFilter;
         return this;
     }
-
+    
+    /**
+     * This will return the guild id that these options are for
+     *
+     * @return The id of that guild as a String
+     */
+    public String getGuildId() {
+        return guildId;
+    }
+    
+    /**
+     * This will return the cutstom join message set for that guild
+     *
+     * @return The custom join message
+     */
+    public String getCustomJoinMessage() {
+        return customJoinMessage;
+    }
+    
     /**
      * This will set the custom join for the corresponding guild
+     *
      * @param customJoinMessage The new join message
      * @return The current {@link GuildSettings}
      */
@@ -83,9 +123,19 @@ public class GuildSettings {
         this.customJoinMessage = customJoinMessage;
         return this;
     }
-
+    
+    /**
+     * Ths will return the prefix that the guild is using
+     *
+     * @return The prefix that the guild is using
+     */
+    public String getCustomPrefix() {
+        return customPrefix;
+    }
+    
     /**
      * This will set the custom prefix for the corresponding guild
+     *
      * @param customPrefix The new prefix
      * @return The current {@link GuildSettings}
      */
@@ -93,47 +143,7 @@ public class GuildSettings {
         this.customPrefix = customPrefix;
         return this;
     }
-
-    /**
-     * this will check if the join message is enabled
-     * @return true if the join message is enabled
-     */
-    public boolean isEnableJoinMessage() {
-        return enableJoinMessage;
-    }
-
-    /**
-     * This will check if the swear filter is enabled
-     * @return true if the filter is on for this guild
-     */
-    public boolean isEnableSwearFilter() {
-        return enableSwearFilter;
-    }
-
-    /**
-     * This will return the guild id that these options are for
-     * @return The id of that guild as a String
-     */
-    public String getGuildId() {
-        return guildId;
-    }
-
-    /**
-     * This will return the cutstom join message set for that guild
-     * @return The custom join message
-     */
-    public String getCustomJoinMessage() {
-        return customJoinMessage;
-    }
-
-    /**
-     * Ths will return the prefix that the guild is using
-     * @return The prefix that the guild is using
-     */
-    public String getCustomPrefix() {
-        return customPrefix;
-    }
-
+    
     /**
      * {@inheritDoc}
      */
@@ -142,5 +152,5 @@ public class GuildSettings {
         return String.format("GuildSettings[%d](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
                 (enableSwearFilter ? "Enabled" : "Disabled"), customJoinMessage);
     }
-
+    
 }

@@ -30,17 +30,17 @@ import org.apache.commons.lang3.StringUtils
 class PPlayCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             Guild guild = event.guild
             GuildMusicManager musicManager = getMusicManager(guild)
 
-            if(args?.length < 1){
+            if (args?.length < 1) {
                 sendMsg(event, "To few arguments, use `${Settings.prefix}$name <media link>`")
                 return
             }
 
             String toPlay = StringUtils.join(args, " ")
-            if(!AirUtils.isURL(toPlay)){
+            if (!AirUtils.isURL(toPlay)) {
                 toPlay = "ytsearch: " + toPlay
             }
 

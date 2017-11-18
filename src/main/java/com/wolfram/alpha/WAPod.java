@@ -8,9 +8,8 @@ package com.wolfram.alpha;
 import com.wolfram.alpha.visitor.Visitable;
 
 
-
 public interface WAPod extends Visitable {
-
+    
     String getTitle();
     
     boolean isError();
@@ -32,16 +31,15 @@ public interface WAPod extends Visitable {
     WAPodState[] getPodStates();
     
     WAInfo[] getInfos();
-
+    
     WASound[] getSounds();
     
     void acquireImages() throws WAException;
     
     void finishAsync() throws WAException;
     
+    Object getUserData();
     
     void setUserData(Object obj);
     
-    Object getUserData();
-   
 }

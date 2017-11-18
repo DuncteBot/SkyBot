@@ -4,6 +4,10 @@
  */
 package com.wolfram.alpha.net.j2se;
 
+import com.wolfram.alpha.net.ProxySettings;
+import com.wolfram.alpha.net.WAHttpException;
+import com.wolfram.alpha.net.impl.HttpTransaction;
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -11,10 +15,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-
-import com.wolfram.alpha.net.ProxySettings;
-import com.wolfram.alpha.net.WAHttpException;
-import com.wolfram.alpha.net.impl.HttpTransaction;
 
 
 public class J2SEHttpTransaction implements HttpTransaction {
@@ -49,7 +49,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
             conn.setRequestMethod("GET");
             
             // TODO: This value
-            conn.setReadTimeout(15*1000);
+            conn.setReadTimeout(15 * 1000);
             conn.connect();
             
             int statusCode = conn.getResponseCode();
@@ -118,7 +118,8 @@ public class J2SEHttpTransaction implements HttpTransaction {
                 if (strm != null)
                     strm.close();
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
 
@@ -129,7 +130,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
     }
     
     public String getUserAgent() {
-    	return userAgent;
+        return userAgent;
     }
 
 }

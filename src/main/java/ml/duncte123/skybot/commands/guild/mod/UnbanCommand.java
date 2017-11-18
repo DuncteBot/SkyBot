@@ -49,13 +49,13 @@ public class UnbanCommand extends Command {
         }
 
         if (args[0].isEmpty()) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <username>");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
             return;
         }
 
         try {
             Guild guild = event.getGuild();
-            List<User> bannedUsers =  guild.getBans().complete();
+            List<User> bannedUsers = guild.getBans().complete();
             for (User bannedUser : bannedUsers) {
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
@@ -65,8 +65,7 @@ public class UnbanCommand extends Command {
                 }
             }
             event.getChannel().sendMessage("This user is not banned").queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

@@ -39,22 +39,22 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class CommandManager {
-
+    
     /**
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-
+    
     /**
      * This makes sure that all the commands are added
      */
     public CommandManager() {
-
+        
         // default commands
         this.addCommand(new HelpCommand());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
-
+        
         //fun commands
         this.addCommand(new DialogCommand());
         this.addCommand(new KpopCommand());
@@ -62,7 +62,7 @@ public class CommandManager {
         this.addCommand(new CoinCommand());
         this.addCommand(new FlipCommand());
         this.addCommand(new TagCommand());
-
+        
         //animal commands
         this.addCommand(new LlamaCommand());
         this.addCommand(new CatCommand());
@@ -71,16 +71,16 @@ public class CommandManager {
         this.addCommand(new AlpacaCommand());
         this.addCommand(new SealCommand());
         this.addCommand(new BirbCommand());
-
+        
         //essentials commands
         this.addCommand(new EvalCommand());
         
-        if(AirUtils.alphaEngine != null)
-        	this.addCommand(new WolframAlphaCommand());
-
+        if (AirUtils.alphaEngine != null)
+            this.addCommand(new WolframAlphaCommand());
+        
         //guild commands
         this.addCommand(new GuildInfoCommand());
-
+        
         //mod commands
         this.addCommand(new BanCommand());
         this.addCommand(new HackbanCommand());
@@ -89,46 +89,52 @@ public class CommandManager {
         this.addCommand(new KickCommand());
         this.addCommand(new CleenupCommand());
         this.addCommand(new AnnounceCommand());
-
+        
         //Guild owner commands
         this.addCommand(new SettingsCommand());
-
+        
     }
-
+    
     /**
      * This is method to get the commands on request
+     *
      * @return A list of all the commands
      */
-    public Set<Command> getCommands() { return commands; }
-
+    public Set<Command> getCommands() {
+        return commands;
+    }
+    
     /**
      * This tries to get a command with the provided name/alias
+     *
      * @param name the name of the command
      * @return a possible null command for the name
      */
     public Command getCommand(String name) {
-        Optional<Command> cmd = commands.stream().filter(c->c.getName().equals(name)).findFirst();
-
-        if(cmd.isPresent()) {
+        Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
+        
+        if (cmd.isPresent()) {
             return cmd.get();
         }
-
-        cmd = commands.stream().filter(c-> Arrays.asList(c.getAliases()).contains(name) ).findFirst();
-
+        
+        cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
+        
         return cmd.isPresent() ? cmd.get() : null;
     }
-
+    
     /**
      * This removes a command from the commands
+     *
      * @param command the command to remove
      * @return {@code true} on success
      */
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
     }
-
+    
     /**
      * This handles adding the command
+     *
      * @param command The command to add
      * @return true if the command is added
      */
@@ -144,9 +150,10 @@ public class CommandManager {
         
         return true;
     }
-
+    
     /**
      * This will run the command when we need them
+     *
      * @param parser The command parser used to parse the commands
      */
     public void runCommand(CommandParser.CommandContainer parser) {
@@ -164,5 +171,5 @@ public class CommandManager {
             }
         }
     }
-
+    
 }
