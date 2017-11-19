@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,27 +21,27 @@ package Java.lang;
 
 /**
  * Made this for the memes
- * 
+ *
  * @author Duncan "duncte123" Sterken
  */
 public class VRCubeException extends SecurityException {
-
+    
     private static final long serialVersionUID = -1411788219603361967L;
-
+    
     public VRCubeException() {
         super();
     }
-
+    
     public VRCubeException(String message) {
         super(message);
     }
-
+    
     public VRCubeException(String message, Throwable cause) {
         super(message, cause);
     }
-
+    
     public VRCubeException(Throwable cause) {
         super(cause);
     }
-
+    
 }

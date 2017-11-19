@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.audio;
@@ -22,7 +23,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 
 public class GuildMusicManager {
-
+    
     /**
      * This is our player
      */
@@ -35,24 +36,26 @@ public class GuildMusicManager {
      * This is what actually sends the audio
      */
     public final AudioPlayerSenderHandler sendHandler;
-
+    
     /**
      * Constructor
+     *
      * @param manager The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager AudioPlayerManager} for the corresponding guild
      */
-    public GuildMusicManager(AudioPlayerManager manager){
+    public GuildMusicManager(AudioPlayerManager manager) {
         player = manager.createPlayer();
         scheduler = new TrackScheduler(player);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
     }
-
+    
     /**
      * This will get our sendings handler
+     *
      * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
      */
-    public AudioPlayerSenderHandler getSendHandler(){
+    public AudioPlayerSenderHandler getSendHandler() {
         return sendHandler;
     }
-
+    
 }

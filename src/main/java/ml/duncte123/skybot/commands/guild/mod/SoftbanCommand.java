@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -49,14 +50,14 @@ public class SoftbanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <@user> [Reason]");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [Reason]");
             return;
         }
 
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
-            if(toBan.equals(event.getAuthor()) &&
-                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan)) ) {
+            if (toBan.equals(event.getAuthor()) &&
+                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
@@ -68,8 +69,7 @@ public class SoftbanCommand extends Command {
                     }
             );
             event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

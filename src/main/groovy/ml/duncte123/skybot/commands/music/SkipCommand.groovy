@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -27,17 +27,17 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class SkipCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             GuildMusicManager manager = getMusicManager(event.guild)
             TrackScheduler scheduler = manager.scheduler
 
-            if(manager.player.playingTrack == null){
+            if (manager.player.playingTrack == null) {
                 sendMsg(event, "The player is not playing.")
                 return
             }
 
             scheduler.nextTrack()
-            sendMsg(event,"The current track was skipped.")
+            sendMsg(event, "The current track was skipped.")
         }
     }
 

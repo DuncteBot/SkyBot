@@ -1,8 +1,31 @@
 /*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
  * Created on Dec 7, 2009
  *
  */
 package com.wolfram.alpha.net.j2se;
+
+import com.wolfram.alpha.net.ProxySettings;
+import com.wolfram.alpha.net.WAHttpException;
+import com.wolfram.alpha.net.impl.HttpTransaction;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -11,10 +34,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.HttpURLConnection;
 import java.net.Proxy;
 import java.net.URL;
-
-import com.wolfram.alpha.net.ProxySettings;
-import com.wolfram.alpha.net.WAHttpException;
-import com.wolfram.alpha.net.impl.HttpTransaction;
 
 
 public class J2SEHttpTransaction implements HttpTransaction {
@@ -49,7 +68,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
             conn.setRequestMethod("GET");
             
             // TODO: This value
-            conn.setReadTimeout(15*1000);
+            conn.setReadTimeout(15 * 1000);
             conn.connect();
             
             int statusCode = conn.getResponseCode();
@@ -118,7 +137,8 @@ public class J2SEHttpTransaction implements HttpTransaction {
                 if (strm != null)
                     strm.close();
             }
-        } catch (IOException e) {}
+        } catch (IOException e) {
+        }
     }
 
 
@@ -129,7 +149,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
     }
     
     public String getUserAgent() {
-    	return userAgent;
+        return userAgent;
     }
 
 }

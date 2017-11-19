@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.audio;
@@ -28,36 +29,38 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     /**
      * This is our audio player
      */
-    private final  AudioPlayer audioPlayer;
+    private final AudioPlayer audioPlayer;
     /**
      * I don't know what this does but it seems important
      */
     private AudioFrame lastFrame;
 
-    public AudioPlayerSenderHandler(AudioPlayer audioPlayer){
+    public AudioPlayerSenderHandler(AudioPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
     /**
      * Checks if the player can provide the song
+     *
      * @return true if we can provide something
      */
     @Override
     public boolean canProvide() {
-      if (lastFrame == null) {
-        lastFrame = audioPlayer.provide();
-      }
-      return lastFrame != null;
+        if (lastFrame == null) {
+            lastFrame = audioPlayer.provide();
+        }
+        return lastFrame != null;
     }
 
     /**
      * This <em>should</em> gives us our audio
+     *
      * @return The audio in some nice bytes
      */
     @Override
     public byte[] provide20MsAudio() {
 
-        if(lastFrame == null){
+        if (lastFrame == null) {
             lastFrame = audioPlayer.provide();
         }
 
@@ -68,10 +71,11 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
 
     /**
      * "Checks" if this audio is opus
+     *
      * @return always true
      */
     @Override
-    public boolean isOpus(){
+    public boolean isOpus() {
         return true;
     }
 

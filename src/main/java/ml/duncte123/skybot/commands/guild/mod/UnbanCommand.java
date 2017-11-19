@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -49,13 +50,13 @@ public class UnbanCommand extends Command {
         }
 
         if (args[0].isEmpty()) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <username>");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
             return;
         }
 
         try {
             Guild guild = event.getGuild();
-            List<User> bannedUsers =  guild.getBans().complete();
+            List<User> bannedUsers = guild.getBans().complete();
             for (User bannedUser : bannedUsers) {
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
@@ -65,8 +66,7 @@ public class UnbanCommand extends Command {
                 }
             }
             event.getChannel().sendMessage("This user is not banned").queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

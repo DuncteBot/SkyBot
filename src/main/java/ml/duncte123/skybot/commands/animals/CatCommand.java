@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.animals;
@@ -29,11 +30,11 @@ import java.net.URL;
 
 public class CatCommand extends Command {
 
+    public final static String help = "here is a cat.";
+
     public CatCommand() {
         this.category = CommandCategory.ANIMALS;
     }
-
-    public final static String help = "here is a cat.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -43,7 +44,6 @@ public class CatCommand extends Command {
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
         }
@@ -52,7 +52,6 @@ public class CatCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return help;
     }
 

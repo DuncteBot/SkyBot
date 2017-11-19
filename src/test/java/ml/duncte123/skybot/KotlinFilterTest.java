@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -24,31 +25,31 @@ import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 public class KotlinFilterTest {
-
-	public static void main(String[] args) {
-		System.out.println(eval("2+2"));
-		System.out.println(eval("'memes'"));
-		System.out.println(eval("System.out"));
-		System.out.println(eval("java.math.BigInteger.valueOf(2)"));
-	}
-	
-	public static Object eval(String s) {
-		GroovyShell gs = new GroovyShell(new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
-		
-		KotlinEvalFilter filter = new KotlinEvalFilter();
-		
-		filter.register();
-		
-		Object o = null;
-		
-		try {
-			o = gs.evaluate(s);
-		} catch (Throwable thr) {
-			thr.printStackTrace();
-		} finally {
-			filter.unregister();
-		}
-		
-		return o;
-	}
+    
+    public static void main(String[] args) {
+        System.out.println(eval("2+2"));
+        System.out.println(eval("'memes'"));
+        System.out.println(eval("System.out"));
+        System.out.println(eval("java.math.BigInteger.valueOf(2)"));
+    }
+    
+    public static Object eval(String s) {
+        GroovyShell gs = new GroovyShell(new CompilerConfiguration().addCompilationCustomizers(new SandboxTransformer()));
+        
+        KotlinEvalFilter filter = new KotlinEvalFilter();
+        
+        filter.register();
+        
+        Object o = null;
+        
+        try {
+            o = gs.evaluate(s);
+        } catch (Throwable thr) {
+            thr.printStackTrace();
+        } finally {
+            filter.unregister();
+        }
+        
+        return o;
+    }
 }

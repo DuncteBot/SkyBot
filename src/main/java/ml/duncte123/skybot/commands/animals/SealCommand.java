@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.animals;
@@ -41,13 +42,12 @@ public class SealCommand extends Command {
             String sealLoc = "https://raw.githubusercontent.com/TheBITLINK/randomse.al/master/seals/" + idStr + ".jpg";
 
             if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
-                event.getChannel().sendFile(new URL(sealLoc).openStream(), "Seal_"+System.currentTimeMillis()+".jpg", null).queue();
+                event.getChannel().sendFile(new URL(sealLoc).openStream(), "Seal_" + System.currentTimeMillis() + ".jpg", null).queue();
             } else {
                 sendMsg(event, sealLoc);
             }
-        }
-        catch (Exception e) {
-            sendMsg(event, "ERROR: "+e.getMessage());
+        } catch (Exception e) {
+            sendMsg(event, "ERROR: " + e.getMessage());
             e.printStackTrace();
         }
 

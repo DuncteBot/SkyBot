@@ -1,39 +1,53 @@
 /*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ */
+
+/*
  * Created on Dec 8, 2009
  *
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAAssumption;
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+
+import java.io.Serializable;
 
 
 public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
-
+    
+    static final WAAssumptionImpl[] EMPTY_ARRAY = new WAAssumptionImpl[0];
+    private static final long serialVersionUID = -7699189119552569080L;
     private String type;
     private int count;
     private String word;
     private String description;
     private int current = -1;
-    
     private String[] names;
     private String[] inputs;
     private String[] descriptions;
     private String[] words;
     private boolean[] valids;
     
-    
-    static final WAAssumptionImpl[] EMPTY_ARRAY = new WAAssumptionImpl[0];
-
-    private static final long serialVersionUID = -7699189119552569080L;
-
     
     WAAssumptionImpl(Element thisElement) throws WAException {
         
@@ -44,8 +58,14 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
         if (description.equals("")) description = null;
         // These two will fall back to their default values if the attributes are not present. In the case of 'count' that
         // should never happen, although 'current' is often missing.
-        try { count = Integer.parseInt(thisElement.getAttribute("count")); } catch (NumberFormatException e) {}
-        try { current = Integer.parseInt(thisElement.getAttribute("current")); } catch (NumberFormatException e) {}
+        try {
+            count = Integer.parseInt(thisElement.getAttribute("count"));
+        } catch (NumberFormatException ignored) {
+        }
+        try {
+            current = Integer.parseInt(thisElement.getAttribute("current"));
+        } catch (NumberFormatException ignored) {
+        }
         
         NodeList valueElements = thisElement.getElementsByTagName("value");
         int numValueElements = valueElements.getLength();
@@ -60,10 +80,9 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
             inputs[i] = value.getAttribute("input");
             descriptions[i] = value.getAttribute("desc");
             words[i] = value.getAttribute("word");
-            valids[i] = value.getAttribute("valid").equals("false") ? false : true;
+            valids[i] = !value.getAttribute("valid").equals("false");
         }
     }
-
     
     
     public String getType() {
@@ -107,12 +126,11 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
         return valids;
     }
     
-
     
     ///////////////////////////  Visitor interface  ////////////////////////////
     
     public void accept(Visitor v) {
         v.visit(this);
     }
-
+    
 }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -32,24 +32,24 @@ import org.apache.commons.lang3.StringUtils
 class PlayCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             Guild guild = event.guild
             GuildMusicManager mng = getMusicManager(guild)
             AudioPlayer player = mng.player
             TrackScheduler scheduler = mng.scheduler
 
-            if(args?.length == 0){
-                if(player.paused){
+            if (args?.length == 0) {
+                if (player.paused) {
                     player.setPaused(false)
                     sendMsg(event, "Playback has been resumed.")
-                }else if(player.playingTrack != null){
+                } else if (player.playingTrack != null) {
                     sendMsg(event, "Player is already playing!")
-                }else if(scheduler.queue.empty){
+                } else if (scheduler.queue.empty) {
                     sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
                 }
-            }else{
+            } else {
                 String toPlay = StringUtils.join(args, " ")
-                if(!AirUtils.isURL(toPlay)){
+                if (!AirUtils.isURL(toPlay)) {
                     toPlay = "ytsearch: " + toPlay
                 }
 

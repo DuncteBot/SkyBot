@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.utils;
@@ -25,12 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelpEmbeds {
-
+    
     /**
      * This tells the fields to be inline or not
      */
     private static boolean INLINE = false;
-
+    
     /**
      * These lists hold the commands for each category
      */
@@ -40,12 +41,16 @@ public class HelpEmbeds {
     private static List<String> musicCommands = new ArrayList<>();
     private static List<String> nerdCommands = new ArrayList<>();
     private static List<String> modAdminCommands = new ArrayList<>();
-
+    /**
+     * This is the embed containing all the commands
+     */
+    public static MessageEmbed commandList = getCommandList();
+    
     /**
      * This loads all the commands in the lists
      */
     public static void init() {
-        for(Command c : AirUtils.commandManager.getCommands()) {
+        for (Command c : AirUtils.commandManager.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());
@@ -65,11 +70,11 @@ public class HelpEmbeds {
                 case NERD_STUFF:
                     nerdCommands.add(c.getName());
                     break;
-            default:
-                break;
+                default:
+                    break;
             }
-
-            for(String alias : c.getAliases()) {
+            
+            for (String alias : c.getAliases()) {
                 switch (c.getCategory()) {
                     case MAIN:
                         mainCommands.add(alias);
@@ -89,62 +94,61 @@ public class HelpEmbeds {
                     case NERD_STUFF:
                         nerdCommands.add(alias);
                         break;
-                default:
-                    break;
+                    default:
+                        break;
                 }
             }
         }
     }
-
-    /**
-     * This is the embed containing all the commands
-     */
-    public static MessageEmbed commandList = getCommandList();
-
+    
     /**
      * This will return a embed containing all the commands
+     *
      * @return a embed containing all the commands
      */
     public static MessageEmbed getCommandList() {
         return getCommandListWithPrefix(Settings.prefix);
     }
-
+    
     /**
      * This will return a embed containing all the commands
+     *
      * @param prefix the prefix that we need
      * @return a embed containing all the commands
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
-                .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-                .setDescription("Use `"+ prefix+"help [command]` to get more info about a command")
-                .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
-                .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
-                .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
-                .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
-                .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
-                .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
-                .build();
+                       .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
+                       .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
+                       .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
+                       .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
+                       .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
+                       .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
+                       .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
+                       .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
+                       .build();
     }
-
+    
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
-     * @param prefix The prefix that will be in frond of the commands
+     *
+     * @param prefix   The prefix that will be in frond of the commands
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
     public static String generateCommandsWithPrefix(String prefix, String... cmdNames) {
         StringBuilder out = new StringBuilder();
-
+        
         for (String name : cmdNames) {
             out.append("`").append(prefix).append(name).append("` ");
         }
-
+        
         return out.toString();
     }
-
+    
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
+     *
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */

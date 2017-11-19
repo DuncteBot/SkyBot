@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,19 +14,21 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.essentials.eval.filter
 
-import org.kohsuke.groovy.sandbox.GroovyValueFilter
-import java.math.BigInteger
-import java.math.BigDecimal
-import java.util.Arrays
-
 import Java.lang.VRCubeException
-import groovy.lang.Script
 import groovy.lang.Closure
+import groovy.lang.Script
+import org.kohsuke.groovy.sandbox.GroovyValueFilter
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.Arrays
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 /**
  * Kotlin version of the eval filter

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.animals;
@@ -34,12 +35,11 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String theLlama = (args.length<1 ? "random" : args[0]);
+            String theLlama = (args.length < 1 ? "random" : args[0]);
             String jsonString = WebUtils.getText("https://api.systemexit.co.uk/animals/llama/" + theLlama);
             JSONObject jsonObject = new JSONObject(jsonString);
             event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }

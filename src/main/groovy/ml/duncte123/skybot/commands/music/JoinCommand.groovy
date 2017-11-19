@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.entities.VoiceChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
@@ -29,35 +28,27 @@ class JoinCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        boolean inChannel = false
-        def vc = null
+        boolean inChannel = event.member.voiceState.inVoiceChannel()
 
-        for(VoiceChannel chan : event.guild.voiceChannels) {
-            if(chan.members.contains(event.member)) {
-                inChannel = true
-                vc = chan
-                break
-            }
-        }
-
-        if(!inChannel){
+        if (!inChannel) {
             sendMsg(event, "You are not in a voice channel")
             return
         }
+        def vc = event.member.voiceState.channel
         def guild = event.guild
         def mng = getMusicManager(guild)
         def audioManager = getAudioManager(guild)
-        if(audioManager.connected && mng.player.playingTrack != null){
+        if (audioManager.connected && mng.player.playingTrack != null) {
             sendMsg(event, "I'm already in a channel.")
             return
         }
 
         try {
-            if(audioManager.connected) audioManager.closeAudioConnection()
+            if (audioManager.connected) audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
         } catch (PermissionException e) {
-            if(e.permission == Permission.VOICE_CONNECT){
+            if (e.permission == Permission.VOICE_CONNECT) {
                 sendMsg(event, "I don't have permission to join `${vc.name}`")
             }
         }

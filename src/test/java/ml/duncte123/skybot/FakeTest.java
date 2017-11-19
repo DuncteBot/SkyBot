@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,53 +14,53 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import ml.duncte123.skybot.objects.FakeInterface;
+import ml.duncte123.skybot.objects.InvocationFunction;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.User;
+import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
-import ml.duncte123.skybot.objects.FakeInterface;
-import ml.duncte123.skybot.objects.InvocationFunction;
-import net.dv8tion.jda.core.entities.Guild;
-import org.junit.Test;
-
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.User;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 
 public class FakeTest {
-
+    
     /**
      * Test basic
      * Mock primitives and String
-     * 
+     *
      * @throws Throwable Should never happen
      */
     @Test
     public void basic()
-    throws Throwable {
+            throws Throwable {
         User user = new FakeInterface<>(User.class).create();
         
         assertEquals(user.getIdLong(), 0L);
         assertEquals(user.getName(), "");
     }
-
+    
     /**
      * Test medium
      * Mock Lists, don't share objects
-     * 
+     *
      * @throws Throwable Should never happen
      */
     @Test
     public void medium()
-    throws Throwable {
+            throws Throwable {
         Member member = new FakeInterface<>(Member.class).create();
         JDA jda = member.getJDA();
         
@@ -69,10 +69,10 @@ public class FakeTest {
         
         assertEquals(jda.getGuilds(), new ArrayList<>());
     }
-
+    
     @Test
     public void advanced()
-    throws Throwable {
+            throws Throwable {
         Map<Method, InvocationFunction> custom = new HashMap<>();
         
         custom.put(User.class.getMethod("getIdLong"), (p, m, a) -> 281673659834302464L);
@@ -80,7 +80,7 @@ public class FakeTest {
         custom.put(User.class.getMethod("getName"), (p, m, a) -> "ramidzkh");
         
         User m = new FakeInterface<>(User.class, custom).create();
-
+        
         assertEquals(m.getIdLong(), 281673659834302464L);
         assertEquals(m.getId(), "281673659834302464");
         assertEquals(m.getName(), "ramidzkh");

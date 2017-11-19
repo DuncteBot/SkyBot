@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.connections.database;
@@ -27,7 +28,7 @@ import java.sql.DriverManager;
  * Represents a server database
  */
 class DatabaseConnectionManager
-implements DBConnectionManager {
+        implements DBConnectionManager {
 
     private final String dbHost;
     private final String user;
@@ -43,14 +44,14 @@ implements DBConnectionManager {
 
     /**
      * This will connect to the database for us and return the connection
+     *
      * @return The connection to the database
      */
     public Connection getConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://"+ dbHost +"/"+ dbName + "?useUnicode=true&characterEncoding=UTF-8", user , pass);
-        }
-        catch (Exception e) {
+            return DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName + "?useUnicode=true&characterEncoding=UTF-8", user, pass);
+        } catch (Exception e) {
             //e.printStackTrace();
             return null;
         }
@@ -58,6 +59,7 @@ implements DBConnectionManager {
 
     /**
      * This will give the database name that we specified in the config
+     *
      * @return the database name
      */
     public String getDbName() {
@@ -66,6 +68,7 @@ implements DBConnectionManager {
 
     /**
      * This will check if the database is connected
+     *
      * @return true if we are connected
      */
     public boolean checkDbConn() {
@@ -74,13 +77,13 @@ implements DBConnectionManager {
 
     /**
      * This will check if we have some settings in the databse
+     *
      * @return true if every sql field is set
      */
     public boolean hasSettings() {
         try {
             return !dbHost.isEmpty() && !user.isEmpty() && !pass.isEmpty() && !dbName.isEmpty();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return false;
         }
     }

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,23 +14,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.essentials;
 
-import com.wolfram.alpha.WAEngine;
-import com.wolfram.alpha.WAException;
-import com.wolfram.alpha.WAImage;
-import com.wolfram.alpha.WAInfo;
-import com.wolfram.alpha.WALink;
-import com.wolfram.alpha.WAPlainText;
-import com.wolfram.alpha.WAPod;
-import com.wolfram.alpha.WAQuery;
-import com.wolfram.alpha.WAQueryResult;
-import com.wolfram.alpha.WASound;
-import com.wolfram.alpha.WASubpod;
+import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
-
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -47,112 +37,113 @@ public class WolframAlphaCommand extends Command {
         this.category = CommandCategory.NERD_STUFF;
     }
 
-    @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        sendMsg(event, "This command is being worked on.");
-        WAEngine engine = AirUtils.alphaEngine;
-        
-        if(engine == null) {
-            sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
-            return;
+    /**
+     * Generates an embed for the {@link WAQueryResult result of a computation}
+     *
+     * @param event  The event
+     * @param result The result generated
+     * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
+     */
+    public static MessageEmbed generateEmbed(
+                                                    GuildMessageReceivedEvent event,
+                                                    WAQueryResult result) {
+        Member m = event.getMember();
+        EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
+
+        eb.setTitle("**Input:** " + result.getQuery().getInput(),
+                result.getQuery().toWebsiteURL());
+
+        for (WAPod pod : result.getPods()) {
+            String name = pod.getTitle();
+
+            StringBuilder embeds = new StringBuilder();
+
+            for (WASubpod sp : pod.getSubpods()) {
+                StringBuilder e = new StringBuilder();
+
+                e.append(sp.getTitle());
+
+                for (Visitable v : sp.getContents()) {
+                    String d = "";
+
+                    if (v instanceof WAImage) {
+                        WAImage i = (WAImage) v;
+                        d += i.getAlt() + ": "
+                                     + WebUtils.shortenUrl(i.getURL());
+                    } else if (v instanceof WAInfo) {
+                        WAInfo i = (WAInfo) v;
+
+                        d += i.getText();
+
+                        // TODO: Display more...
+                    } else if (v instanceof WALink) {
+                        WALink l = (WALink) v;
+
+                        d += l.getText() + ": " + WebUtils.shortenUrl(l.getURL());
+                    } else if (v instanceof WAPlainText) {
+                        WAPlainText pt = (WAPlainText) v;
+
+                        d += pt.getText();
+                    } else if (v instanceof WASound) {
+                        WASound sound = (WASound) v;
+                        d += WebUtils.shortenUrl(sound.getURL());
+                    }
+
+                    e.append(d).append("\n\n");
+                }
+
+                embeds.append(e.toString().trim()).append("\n\n");
+            }
+
+            eb.addField(name, embeds.toString().trim(), false);
         }
-        
-        if(args.length == 0) {
-            sendMsg(event, ":x: Must give a question!!!");
-            return;
-        }
-        
-        // Borrowed from EvalCommand ;p
-        String queryString
-            = event.getMessage().getRawContent()
-                    .substring(event.getMessage().getRawContent()
-                            .split(" ")[0].length());
-        
-        WAQuery query = engine.createQuery(queryString);
-        
-        WAQueryResult result;
-        
-        try {
-            result = engine.performQuery(query);
-        } catch (WAException e) {
-            event.getChannel().sendMessage(":x: Error: "
-                    + e.getClass().getSimpleName() + ": " + e.getMessage())
-                    .queue(); 
-            e.printStackTrace();
-            return;
-        }
-        
-        
-        sendEmbed(event, generateEmbed(event, result));
+
+        return eb.build();
     }
 
     // TODO: Displaying
     //       |-- Need some structure
     //       |-- Custom?
     //       |-- Must display everything?
-    /**
-     * Generates an embed for the {@link WAQueryResult result of a computation}
-     * 
-     * @param event The event
-     * @param result The result generated
-     * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
-     */
-    public static MessageEmbed generateEmbed(
-            GuildMessageReceivedEvent event,
-            WAQueryResult result) {
-    	Member m = event.getMember();
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
-        eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
-        
-        eb.setTitle("**Input:** " + result.getQuery().getInput(),
-                result.getQuery().toWebsiteURL());
-        
-        for(WAPod pod : result.getPods()) {
-            String name = pod.getTitle();
-            
-            StringBuilder embeds = new StringBuilder();
-            
-            for(WASubpod sp : pod.getSubpods()) {
-                StringBuilder e = new StringBuilder();
-                
-                e.append(sp.getTitle());
-                
-                for(Visitable v : sp.getContents()) {
-                    String d = "";
-                    
-                    if(v instanceof WAImage) {
-                        WAImage i = (WAImage) v;
-                        d += i.getAlt() + ": "
-                                    + WebUtils.shortenUrl(i.getURL());
-                    } else if(v instanceof WAInfo) {
-                        WAInfo i = (WAInfo) v;
-                        
-                        d += i.getText();
-                        
-                        // TODO: Display more...
-                    } else if(v instanceof WALink) {
-                        WALink l = (WALink) v;
-                        
-                        d += l.getText() + ": " +  WebUtils.shortenUrl(l.getURL());
-                    } else if(v instanceof WAPlainText) {
-                        WAPlainText pt = (WAPlainText) v;
-                        
-                        d += pt.getText();
-                    } else if(v instanceof WASound) {
-                        WASound sound = (WASound) v;
-                        d += WebUtils.shortenUrl(sound.getURL());
-                    }
-                    
-                    e.append(d).append("\n\n");
-                }
-                
-                embeds.append(e.toString().trim()).append("\n\n");
-            }
-            
-            eb.addField(name, embeds.toString().trim(), false);
+
+    @Override
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        sendMsg(event, "This command is being worked on.");
+        WAEngine engine = AirUtils.alphaEngine;
+
+        if (engine == null) {
+            sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
+            return;
         }
-        
-        return eb.build();
+
+        if (args.length == 0) {
+            sendMsg(event, ":x: Must give a question!!!");
+            return;
+        }
+
+        // Borrowed from EvalCommand ;p
+        String queryString
+                = event.getMessage().getRawContent()
+                          .substring(event.getMessage().getRawContent()
+                                             .split(" ")[0].length());
+
+        WAQuery query = engine.createQuery(queryString);
+
+        WAQueryResult result;
+
+        try {
+            result = engine.performQuery(query);
+        } catch (WAException e) {
+            event.getChannel().sendMessage(":x: Error: "
+                                                   + e.getClass().getSimpleName() + ": " + e.getMessage())
+                    .queue();
+            e.printStackTrace();
+            return;
+        }
+
+
+        sendEmbed(event, generateEmbed(event, result));
     }
 
     @Override
@@ -167,6 +158,6 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"wolfram", "wa", "wolframalpha"};
+        return new String[]{"wolfram", "wa", "wolframalpha"};
     }
 }

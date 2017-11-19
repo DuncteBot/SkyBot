@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -25,14 +25,14 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class LeaveCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             def manager = getAudioManager(event.guild)
 
-            if(manager.connected) {
+            if (manager.connected) {
                 getMusicManager(event.getGuild()).player.stopTrack()
                 manager.setSendingHandler(null)
                 manager.closeAudioConnection()
-                sendMsg(event,"Leaving your channel")
+                sendMsg(event, "Leaving your channel")
             } else {
                 sendMsg(event, "I'm not connected to any channels.")
             }

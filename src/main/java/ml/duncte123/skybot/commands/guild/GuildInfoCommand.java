@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.guild;
@@ -38,35 +39,34 @@ import java.time.format.DateTimeFormatter;
 public class GuildInfoCommand extends Command {
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event){
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         Guild g = event.getGuild();
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
 
             double[] ratio = AirUtils.getBotRatio(g);
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                    .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
-                    .addField("Total Members", g.getMembers().size() + "", true)
-                    .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
-                    .addField("Guild Name", g.getName(), true)
-                    .addField("Guild prefix", settings.getCustomPrefix(), true)
-                    .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                    .addField("Guild Region", g.getRegion().getName(), true)
-                    .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users "+g.getMembers().size()+")", true);
-                    if(g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                        eb.addField("Guild Invite",
-                            "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
+                                      .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
+                                      .addField("Total Members", g.getMembers().size() + "", true)
+                                      .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
+                                      .addField("Guild Name", g.getName(), true)
+                                      .addField("Guild prefix", settings.getCustomPrefix(), true)
+                                      .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                                      .addField("Guild Region", g.getRegion().getName(), true)
+                                      .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
+            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+                eb.addField("Guild Invite",
+                        "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
                                 "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
-                                true);
-                    }
-                    //If the guild doesn't have a icon we show a nice blob
-                   eb.setThumbnail(event.getGuild().getIconUrl() != null  ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
+                        true);
+            }
+            //If the guild doesn't have a icon we show a nice blob
+            eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
             MessageEmbed messageEmbed = eb.build();
 
             sendEmbed(event, messageEmbed);
-        }
-        catch (Exception e){
+        } catch (Exception e) {
             sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
         }

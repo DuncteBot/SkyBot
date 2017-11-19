@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.animals;
@@ -40,7 +41,7 @@ public class KittyCommand extends Command {
         try {
             String apiKey = AirUtils.config.getString("apis.thecatapi", "");
             Document raw = Jsoup.connect("http://thecatapi.com/api/images/get?" +
-                    (!apiKey.isEmpty()? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();
+                                                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();
             Document doc = Jsoup.parse(raw.getAllElements().html(), "", Parser.xmlParser());
 
             String fullUrl = doc.select("url").first().text();
@@ -48,8 +49,7 @@ public class KittyCommand extends Command {
 
             event.getChannel().sendFile(new URL(fullUrl).openStream(),
                     fileName, null).queue();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getCause().toString()));
             e.printStackTrace();
         }

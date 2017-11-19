@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,13 +29,13 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class StopCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             Guild guild = event.guild
             GuildMusicManager musicManager = getMusicManager(guild)
             AudioPlayer player = musicManager.player
             TrackScheduler scheduler = musicManager.scheduler
 
-            if(musicManager.player.playingTrack == null){
+            if (musicManager.player.playingTrack == null) {
                 sendMsg(event, "The player is not playing.")
                 return
             }

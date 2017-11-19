@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot;
@@ -38,6 +39,7 @@ public class SkyBot {
 
     /**
      * This is our main method
+     *
      * @param args The args passed in while running the bot
      * @throws Exception When you mess something up
      * @deprecated Because I can lol
@@ -46,12 +48,12 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
         
         //Set the logger to only info by default
-        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
-        if(useDatabase) { //Don't try to connect if we don't want to
+        if (useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);

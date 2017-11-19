@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -26,18 +26,18 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class PauseCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(channelChecks(event)) {
+        if (channelChecks(event)) {
             AudioPlayer player = getMusicManager(event.guild).player
 
-            if (player.playingTrack == null){
+            if (player.playingTrack == null) {
                 sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
                 return
             }
 
             player.setPaused(!player.paused)
-            if (player.paused){
+            if (player.paused) {
                 sendMsg(event, "The player has been paused.")
-            }else{
+            } else {
                 sendMsg(event, "The player has resumed playing.")
             }
         }

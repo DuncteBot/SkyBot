@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,6 +14,7 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.guild.mod;
@@ -44,16 +45,15 @@ public class HackbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() +" <userId>");
+            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <userId>");
             return;
         }
 
         try {
-            event.getGuild().getController().ban(args[0], 0).queue( (v) -> {
+            event.getGuild().getController().ban(args[0], 0).queue((v) -> {
                 sendMsg(event, "User has been banned!");
-            } );
-        }
-        catch (Exception e) {
+            });
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

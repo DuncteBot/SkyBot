@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -14,21 +14,27 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.apache.commons.lang3.StringUtils;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 
 public class SettingsCommand extends Command {
 
@@ -38,7 +44,7 @@ public class SettingsCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
+        if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
@@ -46,50 +52,77 @@ public class SettingsCommand extends Command {
         GuildSettings settings = getSettings(event.getGuild());
         boolean isEnabled;
         switch (invoke) {
-            case "settings": case "options":
+            case "settings":
+            case "options":
                 //true ✅
                 //false ❌
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
                         "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
                         "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-                        "**Current prefix:** " + settings.getCustomPrefix()
+                        "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
+                        "**Log Channel:** " + AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild()).getAsMention()
                 );
                 sendEmbed(event, message);
                 break;
 
             case "setprefix":
-                if(args.length < 1) {
-                    sendMsg(event, "Correct usage is `"+this.PREFIX+"setPrefix <new prefix>`");
+                if (args.length < 1) {
+                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
                 String newPrefix = StringUtils.join(args);
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
-                sendMsg(event, "New prefix has been set to `"+newPrefix+"`");
+                sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
             case "setjoinmessage":
-                if(args.length < 1) {
-                    sendMsg(event, "Correct usage is `"+this.PREFIX+"setJoinMessage <new join message>`");
+                if (args.length < 1) {
+                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
                 String newJoinMessage = StringUtils.join(args);
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
-                sendMsg(event, "The new join message has been set to `"+newJoinMessage+"`");
+                sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
 
-            case "enablejoinmessage": case "disablejoinmessage": case "togglejoinmessage":
+            case "enablejoinmessage":
+            case "disablejoinmessage":
+            case "togglejoinmessage":
                 isEnabled = settings.isEnableJoinMessage();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                         settings.setEnableJoinMessage(!isEnabled));
                 sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
-            case "enableswearfilter": case "disableswearfilter": case "toggleswearfilter":
+            case "enableswearfilter":
+            case "disableswearfilter":
+            case "toggleswearfilter":
                 isEnabled = settings.isEnableSwearFilter();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                         settings.setEnableSwearFilter(!isEnabled));
                 sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                break;
+
+            case "setlogchannel":
+                if(args.length < 1) {
+                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"setLogChannel [text channel]`");
+                    return;
+                }
+                if(event.getMessage().getMentionedChannels().size() > 0) {
+                    TextChannel tc = event.getMessage().getMentionedChannels().get(0);
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
+                    sendMsg(event, "The new channel log has been set to " + tc.getAsMention());
+                    return;
+                }
+
+                TextChannel tc = AirUtils.getLogChannel(StringUtils.join(args), event.getGuild());
+                if(tc == null) {
+                    sendMsg(event, "This channel could not be found.");
+                    return;
+                }
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
+                sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                 break;
         }
     }
@@ -101,7 +134,8 @@ public class SettingsCommand extends Command {
                 "`"+this.PREFIX+"setPrefix <prefix>` => Sets the new prefix\n" +
                 "`"+this.PREFIX+"setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
                 "`"+this.PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
-                "`"+this.PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n"
+                "`"+this.PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
+                "`"+this.PREFIX+"setLogChannel [text channel]` => Sets the channel to log messages in\n"
                 ;
     }
 
@@ -120,7 +154,8 @@ public class SettingsCommand extends Command {
                 "enableswearfilter",
                 "disableswearfilter",
                 "toggleswearfilter",
-                "setprefix"
+                "setprefix",
+                "setlogchannel"
         };
     }
 }
