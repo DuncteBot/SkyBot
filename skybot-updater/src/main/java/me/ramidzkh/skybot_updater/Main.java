@@ -14,7 +14,9 @@ public class Main {
 
     static {
         String j = System.getProperty("java");
-        if(j == null) j = "C:\\Program Files\\Java\\jre1.8.0_131\\bin\\java.exe";
+        
+        // Debugging
+        // if(j == null) j = "C:\\Program Files\\Java\\jre1.8.0_131\\bin\\java.exe";
         
         java = j;
     }
