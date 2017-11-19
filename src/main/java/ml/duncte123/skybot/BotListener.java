@@ -66,7 +66,7 @@ public class BotListener extends ListenerAdapter {
      */
     public Timer unbanTimer = new Timer();
     /**
-     * This tells us if the {@link #unbanTimer unbanTimer} is running
+     * This tells us if the {@link #unbanTimer} is running
      */
     public boolean unbanTimerRunning = false;
     
@@ -76,7 +76,7 @@ public class BotListener extends ListenerAdapter {
     public Timer settingsUpdateTimer = new Timer();
     
     /**
-     * This tells us if the {@link #settingsUpdateTimer settingsUpdateTimer} is running
+     * This tells us if the {@link #settingsUpdateTimer} is running
      */
     public boolean settingsUpdateTimerRunning = false;
 
@@ -159,16 +159,11 @@ public class BotListener extends ListenerAdapter {
     /**
      * When the bot is ready to go
      *
-     * @param event The corresponding {@link net.dv8tion.jda.core.events.ReadyEvent ReadyEvent}
+     * @param event The corresponding {@link ReadyEvent}
      */
     @Override
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
-        
-        AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
-                new String(Settings.iyqrektunkyhuwul3dx0b[0]))
-                                               | event.getJDA().getSelfUser().getId().equals(
-                new String(Settings.iyqrektunkyhuwul3dx0b[1]));
         
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
@@ -214,11 +209,10 @@ public class BotListener extends ListenerAdapter {
     /**
      * This will fire when a new member joins
      *
-     * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent GuildMemberJoinEvent}
+     * @param event The corresponding {@link GuildMemberJoinEvent}
      */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -244,7 +238,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This will fire when the bot joins a guild and we check if we are allowed to join this guild
      *
-     * @param event The corresponding {@link net.dv8tion.jda.core.events.guild.GuildJoinEvent GuildJoinEvent}
+     * @param event The corresponding {@link GuildJoinEvent}
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
@@ -273,7 +267,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This will fire when a member leaves a channel in a guild, we check if the channel is empty and if it is we leave it
      *
-     * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent GuildVoiceLeaveEvent}
+     * @param event {@link GuildVoiceLeaveEvent}
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
@@ -297,7 +291,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This will fire when a member moves from channel, if a member moves we will check if our channel is empty
      *
-     * @param event {@link net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent GuildVoiceMoveEvent}
+     * @param event {@link GuildVoiceMoveEvent}
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
@@ -336,6 +330,4 @@ public class BotListener extends ListenerAdapter {
             
         }
     }
-
-
 }

@@ -114,3 +114,19 @@ logs\.txt
 \.idea/inspectionProfiles/
 
 \.idea/codeStyleSettings\.xml
+
+skybot-updater/\.idea/libraries/Gradle__com_google_code_gson_gson_2_8_2\.xml
+
+skybot-updater/\.idea/libraries/Gradle__com_squareup_okhttp3_okhttp_3_9_0\.xml
+
+skybot-updater/\.idea/libraries/Gradle__com_squareup_okio_okio_1_13_0\.xml
+
+skybot-updater/\.idea/libraries/Gradle__commons_io_commons_io_2_6\.xml
+
+skybot-updater/\.idea/libraries/Gradle__junit_junit_4_12\.xml
+
+skybot-updater/\.idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3\.xml
+
+skybot-updater/\.idea/workspace\.xml
+
+skybot-updater/updater\.json

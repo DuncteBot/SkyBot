@@ -86,11 +86,11 @@ public abstract class Command {
             
             Response response = new OkHttpClient()
                                         .newCall(
-                                                new Request.Builder()
-                                                        .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                                                        .get()
-                                                        .addHeader("Authorization", token)
-                                                        .build())
+                                            new Request.Builder()
+                                                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                                                .get()
+                                                .addHeader("Authorization", token)
+                                                .build())
                                         .execute();
             JSONArray json = new JSONArray(response.body().source().readUtf8());
             

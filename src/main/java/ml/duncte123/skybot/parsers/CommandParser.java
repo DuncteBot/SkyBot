@@ -31,7 +31,7 @@ public class CommandParser {
      * This will split an command into the command and the args
      *
      * @param rw the raw text
-     * @param e  An instance of the {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param e  An instance of the {@link GuildMessageReceivedEvent}
      * @return Our {@link CommandContainer CommandContainer}
      */
     public CommandContainer parse(String rw, GuildMessageReceivedEvent e) {
@@ -52,7 +52,7 @@ public class CommandParser {
          *
          * @param invoke The command that is ran
          * @param args   The arguments from the command
-         * @param e      A ninstance of the {@link net.dv8tion.jda.core.events.message.MessageReceivedEvent MessageReceivedEvent}
+         * @param e      A ninstance of the {@link GuildMessageReceivedEvent}
          */
         private CommandContainer(String invoke, String[] args, GuildMessageReceivedEvent e) {
             this.invoke = invoke;

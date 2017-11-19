@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -47,10 +48,6 @@ public class AirUtils {
      * This is our config file
      */
     public static Config config = new ConfigUtils().loadConfig();
-    /**
-     * Secret variable of smthn idek
-     */
-    public static boolean spoopyScaryVariable = false;
     /**
      * This will hold the command setup and the registered commands
      */
@@ -91,7 +88,7 @@ public class AirUtils {
     /**
      * This converts the online status of a user to a fancy emote
      *
-     * @param status The {@link net.dv8tion.jda.core.OnlineStatus OnlineStatus} to convert
+     * @param status The {@link OnlineStatus} to convert
      * @return The fancy converted emote as a mention
      */
     public static String convertStatus(OnlineStatus status) {
@@ -116,7 +113,7 @@ public class AirUtils {
      * @param punishment   The type of punishment
      * @param reason       The reason of the punishment
      * @param time         How long it takes for the punishment to get removed
-     * @param g            A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
+     * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
@@ -141,7 +138,7 @@ public class AirUtils {
      * @param punishedUser The user that got punished
      * @param punishment   The type of punishment
      * @param reason       The reason of the punishment
-     * @param g            A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
+     * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
@@ -153,7 +150,7 @@ public class AirUtils {
      * @param mod          The mod that permed the executeCommand
      * @param unbannedUser The user that the executeCommand is for
      * @param punishment   The type of punishment that got removed
-     * @param g            A instance of the {@link net.dv8tion.jda.core.entities.Guild guild}
+     * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
         modLog(mod, unbannedUser, punishment, "", g);
@@ -306,7 +303,7 @@ public class AirUtils {
     /**
      * Logs a message to the console
      *
-     * @param lvl     The {{@link org.slf4j.event.Level level} to log the message at
+     * @param lvl     The {@link Level} to log the message at
      * @param message The message to log
      */
     public static void log(Level lvl, String message) {
@@ -317,7 +314,7 @@ public class AirUtils {
      * Logs a message to the console
      *
      * @param name    The name of the class that is calling it
-     * @param lvl     The {@link org.slf4j.event.Level level} to log the message at
+     * @param lvl     The {@link Level} to log the message at
      * @param message The message to log
      */
     public static void log(String name, Level lvl, Object message) {
@@ -348,7 +345,7 @@ public class AirUtils {
     /**
      * This will calculate the bot to user ratio
      *
-     * @param g the {@link net.dv8tion.jda.core.entities.Guild Guild} that we want to check
+     * @param g the {@link Guild} that we want to check
      * @return the percentage of users and the percentage of bots in a nice compact array
      */
     public static double[] getBotRatio(Guild g) {
@@ -456,8 +453,8 @@ public class AirUtils {
         if (appId == null || "".equals(appId)) {
             IllegalStateException e
                     = new IllegalStateException("Wolfram Alpha App ID not specified."
-                                                        + " Please generate one at "
-                                                        + "https://developer.wolframalpha.com/portal/myapps/");
+                                                + " Please generate one at "
+                                                + "https://developer.wolframalpha.com/portal/myapps/");
             logger.error(e.getMessage(), e);
             return null;
         }
@@ -512,7 +509,7 @@ public class AirUtils {
      * Attempts to register a new tag
      *
      * @param author The user that created the tag
-     * @param tag    the {@link Tag Tag} to add
+     * @param tag    the {@link Tag} to add
      * @return True if the tag is added
      */
     public static boolean registerNewTag(User author, Tag tag) {
@@ -547,7 +544,7 @@ public class AirUtils {
     /**
      * Attempts to delete a tag
      *
-     * @param tag the {@link Tag Tag} to delete
+ * @param tag the {@link Tag} to delete
      * @return true if the tag is deleted
      */
     public static boolean deleteTag(Tag tag) {
@@ -591,7 +588,17 @@ public class AirUtils {
             return e.toString();
         }
     }
-    
+
+    public static void stop() {
+        try {
+            db.getConnManager().getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
+    }
+
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if(channelId == null) return getPublicChannel(guild);
 
@@ -608,4 +615,5 @@ public class AirUtils {
 
         return tc;
     }
+
 }

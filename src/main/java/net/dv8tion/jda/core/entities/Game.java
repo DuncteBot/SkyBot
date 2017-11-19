@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.utils.Checks;
 import java.util.Objects;
 
 /**
- * Represents a Discord {@link net.dv8tion.jda.core.entities.Game Game}.
+ * Represents a Discord {@link Game}.
  * <br>This should contain all information provided from Discord about a Game.
  *
  * @since  2.1
@@ -57,7 +57,7 @@ public class Game
     }
 
     /**
-     * The displayed name of the {@link net.dv8tion.jda.core.entities.Game Game}. If no name has been set, this returns null.
+     * The displayed name of the {@link Game Game}. If no name has been set, this returns null.
      *
      * @return Possibly-null String containing the Game's name.
      */
@@ -67,7 +67,7 @@ public class Game
     }
 
     /**
-     * The URL of the {@link net.dv8tion.jda.core.entities.Game Game} if the game is actually a Stream.
+     * The URL of the {@link Game} if the game is actually a Stream.
      * <br>This will return null for regular games.
      *
      * @return Possibly-null String containing the Game's URL.
@@ -78,9 +78,9 @@ public class Game
     }
 
     /**
-     * The type of {@link net.dv8tion.jda.core.entities.Game Game}.
+     * The type of {@link Game}.
      *
-     * @return Never-null {@link net.dv8tion.jda.core.entities.Game.GameType GameType} representing the type of Game
+     * @return Never-null {@link.GameType GameType} representing the type of Game
      */
     public GameType getType()
     {
@@ -251,7 +251,7 @@ public class Game
      * Creates a new Game instance with the specified name and url.
      *
      * @param  type
-     *         The {@link net.dv8tion.jda.core.entities.Game.GameType GameType} to use
+     *         The {@link.GameType GameType} to use
      * @param  name
      *         The not-null name of the newly created game
      *
@@ -267,11 +267,11 @@ public class Game
 
     /**
      * Creates a new Game instance with the specified name and url.
-     * <br>The provided url would only be used for {@link net.dv8tion.jda.core.entities.Game.GameType#STREAMING GameType.STREAMING}
+     * <br>The provided url would only be used for {@link.GameType#STREAMING GameType.STREAMING}
      * and should be a twitch url.
      *
      * @param  type
-     *         The {@link net.dv8tion.jda.core.entities.Game.GameType GameType} to use
+     *         The {@link.GameType GameType} to use
      * @param  name
      *         The not-null name of the newly created game
      * @param  url
@@ -321,21 +321,21 @@ public class Game
     public enum GameType
     {
         /**
-         * The GameType used to represent a normal {@link net.dv8tion.jda.core.entities.Game Game} status.
+         * The GameType used to represent a normal {@link Game} status.
          */
         DEFAULT(0),
         /**
-         * Used to indicate that the {@link net.dv8tion.jda.core.entities.Game Game} is a stream
+         * Used to indicate that the {@link Game} is a stream
          * <br>This type is displayed as "Streaming" in the discord client.
          */
         STREAMING(1),
         /**
-         * Used to indicate that the {@link net.dv8tion.jda.core.entities.Game Game} should display
+         * Used to indicate that the {@link Game} should display
          * as {@code Listening...} in the official client.
          */
         LISTENING(2),
         /**
-         * Used to indicate that the {@link net.dv8tion.jda.core.entities.Game Game} should display
+         * Used to indicate that the {@link Game} should display
          * as {@code Watching...} in the official client.
          */
         WATCHING(3);

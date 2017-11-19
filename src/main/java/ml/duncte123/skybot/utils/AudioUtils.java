@@ -63,8 +63,8 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    private final Map<String, GuildMusicManager> musicManagers;
-    
+    final Map<String, GuildMusicManager> musicManagers;
+
     /**
      * This will set everything up and get the player ready
      */

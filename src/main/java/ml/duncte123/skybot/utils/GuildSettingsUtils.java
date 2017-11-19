@@ -27,7 +27,7 @@ import java.sql.*;
 
 public class GuildSettingsUtils {
     /**
-     * This runs both {@link #loadGuildSettings()} and {{@link #loadFooterQuotes()}}
+     * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
      */
     public static void loadAllSettings() {
         loadGuildSettings();
@@ -35,7 +35,7 @@ public class GuildSettingsUtils {
     }
     
     /**
-     * This will load all the footer quotes from the database and store them in the {@link EmbedUtils#footerQuotes footerQuotes}
+     * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
      */
     public static void loadFooterQuotes() {
         if(!AirUtils.nonsqlite) return;

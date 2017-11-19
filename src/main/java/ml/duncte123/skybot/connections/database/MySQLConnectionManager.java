@@ -27,7 +27,7 @@ import java.sql.DriverManager;
 /**
  * Represents a server database
  */
-class DatabaseConnectionManager
+class MySQLConnectionManager
         implements DBConnectionManager {
 
     private final String dbHost;
@@ -35,7 +35,7 @@ class DatabaseConnectionManager
     private final String pass;
     private final String dbName;
 
-    public DatabaseConnectionManager() {
+    public MySQLConnectionManager() {
         this.dbHost = AirUtils.config.getString("sql.host", "sql.example.com");
         this.user = AirUtils.config.getString("sql.username", "exampleUser");
         this.pass = AirUtils.config.getString("sql.password", "Ex@mplePAss");
