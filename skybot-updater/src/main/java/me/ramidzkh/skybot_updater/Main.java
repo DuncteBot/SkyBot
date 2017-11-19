@@ -18,11 +18,11 @@ public class Main {
         java = j;
     }
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         if(!file.exists())
             try {
                 handleDownloadFile();
-                ProcessHandler.out.println("Successfully downloaded latest JAR file!");
+                System.out.println("Successfully downloaded latest JAR file!");
             } catch (IOException e) {
                 System.err.println("Couldn't download latest JAR file");
                 e.printStackTrace();
@@ -40,16 +40,14 @@ public class Main {
                 handler.bind();
 
                 while(handler.process.isAlive());
-    
-                handler.kill();
                 
-                int exit;
+                int exit = handler.returnCode();
                 
-                if((exit = handler.process.exitValue()) == 0x5454) {
+                if(exit == 0x5454) {
                     handleDownloadFile();
-                    ProcessHandler.out.println("Successfully downloaded latest JAR file!");
+                    System.out.println("Successfully downloaded latest JAR file!");
                 } else {
-                    ProcessHandler.out.printf("Program exited with %s. Goodbye!\n", exit);
+                    System.out.printf("Program exited with exit code %s. Goodbye!\n", exit);
                     break;
                 }
             } catch (IOException e) {
