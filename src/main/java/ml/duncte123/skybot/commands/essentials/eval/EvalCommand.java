@@ -80,7 +80,7 @@ public class EvalCommand extends Command {
                 "net.dv8tion.jda.core.managers.impl",
                 "net.dv8tion.jda.core.utils",
                 "ml.duncte123.skybot.utils");
-        classImports = Arrays.asList("ml.duncte123.objects.FakeInterface");
+        classImports = Arrays.asList("ml.duncte123.skybot.objects.FakeInterface");
     }
     
     @Override
