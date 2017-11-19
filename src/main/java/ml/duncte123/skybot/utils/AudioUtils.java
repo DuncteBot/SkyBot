@@ -66,11 +66,6 @@ public class AudioUtils {
     final Map<String, GuildMusicManager> musicManagers;
 
     /**
-     * This is the title that you see in the embeds from the player
-     */
-    public final String embedTitle = Settings.playerTitle;
-
-    /**
      * This will set everything up and get the player ready
      */
     public AudioUtils() {
