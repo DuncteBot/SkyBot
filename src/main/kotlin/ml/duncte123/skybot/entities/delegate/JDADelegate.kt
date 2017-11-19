@@ -35,7 +35,7 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
         this.shutdown()
     }
     
-    override fun getPresence() = PresenceDelegate(this.presence)
+    override fun getPresence(): Presence = PresenceDelegate(this.presence)
     
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
