@@ -165,11 +165,6 @@ public class BotListener extends ListenerAdapter {
     public void onReady(ReadyEvent event){
         AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
         
-        AirUtils.spoopyScaryVariable = event.getJDA().getSelfUser().getId().equals(
-                new String(Settings.iyqrektunkyhuwul3dx0b[0]))
-                                               | event.getJDA().getSelfUser().getId().equals(
-                new String(Settings.iyqrektunkyhuwul3dx0b[1]));
-        
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the unban timer.");

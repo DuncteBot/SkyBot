@@ -49,10 +49,6 @@ public class AirUtils {
      */
     public static Config config = new ConfigUtils().loadConfig();
     /**
-     * Secret variable of smthn idek
-     */
-    public static boolean spoopyScaryVariable = false;
-    /**
      * This will hold the command setup and the registered commands
      */
     public static CommandManager commandManager = new CommandManager();
