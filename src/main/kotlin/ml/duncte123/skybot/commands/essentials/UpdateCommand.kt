@@ -21,7 +21,7 @@ class UpdateCommand: Command() {
             return
         }
         
-        event.channel.sendMessage(":x: Goodbye").queue()
+        event.channel.sendMessage(":heavy_check_mark: Goodbye").queue()
         
         // This will also shutdown eval
         event.jda.asBot().shardManager.shutdown()
