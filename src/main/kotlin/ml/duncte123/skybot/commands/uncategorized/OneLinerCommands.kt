@@ -32,7 +32,7 @@ class OneLinerCommands : Command() {
 
     companion object {
         @JvmStatic
-        public val pingHistory: SizedList<Long> = SizedList(25)
+        val pingHistory: SizedList<Long> = SizedList(25)
     }
     
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {

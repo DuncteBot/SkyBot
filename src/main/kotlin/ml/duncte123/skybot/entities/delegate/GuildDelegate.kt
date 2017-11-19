@@ -39,7 +39,7 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
 
     override fun getController(): GuildController = throw VRCubeException("**\uD83D\uDD25 lit**")
 
-    override fun leave(): RestAction<Void>  = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun leave(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     override fun getMember(user: User): Member = MemberDelegate(z88Am1Alk.getMember(user))
 
@@ -65,4 +65,6 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
 
     override fun getMembersWithRoles(roles: Collection<Role>): List<Member> =
             z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
+
+    override fun getRoles(): List<Role> = z88Am1Alk.roles.map { RoleDelegate(it) }
 }
