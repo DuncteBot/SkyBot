@@ -123,6 +123,7 @@ class SQLiteDatabaseConnectionManager
                                                          "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                                                          "guildId TEXT NOT NULL," +
                                                          "guildName TEXT NOT NULL," +
+                                                         "logChannelId TEXT NOT NULL," +
                                                          "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
