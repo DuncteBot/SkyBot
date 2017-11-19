@@ -92,8 +92,8 @@ public class EvalCommand extends Command {
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
-                    EmbedUtils.embedMessage("The eval command is locked for people who have not upvoted the bot," +
-                            " please consider to hit the upvote button over at " +
+                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to user that have not upvoted the bot, " +
+                            "Please consider to give this bot an upvote over at " +
                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
             return;
         }
