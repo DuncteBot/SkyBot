@@ -22,6 +22,7 @@ package ml.duncte123.skybot.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.*;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -166,6 +167,29 @@ public class WebUtils {
     public static Response postRequest(String url) {
         return postRequest(url, AcceptType.TEXT_JSON);
     }
+
+    /**
+     * This allows for JSON post requests to a website
+     * @param url the website to post the json to
+     * @param data the JSON data to post
+     * @return The {@link Response} from the webserver
+     */
+    public static Response postJSON(String url, JSONObject data) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("User-Agent", USER_AGENT)
+                .build();
+
+        try {
+            return (new OkHttpClient()).newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     
     /**
      * Shortens a URL with the <a href="https://goo.gl" target="">goo.gl</a> api
@@ -175,26 +199,17 @@ public class WebUtils {
      */
     public static String shortenUrl(String url) {
         try {
-            HttpsURLConnection con
-                    = (HttpsURLConnection)
-                              new URL("https://www.googleapis.com/urlshortener/v1/url?key="
-                                              + AirUtils.config.getString("apis.googl"))
-                                      .openConnection();
-            con.setRequestMethod("POST");
-            con.addRequestProperty("Content-Type", "application/json");
-            con.setDoOutput(true);
-            
-            JsonObject jo = new JsonObject();
-            
-            jo.addProperty("longUrl", url);
-            
-            con.getOutputStream().write(
-                    jo.toString().getBytes());
-            
-            return new JsonParser().parse(
-                    new InputStreamReader(con.getInputStream()))
-                           .getAsJsonObject().get("id").getAsString();
-        } catch (IOException e) {
+            JSONObject jo = new JSONObject();
+
+            jo.put("longUrl", url);
+
+            String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
+                    + AirUtils.config.getString("apis.googl"), jo).body().source().readUtf8();
+
+            JSONObject returnJSON = new JSONObject(returnData);
+            return returnJSON.get("id").toString();
+
+        } catch (NullPointerException | IOException e) {
             e.printStackTrace();
             return null;
         }
