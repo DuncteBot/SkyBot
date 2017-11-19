@@ -126,3 +126,7 @@ skybot-updater/\.idea/libraries/Gradle__commons_io_commons_io_2_6\.xml
 skybot-updater/\.idea/libraries/Gradle__junit_junit_4_12\.xml
 
 skybot-updater/\.idea/libraries/Gradle__org_hamcrest_hamcrest_core_1_3\.xml
+
+skybot-updater/\.idea/workspace\.xml
+
+skybot-updater/updater\.json

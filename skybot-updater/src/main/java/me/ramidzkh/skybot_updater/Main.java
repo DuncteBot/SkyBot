@@ -1,5 +1,6 @@
 package me.ramidzkh.skybot_updater;
 
+import com.google.gson.JsonObject;
 import okhttp3.OkHttpClient;
 
 import java.io.File;
@@ -34,7 +35,6 @@ public class Main {
         
         while(true) {
             try {
-                // Fix here
                 handler = new ProcessHandler();
                 
                 handler.bind();
@@ -44,14 +44,15 @@ public class Main {
                 int exit = handler.returnCode();
                 
                 if(exit == 0x5454) {
+                    System.out.println("\nInitiating update procedure");
                     handleDownloadFile();
-                    System.out.println("Successfully downloaded latest JAR file!");
+                    System.out.println("Successfully downloaded latest JAR file!\nRetsarting bot...\n\n");
                 } else {
-                    System.out.printf("Program exited with exit code %s. Goodbye!\n", exit);
+                    System.out.printf("Program exited with exit code %s. Goodbye!", exit);
                     break;
                 }
             } catch (IOException e) {
-                System.err.printf("Failed starting SkyBot (%s -jar %s)\n", java, file.getName());
+                System.err.printf("Failed starting SkyBot (%s -jar %s)%n", java, file.getName());
                 System.exit(1);
             }
         }
@@ -61,7 +62,17 @@ public class Main {
     throws IOException {
         if(file.exists())
             file.delete();
+        OkHttpClient client = new OkHttpClient();
         
-        GithubRequester.downloadLatest(new OkHttpClient(), new FileOutputStream(file));
+        UpdateInfo info = UpdateInfo.load();
+        if(info == null)
+            GithubRequester.downloadLatest(client, new FileOutputStream(file));
+        else {
+            JsonObject release = GithubRequester.getLatestRelease(client);
+            JsonObject asset = GithubRequester.getAsset(release);
+            
+            if(info.olderThan(new UpdateInfo(release, asset)))
+                GithubRequester.downloadLatest(client, new FileOutputStream(file));
+        }
     }
 }

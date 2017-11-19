@@ -16,7 +16,7 @@ import java.net.URL;
 
 public class GithubRequester {
 
-    public static JsonObject getLatestDownload(OkHttpClient client)
+    public static JsonObject getLatestRelease(OkHttpClient client)
     throws IOException {
         Request request = new Request.Builder()
                 .url("https://api.github.com/repos/duncte123/SkyBot/releases")
@@ -27,15 +27,31 @@ public class GithubRequester {
         JsonArray releases = new JsonParser().parse(response.body().source().readUtf8()).getAsJsonArray();
         
         for(JsonElement release : releases)
-            for(JsonElement asset : release.getAsJsonObject().get("assets").getAsJsonArray()) {
-                JsonObject jo = asset.getAsJsonObject();
-                if(jo.get("name").getAsString().matches("((?i)skybot)-((\\d*\\.)*\\d*)\\.jar"))
-                    return jo;
-            }
+            return release.getAsJsonObject();
         
         new IllegalStateException("Unable to find a release").printStackTrace();
         System.exit(1);
         
+        return null;
+    }
+
+    public static JsonObject getAsset(JsonObject release) {
+        for(JsonElement asset : release.get("assets").getAsJsonArray()) {
+            JsonObject jo = asset.getAsJsonObject();
+            if (jo.get("name").getAsString().matches("((?i)skybot)-((\\d*\\.)*\\d*)\\.jar")) {
+                try {
+                    new UpdateInfo(release, jo).save();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    System.exit(1);
+                }
+                return jo;
+            }
+        }
+    
+        new IllegalStateException("Unable to find an asset in " + release.toString()).printStackTrace();
+        System.exit(1);
+    
         return null;
     }
 
@@ -53,7 +69,8 @@ public class GithubRequester {
         
         InputStream in = con.getInputStream();
         
-        System.out.printf("%s bytes to be downloaded from %s%n", release.get("size").getAsLong(), con.getURL().toExternalForm());
+        System.out.printf("%s bytes to be downloaded from %s%n", release.get("size").getAsLong(),
+                release.get("browser_download_url").getAsString());
         
         byte[] buf = new byte[1024];
         int len;
@@ -72,6 +89,6 @@ public class GithubRequester {
 
     public static void downloadLatest(OkHttpClient client, OutputStream out)
     throws IOException {
-        download(getLatestDownload(client), out);
+        download(getAsset(getLatestRelease(client)), out);
     }
 }
