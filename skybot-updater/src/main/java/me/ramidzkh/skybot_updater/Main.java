@@ -22,7 +22,7 @@ public class Main {
     }
 
     public static void main(String[] args) throws IOException {
-        if(!file.exists())
+        if (!file.exists())
             try {
                 handleDownloadFile();
                 System.out.println("Successfully downloaded latest JAR file!");
@@ -35,17 +35,17 @@ public class Main {
         
         ProcessHandler handler;
         
-        while(true) {
+        while (true) {
             try {
                 handler = new ProcessHandler();
                 
                 handler.bind();
 
-                while(handler.process.isAlive());
+                while (handler.process.isAlive()) ;
                 
                 int exit = handler.returnCode();
                 
-                if(exit == 0x5454) {
+                if (exit == 0x5454) {
                     System.out.println("\nInitiating update procedure");
                     handleDownloadFile();
                     System.out.println("Successfully downloaded latest JAR file!\nRetsarting bot...\n\n");
@@ -61,19 +61,19 @@ public class Main {
     }
 
     public static void handleDownloadFile()
-    throws IOException {
-        if(file.exists())
+            throws IOException {
+        if (file.exists())
             file.delete();
         OkHttpClient client = new OkHttpClient();
         
         UpdateInfo info = UpdateInfo.load();
-        if(info == null)
+        if (info == null)
             GithubRequester.downloadLatest(client, new FileOutputStream(file));
         else {
             JsonObject release = GithubRequester.getLatestRelease(client);
             JsonObject asset = GithubRequester.getAsset(release);
             
-            if(info.olderThan(new UpdateInfo(release, asset)))
+            if (info.olderThan(new UpdateInfo(release, asset)))
                 GithubRequester.downloadLatest(client, new FileOutputStream(file));
         }
     }

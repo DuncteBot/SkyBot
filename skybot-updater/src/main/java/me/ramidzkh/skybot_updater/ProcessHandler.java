@@ -8,12 +8,12 @@ public class ProcessHandler {
     Process process;
 
     public ProcessHandler()
-    throws IOException {
+            throws IOException {
         process = new ProcessBuilder()
-                .command(Main.java, "-jar", "skybot.jar")
-                .directory(new File(System.getProperty("user.dir")))
-                .inheritIO()
-                .start();
+                          .command(Main.java, "-jar", "skybot.jar")
+                          .directory(new File(System.getProperty("user.dir")))
+                          .inheritIO()
+                          .start();
     }
 
     public void bind() {

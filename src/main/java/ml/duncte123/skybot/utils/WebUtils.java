@@ -48,8 +48,8 @@ public class WebUtils {
         URLConnection connection = website.openConnection();
         connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
         BufferedReader in = new BufferedReader(
-                                                      new InputStreamReader(
-                                                                                   connection.getInputStream()));
+                                      new InputStreamReader(
+                                                   connection.getInputStream()));
         
         StringBuilder response = new StringBuilder();
         String inputLine;
@@ -67,7 +67,7 @@ public class WebUtils {
      *
      * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
         
@@ -93,10 +93,9 @@ public class WebUtils {
      * This makes a post request to the specified website
      *
      * @param url The website to post to
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url) {
-        
         return getRequest(url, AcceptType.TEXT_HTML);
     }
     
@@ -106,10 +105,9 @@ public class WebUtils {
      * @param url        The website to post to
      * @param postFields the params for the post (param name, param value)
      * @param accept     What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-        
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
         
@@ -142,7 +140,7 @@ public class WebUtils {
      *
      * @param url        The website to post to
      * @param postFields the params for the post
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields) {
         return postRequest(url, postFields, AcceptType.URLENCODED);
@@ -153,7 +151,7 @@ public class WebUtils {
      *
      * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, AcceptType accept) {
         return postRequest(url, new HashMap<>(), accept);
@@ -163,7 +161,7 @@ public class WebUtils {
      * This makes a post request to the specified website
      *
      * @param url The website to post to
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url) {
         return postRequest(url, AcceptType.TEXT_JSON);

@@ -40,7 +40,7 @@ public class EmbedUtils {
      *
      * @param title   The title of the field
      * @param message The message to display
-     * @return The {@link net.dv8tion.jda.core.entities.MessageEmbed MessageEmbed} to send to the channel
+     * @return The {@link MessageEmbed} to send to the channel
      */
     public static MessageEmbed embedField(String title, String message) {
         return defaultEmbed().addField(title, message, false).build();
@@ -50,7 +50,7 @@ public class EmbedUtils {
      * The default way to display a nice embedded message
      *
      * @param message The message to display
-     * @return The {@link MessageEmbed MessageEmbed} to send to the channel
+     * @return The {@link MessageEmbed} to send to the channel
      */
     public static MessageEmbed embedMessage(String message) {
         return defaultEmbed().setDescription(message).build();
@@ -60,7 +60,7 @@ public class EmbedUtils {
      * The default way to send a embedded image to the channel
      *
      * @param imageURL The url from the image
-     * @return The {@link MessageEmbed MessageEmbed} to send to the channel
+     * @return The {@link MessageEmbed} to send to the channel
      */
     public static MessageEmbed embedImage(String imageURL) {
         return defaultEmbed().setImage(imageURL).build();
@@ -69,7 +69,7 @@ public class EmbedUtils {
     /**
      * The default embed layout that all of the embeds are based off
      *
-     * @return The way that that the {@link net.dv8tion.jda.core.EmbedBuilder embed} will look like
+     * @return The way that that the {@link EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed() {
         EmbedBuilder eb = new EmbedBuilder()
@@ -93,7 +93,7 @@ public class EmbedUtils {
     /**
      * This will generate a nice player embed for us
      *
-     * @param mng the {@link net.dv8tion.jda.core.entities.Guild Guild} that we need the info for
+     * @param mng the {@link net.dv8tion.jda.core.entities.Guild} that we need the info for
      * @return the String that we can place in our embed
      */
     public static String playerEmbed(GuildMusicManager mng) {
@@ -161,7 +161,7 @@ public class EmbedUtils {
     /**
      * This will convert our embeds for if the bot is not able to send embeds
      *
-     * @param embed the {@link MessageEmbed MessageEmbed} that we are trying to send
+     * @param embed the {@link MessageEmbed} that we are trying to send
      * @return the converted embed
      */
     public static String embedToMessage(MessageEmbed embed) {
