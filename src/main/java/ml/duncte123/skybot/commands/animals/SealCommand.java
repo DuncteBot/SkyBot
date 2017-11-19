@@ -42,13 +42,12 @@ public class SealCommand extends Command {
             String sealLoc = "https://raw.githubusercontent.com/TheBITLINK/randomse.al/master/seals/" + idStr + ".jpg";
 
             if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES)) {
-                event.getChannel().sendFile(new URL(sealLoc).openStream(), "Seal_"+System.currentTimeMillis()+".jpg", null).queue();
+                event.getChannel().sendFile(new URL(sealLoc).openStream(), "Seal_" + System.currentTimeMillis() + ".jpg", null).queue();
             } else {
                 sendMsg(event, sealLoc);
             }
-        }
-        catch (Exception e) {
-            sendMsg(event, "ERROR: "+e.getMessage());
+        } catch (Exception e) {
+            sendMsg(event, "ERROR: " + e.getMessage());
             e.printStackTrace();
         }
 

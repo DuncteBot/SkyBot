@@ -19,15 +19,16 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter
 
-import org.kohsuke.groovy.sandbox.GroovyValueFilter
-import java.math.BigInteger
-import java.math.BigDecimal
-import java.util.Arrays
-
 import Java.lang.VRCubeException
-import groovy.lang.Script
 import groovy.lang.Closure
+import groovy.lang.Script
+import org.kohsuke.groovy.sandbox.GroovyValueFilter
+import java.math.BigDecimal
+import java.math.BigInteger
+import java.util.Arrays
 import java.util.regex.Pattern
+import kotlin.collections.ArrayList
+import kotlin.collections.HashSet
 
 /**
  * Kotlin version of the eval filter

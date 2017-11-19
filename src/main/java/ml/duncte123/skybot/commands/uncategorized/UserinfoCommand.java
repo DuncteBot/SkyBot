@@ -38,7 +38,7 @@ import java.util.stream.Collectors;
  * Created by Duncan on 9-7-2017.
  */
 public class UserinfoCommand extends Command {
-
+    
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         User u;
@@ -53,7 +53,7 @@ public class UserinfoCommand extends Command {
                 m = event.getGuild().getMember(mentioned.get(0));
             } else {
                 String name = StringUtils.join(args, " ");
-
+                
                 List<Member> members = event.getGuild().getMembersByName(name, true);
                 if (members.isEmpty()) {
                     members = event.getGuild().getMembersByNickname(name, true);
@@ -61,68 +61,68 @@ public class UserinfoCommand extends Command {
                 m = members.isEmpty() ? null : members.get(0);
             }
         }
-
+        
         if (m == null) {
             event.getChannel().sendMessage("This user could not be found.").queue();
             return;
         }
-
+        
         u = m.getUser();
-
+        
         StringBuilder joinOrder = new StringBuilder();
         List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
         joins.sort(Comparator.comparing(Member::getJoinDate));
         int index = joins.indexOf(m);
-        index-=3;
-        if(index<0)
-            index=0;
-        joinOrder.append("\n"+"Join Order: ");
-        if(joins.get(index).equals(m))
+        index -= 3;
+        if (index < 0)
+            index = 0;
+        joinOrder.append("\n" + "Join Order: ");
+        if (joins.get(index).equals(m))
             joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("](https://bot.duncte123.me/)");
         else
             joinOrder.append(joins.get(index).getEffectiveName());
-        for(int i=index+1;i<index+7;i++) {
-            if(i>=joins.size())
+        for (int i = index + 1; i < index + 7; i++) {
+            if (i >= joins.size())
                 break;
             Member usr = joins.get(i);
             String name = usr.getEffectiveName();
-            if(usr.equals(m))
-                name="["+name+"](https://bot.duncte123.me/)";
+            if (usr.equals(m))
+                name = "[" + name + "](https://bot.duncte123.me/)";
             joinOrder.append(" > ").append(name);
         }
-
+        
         //TODO: make request to discord profiles
-      
+        
         MessageEmbed eb = EmbedUtils.defaultEmbed()
-                .setColor(m.getColor())
-                .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
-                .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("Username + Discriminator", String.format("%#s", u), true)
-                .addField("User Id", u.getId(), true)
-                .addField("Status", AirUtils.gameToString(m.getGame()), true)
-                .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
-                .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                .addField("Join order", joinOrder.toString(), true)
-                .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " "  + m.getOnlineStatus().name().toLowerCase(), true)
-                .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
-                .build();
-
+                                  .setColor(m.getColor())
+                                  .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
+                                  .setThumbnail(u.getEffectiveAvatarUrl())
+                                  .addField("Username + Discriminator", String.format("%#s", u), true)
+                                  .addField("User Id", u.getId(), true)
+                                  .addField("Status", AirUtils.gameToString(m.getGame()), true)
+                                  .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
+                                  .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                                  .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                                  .addField("Join order", joinOrder.toString(), true)
+                                  .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " " + m.getOnlineStatus().name().toLowerCase(), true)
+                                  .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
+                                  .build();
+        
         sendEmbed(event, eb);
     }
-
+    
     @Override
     public String help() {
-        return "Get information from yourself or from another user.\nUsage: `"+ Settings.prefix+getName()+" [username]`";
+        return "Get information from yourself or from another user.\nUsage: `" + Settings.prefix + getName() + " [username]`";
     }
-
+    
     @Override
     public String getName() {
         return "userinfo";
     }
-
+    
     @Override
     public String[] getAliases() {
-        return new String[] {"user", "i"};
+        return new String[]{"user", "i"};
     }
 }

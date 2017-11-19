@@ -23,26 +23,23 @@
  */
 package com.wolfram.alpha.net;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.logging.Logger;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.net.impl.HttpTransaction;
+
+import java.io.*;
+import java.net.URL;
+import java.util.logging.Logger;
 
 
 public class URLFetcher {
 
+    // Largest result that will be allowed to be returned as a byte[] instead of in a file.
+    private static final int MAX_BUFFER_SIZE = 1000000;
+    public static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
     HttpProvider http;
     private URL url;
     private String outFile;
     private ProxySettings proxySettings;
-    
     // These are volatile because this class is typically run on one thread and
     // queried on another.
     private volatile HttpTransaction trans;
@@ -55,11 +52,6 @@ public class URLFetcher {
     private volatile String charSet = null;
     // WAHttpException, HttpException, IOException
     private volatile Exception exception = null;
-    
-    public static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
-    
-    // Largest result that will be allowed to be returned as a byte[] instead of in a file.
-    private static final int MAX_BUFFER_SIZE = 1000000;
     
 
     // TODO: outFile = null means get data as string. Improve getResponseString() to be safer for large responses.
@@ -86,7 +78,7 @@ public class URLFetcher {
     
     /**
      * Doesn't mean that it finished successfully; could have been cancelled.
-     * 
+     *
      * @return
      */
     public boolean isFinished() {
@@ -125,7 +117,7 @@ public class URLFetcher {
         int totalBytes = getTotalBytes();
         if (totalBytes == -1)
             return -1.0;
-        return ((double) getTotalBytesDownloaded())/totalBytes;
+        return ((double) getTotalBytesDownloaded()) / totalBytes;
     }
     
     // Useful if you want to convert to a String.
@@ -149,12 +141,12 @@ public class URLFetcher {
             // logger.info("Downloading url " + url);
             
             InputStream responseStream = null;
-            OutputStream outStream = null; 
+            OutputStream outStream = null;
             boolean useFile = outFile != null;
             
             try {
                 trans = http.createHttpTransaction(url, proxySettings);
-                trans.execute();                   
+                trans.execute();
                 long contentLength = trans.getContentLength();
                 charSet = trans.getCharSet();
                 responseStream = trans.getResponseStream();
@@ -187,7 +179,7 @@ public class URLFetcher {
                     if (totalBytesDownloaded <= maxBytesToDownload)
                         outStream.write(buf, 0, numRead);
                 }
-            // Might be useful someday to handle all the checked exceptions differently...
+                // Might be useful someday to handle all the checked exceptions differently...
             } catch (WAHttpException e) {
                 exception = e;
             } catch (IOException e) {
@@ -196,13 +188,19 @@ public class URLFetcher {
                 exception = e;
             } finally {
                 if (responseStream != null)
-                    try { responseStream.close(); } catch (Exception e) {}
+                    try {
+                        responseStream.close();
+                    } catch (Exception e) {
+                    }
                 if (trans != null)
                     trans.release();
                 if (outStream != null) {
                     if (!wasCancelled && !useFile)
                         bytes = ((ByteArrayOutputStream) outStream).toByteArray();
-                    try { outStream.close(); } catch (Exception e) {}
+                    try {
+                        outStream.close();
+                    } catch (Exception e) {
+                    }
                 }
                 if (wasCancelled && downloadedFile != null) {
                     downloadedFile.delete();
@@ -225,6 +223,6 @@ public class URLFetcher {
         } finally {
             isFinished = true;
         }
-    }    
+    }
 
 }

@@ -39,6 +39,7 @@ public class SkyBot {
 
     /**
      * This is our main method
+     *
      * @param args The args passed in while running the bot
      * @throws Exception When you mess something up
      * @deprecated Because I can lol
@@ -47,12 +48,12 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
         
         //Set the logger to only info by default
-        Logger l = (Logger)LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
-        if(useDatabase) { //Don't try to connect if we don't want to
+        if (useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
                 AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);

@@ -27,34 +27,34 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class BlobCommand : Command() {
-
+    
     init {
         this.category = CommandCategory.FUN
     }
-
+    
     override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-
+        
         var blob = "blobnomcookie"
-
+        
         if (args.isNotEmpty()) {
             blob = StringUtils.join(*args)
         }
-
+        
         val response = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png")
-
+        
         val responseBody = response!!.body()
-
+        
         if (responseBody!!.contentLength() <= 0) {
             sendMsg(event, "This blob was not found on the server!!!")
             response.close()
             return
         }
-
-        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue {response.close()}
+        
+        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue { response.close() }
     }
-
+    
     override fun help() = "Gives you a blob.\n" +
-                "Usage: `${Settings.prefix}$name [blob name]`"
-
+            "Usage: `${Settings.prefix}$name [blob name]`"
+    
     override fun getName() = "blob"
 }

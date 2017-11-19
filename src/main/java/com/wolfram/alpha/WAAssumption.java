@@ -25,7 +25,7 @@ package com.wolfram.alpha;
 
 
 public interface WAAssumption {
-
+    
     static final String TYPE_CLASH = "Clash";
     static final String TYPE_MULTICLASH = "MultiClash";
     static final String TYPE_UNIT = "Unit";
@@ -53,15 +53,23 @@ public interface WAAssumption {
     
     
     String getType();
+    
     int getCount();
+    
     String getWord();
+    
     String getDescription();
+    
     int getCurrent();
     
     String[] getNames();
+    
     String[] getDescriptions();
+    
     String[] getInputs();
+    
     String[] getWords();
+    
     boolean[] getValidities();
     
 }

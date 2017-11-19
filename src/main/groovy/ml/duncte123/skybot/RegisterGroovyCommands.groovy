@@ -27,6 +27,7 @@ import org.slf4j.event.Level
 
 class RegisterGroovyCommands {
     def manager = AirUtils.commandManager
+
     RegisterGroovyCommands() {
         AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
 

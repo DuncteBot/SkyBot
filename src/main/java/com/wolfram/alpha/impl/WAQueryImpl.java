@@ -23,11 +23,11 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-import java.util.List;
-
 import com.wolfram.alpha.WAQuery;
 import com.wolfram.alpha.WAQueryParameters;
+
+import java.io.Serializable;
+import java.util.List;
 
 
 public class WAQueryImpl extends WAQueryParametersImpl implements WAQuery, Serializable {
@@ -64,7 +64,7 @@ public class WAQueryImpl extends WAQueryParametersImpl implements WAQuery, Seria
             s.append(signature);
         }
         
-        return s.toString();        
+        return s.toString();
     }
 
 }

@@ -59,17 +59,17 @@ public class BanCommand extends Command {
         }
 
         try {
-             final User toBan = event.getMessage().getMentionedUsers().get(0);
-            if(toBan.equals(event.getAuthor()) &&
-                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan)) ) {
+            final User toBan = event.getMessage().getMentionedUsers().get(0);
+            if (toBan.equals(event.getAuthor()) &&
+                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            if(args.length > 1) {
+            if (args.length > 1) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
-                if(!AirUtils.isInt(timeParts[0])) {
+                if (!AirUtils.isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (voidMethod) -> {
@@ -90,7 +90,7 @@ public class BanCommand extends Command {
 
                     switch (timeParts[1]) {
                         case "m":
-                            if(Integer.parseInt(timeParts[0]) < 10 ) {
+                            if (Integer.parseInt(timeParts[0]) < 10) {
                                 sendMsg(event, "The minimum time for minutes is 10.");
                                 return;
                             }
@@ -113,7 +113,7 @@ public class BanCommand extends Command {
                             break;
 
                         default:
-                            event.getChannel().sendMessage(timeParts[1]+" is not defined, please choose from m, d, h, w, M or Y").queue();
+                            event.getChannel().sendMessage(timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y").queue();
                             return;
                     }
                     unbanDate = df.format(dt);
@@ -138,8 +138,7 @@ public class BanCommand extends Command {
                         (voidm) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
                 );
             }
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }
@@ -148,7 +147,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                "Usage: `" + Settings.prefix + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
+                       "Usage: `" + Settings.prefix + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
     }
 
     @Override

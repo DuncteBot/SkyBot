@@ -33,11 +33,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebUtils {
-
-    private static String USER_AGENT = "DiscordBot (DuncteBot v"+Settings.version+", https://bot.duncte123.ml/)";
-
+    
+    private static String USER_AGENT = "DiscordBot (DuncteBot v" + Settings.version + ", https://bot.duncte123.ml/)";
+    
     /**
      * Reads contents from a website and returns it to a string
+     *
      * @param url The url to read
      * @return The text contents
      * @throws IOException When something broke
@@ -47,130 +48,134 @@ public class WebUtils {
         URLConnection connection = website.openConnection();
         connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
         BufferedReader in = new BufferedReader(
-                new InputStreamReader(
-                        connection.getInputStream()));
-
+                                                      new InputStreamReader(
+                                                                                   connection.getInputStream()));
+        
         StringBuilder response = new StringBuilder();
         String inputLine;
-
+        
         while ((inputLine = in.readLine()) != null)
             response.append(inputLine);
-
+        
         in.close();
-
+        
         return response.toString();
     }
-
+    
     /**
      * This makes a get request to the specified website
-     * @param url The website to post to
+     *
+     * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
-
+        
         OkHttpClient client = new OkHttpClient();
-
+        
         Request request = new Request.Builder()
-                .url(url)
-                .get()
-                .addHeader("User-Agent", USER_AGENT)
-                .addHeader("Accept", accept.getType())
-                .addHeader("cache-control", "no-cache")
-                .build();
-
+                                  .url(url)
+                                  .get()
+                                  .addHeader("User-Agent", USER_AGENT)
+                                  .addHeader("Accept", accept.getType())
+                                  .addHeader("cache-control", "no-cache")
+                                  .build();
+        
         try {
             return client.newCall(request).execute();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
+    
     /**
      * This makes a post request to the specified website
+     *
      * @param url The website to post to
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response getRequest(String url) {
-
+        
         return getRequest(url, AcceptType.TEXT_HTML);
     }
-
+    
     /**
      * This makes a post request to the specified website
-     * @param url The website to post to
+     *
+     * @param url        The website to post to
      * @param postFields the params for the post (param name, param value)
-     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @param accept     What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-
+        
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
-
+        
         StringBuilder postParams = new StringBuilder();
-
-        for (Map.Entry < String, Object > entry : postFields.entrySet()) {
+        
+        for (Map.Entry<String, Object> entry : postFields.entrySet()) {
             postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
-
+        
         RequestBody body = RequestBody.create(mediaType, postParams.toString() + "dummy=param");
-
+        
         Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .addHeader("User-Agent", USER_AGENT)
-                .addHeader("Accept", accept.getType())
-                .addHeader("cache-control", "no-cache")
-                .build();
-
+                                  .url(url)
+                                  .post(body)
+                                  .addHeader("User-Agent", USER_AGENT)
+                                  .addHeader("Accept", accept.getType())
+                                  .addHeader("cache-control", "no-cache")
+                                  .build();
+        
         try {
             return client.newCall(request).execute();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
+    
     /**
      * This makes a post request to the specified website
-     * @param url The website to post to
+     *
+     * @param url        The website to post to
      * @param postFields the params for the post
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields) {
         return postRequest(url, postFields, AcceptType.URLENCODED);
     }
-
+    
     /**
      * This makes a post request to the specified website
-     * @param url The website to post to
+     *
+     * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url, AcceptType accept) {
         return postRequest(url, new HashMap<>(), accept);
     }
-
+    
     /**
      * This makes a post request to the specified website
+     *
      * @param url The website to post to
      * @return The {@link okhttp3.Response Response} from the webserver
      */
     public static Response postRequest(String url) {
-        return postRequest(url,AcceptType.TEXT_JSON);
+        return postRequest(url, AcceptType.TEXT_JSON);
     }
-
+    
     public static String shortenUrl(String url) {
         try {
             HttpsURLConnection con
-                = (HttpsURLConnection)
-                    new URL("https://www.googleapis.com/urlshortener/v1/url?key="
-                            + AirUtils.config.getString("apis.googl"))
-                        .openConnection();
+                    = (HttpsURLConnection)
+                              new URL("https://www.googleapis.com/urlshortener/v1/url?key="
+                                              + AirUtils.config.getString("apis.googl"))
+                                      .openConnection();
             con.setRequestMethod("POST");
             con.addRequestProperty("Content-Type", "application/json");
             con.setDoOutput(true);
@@ -184,13 +189,13 @@ public class WebUtils {
             
             return new JsonParser().parse(
                     new InputStreamReader(con.getInputStream()))
-                    .getAsJsonObject().get("id").getAsString();
+                           .getAsJsonObject().get("id").getAsString();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
     }
-
+    
     /**
      * This holds some variables that we will accept
      */
@@ -200,13 +205,13 @@ public class WebUtils {
         TEXT_HTML("text/html"),
         TEXT_XML("application/xml"),
         URLENCODED("application/x-www-form-urlencoded");
-
+        
         private String type;
-
-        AcceptType(String type){
+        
+        AcceptType(String type) {
             this.type = type;
         }
-
+        
         public String getType() {
             return type;
         }

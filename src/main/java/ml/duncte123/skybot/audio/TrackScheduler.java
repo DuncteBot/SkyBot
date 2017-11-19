@@ -32,37 +32,39 @@ import java.util.Queue;
 public class TrackScheduler extends AudioEventAdapter {
 
     /**
-     * Are we repeating the track
+     * this stores our queue
      */
-    private boolean repeating = false;
+    public final Queue<AudioTrack> queue;
     /**
      * Hey look at that, it's our player
      */
     final AudioPlayer player;
     /**
-     * this stores our queue
-     */
-    public final Queue<AudioTrack> queue;
-    /**
      * This is the last playing track
      */
     AudioTrack lastTrack;
+    /**
+     * Are we repeating the track
+     */
+    private boolean repeating = false;
 
     /**
      * This instantiates our player
+     *
      * @param player Our audio player
      */
-    public TrackScheduler(AudioPlayer player){
+    public TrackScheduler(AudioPlayer player) {
         this.player = player;
         this.queue = new LinkedList<>();
     }
 
     /**
      * Queue a track
+     *
      * @param track The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} to queue
      */
-    public void queue(AudioTrack track){
-        if(!player.startTrack(track, true)){
+    public void queue(AudioTrack track) {
+        if (!player.startTrack(track, true)) {
             queue.offer(track);
         }
     }
@@ -70,24 +72,25 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * Starts the next track
      */
-    public void nextTrack(){
+    public void nextTrack() {
         player.startTrack(queue.poll(), false);
     }
 
     /**
      * Gets run when a track ends
-     * @param player The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayer AudioTrack} for that guild
-     * @param track The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} that ended
+     *
+     * @param player    The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayer AudioTrack} for that guild
+     * @param track     The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason){
+    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
 
-        if(endReason.mayStartNext){
-            if(repeating){
+        if (endReason.mayStartNext) {
+            if (repeating) {
                 player.startTrack(lastTrack.makeClone(), false);
-            }else{
+            } else {
                 nextTrack();
             }
         }
@@ -95,24 +98,26 @@ public class TrackScheduler extends AudioEventAdapter {
 
     /**
      * This will tell you if the player is repeating
+     *
      * @return true if the player is set to repeat
      */
-    public boolean isRepeating(){
+    public boolean isRepeating() {
         return repeating;
     }
 
     /**
      * tell the player if needs to repeat
+     *
      * @param repeating if the player needs to repeat
      */
-    public void setRepeating(boolean repeating){
+    public void setRepeating(boolean repeating) {
         this.repeating = repeating;
     }
 
     /**
      * Shuffles the player
      */
-    public void shuffle(){
+    public void shuffle() {
         Collections.shuffle((List<?>) queue);
     }
 

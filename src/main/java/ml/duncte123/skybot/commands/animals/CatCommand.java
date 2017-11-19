@@ -30,11 +30,11 @@ import java.net.URL;
 
 public class CatCommand extends Command {
 
+    public final static String help = "here is a cat.";
+
     public CatCommand() {
         this.category = CommandCategory.ANIMALS;
     }
-
-    public final static String help = "here is a cat.";
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -44,7 +44,6 @@ public class CatCommand extends Command {
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
-            // TODO Auto-generated catch block
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
         }
@@ -53,7 +52,6 @@ public class CatCommand extends Command {
 
     @Override
     public String help() {
-        // TODO Auto-generated method stub
         return help;
     }
 

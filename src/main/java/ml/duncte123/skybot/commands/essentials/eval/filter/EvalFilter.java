@@ -19,14 +19,16 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
+import Java.lang.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import Java.lang.VRCubeException;
-import ml.duncte123.skybot.objects.delegate.GuildDelegate;
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
-import ml.duncte123.skybot.objects.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.GuildDelegate;
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.MemberDelegate;
+import ml.duncte123.skybot.entities.delegate.UserDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
@@ -104,42 +106,44 @@ public class EvalFilter extends GroovyValueFilter {
 
     /**
      * This filters the script
+     *
      * @param o the script to filter
      * @return the script if it passes the filter
      */
     @Override
     public final Object filter(Object o) {
-        if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
+        if (o == null || ALLOWED_TYPES.contains(o.getClass()))
             return o;
 
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
         if(o instanceof JDA)
             return new JDADelegate((JDA) o);
-        if(o instanceof User)
+        if (o instanceof User)
             return new UserDelegate((User) o);
-        if(o instanceof Guild)
+        if (o instanceof Guild)
             return new GuildDelegate((Guild) o);
         ////////////////////////////////////////////
         if(o instanceof Script)
             return o;
-        if(o instanceof Closure)
+        if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-        throw new VRCubeException("Class not allowed: " + o);
+        throw new VRCubeException("Class not allowed: " + o.getClass().getName());
     }
-
+    
     @Override
     public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) throws Throwable {
         throw new VRCubeException(
-                String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
-                                receiver.toString(),
-                                receiver.getClass().getComponentType().getName(),
-                                index.toString(),
-                                value.toString()));
+                                         String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
+                                                 receiver.toString(),
+                                                 receiver.getClass().getComponentType().getName(),
+                                                 index.toString(),
+                                                 value.toString()));
     }
     
     /**
      * This checks if the script contains any loop
+     *
      * @param toFilter the script to filter
      * @return true if the script contains a loop
      */
@@ -147,16 +151,17 @@ public class EvalFilter extends GroovyValueFilter {
         return Pattern.compile(
                 //for or while loop
                 "((while|for)" +
-                //Stuff in the brackets
-                "\\s*\\(.*\\))|" +
-                // Other groovy loops
-                "(\\.step|\\.times|\\.upto|\\.each)"
-                    //match and find
-                    ).matcher(toFilter).find();
+                        //Stuff in the brackets
+                        "\\s*\\(.*\\))|" +
+                        // Other groovy loops
+                        "(\\.step|\\.times|\\.upto|\\.each)"
+                //match and find
+        ).matcher(toFilter).find();
     }
-
+    
     /**
      * This checks if the script contains an array
+     *
      * @param toFilter the script to filter
      * @return true if the script contains an array
      */
@@ -168,5 +173,5 @@ public class EvalFilter extends GroovyValueFilter {
     public boolean containsMentions(String string) {
         return MENTION_FILTER.matcher(string).find();
     }
-
+    
 }

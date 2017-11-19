@@ -35,6 +35,8 @@ public interface WASourceInfo extends Visitable {
     // (it has a banner that looks like the rest of the website). Clients might want to direct users to that page instead,
     // and this is what is returned by getFormattedURL().
     String getURL();
+    
     String getFormattedURL();
+    
     String getText();
 }

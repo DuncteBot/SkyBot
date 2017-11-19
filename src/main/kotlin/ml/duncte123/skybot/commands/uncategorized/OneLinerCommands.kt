@@ -51,16 +51,16 @@ class OneLinerCommands : Command() {
             "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
                     .queue { sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
         
+
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
             "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
-            
+
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
             "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
             else -> println("Invoke was invalid: $invoke")
         }
     }
-    
     override fun help() = "`${PREFIX}ping` => Shows the delay from the bot to the discord servers.\n" +
             "`${PREFIX}cookie` => blobnomcookie.\n" +
             "`${PREFIX}trigger` => use when you are triggered.\n" +

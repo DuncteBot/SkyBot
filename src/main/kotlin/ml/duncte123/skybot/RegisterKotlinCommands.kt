@@ -23,18 +23,21 @@ import ml.duncte123.skybot.commands.`fun`.BlobCommand
 import ml.duncte123.skybot.commands.animals.BirbCommand
 import ml.duncte123.skybot.commands.animals.BirbCommandJava
 import ml.duncte123.skybot.commands.essentials.RestartCommand
+import ml.duncte123.skybot.commands.essentials.UpdateCommand
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
 class RegisterKotlinCommands {
     val manager = AirUtils.commandManager
+    
     init {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
         manager.addCommand(OneLinerCommands())
         manager.addCommand(BlobCommand())
         manager.addCommand(RestartCommand())
         manager.addCommand(BirbCommand())
+        manager.addCommand(UpdateCommand())
     }
-
+    
 }

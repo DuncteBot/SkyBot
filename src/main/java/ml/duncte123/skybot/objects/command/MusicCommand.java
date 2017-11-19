@@ -35,6 +35,7 @@ public abstract class MusicCommand extends Command {
 
     /**
      * Returns the autio utils
+     *
      * @return the audio utils
      */
     protected AudioUtils getAu() {
@@ -43,6 +44,7 @@ public abstract class MusicCommand extends Command {
 
     /**
      * This is a shortcut for getting the music manager
+     *
      * @param guild the guild to get the music manager for
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
@@ -52,6 +54,7 @@ public abstract class MusicCommand extends Command {
 
     /**
      * This is a shortcut for getting the audio manager
+     *
      * @param guild the guild to get the audio manager for
      * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
      */
@@ -61,18 +64,19 @@ public abstract class MusicCommand extends Command {
 
     /**
      * This performs some checks that we need for the music
+     *
      * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
         AudioManager audioManager = getAudioManager(event.getGuild());
 
-        if(!audioManager.isConnected()){
-            sendMsg(event, "I'm not in a voice channel, use `"+ Settings.prefix+"join` to make me join a channel");
+        if (!audioManager.isConnected()) {
+            sendMsg(event, "I'm not in a voice channel, use `" + Settings.prefix + "join` to make me join a channel");
             return false;
         }
 
-        if(!audioManager.getConnectedChannel().getMembers().contains(event.getMember())){
+        if (!audioManager.getConnectedChannel().getMembers().contains(event.getMember())) {
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }

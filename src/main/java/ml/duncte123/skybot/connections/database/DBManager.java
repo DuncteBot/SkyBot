@@ -19,25 +19,23 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.utils.AirUtils;
+
 import java.io.File;
 import java.sql.Connection;
 
-import ml.duncte123.skybot.utils.AirUtils;
-
 public class DBManager {
-
+    
+    public final DBConnectionManager connManager;
     /**
      * This is the database name
      */
     private final String name;
-
     /**
      * This is true if we are connected to the database
      */
     private final boolean isConnected;
-
-    public final DBConnectionManager connManager;
-
+    
     /**
      * This will set our stuff up
      */
@@ -46,41 +44,44 @@ public class DBManager {
         this.isConnected = connManager.isConnected();
         this.name = connManager.getName();
     }
-
+    
     private static DBConnectionManager createDBManager() {
-        if(AirUtils.nonsqlite) return new DatabaseConnectionManager();
+        if (AirUtils.nonsqlite) return new DatabaseConnectionManager();
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
-
+    
     /**
      * This will check the connection for us
+     *
      * @return true if we are connected
      */
     public boolean isConnected() {
         return this.isConnected;
     }
-
+    
     /**
      * This will return the name of the connected database
+     *
      * @return The name of the connected database
      */
     public String getName() {
         return this.name;
     }
-
+    
     /**
      * This will get the connection for us
-     * @return the connection, will we null if we aren't connected
      *
+     * @return the connection, will we null if we aren't connected
      * @deprecated use {@link #getConnManager()} instead
      */
     @Deprecated
     public Connection getConnection() {
         return connManager.getConnection();
     }
-
+    
     /**
      * Returns the connection manager
+     *
      * @return the {@link DBConnectionManager DatabaseConnectionManager}
      */
     public DBConnectionManager getConnManager() {
