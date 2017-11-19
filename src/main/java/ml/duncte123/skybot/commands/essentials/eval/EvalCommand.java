@@ -48,6 +48,7 @@ public class EvalCommand extends Command {
     private GroovyShell protected_;
     private ScriptEngine engine;
     private List<String> packageImports;
+    private List<String> classImports;
     private List<ScheduledExecutorService> services = new ArrayList<>();
     private Supplier<ScheduledExecutorService> service =
             () -> {
@@ -79,6 +80,7 @@ public class EvalCommand extends Command {
                 "net.dv8tion.jda.core.managers.impl",
                 "net.dv8tion.jda.core.utils",
                 "ml.duncte123.skybot.utils");
+        classImports = Arrays.asList("ml.duncte123.objects.FakeInterface");
     }
     
     @Override
@@ -105,6 +107,9 @@ public class EvalCommand extends Command {
                 StringBuilder importStringBuilder = new StringBuilder();
                 for (final String s : packageImports) {
                     importStringBuilder.append("import ").append(s).append(".*;\n");
+                }
+                for (final String s : classImports) {
+                    importStringBuilder.append("import ").append(s).append(";\n");
                 }
                 
                 String script = importStringBuilder.toString() +
