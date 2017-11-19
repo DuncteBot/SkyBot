@@ -83,7 +83,7 @@ public class SkyBot {
         AirUtils.loadAllTags();
 
         //Set the token to a string
-        String token = AirUtils.config.getString("discord.tokenu", "Your Bot Token");
+        String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
@@ -93,7 +93,7 @@ public class SkyBot {
                 .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.listening("to Sanduhr on shard #" + (shardId + 1)))
+                .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
                 .setToken(token)
                 .buildAsync();
 
