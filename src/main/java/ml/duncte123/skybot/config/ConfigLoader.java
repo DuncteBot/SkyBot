@@ -23,6 +23,8 @@ import org.apache.commons.text.translate.UnicodeUnescaper;
 import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.stream.Collectors;
 
 public class ConfigLoader {
 
@@ -48,7 +50,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new JSONObject(new FileReader(file)));
+            super(null, new JSONObject(Files.readAllLines(file.toPath()).stream().filter(line -> !line.startsWith("//")).collect(Collectors.joining())));
             this.configFile = file;
         }
 

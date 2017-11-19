@@ -79,7 +79,7 @@ public abstract class Command {
         try {
             String token = AirUtils.config.getString("apis.discordbots_userToken");
             
-            if (token == null) {
+            if (token == null || token.isEmpty()) {
                 AirUtils.logger.warn("Discord Bots token not found");
                 return;
             }
