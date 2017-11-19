@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -591,7 +592,17 @@ public class AirUtils {
             return e.toString();
         }
     }
-    
+
+    public static void stop() {
+        try {
+            db.getConnManager().getConnection().close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        
+        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
+    }
+
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if(channelId == null) return getPublicChannel(guild);
 
@@ -608,4 +619,5 @@ public class AirUtils {
 
         return tc;
     }
+
 }
