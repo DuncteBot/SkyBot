@@ -81,5 +81,5 @@ class OneLinerCommands : Command() {
     
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote")
 
-    private fun getAverage(): Double = pingHistory.map { it.toDouble() }.average()
+    private fun getAverage(): Double = pingHistory.filter { it != -1L }.map { it.toDouble() }.average()
 }
