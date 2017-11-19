@@ -28,14 +28,13 @@ import net.dv8tion.jda.core.managers.Presence
 class PresenceDelegate(private val presence: Presence) : Presence by presence {
     private val jda: JDA = JDADelegate(presence.jda)
 
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA                                                = JDADelegate(this.jda)
     
-    override fun setGame(game: Game) = throw VRCubeException("Can not set the game")
-    override fun setIdle(idle: Boolean) = throw VRCubeException("Can not set the idle state")
-    override fun setStatus(status: OnlineStatus) = throw VRCubeException("Can not set the online status")
-    
-    override fun setPresence(game: Game, idle: Boolean) = throw VRCubeException("Can not set the game and idle state")
-    override fun setPresence(status: OnlineStatus, game: Game) = throw VRCubeException("Can not set the game and online status")
-    override fun setPresence(status: OnlineStatus, idle: Boolean) = throw VRCubeException("Can not set the online status and idle state")
+    override fun setGame(game: Game)                                          = throw VRCubeException("Can not set the game")
+    override fun setIdle(idle: Boolean)                                       = throw VRCubeException("Can not set the idle state")
+    override fun setStatus(status: OnlineStatus)                              = throw VRCubeException("Can not set the online status")
+    override fun setPresence(game: Game, idle: Boolean)                       = throw VRCubeException("Can not set the game and idle state")
+    override fun setPresence(status: OnlineStatus, game: Game)                = throw VRCubeException("Can not set the game and online status")
+    override fun setPresence(status: OnlineStatus, idle: Boolean)             = throw VRCubeException("Can not set the online status and idle state")
     override fun setPresence(status: OnlineStatus, game: Game, idle: Boolean) = throw VRCubeException("Can not set the online status, game and idle state")
 }

@@ -24,16 +24,12 @@ import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
-    private val token: String = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
+    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)
     
-    override fun getToken(): String = this.token
-    
-    override fun shutdown() = throw VRCubeException("Can not shutdown")
-    
-    override fun shutdownNow() {
-        this.shutdown()
-    }
+    override fun getToken(): String      = this.token
+    override fun shutdown()              = throw VRCubeException("Can not shutdown")
+    override fun shutdownNow()           = this.shutdown()
     
     override fun getPresence(): Presence = PresenceDelegate(this.presence)
     
@@ -46,7 +42,6 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
         
         return false
     }
-
     override fun hashCode(): Int {
         var result = x0sAlsm7sW.hashCode()
         result = 32 * result + token.hashCode()
