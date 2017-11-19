@@ -169,6 +169,12 @@ public class WebUtils {
         return postRequest(url, AcceptType.TEXT_JSON);
     }
     
+    /**
+     * Shortens a URL with the <a href="https://goo.gl" target="">goo.gl</a> api
+     *
+     * @param url The URL to shorten
+     * @return The shortened URL. <code>null</code> if any error occurred
+     */
     public static String shortenUrl(String url) {
         try {
             HttpsURLConnection con
