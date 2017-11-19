@@ -122,7 +122,7 @@ public class Config {
     public void put(String key, Object value) {
         Object json = this.get(this.config, key.substring(0, key.lastIndexOf('.')));
         if (json != null)
-            new JSONObject(json.toString()).put(key.substring(key.lastIndexOf('.'), key.length()), value);
+            new JSONObject(json.toString()).put(key.substring(key.lastIndexOf('.') + 1, key.length()), value);
         try {
             this.save();
         } catch (Exception e) {
