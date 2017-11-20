@@ -203,10 +203,6 @@ public class BotListener extends ListenerAdapter {
         }
     }
     
-    @Override
-    public void onShutdown(ShutdownEvent event) {
-    }
-    
     /**
      * This will fire when a new member joins
      *
