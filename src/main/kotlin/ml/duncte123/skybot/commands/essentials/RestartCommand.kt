@@ -35,18 +35,24 @@ class RestartCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
     
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
-        if (!Arrays.asList<String>(*Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
+    override fun executeCommand(invoke: String, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+        if (!Arrays.asList(*Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
         val shardManager = event.jda.asBot().shardManager
 
         if (args == null) {
             error("args is null?!")
         }
-        
-        when (args.size) {
-            0 -> shardManager.restart()
-            1 -> shardManager.restart(args[0].toInt())
-            else -> sendError(event.message)
+
+        sendErrorJSON(event.message, Throwable("Meme!", Throwable("Test")))
+
+        try {
+            when (args.size) {
+                0 -> shardManager.restart()
+                1 -> shardManager.restart(args[0].toInt())
+                else -> sendError(event.message)
+            }
+        } catch (ex: NumberFormatException) {
+            sendErrorJSON(event.message, ex)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"

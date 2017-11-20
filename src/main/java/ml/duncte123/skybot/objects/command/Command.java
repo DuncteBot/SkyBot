@@ -20,10 +20,8 @@
 package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -36,6 +34,7 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -169,6 +168,21 @@ public abstract class Command {
      */
     protected void sendError(Message message) {
         message.addReaction("❌").queue();
+    }
+
+    /**
+     * This will react with a ❌ if the user doesn't have permission to run the command or any other error while execution
+     *
+     * @param message the message to add the reaction to
+     * @param error the cause
+     */
+    protected void sendErrorJSON(Message message, Throwable error) {
+        message.addReaction("❌").queue();
+
+        message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
+                new MessageBuilder().setEmbed(new EmbedBuilder().setColor(Color.RED).setTitle("We got an error!").setDescription(String.format("Error type: %s",
+                        error.getClass().getSimpleName())).build()).build()
+        ).queue();
     }
     
     /**
