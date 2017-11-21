@@ -87,7 +87,7 @@ public class EvalCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
-                                          event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0]);
+                                          event.getAuthor().getId().equals(Settings.ownerId);
         
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
