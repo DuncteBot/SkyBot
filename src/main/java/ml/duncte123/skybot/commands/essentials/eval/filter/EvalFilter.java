@@ -25,6 +25,7 @@ import groovy.lang.Script;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;
 import ml.duncte123.skybot.entities.delegate.JDADelegate;
 import ml.duncte123.skybot.entities.delegate.UserDelegate;
+import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
@@ -45,6 +46,7 @@ public class EvalFilter extends GroovyValueFilter {
      * This contains a list of all the allowed classes
      */
     private static final Class<?>[] ALLOWED_TYPES_LIST = {
+            Math.class,
             String.class,
             
             Boolean.class,
@@ -113,9 +115,8 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
-        if (o == null || ALLOWED_TYPES.contains(o.getClass()))
+        if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
             return o;
-
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
         if(o instanceof JDA)
@@ -126,7 +127,7 @@ public class EvalFilter extends GroovyValueFilter {
             return new GuildDelegate((Guild) o);
         ////////////////////////////////////////////
         if(o instanceof Script)
-            return o;
+            return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
         throw new VRCubeException("Class not allowed: " + o.getClass().getName());
