@@ -22,6 +22,7 @@ package ml.duncte123.skybot.utils;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import okhttp3.*;
+import org.json.JSONObject;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
@@ -48,8 +49,8 @@ public class WebUtils {
         URLConnection connection = website.openConnection();
         connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
         BufferedReader in = new BufferedReader(
-                                                      new InputStreamReader(
-                                                                                   connection.getInputStream()));
+                                      new InputStreamReader(
+                                                   connection.getInputStream()));
         
         StringBuilder response = new StringBuilder();
         String inputLine;
@@ -67,7 +68,7 @@ public class WebUtils {
      *
      * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
         
@@ -93,10 +94,9 @@ public class WebUtils {
      * This makes a post request to the specified website
      *
      * @param url The website to post to
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url) {
-        
         return getRequest(url, AcceptType.TEXT_HTML);
     }
     
@@ -106,10 +106,9 @@ public class WebUtils {
      * @param url        The website to post to
      * @param postFields the params for the post (param name, param value)
      * @param accept     What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-        
         OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
         
@@ -142,7 +141,7 @@ public class WebUtils {
      *
      * @param url        The website to post to
      * @param postFields the params for the post
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields) {
         return postRequest(url, postFields, AcceptType.URLENCODED);
@@ -153,7 +152,7 @@ public class WebUtils {
      *
      * @param url    The website to post to
      * @param accept What we will accept, {@link AcceptType AcceptType}
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, AcceptType accept) {
         return postRequest(url, new HashMap<>(), accept);
@@ -163,34 +162,54 @@ public class WebUtils {
      * This makes a post request to the specified website
      *
      * @param url The website to post to
-     * @return The {@link okhttp3.Response Response} from the webserver
+     * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url) {
         return postRequest(url, AcceptType.TEXT_JSON);
     }
+
+    /**
+     * This allows for JSON post requests to a website
+     * @param url the website to post the json to
+     * @param data the JSON data to post
+     * @return The {@link Response} from the webserver
+     */
+    public static Response postJSON(String url, JSONObject data) {
+        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
+
+        Request request = new Request.Builder()
+                .url(url)
+                .post(body)
+                .addHeader("User-Agent", USER_AGENT)
+                .build();
+
+        try {
+            return (new OkHttpClient()).newCall(request).execute();
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
     
+    /**
+     * Shortens a URL with the <a href="https://goo.gl" target="">goo.gl</a> api
+     *
+     * @param url The URL to shorten
+     * @return The shortened URL. <code>null</code> if any error occurred
+     */
     public static String shortenUrl(String url) {
         try {
-            HttpsURLConnection con
-                    = (HttpsURLConnection)
-                              new URL("https://www.googleapis.com/urlshortener/v1/url?key="
-                                              + AirUtils.config.getString("apis.googl"))
-                                      .openConnection();
-            con.setRequestMethod("POST");
-            con.addRequestProperty("Content-Type", "application/json");
-            con.setDoOutput(true);
-            
-            JsonObject jo = new JsonObject();
-            
-            jo.addProperty("longUrl", url);
-            
-            con.getOutputStream().write(
-                    jo.toString().getBytes());
-            
-            return new JsonParser().parse(
-                    new InputStreamReader(con.getInputStream()))
-                           .getAsJsonObject().get("id").getAsString();
-        } catch (IOException e) {
+            JSONObject jo = new JSONObject();
+
+            jo.put("longUrl", url);
+
+            String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
+                    + AirUtils.config.getString("apis.googl"), jo).body().source().readUtf8();
+
+            JSONObject returnJSON = new JSONObject(returnData);
+            return returnJSON.get("id").toString();
+
+        } catch (NullPointerException | IOException e) {
             e.printStackTrace();
             return null;
         }

@@ -1,4 +1,4 @@
-# SkyBot [![Build Status](https://travis-ci.org/duncte123/SkyBot.svg?branch=master)](https://travis-ci.org/duncte123/SkyBot)
+# SkyBot [![Build Status](https://circleci.com/gh/duncte123/SkyBot/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/duncte123/SkyBot) [![DiscordBots](https://discordbots.org/api/widget/status/210363111729790977.png)](https://discordbots.org/bot/210363111729790977)
 SkyBot is a discord bot with music and mod commands
 
 # Libs
@@ -13,6 +13,9 @@ The following libraries are used:
 # How to invite the bot to a server?
 
 Go to `https://discordapp.com/oauth2/authorize?&client_id=<CLIENT_ID>&scope=bot&permissions=0` and replace `<CLIENT_ID>` with the client id of the bot on the top of the page. Then you will be asked, on which server the bot should join.
+
+# Updater
+The update command requires an external application to work, to get the updater working please use [this application](https://github.com/ramidzkh/SkyBot-Updater/releases) to run SkyBot: [https://github.com/ramidzkh/SkyBot-Updater/releases](https://github.com/ramidzkh/SkyBot-Updater/releases)
 
 # Support
 If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)

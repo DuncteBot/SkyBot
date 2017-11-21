@@ -136,7 +136,7 @@ public class Config {
      * This will load from our config with the key
      *
      * @param key the key to find
-     * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
+     * @return this thing called {@link JsonPrimitive}
      * @throws NullPointerException when the key is not found
      */
     public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
@@ -148,7 +148,7 @@ public class Config {
      *
      * @param key the key to find
      * @return a nice JsonElement
-     * @throws NullPointerException When things are about too go down
+     * @throws NullPointerException When things are about to go down
      */
     public JsonElement getJsonElement(String key) throws NullPointerException {
         final String[] path = key.split("\\.");
@@ -201,7 +201,7 @@ public class Config {
      * This will attempt to put a value is the config
      *
      * @param key   the key to add the value under
-     * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
+     * @param value the value that we need to add, in the form of an {@link JsonElement}
      * @throws Exception when we fail
      */
     public void put(String key, JsonElement value) throws Exception {

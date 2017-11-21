@@ -46,7 +46,7 @@ public class DBManager {
     }
     
     private static DBConnectionManager createDBManager() {
-        if (AirUtils.nonsqlite) return new DatabaseConnectionManager();
+        if (AirUtils.nonsqlite) return new MySQLConnectionManager();
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
     

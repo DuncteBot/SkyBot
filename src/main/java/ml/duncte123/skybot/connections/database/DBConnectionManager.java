@@ -22,7 +22,7 @@ package ml.duncte123.skybot.connections.database;
 import java.sql.Connection;
 
 /**
- * Use abstraction to easier handle {@link DatabaseConnectionManager} for
+ * Use abstraction to easier handle {@link MySQLConnectionManager} for
  * databases and {@link SQLiteDatabaseConnectionManager} for file databases
  *
  * @author ramidzkh

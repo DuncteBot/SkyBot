@@ -37,10 +37,10 @@ public class BadWordFilter {
     public BadWordFilter() {
         try {
             BufferedReader reader = new BufferedReader(
-                                                              new InputStreamReader(
-                                                                                           new URL("https://docs.google.com/spreadsheets/d/"
-                                                                                                           + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
-                                                                                                           + "export?format=csv").openConnection().getInputStream()));
+                                          new InputStreamReader(
+                                                   new URL("https://docs.google.com/spreadsheets/d/"
+                                                           + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
+                                                           + "export?format=csv").openConnection().getInputStream()));
             String line = "";
             int counter = 0;
             while ((line = reader.readLine()) != null) {
