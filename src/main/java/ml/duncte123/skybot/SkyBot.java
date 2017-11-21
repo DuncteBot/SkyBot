@@ -95,7 +95,7 @@ public class SkyBot {
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
                 .setToken(token)
-                .buildAsync();
+                .build();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
