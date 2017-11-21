@@ -101,6 +101,16 @@ public class BotListener extends ListenerAdapter {
                 AirUtils.log(Level.INFO, "Shard " + shard.getShardInfo().getShardId() + " has been shut down");
                 shard.shutdown();
             }
+            //Kill other things
+            ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
+            if (unbanTimerRunning) {
+                this.unbanTimer.cancel();
+                this.unbanTimer.purge();
+            }
+            if (settingsUpdateTimerRunning) {
+                this.settingsUpdateTimer.cancel();
+                this.settingsUpdateTimer.purge();
+            }
             
             try {
                 AirUtils.db.getConnManager().getConnection().close();
@@ -190,19 +200,6 @@ public class BotListener extends ListenerAdapter {
             };
             settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
             settingsUpdateTimerRunning = true;
-        }
-    }
-    
-    @Override
-    public void onShutdown(ShutdownEvent event) {
-        ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
-        if (unbanTimerRunning) {
-            this.unbanTimer.cancel();
-            this.unbanTimer.purge();
-        }
-        if (settingsUpdateTimerRunning) {
-            this.settingsUpdateTimer.cancel();
-            this.settingsUpdateTimer.purge();
         }
     }
     

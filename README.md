@@ -14,6 +14,9 @@ The following libraries are used:
 
 Go to `https://discordapp.com/oauth2/authorize?&client_id=<CLIENT_ID>&scope=bot&permissions=0` and replace `<CLIENT_ID>` with the client id of the bot on the top of the page. Then you will be asked, on which server the bot should join.
 
+# Updater
+The update command requires an external application to work, to get the updater working please use [this application](https://github.com/ramidzkh/SkyBot-Updater/releases) to run SkyBot: [https://github.com/ramidzkh/SkyBot-Updater/releases](https://github.com/ramidzkh/SkyBot-Updater/releases)
+
 # Support
 If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
