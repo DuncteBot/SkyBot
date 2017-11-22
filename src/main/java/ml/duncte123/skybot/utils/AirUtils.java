@@ -49,6 +49,10 @@ public class AirUtils {
      */
     public static Config config = new ConfigUtils().loadConfig();
     /**
+     * The {@link WAEngine engine} to query Wolfram|Alpha
+     */
+    public static final WAEngine alphaEngine = getWolframEngine();
+    /**
      * This will hold the command setup and the registered commands
      */
     public static CommandManager commandManager = new CommandManager();
@@ -56,10 +60,6 @@ public class AirUtils {
      * We are using slf4j to log things to the console
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     */
-    public static final WAEngine alphaEngine = getWolframEngine();
     /**
      * This holds the value if we should use a non-SQLite database
      */

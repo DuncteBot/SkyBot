@@ -35,8 +35,8 @@ class RestartCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
     
-    override fun executeCommand(invoke: String, args: Array<out String>?, event: GuildMessageReceivedEvent) {
-        if (!Arrays.asList(*Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
+    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
         val shardManager = event.jda.asBot().shardManager
 
         if (args == null) {

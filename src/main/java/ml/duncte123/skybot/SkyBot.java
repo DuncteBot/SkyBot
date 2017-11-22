@@ -90,7 +90,7 @@ public class SkyBot {
 
         //Set up sharding for the bot
         new DefaultShardManagerBuilder()
-                .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
+                .setEventManager(new EventManager())
                 .setAudioSendFactory(new NativeAudioSendFactory())
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))

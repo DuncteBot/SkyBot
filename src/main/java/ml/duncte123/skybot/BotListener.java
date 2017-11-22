@@ -201,6 +201,8 @@ public class BotListener extends ListenerAdapter {
             settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
             settingsUpdateTimerRunning = true;
         }
+        //Update guild count from then the bot was offline (should never die tho)
+        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     /**
