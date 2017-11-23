@@ -29,7 +29,10 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -76,7 +79,7 @@ public abstract class Command {
      */
     protected static void reloadUpvoted() {
         try {
-            String token = AirUtils.config.getString("apis.discordbots_userToken");
+            String token = AirUtils.config.getString("apis.discordbots_userToken", "");
             
             if (token == null) {
                 AirUtils.logger.warn("Discord Bots token not found");
