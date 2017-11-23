@@ -88,14 +88,21 @@ public class SkyBot {
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
 
-        //Set up sharding for the bot
-        new DefaultShardManagerBuilder()
-                .addEventListeners(new BotListener()) //event.getJDA().getRegisteredListeners().get(0)
-                .setAudioSendFactory(new NativeAudioSendFactory())
-                .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
-                .setToken(token)
-                .build();
+        try {
+            //Set up sharding for the bot
+            new DefaultShardManagerBuilder()
+                    .setEventManager(new EventManager())
+                    .setAudioSendFactory(new NativeAudioSendFactory())
+                    .setShardsTotal(TOTAL_SHARDS)
+                    .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
+                    .setToken(token)
+                    .build();
+        }
+        catch(RuntimeException e) {
+            //Kill the system if we can't log in
+            e.printStackTrace();
+            System.exit(-4);
+        }
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();

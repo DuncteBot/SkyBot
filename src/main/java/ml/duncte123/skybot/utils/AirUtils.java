@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class AirUtils {
     
@@ -49,6 +50,11 @@ public class AirUtils {
      */
     public static Config config = new ConfigUtils().loadConfig();
     /**
+     * The {@link WAEngine engine} to query Wolfram|Alpha
+     * This has to be loadded before the commands are loaded
+     */
+    public static final WAEngine alphaEngine = getWolframEngine();
+    /**
      * This will hold the command setup and the registered commands
      */
     public static CommandManager commandManager = new CommandManager();
@@ -56,10 +62,6 @@ public class AirUtils {
      * We are using slf4j to log things to the console
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     */
-    public static final WAEngine alphaEngine = getWolframEngine();
     /**
      * This holds the value if we should use a non-SQLite database
      */
@@ -227,7 +229,9 @@ public class AirUtils {
             }
         }
     }
-    
+
+    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)");
+
     /**
      * This will validate a link
      *
@@ -235,15 +239,9 @@ public class AirUtils {
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        try {
-            URL u = new URL(url);
-            u.openConnection();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        return URL_REGEX.matcher(url).find();
     }
-    
+
     /**
      * This will check if the number that we are trying to parse is an int
      *

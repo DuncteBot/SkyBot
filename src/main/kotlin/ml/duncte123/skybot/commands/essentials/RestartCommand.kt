@@ -36,39 +36,11 @@ class RestartCommand : Command() {
     }
     
     override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
-        if (!Arrays.asList<String>(*Settings.wbkxwkZPaG4ni5lm8laY).contains(event.author.id)) return
+        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
         val shardManager = event.jda.asBot().shardManager
 
-//        val list = event.jda.registeredListeners.filter { t -> t is BotListener}.map {t -> t as BotListener}
-//
-//        if(list.isEmpty()) {
-//            sendMsg(event, "There are no command listeners in here?")
-//            sendError(event.message)
-//            return
-//        }
-
-//        val restart = list[0].restart
-
-//        if(args!!.isEmpty()) {
-            // Stop all shards
-//            shardManager.shutdown()
-//            if (!restart) {
-                // Clean the variables
-//                AirUtils.reload()
-                // Re-run the main command
-//                SkyBot.main()
-//            } else
-                // Magic code, send the restart signal to the executing program
-//                System.exit(0x5454)
-//        } else try {
-//            shardManager.shutdown(args[0].toInt())
-//        } catch (e: NumberFormatException) {
-//            sendMsg(event, "Invalid shard number")
-//            sendError(event.message)
-//        }
         if (args == null) {
             error("args is null?!")
-            return
         }
         
         when (args.size) {
