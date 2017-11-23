@@ -229,7 +229,9 @@ public class AirUtils {
             }
         }
     }
-    
+
+    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)");
+
     /**
      * This will validate a link
      *
@@ -237,15 +239,9 @@ public class AirUtils {
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        try {
-            URL u = new URL(url);
-            u.openConnection();
-            return true;
-        } catch (IOException e) {
-            return false;
-        }
+        return URL_REGEX.matcher(url).find();
     }
-    
+
     /**
      * This will check if the number that we are trying to parse is an int
      *
