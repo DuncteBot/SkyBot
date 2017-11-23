@@ -66,7 +66,7 @@ public class Settings {
     /**
      * The icon url for the embeds
      */
-    public static final String defaultIcon = "https://dshelmondgames.ml/favicon";
+    public static final String defaultIcon = "https://bot.duncte123.me/img/favicon.png";
     /**
      * The colour of the bar that your embed has
      */
