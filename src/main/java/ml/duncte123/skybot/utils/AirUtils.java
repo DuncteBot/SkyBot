@@ -41,6 +41,7 @@ import java.io.IOException;
 import java.net.URL;
 import java.sql.*;
 import java.util.*;
+import java.util.regex.Pattern;
 
 public class AirUtils {
     
@@ -50,6 +51,7 @@ public class AirUtils {
     public static Config config = new ConfigUtils().loadConfig();
     /**
      * The {@link WAEngine engine} to query Wolfram|Alpha
+     * This has to be loadded before the commands are loaded
      */
     public static final WAEngine alphaEngine = getWolframEngine();
     /**
