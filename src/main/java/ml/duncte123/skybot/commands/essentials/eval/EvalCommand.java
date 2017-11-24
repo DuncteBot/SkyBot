@@ -54,7 +54,7 @@ public class EvalCommand extends Command {
     private Supplier<ScheduledExecutorService> service =
             () -> {
                 ScheduledExecutorService service
-                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread-" + evalCounter));
+                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread-" + evalCounter++));
                 services.add(service);
                 return service;
             };
@@ -204,7 +204,6 @@ public class EvalCommand extends Command {
         
         // Garbage collect
         System.gc();
-        evalCounter++;
     }
     
     public void shutdown() {
