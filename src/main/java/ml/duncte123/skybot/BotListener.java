@@ -183,6 +183,7 @@ public class BotListener extends ListenerAdapter {
             TimerTask unbanTask = new TimerTask() {
                 @Override
                 public void run() {
+                    Thread.currentThread().setName("Unban-Timer");
                     AirUtils.checkUnbans(event.getJDA().asBot().getShardManager());
                 }
             };
@@ -195,6 +196,7 @@ public class BotListener extends ListenerAdapter {
             TimerTask settingsTask = new TimerTask() {
                 @Override
                 public void run() {
+                    Thread.currentThread().setName("Settings-Timer");
                     GuildSettingsUtils.loadAllSettings();
                 }
             };
