@@ -43,6 +43,8 @@ import org.slf4j.event.Level;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -64,19 +66,19 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is for checking unbans
      */
-    public Timer unbanTimer = new Timer();
+    private ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Unban-Thread"));
     /**
-     * This tells us if the {@link #unbanTimer} is running
+     * This tells us if the {@link #unbanService} is running
      */
     public boolean unbanTimerRunning = false;
     
     /**
      * This timer is for checking new quotes
      */
-    public Timer settingsUpdateTimer = new Timer();
+    private ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Settings-Thread"));
     
     /**
-     * This tells us if the {@link #settingsUpdateTimer} is running
+     * This tells us if the {@link #settingsUpdateService} is running
      */
     public boolean settingsUpdateTimerRunning = false;
 
@@ -104,17 +106,16 @@ public class BotListener extends ListenerAdapter {
             //Kill other things
             ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
             if (unbanTimerRunning) {
-                this.unbanTimer.cancel();
-                this.unbanTimer.purge();
+                this.unbanService.shutdown();
             }
             if (settingsUpdateTimerRunning) {
-                this.settingsUpdateTimer.cancel();
-                this.settingsUpdateTimer.purge();
+                this.settingsUpdateService.shutdown();
             }
             
             try {
                 AirUtils.db.getConnManager().getConnection().close();
             } catch (SQLException e) {
+                /* ignored */
             }
             
             System.exit(0);
@@ -179,28 +180,13 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the unban timer.");
             //Register the timer for the auto unbans
-            //I moved the timer here to make sure that every running jar has this only once
-            TimerTask unbanTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Thread.currentThread().setName("Unban-Timer");
-                    AirUtils.checkUnbans(event.getJDA().asBot().getShardManager());
-                }
-            };
-            unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
+            unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the settings timer.");
             //This handles the updating from the setting and quotes
-            TimerTask settingsTask = new TimerTask() {
-                @Override
-                public void run() {
-                    Thread.currentThread().setName("Settings-Timer");
-                    GuildSettingsUtils.loadAllSettings();
-                }
-            };
-            settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
+            settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
             settingsUpdateTimerRunning = true;
         }
         //Update guild count from then the bot was offline (should never die tho)
