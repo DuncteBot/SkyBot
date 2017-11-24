@@ -30,7 +30,7 @@ class UpdateCommand: Command() {
         AirUtils.stop()
         
         // Magic code. Tell the updater to update
-        System.exit(0x5454)
+        System.exit(0x54)
     }
 
     override fun help()= "Update the bot and restart"
