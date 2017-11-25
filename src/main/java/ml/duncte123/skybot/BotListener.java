@@ -223,19 +223,20 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
+        //Temp disable that
         //if 60 of a guild is bots, we'll leave it
-        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-        if (botToUserRatio[1] > 60) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
-                    event.getGuild().getOwner().getAsMention(),
-                    botToUserRatio[1],
-                    "%",
-                    event.getGuild().getMemberCache().size())).queue(
-                    message -> message.getGuild().leave().queue()
-            );
-            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
-            return;
-        }
+//        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+//        if (botToUserRatio[1] > 60) {
+//            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+//                    event.getGuild().getOwner().getAsMention(),
+//                    botToUserRatio[1],
+//                    "%",
+//                    event.getGuild().getMemberCache().size())).queue(
+//                    message -> message.getGuild().leave().queue()
+//            );
+//            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
+//            return;
+//        }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
