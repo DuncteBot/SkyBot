@@ -31,6 +31,13 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.UUID;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
 /**
  * NOTE TO SELF String.format("%#s", userObject)
  */
@@ -86,14 +93,19 @@ public class SkyBot {
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
-
+        
+        int gameId = AirUtils.config.getInt("discord.game.type", 3);
+        String name = AirUtils.config.getString("discord.game.name", "Danny Phantom on shard #{shardId}");
+        
+        Game.GameType type = Game.GameType.fromKey(gameId);
+        
         try {
             //Set up sharding for the bot
             new DefaultShardManagerBuilder()
                     .setEventManager(new EventManager())
                     .setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
-                    .setGameProvider(shardId -> Game.watching("Danny Phantom on shard #" + (shardId + 1)))
+                    .setGameProvider(shardId -> Game.of(type, name.replace("#{shardId}", Integer.toString(shardId + 1))))
                     .setToken(token)
                     .build();
         }
@@ -105,5 +117,10 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+    
+    
+        Map<UUID, Integer> kills = new HashMap<>();
+        
+        kills.keySet().stream().sorted(Comparator.comparingInt(kills::get)).collect(Collectors.toMap(Function.identity(), kills::get));
     }
 }
