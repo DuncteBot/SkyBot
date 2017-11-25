@@ -31,13 +31,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
-import java.util.function.Function;
-import java.util.stream.Collectors;
-
 /**
  * NOTE TO SELF String.format("%#s", userObject)
  */
@@ -117,10 +110,5 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
-    
-    
-        Map<UUID, Integer> kills = new HashMap<>();
-        
-        kills.keySet().stream().sorted(Comparator.comparingInt(kills::get)).collect(Collectors.toMap(Function.identity(), kills::get));
     }
 }
