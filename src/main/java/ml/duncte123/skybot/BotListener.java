@@ -122,7 +122,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         
-        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
+        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && settings.isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
