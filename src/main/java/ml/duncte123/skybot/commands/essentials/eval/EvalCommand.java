@@ -50,10 +50,11 @@ public class EvalCommand extends Command {
     private List<String> packageImports;
     private List<String> classImports;
     private List<ScheduledExecutorService> services = new ArrayList<>();
+    private int evalCounter = 0;
     private Supplier<ScheduledExecutorService> service =
             () -> {
                 ScheduledExecutorService service
-                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread"));
+                        = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Eval-Thread-" + evalCounter++));
                 services.add(service);
                 return service;
             };

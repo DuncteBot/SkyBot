@@ -43,6 +43,8 @@ import org.slf4j.event.Level;
 
 import java.sql.SQLException;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
@@ -64,19 +66,19 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is for checking unbans
      */
-    public Timer unbanTimer = new Timer();
+    private ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Unban-Thread"));
     /**
-     * This tells us if the {@link #unbanTimer} is running
+     * This tells us if the {@link #unbanService} is running
      */
     public boolean unbanTimerRunning = false;
     
     /**
      * This timer is for checking new quotes
      */
-    public Timer settingsUpdateTimer = new Timer();
+    private ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Settings-Thread"));
     
     /**
-     * This tells us if the {@link #settingsUpdateTimer} is running
+     * This tells us if the {@link #settingsUpdateService} is running
      */
     public boolean settingsUpdateTimerRunning = false;
 
@@ -98,72 +100,71 @@ public class BotListener extends ListenerAdapter {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for (JDA shard : manager.getShards()) {
-                AirUtils.log(Level.INFO, "Shard " + shard.getShardInfo().getShardId() + " has been shut down");
+                AirUtils.log(Level.INFO, String.format("Shard %s has been shut down", shard.getShardInfo().getShardId()));
                 shard.shutdown();
             }
             //Kill other things
             ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
             if (unbanTimerRunning) {
-                this.unbanTimer.cancel();
-                this.unbanTimer.purge();
+                this.unbanService.shutdown();
             }
             if (settingsUpdateTimerRunning) {
-                this.settingsUpdateTimer.cancel();
-                this.settingsUpdateTimer.purge();
+                this.settingsUpdateService.shutdown();
             }
             
             try {
                 AirUtils.db.getConnManager().getConnection().close();
             } catch (SQLException e) {
+                /* ignored */
             }
             
             System.exit(0);
             return;
         }
-        
-        Permission[] adminPerms = {
-                Permission.MESSAGE_MANAGE
-        };
-        
-        if (event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
-            if (!event.getMember().hasPermission(adminPerms)) {
+
+        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && settings.isEnableSwearFilter()) {
+            if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
-                    event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                    event.getChannel().sendMessage(
+                            String.format("Hello there, %s please do not use cursive language within this Discord.", event.getAuthor().getAsMention())).queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
                     return;
                 }
             }
         }
-        //If the topic contains -commands ignore it
+        String rw = event.getMessage().getRawContent();
+        
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
+                && rw.equals(event.getJDA().getSelfUser().getAsMention())) {
+
+            event.getChannel().sendMessage(
+                    String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                            event.getAuthor().getId(),
+                            Settings.prefix)
+            ).queue();
+            return;
+
+        } else if (!rw.startsWith(Settings.prefix) &&
+                !rw.startsWith(settings.getCustomPrefix())
+                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention())) {
+            return;
+        }
+
+            //If the topic contains -commands ignore it
         if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
             return;
         }
         
-        if (!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())) {
-            return;
-        } else if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            
-            if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
-                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
-                return;
-            }
-            
-        }
-        
         // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        String rw = event.getMessage().getRawContent();
         if (!Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
-        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
-                ,
-                event
-        ));
+        AirUtils.commandManager.runCommand(rw, event);
     }
     
     /**
@@ -173,32 +174,19 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
         
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the unban timer.");
             //Register the timer for the auto unbans
-            //I moved the timer here to make sure that every running jar has this only once
-            TimerTask unbanTask = new TimerTask() {
-                @Override
-                public void run() {
-                    AirUtils.checkUnbans(event.getJDA().asBot().getShardManager());
-                }
-            };
-            unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
+            unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the settings timer.");
             //This handles the updating from the setting and quotes
-            TimerTask settingsTask = new TimerTask() {
-                @Override
-                public void run() {
-                    GuildSettingsUtils.loadAllSettings();
-                }
-            };
-            settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
+            settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
             settingsUpdateTimerRunning = true;
         }
         //Update guild count from then the bot was offline (should never die tho)
@@ -244,9 +232,11 @@ public class BotListener extends ListenerAdapter {
         //if 60 of a guild is bots, we'll leave it
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
         if (botToUserRatio[1] > 60) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                                                                            event.getGuild().getOwner().getAsMention() + ", " + botToUserRatio[1] + "% of this guild are bots (" + event.getGuild().getMemberCache().size() + " is the total btw). " +
-                                                                            "I'm outta here").queue(
+            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+                    event.getGuild().getOwner().getAsMention(),
+                    botToUserRatio[1],
+                    "%",
+                    event.getGuild().getMemberCache().size())).queue(
                     message -> message.getGuild().leave().queue()
             );
             AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");

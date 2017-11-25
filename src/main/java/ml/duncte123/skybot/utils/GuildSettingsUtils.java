@@ -143,7 +143,7 @@ public class GuildSettingsUtils {
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
         String newPrefix = settings.getCustomPrefix();
-        String chanId = settings.getLogChannel();
+        String chanId = settings.getLogChannel() != null ? settings.getLogChannel() : "";
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
