@@ -78,6 +78,14 @@ public class ScriptDelegate extends Script {
         throw new VRCubeException("Erm, no?");
     }
 
+    public Object dump() {
+        return "\uD83D\uDEAE";
+    }
+
+    public Object find() {
+        return "You will never find me.";
+    }
+
     private synchronized String generateScriptName() {
         return "Script" + (++counter);
     }
