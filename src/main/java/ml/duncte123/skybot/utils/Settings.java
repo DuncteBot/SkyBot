@@ -21,15 +21,19 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.BuildConfig;
 
-import java.awt.*;
-
-import static java.awt.Color.RED;
+import java.awt.Color;
+import static java.awt.Color.decode;
 
 public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
     public static final String ownerId = BuildConfig.ownerId;
+
+    /**
+     * This holds the value if the updater command should update the bot or return an error
+     */
+    public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
 
     /**
      * This contains a list of different id's
@@ -70,5 +74,5 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = RED;
+    public static final Color defaultColour = decode("#0751c6");
 }

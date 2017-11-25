@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
@@ -30,7 +29,6 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -38,22 +36,18 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.event.Level;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
-    
-    /**
-     * This is the command parser
-     */
-    private static CommandParser parser = new CommandParser();
 
     /**
      * This filter helps us to fiter out swearing
@@ -229,19 +223,20 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
+        //Temp disable that
         //if 60 of a guild is bots, we'll leave it
-        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-        if (botToUserRatio[1] > 60) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
-                    event.getGuild().getOwner().getAsMention(),
-                    botToUserRatio[1],
-                    "%",
-                    event.getGuild().getMemberCache().size())).queue(
-                    message -> message.getGuild().leave().queue()
-            );
-            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
-            return;
-        }
+//        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+//        if (botToUserRatio[1] > 60) {
+//            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+//                    event.getGuild().getOwner().getAsMention(),
+//                    botToUserRatio[1],
+//                    "%",
+//                    event.getGuild().getMemberCache().size())).queue(
+//                    message -> message.getGuild().leave().queue()
+//            );
+//            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
+//            return;
+//        }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());

@@ -598,7 +598,7 @@ public class AirUtils {
     }
 
     public static TextChannel getLogChannel(String channelId, Guild guild) {
-        if(channelId == null) return getPublicChannel(guild);
+        if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
 
         TextChannel tc;
         try{

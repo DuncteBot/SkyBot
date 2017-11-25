@@ -48,6 +48,8 @@ public class EvalFilter extends GroovyValueFilter {
     private static final Class<?>[] ALLOWED_TYPES_LIST = {
             Math.class,
             String.class,
+            StringBuilder.class,
+            StringBuffer.class,
             
             Boolean.class,
             boolean.class,
