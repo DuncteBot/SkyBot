@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.delegate;
 
 import Java.lang.VRCubeException;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScriptDelegate extends Script {
+    private int counter;
 
     public ScriptDelegate(Script s) {
         super(s.getBinding());
@@ -74,5 +76,14 @@ public class ScriptDelegate extends Script {
     @Override
     public void run(File file, String[] arguments) throws CompilationFailedException, IOException {
         throw new VRCubeException("Erm, no?");
+    }
+
+    private synchronized String generateScriptName() {
+        return "Script" + (++counter);
+    }
+
+    @Override
+    public String toString() {
+        return generateScriptName();
     }
 }
