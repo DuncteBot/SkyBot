@@ -3,6 +3,7 @@ package ml.duncte123.skybot.commands.essentials
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -20,8 +21,15 @@ class UpdateCommand: Command() {
             sendError(event.message)
             return
         }
+
+        if(!Settings.enableUpdaterCommand) {
+            val message = "The updater is not enabled. " +
+                    "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
+            sendEmbed(event, EmbedUtils.embedMessage(message))
+            return
+        }
         
-        event.channel.sendMessage("✅ Updating").queue()
+        sendMsg(event, "✅ Updating")
         
         // This will also shutdown eval
         event.jda.asBot().shardManager.shutdown()

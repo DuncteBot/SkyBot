@@ -46,7 +46,6 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
-        
         //Set the logger to only info by default
         Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(ch.qos.logback.classic.Level.INFO);

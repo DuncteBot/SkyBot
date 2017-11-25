@@ -31,6 +31,11 @@ public class Settings {
     public static final String ownerId = BuildConfig.ownerId;
 
     /**
+     * This holds the value if the updater command should update the bot or return an error
+     */
+    public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
+
+    /**
      * This contains a list of different id's
      *
      * @deprecated because the bot will break if you mess with this.
