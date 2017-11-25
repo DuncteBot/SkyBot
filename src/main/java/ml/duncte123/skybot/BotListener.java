@@ -122,12 +122,8 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         
-        Permission[] adminPerms = {
-                Permission.MESSAGE_MANAGE
-        };
-        
-        if (event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
-            if (!event.getMember().hasPermission(adminPerms)) {
+        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
+            if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
