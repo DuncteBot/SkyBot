@@ -121,7 +121,7 @@ public class BotListener extends ListenerAdapter {
             System.exit(0);
             return;
         }
-        
+
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE) && settings.isEnableSwearFilter()) {
             if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
@@ -134,9 +134,10 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
+        String rw = event.getMessage().getRawContent();
         
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
-                && event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
+                && rw.equals(event.getJDA().getSelfUser().getAsMention())) {
 
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
@@ -145,9 +146,9 @@ public class BotListener extends ListenerAdapter {
             ).queue();
             return;
 
-        } else if (!event.getMessage().getRawContent().startsWith(Settings.prefix) &&
-                !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())
-                && !event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
+        } else if (!rw.startsWith(Settings.prefix) &&
+                !rw.startsWith(settings.getCustomPrefix())
+                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention())) {
             return;
         }
 
@@ -158,16 +159,12 @@ public class BotListener extends ListenerAdapter {
         
         // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        String rw = event.getMessage().getRawContent();
         if (!Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
-        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst(Pattern.quote("<@" + event.getJDA().getSelfUser().getId() + "> "), Settings.prefix)
-                ,
-                event
-        ));
+        AirUtils.commandManager.runCommand(rw, event);
     }
     
     /**

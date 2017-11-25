@@ -31,13 +31,15 @@ import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Settings;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.regex.Pattern;
 
 public class CommandManager {
     
@@ -154,17 +156,23 @@ public class CommandManager {
     /**
      * This will run the command when we need them
      *
-     * @param parser The command parser used to parse the commands
+     * @param rw the raw message
+     * @param event the event for the message
      */
-    public void runCommand(CommandParser.CommandContainer parser) {
+    public void runCommand(String rw, GuildMessageReceivedEvent event) {
+
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
+        final String invoke = split[0].toLowerCase();
+        final String[] args = Arrays.copyOfRange(split, 1, split.length);
+
         for (Command c : this.getCommands()) {
-            if (parser.invoke.equalsIgnoreCase(c.getName())) {
-                c.executeCommand(parser.invoke, parser.args, parser.event);
+            if (invoke.equalsIgnoreCase(c.getName())) {
+                c.executeCommand(invoke, args, event);
                 return;
             } else {
                 for (final String alias : c.getAliases()) {
-                    if (parser.invoke.equalsIgnoreCase(alias)) {
-                        c.executeCommand(parser.invoke, parser.args, parser.event);
+                    if (invoke.equalsIgnoreCase(alias)) {
+                        c.executeCommand(invoke, args, event);
                         return;
                     }
                 }
