@@ -171,7 +171,7 @@ public class GuildSettings {
      */
     @Override
     public String toString() {
-        return String.format("GuildSettings[%d](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
+        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
                 (enableSwearFilter ? "Enabled" : "Disabled"), customJoinMessage);
     }
     

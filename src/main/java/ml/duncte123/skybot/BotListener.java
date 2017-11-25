@@ -100,7 +100,7 @@ public class BotListener extends ListenerAdapter {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
             for (JDA shard : manager.getShards()) {
-                AirUtils.log(Level.INFO, "Shard " + shard.getShardInfo().getShardId() + " has been shut down");
+                AirUtils.log(Level.INFO, String.format("Shard %s has been shut down", shard.getShardInfo().getShardId()));
                 shard.shutdown();
             }
             //Kill other things
@@ -131,26 +131,33 @@ public class BotListener extends ListenerAdapter {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
-                    event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                    event.getChannel().sendMessage(
+                            String.format("Hello there, %s please do not use cursive language within this Discord.", event.getAuthor().getAsMention())).queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
                     return;
                 }
             }
         }
-        //If the topic contains -commands ignore it
-        if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
+        
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
+                && event.getMessage().getRawContent().equals(event.getJDA().getSelfUser().getAsMention())) {
+
+            event.getChannel().sendMessage(
+                    String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                            event.getAuthor().getId(),
+                            Settings.prefix)
+            ).queue();
+            return;
+
+        } else if (!event.getMessage().getRawContent().startsWith(Settings.prefix) &&
+                !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())
+                && !event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
             return;
         }
-        
-        if (!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())) {
+
+            //If the topic contains -commands ignore it
+        if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
             return;
-        } else if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            
-            if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
-                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
-                return;
-            }
-            
         }
         
         // run the a command
@@ -161,7 +168,7 @@ public class BotListener extends ListenerAdapter {
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
-        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
+        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst(Pattern.quote("<@" + event.getJDA().getSelfUser().getId() + "> "), Settings.prefix)
                 ,
                 event
         ));
@@ -174,7 +181,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
         
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
@@ -232,9 +239,11 @@ public class BotListener extends ListenerAdapter {
         //if 60 of a guild is bots, we'll leave it
         double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
         if (botToUserRatio[1] > 60) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                                                                            event.getGuild().getOwner().getAsMention() + ", " + botToUserRatio[1] + "% of this guild are bots (" + event.getGuild().getMemberCache().size() + " is the total btw). " +
-                                                                            "I'm outta here").queue(
+            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+                    event.getGuild().getOwner().getAsMention(),
+                    botToUserRatio[1],
+                    "%",
+                    event.getGuild().getMemberCache().size())).queue(
                     message -> message.getGuild().leave().queue()
             );
             AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
