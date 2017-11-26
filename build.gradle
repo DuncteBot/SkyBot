@@ -72,11 +72,11 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '40ebcf1' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'b55c183' //Beta build with ShardManager
     //Lavaplayer
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.44'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
-    compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.5'
+    compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.6'
     // Commons lang3
     compile group: 'org.apache.commons', name: 'commons-lang3', version: '3.6'
     //Commons text, because UnicodeUnescaper
