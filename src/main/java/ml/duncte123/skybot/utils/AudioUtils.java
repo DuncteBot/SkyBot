@@ -55,7 +55,7 @@ public class AudioUtils {
     /**
      * This is the title that you see in the embeds from the player
      */
-    public final String embedTitle = Settings.playerTitle;
+    public final String embedTitle = "AirPlayer";
     /**
      * This will hold the manager for the audio player
      */

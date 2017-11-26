@@ -64,15 +64,11 @@ public class Settings {
      */
     public static final String defaultName = "DuncteBot";
     /**
-     * This is the title from the player embed
-     */
-    public static final String playerTitle = "AirPlayer";
-    /**
      * The icon url for the embeds
      */
     public static final String defaultIcon = "https://bot.duncte123.me/img/favicon.png";
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = decode("#0751c6");
+    public static final Color defaultColour = decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
 }
