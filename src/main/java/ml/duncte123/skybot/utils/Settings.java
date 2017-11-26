@@ -21,7 +21,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.BuildConfig;
 
-import java.awt.Color;
+import java.awt.*;
 
 import static java.awt.Color.decode;
 

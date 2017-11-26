@@ -30,8 +30,8 @@ import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 
-import static org.slf4j.event.Level.ERROR;
 import static ch.qos.logback.classic.Level.INFO;
+import static org.slf4j.event.Level.ERROR;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)

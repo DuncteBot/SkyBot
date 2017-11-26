@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -32,13 +31,10 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.utils.MiscUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
-import java.io.IOException;
-import java.net.URL;
 import java.sql.*;
 import java.util.*;
 import java.util.regex.Pattern;

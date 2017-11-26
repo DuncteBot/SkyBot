@@ -64,27 +64,27 @@ public class FakeUser implements User {
 
     @Override
     public String getAvatarId() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
     public String getAvatarUrl() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
     public String getDefaultAvatarId() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
     public String getDefaultAvatarUrl() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
     public String getEffectiveAvatarUrl() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
@@ -94,12 +94,12 @@ public class FakeUser implements User {
 
     @Override
     public RestAction<PrivateChannel> openPrivateChannel() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
     public List<Guild> getMutualGuilds() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
@@ -109,7 +109,7 @@ public class FakeUser implements User {
 
     @Override
     public JDA getJDA() {
-        throw new NotImplementedException();
+        return null;
     }
 
     @Override
