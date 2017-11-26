@@ -23,8 +23,6 @@ import ml.duncte123.skybot.BuildConfig;
 
 import java.awt.*;
 
-import static java.awt.Color.RED;
-
 public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
@@ -70,7 +68,7 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = RED;
+    public static final Color defaultColour = Color.decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
 
     public static boolean useCooldown = false;
 
