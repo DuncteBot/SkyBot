@@ -94,7 +94,7 @@ fabric.properties
 .classpath
 .project
 *.eml
-config.json
+/config.json
 *.db
 
 # virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml

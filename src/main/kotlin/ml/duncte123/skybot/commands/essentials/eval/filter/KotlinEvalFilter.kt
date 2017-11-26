@@ -86,61 +86,97 @@ class KotlinEvalFilter : GroovyValueFilter() {
         // Simple mistake, the make the Object... take in the args as elements, we need to use *
         return invoker.call(receiver, null, *args)
     }
+
+    /**
+     * This checks if the script contains any loop
+     *
+     * @param toFilter the script to filter
+     * @return true if the script contains a loop
+     */
+    fun filterLoops(toFilter:String):Boolean {
+        return Pattern.compile(
+         //for or while loop
+                "((while|for)" +
+         //Stuff in the brackets
+                        "\\s*\\(.*\\))|" +
+         // Other groovy loops
+                        "(\\.step|\\.times|\\.upto|\\.each)"
+         //match and find
+            ).matcher(toFilter).find()
+    }
+
+        /**
+     * This checks if the script contains an array
+     *
+     * @param toFilter the script to filter
+     * @return true if the script contains an array
+     */
+         fun filterArrays(toFilter:String):Boolean {
+     //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+            return arrayFilter.matcher(toFilter).find()
+    }
+
+    companion object {
+
+        /**
+         * Typed that are allowed to be used
+         */
+        @JvmField
+        val filteredUsed = listOf(
+                String::class.java,
+                Math::class.java,
+
+                Boolean::class.java,
+                Byte::class.java,
+                Char::class.java,
+                Short::class.java,
+                Int::class.java,
+                Float::class.java,
+                Long::class.java,
+                Double::class.java,
+
+                Arrays::class.java,
+
+                List::class.java,
+                ArrayList::class.java,
+
+                BigDecimal::class.java,
+                BigInteger::class.java)
+
+        /**
+         * Types that are allowed to be constructed
+         */
+        @JvmField
+        val filteredConstructed = listOf(
+                String::class.java,
+                Math::class.java,
+
+                Boolean::class.java,
+                Byte::class.java,
+                Char::class.java,
+                Short::class.java,
+                Int::class.java,
+                Float::class.java,
+                Long::class.java,
+                Double::class.java,
+
+                Arrays::class.java,
+
+                ArrayList::class.java,
+                HashSet::class.java,
+
+                // Want to add these?
+                // Can have huge radix
+                BigDecimal::class.java,
+                BigInteger::class.java
+        )
+
+        @JvmField
+        val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!
+
+        @JvmField
+        val arrayFilter = Pattern.compile("(?i) ((\\[(\\s*[0-9]+\\s*)])|(\\[(\\s*)(0b)([01_]*)(\\s*)])|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))")
+        //                              Case insensitive  (Decimals and Octals   |         Binary         |          Hexadecimal)
+    }
 }
 
-/*
- * These are outside of the class because they are static
- */
-
-/**
- * Typed that are allowed to be used
- */
-val filteredUsed = listOf(
-        String::class.java,
-        Math::class.java,
-
-        Boolean::class.java,
-        Byte::class.java,
-        Character::class.java,
-        Short::class.java,
-        Integer::class.java,
-        Float::class.java,
-        Long::class.java,
-        Double::class.java,
-
-        Arrays::class.java,
-
-        List::class.java,
-        ArrayList::class.java,
-
-        BigDecimal::class.java,
-        BigInteger::class.java)
-
-/**
- * Types that are allowed to be constructed
- */
-val filteredConstructed = listOf(
-        String::class.java,
-        Math::class.java,
-
-        Boolean::class.java,
-        Byte::class.java,
-        Character::class.java,
-        Short::class.java,
-        Integer::class.java,
-        Float::class.java,
-        Long::class.java,
-        Double::class.java,
-
-        Arrays::class.java,
-
-        ArrayList::class.java,
-        HashSet::class.java,
-
-        // Want to add these?
-        // Can have huge radix
-        BigDecimal::class.java,
-        BigInteger::class.java
-)
-
-val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!

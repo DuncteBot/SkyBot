@@ -19,12 +19,12 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 import org.apache.commons.text.translate.UnicodeUnescaper;
+import org.json.JSONObject;
 
 import java.io.*;
+import java.nio.file.Files;
+import java.util.stream.Collectors;
 
 public class ConfigLoader {
 
@@ -50,7 +50,7 @@ public class ConfigLoader {
         private final File configFile;
     
         MainConfig(final File file) throws Exception {
-            super(null, new JsonParser().parse(new FileReader(file)).getAsJsonObject());
+            super(null, new JSONObject(Files.readAllLines(file.toPath()).stream().filter(line -> !line.trim().startsWith("//")).collect(Collectors.joining())));
             this.configFile = file;
         }
     
@@ -61,15 +61,9 @@ public class ConfigLoader {
     
         @Override
         public void save() throws Exception {
-            final Gson gson = new GsonBuilder()
-                                      .serializeNulls()
-                                      .setPrettyPrinting()
-                                      .serializeSpecialFloatingPointValues()
-                                      .create();
-            final String json = gson.toJson(this.config);
+            final String json = this.config.toString();
             try {
-                final BufferedWriter writer = new BufferedWriter(
-                                                                        new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
+                final BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
                 new UnicodeUnescaper().translate(json, writer);
                 writer.close();
             } catch (final IOException e) {

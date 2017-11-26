@@ -23,18 +23,11 @@ import ml.duncte123.skybot.BuildConfig;
 
 import java.awt.*;
 
-import static java.awt.Color.decode;
-
 public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
     public static final String ownerId = BuildConfig.ownerId;
-
-    /**
-     * This holds the value if the updater command should update the bot or return an error
-     */
-    public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
 
     /**
      * This contains a list of different id's
@@ -45,37 +38,40 @@ public class Settings {
     public static final String[] wbkxwkZPaG4ni5lm8laY = {
             new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
             new String(new byte[]{50, 56, 49, 54, 55, 51, 54, 53, 57, 56, 51, 52, 51, 48, 50, 52, 54, 52}),
-            new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52}),
-            ownerId
+            new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52})
     };
 
     /**
      * This is the base url from the custom api
      */
     public static final String apiBase = "https://bot.duncte123.me/api";
-
     /**
      * This is the prefix that your bot has, by default is the /
      */
     public static final String prefix = AirUtils.config.getString("discord.prefix", "/");
-
     /**
      * This is the version of the bot
      */
     public static final String version = BuildConfig.VERSION;
-
     /**
      * This is the name that your bot has
      */
     public static final String defaultName = "DuncteBot";
-
     /**
      * The icon url for the embeds
      */
     public static final String defaultIcon = "https://bot.duncte123.me/img/favicon.png";
-
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
+    public static final Color defaultColour = Color.decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
+
+    public static boolean useCooldown = false;
+
+    public static boolean useJSON = false;
+
+    // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
+    public static void setCooldown(final boolean cooldown) {
+        useCooldown = cooldown;
+    }
 }

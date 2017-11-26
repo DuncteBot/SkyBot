@@ -44,7 +44,8 @@ class JoinCommand extends MusicCommand {
         }
 
         try {
-            if (audioManager.connected) audioManager.closeAudioConnection()
+            if (audioManager.connected)
+                audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
         } catch (PermissionException e) {

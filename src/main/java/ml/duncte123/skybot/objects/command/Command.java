@@ -19,14 +19,8 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -37,12 +31,16 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.json.JSONArray;
 
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Command {
-
+    
     /**
      * A list of users that have upvoted the bot
      */
@@ -51,9 +49,7 @@ public abstract class Command {
         public boolean contains(Object o) {
             if(o.getClass() != String.class) return false;
             
-            boolean contains = super.contains(o);
-            
-            if(contains) return true;
+            if(super.contains(o)) return true;
             
             reloadUpvoted();
             
@@ -61,28 +57,40 @@ public abstract class Command {
         }
     };
 
+    private static boolean cooldown = false;
+
+    public Command() {
+        if (!Settings.useCooldown)
+            return;
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleWithFixedDelay(() -> {
+            if (cooldown)
+                cooldown = false;
+        }, 0, 20, TimeUnit.SECONDS);
+    }
+
     static {
         reloadUpvoted();
     }
-
+    
     /**
      * This holds the prefix for us
      */
     protected final String PREFIX = Settings.prefix;
-
     /**
      * This holds the category
      */
     protected CommandCategory category = CommandCategory.MAIN;
-
+    
     /**
      * Reloads the list of people who have upvoted this bot
      */
     protected static void reloadUpvoted() {
+        if (cooldown && Settings.useCooldown) return;
         try {
             String token = AirUtils.config.getString("apis.discordbots_userToken", "");
             
-            if (token == null) {
+            if (token == null || token.isEmpty()) {
                 AirUtils.logger.warn("Discord Bots token not found");
                 return;
             }
@@ -95,21 +103,24 @@ public abstract class Command {
                                                 .addHeader("Authorization", token)
                                                 .build())
                                         .execute();
-            JsonArray json = new JsonParser().parse(response.body().source().readUtf8()).getAsJsonArray();
+            JSONArray json = new JSONArray(response.body().source().readUtf8());
             
             upvotedIds.clear();
-            
-            for (JsonElement je : json)
-                upvotedIds.add(je.getAsString());
+
+            for (int i = 0; i < json.length(); i++) {
+                upvotedIds.add(json.getString(i));
+            }
         } catch (Exception e) {
             AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
         }
+        if (Settings.useCooldown)
+            cooldown = true;
     }
-
+    
     /**
      * Has this user upvoted the bot
      */
-    public static boolean hasUpvoted(User user) {
+    protected static boolean hasUpvoted(User user) {
         return upvotedIds.contains(user.getId());
     }
 
@@ -121,7 +132,7 @@ public abstract class Command {
     public CommandCategory getCategory() {
         return this.category;
     }
-
+    
     /**
      * This is the action of the command, this will hold what the commands needs to to
      *
@@ -130,21 +141,21 @@ public abstract class Command {
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
-
+    
     /**
      * The usage instructions of the command
      *
      * @return a String
      */
     public abstract String help();
-
+    
     /**
      * This will hold the command name aka what the user puts after the prefix
      *
      * @return The command name
      */
     public abstract String getName();
-
+    
     /**
      * This wil hold any aliases that this command might have
      *
@@ -153,7 +164,7 @@ public abstract class Command {
     public String[] getAliases() {
         return new String[0];
     }
-
+    
     /**
      * This returns the settings for the given guild
      *
@@ -163,7 +174,7 @@ public abstract class Command {
     protected GuildSettings getSettings(Guild guild) {
         return GuildSettingsUtils.getGuild(guild);
     }
-
+    
     /**
      * This will react with a ❌ if the user doesn't have permission to run the command
      *
@@ -174,6 +185,24 @@ public abstract class Command {
     }
 
     /**
+     * This will react with a ❌ if the user doesn't have permission to run the command or any other error while execution
+     *
+     * @param message the message to add the reaction to
+     * @param error the cause
+     */
+    protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
+        if (print)
+            AirUtils.logger.error(error.getLocalizedMessage(), error);
+
+        message.addReaction("❌").queue();
+
+        message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
+                new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
+                        error.getClass().getSimpleName())).build()).build()
+        ).queue();
+    }
+    
+    /**
      * This will react with a ✅ if the user doesn't have permission to run the command
      *
      * @param message the message to add the reaction to
@@ -181,7 +210,7 @@ public abstract class Command {
     protected void sendSuccess(Message message) {
         message.addReaction("✅").queue();
     }
-
+    
     /**
      * This will chcek if we can send a embed and convert it to a message if we can't send embeds
      *
@@ -195,7 +224,7 @@ public abstract class Command {
         }
         sendMsg(event, embed);
     }
-
+    
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -205,7 +234,7 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
         sendMsg(event, (new MessageBuilder()).append(msg).build());
     }
-
+    
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -215,7 +244,7 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
     }
-
+    
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -225,18 +254,18 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
         event.getChannel().sendMessage(msg).queue();
     }
-
+    
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
     }
-
+    
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != this.getClass()) {
+        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
             return false;
         }
         

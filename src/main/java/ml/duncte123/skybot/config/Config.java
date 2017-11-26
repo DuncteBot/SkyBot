@@ -19,23 +19,23 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import ml.duncte123.skybot.utils.AirUtils;
+import org.json.JSONException;
+import org.json.JSONObject;
+import org.slf4j.event.Level;
 
 import java.io.File;
 
 public class Config {
-
-    protected final JsonObject config;
+    
+    protected final JSONObject config;
     private final Config parent;
-
-    protected Config(Config parent, JsonObject config) {
+    
+    protected Config(Config parent, JSONObject config) {
         this.parent = parent;
         this.config = config;
     }
-
+    
     /**
      * idk
      *
@@ -47,7 +47,7 @@ public class Config {
     public static String replaceLast(String text, String regex, String replacement) {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
-
+    
     /**
      * This will try to get data from the config file
      *
@@ -55,9 +55,10 @@ public class Config {
      * @return the value of the setting
      */
     public String getString(String key) {
-        return this.getJsonPrimitive(key).getAsString();
+        Object out = this.get(this.config, key);
+        return (String) out;
     }
-
+    
     /**
      * This will try to get data from the config file
      *
@@ -66,16 +67,10 @@ public class Config {
      * @return the value of the setting
      */
     public final String getString(String key, String defaultValue) {
-        if (!this.hasKey(key)) {
-            this.put(key, defaultValue);
-        }
-        try {
-            return this.getString(key);
-        } catch (Exception e) {
-            return defaultValue;
-        }
+        Object out = this.get(this.config, key);
+        return (out == null) ? defaultValue : (String) out;
     }
-
+    
     /**
      * This will attempt to get an integer from the config file
      *
@@ -84,13 +79,10 @@ public class Config {
      * @throws NumberFormatException if the returned value isn't valis
      */
     public int getInt(String key) throws NumberFormatException {
-        try {
-            return this.getJsonPrimitive(key).getAsInt();
-        } catch (final NumberFormatException e) {
-            throw e;
-        }
+        Object out = this.get(this.config, key);
+        return (int) out;
     }
-
+    
     /**
      * This will attempt to get an integer from the config file
      *
@@ -99,11 +91,10 @@ public class Config {
      * @return the int
      */
     public final int getInt(String key, int defaultValue) {
-        if (!this.hasKey(key))
-            this.put(key, defaultValue);
-        return this.getInt(key);
+        Object out = this.get(this.config, key);
+        return (out == null) ? defaultValue : (int) out;
     }
-
+    
     /**
      * This will attempt to get a boolean from the config file
      *
@@ -111,14 +102,10 @@ public class Config {
      * @return the boolean from the key
      */
     public boolean getBoolean(String key) {
-        try {
-            return this.getJsonPrimitive(key).getAsBoolean();
-        } catch (final Exception e) {
-            e.printStackTrace();
-            return false;
-        }
+        Object out = this.get(this.config, key);
+        return (boolean) out;
     }
-
+    
     /**
      * This will attempt to get a boolean from the config file
      *
@@ -127,174 +114,37 @@ public class Config {
      * @return the boolean from the key
      */
     public final boolean getBoolean(String key, boolean defaultValue) {
-        if (!this.hasKey(key))
-            this.put(key, defaultValue);
-        return this.getBoolean(key);
+
+        Object out = this.get(this.config, key);
+        return (out == null) ? defaultValue : (boolean) out;
     }
 
-    /**
-     * This will load from our config with the key
-     *
-     * @param key the key to find
-     * @return this thing called {@link JsonPrimitive}
-     * @throws NullPointerException when the key is not found
-     */
-    public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
-        return this.getJsonElement(key).getAsJsonPrimitive();
+    public void put(String key, Object value) {
+        Object json = this.get(this.config, key.substring(0, key.lastIndexOf('.')));
+        if (json != null)
+            new JSONObject(json.toString()).put(key.substring(key.lastIndexOf('.') + 1, key.length()), value);
+        try {
+            this.save();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
-    /**
-     * This will load from our config with the key
-     *
-     * @param key the key to find
-     * @return a nice JsonElement
-     * @throws NullPointerException When things are about to go down
-     */
-    public JsonElement getJsonElement(String key) throws NullPointerException {
+    private Object get(JSONObject jsonData, String key) {
         final String[] path = key.split("\\.");
-        JsonElement value = this.config;
+        JSONObject current = jsonData;
         try {
-            for (String element : path) {
-                // System.out.println(element);
-                if (element.trim().isEmpty())
-                    continue;
-                if (element.endsWith("]") && element.contains("[")) {
-                    final int i = element.lastIndexOf("[");
-                    int index;
-                    try {
-                        index = Integer.parseInt(element.substring(i).replace("[", "").replace("]", ""));
-                    } catch (final Exception e) {
-                        index = 0;
-                    }
-                    element = element.substring(0, i);
-                    
-                    value = value.getAsJsonObject().get(element);
-                    value = value.getAsJsonArray().get(index);
-                    
-                } else
-                    value = value.getAsJsonObject().get(element);
+            for (int i = 0; i < path.length; i++) {
+                if (i == path.length - 1)
+                    return current.get(path[i]);
+                current = new JSONObject(current.get(path[i]).toString());
             }
-            if (value == null)
-                throw new NullPointerException("Key '" + key + "' has no value or doesn't exists, trying to add it");
-            return value;
-        } catch (Exception e) {
-            e.printStackTrace();
-            return null;
+        } catch (JSONException ex) {
+            AirUtils.log(Level.ERROR, ex.toString());
         }
+        return null;
     }
-
-    /**
-     * This will check if the key that we are looking for
-     *
-     * @param key the key to find
-     * @return true if the key is there
-     */
-    public boolean hasKey(String key) {
-        try {
-            return this.getJsonElement(key) != null;
-        } catch (NullPointerException e) {
-            return false;
-        }
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add, in the form of an {@link JsonElement}
-     * @throws Exception when we fail
-     */
-    public void put(String key, JsonElement value) throws Exception {
-        final String finalKey = key.substring(key.lastIndexOf(".") + 1);
-        key = replaceLast(key, finalKey, "");
-        if (key.endsWith("."))
-            key = replaceLast(key, ".", "");
-        final String[] path = key.split("\\.");
-        JsonObject current = this.config;
-        
-        try {
-            for (String element : path) {
-                if (element.trim().isEmpty())
-                    continue;
-                if (element.endsWith("]") && element.contains("[")) {
-                    final int i = element.lastIndexOf("[");
-                    int index;
-                    try {
-                        index = Integer.parseInt(element.substring(i).replace("[", "").replace("]", ""));
-                    } catch (final Exception e) {
-                        index = -1;
-                    }
-                    element = element.substring(0, i);
-                    
-                    if (!current.has(element))
-                        current.add(element, new JsonArray());
-                    final JsonArray array = current.get(element).getAsJsonArray();
-                    if (index == -1) {
-                        final JsonObject object = new JsonObject();
-                        array.add(object);
-                        current = object;
-                    } else {
-                        if (index == array.size())
-                            array.add(new JsonObject());
-                        current = array.get(index).getAsJsonObject();
-                    }
-                    
-                } else {
-                    if (!current.has(element))
-                        current.add(element, new JsonObject());
-                    current = current.get(element).getAsJsonObject();
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw e;
-        }
-        current.add(finalKey, value);
-        this.save();
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     */
-    public void put(String key, String value) {
-        try {
-            this.put(key, new JsonPrimitive(value));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     */
-    public void put(String key, Number value) {
-        try {
-            this.put(key, new JsonPrimitive(value));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     */
-    public void put(String key, boolean value) {
-        try {
-            this.put(key, new JsonPrimitive(value));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
+    
     /**
      * get the config as a file
      *
@@ -303,7 +153,7 @@ public class Config {
     public File getConfigFile() {
         return this.parent.getConfigFile();
     }
-
+    
     /**
      * save the config
      *

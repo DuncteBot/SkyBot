@@ -19,8 +19,6 @@
 
 package ml.duncte123.skybot.objects;
 
-import com.google.gson.internal.Primitives;
-
 import java.lang.reflect.*;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -100,22 +98,7 @@ public class FakeInterface<T> {
             
             // Primitives
             if (r.isPrimitive()) {
-                if (r == boolean.class)
-                    return Boolean.FALSE;
-                else if (r == byte.class)
-                    return new Byte((byte) 0);
-                else if (r == char.class)
-                    return '\u0000';
-                else if (r == short.class)
-                    return new Short((short) 0);
-                else if (r == int.class)
-                    return new Integer(0);
-                else if (r == float.class)
-                    return new Float(0F);
-                else if (r == long.class)
-                    return new Long(0L);
-                else if (r == double.class)
-                    return new Double(0D);
+                return Primitives.wrap(r);
             }
             
             // String
