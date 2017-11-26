@@ -25,8 +25,8 @@ import groovy.lang.Script;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.Presence;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -131,12 +131,26 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
-        if(o instanceof JDA)
-            return new JDADelegate((JDA) o);
-        if (o instanceof User)
-            return new UserDelegate((User) o);
+        if (o instanceof Category)
+            return new CategoryDelegate((Category) o);
+        if (o instanceof TextChannel)
+            return new TextChannelDelegate((TextChannel) o);
+        if (o instanceof VoiceChannel)
+            return new VoiceChannelDelegate((VoiceChannel) o);
+        if (o instanceof Channel)
+            return new ChannelDelegate((Channel) o);
         if (o instanceof Guild)
             return new GuildDelegate((Guild) o);
+        if(o instanceof JDA)
+            return new JDADelegate((JDA) o);
+        if (o instanceof Member)
+            return new MemberDelegate((Member) o);
+        if (o instanceof Presence)
+            return new PresenceDelegate((Presence) o);
+        if (o instanceof Role)
+            return new RoleDelegate((Role) o);
+        if (o instanceof User)
+            return new UserDelegate((User) o);
         ////////////////////////////////////////////
         if(o instanceof Script)
             return new ScriptDelegate((Script) o);
