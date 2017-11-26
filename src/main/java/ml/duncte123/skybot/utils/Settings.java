@@ -58,19 +58,17 @@ public class Settings {
      */
     public static final String defaultName = "DuncteBot";
     /**
-     * This is the title from the player embed
-     */
-    public static final String playerTitle = "AirPlayer";
-    /**
      * The icon url for the embeds
      */
-    public static final String defaultIcon = "https://dshelmondgames.ml/favicon";
+    public static final String defaultIcon = "https://bot.duncte123.me/img/favicon.png";
     /**
      * The colour of the bar that your embed has
      */
     public static final Color defaultColour = Color.decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
 
     public static boolean useCooldown = false;
+
+    public static boolean useJSON = false;
 
     // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
     public static void setCooldown(final boolean cooldown) {

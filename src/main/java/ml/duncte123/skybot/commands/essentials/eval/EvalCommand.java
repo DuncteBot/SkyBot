@@ -199,7 +199,12 @@ public class EvalCommand extends Command {
                 sendSuccess(event.getMessage());
             }
         } catch (Throwable thr) {
-            sendErrorJSON(event.getMessage(), thr, true);
+            if (Settings.useJSON)
+                sendErrorJSON(event.getMessage(), thr, true);
+            else {
+                sendMsg(event, "ERROR: " + thr.toString());
+                thr.printStackTrace();
+            }
         } finally {
             filter.unregister();
             
