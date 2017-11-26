@@ -20,6 +20,7 @@
 package ml.duncte123.skybot.objects.command;
 
 public enum CommandCategory {
+
     ANIMALS,
     MAIN,
     FUN,

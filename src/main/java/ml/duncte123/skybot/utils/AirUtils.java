@@ -44,49 +44,58 @@ import java.util.*;
 import java.util.regex.Pattern;
 
 public class AirUtils {
-    
+
     /**
      * This is our config file
      */
     public static Config config = new ConfigUtils().loadConfig();
+
     /**
      * The {@link WAEngine engine} to query Wolfram|Alpha
      * This has to be loadded before the commands are loaded
      */
     public static final WAEngine alphaEngine = getWolframEngine();
+
     /**
      * This will hold the command setup and the registered commands
      */
     public static CommandManager commandManager = new CommandManager();
+
     /**
      * We are using slf4j to log things to the console
      */
     public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
+
     /**
      * This holds the value if we should use a non-SQLite database
      */
     public static boolean nonsqlite = config.getBoolean("use_database", false);
+
     /**
      * This will store the settings for every guild that we are in
      */
     public static Map<String, GuildSettings> guildSettings = new HashMap<>();
+
     /**
      * This stores all the tags
      */
     public static Map<String, Tag> tagsList = new TreeMap<>();
+
     /**
      * This is our audio handler
      */
     public static AudioUtils audioUtils = new AudioUtils();
+
     /**
      * This helps us to make the coinflip command and the footer quotes work
      */
     public static Random rand = new Random();
+
     /**
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
-    
+
     /**
      * This converts the online status of a user to a fancy emote
      *
@@ -106,7 +115,7 @@ public class AirUtils {
                 return "<:offline:313956277237710868>";
         }
     }
-    
+
     /**
      * This will send a message to a channel called modlog
      *
@@ -132,7 +141,7 @@ public class AirUtils {
                         msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
         );
     }
-    
+
     /**
      * A version of {@link AirUtils#modLog(User, User, String, String, String, Guild)} but without the time
      *
@@ -145,7 +154,7 @@ public class AirUtils {
     public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
     }
-    
+
     /**
      * To log a unban or a unmute
      *
@@ -157,7 +166,7 @@ public class AirUtils {
     public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
         modLog(mod, unbannedUser, punishment, "", g);
     }
-    
+
     /**
      * Add the banned user to the database
      *
@@ -183,7 +192,7 @@ public class AirUtils {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * This will check if there are users that can be unbanned
      *
@@ -251,7 +260,7 @@ public class AirUtils {
     public static boolean isInt(String isint) {
         return isint.matches("^\\d+$");
     }
-    
+
     /**
      * This will convert the VerificationLevel from the guild to how it is displayed in the settings
      *
@@ -271,7 +280,7 @@ public class AirUtils {
         }
         return "None";
     }
-    
+
     /**
      * This converts the game that a user is playing into a nice and readable format
      *
@@ -297,7 +306,7 @@ public class AirUtils {
         String gameName = g.getName();
         return gameType + " " + gameName;
     }
-    
+
     /**
      * Logs a message to the console
      *
@@ -307,7 +316,7 @@ public class AirUtils {
     public static void log(Level lvl, String message) {
         log(Settings.defaultName, lvl, message);
     }
-    
+
     /**
      * Logs a message to the console
      *
@@ -339,7 +348,7 @@ public class AirUtils {
         }
         logger = LoggerFactory.getLogger(Settings.defaultName);
     }
-    
+
     /**
      * This will calculate the bot to user ratio
      *
@@ -371,7 +380,7 @@ public class AirUtils {
         
         return new double[]{Math.round(userCountP), Math.round(botCountP)};
     }
-    
+
     /**
      * This will get the first channel of a guild that we can write in/should be able to write in
      *
@@ -388,7 +397,7 @@ public class AirUtils {
         
         return pubChann;
     }
-    
+
     /**
      * This will generate the uptime for us based on the time that we pass in
      *
@@ -398,7 +407,7 @@ public class AirUtils {
     public static String getUptime(long time) {
         return getUptime(time, false);
     }
-    
+
     /**
      * This will generate the uptime for us based on the time that we pass in
      *
@@ -434,7 +443,7 @@ public class AirUtils {
         
         return uptimeString.replaceFirst(",", "");
     }
-    
+
     /**
      * Gets a Wolfram|Alpha engine for creating and processing queries
      *
@@ -466,7 +475,7 @@ public class AirUtils {
         
         return engine;
     }
-    
+
     /**
      * Attempts to load all the tags from the database
      */
@@ -502,7 +511,7 @@ public class AirUtils {
             }
         }
     }
-    
+
     /**
      * Attempts to register a new tag
      *
@@ -538,11 +547,11 @@ public class AirUtils {
         tagsList.put(tag.getName(), tag);
         return true;
     }
-    
+
     /**
      * Attempts to delete a tag
      *
- * @param tag the {@link Tag} to delete
+     * @param tag the {@link Tag} to delete
      * @return true if the tag is deleted
      */
     public static boolean deleteTag(Tag tag) {
@@ -566,7 +575,7 @@ public class AirUtils {
         }
         return false;
     }
-    
+
     /**
      * This sends a post request to the bot lists with the new guild count
      *
@@ -613,5 +622,4 @@ public class AirUtils {
 
         return tc;
     }
-
 }

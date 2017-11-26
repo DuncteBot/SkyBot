@@ -26,6 +26,7 @@ import org.slf4j.event.Level;
 import java.sql.*;
 
 public class GuildSettingsUtils {
+
     /**
      * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
      */
@@ -33,7 +34,7 @@ public class GuildSettingsUtils {
         loadGuildSettings();
         loadFooterQuotes();
     }
-    
+
     /**
      * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
      */
@@ -66,7 +67,7 @@ public class GuildSettingsUtils {
             }
         }
     }
-    
+
     /**
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */
@@ -109,7 +110,7 @@ public class GuildSettingsUtils {
             }
         }
     }
-    
+
     /**
      * This wil get a guild or register it if it's not there yet
      *
@@ -125,7 +126,7 @@ public class GuildSettingsUtils {
         return AirUtils.guildSettings.get(guild.getId());
         
     }
-    
+
     /**
      * This will save the settings into the database when the guild owner/admin updates it
      *
@@ -172,7 +173,7 @@ public class GuildSettingsUtils {
             }
         }
     }
-    
+
     /**
      * This will register a new guild with their settings on bot join
      *
@@ -180,7 +181,6 @@ public class GuildSettingsUtils {
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
-        
         if (AirUtils.guildSettings.containsKey(g.getId())) {
             return AirUtils.guildSettings.get(g.getId());
         }
@@ -189,22 +189,20 @@ public class GuildSettingsUtils {
         boolean ENABLE_SWEAR_FILTER = false;
         String defaultMsg = "Welcome {{USER_MENTION}}, to the official {{GUILD_NAME}} guild.";
         GuildSettings newGuildSettings = new GuildSettings(g.getId())
-                                                 .setEnableJoinMessage(ENABLE_JOIN_MSG)
-                                                 .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
-                                                 .setCustomJoinMessage(defaultMsg)
-                                                 .setCustomPrefix(Settings.prefix);
+                                             .setEnableJoinMessage(ENABLE_JOIN_MSG)
+                                             .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
+                                             .setCustomJoinMessage(defaultMsg)
+                                             .setCustomPrefix(Settings.prefix);
         
         String dbName = AirUtils.db.getName();
-        
         Connection database = AirUtils.db.getConnManager().getConnection();
         
         try {
-            
-            ResultSet resultSet = database.createStatement().executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
+            ResultSet resultSet = database.createStatement()
+                                  .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
             int rows = 0;
-            while (resultSet.next()) {
+            while (resultSet.next())
                 rows++;
-            }
             
             if (rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
@@ -225,16 +223,16 @@ public class GuildSettingsUtils {
         AirUtils.guildSettings.put(g.getId(), newGuildSettings);
         return newGuildSettings;
     }
-    
+
     /**
      * This will attempt to remove a guild wen we leave it
      *
      * @param g the guild to remove from the database
      */
     public static void deleteGuild(Guild g) {
-        if (AirUtils.guildSettings.containsKey(g.getId())) {
+        if (AirUtils.guildSettings.containsKey(g.getId()))
             AirUtils.guildSettings.remove(g.getId());
-        }
+        
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
@@ -251,6 +249,4 @@ public class GuildSettingsUtils {
             }
         }
     }
-    
-    
 }

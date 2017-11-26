@@ -25,17 +25,19 @@ import java.io.File;
 import java.sql.Connection;
 
 public class DBManager {
-    
+
     public final DBConnectionManager connManager;
+
     /**
      * This is the database name
      */
     private final String name;
+
     /**
      * This is true if we are connected to the database
      */
     private final boolean isConnected;
-    
+
     /**
      * This will set our stuff up
      */
@@ -44,12 +46,12 @@ public class DBManager {
         this.isConnected = connManager.isConnected();
         this.name = connManager.getName();
     }
-    
+
     private static DBConnectionManager createDBManager() {
         if (AirUtils.nonsqlite) return new MySQLConnectionManager();
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
-    
+
     /**
      * This will check the connection for us
      *
@@ -58,7 +60,7 @@ public class DBManager {
     public boolean isConnected() {
         return this.isConnected;
     }
-    
+
     /**
      * This will return the name of the connected database
      *
@@ -67,7 +69,7 @@ public class DBManager {
     public String getName() {
         return this.name;
     }
-    
+
     /**
      * This will get the connection for us
      *
@@ -78,7 +80,7 @@ public class DBManager {
     public Connection getConnection() {
         return connManager.getConnection();
     }
-    
+
     /**
      * Returns the connection manager
      *

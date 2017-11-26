@@ -29,7 +29,9 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
+
+import static org.slf4j.event.Level.ERROR;
+import static ch.qos.logback.classic.Level.INFO;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -48,20 +50,18 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
         //Set the logger to only info by default
         Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        l.setLevel(ch.qos.logback.classic.Level.INFO);
+        l.setLevel(INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
         if (useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
-                AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't load database settings. ABORTING!!!!!");
+                AirUtils.log(Settings.defaultName + "Main", ERROR, "Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
-                return;
             }
             if (!AirUtils.db.isConnected()) {
-                AirUtils.log(Settings.defaultName + "Main", Level.ERROR, "Can't connect to database. ABORTING!!!!!");
+                AirUtils.log(Settings.defaultName + "Main", ERROR, "Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
-                return;
             }
         } else {
             int startIn = 5;

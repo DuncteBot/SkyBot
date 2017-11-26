@@ -31,10 +31,10 @@ import java.util.Map;
  * A simple class to help me build embeds
  */
 public class EmbedUtils {
-    
+
     // Quote, User
     public static Map<String, String> footerQuotes = new HashMap<>();
-    
+
     /**
      * The default way to send a embedded message to the channel with a field in it
      *
@@ -45,7 +45,7 @@ public class EmbedUtils {
     public static MessageEmbed embedField(String title, String message) {
         return defaultEmbed().addField(title, message, false).build();
     }
-    
+
     /**
      * The default way to display a nice embedded message
      *
@@ -55,7 +55,7 @@ public class EmbedUtils {
     public static MessageEmbed embedMessage(String message) {
         return defaultEmbed().setDescription(message).build();
     }
-    
+
     /**
      * The default way to send a embedded image to the channel
      *
@@ -65,7 +65,7 @@ public class EmbedUtils {
     public static MessageEmbed embedImage(String imageURL) {
         return defaultEmbed().setImage(imageURL).build();
     }
-    
+
     /**
      * The default embed layout that all of the embeds are based off
      *
@@ -89,7 +89,7 @@ public class EmbedUtils {
         }
         return eb;
     }
-    
+
     /**
      * This will generate a nice player embed for us
      *
@@ -102,7 +102,7 @@ public class EmbedUtils {
                        + " `[" + formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
                        + getVolumeIcon(mng.player.getVolume());
     }
-    
+
     /**
      * This will calculate the progressbar for us
      *
@@ -120,7 +120,7 @@ public class EmbedUtils {
         }
         return str;
     }
-    
+
     /**
      * This will give a nice emote depending on how loud we are sending the music
      *
@@ -139,7 +139,7 @@ public class EmbedUtils {
         }
         return "\uD83D\uDD0A";
     }
-    
+
     /**
      * This wil format our current player time in this format: hh:mm:ss
      *
@@ -157,7 +157,7 @@ public class EmbedUtils {
         seconds %= 60;
         return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
     }
-    
+
     /**
      * This will convert our embeds for if the bot is not able to send embeds
      *

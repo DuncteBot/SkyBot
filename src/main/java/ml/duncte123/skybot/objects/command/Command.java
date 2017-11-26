@@ -42,7 +42,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public abstract class Command {
-    
+
     /**
      * A list of users that have upvoted the bot
      */
@@ -60,20 +60,21 @@ public abstract class Command {
             return super.contains(o);
         }
     };
-    
+
     static {
         reloadUpvoted();
     }
-    
+
     /**
      * This holds the prefix for us
      */
     protected final String PREFIX = Settings.prefix;
+
     /**
      * This holds the category
      */
     protected CommandCategory category = CommandCategory.MAIN;
-    
+
     /**
      * Reloads the list of people who have upvoted this bot
      */
@@ -104,7 +105,7 @@ public abstract class Command {
             AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
         }
     }
-    
+
     /**
      * Has this user upvoted the bot
      */
@@ -120,7 +121,7 @@ public abstract class Command {
     public CommandCategory getCategory() {
         return this.category;
     }
-    
+
     /**
      * This is the action of the command, this will hold what the commands needs to to
      *
@@ -129,21 +130,21 @@ public abstract class Command {
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
     public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
-    
+
     /**
      * The usage instructions of the command
      *
      * @return a String
      */
     public abstract String help();
-    
+
     /**
      * This will hold the command name aka what the user puts after the prefix
      *
      * @return The command name
      */
     public abstract String getName();
-    
+
     /**
      * This wil hold any aliases that this command might have
      *
@@ -152,7 +153,7 @@ public abstract class Command {
     public String[] getAliases() {
         return new String[0];
     }
-    
+
     /**
      * This returns the settings for the given guild
      *
@@ -162,7 +163,7 @@ public abstract class Command {
     protected GuildSettings getSettings(Guild guild) {
         return GuildSettingsUtils.getGuild(guild);
     }
-    
+
     /**
      * This will react with a ❌ if the user doesn't have permission to run the command
      *
@@ -171,7 +172,7 @@ public abstract class Command {
     protected void sendError(Message message) {
         message.addReaction("❌").queue();
     }
-    
+
     /**
      * This will react with a ✅ if the user doesn't have permission to run the command
      *
@@ -180,7 +181,7 @@ public abstract class Command {
     protected void sendSuccess(Message message) {
         message.addReaction("✅").queue();
     }
-    
+
     /**
      * This will chcek if we can send a embed and convert it to a message if we can't send embeds
      *
@@ -194,7 +195,7 @@ public abstract class Command {
         }
         sendMsg(event, embed);
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -204,7 +205,7 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
         sendMsg(event, (new MessageBuilder()).append(msg).build());
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -214,7 +215,7 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -224,12 +225,12 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
         event.getChannel().sendMessage(msg).queue();
     }
-    
+
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {

@@ -26,12 +26,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class HelpEmbeds {
-    
+
     /**
      * This tells the fields to be inline or not
      */
     private static boolean INLINE = false;
-    
+
     /**
      * These lists hold the commands for each category
      */
@@ -41,11 +41,12 @@ public class HelpEmbeds {
     private static List<String> musicCommands = new ArrayList<>();
     private static List<String> nerdCommands = new ArrayList<>();
     private static List<String> modAdminCommands = new ArrayList<>();
+
     /**
      * This is the embed containing all the commands
      */
     public static MessageEmbed commandList = getCommandList();
-    
+
     /**
      * This loads all the commands in the lists
      */
@@ -100,7 +101,7 @@ public class HelpEmbeds {
             }
         }
     }
-    
+
     /**
      * This will return a embed containing all the commands
      *
@@ -109,7 +110,7 @@ public class HelpEmbeds {
     public static MessageEmbed getCommandList() {
         return getCommandListWithPrefix(Settings.prefix);
     }
-    
+
     /**
      * This will return a embed containing all the commands
      *
@@ -128,7 +129,7 @@ public class HelpEmbeds {
                        .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
                        .build();
     }
-    
+
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
      *
@@ -145,7 +146,7 @@ public class HelpEmbeds {
         
         return out.toString();
     }
-    
+
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
      *
