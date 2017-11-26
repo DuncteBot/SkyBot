@@ -19,6 +19,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import java.io.Closeable;
 import java.sql.Connection;
 
 /**
@@ -27,23 +28,24 @@ import java.sql.Connection;
  *
  * @author ramidzkh
  */
-public interface DBConnectionManager {
-    
+public interface DBConnectionManager
+extends Closeable {
+
     /**
      * @return The connection to use
      */
     Connection getConnection();
-    
+
     /**
      * @return Is the connection opened
      */
     boolean isConnected();
-    
+
     /**
      * @return The name of the database
      */
     String getName();
-    
+
     /**
      * @return Does the database have settings, default to true
      */

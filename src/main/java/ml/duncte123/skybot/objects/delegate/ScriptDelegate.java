@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.delegate;
 
 import Java.lang.VRCubeException;
+import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
@@ -26,6 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScriptDelegate extends Script {
+    private int counter;
 
     public ScriptDelegate(Script s) {
         super(s.getBinding());
@@ -33,7 +35,7 @@ public class ScriptDelegate extends Script {
 
     @Override
     public Object run() {
-        return "I'm a bot, I can't run.";
+        return "I am a bot, I can't run.";
     }
 
     @Override
@@ -63,16 +65,33 @@ public class ScriptDelegate extends Script {
 
     @Override
     public Object evaluate(String expression) throws CompilationFailedException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("This method is blocked");
     }
 
     @Override
     public Object evaluate(File file) throws CompilationFailedException, IOException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("How did you get access to the file class?");
     }
 
     @Override
     public void run(File file, String[] arguments) throws CompilationFailedException, IOException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("I am a bot, I can't run");
+    }
+
+    public Object dump() {
+        return "\uD83D\uDEAE";
+    }
+
+    public Object find() {
+        return "You will never find me.";
+    }
+
+    private synchronized String generateScriptName() {
+        return "Script" + (++counter);
+    }
+
+    @Override
+    public String toString() {
+        return generateScriptName();
     }
 }

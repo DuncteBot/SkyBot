@@ -82,5 +82,4 @@ public abstract class MusicCommand extends Command {
         }
         return true;
     }
-
 }

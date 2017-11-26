@@ -47,6 +47,8 @@ public class EvalFilter extends GroovyValueFilter {
             StrictMath.class,
             Math.class,
             String.class,
+            StringBuilder.class,
+            StringBuffer.class,
             
             Boolean.class,
             boolean.class,
@@ -115,7 +117,7 @@ public class EvalFilter extends GroovyValueFilter {
      * Filter mentions
      */
             MENTION_FILTER = 
-                Pattern.compile("(<(@|@@)[0-9]{18}>)|@everyone|@here");
+                Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here");
 
     /**
      * This filters the script

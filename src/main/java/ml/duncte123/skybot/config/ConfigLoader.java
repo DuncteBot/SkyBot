@@ -46,19 +46,19 @@ public class ConfigLoader {
     }
 
     public static class MainConfig extends Config {
-
+    
         private final File configFile;
-
+    
         MainConfig(final File file) throws Exception {
             super(null, new JSONObject(Files.readAllLines(file.toPath()).stream().filter(line -> !line.trim().startsWith("//")).collect(Collectors.joining())));
             this.configFile = file;
         }
-
+    
         @Override
         public File getConfigFile() {
             return this.configFile;
         }
-
+    
         @Override
         public void save() throws Exception {
             final String json = this.config.toString();
@@ -70,6 +70,5 @@ public class ConfigLoader {
                 e.printStackTrace();
             }
         }
-
     }
 }

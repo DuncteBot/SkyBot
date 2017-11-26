@@ -30,14 +30,14 @@ import java.util.stream.Stream;
  * @author ramidzkh
  */
 public class FakeInterface<T> {
-    
+
     protected final Class<T> type;
     protected final Map<Method, InvocationFunction> handlers;
-    
+
     public FakeInterface(Class<T> type) {
         this(type, new HashMap<>());
     }
-    
+
     public FakeInterface(Class<T> type, Map<Method, InvocationFunction> handlers) {
         if (type == null) throw new NullPointerException("Type of interface is null");
         if (!type.isInterface())
@@ -47,11 +47,11 @@ public class FakeInterface<T> {
         this.type = type;
         this.handlers = (handlers != null) ? handlers : new HashMap<>();
     }
-    
+
     public Class<T> getType() {
         return type;
     }
-    
+
     public Map<Method, InvocationFunction> getCustomHandlers() {
         return handlers;
     }
@@ -71,7 +71,7 @@ public class FakeInterface<T> {
         return (T) Proxy.newProxyInstance(type.getClassLoader(),
                 new Class<?>[]{type}, new IH(handlers));
     }
-    
+
     /**
      * An invocation handler to try and return the proper result type
      *
@@ -89,6 +89,9 @@ public class FakeInterface<T> {
             for (Method m : handlers.keySet())
                 if (m.equals(method))
                     return handlers.get(m).handle(proxy, method, args);
+            
+            if(method.getDeclaringClass() == Object.class)
+                return method.invoke(this, args);
             
             // The return type
             Class<?> r = Primitives.unwrap(method.getReturnType());
@@ -132,12 +135,12 @@ public class FakeInterface<T> {
             
             // Try to create an instance
             if ((constructors = Arrays.stream(r.getConstructors())
-                                        // public
-                                        .filter(Constructor::isAccessible)
-                                        // No parameters
-                                        .filter(c -> c.getParameterTypes().length == 0)
-                                        // No exceptions
-                                        .filter(c -> c.getExceptionTypes().length == 0))
+                                    // public
+                                    .filter(Constructor::isAccessible)
+                                    // No parameters
+                                    .filter(c -> c.getParameterTypes().length == 0)
+                                    // No exceptions
+                                    .filter(c -> c.getExceptionTypes().length == 0))
                         // If any
                         .count() > 0)
                 // For each constructor

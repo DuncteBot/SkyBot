@@ -19,18 +19,17 @@
 
 package ml.duncte123.skybot;
 
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.parsers.CommandParser;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
-import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
@@ -38,45 +37,48 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.event.Level;
 
-import java.sql.SQLException;
-import java.util.*;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
-    
-    /**
-     * This is the command parser
-     */
-    private static CommandParser parser = new CommandParser();
 
     /**
      * This filter helps us to fiter out swearing
      */
     private BadWordFilter filter = new BadWordFilter();
+
     /**
      * When a command gets ran, it'll be stored in here
      */
     private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
+
     /**
      * This timer is for checking unbans
      */
-    public Timer unbanTimer = new Timer();
+    private ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "Unban-Thread"));
+
     /**
-     * This tells us if the {@link #unbanTimer} is running
+     * This tells us if the {@link #unbanService} is running
      */
     public boolean unbanTimerRunning = false;
-    
+
     /**
      * This timer is for checking new quotes
      */
-    public Timer settingsUpdateTimer = new Timer();
-    
+    private ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "Settings-Thread"));
+
     /**
-     * This tells us if the {@link #settingsUpdateTimer} is running
+     * This tells us if the {@link #settingsUpdateService} is running
      */
     public boolean settingsUpdateTimerRunning = false;
 
@@ -88,82 +90,80 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         //We only want to respond to members/users
-        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null) {
+        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null)
             return;
-        }
         
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
-        if (event.getMessage().getContent().equals(Settings.prefix + "shutdown") && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
+        if (event.getMessage().getContent().equals(Settings.prefix + "shutdown")
+                    && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
-            for (JDA shard : manager.getShards()) {
-                AirUtils.log(Level.INFO, "Shard " + shard.getShardInfo().getShardId() + " has been shut down");
-                shard.shutdown();
-            }
+            
+            manager.getShards().forEach(jda -> {
+                jda.shutdown();
+                AirUtils.log(Level.INFO, String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
+            });
+            
             //Kill other things
             ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
-            if (unbanTimerRunning) {
-                this.unbanTimer.cancel();
-                this.unbanTimer.purge();
-            }
-            if (settingsUpdateTimerRunning) {
-                this.settingsUpdateTimer.cancel();
-                this.settingsUpdateTimer.purge();
-            }
+            if (unbanTimerRunning)
+                this.unbanService.shutdown();
+            
+            if (settingsUpdateTimerRunning)
+                this.settingsUpdateService.shutdown();
             
             try {
-                AirUtils.db.getConnManager().getConnection().close();
-            } catch (SQLException e) {
+                AirUtils.db.getConnManager().close();
+            } catch (IOException e) {
+                /* ignored */
             }
             
             System.exit(0);
-            return;
         }
-        
-        Permission[] adminPerms = {
-                Permission.MESSAGE_MANAGE
-        };
-        
-        if (event.getGuild().getSelfMember().hasPermission(adminPerms) && AirUtils.guildSettings.get(event.getGuild().getId()).isEnableSwearFilter()) {
-            if (!event.getMember().hasPermission(adminPerms)) {
+
+        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
+                    && settings.isEnableSwearFilter()
+                    && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getRawContent())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
-                    event.getChannel().sendMessage("Hello there, " + event.getAuthor().getAsMention() + " please do not use cursive language within this Discord.").queue(
+                    event.getChannel().sendMessage(
+                            String.format("Hello there, %s please do not use cursive language within this Discord.", event.getAuthor().getAsMention())).queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
                     return;
                 }
-            }
         }
+        
+        String rw = event.getMessage().getRawContent();
+        
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
+                && rw.equals(event.getJDA().getSelfUser().getAsMention()))
+            event.getChannel().sendMessage(
+                    String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                            event.getAuthor().getId(),
+                            Settings.prefix)
+            ).queue();
+        else if (!rw.startsWith(Settings.prefix) &&
+                !rw.startsWith(settings.getCustomPrefix())
+                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention())) {
+            return;
+        }
+
         //If the topic contains -commands ignore it
         if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
             return;
         }
         
-        if (!event.getMessage().getRawContent().startsWith(Settings.prefix) && !event.getMessage().getRawContent().startsWith(settings.getCustomPrefix())) {
-            return;
-        } else if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()) {
-            
-            if (!event.getMessage().getRawContent().startsWith(event.getJDA().getSelfUser().getAsMention())) {
-                event.getChannel().sendMessage("Hey <@" + event.getAuthor().getId() + ">, try `" + Settings.prefix + "help` for a list of commands. If it doesn't work scream at _duncte123#1245_").queue();
-                return;
-            }
-            
-        }
-        
         // run the a command
         lastGuildChannel.put(event.getGuild(), event.getChannel());
-        String rw = event.getMessage().getRawContent();
         if (!Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
-        AirUtils.commandManager.runCommand(parser.parse(rw.replaceFirst("<@" + event.getJDA().getSelfUser().getId() + "> ", Settings.prefix)
-                ,
-                event
-        ));
+        
+        AirUtils.commandManager.runCommand(rw, event);
     }
     
     /**
@@ -173,34 +173,23 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s", event.getJDA().getSelfUser()) + " (Shard #" + event.getJDA().getShardInfo().getShardId() + ")");
+        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
         
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the unban timer.");
             //Register the timer for the auto unbans
-            //I moved the timer here to make sure that every running jar has this only once
-            TimerTask unbanTask = new TimerTask() {
-                @Override
-                public void run() {
-                    AirUtils.checkUnbans(event.getJDA().asBot().getShardManager());
-                }
-            };
-            unbanTimer.schedule(unbanTask, DateUtils.MILLIS_PER_MINUTE * 10, DateUtils.MILLIS_PER_MINUTE * 10);
+            unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
+        
         if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
             AirUtils.log(Level.INFO, "Starting the settings timer.");
             //This handles the updating from the setting and quotes
-            TimerTask settingsTask = new TimerTask() {
-                @Override
-                public void run() {
-                    GuildSettingsUtils.loadAllSettings();
-                }
-            };
-            settingsUpdateTimer.schedule(settingsTask, DateUtils.MILLIS_PER_HOUR, DateUtils.MILLIS_PER_HOUR);
+            settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
             settingsUpdateTimerRunning = true;
         }
+        
         //Update guild count from then the bot was offline (should never die tho)
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
@@ -241,17 +230,20 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
+        //Temp disable that
         //if 60 of a guild is bots, we'll leave it
-        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-        if (botToUserRatio[1] > 60) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage("Hey " +
-                                                                            event.getGuild().getOwner().getAsMention() + ", " + botToUserRatio[1] + "% of this guild are bots (" + event.getGuild().getMemberCache().size() + " is the total btw). " +
-                                                                            "I'm outta here").queue(
-                    message -> message.getGuild().leave().queue()
-            );
-            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
-            return;
-        }
+//        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+//        if (botToUserRatio[1] > 60) {
+//            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+//                    event.getGuild().getOwner().getAsMention(),
+//                    botToUserRatio[1],
+//                    "%",
+//                    event.getGuild().getMemberCache().size())).queue(
+//                    message -> message.getGuild().leave().queue()
+//            );
+//            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
+//            return;
+//        }
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
@@ -274,16 +266,8 @@ public class BotListener extends ListenerAdapter {
             if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                 return;
             }
-            if (event.getChannelLeft().getMembers().size() <= 1) {
-                AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
-                AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
-                AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                if (event.getGuild().getAudioManager().isConnected()) {
-                    event.getGuild().getAudioManager().closeAudioConnection();
-                    event.getGuild().getAudioManager().setSendingHandler(null);
-                }
-            }
+            
+            channelLeaveThing(event.getGuild(), event.getChannelLeft());
         }
     }
     
@@ -299,21 +283,15 @@ public class BotListener extends ListenerAdapter {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
                 }
-                if (event.getChannelLeft().getMembers().size() <= 1) {
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                    lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                    if (event.getGuild().getAudioManager().isConnected()) {
-                        event.getGuild().getAudioManager().closeAudioConnection();
-                        event.getGuild().getAudioManager().setSendingHandler(null);
-                    }
-                }
+                channelLeaveThing(event.getGuild(), event.getChannelLeft());
+
             }
-            
+
             if (event.getChannelJoined() != null) {
-                if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
+                        !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
+                    //System.out.println("Self (this might be buggy)");
                 }
                 if (event.getChannelJoined().getMembers().size() <= 1) {
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
@@ -327,6 +305,26 @@ public class BotListener extends ListenerAdapter {
                 }
             }
             
+        }
+    }
+
+    /**
+     * This handles the guild leave/ join events
+     * @param g the guild
+     * @param vc the voice channel
+     */
+    private void channelLeaveThing(Guild g, VoiceChannel vc) {
+        if (vc.getMembers().size() <= 1) {
+            GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
+            manager.player.stopTrack();
+            manager.player.setPaused(false);
+            manager.scheduler.queue.clear();
+
+            lastGuildChannel.get(g).sendMessage("Leaving voice channel because all the members have left it.").queue();
+            if (g.getAudioManager().isConnected()) {
+                g.getAudioManager().closeAudioConnection();
+                g.getAudioManager().setSendingHandler(null);
+            }
         }
     }
 }
