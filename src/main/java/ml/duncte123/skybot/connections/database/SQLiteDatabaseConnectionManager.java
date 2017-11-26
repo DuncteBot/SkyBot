@@ -23,6 +23,7 @@ import ml.duncte123.skybot.utils.Settings;
 import org.sqlite.JDBC;
 
 import java.io.File;
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.Properties;
@@ -34,18 +35,18 @@ import java.util.regex.Pattern;
  * @author ramidzkh
  */
 class SQLiteDatabaseConnectionManager
-        implements DBConnectionManager {
-    
+implements DBConnectionManager {
+
     /**
      * The URL of this database
      */
     private final String url;
-    
+
     /**
      * The associated connection object
      */
     private Connection con;
-    
+
     /**
      * Constructs a new SQLite file database
      *
@@ -65,7 +66,7 @@ class SQLiteDatabaseConnectionManager
             con = null;
         }
     }
-    
+
     /**
      * Gets the associated connection object
      */
@@ -78,22 +79,20 @@ class SQLiteDatabaseConnectionManager
             return null;
         }
     }
-    
+
     /**
      * @return Is the connection open
      */
     @Override
     public boolean isConnected() {
-        if (con == null)
-            return false;
         try {
-            return !con.isClosed();
+            return con != null && !con.isClosed();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
         }
     }
-    
+
     /**
      * @return The URL of this database
      */
@@ -101,15 +100,25 @@ class SQLiteDatabaseConnectionManager
     public String getName() {
         return "main"; //SQLite uses 'main' as name for the database
     }
-    
+
     /**
      * @return If the connection is available, open or closed
      */
     @Override
     public boolean hasSettings() {
-        return con != null;
+        return isConnected();
     }
-    
+
+    @Override
+    public void close() throws IOException {
+        try {
+            if (isConnected())
+                con.close();
+        } catch (SQLException e) {
+            throw new IOException(e);
+        }
+    }
+
     /**
      * This sets up the database and inserts the tables if they are not there
      *

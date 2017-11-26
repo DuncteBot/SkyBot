@@ -26,9 +26,9 @@ import org.slf4j.event.Level;
 import java.io.File;
 
 public class ConfigUtils {
-    
+
     private Config config;
-    
+
     /**
      * This will try to load the bot config and kill the program if it fails
      */
@@ -42,7 +42,7 @@ public class ConfigUtils {
             System.exit(-1);
         }
     }
-    
+
     /**
      * This will return the config that we have
      *

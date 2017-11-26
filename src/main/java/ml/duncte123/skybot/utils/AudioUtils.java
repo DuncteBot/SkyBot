@@ -47,19 +47,21 @@ import java.util.Map;
 import java.util.logging.Level;
 
 public class AudioUtils {
-    
+
     /**
      * This is the default volume that the player will play at
      */
     private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
+
     /**
      * This is the title that you see in the embeds from the player
      */
-    public final String embedTitle = Settings.playerTitle;
+    public final String embedTitle = "AirPlayer";
     /**
      * This will hold the manager for the audio player
      */
     private final AudioPlayerManager playerManager;
+
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
@@ -87,7 +89,7 @@ public class AudioUtils {
         
         musicManagers = new HashMap<>();
     }
-    
+
     /**
      * This will return the formatted timestamp for the current playing track
      *
@@ -105,7 +107,7 @@ public class AudioUtils {
             return String.format("%02d:%02d", minutes, seconds);
         }
     }
-    
+
     /**
      * Loads a track and plays it if the bot isn't playing
      *
@@ -191,7 +193,7 @@ public class AudioUtils {
             }
         });
     }
-    
+
     /**
      * This will get the music manager for the guild or register it if we don't have it yet
      *
@@ -216,7 +218,7 @@ public class AudioUtils {
         
         return mng;
     }
-    
+
     /**
      * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      *

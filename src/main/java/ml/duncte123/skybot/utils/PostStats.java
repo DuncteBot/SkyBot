@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;
@@ -30,11 +31,10 @@ import java.io.IOException;
 public class PostStats {
 
     private static void toDiscordBots(JDA jda) {
-
-        String url = "https://discordbots.org/api/bots/"+jda.getSelfUser().getId()+"/stats";
+        String url = "https://discordbots.org/api/bots/" + jda.getSelfUser().getId() + "/stats";
 
         JSONObject data = new JSONObject();
-        data.put("server_count", jda.getGuilds().size());
+        data.put("server_count", jda.asBot().getShardManager().getGuilds().size());
 
         RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
 
@@ -42,7 +42,7 @@ public class PostStats {
                 .url(url)
                 .post(body)
                 .addHeader("User-Agent", "DiscordBot " + jda.getSelfUser().getName())
-                .addHeader("Authorization", "YOUR_API_KEY")
+                .addHeader("Authorization", AirUtils.config.getString("apis.discordbots_userToken"))
                 .build();
 
         try {
