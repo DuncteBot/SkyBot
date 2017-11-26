@@ -31,12 +31,14 @@ class MySQLConnectionManager
         implements DBConnectionManager {
 
     private final String dbHost;
+    private final int port;
     private final String user;
     private final String pass;
     private final String dbName;
 
     public MySQLConnectionManager() {
         this.dbHost = AirUtils.config.getString("sql.host", "sql.example.com");
+        this.port = AirUtils.config.getInt("sql.port", 3306);
         this.user = AirUtils.config.getString("sql.username", "exampleUser");
         this.pass = AirUtils.config.getString("sql.password", "Ex@mplePAss");
         this.dbName = AirUtils.config.getString("sql.database", "Example_database");
@@ -50,7 +52,9 @@ class MySQLConnectionManager
     public Connection getConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName + "?useUnicode=true&characterEncoding=UTF-8", user, pass);
+            return DriverManager.getConnection(
+                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                    user, pass);
         } catch (Exception e) {
             //e.printStackTrace();
             return null;
