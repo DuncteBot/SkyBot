@@ -86,7 +86,8 @@ public class SkyBot {
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
-        
+
+        //Set the game from the config
         int gameId = AirUtils.config.getInt("discord.game.type", 3);
         String name = AirUtils.config.getString("discord.game.name", "Danny Phantom on shard #{shardId}");
         

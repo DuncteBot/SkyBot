@@ -54,14 +54,14 @@ implements DBConnectionManager {
      * @return The connection to the database
      */
     public Connection getConnection() {
-        if(connection != null) return connection;
-        
         try {
+
             Class.forName("com.mysql.jdbc.Driver");
-            return (connection = DriverManager.getConnection(
+            this.connection = DriverManager.getConnection(
                     String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
-                    user, pass));
-        } catch (Exception e) {
+                    user, pass);
+            return connection;
+        } catch (SQLException | ClassNotFoundException e) {
             return null;
         }
     }
@@ -88,7 +88,7 @@ implements DBConnectionManager {
     @Override
     public boolean isConnected() {
         try {
-            return connection != null && !connection.isClosed();
+            return getConnection() != null && !connection.isClosed();
         } catch (SQLException e) {
             return false;
         }
