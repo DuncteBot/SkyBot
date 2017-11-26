@@ -41,7 +41,7 @@ apply plugin: 'groovy'
 
 group = 'ml.duncte123.skybot'
 
-version '3.51.5'
+version '3.51.6'
 
 compileGroovy.options.encoding = "UTF-8"
 
