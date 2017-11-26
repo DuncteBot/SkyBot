@@ -55,7 +55,6 @@ implements DBConnectionManager {
      */
     public Connection getConnection() {
         try {
-
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(
                     String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),

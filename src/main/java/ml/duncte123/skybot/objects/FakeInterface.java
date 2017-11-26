@@ -92,6 +92,9 @@ public class FakeInterface<T> {
                 if (m.equals(method))
                     return handlers.get(m).handle(proxy, method, args);
             
+            if(method.getDeclaringClass() == Object.class)
+                return method.invoke(this, args);
+            
             // The return type
             Class<?> r = Primitives.unwrap(method.getReturnType());
             
