@@ -26,9 +26,9 @@ import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.managers.Presence
 
 class PresenceDelegate(private val presence: Presence) : Presence by presence {
-    private val jda: JDA = JDADelegate(presence.jda)
+    private val jda: JDA? = null
 
-    override fun getJDA(): JDA                                                = JDADelegate(this.jda)
+    override fun getJDA(): JDA                                                = JDADelegate(presence.jda)
     
     override fun setGame(game: Game)                                          = throw VRCubeException("Can not set the game")
     override fun setIdle(idle: Boolean)                                       = throw VRCubeException("Can not set the idle state")

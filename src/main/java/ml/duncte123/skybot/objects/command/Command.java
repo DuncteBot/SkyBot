@@ -21,7 +21,6 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -34,9 +33,11 @@ import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
 
-import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public abstract class Command {
     
@@ -48,16 +49,26 @@ public abstract class Command {
         public boolean contains(Object o) {
             if(o.getClass() != String.class) return false;
             
-            boolean contains = super.contains(o);
-            
-            if(contains) return true;
+            if(super.contains(o)) return true;
             
             reloadUpvoted();
             
             return super.contains(o);
         }
     };
-    
+
+    private static boolean cooldown = false;
+
+    public Command() {
+        if (!Settings.useCooldown)
+            return;
+        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+        executorService.scheduleWithFixedDelay(() -> {
+            if (cooldown)
+                cooldown = false;
+        }, 0, 20, TimeUnit.SECONDS);
+    }
+
     static {
         reloadUpvoted();
     }
@@ -75,6 +86,7 @@ public abstract class Command {
      * Reloads the list of people who have upvoted this bot
      */
     protected static void reloadUpvoted() {
+        if (cooldown && Settings.useCooldown) return;
         try {
             String token = AirUtils.config.getString("apis.discordbots_userToken");
             
@@ -101,12 +113,14 @@ public abstract class Command {
         } catch (Exception e) {
             AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
         }
+        if (Settings.useCooldown)
+            cooldown = true;
     }
     
     /**
      * Has this user upvoted the bot
      */
-    public static boolean hasUpvoted(User user) {
+    protected static boolean hasUpvoted(User user) {
         return upvotedIds.contains(user.getId());
     }
 
@@ -176,11 +190,14 @@ public abstract class Command {
      * @param message the message to add the reaction to
      * @param error the cause
      */
-    protected void sendErrorJSON(Message message, Throwable error) {
+    protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
+        if (print)
+            AirUtils.logger.error(error.getLocalizedMessage(), error);
+
         message.addReaction("❌").queue();
 
         message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
-                new MessageBuilder().setEmbed(new EmbedBuilder().setColor(Color.RED).setTitle("We got an error!").setDescription(String.format("Error type: %s",
+                new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
                         error.getClass().getSimpleName())).build()).build()
         ).queue();
     }
@@ -248,7 +265,7 @@ public abstract class Command {
         if (obj == null) {
             return false;
         }
-        if (obj.getClass() != this.getClass()) {
+        if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
             return false;
         }
         

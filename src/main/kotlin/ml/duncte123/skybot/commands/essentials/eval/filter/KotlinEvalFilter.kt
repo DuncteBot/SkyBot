@@ -87,21 +87,50 @@ class KotlinEvalFilter : GroovyValueFilter() {
         return invoker.call(receiver, null, *args)
     }
 
+    /**
+     * This checks if the script contains any loop
+     *
+     * @param toFilter the script to filter
+     * @return true if the script contains a loop
+     */
+    fun filterLoops(toFilter:String):Boolean {
+        return Pattern.compile(
+         //for or while loop
+                "((while|for)" +
+         //Stuff in the brackets
+                        "\\s*\\(.*\\))|" +
+         // Other groovy loops
+                        "(\\.step|\\.times|\\.upto|\\.each)"
+         //match and find
+            ).matcher(toFilter).find()
+    }
+
+        /**
+     * This checks if the script contains an array
+     *
+     * @param toFilter the script to filter
+     * @return true if the script contains an array
+     */
+         fun filterArrays(toFilter:String):Boolean {
+     //Big thanks to ramidzkh#4814 (https://github.com/ramidzkh) for helping me with this regex
+            return arrayFilter.matcher(toFilter).find()
+    }
+
     companion object {
 
         /**
          * Typed that are allowed to be used
          */
-        @JvmStatic
+        @JvmField
         val filteredUsed = listOf(
                 String::class.java,
                 Math::class.java,
 
                 Boolean::class.java,
                 Byte::class.java,
-                Character::class.java,
+                Char::class.java,
                 Short::class.java,
-                Integer::class.java,
+                Int::class.java,
                 Float::class.java,
                 Long::class.java,
                 Double::class.java,
@@ -117,16 +146,16 @@ class KotlinEvalFilter : GroovyValueFilter() {
         /**
          * Types that are allowed to be constructed
          */
-        @JvmStatic
+        @JvmField
         val filteredConstructed = listOf(
                 String::class.java,
                 Math::class.java,
 
                 Boolean::class.java,
                 Byte::class.java,
-                Character::class.java,
+                Char::class.java,
                 Short::class.java,
-                Integer::class.java,
+                Int::class.java,
                 Float::class.java,
                 Long::class.java,
                 Double::class.java,
@@ -142,8 +171,12 @@ class KotlinEvalFilter : GroovyValueFilter() {
                 BigInteger::class.java
         )
 
-        @JvmStatic
+        @JvmField
         val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!
+
+        @JvmField
+        val arrayFilter = Pattern.compile("(?i) ((\\[(\\s*[0-9]+\\s*)])|(\\[(\\s*)(0b)([01_]*)(\\s*)])|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))")
+        //                              Case insensitive  (Decimals and Octals   |         Binary         |          Hexadecimal)
     }
 }
 

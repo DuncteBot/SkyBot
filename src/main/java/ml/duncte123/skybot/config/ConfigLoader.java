@@ -50,7 +50,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new JSONObject(Files.readAllLines(file.toPath()).stream().filter(line -> !line.startsWith("//")).collect(Collectors.joining())));
+            super(null, new JSONObject(Files.readAllLines(file.toPath()).stream().filter(line -> !line.trim().startsWith("//")).collect(Collectors.joining())));
             this.configFile = file;
         }
 

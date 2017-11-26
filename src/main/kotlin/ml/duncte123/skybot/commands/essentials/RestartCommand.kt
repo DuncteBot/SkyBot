@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.util.*
 
 /**
  * @author Sanduhr32
@@ -43,8 +42,6 @@ class RestartCommand : Command() {
             error("args is null?!")
         }
 
-        sendErrorJSON(event.message, Throwable("Meme!", Throwable("Test")))
-
         try {
             when (args.size) {
                 0 -> shardManager.restart()
@@ -52,7 +49,7 @@ class RestartCommand : Command() {
                 else -> sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
-            sendErrorJSON(event.message, ex)
+            sendErrorJSON(event.message, ex, false)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"

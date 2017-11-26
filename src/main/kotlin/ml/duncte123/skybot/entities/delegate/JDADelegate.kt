@@ -28,10 +28,9 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)
     
     override fun getToken(): String      = this.token
+    override fun getPresence(): Presence = this.presence
     override fun shutdown()              = throw VRCubeException("Can not shutdown")
     override fun shutdownNow()           = this.shutdown()
-
-    override fun getPresence(): Presence = PresenceDelegate(this.presence)
     
     override fun equals(other: Any?): Boolean {
         if (other == null) return false

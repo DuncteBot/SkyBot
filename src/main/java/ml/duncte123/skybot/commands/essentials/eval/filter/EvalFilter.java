@@ -24,6 +24,7 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;
 import ml.duncte123.skybot.entities.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.MemberDelegate;
 import ml.duncte123.skybot.entities.delegate.UserDelegate;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
@@ -46,6 +47,7 @@ public class EvalFilter extends GroovyValueFilter {
      * This contains a list of all the allowed classes
      */
     private static final Class<?>[] ALLOWED_TYPES_LIST = {
+            StrictMath.class,
             Math.class,
             String.class,
             
@@ -83,7 +85,8 @@ public class EvalFilter extends GroovyValueFilter {
             
             JDADelegate.class,
             UserDelegate.class,
-            GuildDelegate.class
+            GuildDelegate.class,
+            MemberDelegate.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());

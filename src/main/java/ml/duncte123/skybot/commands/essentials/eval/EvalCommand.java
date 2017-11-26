@@ -43,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class EvalCommand extends Command {
     
@@ -82,7 +83,7 @@ public class EvalCommand extends Command {
                 "net.dv8tion.jda.core.utils",
                 "ml.duncte123.skybot.utils",
                 "ml.duncte123.skybot.entities",
-                "ml.duncte123.skybot.entities.delegate");
+                "ml.duncte123.skybot.entities.delegate",
                 "ml.duncte123.skybot.utils");
         classImports = Arrays.asList("ml.duncte123.skybot.objects.FakeInterface");
     }
@@ -92,13 +93,16 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
+
+//        boolean isRanByBotOwner = false;
         
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to user that have not upvoted the bot, " +
                             "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
+                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
+                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"));
             return;
         }
         
@@ -108,28 +112,24 @@ public class EvalCommand extends Command {
         
         try {
             try {
-                StringBuilder importStringBuilder = new StringBuilder();
-                for (final String s : packageImports) {
-                    importStringBuilder.append("import ").append(s).append(".*;\n");
-                }
-                for (final String s : classImports) {
-                    importStringBuilder.append("import ").append(s).append(";\n");
-                }
+                String importString = "import " +
+                        packageImports.stream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
+                        classImports.stream().collect(Collectors.joining("\n")) + "\n";
                 
-                String script = importStringBuilder.toString() + event.getMessage().getRawContent().split("\\s+",2)[1];
+                String script = importString + event.getMessage().getRawContent().split("\\s+",2)[1];
                 
                 int timeout = 5;
                 if (isRanByBotOwner) {
                     timeout = 60;
                     
-                    engine.put("commandmanager", AirUtils.commandManager);
+                    engine.put("commandManager", AirUtils.commandManager);
                     
                     engine.put("message", event.getMessage());
                     engine.put("channel", event.getMessage().getTextChannel());
                     engine.put("guild", event.getGuild());
                     engine.put("member", event.getMember());
                     engine.put("jda", event.getJDA());
-                    engine.put("shardmanager", event.getJDA().asBot().getShardManager());
+                    engine.put("shardManager", event.getJDA().asBot().getShardManager());
                     engine.put("event", event);
                     
                     engine.put("args", args);
@@ -190,12 +190,12 @@ public class EvalCommand extends Command {
             } catch (IllegalArgumentException | VRCubeException e3) {
                 sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
                 sendError(event.getMessage());
+                // Debuging System.out.println(EarthUtils.throwableToJSONObject(e3).toString(4));
             } catch (ArrayIndexOutOfBoundsException e4) {
                 sendSuccess(event.getMessage());
             }
         } catch (Throwable thr) {
-            sendMsg(event, "ERROR: " + thr.toString());
-            thr.printStackTrace();
+            sendErrorJSON(event.getMessage(), thr, true);
         } finally {
             filter.unregister();
             

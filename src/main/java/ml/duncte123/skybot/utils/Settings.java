@@ -71,4 +71,11 @@ public class Settings {
      * The colour of the bar that your embed has
      */
     public static final Color defaultColour = RED;
+
+    public static boolean useCooldown = false;
+
+    // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
+    public static void setCooldown(final boolean cooldown) {
+        useCooldown = cooldown;
+    }
 }
