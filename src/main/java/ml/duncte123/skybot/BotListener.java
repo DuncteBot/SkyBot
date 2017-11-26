@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -266,18 +267,7 @@ public class BotListener extends ListenerAdapter {
                 return;
             }
             
-            if (event.getChannelLeft().getMembers().size() <= 1) {
-                GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(event.getGuild());
-                manager.player.stopTrack();
-                manager.player.setPaused(false);
-                manager.scheduler.queue.clear();
-                
-                lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                if (event.getGuild().getAudioManager().isConnected()) {
-                    event.getGuild().getAudioManager().closeAudioConnection();
-                    event.getGuild().getAudioManager().setSendingHandler(null);
-                }
-            }
+            channelLeaveThing(event.getGuild(), event.getChannelLeft());
         }
     }
     
@@ -293,24 +283,15 @@ public class BotListener extends ListenerAdapter {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
                 }
-                
-                if (event.getChannelLeft().getMembers().size() <= 1) {
-                    GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(event.getGuild());
-                    manager.player.stopTrack();
-                    manager.player.setPaused(false);
-                    manager.scheduler.queue.clear();
-        
-                    lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                    if (event.getGuild().getAudioManager().isConnected()) {
-                        event.getGuild().getAudioManager().closeAudioConnection();
-                        event.getGuild().getAudioManager().setSendingHandler(null);
-                    }
-                }
+                channelLeaveThing(event.getGuild(), event.getChannelLeft());
+
             }
-            
+
             if (event.getChannelJoined() != null) {
-                if (!event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
+                        !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
+                    //System.out.println("Self (this might be buggy)");
                 }
                 if (event.getChannelJoined().getMembers().size() <= 1) {
                     AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
@@ -324,6 +305,26 @@ public class BotListener extends ListenerAdapter {
                 }
             }
             
+        }
+    }
+
+    /**
+     * This handles the guild leave/ join events
+     * @param g the guild
+     * @param vc the voice channel
+     */
+    private void channelLeaveThing(Guild g, VoiceChannel vc) {
+        if (vc.getMembers().size() <= 1) {
+            GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
+            manager.player.stopTrack();
+            manager.player.setPaused(false);
+            manager.scheduler.queue.clear();
+
+            lastGuildChannel.get(g).sendMessage("Leaving voice channel because all the members have left it.").queue();
+            if (g.getAudioManager().isConnected()) {
+                g.getAudioManager().closeAudioConnection();
+                g.getAudioManager().setSendingHandler(null);
+            }
         }
     }
 }
