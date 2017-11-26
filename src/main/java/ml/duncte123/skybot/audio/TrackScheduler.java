@@ -32,17 +32,20 @@ import java.util.Queue;
 public class TrackScheduler extends AudioEventAdapter {
 
     /**
-     * this stores our queue
+     * This stores our queue
      */
     public final Queue<AudioTrack> queue;
+
     /**
      * Hey look at that, it's our player
      */
     final AudioPlayer player;
+
     /**
      * This is the last playing track
      */
     AudioTrack lastTrack;
+
     /**
      * Are we repeating the track
      */

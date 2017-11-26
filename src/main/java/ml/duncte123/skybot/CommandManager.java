@@ -52,7 +52,6 @@ public class CommandManager {
      * This makes sure that all the commands are added
      */
     public CommandManager() {
-        
         // default commands
         this.addCommand(new HelpCommand());
         this.addCommand(new UserinfoCommand());
@@ -94,7 +93,6 @@ public class CommandManager {
         
         //Guild owner commands
         this.addCommand(new SettingsCommand());
-        
     }
     
     /**
@@ -160,7 +158,6 @@ public class CommandManager {
      * @param event the event for the message
      */
     public void runCommand(String rw, GuildMessageReceivedEvent event) {
-
         final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);

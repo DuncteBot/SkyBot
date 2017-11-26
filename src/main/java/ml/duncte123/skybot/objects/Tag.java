@@ -27,13 +27,13 @@ import org.apache.commons.lang3.StringUtils;
  * This is the model that all the tags use
  */
 public class Tag {
-    
+
     private int tagId;
     private String author;
     private String authorId;
     private String name;
     private String text;
-    
+
     /**
      * The tag constructor
      *
@@ -48,7 +48,7 @@ public class Tag {
         this.name = name;
         this.text = text;
     }
-    
+
     /**
      * Returns the tag name
      *
@@ -57,7 +57,7 @@ public class Tag {
     public String getName() {
         return name;
     }
-    
+
     /**
      * Returns who created the tag
      *
@@ -66,7 +66,7 @@ public class Tag {
     public String getAuthor() {
         return author;
     }
-    
+
     /**
      * Returns the user id of the author
      *
@@ -75,7 +75,7 @@ public class Tag {
     public String getAuthorId() {
         return authorId;
     }
-    
+
     /**
      * Returns the contends of the tag
      *
@@ -84,7 +84,7 @@ public class Tag {
     public String getText() {
         return text;
     }
-    
+
     /**
      * Returns the tag id
      *
@@ -93,7 +93,7 @@ public class Tag {
     public int getTagId() {
         return tagId;
     }
-    
+
     @Override
     public String toString() {
         return String.format("Tag[%s, %s, Author: %s]", name, StringUtils.abbreviate(text, 30), author);

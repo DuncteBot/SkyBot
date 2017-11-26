@@ -34,9 +34,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class WebUtils {
-    
+
     private static String USER_AGENT = "DiscordBot (DuncteBot v" + Settings.version + ", https://bot.duncte123.ml/)";
-    
+
     /**
      * Reads contents from a website and returns it to a string
      *
@@ -62,7 +62,7 @@ public class WebUtils {
         
         return response.toString();
     }
-    
+
     /**
      * This makes a get request to the specified website
      *
@@ -89,7 +89,7 @@ public class WebUtils {
             return null;
         }
     }
-    
+
     /**
      * This makes a post request to the specified website
      *
@@ -99,7 +99,7 @@ public class WebUtils {
     public static Response getRequest(String url) {
         return getRequest(url, AcceptType.TEXT_HTML);
     }
-    
+
     /**
      * This makes a post request to the specified website
      *
@@ -135,7 +135,7 @@ public class WebUtils {
             return null;
         }
     }
-    
+
     /**
      * This makes a post request to the specified website
      *
@@ -146,7 +146,7 @@ public class WebUtils {
     public static Response postRequest(String url, Map<String, Object> postFields) {
         return postRequest(url, postFields, AcceptType.URLENCODED);
     }
-    
+
     /**
      * This makes a post request to the specified website
      *
@@ -157,7 +157,7 @@ public class WebUtils {
     public static Response postRequest(String url, AcceptType accept) {
         return postRequest(url, new HashMap<>(), accept);
     }
-    
+
     /**
      * This makes a post request to the specified website
      *
@@ -190,7 +190,7 @@ public class WebUtils {
             return null;
         }
     }
-    
+
     /**
      * Shortens a URL with the <a href="https://goo.gl" target="">goo.gl</a> api
      *
@@ -214,7 +214,7 @@ public class WebUtils {
             return null;
         }
     }
-    
+
     /**
      * This holds some variables that we will accept
      */

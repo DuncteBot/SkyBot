@@ -30,7 +30,7 @@ public class SkybotMainTest {
     @Test
     public void testSettings() {
         String[] actualValue = Settings.wbkxwkZPaG4ni5lm8laY;
-        assertEquals("Checks if the settings are set correct", actualValue.length, 3);
+        assertEquals("Checks if the settings are set correct", actualValue.length, 4);
     }
     
     @Test

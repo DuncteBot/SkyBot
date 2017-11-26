@@ -45,8 +45,8 @@ public class WolframAlphaCommand extends Command {
      * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
      */
     public static MessageEmbed generateEmbed(
-                                                    GuildMessageReceivedEvent event,
-                                                    WAQueryResult result) {
+                                            GuildMessageReceivedEvent event,
+                                            WAQueryResult result) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
@@ -89,44 +89,38 @@ public class WolframAlphaCommand extends Command {
                         WASound sound = (WASound) v;
                         d += WebUtils.shortenUrl(sound.getURL());
                     }
-
+                    
                     e.append(d).append("\n\n");
                 }
-
+                
                 embeds.append(e.toString().trim()).append("\n\n");
             }
-
+            
             eb.addField(name, embeds.toString().trim(), false);
         }
-
+        
         return eb.build();
     }
-
-    // TODO: Displaying
-    //       |-- Need some structure
-    //       |-- Custom?
-    //       |-- Must display everything?
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         sendMsg(event, "This command is being worked on.");
         WAEngine engine = AirUtils.alphaEngine;
-
+        
         if (engine == null) {
             sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
-
+        
         if (args.length == 0) {
             sendMsg(event, ":x: Must give a question!!!");
             return;
         }
-
-        // Borrowed from EvalCommand ;p
+        
         String queryString
                 = event.getMessage().getRawContent()
-                          .substring(event.getMessage().getRawContent()
-                                             .split(" ")[0].length());
+                      .substring(event.getMessage().getRawContent()
+                             .split(" ")[0].length());
 
         WAQuery query = engine.createQuery(queryString);
 
@@ -136,19 +130,17 @@ public class WolframAlphaCommand extends Command {
             result = engine.performQuery(query);
         } catch (WAException e) {
             event.getChannel().sendMessage(":x: Error: "
-                                                   + e.getClass().getSimpleName() + ": " + e.getMessage())
-                    .queue();
+                               + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
             e.printStackTrace();
             return;
         }
-
-
+        
         sendEmbed(event, generateEmbed(event, result));
     }
 
     @Override
     public String help() {
-        return "Query Wolfram|Alpha with all your geeky questions";
+        return "Ask Wolfram|Alpha all your geeky questions";
     }
 
     @Override
