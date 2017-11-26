@@ -22,10 +22,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import Java.lang.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import ml.duncte123.skybot.entities.delegate.GuildDelegate;
-import ml.duncte123.skybot.entities.delegate.JDADelegate;
-import ml.duncte123.skybot.entities.delegate.MemberDelegate;
-import ml.duncte123.skybot.entities.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
@@ -82,11 +79,21 @@ public class EvalFilter extends GroovyValueFilter {
             
             BigDecimal.class,
             BigInteger.class,
-            
-            JDADelegate.class,
-            UserDelegate.class,
+
+            //Java
+            ScriptDelegate.class,
+
+            //Kotlin
+            CategoryDelegate.class,
+            ChannelDelegate.class,
             GuildDelegate.class,
-            MemberDelegate.class
+            JDADelegate.class,
+            MemberDelegate.class,
+            PresenceDelegate.class,
+            RoleDelegate.class,
+            TextChannelDelegate.class,
+            UserDelegate.class,
+            VoiceChannelDelegate.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
