@@ -27,15 +27,15 @@ import com.google.gson.JsonPrimitive;
 import java.io.File;
 
 public class Config {
-    
+
     protected final JsonObject config;
     private final Config parent;
-    
+
     protected Config(Config parent, JsonObject config) {
         this.parent = parent;
         this.config = config;
     }
-    
+
     /**
      * idk
      *
@@ -47,7 +47,7 @@ public class Config {
     public static String replaceLast(String text, String regex, String replacement) {
         return text.replaceFirst("(?s)(.*)" + regex, "$1" + replacement);
     }
-    
+
     /**
      * This will try to get data from the config file
      *
@@ -57,7 +57,7 @@ public class Config {
     public String getString(String key) {
         return this.getJsonPrimitive(key).getAsString();
     }
-    
+
     /**
      * This will try to get data from the config file
      *
@@ -75,7 +75,7 @@ public class Config {
             return defaultValue;
         }
     }
-    
+
     /**
      * This will attempt to get an integer from the config file
      *
@@ -90,7 +90,7 @@ public class Config {
             throw e;
         }
     }
-    
+
     /**
      * This will attempt to get an integer from the config file
      *
@@ -103,7 +103,7 @@ public class Config {
             this.put(key, defaultValue);
         return this.getInt(key);
     }
-    
+
     /**
      * This will attempt to get a boolean from the config file
      *
@@ -118,7 +118,7 @@ public class Config {
             return false;
         }
     }
-    
+
     /**
      * This will attempt to get a boolean from the config file
      *
@@ -131,7 +131,7 @@ public class Config {
             this.put(key, defaultValue);
         return this.getBoolean(key);
     }
-    
+
     /**
      * This will load from our config with the key
      *
@@ -142,7 +142,7 @@ public class Config {
     public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
         return this.getJsonElement(key).getAsJsonPrimitive();
     }
-    
+
     /**
      * This will load from our config with the key
      *
@@ -182,7 +182,7 @@ public class Config {
             return null;
         }
     }
-    
+
     /**
      * This will check if the key that we are looking for
      *
@@ -196,7 +196,7 @@ public class Config {
             return false;
         }
     }
-    
+
     /**
      * This will attempt to put a value is the config
      *
@@ -252,7 +252,7 @@ public class Config {
         current.add(finalKey, value);
         this.save();
     }
-    
+
     /**
      * This will attempt to put a value is the config
      *
@@ -266,7 +266,7 @@ public class Config {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * This will attempt to put a value is the config
      *
@@ -280,7 +280,7 @@ public class Config {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * This will attempt to put a value is the config
      *
@@ -294,7 +294,7 @@ public class Config {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * get the config as a file
      *
@@ -303,7 +303,7 @@ public class Config {
     public File getConfigFile() {
         return this.parent.getConfigFile();
     }
-    
+
     /**
      * save the config
      *

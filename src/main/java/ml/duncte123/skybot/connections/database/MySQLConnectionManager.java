@@ -21,22 +21,28 @@ package ml.duncte123.skybot.connections.database;
 
 import ml.duncte123.skybot.utils.AirUtils;
 
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.SQLException;
 
 /**
  * Represents a server database
  */
 class MySQLConnectionManager
-        implements DBConnectionManager {
+implements DBConnectionManager {
+
+    private Connection connection;
 
     private final String dbHost;
+    private final int port;
     private final String user;
     private final String pass;
     private final String dbName;
 
     public MySQLConnectionManager() {
         this.dbHost = AirUtils.config.getString("sql.host", "sql.example.com");
+        this.port = AirUtils.config.getInt("sql.port", 3306);
         this.user = AirUtils.config.getString("sql.username", "exampleUser");
         this.pass = AirUtils.config.getString("sql.password", "Ex@mplePAss");
         this.dbName = AirUtils.config.getString("sql.database", "Example_database");
@@ -48,31 +54,16 @@ class MySQLConnectionManager
      * @return The connection to the database
      */
     public Connection getConnection() {
+        if(connection != null) return connection;
+        
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            return DriverManager.getConnection("jdbc:mysql://" + dbHost + "/" + dbName + "?useUnicode=true&characterEncoding=UTF-8", user, pass);
+            return (connection = DriverManager.getConnection(
+                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                    user, pass));
         } catch (Exception e) {
-            //e.printStackTrace();
             return null;
         }
-    }
-
-    /**
-     * This will give the database name that we specified in the config
-     *
-     * @return the database name
-     */
-    public String getDbName() {
-        return dbName;
-    }
-
-    /**
-     * This will check if the database is connected
-     *
-     * @return true if we are connected
-     */
-    public boolean checkDbConn() {
-        return getConnection() != null;
     }
 
     /**
@@ -80,6 +71,7 @@ class MySQLConnectionManager
      *
      * @return true if every sql field is set
      */
+    @Override
     public boolean hasSettings() {
         try {
             return !dbHost.isEmpty() && !user.isEmpty() && !pass.isEmpty() && !dbName.isEmpty();
@@ -88,13 +80,37 @@ class MySQLConnectionManager
         }
     }
 
+    /**
+     * This will check if the database is connected
+     *
+     * @return true if we are connected
+     */
     @Override
     public boolean isConnected() {
-        return checkDbConn();
+        try {
+            return connection != null && !connection.isClosed();
+        } catch (SQLException e) {
+            return false;
+        }
+    }
+
+    /**
+     * This will give the database name that we specified in the config
+     *
+     * @return the database name
+     */
+    @Override
+    public String getName() {
+        return dbName;
     }
 
     @Override
-    public String getName() {
-        return getDbName();
+    public void close() throws IOException {
+        try {
+            if (isConnected())
+                connection.close();
+        } catch (SQLException e) {
+            throw new IOException(e);
+        }
     }
 }

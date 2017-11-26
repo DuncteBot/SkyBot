@@ -25,11 +25,11 @@ import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 public class AudioPlayerSenderHandler implements AudioSendHandler {
 
-
     /**
      * This is our audio player
      */
     private final AudioPlayer audioPlayer;
+
     /**
      * I don't know what this does but it seems important
      */
@@ -77,5 +77,4 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     public boolean isOpus() {
         return true;
     }
-
 }

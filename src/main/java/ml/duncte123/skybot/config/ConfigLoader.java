@@ -46,19 +46,19 @@ public class ConfigLoader {
     }
 
     public static class MainConfig extends Config {
-
+    
         private final File configFile;
-
+    
         MainConfig(final File file) throws Exception {
             super(null, new JsonParser().parse(new FileReader(file)).getAsJsonObject());
             this.configFile = file;
         }
-
+    
         @Override
         public File getConfigFile() {
             return this.configFile;
         }
-
+    
         @Override
         public void save() throws Exception {
             final Gson gson = new GsonBuilder()
@@ -76,6 +76,5 @@ public class ConfigLoader {
                 e.printStackTrace();
             }
         }
-
     }
 }
