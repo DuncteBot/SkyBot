@@ -7,17 +7,19 @@ class EarthUtils {
     companion object {
         @JvmStatic
         fun throwableToJSONObject(throwable: Throwable): JSONObject {
-
-            return JSONObject().put("className", throwable::class.java.name)
-                    .put("message", throwable.message)
-                    .put("localiziedMessage", throwable.localizedMessage)
-                    .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
-                    .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
-                    .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
+            var json = JSONObject().put("className", throwable::class.java.name)
+                        .put("message", throwable.message)
+                        .put("localiziedMessage", throwable.localizedMessage)
+                        .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
+                        .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
+                        .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
+            if(throwable.cause != null)
+                json.put("cause", throwableToJSONObject(throwable.cause!!))
+            return json
         }
 
         @JvmStatic
-        private fun throwableArrayToJSONArray(throwables: Array<Throwable>): JSONArray =
+        private fun throwableArrayToJSONArray(throwables: Array<Throwable>) =
                 JSONArray(throwables.map { throwableToJSONObject(it) })
 
         @JvmStatic
@@ -26,7 +28,9 @@ class EarthUtils {
 
         @JvmStatic
         fun stacktraceToJSONObject(stackTraceElement: StackTraceElement) =
-                JSONObject().put("className", stackTraceElement.className).put("methodName", stackTraceElement.methodName)
-                        .put("lineNumber", stackTraceElement.lineNumber).put("isNative", stackTraceElement.isNativeMethod)
+                JSONObject().put("className", stackTraceElement.className)
+                            .put("methodName", stackTraceElement.methodName)
+                            .put("lineNumber", stackTraceElement.lineNumber)
+                            .put("isNative", stackTraceElement.isNativeMethod)
     }
 }
