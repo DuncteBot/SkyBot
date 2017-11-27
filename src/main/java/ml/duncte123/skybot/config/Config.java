@@ -28,7 +28,7 @@ import java.io.File;
 
 public class Config {
     
-    protected final JSONObject config;
+    protected JSONObject config;
     private final Config parent;
     
     protected Config(Config parent, JSONObject config) {
@@ -120,9 +120,32 @@ public class Config {
     }
 
     public void put(String key, Object value) {
-        Object json = this.get(this.config, key.substring(0, key.lastIndexOf('.')));
-        if (json != null)
-            new JSONObject(json.toString()).put(key.substring(key.lastIndexOf('.') + 1, key.length()), value);
+        final String[] path = key.split("\\.");
+
+        try {
+            JSONObject temp = this.config;
+            for (int i = 0; i < path.length; i++) {
+                if (i == path.length - 1) {
+                    temp.put(path[i], value);
+                    break;
+                }
+                Object x = this.get(temp, path[i]);
+                if (x == null) {
+                    if (path.length == 1) {
+                        this.config.put(key, value);
+                    } else {
+                        AirUtils.log(Level.ERROR, "Lol is this possible?");
+                    }
+                } else {
+                    temp = new JSONObject(x.toString());
+                    temp = new JSONObject().put(path[i], temp);
+                }
+            }
+            this.config = temp;
+        } catch (JSONException ex) {
+            AirUtils.log(Level.ERROR, ex.toString());
+        }
+
         try {
             this.save();
         } catch (Exception e) {
@@ -130,18 +153,29 @@ public class Config {
         }
     }
 
+    /**
+     * This methods gets an item of an JSON really quick but
+     * can't be used for putting items!
+     * @param jsonData the json where it should search
+     * @param key key aka path in the json
+     * @return Object probably a json or any other..
+     */
     private Object get(JSONObject jsonData, String key) {
+        if (key.isEmpty())
+            return null;
         final String[] path = key.split("\\.");
         JSONObject current = jsonData;
-        try {
             for (int i = 0; i < path.length; i++) {
-                if (i == path.length - 1)
-                    return current.get(path[i]);
-                current = new JSONObject(current.get(path[i]).toString());
+                try {
+                    if (jsonData.isNull(path[i]))
+                        jsonData.put(path[i], new Object());
+                    if (i == path.length - 1)
+                        return current.get(path[i]);
+                    current = new JSONObject(current.get(path[i]).toString());
+                } catch (JSONException ex) {
+                    AirUtils.log(Level.ERROR, ex.toString());
+                }
             }
-        } catch (JSONException ex) {
-            AirUtils.log(Level.ERROR, ex.toString());
-        }
         return null;
     }
     

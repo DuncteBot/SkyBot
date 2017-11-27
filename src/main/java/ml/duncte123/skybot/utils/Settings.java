@@ -78,6 +78,7 @@ public class Settings {
      */
     public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
 
+
     // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
     public static void setCooldown(final boolean cooldown) {
         useCooldown = cooldown;
