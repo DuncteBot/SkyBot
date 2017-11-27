@@ -46,8 +46,7 @@ public class FakeTest {
     public void basic()
             throws Throwable {
         User user = new FakeInterface<>(User.class).create();
-        
-        assertEquals(user.getIdLong(), 0L);
+
         assertEquals(user.getName(), "");
     }
     
@@ -64,7 +63,7 @@ public class FakeTest {
         JDA jda = member.getJDA();
         
         assertNotEquals(jda, member.getJDA());
-        assertNotEquals(jda.getGuildById(member.getGuild().getIdLong()), member.getGuild());
+        assertNotEquals(jda.getGuildById(member.getGuild().getId()), member.getGuild());
         
         assertEquals(jda.getGuilds(), new ArrayList<>());
     }
