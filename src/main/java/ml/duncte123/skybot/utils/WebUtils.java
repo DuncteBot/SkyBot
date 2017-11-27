@@ -34,6 +34,11 @@ import java.util.Map;
 public class WebUtils {
 
     private static String USER_AGENT = "DiscordBot (DuncteBot v" + Settings.version + ", https://bot.duncte123.ml/)";
+    private static final OkHttpClient client;
+
+    static {
+        client = new OkHttpClient();
+    }
 
     /**
      * Reads contents from a website and returns it to a string
@@ -70,8 +75,6 @@ public class WebUtils {
      */
     public static Response getRequest(String url, AcceptType accept) {
         
-        OkHttpClient client = new OkHttpClient();
-        
         Request request = new Request.Builder()
                                   .url(url)
                                   .get()
@@ -107,7 +110,6 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-        OkHttpClient client = new OkHttpClient();
         MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
         
         StringBuilder postParams = new StringBuilder();
@@ -182,7 +184,7 @@ public class WebUtils {
                 .build();
 
         try {
-            return (new OkHttpClient()).newCall(request).execute();
+            return client.newCall(request).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
