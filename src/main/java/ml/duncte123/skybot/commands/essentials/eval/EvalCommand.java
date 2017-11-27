@@ -111,7 +111,7 @@ public class EvalCommand extends Command {
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to user that have not upvoted the bot, " +
+                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
                             "Please consider to give this bot an upvote over at " +
                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"));
