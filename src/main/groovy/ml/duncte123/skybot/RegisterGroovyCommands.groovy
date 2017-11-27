@@ -19,6 +19,7 @@
 
 package ml.duncte123.skybot
 
+import ml.duncte123.skybot.commands.fun.ChatCommand
 import ml.duncte123.skybot.commands.fun.TextToBricksCommand
 import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
@@ -47,6 +48,12 @@ class RegisterGroovyCommands {
         manager.addCommand(new ShuffleCommand())
         manager.addCommand(new SkipCommand())
         manager.addCommand(new StopCommand())
+
+        //Only if the api keys are set we are going to use the chat api, we don't bug the user with adding the values
+        def api = AirUtils.config.getString("apis.cleverbot.api")
+        def user = AirUtils.config.getString("apis.cleverbot.user")
+        if(api != null && !api.empty && user != null && !user.empty )
+            manager.addCommand(new ChatCommand())
     }
 
 }
