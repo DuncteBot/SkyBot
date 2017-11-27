@@ -6,33 +6,33 @@ import java.util.Map;
 
 public class Primitives {
 
-    static Class<?> unwrap(Class<?> type) {
+    public static Class<?> unwrap(Class<?> type) {
         return (wrapperToPrimitives.get(type) == null) ? type : wrapperToPrimitives.get(type);
     }
 
-    static Class<?> wrap(Class<?> type) {
+    public static Class<?> wrap(Class<?> type) {
         return (primitivesToWrapper.get(type) == null) ? type : primitivesToWrapper.get(type);
     }
 
-    private static final Map<Class<?>, Class<?>> primitivesToWrapper = new HashMap<>(16);
-    private static final Map<Class<?>, Class<?>> wrapperToPrimitives = new HashMap<>(16);
+    private static final Map<Class<?>, Class<?>> primitivesToWrapper;
+    private static final Map<Class<?>, Class<?>> wrapperToPrimitives;
 
     static {
-        Map<Class<?>, Class<?>> primitivesToWrapper = new HashMap<>(16);
-        Map<Class<?>, Class<?>> wrapperToPrimitives = new HashMap<>(16);
+        Map<Class<?>, Class<?>> p = new HashMap<>(16);
+        Map<Class<?>, Class<?>> w = new HashMap<>(16);
 
-        put(primitivesToWrapper, wrapperToPrimitives, boolean.class, Boolean.class);
-        put(primitivesToWrapper, wrapperToPrimitives, byte.class, Byte.class);
-        put(primitivesToWrapper, wrapperToPrimitives, char.class, Character.class);
-        put(primitivesToWrapper, wrapperToPrimitives, double.class, Double.class);
-        put(primitivesToWrapper, wrapperToPrimitives, float.class, Float.class);
-        put(primitivesToWrapper, wrapperToPrimitives, int.class, Integer.class);
-        put(primitivesToWrapper, wrapperToPrimitives, long.class, Long.class);
-        put(primitivesToWrapper, wrapperToPrimitives, short.class, Short.class);
-        put(primitivesToWrapper, wrapperToPrimitives, void.class, Void.class);
+        put(p, w, boolean.class, Boolean.class);
+        put(p, w, byte.class, Byte.class);
+        put(p, w, char.class, Character.class);
+        put(p, w, double.class, Double.class);
+        put(p, w, float.class, Float.class);
+        put(p, w, int.class, Integer.class);
+        put(p, w, long.class, Long.class);
+        put(p, w, short.class, Short.class);
+        put(p, w, void.class, Void.class);
 
-        primitivesToWrapper = Collections.unmodifiableMap(primitivesToWrapper);
-        wrapperToPrimitives = Collections.unmodifiableMap(primitivesToWrapper);
+        primitivesToWrapper = Collections.unmodifiableMap(p);
+        wrapperToPrimitives = Collections.unmodifiableMap(w);
     }
 
     private static void put(Map<Class<?>, Class<?>> first, Map<Class<?>, Class<?>> second, Class<?> primitive, Class<?> wrapper) {
