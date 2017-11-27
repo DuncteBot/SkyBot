@@ -14,13 +14,13 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
+import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -146,7 +146,7 @@ public class BotListener extends ListenerAdapter {
             ).queue();
         else if (!rw.startsWith(Settings.prefix) &&
                 !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention())) {
+                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention()) ) {
             return;
         }
 
@@ -155,14 +155,23 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         
-        // run the a command
-        lastGuildChannel.put(event.getGuild(), event.getChannel());
-        if (!Settings.prefix.equals(settings.getCustomPrefix())) {
+        //Replace the custom prefix
+        if (!rw.startsWith(event.getJDA().getSelfUser().getAsMention()) && !Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
-        
+
+        if (rw.startsWith(event.getJDA().getSelfUser().getAsMention()) ) {
+            final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
+            final String[] args = Arrays.copyOfRange(split, 1, split.length);
+            //Handle the chat command
+            AirUtils.commandManager.getCommand("chat").executeCommand("chat", args, event);
+            return;
+        }
+        //Store the channel
+        lastGuildChannel.put(event.getGuild(), event.getChannel());
+        //Handle the command
         AirUtils.commandManager.runCommand(rw, event);
     }
     

@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.config;
@@ -46,35 +45,36 @@ public class ConfigLoader {
     }
 
     public static class MainConfig extends Config {
-    
+
         private final File configFile;
-    
+
         MainConfig(final File file) throws Exception {
             super(null, new JsonParser().parse(new FileReader(file)).getAsJsonObject());
             this.configFile = file;
         }
-    
+
         @Override
         public File getConfigFile() {
             return this.configFile;
         }
-    
+
         @Override
         public void save() throws Exception {
             final Gson gson = new GsonBuilder()
-                                      .serializeNulls()
-                                      .setPrettyPrinting()
-                                      .serializeSpecialFloatingPointValues()
-                                      .create();
+                    .serializeNulls()
+                    .setPrettyPrinting()
+                    .serializeSpecialFloatingPointValues()
+                    .create();
             final String json = gson.toJson(this.config);
             try {
                 final BufferedWriter writer = new BufferedWriter(
-                                                                        new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
+                        new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
                 new UnicodeUnescaper().translate(json, writer);
                 writer.close();
             } catch (final IOException e) {
                 e.printStackTrace();
             }
         }
+
     }
 }

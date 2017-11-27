@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.commands.essentials
@@ -23,7 +22,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.util.*
 
 /**
  * @author Sanduhr32
@@ -42,11 +40,15 @@ class RestartCommand : Command() {
         if (args == null) {
             error("args is null?!")
         }
-        
-        when (args.size) {
-            0 -> shardManager.restart()
-            1 -> shardManager.restart(args[0].toInt())
-            else -> sendError(event.message)
+
+        try {
+            when (args.size) {
+                0 -> shardManager.restart()
+                1 -> shardManager.restart(args[0].toInt())
+                else -> sendError(event.message)
+            }
+        } catch (ex: NumberFormatException) {
+            sendErrorJSON(event.message, ex, false)
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"

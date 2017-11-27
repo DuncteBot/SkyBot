@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
@@ -22,13 +21,11 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import Java.lang.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import ml.duncte123.skybot.entities.delegate.GuildDelegate;
-import ml.duncte123.skybot.entities.delegate.JDADelegate;
-import ml.duncte123.skybot.entities.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.managers.Presence;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -46,6 +43,7 @@ public class EvalFilter extends GroovyValueFilter {
      * This contains a list of all the allowed classes
      */
     private static final Class<?>[] ALLOWED_TYPES_LIST = {
+            StrictMath.class,
             Math.class,
             String.class,
             StringBuilder.class,
@@ -82,10 +80,21 @@ public class EvalFilter extends GroovyValueFilter {
             
             BigDecimal.class,
             BigInteger.class,
-            
+
+            //Java
+            ScriptDelegate.class,
+
+            //Kotlin
+            CategoryDelegate.class,
+            ChannelDelegate.class,
+            GuildDelegate.class,
             JDADelegate.class,
+            MemberDelegate.class,
+            PresenceDelegate.class,
+            RoleDelegate.class,
+            TextChannelDelegate.class,
             UserDelegate.class,
-            GuildDelegate.class
+            VoiceChannelDelegate.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
@@ -121,12 +130,26 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
-        if(o instanceof JDA)
-            return new JDADelegate((JDA) o);
-        if (o instanceof User)
-            return new UserDelegate((User) o);
+        if (o instanceof Category)
+            return new CategoryDelegate((Category) o);
+        if (o instanceof TextChannel)
+            return new TextChannelDelegate((TextChannel) o);
+        if (o instanceof VoiceChannel)
+            return new VoiceChannelDelegate((VoiceChannel) o);
+        if (o instanceof Channel)
+            return new ChannelDelegate((Channel) o);
         if (o instanceof Guild)
             return new GuildDelegate((Guild) o);
+        if(o instanceof JDA)
+            return new JDADelegate((JDA) o);
+        if (o instanceof Member)
+            return new MemberDelegate((Member) o);
+        if (o instanceof Presence)
+            return new PresenceDelegate((Presence) o);
+        if (o instanceof Role)
+            return new RoleDelegate((Role) o);
+        if (o instanceof User)
+            return new UserDelegate((User) o);
         ////////////////////////////////////////////
         if(o instanceof Script)
             return new ScriptDelegate((Script) o);

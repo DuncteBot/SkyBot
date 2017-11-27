@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot
@@ -28,7 +27,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
 class RegisterKotlinCommands {
-    val manager = AirUtils.commandManager
+    val manager: CommandManager = AirUtils.commandManager
     
     init {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")

@@ -35,7 +35,7 @@ public class ScriptDelegate extends Script {
 
     @Override
     public Object run() {
-        return "I'm a bot, I can't run.";
+        return "I am a bot, I can't run.";
     }
 
     @Override
@@ -65,17 +65,17 @@ public class ScriptDelegate extends Script {
 
     @Override
     public Object evaluate(String expression) throws CompilationFailedException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("This method is blocked");
     }
 
     @Override
     public Object evaluate(File file) throws CompilationFailedException, IOException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("How did you get access to the file class?");
     }
 
     @Override
     public void run(File file, String[] arguments) throws CompilationFailedException, IOException {
-        throw new VRCubeException("Erm, no?");
+        throw new VRCubeException("I am a bot, I can't run");
     }
 
     public Object dump() {

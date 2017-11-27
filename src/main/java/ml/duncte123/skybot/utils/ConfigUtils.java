@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.utils;
@@ -35,7 +34,7 @@ public class ConfigUtils {
     public ConfigUtils() {
         try {
             AirUtils.log(Level.INFO, "Loading config.json");
-            this.config = ConfigLoader.getConfig(new File("config.json"));
+            this.config = ConfigLoader.getConfig(new File(".\\config.json"));
             AirUtils.log(Level.INFO, "Loaded config.json");
         } catch (Exception e) {
             AirUtils.log(Level.ERROR, "Could not load config, aborting");

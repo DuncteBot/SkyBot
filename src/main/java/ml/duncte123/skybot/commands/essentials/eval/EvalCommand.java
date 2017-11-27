@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.commands.essentials.eval;
@@ -22,16 +21,18 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import Java.lang.VRCubeException;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
+import ml.duncte123.skybot.entities.delegate.GuildDelegate;
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.MemberDelegate;
+import ml.duncte123.skybot.entities.delegate.UserDelegate;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.delegate.GuildDelegate;
-import ml.duncte123.skybot.objects.delegate.JDADelegate;
-import ml.duncte123.skybot.objects.delegate.UserDelegate;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
@@ -42,6 +43,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.*;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 public class EvalCommand extends Command {
     
@@ -68,7 +70,16 @@ public class EvalCommand extends Command {
         // The GroovyShell is for the public eval
         protected_ = new GroovyShell(
                             new CompilerConfiguration()
-                                    .addCompilationCustomizers(new SandboxTransformer()));
+                                    .addCompilationCustomizers(new SandboxTransformer())) {
+            @Override
+            public Object evaluate(String scriptText) throws CompilationFailedException {
+                if (filter.filterArrays(scriptText))
+                    throw new VRCubeException("Arrays are not allowed");
+                if (filter.filterLoops(scriptText))
+                    throw new VRCubeException("Loops are not allowed");
+                return super.evaluate(scriptText);
+            }
+        };
         engine = new ScriptEngineManager(protected_.getClassLoader()).getEngineByName("groovy");
         packageImports = Arrays.asList(
                 "java.io",
@@ -80,6 +91,9 @@ public class EvalCommand extends Command {
                 "net.dv8tion.jda.core.managers",
                 "net.dv8tion.jda.core.managers.impl",
                 "net.dv8tion.jda.core.utils",
+                "ml.duncte123.skybot.utils",
+                "ml.duncte123.skybot.entities",
+                "ml.duncte123.skybot.entities.delegate",
                 "ml.duncte123.skybot.utils");
         classImports = Arrays.asList(
                 "ml.duncte123.skybot.objects.FakeInterface",
@@ -96,9 +110,10 @@ public class EvalCommand extends Command {
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to user that have not upvoted the bot, " +
+                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
                             "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)"));
+                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
+                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"));
             return;
         }
         
@@ -108,31 +123,25 @@ public class EvalCommand extends Command {
         
         try {
             try {
-                StringBuilder importStringBuilder = new StringBuilder();
-                for (final String s : packageImports) {
-                    importStringBuilder.append("import ").append(s).append(".*;\n");
-                }
-                for (final String s : classImports) {
-                    importStringBuilder.append("import ").append(s).append(";\n");
-                }
+                String importString = "import " +
+                        packageImports.stream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
+                        classImports.stream().collect(Collectors.joining("\n")) + "\n";
                 
-                String script = importStringBuilder.toString() +
-                                    event.getMessage().getRawContent()
-                                        .substring(event.getMessage().getRawContent()
-                                                   .split(" ")[0].length());
+                String script = importString + event.getMessage().getRawContent().split("\\s+",2)[1];
                 
                 int timeout = 5;
+                
                 if (isRanByBotOwner) {
                     timeout = 60;
                     
-                    engine.put("commandmanager", AirUtils.commandManager);
+                    engine.put("commandManager", AirUtils.commandManager);
                     
                     engine.put("message", event.getMessage());
                     engine.put("channel", event.getMessage().getTextChannel());
                     engine.put("guild", event.getGuild());
                     engine.put("member", event.getMember());
                     engine.put("jda", event.getJDA());
-                    engine.put("shardmanager", event.getJDA().asBot().getShardManager());
+                    engine.put("shardManager", event.getJDA().asBot().getShardManager());
                     engine.put("event", event);
                     
                     engine.put("args", args);
@@ -140,15 +149,10 @@ public class EvalCommand extends Command {
                     future = service.schedule(
                             () -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
                 } else {
-                    
-                    if (filter.filterArrays(script))
-                        throw new VRCubeException("Arrays are not allowed");
-                    if (filter.filterLoops(script))
-                        throw new VRCubeException("Loops are not allowed");
-                    
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
                     protected_.setVariable("jda", new JDADelegate(event.getJDA()));
+                    protected_.setVariable("member", new MemberDelegate(event.getMember()));
                     
                     future = service.schedule(() -> {
                         filter.register();
@@ -192,10 +196,17 @@ public class EvalCommand extends Command {
             } catch (IllegalArgumentException | VRCubeException e3) {
                 sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
                 sendError(event.getMessage());
+                // Debuging System.out.println(EarthUtils.throwableToJSONObject(e3).toString(4));
+            } catch (ArrayIndexOutOfBoundsException e4) {
+                sendSuccess(event.getMessage());
             }
         } catch (Throwable thr) {
-            sendMsg(event, "ERROR: " + thr.toString());
-            thr.printStackTrace();
+            if (Settings.useJSON)
+                sendErrorJSON(event.getMessage(), thr, true);
+            else {
+                sendMsg(event, "ERROR: " + thr.toString());
+                thr.printStackTrace();
+            }
         } finally {
             filter.unregister();
             

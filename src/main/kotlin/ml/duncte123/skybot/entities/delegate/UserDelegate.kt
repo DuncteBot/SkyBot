@@ -14,15 +14,21 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.entities.delegate
 
+import Java.lang.VRCubeException
 import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.Guild
+import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.entities.User
+import net.dv8tion.jda.core.requests.RestAction
 
 class UserDelegate(val yBGyt8Kduo: User) : User by yBGyt8Kduo {
-    private val jda: JDA = JDADelegate(yBGyt8Kduo.jda)
+    private val jda: JDA       = JDADelegate(yBGyt8Kduo.jda)
     override fun getJDA(): JDA = JDADelegate(this.jda)
+
+    override fun getMutualGuilds(): List<Guild>                   = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) }
+    override fun openPrivateChannel(): RestAction<PrivateChannel> = throw VRCubeException("**\uD83D\uDD25 lit**")
 }

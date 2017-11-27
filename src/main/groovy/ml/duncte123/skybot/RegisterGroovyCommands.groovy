@@ -14,11 +14,11 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot
 
+import ml.duncte123.skybot.commands.fun.ChatCommand
 import ml.duncte123.skybot.commands.fun.TextToBricksCommand
 import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
@@ -47,6 +47,12 @@ class RegisterGroovyCommands {
         manager.addCommand(new ShuffleCommand())
         manager.addCommand(new SkipCommand())
         manager.addCommand(new StopCommand())
+
+        //Only if the api keys are set we are going to use the chat api, we don't bug the user with adding the values
+        def apiKey = AirUtils.config.getString("apis.cleverbot.api")
+        def userKey = AirUtils.config.getString("apis.cleverbot.user")
+        if(apiKey != null && !apiKey.empty && userKey != null && !userKey.empty )
+            manager.addCommand(new ChatCommand())
     }
 
 }

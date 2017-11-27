@@ -14,7 +14,6 @@
  *
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- *
  */
 
 package ml.duncte123.skybot.config;
@@ -136,7 +135,7 @@ public class Config {
      * This will load from our config with the key
      *
      * @param key the key to find
-     * @return this thing called {@link JsonPrimitive}
+     * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
      * @throws NullPointerException when the key is not found
      */
     public JsonPrimitive getJsonPrimitive(String key) throws NullPointerException {
@@ -148,7 +147,7 @@ public class Config {
      *
      * @param key the key to find
      * @return a nice JsonElement
-     * @throws NullPointerException When things are about to go down
+     * @throws NullPointerException When things are about too go down
      */
     public JsonElement getJsonElement(String key) throws NullPointerException {
         final String[] path = key.split("\\.");
@@ -167,10 +166,10 @@ public class Config {
                         index = 0;
                     }
                     element = element.substring(0, i);
-                    
+
                     value = value.getAsJsonObject().get(element);
                     value = value.getAsJsonArray().get(index);
-                    
+
                 } else
                     value = value.getAsJsonObject().get(element);
             }
@@ -201,7 +200,7 @@ public class Config {
      * This will attempt to put a value is the config
      *
      * @param key   the key to add the value under
-     * @param value the value that we need to add, in the form of an {@link JsonElement}
+     * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
      * @throws Exception when we fail
      */
     public void put(String key, JsonElement value) throws Exception {
@@ -211,7 +210,7 @@ public class Config {
             key = replaceLast(key, ".", "");
         final String[] path = key.split("\\.");
         JsonObject current = this.config;
-        
+
         try {
             for (String element : path) {
                 if (element.trim().isEmpty())
@@ -225,7 +224,7 @@ public class Config {
                         index = -1;
                     }
                     element = element.substring(0, i);
-                    
+
                     if (!current.has(element))
                         current.add(element, new JsonArray());
                     final JsonArray array = current.get(element).getAsJsonArray();
@@ -238,7 +237,7 @@ public class Config {
                             array.add(new JsonObject());
                         current = array.get(index).getAsJsonObject();
                     }
-                    
+
                 } else {
                     if (!current.has(element))
                         current.add(element, new JsonObject());
