@@ -33,6 +33,7 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.codehaus.groovy.control.CompilationFailedException;
 import org.codehaus.groovy.control.CompilerConfiguration;
 import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
@@ -70,7 +71,16 @@ public class EvalCommand extends Command {
         // The GroovyShell is for the public eval
         protected_ = new GroovyShell(
                             new CompilerConfiguration()
-                                    .addCompilationCustomizers(new SandboxTransformer()));
+                                    .addCompilationCustomizers(new SandboxTransformer())) {
+            @Override
+            public Object evaluate(String scriptText) throws CompilationFailedException {
+                if (filter.filterArrays(scriptText))
+                    throw new VRCubeException("Arrays are not allowed");
+                if (filter.filterLoops(scriptText))
+                    throw new VRCubeException("Loops are not allowed");
+                return super.evaluate(scriptText);
+            }
+        };
         engine = new ScriptEngineManager(protected_.getClassLoader()).getEngineByName("groovy");
         packageImports = Arrays.asList(
                 "java.io",
@@ -97,8 +107,6 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
-
-//        boolean isRanByBotOwner = false;
         
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
@@ -123,6 +131,7 @@ public class EvalCommand extends Command {
                 String script = importString + event.getMessage().getRawContent().split("\\s+",2)[1];
                 
                 int timeout = 5;
+                
                 if (isRanByBotOwner) {
                     timeout = 60;
                     
@@ -141,12 +150,6 @@ public class EvalCommand extends Command {
                     future = service.schedule(
                             () -> engine.eval(script), 0, TimeUnit.MILLISECONDS);
                 } else {
-                    
-                    if (filter.filterArrays(script))
-                        throw new VRCubeException("Arrays are not allowed");
-                    if (filter.filterLoops(script))
-                        throw new VRCubeException("Loops are not allowed");
-                    
                     protected_.setVariable("user", new UserDelegate(event.getAuthor()));
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
                     protected_.setVariable("jda", new JDADelegate(event.getJDA()));
