@@ -50,9 +50,9 @@ class RegisterGroovyCommands {
         manager.addCommand(new StopCommand())
 
         //Only if the api keys are set we are going to use the chat api, we don't bug the user with adding the values
-        def api = AirUtils.config.getString("apis.cleverbot.api")
-        def user = AirUtils.config.getString("apis.cleverbot.user")
-        if(api != null && !api.empty && user != null && !user.empty )
+        def apiKey = AirUtils.config.getString("apis.cleverbot.api")
+        def userKey = AirUtils.config.getString("apis.cleverbot.user")
+        if(apiKey != null && !apiKey.empty && userKey != null && !userKey.empty )
             manager.addCommand(new ChatCommand())
     }
 
