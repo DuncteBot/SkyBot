@@ -18,16 +18,12 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonPrimitive;
+import com.afollestad.ason.Ason;
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
-import java.util.Arrays;
 
 public class Config {
 
@@ -139,14 +135,11 @@ public class Config {
      * This will load from our config with the key
      *
      * @param key the key to find
-     * @return this thing called {@link com.google.gson.JsonPrimitive JsonPrimitive}
+     * @return the data
      * @throws NullPointerException when the key is not found
      */
     public Object getJsonPrimitive(String key) throws NullPointerException {
-        String[] path = key.split("\\.");
-        String toFind = path[path.length-1];
-        System.out.println(this.getJsonElement(key));
-        return this.getJsonElement(key).get(toFind);
+        return this.getJsonElement(key);
     }
 
     /**
@@ -156,10 +149,10 @@ public class Config {
      * @return a nice JsonElement
      * @throws NullPointerException When things are about too go down
      */
-    public JSONObject getJsonElement(String key) throws NullPointerException {
-        final String[] path = key.split("\\.");
-        JSONObject value = this.config;
-        try {
+    public Object getJsonElement(String key) throws NullPointerException {
+        //final String[] path = key.split("\\.");
+        return new Ason(this.config).get(key);
+        /*try {
             for (String element : path) {
                 if (element.trim().isEmpty())
                     continue;
@@ -188,7 +181,7 @@ public class Config {
         } catch (JSONException e) {
             e.printStackTrace();
             return null;
-        }
+        }*/
     }
 
     /**
@@ -209,7 +202,7 @@ public class Config {
      * This will attempt to put a value is the config
      *
      * @param key   the key to add the value under
-     * @param value the value that we need to add, in the form of an {@link com.google.gson.JsonElement JsonElement}
+     * @param value the value that we need to add, in the form of json
      * @throws Exception when we fail
      */
     public void put(String key, Object value) {
@@ -236,24 +229,20 @@ public class Config {
 
                     if (!current.has(element))
                         current.put(element, new JSONArray());
-                        //current.add(element, new JsonArray());
                     final JSONArray array = current.getJSONArray(element);
                     if (index == -1) {
                         final JSONObject object = new JSONObject();
                         array.put(object);
-                        //array.add(object);
                         current = object;
                     } else {
                         if (index == array.length())
                             array.put(new JSONObject());
-                            //array.add(new JsonObject());
                         current = array.getJSONObject(index);
                     }
 
                 } else {
                     if (!current.has(element))
                         current.put(element, new JSONObject());
-                        //current.add(element, new JsonObject());
                     current = current.getJSONObject(element);
                 }
             }
@@ -262,56 +251,13 @@ public class Config {
             throw e;
         }
         current.put(finalKey, value);
-        //current.add(finalKey, value);
         try {
             this.save();
         }
         catch (Exception e1) {
-            e1.printStackTrace();;
+            e1.printStackTrace();
         }
     }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     */
-    /*public void put(String key, String value) {
-        try {
-            this.put(key, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     *
-    public void put(String key, int value) {
-        try {
-            this.put(key, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will attempt to put a value is the config
-     *
-     * @param key   the key to add the value under
-     * @param value the value that we need to add
-     *
-    public void put(String key, boolean value) {
-        try {
-            this.put(key, value);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }*/
 
     /**
      * get the config as a file

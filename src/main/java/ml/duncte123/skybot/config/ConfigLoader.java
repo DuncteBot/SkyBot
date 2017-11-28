@@ -58,11 +58,6 @@ public class ConfigLoader {
 
         @Override
         public void save() throws Exception {
-//            final Gson gson = new GsonBuilder()
-//                    .serializeNulls()
-//                    .setPrettyPrinting()
-//                    .serializeSpecialFloatingPointValues()
-//                    .create();
             final String json = this.config.toString(4);
             try {
                 final BufferedWriter writer = new BufferedWriter(
