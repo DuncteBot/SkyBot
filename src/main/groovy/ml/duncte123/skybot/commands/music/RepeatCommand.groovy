@@ -35,7 +35,7 @@ class RepeatCommand extends MusicCommand {
 
     @Override
     String help() {
-        return "Makes the player repeat the currently playing song/"
+        return "Makes the player repeat the currently playing song"
     }
 
     @Override
