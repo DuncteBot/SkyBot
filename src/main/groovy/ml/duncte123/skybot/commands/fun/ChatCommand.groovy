@@ -30,6 +30,12 @@ import org.slf4j.event.Level
 class ChatCommand extends Command {
 
     private AI ai
+    def responses = [
+            "My prefix in this guild is {PREFIX}",
+            "Thanks for asking, my prefix here is {PREFIX}",
+            "That should be {PREFIX}",
+            "It was {PREFIX} if I'm not mistaken"
+    ]
 
     ChatCommand() {
         AirUtils.log(Level.INFO, "Starting AI")
@@ -48,12 +54,18 @@ class ChatCommand extends Command {
             return
         }
         def time = System.currentTimeMillis()
-        AirUtils.log(Level.DEBUG, "New Question: ${StringUtils.join(args, " ")}")
+        def message = StringUtils.join(args, " ")
         event.channel.sendTyping().queue()
-        ai.ask(StringUtils.join(args, " "), { json ->
+        AirUtils.log(Level.DEBUG, "New Question: $message")
+        if(message.contains("prefix")) {
+            sendMsg(event, "${event.author.asMention}, " + responses.get(AirUtils.rand.nextInt(responses.size()))
+                    .replace("{PREFIX}", "`${getSettings(event.guild).customPrefix}`"))
+            return
+        }
+        ai.ask(message, { json ->
             AirUtils.log(Level.DEBUG, "New response: ${json.toString()}, this took ${System.currentTimeMillis() - time}ms")
             if(json["status"] == "success") {
-                sendMsg(event, json["response"])
+                sendMsg(event, "${event.author.asMention}, ${json["response"]}")
             } else {
                 sendMsg(event, "Error: ${json["response"]}")
             }
