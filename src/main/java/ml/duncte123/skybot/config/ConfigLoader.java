@@ -18,10 +18,8 @@
 
 package ml.duncte123.skybot.config;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonParser;
 import org.apache.commons.text.translate.UnicodeUnescaper;
+import org.json.JSONObject;
 
 import java.io.*;
 
@@ -49,7 +47,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new JsonParser().parse(new FileReader(file)).getAsJsonObject());
+            super(null, new JSONObject(new FileReader(file)));
             this.configFile = file;
         }
 
@@ -60,12 +58,12 @@ public class ConfigLoader {
 
         @Override
         public void save() throws Exception {
-            final Gson gson = new GsonBuilder()
-                    .serializeNulls()
-                    .setPrettyPrinting()
-                    .serializeSpecialFloatingPointValues()
-                    .create();
-            final String json = gson.toJson(this.config);
+//            final Gson gson = new GsonBuilder()
+//                    .serializeNulls()
+//                    .setPrettyPrinting()
+//                    .serializeSpecialFloatingPointValues()
+//                    .create();
+            final String json = this.config.toString(4);
             try {
                 final BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));

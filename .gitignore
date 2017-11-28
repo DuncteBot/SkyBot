@@ -132,3 +132,5 @@ skybot-updater/\.idea/workspace\.xml
 skybot-updater/updater\.json
 
 *.db
+
+config_old\.json
