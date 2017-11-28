@@ -92,7 +92,7 @@ dependencies {
     compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10' // to also compile it
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
-    compile 'com.afollestad:ason:1.4.16'
+    compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
     // Logback core
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     // Logback classic

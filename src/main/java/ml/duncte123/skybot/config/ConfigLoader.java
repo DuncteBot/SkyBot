@@ -20,6 +20,7 @@ package ml.duncte123.skybot.config;
 
 import org.apache.commons.text.translate.UnicodeUnescaper;
 import org.json.JSONObject;
+import org.json.JSONTokener;
 
 import java.io.*;
 
@@ -47,7 +48,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new JSONObject(new FileReader(file)));
+            super(null, new JSONObject(new JSONTokener(new FileReader(file))));
             this.configFile = file;
         }
 

@@ -29,10 +29,12 @@ public class Config {
 
     protected final JSONObject config;
     private final Config parent;
+    private final Ason ason;
 
     protected Config(Config parent, JSONObject config) {
         this.parent = parent;
         this.config = config;
+        this.ason = new Ason(this.config);
     }
 
     /**
@@ -54,7 +56,7 @@ public class Config {
      * @return the value of the setting
      */
     public String getString(String key) {
-        return String.valueOf(this.getJsonPrimitive(key));
+        return ason.getString(key);
     }
 
     /**
@@ -66,7 +68,7 @@ public class Config {
      */
     public final String getString(String key, String defaultValue) {
         if (!this.hasKey(key)) {
-            this.put(key, String.valueOf(defaultValue));
+            this.put(key, defaultValue);
         }
         try {
             return this.getString(key);
@@ -84,7 +86,7 @@ public class Config {
      */
     public int getInt(String key) throws NumberFormatException {
         try {
-            return Integer.valueOf(String.valueOf(this.getJsonPrimitive(key)));
+            return ason.getInt(key);
         } catch (final NumberFormatException e) {
             throw e;
         }
@@ -99,7 +101,7 @@ public class Config {
      */
     public final int getInt(String key, int defaultValue) {
         if (!this.hasKey(key))
-            this.put(key, (int)defaultValue);
+            this.put(key, defaultValue);
         return this.getInt(key);
     }
 
@@ -111,7 +113,7 @@ public class Config {
      */
     public boolean getBoolean(String key) {
         try {
-            return Boolean.valueOf(String.valueOf(this.getJsonPrimitive(key)));
+            return ason.getBool(key);
         } catch (final Exception e) {
             e.printStackTrace();
             return false;
@@ -127,61 +129,8 @@ public class Config {
      */
     public final boolean getBoolean(String key, boolean defaultValue) {
         if (!this.hasKey(key))
-            this.put(key, (boolean)defaultValue);
+            this.put(key, defaultValue);
         return this.getBoolean(key);
-    }
-
-    /**
-     * This will load from our config with the key
-     *
-     * @param key the key to find
-     * @return the data
-     * @throws NullPointerException when the key is not found
-     */
-    public Object getJsonPrimitive(String key) throws NullPointerException {
-        return this.getJsonElement(key);
-    }
-
-    /**
-     * This will load from our config with the key
-     *
-     * @param key the key to find
-     * @return a nice JsonElement
-     * @throws NullPointerException When things are about too go down
-     */
-    public Object getJsonElement(String key) throws NullPointerException {
-        //final String[] path = key.split("\\.");
-        return new Ason(this.config).get(key);
-        /*try {
-            for (String element : path) {
-                if (element.trim().isEmpty())
-                    continue;
-                if (element.endsWith("]") && element.contains("[")) {
-                    final int i = element.lastIndexOf("[");
-                    int index;
-                    try {
-                        index = Integer.parseInt(element.substring(i).replace("[", "").replace("]", ""));
-                    } catch (final Exception e) {
-                        index = 0;
-                    }
-                    element = element.substring(0, i);
-
-                    value = value.getJSONObject(element);
-                    //value = value.getAsJsonObject().get(element);
-                    //value = value.getAsJsonArray().get(index);
-                    value = value.getJSONArray(element).getJSONObject(index);
-
-                } else
-                    value = value.getJSONObject(element);
-                    //value = value.getAsJsonObject().get(element);
-            }
-            if (value == null)
-                throw new NullPointerException("Key '" + key + "' has no value or doesn't exists, trying to add it");
-            return value;
-        } catch (JSONException e) {
-            e.printStackTrace();
-            return null;
-        }*/
     }
 
     /**
@@ -192,7 +141,7 @@ public class Config {
      */
     public boolean hasKey(String key) {
         try {
-            return this.getJsonElement(key) != null;
+            return ason.has(key);
         } catch (NullPointerException e) {
             return false;
         }
@@ -206,6 +155,7 @@ public class Config {
      * @throws Exception when we fail
      */
     public void put(String key, Object value) {
+        ason.put(key, value);
         final String finalKey = key.substring(key.lastIndexOf(".") + 1);
         key = replaceLast(key, finalKey, "");
         if (key.endsWith("."))
