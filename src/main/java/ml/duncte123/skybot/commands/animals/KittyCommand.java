@@ -49,7 +49,7 @@ public class KittyCommand extends Command {
             event.getChannel().sendFile(new URL(fullUrl).openStream(),
                     fileName, null).queue();
         } catch (Exception e) {
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getCause().toString()));
+            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
             e.printStackTrace();
         }
     }

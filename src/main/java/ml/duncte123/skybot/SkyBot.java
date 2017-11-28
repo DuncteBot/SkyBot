@@ -88,7 +88,7 @@ public class SkyBot {
 
         //Set the game from the config
         int gameId = AirUtils.config.getInt("discord.game.type", 3);
-        String name = AirUtils.config.getString("discord.game.name", "Danny Phantom on shard #{shardId}");
+        String name = AirUtils.config.getString("discord.game.name", "over shard #{shardId}");
         
         Game.GameType type = Game.GameType.fromKey(gameId);
         
@@ -106,7 +106,7 @@ public class SkyBot {
         }
         catch(RuntimeException e) {
             //Kill the system if we can't log in
-            e.printStackTrace();
+            AirUtils.logger.error("Could not log in, check if your token is correct", e);
             System.exit(-4);
         }
 

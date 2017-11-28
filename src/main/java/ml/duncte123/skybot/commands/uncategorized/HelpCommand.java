@@ -29,8 +29,6 @@ import org.apache.commons.lang3.StringUtils;
 
 public class HelpCommand extends Command {
     
-    public final static String help = "Shows a list of all the commands.\nUsage: `" + Settings.prefix + "help [command]`";
-    
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (args.length > 0) {
@@ -70,7 +68,7 @@ public class HelpCommand extends Command {
     
     @Override
     public String help() {
-        return help;
+        return "Shows a list of all the commands.\nUsage: `" + Settings.prefix + "help [command]`";
     }
     
     @Override
