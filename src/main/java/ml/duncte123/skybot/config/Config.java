@@ -38,7 +38,7 @@ public class Config {
     }
 
     /**
-     * idk
+     * Replaces the last thing in a string
      *
      * @param text        the text to replace
      * @param regex       the regex or something
