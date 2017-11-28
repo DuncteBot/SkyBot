@@ -146,7 +146,7 @@ public class BotListener extends ListenerAdapter {
             ).queue();
         else if (!rw.startsWith(Settings.prefix) &&
                 !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(event.getJDA().getSelfUser().getAsMention()) ) {
+                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
             return;
         }
 
@@ -156,13 +156,13 @@ public class BotListener extends ListenerAdapter {
         }
         
         //Replace the custom prefix
-        if (!rw.startsWith(event.getJDA().getSelfUser().getAsMention()) && !Settings.prefix.equals(settings.getCustomPrefix())) {
+        if (!rw.startsWith(event.getGuild().getSelfMember().getAsMention()) && !Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
                     Settings.prefix);
         }
 
-        if (rw.startsWith(event.getJDA().getSelfUser().getAsMention()) ) {
+        if (rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
             final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command

@@ -27,10 +27,8 @@ class JoinCommand extends MusicCommand {
     @Override
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        boolean inChannel = event.member.voiceState.inVoiceChannel()
-
-        if (!inChannel) {
-            sendMsg(event, "You are not in a voice channel")
+        if (!event.member.voiceState.inVoiceChannel()) {
+            sendMsg(event, "Please join a voice channel first.")
             return
         }
         def vc = event.member.voiceState.channel

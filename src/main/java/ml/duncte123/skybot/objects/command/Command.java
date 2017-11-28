@@ -31,7 +31,9 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.json.JSONArray;
+import org.json.JSONException;
 
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -102,6 +104,7 @@ public abstract class Command {
                                                 .addHeader("Authorization", token)
                                                 .build())
                                         .execute();
+            System.out.println(token);
             JSONArray json = new JSONArray(response.body().source().readUtf8());
             
             upvotedIds.clear();
@@ -109,8 +112,12 @@ public abstract class Command {
             for (int i = 0; i < json.length(); i++) {
                 upvotedIds.add(json.getString(i));
             }
-        } catch (Exception e) {
-            AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
+        } catch (JSONException e) {
+            //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
+            /* ignored */
+        }
+        catch (IOException e1) {
+            AirUtils.logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
         }
         if (Settings.useCooldown)
             cooldown = true;
