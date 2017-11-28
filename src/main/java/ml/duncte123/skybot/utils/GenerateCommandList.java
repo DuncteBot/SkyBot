@@ -66,9 +66,9 @@ public class GenerateCommandList {
                     .append(" => ")
                     .append('"')
                     .append(cmd.help()
+                            .replaceAll("`(.*)`", "<code>$1</code>")
                             .replaceAll("\\n", "<br />")
                             .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>")
-                            .replaceAll("`(.*)`", "<code>$1</code>")
                     );
             if(cmd.getAliases().length > 0) {
                 writer.append("<br />")
