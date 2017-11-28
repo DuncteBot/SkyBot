@@ -16,34 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.chatai;
+package ml.duncte123.skybot.objects.chatai
 
-import ml.duncte123.skybot.utils.WebUtils;
-import okhttp3.Response;
-import org.json.JSONObject;
+import ml.duncte123.skybot.utils.WebUtils
+import okhttp3.Response
+import org.json.JSONObject
 
-import java.io.IOException;
+class AI {
 
-/**
- * This class is made for the chat AI
- *
- * @author duncte123
- */
-public class AI {
-
-    private final String base = "https://cleverbot.io/1.0/";
-    private final String userKey;
-    private final String apiKey;
-    private String nickname = "Cleverbot";
+    def base = "https://cleverbot.io/1.0/"
+    def userKey
+    def apiKey
+    def nickname = "Cleverbot"
 
     /**
      * This sets up the api for us to use
      * @param user the user token provided by <a href="https://cleverbot.io/">https://cleverbot.io/</a>
      * @param api the api token provided by <a href="https://cleverbot.io/">https://cleverbot.io/</a>
      */
-    public AI(String user, String api) {
-        this.userKey = user;
-        this.apiKey = api;
+    AI(String user, String api) {
+        this.userKey = user
+        this.apiKey = api
     }
 
     /**
@@ -51,36 +44,36 @@ public class AI {
      * @param nickname the nickname for the bot
      * @return the AI class, useful for chaining
      */
-    public AI setNick(String nickname) {
-        this.nickname = nickname;
-        return this;
+    AI setNick(String nickname) {
+        this.nickname = nickname
+        return this
     }
 
     /**
      * This creates the bot
-     * @param callback a {@link Callback Callback} that gives the return data from the api
+     * @param callback a {@link ml.duncte123.skybot.objects.chatai.Callback Callback} that gives the return data from the api
      * @return the AI class, useful for chaining
      */
-    public AI create(Callback callback) {
-        JSONObject postData = new JSONObject();
-        postData.put("user", this.userKey);
-        postData.put("key", this.apiKey);
-        postData.put("nick", this.nickname);
+    AI create(Callback callback) {
+        JSONObject postData = new JSONObject()
+            .put("user", this.userKey)
+            .put("key", this.apiKey)
+            .put("nick", this.nickname)
 
-        Response r = WebUtils.postJSON(this.base + "ask", postData);
+        Response r = WebUtils.postJSON(this.base + "create", postData)
 
         try {
-            callback.call(new JSONObject(r.body().source().readUtf8()));
+            callback.call(new JSONObject(r.body().source().readUtf8()))
         }
         catch (IOException | NullPointerException e) {
-            e.printStackTrace();
+            e.printStackTrace()
             callback.call(new JSONObject()
                     .put("status", "failure")
                     .put("response", e.getMessage())
-            );
+            )
         }
 
-        return this;
+        return this
     }
 
     /**
@@ -88,25 +81,24 @@ public class AI {
      * @param input the text to send to the bot
      * @param callback a {@link Callback Callback} that gives the return data from the api
      */
-    public void ask(String input, Callback callback) {
-        JSONObject postData = new JSONObject();
-        postData.put("user", this.userKey);
-        postData.put("key", this.apiKey);
-        postData.put("nick", this.nickname);
-        postData.put("text", input);
+    def ask(String input, Callback callback) {
+        JSONObject postData = new JSONObject()
+        postData.put("user", this.userKey)
+        postData.put("key", this.apiKey)
+        postData.put("nick", this.nickname)
+        postData.put("text", input)
 
-        Response r = WebUtils.postJSON(this.base + "ask", postData);
+        Response r = WebUtils.postJSON(this.base + "ask", postData)
 
         try {
-            callback.call(new JSONObject(r.body().source().readUtf8()));
+            callback.call(new JSONObject(r.body().source().readUtf8()))
         }
         catch (IOException | NullPointerException e) {
-            e.printStackTrace();
+            e.printStackTrace()
             callback.call(new JSONObject()
                     .put("status", "failure")
                     .put("response", e.getMessage())
-            );
+            )
         }
     }
-
 }

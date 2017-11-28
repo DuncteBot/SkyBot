@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.chatai;
+package ml.duncte123.skybot.objects.chatai
 
-import org.json.JSONObject;
+import org.json.JSONObject
 
-public interface Callback {
-    void call(JSONObject json);
+interface Callback {
+    def call(JSONObject json)
 }
