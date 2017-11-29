@@ -40,6 +40,7 @@ class TagCommand extends Command {
     void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         Message helpMessage = new MessageBuilder()
                 .appendCodeBlock("$PREFIX$invoke help => shows this\n" +
+                "$PREFIX$invoke list => lists all the tags\n" +
                 "$PREFIX$invoke delete => removes a tag\n" +
                 "$PREFIX$invoke author => displays who made the tag\n" +
                 "$PREFIX$invoke create => make a new tag", "cs").build()
