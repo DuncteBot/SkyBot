@@ -18,8 +18,7 @@
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.commands.fun.ChatCommand
-import ml.duncte123.skybot.commands.fun.TextToBricksCommand
+import ml.duncte123.skybot.commands.fun.*
 import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
 import ml.duncte123.skybot.utils.AirUtils
@@ -32,7 +31,15 @@ class RegisterGroovyCommands {
         AirUtils.log("GroovyCommandManager", Level.INFO, "Registering groovy commands")
 
         manager.addCommand(new ShortenCommand())
+
+        //Fun commands
         manager.addCommand(new TextToBricksCommand())
+        manager.addCommand(new DialogCommand())
+        manager.addCommand(new KpopCommand())
+        manager.addCommand(new JokeCommand())
+        manager.addCommand(new CoinCommand())
+        manager.addCommand(new FlipCommand())
+        manager.addCommand(new TagCommand())
 
         //Add the music commands
         manager.addCommand(new JoinCommand())

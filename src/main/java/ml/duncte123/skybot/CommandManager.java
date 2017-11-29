@@ -22,7 +22,6 @@ import Java.lang.VRCubeException;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
-import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
@@ -55,14 +54,7 @@ public class CommandManager {
         this.addCommand(new HelpCommand());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
-        
-        //fun commands
-        this.addCommand(new DialogCommand());
-        this.addCommand(new KpopCommand());
-        this.addCommand(new JokeCommand());
-        this.addCommand(new CoinCommand());
-        this.addCommand(new FlipCommand());
-        this.addCommand(new TagCommand());
+
         
         //animal commands
         this.addCommand(new LlamaCommand());

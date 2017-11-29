@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedWriter;
@@ -59,24 +60,26 @@ public class GenerateCommandList {
 
         for (String n: names) {
             Command cmd = AirUtils.commandManager.getCommand(n);
-            writer.append("\t")
-                    .append('"')
-                    .append(cmd.getName())
-                    .append('"')
-                    .append(" => ")
-                    .append('"')
-                    .append(cmd.help()
-                            .replaceAll("`(.*)`", "<code>$1</code>")
-                            .replaceAll("\\n", "<br />")
-                            .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>")
-                    );
-            if(cmd.getAliases().length > 0) {
-                writer.append("<br />")
-                        .append("Aliases: ")
-                        .append(StringUtils.join(cmd.getAliases(), ", "));
+            if(!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
+                writer.append("\t")
+                        .append('"')
+                        .append(cmd.getName())
+                        .append('"')
+                        .append(" => ")
+                        .append('"')
+                        .append(cmd.help()
+                                .replaceAll("`(.*)`", "<code>$1</code>")
+                                .replaceAll("\\n", "<br />")
+                                .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>")
+                        );
+                if (cmd.getAliases().length > 0) {
+                    writer.append("<br />")
+                            .append("Aliases: ")
+                            .append(StringUtils.join(cmd.getAliases(), ", "));
+                }
+                writer.append("\",");
+                writer.newLine();
             }
-            writer.append("\",");
-            writer.newLine();
         }
 
         writer.newLine();
