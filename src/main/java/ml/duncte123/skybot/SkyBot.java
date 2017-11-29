@@ -91,7 +91,7 @@ public class SkyBot {
         String name = AirUtils.config.getString("discord.game.name", "over shard #{shardId}");
         
         Game.GameType type = Game.GameType.fromKey(gameId);
-        
+
         try {
             //Set up sharding for the bot
             new DefaultShardManagerBuilder()
