@@ -40,11 +40,13 @@ public class GenerateCommandList {
     public static void inPHP() throws Exception{
         File phpFile = new File("commandList.php");
 
-        if(!phpFile.exists())
+        if(!phpFile.exists()) {
             phpFile.createNewFile();
-        else {
+            Thread.sleep(500);
+        } else {
             phpFile.delete();
             phpFile.createNewFile();
+            Thread.sleep(500);
         }
 
         BufferedWriter writer = new BufferedWriter(
@@ -68,6 +70,8 @@ public class GenerateCommandList {
                         .append(" => ")
                         .append('"')
                         .append(cmd.help()
+                                .replaceAll("<", "&lt;")
+                                .replaceAll(">", "&gt;")
                                 .replaceAll("`(.*)`", "<code>$1</code>")
                                 .replaceAll("\\n", "<br />")
                                 .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>")
