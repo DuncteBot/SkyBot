@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -55,12 +54,10 @@ public class GuildInfoCommand extends Command {
                                       .addField("Guild Region", g.getRegion().getName(), true)
                                       .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                g.getInvites().queue(i-> {
-                    eb.addField("Guild Invite",
-                            "[https://discord.gg/" + i.get(0).getCode() +
-                                    "](https://discord.gg/" + i.get(0).getCode() + ")",
-                            true);
-                });
+                g.getInvites().queue(i -> eb.addField("Guild Invite",
+                        "[https://discord.gg/" + i.get(0).getCode() +
+                                "](https://discord.gg/" + i.get(0).getCode() + ")",
+                        true));
             }
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");

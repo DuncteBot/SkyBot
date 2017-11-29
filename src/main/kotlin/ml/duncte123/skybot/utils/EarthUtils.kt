@@ -25,15 +25,12 @@ class EarthUtils {
     companion object {
         @JvmStatic
         fun throwableToJSONObject(throwable: Throwable): JSONObject {
-            var json = JSONObject().put("className", throwable::class.java.name)
+            return JSONObject().put("className", throwable::class.java.name)
                         .put("message", throwable.message)
                         .put("localiziedMessage", throwable.localizedMessage)
                         .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
                         .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
                         .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
-            if(throwable.cause != null)
-                json.put("cause", throwableToJSONObject(throwable.cause!!))
-            return json
         }
 
         @JvmStatic
@@ -41,11 +38,11 @@ class EarthUtils {
                 JSONArray(throwables.map { throwableToJSONObject(it) })
 
         @JvmStatic
-        private fun stacktraceArrayToJSONArray(stacktraces: Array<StackTraceElement>): JSONArray =
-                JSONArray(stacktraces.map { stacktraceToJSONObject(it) })
+        private fun stacktraceArrayToJSONArray(stackTraces: Array<StackTraceElement>): JSONArray =
+                JSONArray(stackTraces.map { stackTraceToJSONObject(it) })
 
         @JvmStatic
-        fun stacktraceToJSONObject(stackTraceElement: StackTraceElement) =
+        private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement) =
                 JSONObject().put("className", stackTraceElement.className)
                             .put("methodName", stackTraceElement.methodName)
                             .put("lineNumber", stackTraceElement.lineNumber)
