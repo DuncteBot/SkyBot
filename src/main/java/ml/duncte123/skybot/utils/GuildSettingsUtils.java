@@ -213,10 +213,12 @@ public class GuildSettingsUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
+            if (database != null) {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
         AirUtils.guildSettings.put(g.getId(), newGuildSettings);
