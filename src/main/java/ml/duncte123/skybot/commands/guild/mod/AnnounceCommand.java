@@ -26,9 +26,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
 
 public class AnnounceCommand extends Command {
     
@@ -55,16 +52,21 @@ public class AnnounceCommand extends Command {
         
         try {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
-            String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+
+            if (!chann.canTalk()) {
+                sendError(event.getMessage());
+                return;
+            }
+
+            String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
             
             MessageEmbed embed = EmbedUtils.embedMessage(msg);
             
             if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
                 chann.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-                sendSuccess(event.getMessage());
-                return;
+            } else {
+                chann.sendMessage(embed).queue();
             }
-            chann.sendMessage(embed).queue();
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {
