@@ -138,13 +138,14 @@ public class BotListener extends ListenerAdapter {
         String rw = event.getMessage().getRawContent();
         
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
-                && rw.equals(event.getJDA().getSelfUser().getAsMention()))
+                && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                             event.getAuthor().getId(),
                             Settings.prefix)
             ).queue();
-        else if (!rw.startsWith(Settings.prefix) &&
+            return;
+        }else if (!rw.startsWith(Settings.prefix) &&
                 !rw.startsWith(settings.getCustomPrefix())
                 && !rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
             return;

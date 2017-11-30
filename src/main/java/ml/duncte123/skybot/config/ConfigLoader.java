@@ -69,6 +69,5 @@ public class ConfigLoader {
                 e.printStackTrace();
             }
         }
-
     }
 }

@@ -72,7 +72,7 @@ public class CleenupCommand extends Command {
             event.getChannel().sendMessage("Removed " + deletedMsg + " messages!").queue(
                     message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
             );
-            AirUtils.log(Level.INFO, deletedMsg + " messages removed in channel " + event.getChannel().getName());
+            AirUtils.log(Level.DEBUG, deletedMsg + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
         } catch (Exception e) {
             event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();
         }
@@ -90,6 +90,6 @@ public class CleenupCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"clear"};
+        return new String[]{"clear", "purge"};
     }
 }
