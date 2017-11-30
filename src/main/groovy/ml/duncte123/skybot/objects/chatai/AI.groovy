@@ -27,7 +27,7 @@ class AI {
     def base = "https://cleverbot.io/1.0/"
     def userKey
     def apiKey
-    def nickname = "Cleverbot"
+    def nickname
 
     /**
      * This sets up the api for us to use
@@ -58,12 +58,16 @@ class AI {
         JSONObject postData = new JSONObject()
             .put("user", this.userKey)
             .put("key", this.apiKey)
-            .put("nick", this.nickname)
+
+        if(this.nickname != null)
+            postData.put("nick", this.nickname)
 
         Response r = WebUtils.postJSON(this.base + "create", postData)
 
         try {
-            callback.call(new JSONObject(r.body().source().readUtf8()))
+            JSONObject returnData = new JSONObject(r.body().source().readUtf8())
+            this.nickname = returnData["nick"]
+            callback.call(returnData)
         }
         catch (IOException | NullPointerException e) {
             e.printStackTrace()
@@ -83,10 +87,11 @@ class AI {
      */
     def ask(String input, Callback callback) {
         JSONObject postData = new JSONObject()
-        postData.put("user", this.userKey)
-        postData.put("key", this.apiKey)
-        postData.put("nick", this.nickname)
-        postData.put("text", input)
+            .put("user", this.userKey)
+            .put("key", this.apiKey)
+            .put("nick", this.nickname)
+            .put("text", input)
+
 
         Response r = WebUtils.postJSON(this.base + "ask", postData)
 
