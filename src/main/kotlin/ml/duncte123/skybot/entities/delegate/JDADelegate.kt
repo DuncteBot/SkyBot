@@ -33,10 +33,11 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
-        if (this == other) return true
         
-        if (other::class.java == this::class.java)
-            return (other as JDADelegate).x0sAlsm7sW == x0sAlsm7sW
+        if (other is JDADelegate)
+            return other.x0sAlsm7sW == x0sAlsm7sW
+        else if (other is JDA)
+            return other == x0sAlsm7sW
         
         return false
     }

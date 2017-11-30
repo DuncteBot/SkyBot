@@ -20,6 +20,8 @@ package ml.duncte123.skybot.utils
 
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 
 class EarthUtils {
     companion object {
@@ -47,5 +49,15 @@ class EarthUtils {
                             .put("methodName", stackTraceElement.methodName)
                             .put("lineNumber", stackTraceElement.lineNumber)
                             .put("isNative", stackTraceElement.isNativeMethod)
+
+        @JvmStatic
+        fun write(file: String, content: String) {
+            val file = File(file)
+
+            if (!file.exists())
+                file.createNewFile()
+
+            FileOutputStream(file).write(content.toByteArray())
+        }
     }
 }
