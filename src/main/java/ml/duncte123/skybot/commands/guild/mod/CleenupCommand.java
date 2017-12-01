@@ -51,11 +51,17 @@ public class CleenupCommand extends Command {
             return;
         }
 
-        int deletedMsg = 0;
+        int deletedMsg;
         int total = 5;
 
         if (args.length > 0) {
-            total = Integer.parseInt(args[0]);
+            try {
+                total = Integer.parseInt(args[0]);
+            }
+            catch (NumberFormatException e) {
+                sendError(event.getMessage());
+                sendMsg(event, "Error: That is not a valid number");
+            }
             if (total < 2 || total > 100) {
                 event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
                         message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
