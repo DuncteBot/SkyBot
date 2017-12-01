@@ -50,7 +50,6 @@ class JokeCommand extends Command {
         }.collect(Collectors.toList())
 
         if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.get(event.guild.id) >= posts.size()) {
-            println "pls only do this once"
             jokeIndex.put(event.guild.id, 0)
         }
 
