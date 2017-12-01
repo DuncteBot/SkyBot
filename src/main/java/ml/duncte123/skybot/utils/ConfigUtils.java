@@ -37,7 +37,7 @@ public class ConfigUtils {
             this.config = ConfigLoader.getConfig(new File("config.json"));
             AirUtils.log(Level.INFO, "Loaded config.json");
         } catch (Exception e) {
-            AirUtils.log(Level.ERROR, "Could not load config, aborting");
+            AirUtils.logger.error("Could not load config, aborting", e);
             System.exit(-1);
         }
     }

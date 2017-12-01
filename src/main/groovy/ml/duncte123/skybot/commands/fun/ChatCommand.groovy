@@ -41,7 +41,8 @@ class ChatCommand extends Command {
         AirUtils.log(Level.INFO, "Starting AI")
         this.category = CommandCategory.NERD_STUFF
         this.ai = new AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                .setNick(Settings.defaultName)
+                //Use the current milliseconds to get a available username every login
+                .setNick(Settings.defaultName + System.currentTimeMillis())
                 .create({
                     AirUtils.log(Level.INFO, "AI has been loaded, server response: ${it.toString()}")
                 })

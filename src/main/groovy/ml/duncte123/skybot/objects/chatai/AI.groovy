@@ -22,6 +22,8 @@ import ml.duncte123.skybot.utils.WebUtils
 import okhttp3.Response
 import org.json.JSONObject
 
+import java.util.function.Consumer
+
 class AI {
 
     def base = "https://cleverbot.io/1.0/"
@@ -51,10 +53,10 @@ class AI {
 
     /**
      * This creates the bot
-     * @param callback a {@link ml.duncte123.skybot.objects.chatai.Callback Callback} that gives the return data from the api
+     * @param callback a {@link java.util.function.Consumer Consumer} that gives the return data from the api
      * @return the AI class, useful for chaining
      */
-    AI create(Callback callback) {
+    AI create(Consumer<JSONObject> callback) {
         JSONObject postData = new JSONObject()
             .put("user", this.userKey)
             .put("key", this.apiKey)
@@ -67,11 +69,11 @@ class AI {
         try {
             JSONObject returnData = new JSONObject(r.body().source().readUtf8())
             this.nickname = returnData["nick"]
-            callback.call(returnData)
+            callback.accept(returnData)
         }
         catch (IOException | NullPointerException e) {
             e.printStackTrace()
-            callback.call(new JSONObject()
+            callback.accept(new JSONObject()
                     .put("status", "failure")
                     .put("response", e.getMessage())
             )
@@ -83,9 +85,9 @@ class AI {
     /**
      * this "asks" a question to the bot
      * @param input the text to send to the bot
-     * @param callback a {@link Callback Callback} that gives the return data from the api
+     * @param callback a {@link java.util.function.Consumer Consumer} that gives the return data from the api
      */
-    def ask(String input, Callback callback) {
+    def ask(String input, Consumer<JSONObject> callback) {
         JSONObject postData = new JSONObject()
             .put("user", this.userKey)
             .put("key", this.apiKey)
@@ -96,11 +98,11 @@ class AI {
         Response r = WebUtils.postJSON(this.base + "ask", postData)
 
         try {
-            callback.call(new JSONObject(r.body().source().readUtf8()))
+            callback.accept(new JSONObject(r.body().source().readUtf8()))
         }
         catch (IOException | NullPointerException e) {
             e.printStackTrace()
-            callback.call(new JSONObject()
+            callback.accept(new JSONObject()
                     .put("status", "failure")
                     .put("response", e.getMessage())
             )
