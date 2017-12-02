@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.util.HashMap;
@@ -79,7 +80,7 @@ public class EmbedUtils {
             //Get the quote as a string
             String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
             String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
-            String finalQuote = quote + " - " + user;
+            String finalQuote = StringUtils.abbreviate(quote, 100) + " - " + user;
             //Set the quote in the footer
             eb.setFooter(finalQuote, Settings.defaultIcon);
         } else {
