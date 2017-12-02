@@ -161,9 +161,7 @@ public class BotListener extends ListenerAdapter {
         if (!rw.startsWith(event.getGuild().getSelfMember().getAsMention()) && !Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
-                    Settings.prefix)
-                    .replaceFirst(Settings.otherPrefix
-                    ,Settings.prefix);
+                    Settings.prefix);
         }
 
         if (rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
@@ -176,7 +174,9 @@ public class BotListener extends ListenerAdapter {
         //Store the channel
         lastGuildChannel.put(event.getGuild(), event.getChannel());
         //Handle the command
-        AirUtils.commandManager.runCommand(rw, event);
+        AirUtils.commandManager.runCommand(rw
+                .replaceFirst(Settings.otherPrefix
+                        ,Settings.prefix), event);
     }
     
     /**

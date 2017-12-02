@@ -29,6 +29,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
@@ -36,7 +37,10 @@ public class WebUtils {
     private static final OkHttpClient client;
 
     static {
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder()
+                .connectTimeout(15, TimeUnit.SECONDS)// connect timeout
+                .readTimeout(15, TimeUnit.SECONDS)// socket timeout
+        .build();
     }
 
     /**
