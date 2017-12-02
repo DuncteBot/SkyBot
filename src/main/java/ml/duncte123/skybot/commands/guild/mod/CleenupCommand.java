@@ -61,6 +61,7 @@ public class CleenupCommand extends Command {
             catch (NumberFormatException e) {
                 sendError(event.getMessage());
                 sendMsg(event, "Error: That is not a valid number");
+                return;
             }
             if (total < 2 || total > 100) {
                 event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
