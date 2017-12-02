@@ -34,13 +34,18 @@ class PPlayCommand extends MusicCommand {
             GuildMusicManager musicManager = getMusicManager(guild)
 
             if (args?.length < 1) {
-                sendMsg(event, "To few arguments, use `${Settings.prefix}$name <media link>`")
+                sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
                 return
             }
 
             String toPlay = StringUtils.join(args, " ")
             if (!AirUtils.isURL(toPlay)) {
                 toPlay = "ytsearch: " + toPlay
+            }
+            if(toPlay.size() > 1024) {
+                sendError(event.message)
+                sendMsg(event, "Input cannot be longer than 1024 characters.")
+                return
             }
 
             getAu().loadAndPlay(musicManager, event.channel, toPlay, true)

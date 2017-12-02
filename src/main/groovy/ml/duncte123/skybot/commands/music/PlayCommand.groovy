@@ -52,6 +52,12 @@ class PlayCommand extends MusicCommand {
                     toPlay = "ytsearch: " + toPlay
                 }
 
+                if(toPlay.size() > 1024) {
+                    sendError(event.message)
+                    sendMsg(event, "Input cannot be longer than 1024 characters.")
+                    return
+                }
+
                 au.loadAndPlay(mng, event.channel, toPlay, false)
             }
         }
@@ -60,7 +66,7 @@ class PlayCommand extends MusicCommand {
     @Override
     String help() {
         return "Make the bot play song.\n" +
-                "Usage: `${Settings.prefix}$name [url/search term]`"
+                "Usage: `$PREFIX$name [url/search term]`"
     }
 
     @Override

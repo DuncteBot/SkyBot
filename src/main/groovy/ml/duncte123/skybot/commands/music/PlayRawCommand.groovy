@@ -44,7 +44,13 @@ class PlayRawCommand extends PlayCommand {
                     sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
                 }
             } else {
-                getAu().loadAndPlay(musicManager, event.channel, StringUtils.join(args, " "), false)
+                String toPlay = StringUtils.join(args, " ")
+                if(toPlay.size() > 1024) {
+                    sendError(event.message)
+                    sendMsg(event, "Input cannot be longer than 1024 characters.")
+                    return
+                }
+                getAu().loadAndPlay(musicManager, event.channel, toPlay, false)
             }
         }
     }

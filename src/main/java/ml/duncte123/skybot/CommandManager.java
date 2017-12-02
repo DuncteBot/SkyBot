@@ -55,7 +55,7 @@ public class CommandManager {
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
 
-        
+
         //animal commands
         this.addCommand(new LlamaCommand());
         this.addCommand(new CatCommand());
@@ -66,13 +66,13 @@ public class CommandManager {
 
         //essentials commands
         this.addCommand(new EvalCommand());
-        
+
         if (AirUtils.alphaEngine != null)
             this.addCommand(new WolframAlphaCommand());
-        
+
         //guild commands
         this.addCommand(new GuildInfoCommand());
-        
+
         //mod commands
         this.addCommand(new BanCommand());
         this.addCommand(new HackbanCommand());
@@ -81,7 +81,7 @@ public class CommandManager {
         this.addCommand(new KickCommand());
         this.addCommand(new CleenupCommand());
         this.addCommand(new AnnounceCommand());
-        
+
         //Guild owner commands
         this.addCommand(new SettingsCommand());
     }
