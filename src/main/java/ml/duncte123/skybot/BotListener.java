@@ -147,7 +147,8 @@ public class BotListener extends ListenerAdapter {
             return;
         }else if (!rw.startsWith(Settings.prefix) &&
                 !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
+                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention())
+                && !rw.startsWith(Settings.otherPrefix)) {
             return;
         }
 
@@ -160,7 +161,9 @@ public class BotListener extends ListenerAdapter {
         if (!rw.startsWith(event.getGuild().getSelfMember().getAsMention()) && !Settings.prefix.equals(settings.getCustomPrefix())) {
             rw = rw.replaceFirst(
                     Pattern.quote(settings.getCustomPrefix()),
-                    Settings.prefix);
+                    Settings.prefix)
+                    .replaceFirst(Settings.otherPrefix
+                    ,Settings.prefix);
         }
 
         if (rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {

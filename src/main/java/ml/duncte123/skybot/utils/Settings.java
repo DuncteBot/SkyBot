@@ -49,6 +49,10 @@ public class Settings {
      */
     public static final String prefix = AirUtils.config.getString("discord.prefix", "/");
     /**
+     * This is another prefix because I can
+     */
+    public static final String otherPrefix = "db!";
+    /**
      * This is the version of the bot
      */
     public static final String version = BuildConfig.VERSION;
