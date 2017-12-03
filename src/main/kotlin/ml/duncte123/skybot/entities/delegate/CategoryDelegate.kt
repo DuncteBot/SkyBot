@@ -36,7 +36,7 @@ import net.dv8tion.jda.core.entities.VoiceChannel
 class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDelegate(a6sG3x_Hw) {
     private val guild: Guild = GuildDelegate(a6sG3x_Hw.guild)
 
-    override fun getParent(): Category                  = CategoryDelegate(this.parent)
+    override fun getParent(): Category                  = this.parent.let { CategoryDelegate(it) }
     override fun getJDA(): JDA                          = JDADelegate(this.jda)
     override fun getGuild(): Guild                      = GuildDelegate(this.guild)
 

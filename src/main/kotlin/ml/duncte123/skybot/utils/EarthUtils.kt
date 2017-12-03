@@ -23,6 +23,10 @@ package ml.duncte123.skybot.utils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.entities.delegate.*
+import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.managers.Presence
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -36,11 +40,11 @@ class EarthUtils {
         @JvmStatic
         fun throwableToJSONObject(throwable: Throwable): JSONObject {
             return JSONObject().put("className", throwable::class.java.name)
-                        .put("message", throwable.message)
-                        .put("localiziedMessage", throwable.localizedMessage)
-                        .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
-                        .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
-                        .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
+                    .put("message", throwable.message)
+                    .put("localiziedMessage", throwable.localizedMessage)
+                    .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
+                    .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
+                    .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
         }
 
         @JvmStatic
@@ -54,9 +58,9 @@ class EarthUtils {
         @JvmStatic
         private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement) =
                 JSONObject().put("className", stackTraceElement.className)
-                            .put("methodName", stackTraceElement.methodName)
-                            .put("lineNumber", stackTraceElement.lineNumber)
-                            .put("isNative", stackTraceElement.isNativeMethod)
+                        .put("methodName", stackTraceElement.methodName)
+                        .put("lineNumber", stackTraceElement.lineNumber)
+                        .put("isNative", stackTraceElement.isNativeMethod)
 
         @JvmStatic
         fun write(file: String, content: String) {
@@ -66,6 +70,25 @@ class EarthUtils {
                 file.createNewFile()
 
             FileOutputStream(file).write(content.toByteArray())
+        }
+
+        @JvmStatic
+        public fun delegateOf(jdaobject: Any?): Any? {
+            return when (jdaobject) {
+                is Category -> CategoryDelegate(jdaobject)
+                is TextChannel -> TextChannelDelegate(jdaobject)
+                is VoiceChannel -> VoiceChannelDelegate(jdaobject)
+                is Channel -> ChannelDelegate(jdaobject)
+                is Guild -> GuildDelegate(jdaobject)
+                is JDA -> JDADelegate(jdaobject)
+                is Member -> MemberDelegate(jdaobject)
+                is Presence -> PresenceDelegate(jdaobject)
+                is Role -> RoleDelegate(jdaobject)
+                is User -> UserDelegate(jdaobject)
+                else -> {
+                    null
+                }
+            }
         }
     }
 }
