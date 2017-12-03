@@ -36,6 +36,7 @@ import static org.slf4j.event.Level.ERROR;
  * NOTE TO SELF String.format("%#s", userObject)
  */
 @SinceSkybot(version = "1.0")
+@Author
 public class SkyBot {
 
     /**

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,25 +18,33 @@
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
-package ml.duncte123.skybot.entities.delegate
+package ml.duncte123.skybot.entities
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.entities.delegate.*
 import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.User
+import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.managers.Presence
 
-@SinceSkybot("3.51.5")
-@DocumentationNeeded
+@DocumentationNeeded("FUNCTION")
+@SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class MemberDelegate(private val xH4z9a_Qe: Member) : Member by xH4z9a_Qe {
-    private val jda: JDA     = JDADelegate(xH4z9a_Qe.jda)
-    private val guild: Guild = GuildDelegate(xH4z9a_Qe.guild)
-    private val user: User   = UserDelegate(xH4z9a_Qe.user)
-
-    override fun getJDA(): JDA     = JDADelegate(this.jda)
-    override fun getGuild(): Guild = GuildDelegate(this.guild)
-    override fun getUser(): User   = UserDelegate(this.user)
+public inline fun <reified T> delegateOf(jdaobject: (T)): Any? {
+    return when (jdaobject) {
+        is Category -> CategoryDelegate(jdaobject)
+        is TextChannel -> TextChannelDelegate(jdaobject)
+        is VoiceChannel -> VoiceChannelDelegate(jdaobject)
+        is Channel -> ChannelDelegate(jdaobject)
+        is Guild -> GuildDelegate(jdaobject)
+        is JDA -> JDADelegate(jdaobject)
+        is Member -> MemberDelegate(jdaobject)
+        is Presence -> PresenceDelegate(jdaobject)
+        is Role -> RoleDelegate(jdaobject)
+        is User -> UserDelegate(jdaobject)
+        else -> {
+            null
+        }
+    }
 }

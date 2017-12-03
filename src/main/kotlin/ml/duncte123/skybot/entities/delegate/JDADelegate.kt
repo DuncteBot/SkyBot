@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
@@ -26,6 +29,7 @@ import net.dv8tion.jda.core.managers.Presence
 
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)

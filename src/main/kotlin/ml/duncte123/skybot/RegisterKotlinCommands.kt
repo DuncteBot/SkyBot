@@ -16,6 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author
+
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.commands.`fun`.BlobCommand
@@ -27,6 +29,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
 @SinceSkybot("3.50.4")
+@Author
 class RegisterKotlinCommands {
     val manager: CommandManager = AirUtils.commandManager
     

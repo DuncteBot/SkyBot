@@ -16,9 +16,12 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
@@ -31,6 +34,7 @@ import net.dv8tion.jda.core.requests.restaction.RoleAction
 
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RoleDelegate(private val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
     private val jda: JDA     = JDADelegate(uA83D3Ax_ky.jda)
     private val guild: Guild = GuildDelegate(uA83D3Ax_ky.guild)

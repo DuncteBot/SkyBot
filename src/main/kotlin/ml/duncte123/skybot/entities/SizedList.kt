@@ -16,8 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.entities
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 
 /**
@@ -28,6 +31,7 @@ import ml.duncte123.skybot.SinceSkybot
  * @author Sanduhr32
  */
 @SinceSkybot("3.51.5")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SizedList<E>(private val fixedSize:Int) : List<E>, ArrayList<E>() {
 
     /**
