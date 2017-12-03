@@ -27,7 +27,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScriptDelegate extends Script {
-    private int counter;
+    private int counter = 0;
 
     public ScriptDelegate(Script s) {
         super(s.getBinding());
@@ -86,12 +86,13 @@ public class ScriptDelegate extends Script {
         return "You will never find me.";
     }
 
-    private synchronized String generateScriptName() {
-        return "Script" + (++counter);
+    public int quick_mafs(int x) {
+        int the_thing = x + 2 -1;
+        return the_thing;
     }
 
     @Override
     public String toString() {
-        return generateScriptName();
+        return "Script" + (++counter);
     }
 }
