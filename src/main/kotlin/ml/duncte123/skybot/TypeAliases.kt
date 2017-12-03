@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,9 +17,10 @@
  */
 
 @file:JvmName("SkybotTypeAliasesKt")
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.entities.SizedList
 
-@SinceSkybot("3.51.10") public typealias FixedList<E> = SizedList<E>
+@SinceSkybot("3.51.10") @Author(nickname = "Sanduhr32", author = "Maurice R S") public typealias FixedList<E> = SizedList<E>

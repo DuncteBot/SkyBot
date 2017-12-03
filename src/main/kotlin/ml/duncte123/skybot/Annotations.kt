@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,6 +17,7 @@
  */
 
 @file:JvmName("SkyBotAnnotationsKt")
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 package ml.duncte123.skybot
 
@@ -32,6 +33,7 @@ import kotlin.annotation.AnnotationTarget.*
 @Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS)
 @Retention
 @SinceSkybot("3.51.10")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
 
 /**
@@ -42,4 +44,17 @@ public annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
 @Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
 @Retention
 @SinceSkybot("3.51.10")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public annotation class DocumentationNeeded(vararg val specificPart: String = ["everything", "class"])
+
+/**
+ * Specifies any part in any kind of files.
+ *
+ * @property author is the real name of the author
+ * @property nickname is the nickname of the author
+ */
+@Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
+@Retention
+@SinceSkybot("3.51.10")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+public annotation class Author(val author: String = "Dunkan Sterken", val nickname: String = "duncte123")
