@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -89,6 +89,10 @@ public class ScriptDelegate extends Script {
     public int quick_mafs(int x) {
         int the_thing = x + 2 -1;
         return the_thing;
+    }
+
+    public boolean isEven(int number) {
+        return number % 2 == 0;
     }
 
     @Override

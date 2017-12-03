@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -35,6 +35,7 @@ import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,6 +97,21 @@ public class EvalCommand extends Command {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         );
+
+        //Add functions to the owner eval
+        //This is because I want to use those methods in the eval
+        try {
+            engine.eval("def isEven(int number) {\n" +
+                        "return number % 2 == 0\n" +
+                    "}\n");
+            engine.eval( "def quick_mafs(int x) {\n" +
+                        "def the_thing = x + 2 -1 \n " +
+                        "return the_thing \n" +
+                    "}");
+        }
+        catch (ScriptException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
