@@ -35,6 +35,7 @@ import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -96,6 +97,20 @@ public class EvalCommand extends Command {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         );
+
+        //Add functions to the owner eval
+        //This is because I want to use those methods in the eval
+        try {
+            engine.eval("def isEven(int number) {" +
+                        "return number % 2 == 0" +
+                    "}" +
+
+                    "def quick_mafs(int x) {" +
+                        "def the_thing = x + 2 -1;" +
+                        "return the_thing;" +
+                    "");
+        }
+        catch (ScriptException e) { /* ignored */}
     }
     
     @Override

@@ -91,6 +91,10 @@ public class ScriptDelegate extends Script {
         return the_thing;
     }
 
+    public boolean isEven(int number) {
+        return number % 2 == 0;
+    }
+
     @Override
     public String toString() {
         return "Script" + (++counter);
