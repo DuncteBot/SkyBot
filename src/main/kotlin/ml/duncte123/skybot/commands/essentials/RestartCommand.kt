@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
@@ -27,6 +29,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
  * @author Sanduhr32
  */
 
+@SinceSkybot("3.50.X")
 class RestartCommand : Command() {
     
     init {
@@ -48,7 +51,12 @@ class RestartCommand : Command() {
                 else -> sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
-            sendErrorJSON(event.message, ex, false)
+            if (Settings.useJSON)
+                sendErrorJSON(event.message, ex, false)
+            else {
+                AirUtils.logger.error(ex.localizedMessage, ex)
+                sendError(event.message)
+            }
         }
     }
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"

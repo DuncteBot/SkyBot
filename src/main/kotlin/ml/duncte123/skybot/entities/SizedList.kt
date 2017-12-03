@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.entities
 
+import ml.duncte123.skybot.SinceSkybot
+
 /**
  *
  * This class implements [List] and extends [ArrayList] and requires:
@@ -25,6 +27,7 @@ package ml.duncte123.skybot.entities
  * [List.size] never can be bigger than [fixedSize]!
  * @author Sanduhr32
  */
+@SinceSkybot("3.51.5")
 class SizedList<E>(private val fixedSize:Int) : List<E>, ArrayList<E>() {
 
     /**

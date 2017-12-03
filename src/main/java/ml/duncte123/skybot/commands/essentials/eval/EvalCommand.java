@@ -21,10 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import Java.lang.VRCubeException;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.entities.delegate.GuildDelegate;
-import ml.duncte123.skybot.entities.delegate.JDADelegate;
-import ml.duncte123.skybot.entities.delegate.MemberDelegate;
-import ml.duncte123.skybot.entities.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -153,6 +150,9 @@ public class EvalCommand extends Command {
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
                     protected_.setVariable("jda", new JDADelegate(event.getJDA()));
                     protected_.setVariable("member", new MemberDelegate(event.getMember()));
+                    protected_.setVariable("channel", new TextChannelDelegate(event.getChannel()));
+                    if (event.getChannel().getParent() != null)
+                        protected_.setVariable("category", new CategoryDelegate(event.getChannel().getParent()));
                     
                     future = service.schedule(() -> {
                         filter.register();

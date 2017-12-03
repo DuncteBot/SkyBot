@@ -19,9 +19,13 @@
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)

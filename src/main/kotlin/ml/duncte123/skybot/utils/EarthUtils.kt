@@ -18,11 +18,15 @@
 
 package ml.duncte123.skybot.utils
 
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
 class EarthUtils {
     companion object {
         @JvmStatic

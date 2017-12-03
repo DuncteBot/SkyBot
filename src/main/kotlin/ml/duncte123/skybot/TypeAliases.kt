@@ -16,27 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("SkybotTypeAliasesKt")
+
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.commands.`fun`.BlobCommand
-import ml.duncte123.skybot.commands.animals.BirbCommand
-import ml.duncte123.skybot.commands.essentials.RestartCommand
-import ml.duncte123.skybot.commands.essentials.UpdateCommand
-import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
-import ml.duncte123.skybot.utils.AirUtils
-import org.slf4j.event.Level
+import ml.duncte123.skybot.entities.SizedList
 
-@SinceSkybot("3.50.4")
-class RegisterKotlinCommands {
-    val manager: CommandManager = AirUtils.commandManager
-    
-    init {
-        AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
-        manager.addCommand(OneLinerCommands())
-        manager.addCommand(BlobCommand())
-        manager.addCommand(RestartCommand())
-        manager.addCommand(BirbCommand())
-        manager.addCommand(UpdateCommand())
-    }
-    
-}
+@SinceSkybot("3.51.10") public typealias FixedList<E> = SizedList<E>

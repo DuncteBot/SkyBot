@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.entities.delegate
 
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Category
 import net.dv8tion.jda.core.entities.Guild
@@ -25,6 +27,8 @@ import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.entities.VoiceChannel
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
 class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDelegate(a6sG3x_Hw) {
     private val jda: JDA     = JDADelegate(a6sG3x_Hw.jda)
     private val guild: Guild = GuildDelegate(a6sG3x_Hw.guild)

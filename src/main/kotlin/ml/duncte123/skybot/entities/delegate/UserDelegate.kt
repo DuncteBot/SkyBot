@@ -19,12 +19,16 @@
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.PrivateChannel
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.requests.RestAction
 
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
 class UserDelegate(val yBGyt8Kduo: User) : User by yBGyt8Kduo {
     private val jda: JDA       = JDADelegate(yBGyt8Kduo.jda)
     override fun getJDA(): JDA = JDADelegate(this.jda)

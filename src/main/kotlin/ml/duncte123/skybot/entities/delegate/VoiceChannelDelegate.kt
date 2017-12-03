@@ -18,9 +18,11 @@
 
 package ml.duncte123.skybot.entities.delegate
 
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.entities.VoiceChannel
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
-class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs) {
-
-}
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
+class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs)
