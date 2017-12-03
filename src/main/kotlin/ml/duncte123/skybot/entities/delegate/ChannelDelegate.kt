@@ -42,7 +42,7 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     private val guild: Guild        = GuildDelegate(channel.guild)
     private val parent: Category?   = null
 
-    override fun getParent(): Category                                              = CategoryDelegate(requireNotNull(channel.parent))
+    override fun getParent(): Category?                                             = CategoryDelegate(requireNotNull(channel.parent))
     override fun getJDA(): JDA                                                      = JDADelegate(this.jda)
     override fun getGuild(): Guild                                                  = GuildDelegate(this.guild)
 

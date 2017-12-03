@@ -130,8 +130,6 @@ public class EvalCommand extends Command {
             return;
         }
 
-        isRanByBotOwner = false;
-
         ScheduledExecutorService service = this.service.get();
         
         ScheduledFuture<Object> future = null;
