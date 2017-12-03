@@ -73,7 +73,7 @@ class EarthUtils {
         }
 
         @JvmStatic
-        public fun delegateOf(jdaobject: Any?): Any? {
+        fun delegateOf(jdaobject: Any?): Any? {
             return when (jdaobject) {
                 is Category -> CategoryDelegate(jdaobject)
                 is TextChannel -> TextChannelDelegate(jdaobject)

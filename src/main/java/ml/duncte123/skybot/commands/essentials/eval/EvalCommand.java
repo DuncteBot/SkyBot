@@ -129,7 +129,9 @@ public class EvalCommand extends Command {
                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"));
             return;
         }
-        
+
+        isRanByBotOwner = false;
+
         ScheduledExecutorService service = this.service.get();
         
         ScheduledFuture<Object> future = null;

@@ -60,15 +60,15 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * All [RestAction]s are blocked, because we dont want that our bot has issues with Discord and upload.
      * Also we dont like that our console is spammed with [Exception]s
      */
-    override fun sendFile(file: File, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: F(${file.name}), ${message.rawContent}**")
-    override fun sendFile(data: ByteArray, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: F($fileName, ${data.size}), ${message.rawContent}**")
-    override fun sendFile(data: InputStream, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: F($fileName), ${message.rawContent}**")
-    override fun sendFile(file: File, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: F(${file.name}), ${message.rawContent}**")
+    override fun sendFile(file: File, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).rawContent}**")
+    override fun sendFile(data: ByteArray, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.rawContent}**")
+    override fun sendFile(data: InputStream, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.rawContent}**")
+    override fun sendFile(file: File, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.rawContent}**")
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(embed: MessageEmbed): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun sendMessage(msg: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: M(${msg.rawContent})**")
-    override fun sendMessage(text: String): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: M($text)**")
-    override fun sendMessageFormat(format: String, vararg args: Any): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: M(${format.format(args)})**")
+    override fun sendMessage(msg: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.rawContent}**")
+    override fun sendMessage(text: String): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
+    override fun sendMessageFormat(format: String, vararg args: Any): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 
     /*
      * Editing RestActions
@@ -107,4 +107,6 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
     override fun getHistoryAfter(messageId: String, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    override fun toString(): String = "TC:$name($id)"
 }

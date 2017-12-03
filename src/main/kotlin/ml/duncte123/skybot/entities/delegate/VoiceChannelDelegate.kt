@@ -29,4 +29,6 @@ import net.dv8tion.jda.core.entities.VoiceChannel
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs)
+class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs) {
+    override fun toString(): String = "VC:$name($id)"
+}

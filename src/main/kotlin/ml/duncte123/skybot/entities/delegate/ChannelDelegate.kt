@@ -38,11 +38,11 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
-    private val jda: JDA         = JDADelegate(channel.jda)
-    private val guild: Guild     = GuildDelegate(channel.guild)
-    private val parent: Category = CategoryDelegate(channel.parent)
+    private val jda: JDA            = JDADelegate(channel.jda)
+    private val guild: Guild        = GuildDelegate(channel.guild)
+    private val parent: Category?   = null
 
-    override fun getParent(): Category                                              = CategoryDelegate(this.parent)
+    override fun getParent(): Category                                              = CategoryDelegate(requireNotNull(channel.parent))
     override fun getJDA(): JDA                                                      = JDADelegate(this.jda)
     override fun getGuild(): Guild                                                  = GuildDelegate(this.guild)
 
@@ -62,4 +62,5 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun createPermissionOverride(role: Role): PermissionOverrideAction     = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 
+    override fun toString(): String = "C:$name($id)"
 }
