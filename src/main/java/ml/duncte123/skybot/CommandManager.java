@@ -34,6 +34,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -79,7 +80,7 @@ public class CommandManager {
         this.addCommand(new SoftbanCommand());
         this.addCommand(new UnbanCommand());
         this.addCommand(new KickCommand());
-        this.addCommand(new CleenupCommand());
+        this.addCommand(new CleanupCommand());
         this.addCommand(new AnnounceCommand());
 
         //Guild owner commands
@@ -110,7 +111,7 @@ public class CommandManager {
         
         cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         
-        return cmd.isPresent() ? cmd.get() : null;
+        return cmd.orElse(null);
     }
     
     /**
@@ -133,8 +134,16 @@ public class CommandManager {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
-        
-        if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {
+
+        //ParallelStream for less execution time
+        if (this.commands.parallelStream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
+            @SinceSkybot(version = "3.52.1")
+            List<String> aliases = Arrays.asList(this.commands.parallelStream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+            for (String alias : command.getAliases()) {
+                if (aliases.contains(alias)) {
+                    return false;
+                }
+            }
             return false;
         }
         this.commands.add(command);

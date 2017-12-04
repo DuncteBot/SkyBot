@@ -30,11 +30,11 @@ import org.slf4j.event.Level;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
-public class CleenupCommand extends Command {
+public class CleanupCommand extends Command {
 
     public final static String help = "performs a cleanup in the channel where the command is run.";
 
-    public CleenupCommand() {
+    public CleanupCommand() {
         this.category = CommandCategory.MOD_ADMIN;
     }
 

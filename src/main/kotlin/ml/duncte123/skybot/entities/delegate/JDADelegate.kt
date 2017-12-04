@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.managers.Presence
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
-    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
+    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobs\u2122"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)
     
     override fun getToken(): String      = this.token

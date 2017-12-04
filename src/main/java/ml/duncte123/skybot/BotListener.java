@@ -168,7 +168,9 @@ public class BotListener extends ListenerAdapter {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
             final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command
-            AirUtils.commandManager.getCommand("chat").executeCommand("chat", args, event);
+            Command cmd = AirUtils.commandManager.getCommand("chat");
+            if (cmd != null)
+                cmd.executeCommand("chat", args, event);
             return;
         }
         //Store the channel
