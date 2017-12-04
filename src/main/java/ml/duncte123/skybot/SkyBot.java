@@ -35,7 +35,8 @@ import static org.slf4j.event.Level.ERROR;
 /**
  * NOTE TO SELF String.format("%#s", userObject)
  */
-@SinceSkybot(version = "1.0")
+//Skybot version 1.0 and 2.0 where written in php
+@SinceSkybot(version = "3.0.0")
 @Author
 public class SkyBot {
 
