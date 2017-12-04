@@ -57,4 +57,4 @@ public annotation class DocumentationNeeded(vararg val specificPart: String = ["
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public annotation class Author(val author: String = "Dunkan Sterken", val nickname: String = "duncte123")
+public annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
