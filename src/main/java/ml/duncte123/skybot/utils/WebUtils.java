@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
-    private static String USER_AGENT = "DiscordBot (DuncteBot v" + Settings.version + ", https://bot.duncte123.ml/)";
+    private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client;
 
     static {
