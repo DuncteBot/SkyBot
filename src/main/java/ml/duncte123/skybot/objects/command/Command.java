@@ -257,7 +257,9 @@ public abstract class Command {
      * @param msg   the message to send
      */
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
-        event.getChannel().sendMessage(msg).queue();
+        //Only send a message if we can talk
+        if(event.getChannel().canTalk())
+            event.getChannel().sendMessage(msg).queue();
     }
     
     @Override
