@@ -32,6 +32,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
@@ -46,6 +47,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+@SinceSkybot(version = "3.5.1")
 public class AudioUtils {
 
     /**
@@ -217,11 +219,13 @@ public class AudioUtils {
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
-        if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-            channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-            return;
+        if(tc.canTalk()) {
+            if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
+                channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+                return;
+            }
+            channel.sendMessage(embed).queue();
         }
-        channel.sendMessage(embed).queue();
     }
     
 }

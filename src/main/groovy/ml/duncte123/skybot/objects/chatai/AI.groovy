@@ -57,14 +57,14 @@ class AI {
      * @return the AI class, useful for chaining
      */
     AI create(Consumer<JSONObject> callback) {
-        JSONObject postData = new JSONObject()
-            .put("user", this.userKey)
-            .put("key", this.apiKey)
+        Map<String, Object> postData = new HashMap<>()
+        postData.put("user", this.userKey)
+        postData.put("key", this.apiKey)
 
         if(this.nickname != null)
             postData.put("nick", this.nickname)
 
-        Response r = WebUtils.postJSON(this.base + "create", postData)
+        Response r = WebUtils.postRequest(this.base + "create", postData, WebUtils.AcceptType.TEXT_JSON)
 
         try {
             JSONObject returnData = new JSONObject(r.body().source().readUtf8())
@@ -88,14 +88,14 @@ class AI {
      * @param callback a {@link java.util.function.Consumer Consumer} that gives the return data from the api
      */
     def ask(String input, Consumer<JSONObject> callback) {
-        JSONObject postData = new JSONObject()
-            .put("user", this.userKey)
-            .put("key", this.apiKey)
-            .put("nick", this.nickname)
-            .put("text", input)
+        Map<String, Object> postData = new HashMap<>()
+        postData.put("user", this.userKey)
+        postData.put("key", this.apiKey)
+        postData.put("nick", this.nickname)
+        postData.put("text", input)
 
 
-        Response r = WebUtils.postJSON(this.base + "ask", postData)
+        Response r = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
 
         try {
             callback.accept(new JSONObject(r.body().source().readUtf8()))
