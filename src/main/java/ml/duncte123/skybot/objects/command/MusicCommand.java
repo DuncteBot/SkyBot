@@ -75,7 +75,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        if (!audioManager.getConnectedChannel().getMembers().contains(event.getMember())) {
+        if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }

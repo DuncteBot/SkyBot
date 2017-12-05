@@ -110,15 +110,15 @@ public class EmbedUtils {
      * @return the progressbar
      */
     public static String generateProgressBar(double percent) {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             if (i == (int) (percent * 8)) {
-                str += "\uD83D\uDD18";
+                str.append("\uD83D\uDD18");
             } else {
-                str += "▬";
+                str.append("▬");
             }
         }
-        return str;
+        return str.toString();
     }
 
     /**
@@ -131,10 +131,10 @@ public class EmbedUtils {
         if (volume == 0) {
             return "\uD83D\uDD07";
         }
-        if (volume < 30) {
+        if (volume < 33) {
             return "\uD83D\uDD08";
         }
-        if (volume < 70) {
+        if (volume < 67) {
             return "\uD83D\uDD09";
         }
         return "\uD83D\uDD0A";
@@ -165,27 +165,27 @@ public class EmbedUtils {
      * @return the converted embed
      */
     public static String embedToMessage(MessageEmbed embed) {
-        String msg = "";
+        StringBuilder msg = new StringBuilder();
         
         if (embed.getAuthor() != null) {
-            msg += "***" + embed.getAuthor().getName() + "***\n\n";
+            msg.append("***").append(embed.getAuthor().getName()).append("***\n\n");
         }
         if (embed.getDescription() != null) {
-            msg += "_" + embed.getDescription() + "_\n\n";
+            msg.append("_").append(embed.getDescription()).append("_\n\n");
         }
         for (MessageEmbed.Field f : embed.getFields()) {
-            msg += "__" + f.getName() + "__\n" + f.getValue() + "\n\n";
+            msg.append("__").append(f.getName()).append("__\n").append(f.getValue()).append("\n\n");
         }
         if (embed.getImage() != null) {
-            msg += embed.getImage().getUrl() + "\n";
+            msg.append(embed.getImage().getUrl()).append("\n");
         }
         if (embed.getFooter() != null) {
-            msg += embed.getFooter().getText();
+            msg.append(embed.getFooter().getText());
         }
         if (embed.getTimestamp() != null) {
-            msg += "|" + embed.getTimestamp();
+            msg.append(" | ").append(embed.getTimestamp());
         }
         
-        return msg;
+        return msg.toString();
     }
 }

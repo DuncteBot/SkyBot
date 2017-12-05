@@ -22,10 +22,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -186,6 +183,12 @@ public abstract class Command {
      * @param message the message to add the reaction to
      */
     protected void sendError(Message message) {
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
         message.addReaction("❌").queue();
     }
 
@@ -198,6 +201,14 @@ public abstract class Command {
     protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
         if (print)
             AirUtils.logger.error(error.getLocalizedMessage(), error);
+
+        //Makes no difference if we use sendError or check here both perm types
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
 
         message.addReaction("❌").queue();
 
@@ -213,6 +224,12 @@ public abstract class Command {
      * @param message the message to add the reaction to
      */
     protected void sendSuccess(Message message) {
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
         message.addReaction("✅").queue();
     }
     
