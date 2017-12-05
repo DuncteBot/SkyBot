@@ -591,6 +591,9 @@ public class AirUtils {
         }
     }
 
+    /**
+     * Stops everything
+     */
     public static void stop() {
         try {
             db.getConnManager().getConnection().close();
@@ -601,6 +604,12 @@ public class AirUtils {
         audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
     }
 
+    /**
+     * This gets the channel from a name or id
+     * @param channelId the channel name or id
+     * @param guild the guild to search in
+     * @return the channel
+     */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
 
@@ -616,5 +625,28 @@ public class AirUtils {
         }
 
         return tc;
+    }
+
+    /**
+     * This generates a random string withe the specified length
+     * @param length the length that the string should be
+     * @return the generated string
+     */
+    public static String generateRandomString(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
+        StringBuilder output = new StringBuilder();
+        while (output.length() < length) { // length of the random string.
+            int index = (int) (rand.nextFloat() * chars.length());
+            output.append(chars.charAt(index));
+        }
+        return output.toString();
+    }
+
+    /**
+     * Returns a random string that has 10 chars
+     * @return a random string that has 10 chars
+     */
+    public static String generateRandomString() {
+        return generateRandomString(10);
     }
 }
