@@ -41,22 +41,22 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilove2dance","http://www.iloveradio.de/ilove2dance.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovetop100charts","http://www.iloveradio.de/ilovetop100charts.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovethebattle","http://www.iloveradio.de/ilovethebattle.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovedreist","http://www.iloveradio.de/ilovedreist.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovehiphop","http://www.iloveradio.de/ilovehiphopturnup.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovemashup","http://www.iloveradio.de/ilovemashup.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovebass","http://www.iloveradio.de/ilovebass.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovehistory","http://www.iloveradio.de/ilovehitshistory.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovepopstars","http://www.iloveradio.de/ilovepopstars.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("iloveandchill","http://www.iloveradio.de/iloveandchill.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("iloveberlin","http://www.iloveradio.de/iloveaboutberlin.m3u","http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovedreist","http://www.iloveradio.de/ilovedreist.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovehiphop","http://www.iloveradio.de/ilovehiphopturnup.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovemashup","http://www.iloveradio.de/ilovemashup.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovebass","http://www.iloveradio.de/ilovebass.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovehistory","http://www.iloveradio.de/ilovehitshistory.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovepopstars","http://www.iloveradio.de/ilovepopstars.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveandchill","http://www.iloveradio.de/iloveandchill.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveberlin","http://www.iloveradio.de/iloveaboutberlin.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovexmas","http://www.iloveradio.de/ilovexmas.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100pop","http://www.iloveradio.de/ilovetop100pop.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100hiphop","http://www.iloveradio.de/ilovetop100hiphop.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100dance&dj","http://www.iloveradio.de/ilovetop100dancedjs.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("iloveurban","http://www.iloveradio.de/ilovebigfmurbanclubbeats.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovegroovenight","http://www.iloveradio.de/ilovebigfmgroovenight.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovetop100pop","http://www.iloveradio.de/ilovetop100pop.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovetop100hiphop","http://www.iloveradio.de/ilovetop100hiphop.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovetop100dance&dj","http://www.iloveradio.de/ilovetop100dancedjs.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveurban","http://www.iloveradio.de/ilovebigfmurbanclubbeats.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovegroovenight","http://www.iloveradio.de/ilovebigfmgroovenight.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
     }
 
@@ -103,7 +103,7 @@ public class RadioCommand : MusicCommand() {
     override fun getAliases(): Array<String> = arrayOf("pstream", "stream")
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent) {
-        val streams = radioStreams.map { "[${it.name}](${it.url}) from [${it.website} ](${it.website})" }
+        val streams = radioStreams.filter { it.public }.map { "[${it.name}](${it.url}) from [${it.website} ](${it.website})" }
         MessageBuilder().append(streams.joinToString(separator = "\n")).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.rawContent).build())
         }
