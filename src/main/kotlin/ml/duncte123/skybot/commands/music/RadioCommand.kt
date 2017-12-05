@@ -58,6 +58,13 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
+        radioStreams += RadioStream("3fm","http://icecast.omroep.nl/3fm-sb-mp3.m3u","http://radioplayer.npo.nl/3fm/?channel=3")
+        radioStreams += RadioStream("radio1","http://icecast.omroep.nl/radio1-sb-mp3.m3u","http://www.radio1.nl/", false)
+        radioStreams += RadioStream("radio2","http://icecast.omroep.nl/radio2-sb-mp3.m3u","http://www.radio2.nl/")
+        radioStreams += RadioStream("100%nl","http://www.100p.nl/media/audio/100pnl.pls","http://www.100p.nl/", false)
+        radioStreams += RadioStream("omroepbrabant","http://www.listenlive.eu/omroepbrabant.m3u","http://www.omroepbrabant.nl/", false)
+        radioStreams += RadioStream("538","http://vip-icecast.538.lw.triple-it.nl/RADIO538_MP3.m3u","http://www.radio538.nl/")
+        radioStreams += RadioStream("q-music","http://icecast-qmusic.cdp.triple-it.nl/Qmusic_nl_live_96.mp3.m3u","http://www.qmusic.nl/", false)
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
