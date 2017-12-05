@@ -18,9 +18,12 @@
 
 package ml.duncte123.skybot.objects.chatai
 
+import ch.qos.logback.classic.Level
 import ml.duncte123.skybot.utils.WebUtils
 import okhttp3.Response
 import org.json.JSONObject
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 
 import java.util.function.Consumer
 
@@ -30,6 +33,7 @@ class AI {
     def userKey
     def apiKey
     def nickname
+    def log = (ch.qos.logback.classic.Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME)
 
     /**
      * This sets up the api for us to use
@@ -72,7 +76,10 @@ class AI {
             callback.accept(returnData)
         }
         catch (IOException | NullPointerException e) {
-            e.printStackTrace()
+            //If the logger is set to debug, print the stacktrace
+            if(log.getLevel() == Level.DEBUG)
+                e.printStackTrace()
+
             callback.accept(new JSONObject()
                     .put("status", "failure")
                     .put("response", e.getMessage())
@@ -101,7 +108,10 @@ class AI {
             callback.accept(new JSONObject(r.body().source().readUtf8()))
         }
         catch (IOException | NullPointerException e) {
-            e.printStackTrace()
+            //If the logger is set to debug, print the stacktrace
+            if(log.getLevel() == Level.DEBUG)
+                e.printStackTrace()
+
             callback.accept(new JSONObject()
                     .put("status", "failure")
                     .put("response", "Chat is unavailable at this moment in time, please try again later.")
