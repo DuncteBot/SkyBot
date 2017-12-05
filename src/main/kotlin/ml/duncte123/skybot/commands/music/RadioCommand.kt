@@ -21,6 +21,8 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.entities.RadioStream
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -28,6 +30,8 @@ import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+@SinceSkybot("3.52.2")
+@DocumentationNeeded
 public class RadioCommand : MusicCommand() {
 
     var radioStreams: List<RadioStream> = ArrayList()

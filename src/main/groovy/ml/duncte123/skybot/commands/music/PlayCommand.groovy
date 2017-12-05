@@ -23,7 +23,6 @@ import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
@@ -44,7 +43,8 @@ class PlayCommand extends MusicCommand {
                 } else if (player.playingTrack != null) {
                     sendMsg(event, "Player is already playing!")
                 } else if (scheduler.queue.empty) {
-                    sendMsg(event, "The current audio queue is empty! Add something to the queue first! For example: https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix")
+                    sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
+                            "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
                 }
             } else {
                 String toPlay = StringUtils.join(args, " ")
