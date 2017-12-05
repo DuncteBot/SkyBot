@@ -45,6 +45,8 @@ class JoinCommand extends MusicCommand {
                 audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
+
+            sendSuccess(event.message)
         } catch (PermissionException e) {
             if (e.permission == Permission.VOICE_CONNECT) {
                 sendMsg(event, "I don't have permission to join `${vc.name}`")
