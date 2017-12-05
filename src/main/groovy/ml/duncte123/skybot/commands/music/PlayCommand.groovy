@@ -44,7 +44,7 @@ class PlayCommand extends MusicCommand {
                 } else if (player.playingTrack != null) {
                     sendMsg(event, "Player is already playing!")
                 } else if (scheduler.queue.empty) {
-                    sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
+                    sendMsg(event, "The current audio queue is empty! Add something to the queue first! For example: https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix")
                 }
             } else {
                 String toPlay = StringUtils.join(args, " ")
