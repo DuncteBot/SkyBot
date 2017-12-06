@@ -18,27 +18,28 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import ch.qos.logback.classic.Level
 import ml.duncte123.skybot.entities.chatai.AI
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.slf4j.event.Level
+import java.util.function.Consumer
 
 class ChatCommand : Command() {
 
     private val ai: AI
 
     init {
-        ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
+        ai = AI(AirUtils.config.getString("apis.cleverbot.user", "meme"), AirUtils.config.getString("apis.cleverbot.api", "null"))
                 .setNick(Settings.defaultName + AirUtils.generateRandomString(4))
-                .create(json -> {
-                   AirUtils.log(Level.INFO, "AI has been loaded, server response: ${it.toString()}")
+                .create(Consumer {
+                   AirUtils.log(Level.INFO, "AI has been loaded, server response: $it")
                 })
     }
 
 
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent?) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 

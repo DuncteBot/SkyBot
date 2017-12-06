@@ -21,6 +21,7 @@ package ml.duncte123.skybot.entities.chatai
 import ch.qos.logback.classic.Level
 import ml.duncte123.skybot.utils.WebUtils
 import okhttp3.Response
+import org.json.JSONException
 import org.json.JSONObject
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -84,6 +85,7 @@ class AI(val user: String, val api: String) {
                     .put("response", e.message)
             )
         }
+        catch (ignored: JSONException) {}
 
         return this
     }
