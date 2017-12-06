@@ -49,6 +49,7 @@ class KotlinCommandManager : CommandManager() {
         this.addCommand(ListCommand())
         this.addCommand(NowPlayingCommand())
         this.addCommand(PauseCommand())
+        this.addCommand(PlayCommand())
         this.addCommand(RadioCommand())
     }
 }

@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import ch.qos.logback.classic.Level
-import ml.duncte123.skybot.objects.chatai.AI
+import ml.duncte123.skybot.entities.chatai.AI
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings

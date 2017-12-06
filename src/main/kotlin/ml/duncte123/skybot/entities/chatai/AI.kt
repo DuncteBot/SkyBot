@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.chatai
+package ml.duncte123.skybot.entities.chatai
 
 import ch.qos.logback.classic.Level
 import ml.duncte123.skybot.utils.WebUtils

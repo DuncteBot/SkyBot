@@ -74,9 +74,7 @@ public class SkyBot {
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
-        //This is a little hack because we can't use groovy and kotlin in the same classes
-        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        new RegisterKotlinCommands();
+        new KotlinCommandManager();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
@@ -85,7 +83,7 @@ public class SkyBot {
         AirUtils.loadAllTags();
 
         //Set the token to a string
-        String token = AirUtils.config.getString("discord.token", "Your Bot Token");
+        String token = AirUtils.config.getString("discord.tokenu", "Your Bot Token");
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);

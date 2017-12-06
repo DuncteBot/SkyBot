@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.fun
 
-import ml.duncte123.skybot.objects.chatai.AI
+import ml.duncte123.skybot.entities.chatai.AI
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
