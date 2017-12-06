@@ -16,56 +16,46 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.*
 
-class ListCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            def scheduler = getMusicManager(event.guild).scheduler
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class ListCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        val scheduler = getMusicManager(event.guild).scheduler
 
-            Queue<AudioTrack> queue = scheduler.queue
-            synchronized (queue) {
-                if (queue.empty) {
-                    sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"))
-                } else {
-                    int trackCount = 0
-                    long queueLength = 0
-                    StringBuilder sb = new StringBuilder()
-                    sb.append("Current Queue: Entries: ").append(queue.size()).append("\n")
-                    for (AudioTrack track : queue) {
-                        queueLength += track.duration
-                        if (trackCount < 10) {
+        val queue: Queue<AudioTrack> = scheduler.queue
+                synchronized (queue) {
+                    if (queue.isEmpty()) {
+                        sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"))
+                    } else {
+                        var queueLength: Long = 0
+                        val sb = StringBuilder()
+                        sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
+                        for ((trackCount, track) in queue.withIndex()) {
+                            queueLength += track.duration
                             sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                             sb.append(track.info.title).append("\n")
-                            trackCount++
                         }
+                        sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
+                        sendEmbed(event, EmbedUtils.embedField(au.embedTitle, sb.toString()))
                     }
-                    sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                    sendEmbed(event, EmbedUtils.embedField(au.embedTitle, sb.toString()))
                 }
-            }
-        }
     }
 
-    @Override
-    String help() {
-        return "shows the current queue"
-    }
+    override fun help(): String = "shows the current queue"
 
-    @Override
-    String getName() {
-        return "list"
-    }
+    override fun getName(): String = "list"
 
-    @Override
-    String[] getAliases() {
-        return ["queue"]
-    }
+    override fun getAliases(): Array<String> = arrayOf("queue")
+
 }

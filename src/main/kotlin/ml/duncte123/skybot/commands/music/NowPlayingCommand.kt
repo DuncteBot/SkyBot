@@ -16,40 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
-import ml.duncte123.skybot.audio.GuildMusicManager
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class NowPlayingCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        GuildMusicManager mng = getMusicManager(event.guild)
-        AudioPlayer player = mng.player
-        def msg
-        if (player.playingTrack != null) {
-            msg = "**Playing** " + player.playingTrack.info.title + "\n" + EmbedUtils.playerEmbed(mng)
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class NowPlayingCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (!channelChecks(event))
+            return
+        val mng = getMusicManager(event.guild)
+        val player = mng.player
+        val msg = if (player.playingTrack != null) {
+            "**Playing** " + player.playingTrack.info.title + "\n" + EmbedUtils.playerEmbed(mng)
         } else {
-            msg = "The player is not currently playing anything!"
+            "The player is not currently playing anything!"
         }
         sendEmbed(event, EmbedUtils.embedMessage(msg))
     }
 
-    @Override
-    String help() {
-        return "Prints information about the currently playing song (title, current time)"
-    }
+    override fun help(): String = "Prints information about the currently playing song (title, current time)"
 
-    @Override
-    String getName() {
-        return "nowplaying"
-    }
+    override fun getName(): String = "nowplaying"
 
-    @Override
-    String[] getAliases() {
-        return ["np", "song"]
-    }
+    override fun getAliases(): Array<String> = arrayOf("np", "song")
 }

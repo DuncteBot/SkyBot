@@ -77,17 +77,17 @@ public class RadioCommand : MusicCommand() {
         val mng = getMusicManager(guild)
         val scheduler = mng.scheduler
 
-        when {
-            args.isEmpty() -> {
+        when (args.size) {
+            0 -> {
                 sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
             }
-            args.size == 1 -> {
-                when {
-                    args[0] == "list" -> {
+            1 -> {
+                when (args[0]) {
+                    "list" -> {
                         sendRadioSender(event = event)
                         return@executeCommand
                     }
-                    args[0] == "fulllist" -> {
+                    "fulllist" -> {
                         sendRadioSender(event = event, full = true)
                         return@executeCommand
                     }
@@ -113,8 +113,9 @@ public class RadioCommand : MusicCommand() {
         }
     }
 
-    override fun help(): String = "Adds a radio http stream\n" +
-            "Usage: `$PREFIX$name <list/station name>`"
+    override fun help(): String = """Adds a radio http stream to your queue and goes to it!
+            |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
+            |Usage: `$PREFIX$name <(full)list/station name>`""".trimMargin()
 
     override fun getName(): String = "radio"
 

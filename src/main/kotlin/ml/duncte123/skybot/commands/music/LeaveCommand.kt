@@ -16,39 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class PauseCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            AudioPlayer player = getMusicManager(event.guild).player
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class LeaveCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (!channelChecks(event))
+            return
+        val manager = getAudioManager(event.guild)
 
-            if (player.playingTrack == null) {
-                sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
-                return
-            }
-
-            player.setPaused(!player.paused)
-            if (player.paused) {
-                sendMsg(event, "The player has been paused.")
-            } else {
-                sendMsg(event, "The player has resumed playing.")
-            }
+        if (manager.isConnected) {
+            getMusicManager(event.guild).player.stopTrack()
+            manager.sendingHandler = null
+            manager.closeAudioConnection()
+            sendMsg(event, "Leaving your channel")
+        } else {
+            sendMsg(event, "I'm not connected to any channels.")
         }
     }
 
-    @Override
-    String help() {
-        return "Pauses the current song"
-    }
+    override fun help(): String = "Makes the bot leave your channel."
 
-    @Override
-    String getName() {
-        return "pause"
-    }
+    override fun getName(): String = "leave"
+
+    override fun getAliases(): Array<String> = arrayOf("disconnect")
 }

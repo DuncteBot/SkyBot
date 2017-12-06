@@ -16,40 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class LeaveCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            def manager = getAudioManager(event.guild)
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class PauseCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-            if (manager.connected) {
-                getMusicManager(event.getGuild()).player.stopTrack()
-                manager.setSendingHandler(null)
-                manager.closeAudioConnection()
-                sendMsg(event, "Leaving your channel")
-            } else {
-                sendMsg(event, "I'm not connected to any channels.")
-            }
+        if (!channelChecks(event))
+            return
+
+        val player = getMusicManager(event.guild).player
+
+        if (player.playingTrack == null) {
+            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
+            return
         }
+
+        player.isPaused = !player.isPaused
+        sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
-    @Override
-    String help() {
-        return "Makes the bot leave your channel."
-    }
+    override fun help(): String = "Pauses the current song"
 
-    @Override
-    String getName() {
-        return "leave"
-    }
-
-    @Override
-    String[] getAliases() {
-        return ["disconnect"]
-    }
+    override fun getName(): String = "pause"
 }

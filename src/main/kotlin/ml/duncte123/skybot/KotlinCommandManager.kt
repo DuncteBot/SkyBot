@@ -24,23 +24,31 @@ import ml.duncte123.skybot.commands.`fun`.BlobCommand
 import ml.duncte123.skybot.commands.animals.BirbCommand
 import ml.duncte123.skybot.commands.essentials.RestartCommand
 import ml.duncte123.skybot.commands.essentials.UpdateCommand
-import ml.duncte123.skybot.commands.music.RadioCommand
+import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
 @SinceSkybot("3.50.4")
 @Author
-class RegisterKotlinCommands {
-    val manager: CommandManager = AirUtils.commandManager
-    
+class KotlinCommandManager : CommandManager() {
     init {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
-        manager.addCommand(OneLinerCommands())
-        manager.addCommand(BlobCommand())
-        manager.addCommand(RestartCommand())
-        manager.addCommand(BirbCommand())
-        manager.addCommand(UpdateCommand())
-        manager.addCommand(RadioCommand())
+        //uncategorized
+        this.addCommand(OneLinerCommands())
+        //fun
+        this.addCommand(BlobCommand())
+        //animals
+        this.addCommand(BirbCommand())
+        //essentials
+        this.addCommand(RestartCommand())
+        this.addCommand(UpdateCommand())
+        //music
+        this.addCommand(JoinCommand())
+        this.addCommand(LeaveCommand())
+        this.addCommand(ListCommand())
+        this.addCommand(NowPlayingCommand())
+        this.addCommand(PauseCommand())
+        this.addCommand(RadioCommand())
     }
 }

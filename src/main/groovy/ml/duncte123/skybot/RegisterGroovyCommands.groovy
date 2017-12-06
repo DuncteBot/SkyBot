@@ -42,9 +42,6 @@ class RegisterGroovyCommands {
         manager.addCommand(new TagCommand())
 
         //Add the music commands
-        manager.addCommand(new JoinCommand())
-        manager.addCommand(new LeaveCommand())
-        manager.addCommand(new ListCommand())
         manager.addCommand(new NowPlayingCommand())
         manager.addCommand(new PauseCommand())
         manager.addCommand(new PlayCommand())
