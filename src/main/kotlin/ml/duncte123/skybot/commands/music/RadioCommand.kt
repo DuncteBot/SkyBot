@@ -39,6 +39,7 @@ public class RadioCommand : MusicCommand() {
     init {
         //Dutch radio stations
         radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
+        radioStreams += RadioStream("radio538","http://20073.live.streamtheworld.com/RADIO538.mp3","https://www.538.nl/", false)
 
         //German radio stations
         radioStreams += RadioStream("iloveradio","http://www.iloveradio.de/iloveradio.m3u","http://www.iloveradio.de/streams/")
