@@ -21,29 +21,40 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class LeaveCommand : MusicCommand() {
+class PlayRawCommand : PlayCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+
         if (!channelChecks(event))
             return
-        val manager = getAudioManager(event.guild)
 
-        if (manager.isConnected) {
-            getMusicManager(event.guild).player.stopTrack()
-            manager.sendingHandler = null
-            manager.closeAudioConnection()
-            sendMsg(event, "Leaving your channel")
+        val guild = event.guild
+        val musicManager = getMusicManager(guild)
+        val player = musicManager.player
+        val scheduler = musicManager.scheduler
+
+        if (args.isEmpty()) {
+            when {
+                player.isPaused -> {
+                    player.isPaused = false
+                    sendMsg(event, "Playback has been resumed.")
+                }
+                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
+                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
+            }
         } else {
-            sendMsg(event, "I'm not connected to any channels.")
+            val toPlay = StringUtils.join(args, " ")
+            if(toPlay.length > 1024) {
+                sendError(event.message)
+                sendMsg(event, "Input cannot be longer than 1024 characters.")
+                return
+            }
+            au.loadAndPlay(musicManager, event.channel, toPlay, false)
         }
     }
 
-    override fun help(): String = "Makes the bot leave your channel."
-
-    override fun getName(): String = "leave"
-
-    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit", "kill")
+    override fun getName(): String = "playrw"
 }

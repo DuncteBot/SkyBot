@@ -27,37 +27,41 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class PlayCommand : MusicCommand() {
+open class PlayCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+
+        if (!channelChecks(event))
+            return
+
         val guild = event.guild
         val mng = getMusicManager(guild)
         val player = mng.player
         val scheduler = mng.scheduler
 
-                if (args.isEmpty()) {
-                    when {
-                        player.isPaused -> {
-                            player.isPaused = false
-                            sendMsg(event, "Playback has been resumed.")
-                        }
-                        player.playingTrack != null -> sendMsg(event, "Player is already playing!")
-                        scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                                "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
-                    }
-                } else {
-                    var toPlay = StringUtils.join(args, " ")
-                    if (!AirUtils.isURL(toPlay)) {
-                        toPlay = "ytsearch: " + toPlay
-                    }
-
-                    if(toPlay.length > 1024) {
-                        sendError(event.message)
-                        sendMsg(event, "Input cannot be longer than 1024 characters.")
-                        return
-                    }
-
-                    au.loadAndPlay(mng, event.channel, toPlay, false)
+        if (args.isEmpty()) {
+            when {
+                player.isPaused -> {
+                    player.isPaused = false
+                    sendMsg(event, "Playback has been resumed.")
                 }
+                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
+                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
+                        "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
+            }
+        } else {
+            var toPlay = StringUtils.join(args, " ")
+            if (!AirUtils.isURL(toPlay)) {
+                toPlay = "ytsearch: " + toPlay
+            }
+
+            if(toPlay.length > 1024) {
+                sendError(event.message)
+                sendMsg(event, "Input cannot be longer than 1024 characters.")
+                return
+            }
+
+            au.loadAndPlay(mng, event.channel, toPlay, false)
+        }
     }
 
     override fun help(): String = """Make the bot play song.

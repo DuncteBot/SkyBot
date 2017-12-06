@@ -25,25 +25,29 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class LeaveCommand : MusicCommand() {
+class StopCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+
         if (!channelChecks(event))
             return
-        val manager = getAudioManager(event.guild)
 
-        if (manager.isConnected) {
-            getMusicManager(event.guild).player.stopTrack()
-            manager.sendingHandler = null
-            manager.closeAudioConnection()
-            sendMsg(event, "Leaving your channel")
-        } else {
-            sendMsg(event, "I'm not connected to any channels.")
+        val guild = event.guild
+        val musicManager = getMusicManager(guild)
+        val player = musicManager.player
+        val scheduler = musicManager.scheduler
+
+        if (musicManager.player.playingTrack == null) {
+            sendMsg(event, "The player is not playing.")
+            return
         }
+
+        scheduler.queue.clear()
+        player.stopTrack()
+        player.isPaused = false
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
-    override fun help(): String = "Makes the bot leave your channel."
+    override fun help(): String = "Stops the music player."
 
-    override fun getName(): String = "leave"
-
-    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit", "kill")
+    override fun getName(): String = "stop"
 }

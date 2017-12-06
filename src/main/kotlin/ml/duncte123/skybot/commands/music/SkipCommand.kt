@@ -16,34 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
-import ml.duncte123.skybot.audio.TrackScheduler
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class ShuffleCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            TrackScheduler scheduler = getMusicManager(event.guild).scheduler
-            if (scheduler.queue.isEmpty()) {
-                sendMsg(event, "There are no songs to shuffle")
-                return
-            }
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class SkipCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-            scheduler.shuffle()
-            sendMsg(event, "The queue has been shuffled!")
+        if (!channelChecks(event))
+            return
+
+        val manager = getMusicManager(event.guild)
+        val scheduler = manager.scheduler
+
+        if (manager.player.playingTrack == null) {
+            sendMsg(event, "The player is not playing.")
+            return
         }
+
+        scheduler.nextTrack()
+        sendMsg(event, "The current track was skipped.")
     }
 
-    @Override
-    String help() {
-        return "Shuffles the current queue"
-    }
+    override fun help(): String = "Skips the current track."
 
-    @Override
-    String getName() {
-        return "shuffle"
-    }
+    override fun getName(): String = "skip"
+
+    override fun getAliases(): Array<String> = arrayOf("next", "nexttrack", "skiptrack")
 }
