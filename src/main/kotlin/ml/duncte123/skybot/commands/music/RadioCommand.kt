@@ -37,11 +37,9 @@ public class RadioCommand : MusicCommand() {
     var radioStreams: List<RadioStream> = ArrayList()
 
     init {
-        //Dutch radio stations
-        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
-        radioStreams += RadioStream("radio538","http://20073.live.streamtheworld.com/RADIO538.mp3","https://www.538.nl/", false)
+        //Sorting via locales https://lh.2xlibre.net/locales/
 
-        //German radio stations
+        //de_DE radio stations
         radioStreams += RadioStream("iloveradio","http://www.iloveradio.de/iloveradio.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilove2dance","http://www.iloveradio.de/ilove2dance.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovetop100charts","http://www.iloveradio.de/ilovetop100charts.m3u","http://www.iloveradio.de/streams/")
@@ -63,6 +61,10 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
 
+        //nl_NL radio stations
+        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/ ")
+        radioStreams += RadioStream("radio538","http://20073.live.streamtheworld.com/RADIO538.mp3","https://www.538.nl/", false)
+
         //International radio stations
         //TODO: add international radio stations
     }
@@ -77,27 +79,35 @@ public class RadioCommand : MusicCommand() {
 
         when {
             args.isEmpty() -> {
-                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <list/station name>`")
+                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
             }
             args.size == 1 -> {
-                if (args[0] == "list") {
-                    sendRadioSender(event = event)
-                    return
-                }
-                val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
-                if (radio == null) {
-                    sendMsg(event, "The stream is invalid!")
-                    sendError(event.message)
-                    return
-                }
-                au.loadAndPlay(mng, event.channel, radio.url, false)
-                scheduler.queue.forEach {
-                    if (it.info.uri != radio.url)
-                        scheduler.nextTrack()
+                when {
+                    args[0] == "list" -> {
+                        sendRadioSender(event = event)
+                        return@executeCommand
+                    }
+                    args[0] == "fulllist" -> {
+                        sendRadioSender(event = event, full = true)
+                        return@executeCommand
+                    }
+                    else -> {
+                        val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
+                        if (radio == null) {
+                            sendMsg(event, "The stream is invalid!")
+                            sendError(event.message)
+                            return@executeCommand
+                        }
+                        au.loadAndPlay(mng, event.channel, radio.url, false)
+                        scheduler.queue.forEach {
+                            if (it.info.uri != radio.url)
+                                scheduler.nextTrack()
+                        }
+                    }
                 }
             }
             else -> {
-                sendMsg(event, "The stream name is too long! Type `$PREFIX$name list` for a list of available streams!")
+                sendMsg(event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
                 sendError(event.message)
             }
         }
@@ -108,13 +118,16 @@ public class RadioCommand : MusicCommand() {
 
     override fun getName(): String = "radio"
 
-    override fun getAliases(): Array<String> = arrayOf("pstream", "stream")
+    override fun getAliases(): Array<String> = arrayOf("pstream", "stream", "webstream", "webradio")
 
-    private fun sendRadioSender(event: GuildMessageReceivedEvent) {
-        val streams = radioStreams.filter { it.public }.map { "[${it.name}](${it.url}) from [${it.website} ](${it.website})" }
+    private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
+        val streams = radioStreams
+        if (!full) {
+            streams.filter { it.public }
+        }
+        streams.map { "[${it.name}](${it.url}) from [${it.website}](${it.website})" }
         MessageBuilder().append(streams.joinToString(separator = "\n")).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.rawContent).build())
         }
     }
 }
-

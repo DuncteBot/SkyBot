@@ -75,7 +75,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8124169' //Beta build with ShardManager is newest but not ready yet! 8124169
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8124169' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
