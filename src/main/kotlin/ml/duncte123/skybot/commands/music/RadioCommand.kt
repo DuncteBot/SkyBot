@@ -37,6 +37,10 @@ public class RadioCommand : MusicCommand() {
     var radioStreams: List<RadioStream> = ArrayList()
 
     init {
+        //Dutch radio stations
+        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
+
+        //German radio stations
         radioStreams += RadioStream("iloveradio","http://www.iloveradio.de/iloveradio.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilove2dance","http://www.iloveradio.de/ilove2dance.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovetop100charts","http://www.iloveradio.de/ilovetop100charts.m3u","http://www.iloveradio.de/streams/")
@@ -57,7 +61,9 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovegroovenight","http://www.iloveradio.de/ilovebigfmgroovenight.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/")
+
+        //International radio stations
+        //TODO: add international radio stations
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -70,7 +76,7 @@ public class RadioCommand : MusicCommand() {
 
         when {
             args.isEmpty() -> {
-                sendRadioSender(event = event)
+                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <list/station name>`")
             }
             args.size == 1 -> {
                 if (args[0] == "list") {
@@ -90,13 +96,14 @@ public class RadioCommand : MusicCommand() {
                 }
             }
             else -> {
-                sendMsg(event, "The stream name is too long! Type `$PREFIX$name` for more!")
+                sendMsg(event, "The stream name is too long! Type `$PREFIX$name list` for a list of available streams!")
                 sendError(event.message)
             }
         }
     }
 
-    override fun help(): String = "Adds a radio http stream"
+    override fun help(): String = "Adds a radio http stream\n" +
+            "Usage: `$PREFIX$name <list/station name>`"
 
     override fun getName(): String = "radio"
 
