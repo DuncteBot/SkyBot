@@ -265,6 +265,7 @@ public class BotListener extends ListenerAdapter {
     
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
+        AirUtils.log(Settings.defaultName + "GuildLeave", Level.INFO, "Leaving guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.deleteGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
