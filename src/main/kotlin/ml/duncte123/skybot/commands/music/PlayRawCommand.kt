@@ -16,44 +16,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.essentials
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
+package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
-@SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class RestartCommand : Command() {
-    
-    init {
-        this.category = CommandCategory.UNLISTED
-    }
-    
+class PlayRawCommand : PlayCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
-        val shardManager = event.jda.asBot().shardManager
 
-        try {
-            when (args.size) {
-                0 -> shardManager.restart()
-                1 -> shardManager.restart(args[0].toInt())
-                else -> sendError(event.message)
+        if (!channelChecks(event))
+            return
+
+        val guild = event.guild
+        val musicManager = getMusicManager(guild)
+        val player = musicManager.player
+        val scheduler = musicManager.scheduler
+
+        if (args.isEmpty()) {
+            when {
+                player.isPaused -> {
+                    player.isPaused = false
+                    sendMsg(event, "Playback has been resumed.")
+                }
+                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
+                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
             }
-        } catch (ex: NumberFormatException) {
-            if (Settings.useJSON)
-                sendErrorJSON(event.message, ex, false)
-            else {
-                AirUtils.logger.error(ex.localizedMessage, ex)
+        } else {
+            val toPlay = StringUtils.join(args, " ")
+            if(toPlay.length > 1024) {
                 sendError(event.message)
+                sendMsg(event, "Input cannot be longer than 1024 characters.")
+                return
             }
+            au.loadAndPlay(musicManager, event.channel, toPlay, false)
         }
     }
-    override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
-    override fun getName() = "restart"
+    override fun getName(): String = "playrw"
 }

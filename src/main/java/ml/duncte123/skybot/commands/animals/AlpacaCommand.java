@@ -40,7 +40,7 @@ public class AlpacaCommand extends Command {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
             
             Element img = doc.select("img").first();
-            event.getChannel().sendFile(new URL(img.attributes().get("src")).openStream(), "Alpaca_" + System.currentTimeMillis() + ".png", null).queue();
+            sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         } catch (Exception e) {
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));

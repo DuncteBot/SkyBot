@@ -41,7 +41,7 @@ class ListCommand : MusicCommand() {
                         var queueLength: Long = 0
                         val sb = StringBuilder()
                         sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
-                        for ((trackCount, track) in queue.withIndex()) {
+                        for (track in queue) {
                             queueLength += track.duration
                             sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                             sb.append(track.info.title).append("\n")

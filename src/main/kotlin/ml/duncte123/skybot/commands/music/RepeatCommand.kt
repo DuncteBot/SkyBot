@@ -16,35 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
-import ml.duncte123.skybot.audio.TrackScheduler
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class RepeatCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            TrackScheduler scheduler = getMusicManager(event.guild).scheduler
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class RepeatCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-            scheduler.setRepeating(!scheduler.repeating)
-            sendMsg(event, "Player was set to: **" + (scheduler.repeating ? "" : "not") + "repeat**")
-        }
+        if (!channelChecks(event))
+            return
+
+        val scheduler = getMusicManager(event.guild).scheduler
+
+        scheduler.isRepeating = !scheduler.isRepeating
+        sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
     }
 
-    @Override
-    String help() {
-        return "Makes the player repeat the currently playing song"
-    }
+    override fun help(): String = "Makes the player repeat the currently playing song"
 
-    @Override
-    String getName() {
-        return "repeat"
-    }
+    override fun getName(): String = "repeat"
 
-    @Override
-    String[] getAliases() {
-        return ["loop"]
-    }
+    override fun getAliases(): Array<String> = arrayOf("loop")
 }

@@ -16,62 +16,56 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.json.JSONArray
 import org.json.JSONObject
-
+import java.util.*
 import java.util.stream.Collectors
 
-class JokeCommand extends Command {
+class JokeCommand : Command() {
 
     /**
      * This keeps track of where we are in the jokes
      */
-    private Map<String, Integer> jokeIndex
+    private val jokeIndex: MutableMap<String, Int>
 
-    JokeCommand() {
+    init {
         this.category = CommandCategory.FUN
-        this.jokeIndex = new TreeMap<>()
+        this.jokeIndex = TreeMap()
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        String rawJSON = WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400")
-        JSONObject jsonObject = new JSONObject(rawJSON)
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        val rawJSON = WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400")
+        val jsonObject = JSONObject(rawJSON)
 
-        def posts = jsonObject.getJSONObject("data").getJSONArray("children").toList().parallelStream().filter{
-            !it["data"]["preview"] && ((String) it["data"]["selftext"]).size() <= 550 && ((String) it["data"]["title"]).size() <= 256
-        }.collect(Collectors.toList())
+        val posts = jsonObject.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
+                    (it.getJSONObject("data").getString("selftext").length <= 550
+                    && it.getJSONObject("data").getString("title").length <= 256)
+        })
 
-        if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.get(event.guild.id) >= posts.size()) {
+        if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
             jokeIndex.put(event.guild.id, 0)
         }
 
-        def jokeI = jokeIndex.get(event.guild.id)
+        val jokeI = jokeIndex.getOrDefault(event.guild.id, 0)
 
-        JSONObject jokeData = ((JSONArray) jsonObject["data"]["children"]).getJSONObject(jokeI).getJSONObject("data")
+        val jokeData: JSONObject = jsonObject.getJSONObject("data").getJSONArray("children").getJSONObject(jokeI).getJSONObject("data")
         jokeIndex.put(event.guild.id, jokeI + 1)
-        String title = jokeData["title"]
-        String text = jokeData["selftext"]
-        String url = jokeData["url"]
+        val title: String = jokeData.getString("title")
+        val text: String = jokeData.getString("selftext")
+        val url: String = jokeData.getString("url")
 
         sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
+
     }
 
-    @Override
-    String help() {
-        return "See a funny joke. Dad's love them!\n" +
-                "Usage: `$PREFIX$name`"
-    }
+    override fun help() = "See a funny joke. Dad's love them!\n" +
+            "Usage: `$PREFIX$name`"
 
-    @Override
-    String getName() {
-        return "joke"
-    }
+    override fun getName() = "joke"
 }

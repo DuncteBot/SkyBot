@@ -25,13 +25,13 @@ import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.io.IOException
 
-class BirbCommand: Command() {
+class BirbCommand : Command() {
 
     init {
         this.category = CommandCategory.ANIMALS
     }
 
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent?) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         try {
             sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" +
                             "${WebUtils.getText("https://proximyst.com:4500/random/path/text")}/image"))

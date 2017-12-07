@@ -16,42 +16,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.uncategorized
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class ShortenCommand extends Command {
-
-    ShortenCommand() {
-        this.category = CommandCategory.UNLISTED
-    }
-
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (args.length < 1 || args[0].isEmpty()) {
-            sendMsg(event, "Incorrect usage: `${Settings.prefix}$name <link to shorten>`")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class ShortenCommand : Command() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (args.isEmpty() || args[0].isEmpty()) {
+            sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
             return
         }
         sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
-    @Override
-    String help() {
-        return "Shortens a url\n" +
-                "Usage: `${Settings.prefix}$name <link to shorten>`"
-    }
+    override fun help(): String = """"Shortens a url
+            |Usage: `${Settings.prefix}$name <link to shorten>`""".trimMargin()
 
-    @Override
-    String getName() {
-        return "shorten"
-    }
+    override fun getName(): String = "shorten"
 
-    @Override
-    String[] getAliases() {
-        return ["short", "url", "bitly", "googl"]
-    }
+    override fun getAliases(): Array<String> = arrayOf("short", "url", "bitly", "googl")
 }

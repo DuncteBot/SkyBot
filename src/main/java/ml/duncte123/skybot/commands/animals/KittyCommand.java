@@ -44,10 +44,8 @@ public class KittyCommand extends Command {
             Document doc = Jsoup.parse(raw.getAllElements().html(), "", Parser.xmlParser());
 
             String fullUrl = doc.select("url").first().text();
-            String fileName = fullUrl.split("/")[3];
 
-            event.getChannel().sendFile(new URL(fullUrl).openStream(),
-                    fileName, null).queue();
+            sendEmbed(event, EmbedUtils.embedImage(fullUrl));
         } catch (Exception e) {
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
             e.printStackTrace();

@@ -26,6 +26,7 @@ import ml.duncte123.skybot.commands.essentials.RestartCommand
 import ml.duncte123.skybot.commands.essentials.UpdateCommand
 import ml.duncte123.skybot.commands.music.*
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
+import ml.duncte123.skybot.commands.uncategorized.ShortenCommand
 import ml.duncte123.skybot.utils.AirUtils
 import org.slf4j.event.Level
 
@@ -36,12 +37,20 @@ class KotlinCommandManager : CommandManager() {
         AirUtils.log("KotlinCommandManager", Level.INFO, "Registering kotlin commands")
         //uncategorized
         this.addCommand(OneLinerCommands())
+        this.addCommand(ShortenCommand())
         //fun
         this.addCommand(BlobCommand())
-        this.addCommand(ChatCommand())
         this.addCommand(CoinCommand())
         this.addCommand(TextToBricksCommand())
         this.addCommand(KpopCommand())
+        this.addCommand(FlipCommand())
+        this.addCommand(DialogCommand())
+        this.addCommand(JokeCommand())
+        this.addCommand(TagCommand())
+
+        if(AirUtils.config.getString("apis.cleverbot.api") != null && !AirUtils.config.getString("apis.cleverbot.api").isEmpty()
+                && AirUtils.config.getString("apis.cleverbot.user") != null && !AirUtils.config.getString("apis.cleverbot.user").isEmpty() )
+            this.addCommand(ChatCommand())
         //animals
         this.addCommand(BirbCommand())
         //essentials
@@ -54,6 +63,12 @@ class KotlinCommandManager : CommandManager() {
         this.addCommand(NowPlayingCommand())
         this.addCommand(PauseCommand())
         this.addCommand(PlayCommand())
+        this.addCommand(PlayRawCommand())
+        this.addCommand(PPlayCommand())
         this.addCommand(RadioCommand())
+        this.addCommand(RepeatCommand())
+        this.addCommand(ShuffleCommand())
+        this.addCommand(SkipCommand())
+        this.addCommand(StopCommand())
     }
 }

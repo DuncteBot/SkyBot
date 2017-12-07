@@ -36,9 +36,11 @@ class TextToBricksCommand: Command() {
             return
         }
 
-        sendEmbed(event, EmbedUtils.embedMessage(StringUtils.join(args, " ")
-                .replace("([a-zA-Z])", ":regional_indicator_$1:")
-                .replace("([0-9])", "$1\u20E3")))
+        sendEmbed(event,
+                EmbedUtils.embedMessage(
+                        StringUtils.join(args, " ").replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:").replace(Regex("([0-9])"), "\$1\u20E3")
+                )
+        )
     }
 
     override fun help() = "Convert your text to bricks"
