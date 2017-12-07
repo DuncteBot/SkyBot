@@ -253,6 +253,6 @@ public class EvalCommand extends Command {
     
     @Override
     public String[] getAliases() {
-        return new String[]{"eval™", "evaluate"};
+        return new String[]{"eval™", "evaluate", "evan", "eva;"};
     }
 }
