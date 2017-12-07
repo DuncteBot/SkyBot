@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 import okhttp3.*;
 import org.json.JSONObject;
 
-import javax.net.ssl.HttpsURLConnection;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -29,14 +28,18 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
-    private static String USER_AGENT = "DiscordBot (DuncteBot v" + Settings.version + ", https://bot.duncte123.ml/)";
+    private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client;
 
     static {
-        client = new OkHttpClient();
+        client = new OkHttpClient.Builder()
+                .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
+                .readTimeout(10, TimeUnit.SECONDS)// socket timeout
+        .build();
     }
 
     /**

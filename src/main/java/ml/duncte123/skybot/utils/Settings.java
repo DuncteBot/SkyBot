@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -49,6 +49,10 @@ public class Settings {
      */
     public static final String prefix = AirUtils.config.getString("discord.prefix", "/");
     /**
+     * This is another prefix because I can
+     */
+    public static final String otherPrefix = "db!";
+    /**
      * This is the version of the bot
      */
     public static final String version = BuildConfig.VERSION;
@@ -76,7 +80,6 @@ public class Settings {
      * This holds if we can use the updater
      */
     public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
-
 
     // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
     public static void setCooldown(final boolean cooldown) {

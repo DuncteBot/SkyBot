@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.KotlinCommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -54,7 +55,7 @@ public class AirUtils {
     /**
      * This will hold the command setup and the registered commands
      */
-    public static CommandManager commandManager = new CommandManager();
+    public static CommandManager commandManager = new KotlinCommandManager();
 
     /**
      * We are using slf4j to log things to the console
@@ -591,6 +592,9 @@ public class AirUtils {
         }
     }
 
+    /**
+     * Stops everything
+     */
     public static void stop() {
         try {
             db.getConnManager().getConnection().close();
@@ -601,6 +605,12 @@ public class AirUtils {
         audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
     }
 
+    /**
+     * This gets the channel from a name or id
+     * @param channelId the channel name or id
+     * @param guild the guild to search in
+     * @return the channel
+     */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
 
@@ -616,5 +626,28 @@ public class AirUtils {
         }
 
         return tc;
+    }
+
+    /**
+     * This generates a random string withe the specified length
+     * @param length the length that the string should be
+     * @return the generated string
+     */
+    public static String generateRandomString(int length) {
+        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
+        StringBuilder output = new StringBuilder();
+        while (output.length() < length) { // length of the random string.
+            int index = (int) (rand.nextFloat() * chars.length());
+            output.append(chars.charAt(index));
+        }
+        return output.toString();
+    }
+
+    /**
+     * Returns a random string that has 10 chars
+     * @return a random string that has 10 chars
+     */
+    public static String generateRandomString() {
+        return generateRandomString(10);
     }
 }

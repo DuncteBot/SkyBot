@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -44,10 +44,8 @@ public class KittyCommand extends Command {
             Document doc = Jsoup.parse(raw.getAllElements().html(), "", Parser.xmlParser());
 
             String fullUrl = doc.select("url").first().text();
-            String fileName = fullUrl.split("/")[3];
 
-            event.getChannel().sendFile(new URL(fullUrl).openStream(),
-                    fileName, null).queue();
+            sendEmbed(event, EmbedUtils.embedImage(fullUrl));
         } catch (Exception e) {
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
             e.printStackTrace();

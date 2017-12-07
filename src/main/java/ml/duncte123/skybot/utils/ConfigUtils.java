@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -37,7 +37,7 @@ public class ConfigUtils {
             this.config = ConfigLoader.getConfig(new File("config.json"));
             AirUtils.log(Level.INFO, "Loaded config.json");
         } catch (Exception e) {
-            AirUtils.log(Level.ERROR, "Could not load config, aborting");
+            AirUtils.logger.error("Could not load config, aborting", e);
             System.exit(-1);
         }
     }

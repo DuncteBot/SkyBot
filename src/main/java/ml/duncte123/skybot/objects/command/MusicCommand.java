@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -75,7 +75,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        if (!audioManager.getConnectedChannel().getMembers().contains(event.getMember())) {
+        if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
             sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }

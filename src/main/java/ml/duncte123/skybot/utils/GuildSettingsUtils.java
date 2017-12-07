@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -213,10 +213,12 @@ public class GuildSettingsUtils {
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
+            if (database != null) {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
         }
         AirUtils.guildSettings.put(g.getId(), newGuildSettings);

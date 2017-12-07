@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -49,14 +49,15 @@ public class SettingsCommand extends Command {
         switch (invoke) {
             case "settings":
             case "options":
-                //true ✅
-                //false ❌
+                //true <:check:314349398811475968>
+                //false <:xmark:314349398824058880>
+                TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild());
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                        "**Show join messages:** " + (settings.isEnableJoinMessage() ? "✅" : "❌") + "\n" +
-                        "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "✅" : "❌") + "\n" +
+                        "**Show join messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
+                        "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
-                        "**Log Channel:** " + AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild()).getAsMention()
+                        "**Log Channel:** " + (logChan !=null ? logChan.getAsMention(): "none")
                 );
                 sendEmbed(event, message);
                 break;

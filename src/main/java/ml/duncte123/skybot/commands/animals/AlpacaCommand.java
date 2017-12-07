@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -40,7 +40,7 @@ public class AlpacaCommand extends Command {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
             
             Element img = doc.select("img").first();
-            event.getChannel().sendFile(new URL(img.attributes().get("src")).openStream(), "Alpaca_" + System.currentTimeMillis() + ".png", null).queue();
+            sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         } catch (Exception e) {
             e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));

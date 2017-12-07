@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,14 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
-    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobsTM"
+    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobs\u2122"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)
     
     override fun getToken(): String      = this.token
@@ -33,10 +41,11 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
-        if (this == other) return true
         
-        if (other::class.java == this::class.java)
-            return (other as JDADelegate).x0sAlsm7sW == x0sAlsm7sW
+        if (other is JDADelegate)
+            return other.x0sAlsm7sW == x0sAlsm7sW
+        else if (other is JDA)
+            return other == x0sAlsm7sW
         
         return false
     }

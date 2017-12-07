@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,14 +22,12 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -104,7 +102,6 @@ public abstract class Command {
                                                 .addHeader("Authorization", token)
                                                 .build())
                                         .execute();
-            System.out.println(token);
             JSONArray json = new JSONArray(response.body().source().readUtf8());
             
             upvotedIds.clear();
@@ -146,7 +143,7 @@ public abstract class Command {
      * @param args   The command agruments
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
+    public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
     
     /**
      * The usage instructions of the command
@@ -187,6 +184,12 @@ public abstract class Command {
      * @param message the message to add the reaction to
      */
     protected void sendError(Message message) {
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
         message.addReaction("❌").queue();
     }
 
@@ -199,6 +202,14 @@ public abstract class Command {
     protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
         if (print)
             AirUtils.logger.error(error.getLocalizedMessage(), error);
+
+        //Makes no difference if we use sendError or check here both perm types
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
 
         message.addReaction("❌").queue();
 
@@ -214,6 +225,12 @@ public abstract class Command {
      * @param message the message to add the reaction to
      */
     protected void sendSuccess(Message message) {
+        if (message.getChannelType() == ChannelType.TEXT) {
+            TextChannel channel = message.getTextChannel();
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                return;
+            }
+        }
         message.addReaction("✅").queue();
     }
     
@@ -258,7 +275,9 @@ public abstract class Command {
      * @param msg   the message to send
      */
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
-        event.getChannel().sendMessage(msg).queue();
+        //Only send a message if we can talk
+        if(event.getChannel().canTalk())
+            event.getChannel().sendMessage(msg).queue();
     }
     
     @Override

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,16 +21,11 @@ package ml.duncte123.skybot.utils;
 import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.local.LocalAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
@@ -45,6 +40,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+@SinceSkybot(version = "3.5.1")
 public class AudioUtils {
 
     /**
@@ -73,18 +69,8 @@ public class AudioUtils {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
         this.playerManager = new DefaultAudioPlayerManager();
-        playerManager.registerSourceManager(new YoutubeAudioSourceManager());
-        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
-        playerManager.registerSourceManager(new BandcampAudioSourceManager());
-        playerManager.registerSourceManager(new VimeoAudioSourceManager());
-        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-        playerManager.registerSourceManager(new BeamAudioSourceManager());
-        //playerManager.registerSourceManager(new HttpAudioSourceManager());
-        playerManager.registerSourceManager(new LocalAudioSourceManager());
         
-        //AudioSourceManagers.registerRemoteSources(playerManager);
-        // No one plays audio from the host machine ;)
-        // AudioSourceManagers.registerLocalSource(playerManager);
+        AudioSourceManagers.registerRemoteSources(playerManager);
         
         musicManagers = new HashMap<>();
     }
@@ -92,13 +78,13 @@ public class AudioUtils {
     /**
      * This will return the formatted timestamp for the current playing track
      *
-     * @param miliseconds the miliseconds that the track is at
+     * @param milliseconds the milliseconds that the track is at
      * @return a formatted time
      */
-    public static String getTimestamp(long miliseconds) {
-        int seconds = (int) (miliseconds / 1000) % 60;
-        int minutes = (int) ((miliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((miliseconds / (1000 * 60 * 60)) % 24);
+    public static String getTimestamp(long milliseconds) {
+        int seconds = (int) (milliseconds / 1000) % 60;
+        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
         
         if (hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);
@@ -187,8 +173,7 @@ public class AudioUtils {
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()), channel);
-                
+                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage() + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"), channel);
             }
         });
     }
@@ -226,11 +211,13 @@ public class AudioUtils {
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
-        if (!tc.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-            channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-            return;
+        if(tc.canTalk()) {
+            if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
+                channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+                return;
+            }
+            channel.sendMessage(embed).queue();
         }
-        channel.sendMessage(embed).queue();
     }
     
 }

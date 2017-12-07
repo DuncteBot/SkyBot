@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.objects.delegate;
 
 import Java.lang.VRCubeException;
-import groovy.lang.GroovyShell;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
@@ -27,7 +26,7 @@ import java.io.File;
 import java.io.IOException;
 
 public class ScriptDelegate extends Script {
-    private int counter;
+    private int counter = 0;
 
     public ScriptDelegate(Script s) {
         super(s.getBinding());
@@ -86,12 +85,17 @@ public class ScriptDelegate extends Script {
         return "You will never find me.";
     }
 
-    private synchronized String generateScriptName() {
-        return "Script" + (++counter);
+    public int quick_mafs(int x) {
+        int the_thing = x + 2 -1;
+        return the_thing;
+    }
+
+    public boolean isEven(int number) {
+        return number % 2 == 0;
     }
 
     @Override
     public String toString() {
-        return generateScriptName();
+        return "Script" + (++counter);
     }
 }

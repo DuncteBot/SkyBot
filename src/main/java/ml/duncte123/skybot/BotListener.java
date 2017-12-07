@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -25,10 +25,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -42,11 +39,13 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class BotListener extends ListenerAdapter {
 
@@ -138,15 +137,17 @@ public class BotListener extends ListenerAdapter {
         String rw = event.getMessage().getRawContent();
         
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
-                && rw.equals(event.getJDA().getSelfUser().getAsMention()))
+                && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                             event.getAuthor().getId(),
                             Settings.prefix)
             ).queue();
-        else if (!rw.startsWith(Settings.prefix) &&
+            return;
+        }else if (!rw.startsWith(Settings.prefix) &&
                 !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
+                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention())
+                && !rw.startsWith(Settings.otherPrefix)) {
             return;
         }
 
@@ -166,13 +167,17 @@ public class BotListener extends ListenerAdapter {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
             final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command
-            AirUtils.commandManager.getCommand("chat").executeCommand("chat", args, event);
+            Command cmd = AirUtils.commandManager.getCommand("chat");
+            if (cmd != null)
+                cmd.executeCommand("chat", args, event);
             return;
         }
         //Store the channel
         lastGuildChannel.put(event.getGuild(), event.getChannel());
         //Handle the command
-        AirUtils.commandManager.runCommand(rw, event);
+        AirUtils.commandManager.runCommand(rw
+                .replaceFirst(Settings.otherPrefix
+                        ,Settings.prefix), event);
     }
     
     /**
@@ -276,7 +281,7 @@ public class BotListener extends ListenerAdapter {
                 return;
             }
             
-            channelLeaveThing(event.getGuild(), event.getChannelLeft());
+            channelCheckThing(event.getGuild(), event.getChannelLeft());
         }
     }
     
@@ -292,7 +297,7 @@ public class BotListener extends ListenerAdapter {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
                 }
-                channelLeaveThing(event.getGuild(), event.getChannelLeft());
+                channelCheckThing(event.getGuild(), event.getChannelLeft());
 
             }
 
@@ -302,28 +307,24 @@ public class BotListener extends ListenerAdapter {
                     return;
                     //System.out.println("Self (this might be buggy)");
                 }
-                if (event.getChannelJoined().getMembers().size() <= 1) {
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.stopTrack();
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).player.setPaused(false);
-                    AirUtils.audioUtils.getMusicManager(event.getGuild()).scheduler.queue.clear();
-                    lastGuildChannel.get(event.getGuild()).sendMessage(EmbedUtils.embedMessage("Leaving voice channel because all the members have left it.")).queue();
-                    if (event.getGuild().getAudioManager().isConnected()) {
-                        event.getGuild().getAudioManager().setSendingHandler(null);
-                        event.getGuild().getAudioManager().closeAudioConnection();
-                    }
-                }
+                channelCheckThing(event.getGuild(), event.getChannelJoined());
             }
             
         }
     }
 
     /**
-     * This handles the guild leave/ join events
+     * This handles the guild leave/ join events to deferments if the channel is empty
      * @param g the guild
      * @param vc the voice channel
      */
-    private void channelLeaveThing(Guild g, VoiceChannel vc) {
-        if (vc.getMembers().size() <= 1) {
+    private void channelCheckThing(Guild g, VoiceChannel vc) {
+
+        //Filter out all bots
+        List<Member> membersInChannel = vc.getMembers().parallelStream()
+                .filter(m -> !m.getUser().isBot()).collect(Collectors.toList());
+
+        if (membersInChannel.size() < 1) {
             GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);

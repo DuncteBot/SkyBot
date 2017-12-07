@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.1.61'
+    ext.kotlin_version = '1.2.0'
 
     repositories {
         mavenCentral()
@@ -32,17 +32,13 @@ plugins {
     id 'idea'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'org.jetbrains.kotlin.jvm' version '1.1.60'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.0'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
-apply plugin: 'groovy'
-
 group = 'ml.duncte123.skybot'
 
-version '3.51.7'
-
-compileGroovy.options.encoding = "UTF-8"
+version '3.53.0'
 
 sourceCompatibility = 1.8
 
@@ -75,7 +71,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'b55c183' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8124169' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
@@ -89,9 +85,10 @@ dependencies {
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10' // to also compile it
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.12' // to also compile it
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
+    //JSON Extension
     compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
     // Logback core
     compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
@@ -99,8 +96,8 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jre8', version: '1.1.60'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.1.60'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.0'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.0'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
 
     //test stufzz

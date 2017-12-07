@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,6 @@ import Java.lang.VRCubeException;
 import ml.duncte123.skybot.commands.animals.*;
 import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
-import ml.duncte123.skybot.commands.fun.*;
 import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
 import ml.duncte123.skybot.commands.guild.mod.*;
 import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
@@ -35,6 +34,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -55,15 +55,8 @@ public class CommandManager {
         this.addCommand(new HelpCommand());
         this.addCommand(new UserinfoCommand());
         this.addCommand(new BotinfoCommand());
-        
-        //fun commands
-        this.addCommand(new DialogCommand());
-        this.addCommand(new KpopCommand());
-        this.addCommand(new JokeCommand());
-        this.addCommand(new CoinCommand());
-        this.addCommand(new FlipCommand());
-        this.addCommand(new TagCommand());
-        
+
+
         //animal commands
         this.addCommand(new LlamaCommand());
         this.addCommand(new CatCommand());
@@ -74,22 +67,22 @@ public class CommandManager {
 
         //essentials commands
         this.addCommand(new EvalCommand());
-        
+
         if (AirUtils.alphaEngine != null)
             this.addCommand(new WolframAlphaCommand());
-        
+
         //guild commands
         this.addCommand(new GuildInfoCommand());
-        
+
         //mod commands
         this.addCommand(new BanCommand());
         this.addCommand(new HackbanCommand());
         this.addCommand(new SoftbanCommand());
         this.addCommand(new UnbanCommand());
         this.addCommand(new KickCommand());
-        this.addCommand(new CleenupCommand());
+        this.addCommand(new CleanupCommand());
         this.addCommand(new AnnounceCommand());
-        
+
         //Guild owner commands
         this.addCommand(new SettingsCommand());
     }
@@ -118,7 +111,7 @@ public class CommandManager {
         
         cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         
-        return cmd.isPresent() ? cmd.get() : null;
+        return cmd.orElse(null);
     }
     
     /**
@@ -141,8 +134,16 @@ public class CommandManager {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
-        
-        if (this.commands.stream().map(Command::getName).anyMatch(c -> command.getName().equalsIgnoreCase(c))) {
+
+        //ParallelStream for less execution time
+        if (this.commands.parallelStream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
+            @SinceSkybot(version = "3.52.1")
+            List<String> aliases = Arrays.asList(this.commands.parallelStream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+            for (String alias : command.getAliases()) {
+                if (aliases.contains(alias)) {
+                    return false;
+                }
+            }
             return false;
         }
         this.commands.add(command);

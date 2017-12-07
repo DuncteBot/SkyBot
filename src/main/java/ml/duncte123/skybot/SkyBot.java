@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,13 +29,17 @@ import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.LoginException;
+
 import static ch.qos.logback.classic.Level.INFO;
 import static org.slf4j.event.Level.ERROR;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
  */
-
+//Skybot version 1.0 and 2.0 where written in php
+@SinceSkybot(version = "3.0.0")
+@Author
 public class SkyBot {
 
     /**
@@ -69,10 +73,6 @@ public class SkyBot {
             AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
-
-        //This is a little hack because we can't use groovy and kotlin in the same classes
-        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        new RegisterKotlinCommands();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
@@ -91,7 +91,7 @@ public class SkyBot {
         String name = AirUtils.config.getString("discord.game.name", "over shard #{shardId}");
         
         Game.GameType type = Game.GameType.fromKey(gameId);
-        
+
         try {
             //Set up sharding for the bot
             new DefaultShardManagerBuilder()
@@ -104,7 +104,7 @@ public class SkyBot {
                     .setToken(token)
                     .build();
         }
-        catch(RuntimeException e) {
+        catch(LoginException e) {
             //Kill the system if we can't log in
             AirUtils.logger.error("Could not log in, check if your token is correct", e);
             System.exit(-4);

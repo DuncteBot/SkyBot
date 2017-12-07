@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,17 +18,16 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
-
-import java.util.Arrays;
 
 public class AnnounceCommand extends Command {
     
@@ -52,19 +51,28 @@ public class AnnounceCommand extends Command {
             sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
             return;
         }
-        
+
         try {
             TextChannel chann = event.getMessage().getMentionedChannels().get(0);
-            String msg = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-            
-            MessageEmbed embed = EmbedUtils.embedMessage(msg);
-            
-            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-                chann.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-                sendSuccess(event.getMessage());
+
+            if (!chann.canTalk()) {
+                sendError(event.getMessage());
                 return;
             }
-            chann.sendMessage(embed).queue();
+
+            String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
+            @SinceSkybot(version = "3.52.3")
+            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg);
+
+            if (!event.getMessage().getAttachments().isEmpty()) {
+                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
+            }
+            
+            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
+                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
+            } else {
+                chann.sendMessage(embed.build()).queue();
+            }
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {

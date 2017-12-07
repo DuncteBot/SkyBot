@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,10 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval;
 import Java.lang.VRCubeException;
 import groovy.lang.GroovyShell;
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter;
-import ml.duncte123.skybot.entities.delegate.GuildDelegate;
-import ml.duncte123.skybot.entities.delegate.JDADelegate;
-import ml.duncte123.skybot.entities.delegate.MemberDelegate;
-import ml.duncte123.skybot.entities.delegate.UserDelegate;
+import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -38,6 +35,7 @@ import org.kohsuke.groovy.sandbox.SandboxTransformer;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
+import javax.script.ScriptException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -99,6 +97,21 @@ public class EvalCommand extends Command {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         );
+
+        //Add functions to the owner eval
+        //This is because I want to use those methods in the eval
+        try {
+            engine.eval("def isEven(int number) {\n" +
+                        "return number % 2 == 0\n" +
+                    "}\n");
+            engine.eval( "def quick_mafs(int x) {\n" +
+                        "def the_thing = x + 2 -1 \n " +
+                        "return the_thing \n" +
+                    "}");
+        }
+        catch (ScriptException e) {
+            e.printStackTrace();
+        }
     }
     
     @Override
@@ -116,7 +129,7 @@ public class EvalCommand extends Command {
                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"));
             return;
         }
-        
+
         ScheduledExecutorService service = this.service.get();
         
         ScheduledFuture<Object> future = null;
@@ -153,6 +166,9 @@ public class EvalCommand extends Command {
                     protected_.setVariable("guild", new GuildDelegate(event.getGuild()));
                     protected_.setVariable("jda", new JDADelegate(event.getJDA()));
                     protected_.setVariable("member", new MemberDelegate(event.getMember()));
+                    protected_.setVariable("channel", new TextChannelDelegate(event.getChannel()));
+                    if (event.getChannel().getParent() != null)
+                        protected_.setVariable("category", new CategoryDelegate(event.getChannel().getParent()));
                     
                     future = service.schedule(() -> {
                         filter.register();

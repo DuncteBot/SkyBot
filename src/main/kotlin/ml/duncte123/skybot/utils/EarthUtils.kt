@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,24 +16,35 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.utils
 
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.DocumentationNeeded
+import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.entities.delegate.*
+import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.managers.Presence
 import org.json.JSONArray
 import org.json.JSONObject
+import java.io.File
+import java.io.FileOutputStream
 
+@SinceSkybot("3.51.5")
+@DocumentationNeeded
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class EarthUtils {
     companion object {
         @JvmStatic
         fun throwableToJSONObject(throwable: Throwable): JSONObject {
-            var json = JSONObject().put("className", throwable::class.java.name)
-                        .put("message", throwable.message)
-                        .put("localiziedMessage", throwable.localizedMessage)
-                        .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
-                        .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
-                        .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
-            if(throwable.cause != null)
-                json.put("cause", throwableToJSONObject(throwable.cause!!))
-            return json
+            return JSONObject().put("className", throwable::class.java.name)
+                    .put("message", throwable.message)
+                    .put("localiziedMessage", throwable.localizedMessage)
+                    .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
+                    .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
+                    .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
         }
 
         @JvmStatic
@@ -41,14 +52,43 @@ class EarthUtils {
                 JSONArray(throwables.map { throwableToJSONObject(it) })
 
         @JvmStatic
-        private fun stacktraceArrayToJSONArray(stacktraces: Array<StackTraceElement>): JSONArray =
-                JSONArray(stacktraces.map { stacktraceToJSONObject(it) })
+        private fun stacktraceArrayToJSONArray(stackTraces: Array<StackTraceElement>): JSONArray =
+                JSONArray(stackTraces.map { stackTraceToJSONObject(it) })
 
         @JvmStatic
-        fun stacktraceToJSONObject(stackTraceElement: StackTraceElement) =
+        private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement) =
                 JSONObject().put("className", stackTraceElement.className)
-                            .put("methodName", stackTraceElement.methodName)
-                            .put("lineNumber", stackTraceElement.lineNumber)
-                            .put("isNative", stackTraceElement.isNativeMethod)
+                        .put("methodName", stackTraceElement.methodName)
+                        .put("lineNumber", stackTraceElement.lineNumber)
+                        .put("isNative", stackTraceElement.isNativeMethod)
+
+        @JvmStatic
+        fun write(file: String, content: String) {
+            val file = File(file)
+
+            if (!file.exists())
+                file.createNewFile()
+
+            FileOutputStream(file).write(content.toByteArray())
+        }
+
+        @JvmStatic
+        fun delegateOf(jdaobject: Any?): Any? {
+            return when (jdaobject) {
+                is Category -> CategoryDelegate(jdaobject)
+                is TextChannel -> TextChannelDelegate(jdaobject)
+                is VoiceChannel -> VoiceChannelDelegate(jdaobject)
+                is Channel -> ChannelDelegate(jdaobject)
+                is Guild -> GuildDelegate(jdaobject)
+                is JDA -> JDADelegate(jdaobject)
+                is Member -> MemberDelegate(jdaobject)
+                is Presence -> PresenceDelegate(jdaobject)
+                is Role -> RoleDelegate(jdaobject)
+                is User -> UserDelegate(jdaobject)
+                else -> {
+                    null
+                }
+            }
+        }
     }
 }

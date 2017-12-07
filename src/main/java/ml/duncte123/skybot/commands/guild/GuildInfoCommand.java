@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Sanduhr32
+ *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -54,10 +54,10 @@ public class GuildInfoCommand extends Command {
                                       .addField("Guild Region", g.getRegion().getName(), true)
                                       .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                eb.addField("Guild Invite",
-                        "[https://discord.gg/" + g.getInvites().complete().get(0).getCode() +
-                                "](https://discord.gg/" + g.getInvites().complete().get(0).getCode() + ")",
-                        true);
+                g.getInvites().queue(i -> eb.addField("Guild Invite",
+                        "[https://discord.gg/" + i.get(0).getCode() +
+                                "](https://discord.gg/" + i.get(0).getCode() + ")",
+                        true));
             }
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
