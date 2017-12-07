@@ -40,11 +40,12 @@ class ChatCommand : Command() {
 
 
     init {
+        AirUtils.log(Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
         ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                .setNick(Settings.defaultName )
+                .setNick(Settings.defaultName.plus(System.currentTimeMillis()))
                 .create(Consumer {
-                   AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
+                    AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
                 })
     }
 

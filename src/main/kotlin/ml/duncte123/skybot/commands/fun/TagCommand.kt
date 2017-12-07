@@ -40,7 +40,7 @@ class TagCommand : Command() {
                         "$PREFIX$invoke list => lists all the tags\n" +
                         "$PREFIX$invoke delete => removes a tag\n" +
                         "$PREFIX$invoke author => displays who made the tag\n" +
-                        "$PREFIX$invoke create => make a new tag", "cs").build()
+                        "$PREFIX$invoke create => make a new tag", "YAML").build()
 
         if (args.size == 0) {
             sendMsg(event, helpMessage)
