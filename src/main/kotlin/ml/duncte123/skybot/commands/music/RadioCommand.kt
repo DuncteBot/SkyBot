@@ -67,6 +67,7 @@ public class RadioCommand : MusicCommand() {
 
         //International radio stations
         //TODO: add international radio stations
+        radioStreams += RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "trap.fm/ ")
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
