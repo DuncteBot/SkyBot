@@ -62,17 +62,13 @@ public class AnnounceCommand extends Command {
 
             String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
             @SinceSkybot(version = "3.52.3")
-            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg);
+            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
             if (!event.getMessage().getAttachments().isEmpty()) {
                 event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
             }
             
-            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
-            } else {
-                chann.sendMessage(embed.build()).queue();
-            }
+            sendEmbed(event, embed.build());
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {
@@ -83,7 +79,8 @@ public class AnnounceCommand extends Command {
     
     @Override
     public String help() {
-        return "Announces a message.";
+        return "Announces a message.\n" +
+                "Usage `" + PREFIX + getName() + " <message>`";
     }
     
     @Override

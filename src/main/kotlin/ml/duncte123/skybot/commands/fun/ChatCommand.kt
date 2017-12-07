@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
+import org.json.JSONException
 import org.slf4j.event.Level
 import java.util.function.Consumer
 
@@ -40,11 +41,12 @@ class ChatCommand : Command() {
 
 
     init {
+        AirUtils.log(Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
         ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                .setNick(Settings.defaultName )
+                .setNick(Settings.defaultName.plus(System.currentTimeMillis()))
                 .create(Consumer {
-                   AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
+                    AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
                 })
     }
 
@@ -66,10 +68,15 @@ class ChatCommand : Command() {
 
         ai.ask(message, Consumer{ json ->
             AirUtils.log(Level.DEBUG, "New response: $json, this took ${System.currentTimeMillis() - time}ms")
-            if(json["status"] == "success") {
-                sendMsg(event, "${event.author.asMention}, ${json["response"]}")
-            } else {
-                sendMsg(event, "Error: ${json["response"]}")
+            try {
+                if (json["status"] == "success") {
+                    sendMsg(event, "${event.author.asMention}, ${json["response"]}")
+                } else {
+                    sendMsg(event, "Error: ${json["response"]}")
+                }
+            }
+            catch (e: JSONException) {
+                sendMsg(event, "Chat is unavailable at this moment in time, please try again later.")
             }
         })
     }

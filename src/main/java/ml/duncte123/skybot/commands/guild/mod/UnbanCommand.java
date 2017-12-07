@@ -48,7 +48,7 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        if (args[0].isEmpty()) {
+        if (args == null || args[0].isEmpty()) {
             sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
             return;
         }

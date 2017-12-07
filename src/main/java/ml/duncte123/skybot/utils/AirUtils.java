@@ -183,7 +183,7 @@ public class AirUtils {
         postFields.put("guildId", guildId);
         
         try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/", postFields).close();
+            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -584,7 +584,7 @@ public class AirUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().source().readUtf8();
         }
         catch (Exception e) {
             e.printStackTrace();
