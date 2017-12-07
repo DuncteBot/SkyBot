@@ -20,7 +20,7 @@
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.commands.`fun`.BlobCommand
+import ml.duncte123.skybot.commands.`fun`.*
 import ml.duncte123.skybot.commands.animals.BirbCommand
 import ml.duncte123.skybot.commands.essentials.RestartCommand
 import ml.duncte123.skybot.commands.essentials.UpdateCommand
@@ -38,6 +38,10 @@ class KotlinCommandManager : CommandManager() {
         this.addCommand(OneLinerCommands())
         //fun
         this.addCommand(BlobCommand())
+        this.addCommand(ChatCommand())
+        this.addCommand(CoinCommand())
+        this.addCommand(TextToBricksCommand())
+        this.addCommand(KpopCommand())
         //animals
         this.addCommand(BirbCommand())
         //essentials

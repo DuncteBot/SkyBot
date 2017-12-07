@@ -16,36 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
+import java.util.concurrent.TimeUnit
 
-class TextToBricksCommand extends Command {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+class CoinCommand: Command() {
 
-        if (args.length < 1) {
-            sendMsg(event, "Correct usage: `${Settings.prefix}$invoke <words>`")
-            return
+    val imagesArr = arrayOf("heads.png", "tails.png")
+
+    init {
+        this.category = CommandCategory.FUN
+    }
+
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        event.channel.sendTyping().queue{
+            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
+                sendEmbed(event, EmbedUtils.embedImage("https://dshelmondgames.ml/img/coin/" + imagesArr[AirUtils.rand.nextInt(2)]))
+            })
         }
-
-        def output = StringUtils.join(args, " ")
-                .replaceAll("([a-zA-Z])", ":regional_indicator_\$1:")
-                .replaceAll("([0-9])", "\$1\u20E3")
-        sendEmbed(event, EmbedUtils.embedMessage(output))
     }
 
-    @Override
-    String help() {
-        return "Convert your text to bricks"
-    }
+    override fun help() = "flips a coin.\nUsage: `$PREFIX$name`"
 
-    @Override
-    String getName() {
-        return "ttb"
-    }
+    override fun getName() = "coin"
 }

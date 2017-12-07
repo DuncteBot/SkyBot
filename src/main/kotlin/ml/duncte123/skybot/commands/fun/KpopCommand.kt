@@ -16,45 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
-import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
-
-import java.sql.Connection
-import java.sql.PreparedStatement
 import java.sql.ResultSet
 import java.sql.SQLException
-import java.sql.Statement
 
-class KpopCommand extends Command {
+class KpopCommand: Command() {
 
-    KpopCommand() {
+    init {
         this.category = CommandCategory.FUN
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        def id = "",
-            name = "",
-            group = "",
-            imgUrl = ""
-        ResultSet res
+        val dbName = AirUtils.db.name
+        val database = AirUtils.db.connManager.connection
 
-        String dbName = AirUtils.db.name
-        Connection database = AirUtils.db.connManager.getConnection()
+        var id = ""
+        var name = ""
+        var group = ""
+        var imgUrl = ""
+        val res: ResultSet
+
+
         try {
 
-            if (args.length > 0) {
+            if (args.size > 0) {
 
-                PreparedStatement statement = database.prepareStatement("SELECT * FROM ${dbName}.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
+                val statement = database.prepareStatement("SELECT * FROM ${dbName}.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
                 statement.setString(1, "%" + StringUtils.join(args, " ") + "%")
                 statement.setString(2, StringUtils.join(args, " "))
 
@@ -62,7 +58,7 @@ class KpopCommand extends Command {
 
             } else {
 
-                Statement statement = database.createStatement()
+                val statement = database.createStatement()
 
                 res = statement.executeQuery("SELECT * FROM ${dbName}.kpop ORDER BY RAND() LIMIT 1")
             }
@@ -74,33 +70,27 @@ class KpopCommand extends Command {
                 imgUrl = res.getString("img")
             }
 
-            EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            val eb = EmbedUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group $group")
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
                     .setFooter("Query id: $id", Settings.defaultIcon)
             sendEmbed(event, eb.build())
-        } catch (Exception e) {
-            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: ${e.toString()}")
+        } catch (e: Exception) {
+            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
             e.printStackTrace()
         } finally {
             try {
                 database.close()
-            } catch (SQLException e2) {
+            } catch (e2: SQLException) {
                 e2.printStackTrace()
             }
+
         }
-
     }
 
-    @Override
-    String help() {
-        return "Gives you a random kpop member, command suggestion by Exa\n" +
-                "Usage: `$PREFIX$name [search term]`"
-    }
+    override fun help() = "Gives you a random kpop member, command suggestion by Exa\n" +
+            "Usage: `$PREFIX$name [search term]`"
 
-    @Override
-    String getName() {
-        return "kpop"
-    }
+    override fun getName() = "kpop"
 }

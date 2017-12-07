@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
 
@@ -142,7 +143,7 @@ public abstract class Command {
      * @param args   The command agruments
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
-    public abstract void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event);
+    public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
     
     /**
      * The usage instructions of the command
