@@ -98,10 +98,10 @@ class AI(val user: String, val api: String) {
         postData += Pair("text", question)
 
 
-        val r: Response = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
+        val r = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
 
         try {
-            callback.accept(JSONObject(r.body()?.source()?.readUtf8()))
+            callback.accept(JSONObject(r.body()!!.source().readUtf8()))
         }
         catch (e: IOException) {
             //If the logger is set to debug, print the stacktrace
