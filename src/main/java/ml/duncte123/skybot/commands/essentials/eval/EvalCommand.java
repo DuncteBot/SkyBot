@@ -183,7 +183,7 @@ public class EvalCommand extends Command {
                         (new MessageBuilder())
                                 .append(out.toString())
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                                .forEach(it -> event.getChannel().sendMessage(it).queue());
+                                .forEach(it -> sendMsg(event, it));
                     else {
                         if (filter.containsMentions(out.toString())) {
                             sendMsg(event, "**ERROR:** Mentioning people!");
