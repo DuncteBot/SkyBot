@@ -38,7 +38,7 @@ class OneLinerCommands : Command() {
         when (invoke) {
             "ping" -> {
                 val time = System.currentTimeMillis()
-                val avg = if (getAverage() != Double.NaN) "\nAverage music ping: ${getAverage()}ms" else ""
+                val avg = if (!getAverage().isNaN()) "\nAverage music ping: ${getAverage()}ms" else ""
 
                 event.channel.sendMessage("PONG!").queue {
                     it.editMessage("PONG!\n" +
