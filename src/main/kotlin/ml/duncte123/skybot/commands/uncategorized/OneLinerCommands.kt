@@ -42,7 +42,7 @@ class OneLinerCommands : Command() {
 
                 event.channel.sendMessage("PONG!").queue {
                     it.editMessage("PONG!\n" +
-                            "Ping is: ${System.currentTimeMillis() - time}ms\n" +
+                            "Message ping is: ${System.currentTimeMillis() - time}ms\n" +
                             "Websocket ping: ${event.jda.ping}ms\n" +
                             "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms$avg").queue()
                 }
