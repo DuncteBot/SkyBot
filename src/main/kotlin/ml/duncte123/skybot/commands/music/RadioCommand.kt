@@ -123,7 +123,7 @@ public class RadioCommand : MusicCommand() {
     override fun getAliases(): Array<String> = arrayOf("pstream", "stream", "webstream", "webradio")
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
-        val streams = radioStreams
+        var streams = radioStreams
         if (!full) {
             streams.filter { it.public }
         }
