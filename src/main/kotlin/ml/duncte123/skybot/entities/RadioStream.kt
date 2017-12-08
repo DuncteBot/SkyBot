@@ -29,4 +29,6 @@ import ml.duncte123.skybot.SinceSkybot
 @DocumentationNeeded
 class RadioStream(public val name: String, public val url: String, public val website: String?, val public: Boolean = true) {
     fun hasWebsite() = !website.isNullOrBlank()
+
+    override fun toString(): String = "[$name]($url) ${if (hasWebsite()) "from [$website]($website)" else ""}"
 }
