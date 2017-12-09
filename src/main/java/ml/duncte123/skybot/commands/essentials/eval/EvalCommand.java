@@ -153,6 +153,7 @@ public class EvalCommand extends Command {
                     engine.put("channel", event.getMessage().getTextChannel());
                     engine.put("guild", event.getGuild());
                     engine.put("member", event.getMember());
+                    engine.put("user", event.getAuthor());
                     engine.put("jda", event.getJDA());
                     engine.put("shardManager", event.getJDA().asBot().getShardManager());
                     engine.put("event", event);
