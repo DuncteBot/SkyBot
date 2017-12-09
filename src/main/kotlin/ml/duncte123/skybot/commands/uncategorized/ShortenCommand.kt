@@ -36,7 +36,7 @@ class ShortenCommand : Command() {
         sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
-    override fun help(): String = """"Shortens a url
+    override fun help(): String = """Shortens a url
             |Usage: `${Settings.prefix}$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"
