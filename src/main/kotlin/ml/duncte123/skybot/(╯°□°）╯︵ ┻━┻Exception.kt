@@ -20,11 +20,14 @@
 
 package ml.duncte123.skybot
 
+import Java.lang.VRCubeException
+
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class `(╯°□°）╯︵ ┻━┻Exception`() : Exception() /* This might be an VRCubeException */{
+@SinceSkybot("3.53.4")
+@DocumentationNeeded
+class `(╯°□°）╯︵ ┻━┻Exception`() : VRCubeException() {
 
     override lateinit var message: String
-
 
     fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
 
