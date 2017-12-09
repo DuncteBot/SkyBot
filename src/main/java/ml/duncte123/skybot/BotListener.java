@@ -277,12 +277,13 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
-            if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
-                return;
+        if(event.getGuild().getAudioManager().isConnected()) {
+            if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
+                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                    return;
+                }
+                channelCheckThing(event.getGuild(), event.getChannelLeft());
             }
-            
-            channelCheckThing(event.getGuild(), event.getChannelLeft());
         }
     }
     
@@ -293,24 +294,25 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) && event.getGuild().getAudioManager().isConnected()) {
-            if (event.getChannelLeft() != null) {
-                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
-                    return;
-                }
-                channelCheckThing(event.getGuild(), event.getChannelLeft());
+        if(event.getGuild().getAudioManager().isConnected()) {
+            if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
+                if (event.getChannelLeft() != null) {
+                    if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                        return;
+                    }
+                    channelCheckThing(event.getGuild(), event.getChannelLeft());
 
-            }
-
-            if (event.getChannelJoined() != null) {
-                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
-                        !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
-                    return;
-                    //System.out.println("Self (this might be buggy)");
                 }
-                channelCheckThing(event.getGuild(), event.getChannelJoined());
+
+                if (event.getChannelJoined() != null) {
+                    if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
+                            !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                        return;
+                        //System.out.println("Self (this might be buggy)");
+                    }
+                    channelCheckThing(event.getGuild(), event.getChannelJoined());
+                }
             }
-            
         }
     }
 
