@@ -67,8 +67,13 @@ public class AnnounceCommand extends Command {
             if (!event.getMessage().getAttachments().isEmpty()) {
                 event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
             }
-            
-            sendEmbed(event, embed.build());
+
+            //we are handling the sending here because we need to send to chann
+            if (!event.getGuild().getSelfMember().hasPermission(chann, Permission.MESSAGE_EMBED_LINKS)) {
+                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
+                return;
+            }
+            chann.sendMessage(embed.build()).queue();
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {
