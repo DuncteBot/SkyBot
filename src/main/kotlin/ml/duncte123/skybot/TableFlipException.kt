@@ -16,12 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:JvmName("SkybotTypeAliasesKt")
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.entities.SizedList
+import Java.lang.VRCubeException
 
-@SinceSkybot("3.51.10") @Author(nickname = "Sanduhr32", author = "Maurice R S") public typealias FixedList<E> = SizedList<E>
-@SinceSkybot("3.53.4") @Author(nickname = "Sanduhr32", author = "Maurice R S") public typealias TFException = TableFlipException
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class TableFlipException() : VRCubeException() {
+
+    override lateinit var message: String
+
+
+    fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
+
+    constructor(message: String) : this() {
+        this.message = message
+    }
+}
