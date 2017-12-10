@@ -23,7 +23,6 @@ package ml.duncte123.skybot.entities.delegate
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.TFException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
