@@ -20,10 +20,10 @@
 
 package ml.duncte123.skybot.entities.delegate
 
-import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.TFException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
@@ -36,7 +36,7 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     
     override fun getToken(): String      = this.token
     override fun getPresence(): Presence = this.presence
-    override fun shutdown()              = throw VRCubeException("Can not shutdown")
+    override fun shutdown()              = throw TFException("Can not shutdown")
     override fun shutdownNow()           = this.shutdown()
     
     override fun equals(other: Any?): Boolean {
