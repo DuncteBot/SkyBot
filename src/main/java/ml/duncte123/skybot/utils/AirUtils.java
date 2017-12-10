@@ -650,4 +650,23 @@ public class AirUtils {
     public static String generateRandomString() {
         return generateRandomString(10);
     }
+
+    /**
+     * Returns a flipped table
+     * @return a flipped table
+     */
+    public static String flipTable() {
+        switch (AirUtils.rand.nextInt(4)){
+            case 0:
+                return "（╯°□°）╯︵┻━┻";
+            case 1:
+                return "（ノ゜Д゜）ノ︵┻━┻";
+            case 2:
+                return  "（ノಥ益ಥ）ノ︵┻━┻";
+            case 3:
+               return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+           default:
+               return "I CAN'T FLIP THIS TABLE";
+        }
+    }
 }

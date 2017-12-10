@@ -41,10 +41,10 @@ class ChatCommand : Command() {
 
 
     init {
-        AirUtils.log(Level.INFO, "Starting AI")
+        AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
         ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                .setNick(Settings.defaultName.plus(System.currentTimeMillis()))
+                .setNick(AirUtils.generateRandomString())
                 .create(Consumer {
                     AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
                 })
@@ -76,7 +76,9 @@ class ChatCommand : Command() {
                 }
             }
             catch (e: JSONException) {
-                sendMsg(event, "Chat is unavailable at this moment in time, please try again later.")
+                var flip = ""
+
+                sendMsg(event, "Chat is unavailable at this moment in time, please try again later.\t ${AirUtils.flipTable()}")
             }
         })
     }

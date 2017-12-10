@@ -47,21 +47,6 @@ public class VRCubeException extends SecurityException {
 
     @Override
     public String toString() {
-        String fileName = "skybot.exceptions.";
-        switch (AirUtils.rand.nextInt(4)){
-            case 0:
-                fileName += "（╯°□°）╯︵┻━┻: ";
-                break;
-            case 1:
-                fileName += "（ノ゜Д゜）ノ︵┻━┻: ";
-                break;
-            case 2:
-                fileName += "（ノಥ益ಥ）ノ︵┻━┻: ";
-                break;
-            case 3:
-                fileName += "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻: ";
-                break;
-        }
-        return fileName + getMessage();
+        return "skybot.exceptions." + AirUtils.flipTable() + ": " + getMessage();
     }
 }
