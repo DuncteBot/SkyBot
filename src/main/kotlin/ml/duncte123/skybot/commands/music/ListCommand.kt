@@ -39,12 +39,18 @@ class ListCommand : MusicCommand() {
                         sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"))
                     } else {
                         var queueLength: Long = 0
+                        val maxTracks = 10
+                        var trackCount = 0
                         val sb = StringBuilder()
                         sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
                         for (track in queue) {
+                            if(trackCount >= maxTracks) {
+                                break
+                            }
                             queueLength += track.duration
                             sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                             sb.append(track.info.title).append("\n")
+                            trackCount++
                         }
                         sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
                         sendEmbed(event, EmbedUtils.embedField(au.embedTitle, sb.toString()))
