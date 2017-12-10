@@ -36,7 +36,7 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     
     override fun getToken(): String      = this.token
     override fun getPresence(): Presence = this.presence
-    override fun shutdown()              = throw TFException("Can not shutdown")
+    override fun shutdown()              = throw Exception("Can not shutdown")
     override fun shutdownNow()           = this.shutdown()
     
     override fun equals(other: Any?): Boolean {
