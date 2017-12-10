@@ -211,7 +211,7 @@ public class EvalCommand extends Command {
                 if (!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
             } catch (IllegalArgumentException | VRCubeException e3) {
-                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
+                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getLocalizedMessage());
                 sendError(event.getMessage());
                 // Debuging System.out.println(EarthUtils.throwableToJSONObject(e3).toString(4));
             } catch (ArrayIndexOutOfBoundsException e4) {

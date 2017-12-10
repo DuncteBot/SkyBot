@@ -27,10 +27,11 @@ class TableFlipException() : VRCubeException() {
 
     override lateinit var message: String
 
-
-    fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
+    private fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
 
     constructor(message: String) : this() {
         this.message = message
     }
+
+    override fun getLocalizedMessage(): String = "${getMeme()} $message"
 }
