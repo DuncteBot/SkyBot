@@ -103,14 +103,14 @@ public class CommandManager {
      * @return a possible null command for the name
      */
     public Command getCommand(String name) {
-        Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
-        
+        Optional<Command> cmd = commands.parallelStream().filter(c -> c.getName().equals(name)).findFirst();
+
         if (cmd.isPresent()) {
             return cmd.get();
         }
-        
-        cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
-        
+
+        cmd = commands.parallelStream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
+
         return cmd.orElse(null);
     }
     
@@ -162,19 +162,10 @@ public class CommandManager {
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
 
-        for (Command c : this.getCommands()) {
-            if (invoke.equalsIgnoreCase(c.getName())) {
-                c.executeCommand(invoke, args, event);
-                return;
-            } else {
-                for (final String alias : c.getAliases()) {
-                    if (invoke.equalsIgnoreCase(alias)) {
-                        c.executeCommand(invoke, args, event);
-                        return;
-                    }
-                }
-            }
-        }
+        Command cmd = getCommand(invoke);
+
+        if(cmd != null)
+            cmd.executeCommand(invoke, args, event);
     }
     
 }
