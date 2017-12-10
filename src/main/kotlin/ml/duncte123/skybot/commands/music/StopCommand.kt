@@ -16,40 +16,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class LeaveCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            def manager = getAudioManager(event.guild)
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class StopCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-            if (manager.connected) {
-                getMusicManager(event.getGuild()).player.stopTrack()
-                manager.setSendingHandler(null)
-                manager.closeAudioConnection()
-                sendMsg(event, "Leaving your channel")
-            } else {
-                sendMsg(event, "I'm not connected to any channels.")
-            }
+        if (!channelChecks(event))
+            return
+
+        val guild = event.guild
+        val musicManager = getMusicManager(guild)
+        val player = musicManager.player
+        val scheduler = musicManager.scheduler
+
+        if (musicManager.player.playingTrack == null) {
+            sendMsg(event, "The player is not playing.")
+            return
         }
+
+        scheduler.queue.clear()
+        player.stopTrack()
+        player.isPaused = false
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
-    @Override
-    String help() {
-        return "Makes the bot leave your channel."
-    }
+    override fun help(): String = "Stops the music player."
 
-    @Override
-    String getName() {
-        return "leave"
-    }
-
-    @Override
-    String[] getAliases() {
-        return ["disconnect"]
-    }
+    override fun getName(): String = "stop"
 }

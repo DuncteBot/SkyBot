@@ -16,40 +16,38 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.text.WordUtils
+import org.apache.commons.lang3.text.WordUtils
 
-class DialogCommand extends Command {
+class DialogCommand : Command() {
 
-    DialogCommand() {
+    init {
         this.category = CommandCategory.FUN
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
-        if (args.length < 1) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (args.size < 1) {
             sendMsg(event, "Correct usage: `$PREFIX$name <words>`")
             return
         }
 
-        String[] lines = WordUtils.wrap(
-                StringUtils.join(args, " ").replaceAll("`", "")
-                , 25, null, true).split("\n")
+        val lines = WordUtils.wrap(
+                StringUtils.join(args, " ").replace("`", "")
+        , 25, null, true).split("\n")
 
-        StringBuilder sb = new StringBuilder()
+        val sb = StringBuilder()
                 .append("```")
                 .append("╔═══════════════════════════╗ \n")
                 .append("║ Alert                     ║\n")
                 .append("╠═══════════════════════════╣\n")
 
-        Arrays.stream(lines).map{it.trim()}.map{String.format("%-25s", it)}.map{"║ " + it + " ║\n"}.forEach{sb.append(it)}
+        lines.stream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
 
               sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
                 .append("║  │   Yes   │  │   No   │  ║\n")
@@ -59,14 +57,8 @@ class DialogCommand extends Command {
         sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
     }
 
-    @Override
-    String help() {
-        return "Gives you a nice dialog\n" +
-                "Usage: `$PREFIX$name <text>`"
-    }
+    override fun help() = "Gives you a nice dialog\n" +
+            "Usage: `$PREFIX$name <text>`"
 
-    @Override
-    String getName() {
-        return "dialog"
-    }
+    override fun getName() = "dialog"
 }

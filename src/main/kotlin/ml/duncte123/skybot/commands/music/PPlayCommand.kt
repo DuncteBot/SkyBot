@@ -16,44 +16,45 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.essentials
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
+package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
-@SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class RestartCommand : Command() {
-    
-    init {
-        this.category = CommandCategory.UNLISTED
-    }
-    
+class PPlayCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
-        val shardManager = event.jda.asBot().shardManager
 
-        try {
-            when (args.size) {
-                0 -> shardManager.restart()
-                1 -> shardManager.restart(args[0].toInt())
-                else -> sendError(event.message)
-            }
-        } catch (ex: NumberFormatException) {
-            if (Settings.useJSON)
-                sendErrorJSON(event.message, ex, false)
-            else {
-                AirUtils.logger.error(ex.localizedMessage, ex)
-                sendError(event.message)
-            }
+        if (!channelChecks(event))
+            return
+
+        val guild = event.guild
+        val musicManager = getMusicManager(guild)
+
+        if (args.isEmpty()) {
+            sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
+            return
         }
-    }
-    override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
-    override fun getName() = "restart"
+        var toPlay = StringUtils.join(args, " ")
+        if (!AirUtils.isURL(toPlay)) {
+            toPlay = "ytsearch: " + toPlay
+        }
+        if(toPlay.length > 1024) {
+            sendError(event.message)
+            sendMsg(event, "Input cannot be longer than 1024 characters.")
+            return
+        }
+
+        getAu().loadAndPlay(musicManager, event.channel, toPlay, true)
+    }
+
+    override fun help(): String = "Add a playlist to the queue."
+
+    override fun getName(): String = "pplay"
 }

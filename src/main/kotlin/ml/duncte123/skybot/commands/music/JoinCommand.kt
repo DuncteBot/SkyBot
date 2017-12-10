@@ -16,38 +16,43 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
-class JoinCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+
+
+class JoinCommand : MusicCommand() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if (!event.member.voiceState.inVoiceChannel()) {
             sendMsg(event, "Please join a voice channel first.")
             return
         }
-        def vc = event.member.voiceState.channel
-        def guild = event.guild
-        def mng = getMusicManager(guild)
-        def audioManager = getAudioManager(guild)
-        if (audioManager.connected && mng.player.playingTrack != null) {
+        val vc = event.member.voiceState.channel
+        val guild = event.guild
+        val mng = getMusicManager(guild)
+        val audioManager = getAudioManager(guild)
+        if (audioManager.isConnected && mng.player.playingTrack != null) {
             sendMsg(event, "I'm already in a channel.")
             return
         }
 
         try {
-            if (audioManager.connected)
+            if (audioManager.isConnected)
                 audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
 
             sendSuccess(event.message)
-        } catch (PermissionException e) {
+        } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
                 sendMsg(event, "I don't have permission to join `${vc.name}`")
             }
@@ -55,18 +60,9 @@ class JoinCommand extends MusicCommand {
 
     }
 
-    @Override
-    String help() {
-        return "Makes the bot join the voice channel that you are in."
-    }
+    override fun help(): String = "Makes the bot join the voice channel that you are in."
 
-    @Override
-    String getName() {
-        return "join"
-    }
+    override fun getName(): String = "join"
 
-    @Override
-    String[] getAliases() {
-        return ["summon", "connect"]
-    }
+    override fun getAliases(): Array<String> = arrayOf("summon", "connect")
 }

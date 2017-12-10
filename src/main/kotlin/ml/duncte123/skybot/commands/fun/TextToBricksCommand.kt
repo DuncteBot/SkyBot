@@ -16,35 +16,34 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music
+package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.audio.TrackScheduler
-import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
-class RepeatCommand extends MusicCommand {
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (channelChecks(event)) {
-            TrackScheduler scheduler = getMusicManager(event.guild).scheduler
+class TextToBricksCommand: Command() {
 
-            scheduler.setRepeating(!scheduler.repeating)
-            sendMsg(event, "Player was set to: **" + (scheduler.repeating ? "" : "not") + "repeat**")
+    init {
+        this.category = CommandCategory.FUN
+    }
+
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (args.isEmpty()) {
+            sendMsg(event, "Correct usage: `$PREFIX$invoke <words>`")
+            return
         }
+
+        sendEmbed(event,
+                EmbedUtils.embedMessage(
+                        StringUtils.join(args, " ").replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:").replace(Regex("([0-9])"), "\$1\u20E3")
+                )
+        )
     }
 
-    @Override
-    String help() {
-        return "Makes the player repeat the currently playing song"
-    }
+    override fun help() = "Convert your text to bricks"
 
-    @Override
-    String getName() {
-        return "repeat"
-    }
-
-    @Override
-    String[] getAliases() {
-        return ["loop"]
-    }
+    override fun getName() = "ttb"
 }

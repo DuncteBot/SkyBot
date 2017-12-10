@@ -29,6 +29,8 @@ import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 
+import javax.security.auth.login.LoginException;
+
 import static ch.qos.logback.classic.Level.INFO;
 import static org.slf4j.event.Level.ERROR;
 
@@ -71,10 +73,6 @@ public class SkyBot {
             AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
-
-        //This is a little hack because we can't use groovy and kotlin in the same classes
-        Class.forName("ml.duncte123.skybot.RegisterGroovyCommands").newInstance();
-        new RegisterKotlinCommands();
         
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
@@ -106,7 +104,7 @@ public class SkyBot {
                     .setToken(token)
                     .build();
         }
-        catch(RuntimeException e) {
+        catch(LoginException e) {
             //Kill the system if we can't log in
             AirUtils.logger.error("Could not log in, check if your token is correct", e);
             System.exit(-4);

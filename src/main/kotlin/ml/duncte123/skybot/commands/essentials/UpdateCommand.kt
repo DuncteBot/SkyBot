@@ -24,7 +24,6 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.util.*
 
 class UpdateCommand: Command() {
 
@@ -32,7 +31,7 @@ class UpdateCommand: Command() {
         this.category = CommandCategory.UNLISTED
     }
     
-    override fun executeCommand(invoke: String, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
                 && Settings.ownerId != event.author.id) {
             event.channel.sendMessage(":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***").queue()

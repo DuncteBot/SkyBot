@@ -36,13 +36,9 @@ plugins {
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
-apply plugin: 'groovy'
-
 group = 'ml.duncte123.skybot'
 
-version '3.52.1'
-
-compileGroovy.options.encoding = "UTF-8"
+version '3.53.0'
 
 sourceCompatibility = 1.8
 
@@ -75,7 +71,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'b55c183' //Beta build with ShardManager is newest but not ready yet! 8124169
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8124169' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
@@ -89,7 +85,7 @@ dependencies {
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-all', version: '2.4.10' // to also compile it
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.12' // to also compile it
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension

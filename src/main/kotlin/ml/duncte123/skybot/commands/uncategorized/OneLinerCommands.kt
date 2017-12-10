@@ -34,7 +34,7 @@ class OneLinerCommands : Command() {
         val pingHistory: SizedList<Long> = SizedList(25)
     }
     
-    override fun executeCommand(invoke: String?, args: Array<out String>?, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
                 val time = System.currentTimeMillis()
@@ -67,14 +67,14 @@ class OneLinerCommands : Command() {
             else -> println("Invoke was invalid: $invoke")
         }
     }
-    override fun help() = "`${PREFIX}ping` => Shows the delay from the bot to the discord servers.\n" +
-            "`${PREFIX}cookie` => blobnomcookie.\n" +
-            "`${PREFIX}trigger` => use when you are triggered.\n" +
-            "`${PREFIX}wam` => you need more WAM!.\n" +
-            "`${PREFIX}mineh` => HERE COMES MINEH!\n" +
-            "`${PREFIX}invite` => gives you the bot invite\n" +
-            "`${PREFIX}uptime` => shows the bot uptime\n" +
-            "`${PREFIX}quote` => Shows an inspiring quote\n"
+    override fun help() = """`${PREFIX}ping` => Shows the delay from the bot to the discord servers.
+            |`${PREFIX}cookie` => blobnomcookie.
+            |`${PREFIX}trigger` => use when you are triggered.
+            |`${PREFIX}wam` => you need more WAM!.
+            |`${PREFIX}mineh` => HERE COMES MINEH!
+            |`${PREFIX}invite` => gives you the bot invite
+            |`${PREFIX}uptime` => shows the bot uptime
+            |`${PREFIX}quote` => Shows an inspiring quote""".trimMargin()
 
     override fun getName() = "ping"
     

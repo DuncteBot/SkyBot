@@ -32,7 +32,7 @@ import ml.duncte123.skybot.SinceSkybot
  */
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SizedList<E>(private val fixedSize:Int) : List<E>, ArrayList<E>() {
+class SizedList<E>(private val fixedSize: Int) : List<E>, ArrayList<E>() {
 
     /**
      *

@@ -16,42 +16,32 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-
 import java.util.concurrent.TimeUnit
 
-class CoinCommand extends Command {
+class CoinCommand: Command() {
 
-    def imagesArr = ["heads.png", "tails.png"]
+    val imagesArr = arrayOf("heads.png", "tails.png")
 
-    CoinCommand() {
+    init {
         this.category = CommandCategory.FUN
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         event.channel.sendTyping().queue{
             event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
                 sendEmbed(event, EmbedUtils.embedImage("https://dshelmondgames.ml/img/coin/" + imagesArr[AirUtils.rand.nextInt(2)]))
             })
         }
-
     }
 
-    @Override
-    String help() {
-        return "flips a coin.\nUsage: `$PREFIX$name`"
-    }
+    override fun help() = "flips a coin.\nUsage: `$PREFIX$name`"
 
-    @Override
-    String getName() {
-        return "coin"
-    }
+    override fun getName() = "coin"
 }

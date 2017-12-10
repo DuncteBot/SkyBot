@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.objects.chatai.AI
+import ml.duncte123.skybot.entities.chatai.AI
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -26,45 +26,46 @@ import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.event.Level
+import java.util.function.Consumer
 
-class ChatCommand extends Command {
+class ChatCommand : Command() {
 
-    private AI ai
-    def responses = [
-            "My prefix in this guild is {PREFIX}",
-            "Thanks for asking, my prefix here is {PREFIX}",
-            "That should be {PREFIX}",
-            "It was {PREFIX} if I'm not mistaken"
-    ]
+    private val ai: AI
+    private val responses = arrayOf(
+        "My prefix in this guild is {PREFIX}",
+        "Thanks for asking, my prefix here is {PREFIX}",
+        "That should be {PREFIX}",
+        "It was {PREFIX} if I'm not mistaken"
+    )
 
-    ChatCommand() {
-        AirUtils.log(Level.INFO, "Starting AI")
-        this.category = CommandCategory.NERD_STUFF
-        this.ai = new AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                //Use the current milliseconds to get a available username every login
-                .setNick(Settings.defaultName + AirUtils.generateRandomString(4))
-                .create({
-                    AirUtils.log(Level.INFO, "AI has been loaded, server response: ${it.toString()}")
+
+    init {
+        this.category = CommandCategory.FUN
+        ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
+                .setNick(Settings.defaultName )
+                .create(Consumer {
+                   AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
                 })
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(args.length < 1){
+
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if(args.isEmpty()){
             sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
-        def time = System.currentTimeMillis()
-        def message = StringUtils.join(args, " ")
+        val time = System.currentTimeMillis()
+        val message = StringUtils.join(args, " ")
         event.channel.sendTyping().queue()
-        AirUtils.log(Level.DEBUG, "New Question: $message")
+
         if(message.contains("prefix")) {
-            sendMsg(event, "${event.author.asMention}, " + responses.get(AirUtils.rand.nextInt(responses.size()))
+            sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.rand.nextInt(responses.size)]
                     .replace("{PREFIX}", "`${getSettings(event.guild).customPrefix}`"))
             return
         }
-        ai.ask(message, { json ->
-            AirUtils.log(Level.DEBUG, "New response: ${json.toString()}, this took ${System.currentTimeMillis() - time}ms")
+
+        ai.ask(message, Consumer{ json ->
+            AirUtils.log(Level.DEBUG, "New response: $json, this took ${System.currentTimeMillis() - time}ms")
             if(json["status"] == "success") {
                 sendMsg(event, "${event.author.asMention}, ${json["response"]}")
             } else {
@@ -73,14 +74,8 @@ class ChatCommand extends Command {
         })
     }
 
-    @Override
-    String help() {
-        return "Have a chat with dunctebot\n" +
-                "Usage: `$PREFIX$name <message>`"
-    }
+    override fun help() = "Have a chat with dunctebot\n" +
+            "Usage: `$PREFIX$name <message>`"
 
-    @Override
-    String getName() {
-        return "chat"
-    }
+    override fun getName() = "chat"
 }

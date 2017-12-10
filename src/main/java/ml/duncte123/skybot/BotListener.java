@@ -324,7 +324,7 @@ public class BotListener extends ListenerAdapter {
         List<Member> membersInChannel = vc.getMembers().parallelStream()
                 .filter(m -> !m.getUser().isBot()).collect(Collectors.toList());
 
-        if (membersInChannel.size() <= 1) {
+        if (membersInChannel.size() < 1) {
             GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);

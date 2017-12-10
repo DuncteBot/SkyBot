@@ -16,31 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
-class FlipCommand extends Command {
+class FlipCommand : Command() {
 
-    FlipCommand() {
+    init {
         this.category = CommandCategory.FUN
     }
 
-    @Override
-    void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        def uname = event.member.effectiveName
-        def output = ""
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        var uname = event.member.effectiveName
+        var output = ""
 
-        if (event.message.mentionedUsers.size() > 0) {
-            uname = event.guild.getMember(event.message.mentionedUsers.get(0)).effectiveName
-        } else if(args.size() > 0) {
-            uname = args.join(" ")
+        if (event.message.mentionedUsers.size > 0) {
+            uname = event.guild.getMember(event.message.mentionedUsers[0]).effectiveName
+        } else if(args.size > 0) {
+            uname = StringUtils.join(args, " ")
         }
 
-        String normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'"
-        String split = "ɐqɔpǝɟbɥıظʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡/\\,"
+        var normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'"
+        var split = "ɐqɔpǝɟbɥıظʞןɯuodbɹsʇnʌʍxʎz‾'؛˙¿¡/\\,"
         //maj
         normal += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
         split += "∀qϽᗡƎℲƃHIſʞ˥WNOԀὉᴚS⊥∩ΛMXʎZ"
@@ -49,27 +49,19 @@ class FlipCommand extends Command {
         split += "0ƖᄅƐㄣϛ9ㄥ86"
 
 
-        uname = uname.reverse()
+        uname = uname.reversed()
 
-        char letter
-        for (int i = 0; i < uname.length(); i++) {
-            letter = uname.charAt(i)
+        for (letter in uname.iterator()) {
 
-            int a = normal.indexOf(letter.toString(), 0)
-            output += (a != -1) ? split.charAt(a) : letter
+            val a = normal.indexOf(letter.toString(), 0)
+            output += if (a != -1) split[a] else letter
         }
 
         sendMsg(event, "(╯°□°）╯︵ $output")
     }
 
-    @Override
-    String help() {
-        return "Flips a user.\n" +
-                "Usage: `$PREFIX$name [@user]`"
-    }
+    override fun help() = "Flips a user.\n" +
+            "Usage: `$PREFIX$name [@user]`"
 
-    @Override
-    String getName() {
-        return "flip"
-    }
+    override fun getName() = "flip"
 }
