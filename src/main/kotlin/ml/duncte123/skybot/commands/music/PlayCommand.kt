@@ -48,8 +48,13 @@ open class PlayCommand : MusicCommand() {
                 scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
                         "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
             }
+
         } else {
+
             var toPlay = StringUtils.join(args, " ")
+            if (toPlay == "dubstep") {
+                sendMsg(event, "no")
+            }
             if (!AirUtils.isURL(toPlay)) {
                 toPlay = "ytsearch: " + toPlay
             }
