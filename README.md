@@ -22,13 +22,13 @@ The update command requires an external application to work, to get the updater 
 If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 # ToDo list
-- [X] SQLite as a fail over database
-- [X] Make database optional
-- [X] Create Joke command
-- [X] Fix timed bans in the ban command (Turned out to be a backend issue)
-- [X] Add a wiki that explains how to set the bot up yourself
-- [X] Create new way to load the bot token
-- [X] Create a random seal command
-- [X] Make the nowplaying command show the title of the song in the embed
-- [x] Make kpop command take in a search term (name/id)
-
+- [x] ~~SQLite as a fail over database~~
+- [x] ~~Make database optional~~
+- [x] ~~Create Joke command~~
+- [x] ~~Fix timed bans in the ban command (Turned out to be a backend issue)~~
+- [x] ~~Add a wiki that explains how to set the bot up yourself~~
+- [x] ~~Create new way to load the bot token~~
+- [x] ~~Create a random seal command~~
+- [x] ~~Make the nowplaying command show the title of the song in the embed~~
+- [x] ~~Make kpop command take in a search term (name/id)~~
+- [x] Find international music streams for the [RadioCommand](https://github.com/duncte123/SkyBot/blob/dev/src/main/kotlin/ml/duncte123/skybot/commands/music/RadioCommand.kt#L69)
