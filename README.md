@@ -3,10 +3,10 @@ SkyBot is a discord bot with music and mod commands
 
 # Libs
 The following libraries are used:
-[_CleverBot4J_](https://github.com/duncte123/CleverBot4J),
-[_JDA_](https://github.com/DV8FromTheWorld/JDA) 
-,[_LavaPlayer_](https://github.com/sedmelluq/lavaplayer)
-,[_jda-nas_](https://github.com/sedmelluq/jda-nas), commons-lang3, commons-text, jsoup, mysql-connector-java, sqlite-connector-java, groovy-all and logback-classic
+[_JDA_](https://github.com/DV8FromTheWorld/JDA), 
+[_LavaPlayer_](https://github.com/sedmelluq/lavaplayer),
+[_jda-nas_](https://github.com/sedmelluq/jda-nas), commons-lang3, commons-text, jsoup, mysql-connector-java, sqlite-connector-java, groovy-all, logback-classic and
+[_chatter-bot-api_](https://github.com/pierredavidbelanger/chatter-bot-api)
 
 # How to setup?
 [Click here](https://github.com/duncte123/SkyBot/wiki/How-to-run-the-bot) to learn how to set the bot up
