@@ -38,7 +38,6 @@ class ChatCommand : Command() {
         "It was {PREFIX} if I'm not mistaken"
     )
 
-
     init {
         AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN

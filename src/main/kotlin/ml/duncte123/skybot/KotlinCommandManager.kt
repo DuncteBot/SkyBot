@@ -38,6 +38,7 @@ class KotlinCommandManager : CommandManager() {
         //uncategorized
         this.addCommand(OneLinerCommands())
         this.addCommand(ShortenCommand())
+
         //fun
         this.addCommand(BlobCommand())
         this.addCommand(CoinCommand())
@@ -47,13 +48,15 @@ class KotlinCommandManager : CommandManager() {
         this.addCommand(DialogCommand())
         this.addCommand(JokeCommand())
         this.addCommand(TagCommand())
-
         this.addCommand(ChatCommand())
+
         //animals
         this.addCommand(BirbCommand())
+
         //essentials
         this.addCommand(RestartCommand())
         this.addCommand(UpdateCommand())
+
         //music
         this.addCommand(JoinCommand())
         this.addCommand(LeaveCommand())

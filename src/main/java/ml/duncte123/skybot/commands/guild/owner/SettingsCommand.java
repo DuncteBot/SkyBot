@@ -77,7 +77,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + this.PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = StringUtils.join(args, " ");
+                String newJoinMessage = event.getMessage().getRawContent().split("\\s+",2)[1].replaceAll("\\\\n","\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
