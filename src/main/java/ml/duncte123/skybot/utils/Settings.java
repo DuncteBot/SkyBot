@@ -26,7 +26,7 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String ownerId = BuildConfig.ownerId;
+    public static final String ownerId = AirUtils.config.getString("discord.botOwnerId", BuildConfig.ownerId);
 
     /**
      * This contains a list of different id's
