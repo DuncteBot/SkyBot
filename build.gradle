@@ -71,7 +71,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '9668076' //Beta build with ShardManager
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '3687bd5' //Beta build with ShardManager
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
@@ -99,6 +99,9 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.0'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.0'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
+
+    //Bot?
+    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'

@@ -22,7 +22,10 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.BadWordFilter;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
@@ -68,7 +71,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This tells us if the {@link #unbanService} is running
      */
-    public boolean unbanTimerRunning = false;
+    private boolean unbanTimerRunning = false;
 
     /**
      * This timer is for checking new quotes
@@ -79,7 +82,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This tells us if the {@link #settingsUpdateService} is running
      */
-    public boolean settingsUpdateTimerRunning = false;
+    private boolean settingsUpdateTimerRunning = false;
 
     /**
      * Listen for messages send to the bot

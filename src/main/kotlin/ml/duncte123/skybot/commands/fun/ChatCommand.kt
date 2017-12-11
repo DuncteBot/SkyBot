@@ -18,20 +18,19 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.entities.chatai.AI
+import com.google.code.chatterbotapi.ChatterBotFactory
+import com.google.code.chatterbotapi.ChatterBotSession
+import com.google.code.chatterbotapi.ChatterBotType
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
-import org.json.JSONException
 import org.slf4j.event.Level
-import java.util.function.Consumer
 
 class ChatCommand : Command() {
 
-    private val ai: AI
+    private val bot: ChatterBotSession
     private val responses = arrayOf(
         "My prefix in this guild is {PREFIX}",
         "Thanks for asking, my prefix here is {PREFIX}",
@@ -43,11 +42,11 @@ class ChatCommand : Command() {
     init {
         AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
-        ai = AI(AirUtils.config.getString("apis.cleverbot.user"), AirUtils.config.getString("apis.cleverbot.api"))
-                .setNick(AirUtils.generateRandomString())
-                .create(Consumer {
-                    AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded, server response: $it")
-                })
+        //New chat bot :D
+        bot = ChatterBotFactory()
+                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
+                .createSession()
+        AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
 
 
@@ -66,21 +65,9 @@ class ChatCommand : Command() {
             return
         }
 
-        ai.ask(message, Consumer{ json ->
-            AirUtils.log(Level.DEBUG, "New response: $json, this took ${System.currentTimeMillis() - time}ms")
-            try {
-                if (json["status"] == "success") {
-                    sendMsg(event, "${event.author.asMention}, ${json["response"]}")
-                } else {
-                    sendMsg(event, "Error: ${json["response"]}")
-                }
-            }
-            catch (e: JSONException) {
-                var flip = ""
-
-                sendMsg(event, "Chat is unavailable at this moment in time, please try again later.\t ${AirUtils.flipTable()}")
-            }
-        })
+        val response = bot.think(message)
+        sendMsg(event, "${event.author.asMention}, $response")
+        AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
