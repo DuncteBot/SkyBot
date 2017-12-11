@@ -28,7 +28,10 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -42,13 +45,11 @@ import org.slf4j.event.Level;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 public class BotListener extends ListenerAdapter {
 
@@ -326,11 +327,7 @@ public class BotListener extends ListenerAdapter {
      */
     private void channelCheckThing(Guild g, VoiceChannel vc) {
 
-        //Filter out all bots
-        List<Member> membersInChannel = vc.getMembers().parallelStream()
-                .filter(m -> !m.getUser().isBot()).collect(Collectors.toList());
-
-        if (membersInChannel.size() < 1) {
+        if (vc.getMembers().parallelStream().filter(m -> !m.getUser().isBot()).count() < 1) {
             GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);

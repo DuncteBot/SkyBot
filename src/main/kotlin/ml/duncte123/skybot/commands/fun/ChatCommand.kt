@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
+import org.jsoup.Jsoup
 import org.slf4j.event.Level
 
 class ChatCommand : Command() {
@@ -56,7 +56,7 @@ class ChatCommand : Command() {
             return
         }
         val time = System.currentTimeMillis()
-        val message = StringUtils.join(args, " ")
+        val message = event.message.rawContent.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
         if(message.contains("prefix")) {
@@ -65,7 +65,17 @@ class ChatCommand : Command() {
             return
         }
 
-        val response = bot.think(message)
+        event.message.mentionedChannels.forEach { message.replace(it.asMention, it.name) }
+        event.message.mentionedRoles.forEach { message.replace(it.asMention, it.name) }
+        event.message.mentionedUsers.forEach { message.replace(it.asMention, it.name) }
+        event.message.emotes.forEach { message.replace(it.asMention, it.name) }
+        message.replace("@here", "here").replace("@everyone", "everyone")
+
+        var response = bot.think(message)
+        if (response.startsWith(prefix = "<")) {
+            response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
+                    .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
+        }
         sendMsg(event, "${event.author.asMention}, $response")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
