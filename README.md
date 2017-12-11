@@ -31,4 +31,4 @@ If you need any support please join our [support guild](https://discord.gg/NKM9X
 - [x] ~~Create a random seal command~~
 - [x] ~~Make the nowplaying command show the title of the song in the embed~~
 - [x] ~~Make kpop command take in a search term (name/id)~~
-- [x] Find international music streams for the [RadioCommand](https://github.com/duncte123/SkyBot/blob/dev/src/main/kotlin/ml/duncte123/skybot/commands/music/RadioCommand.kt#L69)
+- [ ] Find international music streams for the [RadioCommand](https://github.com/duncte123/SkyBot/blob/dev/src/main/kotlin/ml/duncte123/skybot/commands/music/RadioCommand.kt#L69)
