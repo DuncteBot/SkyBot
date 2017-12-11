@@ -59,7 +59,6 @@ public abstract class Command {
     private static boolean cooldown = false;
 
     public Command() {
-        reloadUpvoted();
         if (!Settings.useCooldown)
             return;
         ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
@@ -67,6 +66,10 @@ public abstract class Command {
             if (cooldown)
                 cooldown = false;
         }, 0, 20, TimeUnit.SECONDS);
+    }
+
+    static {
+        reloadUpvoted();
     }
     
     /**
