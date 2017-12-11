@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,6 +57,6 @@ implements IEventManager {
     
     @Override
     public List<Object> getRegisteredListeners() {
-        return Arrays.asList(botListener);
+        return Collections.singletonList(botListener);
     }
 }

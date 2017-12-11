@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
+import org.jsoup.Jsoup
 import org.slf4j.event.Level
 
 class ChatCommand : Command() {
@@ -65,7 +66,11 @@ class ChatCommand : Command() {
             return
         }
 
-        val response = bot.think(message)
+        var response = bot.think(message)
+        if (response.startsWith(prefix = "<")) {
+            response = Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
+                    .getElementsByTag("a").first().attr("href") + response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))
+        }
         sendMsg(event, "${event.author.asMention}, $response")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }

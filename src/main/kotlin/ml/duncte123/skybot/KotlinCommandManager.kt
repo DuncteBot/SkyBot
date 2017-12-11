@@ -48,9 +48,7 @@ class KotlinCommandManager : CommandManager() {
         this.addCommand(JokeCommand())
         this.addCommand(TagCommand())
 
-        if(AirUtils.config.getString("apis.cleverbot.api") != null && !AirUtils.config.getString("apis.cleverbot.api").isEmpty()
-                && AirUtils.config.getString("apis.cleverbot.user") != null && !AirUtils.config.getString("apis.cleverbot.user").isEmpty() )
-            this.addCommand(ChatCommand())
+        this.addCommand(ChatCommand())
         //animals
         this.addCommand(BirbCommand())
         //essentials
