@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.entities.MessageHistory
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.requests.RestAction
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction
+import net.dv8tion.jda.core.requests.restaction.MessageAction
 import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationAction
 import java.io.File
 import java.io.InputStream
@@ -60,26 +61,26 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * All [RestAction]s are blocked, because we dont want that our bot has issues with Discord and upload.
      * Also we dont like that our console is spammed with [Exception]s
      */
-    override fun sendFile(file: File, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).rawContent}**")
-    override fun sendFile(data: ByteArray, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.rawContent}**")
-    override fun sendFile(data: InputStream, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.rawContent}**")
-    override fun sendFile(file: File, fileName: String, message: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.rawContent}**")
+    override fun sendFile(file: File, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).rawContent}**")
+    override fun sendFile(data: ByteArray, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.rawContent}**")
+    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.rawContent}**")
+    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.rawContent}**")
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun sendMessage(embed: MessageEmbed): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun sendMessage(msg: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.rawContent}**")
-    override fun sendMessage(text: String): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
-    override fun sendMessageFormat(format: String, vararg args: Any): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
+    override fun sendMessage(embed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.rawContent}**")
+    //override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
+    override fun sendMessageFormat(format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 
     /*
      * Editing RestActions
      */
-    override fun editMessageById(messageId: String, newEmbed: MessageEmbed): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageById(messageId: String, newContent: String): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageById(messageId: String, newContent: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageById(messageId: Long, newEmbed: MessageEmbed): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageById(messageId: Long, newContent: Message): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageFormatById(messageId: String, format: String, vararg args: Any): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageFormatById(messageId: Long, format: String, vararg args: Any): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageById(messageId: String, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    //override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageById(messageId: String, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageById(messageId: Long, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageById(messageId: Long, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageFormatById(messageId: String, format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageFormatById(messageId: Long, format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     /*
      * Deleting RestActions
