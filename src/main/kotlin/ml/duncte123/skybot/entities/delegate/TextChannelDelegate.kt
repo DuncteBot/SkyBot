@@ -61,13 +61,13 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * All [RestAction]s are blocked, because we dont want that our bot has issues with Discord and upload.
      * Also we dont like that our console is spammed with [Exception]s
      */
-    override fun sendFile(file: File, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).rawContent}**")
-    override fun sendFile(data: ByteArray, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.rawContent}**")
-    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.rawContent}**")
-    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.rawContent}**")
+    override fun sendFile(file: File, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).contentRaw}**")
+    override fun sendFile(data: ByteArray, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.contentRaw}**")
+    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.contentRaw}**")
+    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.contentRaw}**")
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(embed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.rawContent}**")
+    override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.contentRaw}**")
     //override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
     override fun sendMessageFormat(format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 

@@ -131,7 +131,7 @@ public class RadioCommand : MusicCommand() {
             streams.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
         }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.rawContent).build())
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
     }
 }

@@ -97,7 +97,7 @@ class TagCommand : Command() {
                 sendMsg(event, "The tag name can't be `${args[1]}`")
                 return
             }
-            val newTagContent: List<String> = event.message.rawContent.replaceFirst(Pattern.quote(PREFIX), "").split(" ")
+            val newTagContent: List<String> = event.message.contentRaw.replaceFirst(Pattern.quote(PREFIX), "").split(" ")
             if (AirUtils.registerNewTag(event.author, Tag(
                     AirUtils.tagsList.keys.size + 1,
                     String.format("%#s", event.author),

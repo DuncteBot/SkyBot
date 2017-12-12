@@ -55,7 +55,7 @@ class ChatCommand : Command() {
             return
         }
         val time = System.currentTimeMillis()
-        val message = event.message.rawContent.split( "\\s+".toRegex(),2)[1]
+        val message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
         if(message.contains("prefix")) {
