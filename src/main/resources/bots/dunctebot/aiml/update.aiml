@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml>
+<!-- File: update.aiml -->
+<!-- Author: duncte123 -->
+<!-- Last modified: December 12, 2017 -->
+<!--  -->
+<!-- This AIML file is part of the DUNCTEBOT 0.0.4 chat bot knowledge base. -->
+<!--  -->
+<!-- The DUNCTEBOT brain is Copyright &copy; 2017 by ALICE AI Foundation. -->
+<!--  -->
+<!-- The DUNCTEBOT brain is released under the terms of the GNU Lesser General -->
+<!-- Public License, as published by the Free Software Foundation. -->
+<!--  -->
+<!-- This file is distributed WITHOUT ANY WARRANTY; without even the  -->
+<!-- implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   -->
+<!--  -->
+<!-- For more information see http://bot.duncte123.me/ -->
+<!--  -->
+<category><pattern>VERSION</pattern>
+<template>S.U.P.E.R. AIML Bot version 0.0.4</template>
+</category>
+<category><pattern>BUILD</pattern>
+<template>Wed Feb 20 18:10:39 EST 2013</template>
+</category>
+<category><pattern>DELEVLOPMENT ENVIRONMENT</pattern>
+<template>Program AB 0.0.4.2 beta -- AI Foundation Reference AIML 2.0 implementation</template>
+</category>
+<category><pattern>PROGRAM VERSION</pattern>
+<template>Program AB 0.0.6.26 beta -- AI Foundation Reference AIML 2.1 implementation</template>
+</category>
+<category><pattern>BRAIN BUILD</pattern>
+<template>Tue Dec 12 18:12:27 CET 2017</template>
+</category>
+</aiml>

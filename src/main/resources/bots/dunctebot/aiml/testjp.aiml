@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<aiml>
+<!-- File: testjp.aiml -->
+<!-- Author: duncte123 -->
+<!-- Last modified: December 12, 2017 -->
+<!--  -->
+<!-- This AIML file is part of the DUNCTEBOT 0.0.4 chat bot knowledge base. -->
+<!--  -->
+<!-- The DUNCTEBOT brain is Copyright &copy; 2017 by ALICE AI Foundation. -->
+<!--  -->
+<!-- The DUNCTEBOT brain is released under the terms of the GNU Lesser General -->
+<!-- Public License, as published by the Free Software Foundation. -->
+<!--  -->
+<!-- This file is distributed WITHOUT ANY WARRANTY; without even the  -->
+<!-- implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.   -->
+<!--  -->
+<!-- For more information see http://bot.duncte123.me/ -->
+<!--  -->
+<category><pattern>GREETINGS</pattern>
+<template>????????????????????????</template>
+</category>
+<category><pattern>?????</pattern>
+<template><srai>GREETINGS</srai></template>
+</category>
+</aiml>
