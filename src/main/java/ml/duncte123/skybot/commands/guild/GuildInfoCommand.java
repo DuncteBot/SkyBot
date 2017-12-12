@@ -54,10 +54,17 @@ public class GuildInfoCommand extends Command {
                                       .addField("Guild Region", g.getRegion().getName(), true)
                                       .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                g.getInvites().queue(i -> eb.addField("Guild Invite",
-                        "[https://discord.gg/" + i.get(0).getCode() +
-                                "](https://discord.gg/" + i.get(0).getCode() + ")",
-                        true));
+                if (!g.getFeatures().contains("VANITY_URL")) {
+                    g.getInvites().complete().stream().findFirst().ifPresent(inv ->
+                            eb.addField("Guild invite",
+                                    " [discord.gg/" + inv.getCode() + "](https://discord.gg/" + inv.getCode() + ")",
+                                    true));
+                } else {
+                    String vanity = g.getVanityUrl().complete();
+                    eb.addField("Guild invite",
+                            " [discord.gg/" + vanity + "](https://discord.gg/" + vanity + ")",
+                            true);
+                }
             }
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");

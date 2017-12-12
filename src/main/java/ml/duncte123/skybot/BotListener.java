@@ -246,10 +246,13 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
-            String welcomeLeaveChannelId = settings.getWelcomeLeaveChannel() == null
+            String welcomeLeaveChannelId =
+                    (settings.getWelcomeLeaveChannel() == null)
                     ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
+            if (msg.isEmpty())
+                msg = "\u200E";
             welcomeLeaveChannel.sendMessage(msg).queue();
         }
     }
