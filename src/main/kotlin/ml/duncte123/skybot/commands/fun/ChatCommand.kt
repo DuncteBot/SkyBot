@@ -25,16 +25,12 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.alicebot.ab.Bot
-import org.alicebot.ab.Chat
 import org.jsoup.Jsoup
 import org.slf4j.event.Level
-import java.io.File
 
 class ChatCommand : Command() {
 
-    //private val chatterBotSession: ChatterBotSession
-    private val bot: Chat
+    private val bot: ChatterBotSession
     private val responses = arrayOf(
         "My prefix in this guild is {PREFIX}",
         "Thanks for asking, my prefix here is {PREFIX}",
@@ -46,14 +42,9 @@ class ChatCommand : Command() {
         AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
         //New chat bot :D
-//        chatterBotSession = ChatterBotFactory()
-//                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-//                .createSession()
-        val resourcesPath = getResourcesPath()
-        val botBuilder = Bot("dunctebot", resourcesPath, "aiml2csv")
-        //botBuilder.writeAIMLFiles()
-        bot = Chat(botBuilder)
-        botBuilder.brain.nodeStats()
+        bot = ChatterBotFactory()
+                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
+                .createSession()
         AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
 
@@ -79,8 +70,7 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message.replace(it.asMention, it.name) }
         message.replace("@here", "here").replace("@everyone", "everyone")
 
-        //var response = chatterBotSession.think(message)
-        var response = bot.multisentenceRespond(message)
+        var response = bot.think(message)
         if (response.startsWith(prefix = "<")) {
             response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
                     .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
@@ -93,11 +83,4 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
-
-    fun getResourcesPath(): String {
-        val currDir = File(".")
-        var path = currDir.getAbsolutePath()
-        path = path.substring(0, path.length - 2)
-        return path + File.separator + "src" + File.separator + "main" + File.separator + "resources"
-    }
 }
