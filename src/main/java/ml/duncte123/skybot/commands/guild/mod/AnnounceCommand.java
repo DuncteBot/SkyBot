@@ -60,7 +60,7 @@ public class AnnounceCommand extends Command {
                 return;
             }
 
-            String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
+            String msg = event.getMessage().getContentRaw().split("\\s+", 3)[2];
             @SinceSkybot(version = "3.52.3")
             EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 

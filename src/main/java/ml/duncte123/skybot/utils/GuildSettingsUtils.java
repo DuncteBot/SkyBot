@@ -88,6 +88,8 @@ public class GuildSettingsUtils {
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
                 String logChannel = resSettings.getString("logChannelId");
+                String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
+                String leaveMessage = resSettings.getString("customLeaveMessage");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
@@ -95,6 +97,8 @@ public class GuildSettingsUtils {
                         .setCustomJoinMessage(joinmsg)
                         .setCustomPrefix(prefix)
                         .setLogChannel(logChannel)
+                        .setWelcomeLeaveChannel(welcomeLeaveChannel)
+                        .setCustomLeaveMessage(leaveMessage)
                 );
             }
             
@@ -142,8 +146,10 @@ public class GuildSettingsUtils {
         boolean enableJoinMessage = settings.isEnableJoinMessage();
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
+        String customLeaveMessage = settings.getCustomLeaveMessage();
         String newPrefix = settings.getCustomPrefix();
         String chanId = settings.getLogChannel() != null ? settings.getLogChannel() : "";
+        String welcomeLeaveChannel = settings.getWelcomeLeaveChannel() != null ? settings.getWelcomeLeaveChannel() : "";
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
@@ -153,13 +159,17 @@ public class GuildSettingsUtils {
                     "enableSwearFilter= ? ," +
                     "customWelcomeMessage= ? ," +
                     "prefix= ? ," +
-                    "logChannelId= ?" +
+                    "logChannelId= ? ," +
+                    "welcomeLeaveChannel= ? ," +
+                    "customLeaveMessage = ?" +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);
             preparedStatement.setString(4, newPrefix);
             preparedStatement.setString(5, chanId);
+            preparedStatement.setString(6, welcomeLeaveChannel);
+            preparedStatement.setString(7, customLeaveMessage);
             preparedStatement.executeUpdate();
             
         } catch (Exception e) {
@@ -205,9 +215,11 @@ public class GuildSettingsUtils {
             
             if (rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
-                                                                          "customWelcomeMessage, prefix) " + "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ?)");
+                                                                          "customWelcomeMessage, prefix, customLeaveMessage) " +
+                        "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, Settings.prefix);
+                smt.setString(3, newGuildSettings.getCustomLeaveMessage());
                 smt.execute();
             }
         } catch (Exception e) {

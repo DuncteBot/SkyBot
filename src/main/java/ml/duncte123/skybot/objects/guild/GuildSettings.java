@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 /**
  * This class will hold the settings for a guild
@@ -47,6 +46,11 @@ public class GuildSettings {
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
 
     /**
+     * This will hold the custom leave message
+     */
+    private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
+
+    /**
      * This will hold the custom prefix if the guild has set one
      */
     private String customPrefix = Settings.prefix;
@@ -55,6 +59,11 @@ public class GuildSettings {
      * This stores the channel that we log the bans in
      */
     private String logChannel = null;
+
+    /**
+     * This stores the channel in where the welcome or leave messages should display
+     */
+    private String welcomeLeaveChannel = null;
 
     /**
      * This will init everything
@@ -116,12 +125,32 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom leave message for the corresponding guild
+     * @param customLeaveMessage The new leave message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
+        this.customLeaveMessage = customLeaveMessage;
+        return this;
+    }
+
+    /**
      * This will set the channel that we log all the mod stuff in
      * @param tc the channel to log
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setLogChannel(String tc) {
         this.logChannel = tc;
+        return this;
+    }
+
+    /**
+     * This sets the channel in where the welcome or leave messages should display
+     * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setWelcomeLeaveChannel(String welcomeLeaveChannel) {
+        this.welcomeLeaveChannel = welcomeLeaveChannel;
         return this;
     }
 
@@ -135,12 +164,20 @@ public class GuildSettings {
     }
 
     /**
-     * This will return the cutstom join message set for that guild
+     * This will return the custom join message set for that guild
      *
      * @return The custom join message
      */
     public String getCustomJoinMessage() {
         return customJoinMessage;
+    }
+
+    /**
+     * Returns the custom leave message
+     * @return the custom leave message
+     */
+    public String getCustomLeaveMessage() {
+        return customLeaveMessage;
     }
 
     /**
@@ -169,6 +206,14 @@ public class GuildSettings {
      */
     public String getLogChannel() {
         return logChannel;
+    }
+
+    /**
+     * Returns the channel in where the welcome or leave messages should display
+     * @return the channel in where the welcome or leave messages should display
+     */
+    public String getWelcomeLeaveChannel() {
+        return welcomeLeaveChannel;
     }
 
     /**

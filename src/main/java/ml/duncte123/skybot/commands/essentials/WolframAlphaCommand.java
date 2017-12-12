@@ -117,8 +117,8 @@ public class WolframAlphaCommand extends Command {
         }
         
         String queryString
-                = event.getMessage().getRawContent()
-                      .substring(event.getMessage().getRawContent()
+                = event.getMessage().getContentRaw()
+                      .substring(event.getMessage().getContentRaw()
                              .split(" ")[0].length());
 
         WAQuery query = engine.createQuery(queryString);

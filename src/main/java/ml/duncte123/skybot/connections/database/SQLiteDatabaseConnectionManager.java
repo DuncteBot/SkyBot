@@ -132,10 +132,12 @@ implements DBConnectionManager {
                                                          "guildId TEXT NOT NULL," +
                                                          "guildName TEXT NOT NULL," +
                                                          "logChannelId TEXT NULL," +
+                                                         "welcomeLeaveChannel TEXT NULL," +
                                                          "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "customWelcomeMessage TEXT NOT NULL);");
+                                                         "customWelcomeMessage TEXT NOT NULL," +
+                                                         "customLeaveMessage TEXT NOT NULL);");
             
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
                                                          "(id INTEGER PRIMARY KEY AUTOINCREMENT," +

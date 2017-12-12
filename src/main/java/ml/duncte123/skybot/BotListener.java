@@ -35,7 +35,9 @@ import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -98,7 +100,7 @@ public class BotListener extends ListenerAdapter {
         
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
-        if (event.getMessage().getContent().equals(Settings.prefix + "shutdown")
+        if (event.getMessage().getContentDisplay().equals(Settings.prefix + "shutdown")
                     && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
@@ -129,8 +131,8 @@ public class BotListener extends ListenerAdapter {
                     && settings.isEnableSwearFilter()
                     && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(messageToCheck.getRawContent())) {
-                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContent()).queue();
+                if (filter.filterText(messageToCheck.getContentRaw())) {
+                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay()).queue();
                     event.getChannel().sendMessage(
                             String.format("Hello there, %s please do not use cursive language within this Discord.", event.getAuthor().getAsMention())).queue(
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
@@ -138,7 +140,7 @@ public class BotListener extends ListenerAdapter {
                 }
         }
         
-        String rw = event.getMessage().getRawContent();
+        String rw = event.getMessage().getContentRaw();
         
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().canTalk()
                 && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
@@ -231,16 +233,27 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
         if (settings.isEnableJoinMessage()) {
-            TextChannel publicChannel = AirUtils.getPublicChannel(event.getGuild());
-            String msg = settings.getCustomJoinMessage()
-                                 .replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
-                                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-                                 .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
-                                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
-            publicChannel.sendMessage(msg).queue();
+            String welcomeLeaveChannelId = settings.getWelcomeLeaveChannel() == null
+                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
+            TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
+            String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
+            welcomeLeaveChannel.sendMessage(msg).queue();
         }
     }
-    
+
+    @Override
+    public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+
+        if (settings.isEnableJoinMessage()) {
+            String welcomeLeaveChannelId = settings.getWelcomeLeaveChannel() == null
+                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
+            TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
+            String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
+            welcomeLeaveChannel.sendMessage(msg).queue();
+        }
+    }
+
     /**
      * This will fire when the bot joins a guild and we check if we are allowed to join this guild
      *
@@ -339,5 +352,16 @@ public class BotListener extends ListenerAdapter {
                 g.getAudioManager().setSendingHandler(null);
             }
         }
+    }
+
+    private String parseGuildVars(String message, GenericGuildMemberEvent event) {
+
+        if(!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent))
+            return "NOPE";
+
+        return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
+                .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
+                .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
+                .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
     }
 }

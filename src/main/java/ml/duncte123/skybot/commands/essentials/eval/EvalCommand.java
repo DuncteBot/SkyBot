@@ -140,7 +140,7 @@ public class EvalCommand extends Command {
                         packageImports.stream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
                         classImports.stream().collect(Collectors.joining("\n")) + "\n";
                 
-                String script = importString + event.getMessage().getRawContent().split("\\s+",2)[1];
+                String script = importString + event.getMessage().getContentRaw().split("\\s+",2)[1];
                 
                 int timeout = 5;
                 

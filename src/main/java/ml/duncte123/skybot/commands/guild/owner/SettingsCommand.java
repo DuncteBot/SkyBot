@@ -52,12 +52,14 @@ public class SettingsCommand extends Command {
                 //true <:check:314349398811475968>
                 //false <:xmark:314349398824058880>
                 TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild());
+                TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), event.getGuild());
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
                         "**Show join messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
-                        "**Log Channel:** " + (logChan !=null ? logChan.getAsMention(): "none")
+                        "**Modlog Channel:** " + (logChan !=null ? logChan.getAsMention(): "none") + "\n" +
+                        "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
                 );
                 sendEmbed(event, message);
                 break;
@@ -77,9 +79,19 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + this.PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = event.getMessage().getRawContent().split("\\s+",2)[1].replaceAll("\\\\n","\n");
+                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
+                break;
+
+            case "setleavemessage":
+                if (args.length < 1) {
+                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setleavemessage <new join message>`");
+                    return;
+                }
+                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomLeaveMessage(newLeaveMessage));
+                sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
 
             case "enablejoinmessage":
@@ -88,7 +100,7 @@ public class SettingsCommand extends Command {
                 isEnabled = settings.isEnableJoinMessage();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                         settings.setEnableJoinMessage(!isEnabled));
-                sendMsg(event, "The join message has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                sendMsg(event, "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
             case "enableswearfilter":
@@ -107,8 +119,13 @@ public class SettingsCommand extends Command {
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
                     TextChannel tc = event.getMessage().getMentionedChannels().get(0);
+                    if(!tc.canTalk()) {
+                        sendError(event.getMessage());
+                        sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
+                        return;
+                    }
                     GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
-                    sendMsg(event, "The new channel log has been set to " + tc.getAsMention());
+                    sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                     return;
                 }
 
@@ -120,6 +137,32 @@ public class SettingsCommand extends Command {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
                 sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                 break;
+            case "setwelcomechannel":
+            case "setleavechannel":
+                if(args.length < 1) {
+                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"setwelcomechannel [text channel]`");
+                    return;
+                }
+                if(event.getMessage().getMentionedChannels().size() > 0) {
+                    TextChannel welcomeChannel = event.getMessage().getMentionedChannels().get(0);
+                    if(!welcomeChannel.canTalk()) {
+                        sendError(event.getMessage());
+                        sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
+                        return;
+                    }
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                    sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
+                    return;
+                }
+
+                TextChannel welcomeChannel = AirUtils.getLogChannel(StringUtils.join(args), event.getGuild());
+                if(welcomeChannel == null) {
+                    sendMsg(event, "This channel could not be found.");
+                    return;
+                }
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
+                break;
         }
     }
 
@@ -129,9 +172,11 @@ public class SettingsCommand extends Command {
                 "`"+this.PREFIX+"settings` => Shows the current settings\n" +
                 "`"+this.PREFIX+"setPrefix <prefix>` => Sets the new prefix\n" +
                 "`"+this.PREFIX+"setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
+                "`"+this.PREFIX+"setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves\n" +
                 "`"+this.PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
                 "`"+this.PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
-                "`"+this.PREFIX+"setLogChannel [text channel]` => Sets the channel to log messages in\n"
+                "`"+this.PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
+                "`"+this.PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n"
                 ;
     }
 
@@ -151,7 +196,10 @@ public class SettingsCommand extends Command {
                 "disableswearfilter",
                 "toggleswearfilter",
                 "setprefix",
-                "setlogchannel"
+                "setlogchannel",
+                "setwelcomechannel",
+                "setleavechannel",
+                "setleavemessage"
         };
     }
 }
