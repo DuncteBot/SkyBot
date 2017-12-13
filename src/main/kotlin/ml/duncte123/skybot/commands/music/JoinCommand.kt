@@ -21,12 +21,8 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.audio.hooks.ConnectionListener
-import net.dv8tion.jda.core.audio.hooks.ConnectionStatus
-import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
@@ -55,9 +51,6 @@ class JoinCommand : MusicCommand() {
                 audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
-            //Set the listener if it's not set yet
-            if (audioManager.connectionListener == null)
-                audioManager.connectionListener = this
 
             sendSuccess(event.message)
         } catch (e: PermissionException) {
@@ -75,13 +68,4 @@ class JoinCommand : MusicCommand() {
     override fun getName(): String = "join"
 
     override fun getAliases(): Array<String> = arrayOf("summon", "connect")
-
-//    //Audio stuff
-//    override fun onStatusChange(p0: ConnectionStatus?) { /* Unused */ }
-//
-//    override fun onUserSpeaking(p0: User?, p1: Boolean) { /* Unused */ }
-//    //Listen for ping
-//    override fun onPing(p0: Long) {
-//        OneLinerCommands.pingHistory.add(p0, true)
-//    }
 }

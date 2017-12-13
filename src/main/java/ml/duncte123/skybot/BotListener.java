@@ -100,7 +100,7 @@ public class BotListener extends ListenerAdapter {
         
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
-        if (event.getMessage().getContentDisplay().equals(Settings.prefix + "shutdown")
+        if (event.getMessage().getContentRaw().equals(Settings.prefix + "shutdown")
                     && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
             ShardManager manager = event.getJDA().asBot().getShardManager();
