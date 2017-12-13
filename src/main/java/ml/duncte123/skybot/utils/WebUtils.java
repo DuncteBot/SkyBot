@@ -28,12 +28,14 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class WebUtils {
 
     private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client;
+    private static final ScheduledExecutorService service
+            = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Web-Thread"));
 
     static {
         client = new OkHttpClient.Builder()
@@ -86,8 +88,10 @@ public class WebUtils {
                                   .build();
         
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
+            return service.schedule(
+                    () -> client.newCall(request).execute(),
+                    0, TimeUnit.MILLISECONDS).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
@@ -131,8 +135,10 @@ public class WebUtils {
                                   .build();
         
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
+            return service.schedule(
+                    () -> client.newCall(request).execute(),
+                    0, TimeUnit.MILLISECONDS).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
@@ -186,8 +192,10 @@ public class WebUtils {
                 .build();
 
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
+            return service.schedule(
+                    () -> client.newCall(request).execute(),
+                    0, TimeUnit.MILLISECONDS).get();
+        } catch (ExecutionException | InterruptedException e) {
             e.printStackTrace();
             return null;
         }
