@@ -29,6 +29,7 @@ import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -39,6 +40,7 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class CommandManager {
     
@@ -112,6 +114,10 @@ public class CommandManager {
         cmd = commands.parallelStream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
 
         return cmd.orElse(null);
+    }
+
+    public List<Command> getCommands(CommandCategory category) {
+        return commands.parallelStream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
     
     /**

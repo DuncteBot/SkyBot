@@ -21,15 +21,19 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.audio.hooks.ConnectionListener
+import net.dv8tion.jda.core.audio.hooks.ConnectionStatus
+import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 
-class JoinCommand : MusicCommand() {
+class JoinCommand : MusicCommand(), ConnectionListener {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
@@ -41,6 +45,13 @@ class JoinCommand : MusicCommand() {
         val guild = event.guild
         val mng = getMusicManager(guild)
         val audioManager = getAudioManager(guild)
+        val cooldowns = MusicCommand.cooldowns
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
+            sendMsg(event, """I still have cooldown!
+                    |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
+            sendError(event.message)
+            return
+        }
         if (audioManager.isConnected && mng.player.playingTrack != null) {
             sendMsg(event, "I'm already in a channel.")
             return
@@ -51,6 +62,11 @@ class JoinCommand : MusicCommand() {
                 audioManager.closeAudioConnection()
 
             audioManager.openAudioConnection(vc)
+            MusicCommand.addCooldown(guild.idLong)
+
+            //Set the listener if it's not set yet
+            if (audioManager.connectionListener == null)
+                audioManager.connectionListener = this
 
             sendSuccess(event.message)
         } catch (e: PermissionException) {
@@ -68,4 +84,13 @@ class JoinCommand : MusicCommand() {
     override fun getName(): String = "join"
 
     override fun getAliases(): Array<String> = arrayOf("summon", "connect")
+
+    //Audio stuff
+    override fun onStatusChange(p0: ConnectionStatus?) { /* Unused */ }
+
+    override fun onUserSpeaking(p0: User?, p1: Boolean) { /* Unused */ }
+    //Listen for ping
+    override fun onPing(ping: Long) {
+        OneLinerCommands.pingHistory.add(ping, true)
+    }
 }

@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.BadWordFilter;
@@ -103,6 +104,9 @@ public class BotListener extends ListenerAdapter {
         if (event.getMessage().getContentRaw().equals(Settings.prefix + "shutdown")
                     && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             AirUtils.log(Level.INFO, "Initialising shutdown!!!");
+
+            MusicCommand.shutdown();
+
             ShardManager manager = event.getJDA().asBot().getShardManager();
             
             manager.getShards().forEach(jda -> {

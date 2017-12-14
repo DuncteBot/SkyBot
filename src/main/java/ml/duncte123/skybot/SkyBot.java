@@ -73,7 +73,8 @@ public class SkyBot {
             AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
-        
+
+
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();
 
@@ -89,7 +90,8 @@ public class SkyBot {
         //Set the game from the config
         int gameId = AirUtils.config.getInt("discord.game.type", 3);
         String name = AirUtils.config.getString("discord.game.name", "over shard #{shardId}");
-        
+
+
         Game.GameType type = Game.GameType.fromKey(gameId);
 
         try {
@@ -103,8 +105,7 @@ public class SkyBot {
                     )
                     .setToken(token)
                     .build();
-        }
-        catch(LoginException e) {
+        } catch (LoginException e) {
             //Kill the system if we can't log in
             AirUtils.logger.error("Could not log in, check if your token is correct", e);
             System.exit(-4);

@@ -29,12 +29,21 @@ class LeaveCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (!channelChecks(event))
             return
-        val manager = getAudioManager(event.guild)
+        val guild = event.guild
+        val cooldowns = MusicCommand.cooldowns
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
+            sendMsg(event, """I still have cooldown!
+                    |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
+            sendError(event.message)
+            return
+        }
+        val manager = getAudioManager(guild)
 
         if (manager.isConnected) {
             getMusicManager(event.guild).player.stopTrack()
             manager.sendingHandler = null
             manager.closeAudioConnection()
+            MusicCommand.addCooldown(guild.idLong)
             sendMsg(event, "Leaving your channel")
         } else {
             sendMsg(event, "I'm not connected to any channels.")
