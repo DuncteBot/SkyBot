@@ -37,18 +37,12 @@ public class UnbanCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
-        if (args == null || args[0].isEmpty()) {
+        if (args.length < 1) {
             sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
             return;
         }
