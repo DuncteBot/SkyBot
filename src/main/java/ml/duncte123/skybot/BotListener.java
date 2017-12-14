@@ -307,6 +307,7 @@ public class BotListener extends ListenerAdapter {
                     return;
                 }
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
+                MusicCommand.cooldowns.put(event.getGuild().getIdLong(), 12600);
             }
         }
     }

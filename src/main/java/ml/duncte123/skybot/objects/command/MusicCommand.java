@@ -51,7 +51,7 @@ public abstract class MusicCommand extends Command {
                             }
                             return false;
                         })
-                , 5000, 200, TimeUnit.MILLISECONDS);
+                , 0, 200, TimeUnit.MILLISECONDS);
     }
 
     /**
