@@ -20,9 +20,13 @@
 
 package ml.duncte123.skybot.utils
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.audio.GuildMusicManager
+import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.entities.delegate.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
@@ -90,5 +94,31 @@ class EarthUtils {
                 }
             }
         }
+
+        @JvmStatic
+        fun audioJSON(): JSONObject {
+            val json = JSONObject()
+            AirUtils.audioUtils.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
+            return json
+        }
+
+        @JvmStatic
+        private fun gMMtoJSON(manager: GuildMusicManager): JSONObject =
+                JSONObject().put("player", playerToJSON(manager.player)).put("scheduler", schedulerToJSO(manager.scheduler))
+
+        @JvmStatic
+        private fun playerToJSON(player: AudioPlayer): JSONObject =
+                JSONObject().put("currentTrack", trackToJSON(player.playingTrack)).put("paused",player.isPaused)
+                        .put("volume", player.volume)
+
+        @JvmStatic
+        private fun schedulerToJSO(scheduler: TrackScheduler): JSONObject =
+                JSONObject().put("repeating", scheduler.isRepeating).put("queue_size", scheduler.queue.size)
+
+        @JvmStatic
+        private fun trackToJSON(track: AudioTrack): JSONObject =
+                JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
+                    .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
+                    .put("title", track.info.title)
     }
 }
