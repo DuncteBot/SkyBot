@@ -71,11 +71,10 @@ class ChatCommand : Command() {
         message.replace("@here", "here").replace("@everyone", "everyone")
 
         var response = bot.think(message)
-        response = Jsoup.parse(response).text()
-//        if (response.matches(regex = "<".toRegex())) /* this has to match the html parts */ {
-//            response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
-//                    .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
-//        }
+        for (element in Jsoup.parse(response).getElementsByTag("a")) {
+            println(element.toString())
+            response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
+        }
         sendMsg(event, "${event.author.asMention}, $response")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
