@@ -282,7 +282,9 @@ public class BotListener extends ListenerAdapter {
 //            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
 //            return;
 //        }
-        AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ".");
+        Guild g = event.getGuild();
+        String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
+        AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, message);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
