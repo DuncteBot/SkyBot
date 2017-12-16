@@ -96,4 +96,8 @@ class SizedList<E>(private val fixedSize: Int) : List<E>, ArrayList<E>() {
         }
         add(index, element)
     }
+
+    override fun toString(): String {
+        return "[Maximum size: $fixedSize, current size: $size, content: ${super.toString()}]"
+    }
 }

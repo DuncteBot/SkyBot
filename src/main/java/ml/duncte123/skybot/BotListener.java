@@ -251,7 +251,7 @@ public class BotListener extends ListenerAdapter {
 
         if (settings.isEnableJoinMessage()) {
             String welcomeLeaveChannelId =
-                    (settings.getWelcomeLeaveChannel() == null)
+                    (settings.getWelcomeLeaveChannel() == null || settings.getWelcomeLeaveChannel().isEmpty())
                     ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
