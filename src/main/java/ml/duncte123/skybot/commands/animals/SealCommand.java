@@ -21,10 +21,7 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-
-import java.net.URL;
 
 public class SealCommand extends Command {
 

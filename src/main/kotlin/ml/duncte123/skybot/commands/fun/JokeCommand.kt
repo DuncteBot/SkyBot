@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONArray
 import org.json.JSONObject
 import java.util.*
-import java.util.stream.Collectors
 
 class JokeCommand : Command() {
 

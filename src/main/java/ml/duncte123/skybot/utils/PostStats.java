@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import okhttp3.MediaType;
 import okhttp3.OkHttpClient;

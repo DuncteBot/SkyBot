@@ -26,8 +26,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 
-import java.net.URL;
-
 public class AlpacaCommand extends Command {
 
     public AlpacaCommand() {

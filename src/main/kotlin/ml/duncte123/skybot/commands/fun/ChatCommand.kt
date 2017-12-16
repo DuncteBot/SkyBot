@@ -18,19 +18,27 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import com.batiaev.aiml.bot.BotImpl
+import com.batiaev.aiml.chat.ChatContext
+import com.google.code.chatterbotapi.ChatterBot
 import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AiUtils
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import org.slf4j.event.Level
 
 class ChatCommand : Command() {
 
-    private val bot: ChatterBotSession
+    private val builder: ChatterBot
+    private var oldBot: ChatterBotSession
+    //private val bot: BotImpl
+    //private val context = ChatContext(Settings.defaultName.toLowerCase())
     private val responses = arrayOf(
         "My prefix in this guild is {PREFIX}",
         "Thanks for asking, my prefix here is {PREFIX}",
@@ -39,12 +47,15 @@ class ChatCommand : Command() {
     )
 
     init {
-        AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         this.category = CommandCategory.FUN
-        //New chat bot :D
-        bot = ChatterBotFactory()
+        AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
+        //New chat Bot :D
+        builder = ChatterBotFactory()
                 .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-                .createSession()
+        oldBot = builder.createSession()
+
+        //bot = AiUtils.get(Settings.defaultName.toLowerCase())
+
         AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
 
@@ -55,7 +66,7 @@ class ChatCommand : Command() {
             return
         }
         val time = System.currentTimeMillis()
-        val message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
+        val message = event.message.contentDisplay.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
         if(message.contains("prefix")) {
@@ -70,7 +81,8 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message.replace(it.asMention, it.name) }
         message.replace("@here", "here").replace("@everyone", "everyone")
 
-        var response = bot.think(message)
+        var response = oldBot.think(message)
+        //var response = bot.multisentenceRespond(message, context)
         if (response.startsWith(prefix = "<")) {
             response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
                     .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
@@ -83,4 +95,8 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
+
+    fun resetAi() {
+        oldBot = builder.createSession()
+    }
 }

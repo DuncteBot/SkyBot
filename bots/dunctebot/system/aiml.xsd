@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified" attributeFormDefault="unqualified">
+   <xs:element name="aiml" type="xs:string">
+         <xs:complexType>
+               <xs:sequence>
+                     <xs:element name="topic" maxOccurs="unbounded">
+                           <xs:complexType name="category">
+                                 <xs:sequence>
+                                       <xs:element name="category">
+                                             <xs:complexType>
+                                                   <xs:sequence>
+                                                         <xs:element name="pattern" type="xs:string"></xs:element>
+                                                         <xs:element name="that" type="xs:string"></xs:element>
+                                                         <xs:element name="template">
+                                                               <xs:complexType>
+                                                                     <xs:sequence>
+                                                                           <xs:element name="think">
+                                                                                 <xs:complexType>
+                                                                                       <xs:sequence>
+                                                                                             <xs:element name="set" type="xs:string">
+                                                                                                   <xs:complexType>
+                                                                                                         <xs:sequence>
+                                                                                                               <xs:element name="star"></xs:element>
+                                                                                                               <xs:element name="get">
+                                                                                                                     <xs:complexType>
+                                                                                                                           <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                                                                     </xs:complexType>
+                                                                                                               </xs:element>
+                                                                                                         </xs:sequence>
+                                                                                                         <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                                                   </xs:complexType>
+                                                                                             </xs:element>
+                                                                                       </xs:sequence>
+                                                                                 </xs:complexType>
+                                                                           </xs:element>
+                                                                           <xs:element name="star"></xs:element>
+                                                                           <xs:element name="srai" type="xs:string">
+                                                                                 <xs:complexType>
+                                                                                       <xs:sequence>
+                                                                                             <xs:element name="get">
+                                                                                                   <xs:complexType>
+                                                                                                         <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                                                   </xs:complexType>
+                                                                                             </xs:element>
+                                                                                       </xs:sequence>
+                                                                                 </xs:complexType>
+                                                                           </xs:element>
+                                                                           <xs:element name="condition">
+                                                                                 <xs:complexType>
+                                                                                       <xs:sequence>
+                                                                                             <xs:element name="li" maxOccurs="unbounded" type="xs:string">
+                                                                                                   <xs:complexType>
+                                                                                                         <xs:sequence>
+                                                                                                               <xs:element name="get">
+                                                                                                                     <xs:complexType>
+                                                                                                                           <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                                                                     </xs:complexType>
+                                                                                                               </xs:element>
+                                                                                                               <xs:element name="srai" maxOccurs="unbounded" type="xs:string"></xs:element>
+                                                                                                         </xs:sequence>
+                                                                                                         <xs:attribute name="value" type="xs:string"></xs:attribute>
+                                                                                                   </xs:complexType>
+                                                                                             </xs:element>
+                                                                                       </xs:sequence>
+                                                                                       <xs:attribute name="name" type="xs:string"></xs:attribute>
+                                                                                 </xs:complexType>
+                                                                           </xs:element>
+                                                                     </xs:sequence>
+                                                               </xs:complexType>
+                                                         </xs:element>
+                                                   </xs:sequence>
+                                             </xs:complexType>
+                                       </xs:element>
+                                 </xs:sequence>
+                                 <xs:attribute name="name" type="xs:string"></xs:attribute>
+                           </xs:complexType>
+                     </xs:element>
+                     <xs:element name="category" maxOccurs="unbounded" type="category"/>
+               </xs:sequence>
+               <xs:attribute name="version" type="xs:string"></xs:attribute>
+         </xs:complexType>
+   </xs:element>
+</xs:schema>
+ 

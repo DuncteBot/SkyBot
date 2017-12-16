@@ -27,8 +27,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 
-import java.net.URL;
-
 public class KittyCommand extends Command {
 
     public KittyCommand() {
