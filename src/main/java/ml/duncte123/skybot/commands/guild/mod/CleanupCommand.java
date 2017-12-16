@@ -29,6 +29,7 @@ import org.slf4j.event.Level;
 
 import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class CleanupCommand extends Command {
@@ -48,15 +49,16 @@ public class CleanupCommand extends Command {
         }
 
         int total = 5;
-        boolean keepPinned = false;
+        //Little hack for lambda
+        AtomicBoolean keepPinned = new AtomicBoolean(false);
 
         if (args.length > 0) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
-                keepPinned = true;
+                keepPinned.set(true);
             else {
                 if(args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
-                     keepPinned = true;
+                    keepPinned.set(true);
                 try {
                     total = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
@@ -74,19 +76,19 @@ public class CleanupCommand extends Command {
         }
 
         try {
-            MessageHistory mh = event.getChannel().getHistory();
-            List<Message> msgLst = mh.retrievePast(total).complete();
 
-            if(keepPinned)
-                msgLst = msgLst.parallelStream().filter(message -> !message.isPinned()).collect(Collectors.toList());
+            event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
+                if(keepPinned.get())
+                    msgLst = msgLst.parallelStream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
-            event.getChannel().deleteMessages(msgLst).queue();
-            event.getChannel().sendMessage("Removed " + msgLst.size() + " messages!").queue(
-                    message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-            );
-            AirUtils.log(Level.DEBUG, msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
+                event.getChannel().deleteMessages(msgLst).queue();
+                event.getChannel().sendMessage("Removed " + msgLst.size() + " messages!").queue(
+                        message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
+                );
+                AirUtils.log(Level.DEBUG, msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
+            });
         } catch (Exception e) {
-            event.getChannel().sendMessage("ERROR: " + e.getMessage()).queue();
+            sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

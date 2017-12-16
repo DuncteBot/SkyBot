@@ -75,7 +75,7 @@ public class UserinfoCommand extends Command {
         index -= 3;
         if (index < 0)
             index = 0;
-        joinOrder.append("\n" + "Join Order: ");
+        joinOrder.append("\n");
         if (joins.get(index).equals(m))
             joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("](https://bot.duncte123.me/)");
         else
@@ -103,7 +103,7 @@ public class UserinfoCommand extends Command {
                                   .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                                   .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                                   .addField("Join order", joinOrder.toString(), true)
-                                  .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " " + m.getOnlineStatus().name().toLowerCase(), true)
+                                  .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " " + m.getOnlineStatus().name().toLowerCase().replaceAll("_", " "), true)
                                   .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                                   .build();
         
