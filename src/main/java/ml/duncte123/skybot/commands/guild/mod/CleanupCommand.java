@@ -78,7 +78,7 @@ public class CleanupCommand extends Command {
             List<Message> msgLst = mh.retrievePast(total).complete();
 
             if(keepPinned)
-                msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
+                msgLst = msgLst.parallelStream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
             event.getChannel().deleteMessages(msgLst).queue();
             event.getChannel().sendMessage("Removed " + msgLst.size() + " messages!").queue(

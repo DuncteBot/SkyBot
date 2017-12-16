@@ -55,7 +55,7 @@ public class GuildInfoCommand extends Command {
                                       .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().complete().stream().findFirst().ifPresent(inv ->
+                    g.getInvites().complete().parallelStream().findFirst().ifPresent(inv ->
                             eb.addField("Guild invite",
                                     " [discord.gg/" + inv.getCode() + "](https://discord.gg/" + inv.getCode() + ")",
                                     true));

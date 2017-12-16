@@ -47,7 +47,7 @@ class DialogCommand : Command() {
                 .append("║ Alert                     ║\n")
                 .append("╠═══════════════════════════╣\n")
 
-        lines.stream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
+        lines.parallelStream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
 
               sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
                 .append("║  │   Yes   │  │   No   │  ║\n")

@@ -31,6 +31,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -353,17 +354,10 @@ public class AirUtils {
      */
     public static double[] getBotRatio(Guild g) {
         
-        double totalCount = g.getMemberCache().size();
-        double botCount = 0;
-        double userCount = 0;
-        
-        for (Member m : g.getMembers()) {
-            if (m.getUser().isBot()) {
-                botCount++;
-            } else {
-                userCount++;
-            }
-        }
+        MemberCacheView memberCache = g.getMemberCache();
+        double totalCount = memberCache.size();
+        double botCount = memberCache.parallelStream().filter(it -> it.getUser().isBot()).count();
+        double userCount = memberCache.parallelStream().filter(it -> !it.getUser().isBot()).count();
         
         //percent in users
         double userCountP = (userCount / totalCount) * 100;
@@ -388,7 +382,7 @@ public class AirUtils {
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
         if (pubChann == null || !pubChann.canTalk()) {
-            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+            return guild.getTextChannelCache().parallelStream().filter(TextChannel::canTalk).findFirst().orElse(null);
         }
         
         return pubChann;
