@@ -53,8 +53,10 @@ public abstract class MusicCommand extends Command {
                             if (b > 0) {
                                 cooldowns.put(a, (b - 200));
                                 return true;
+                            } else if (b == 0) {
+                                cooldowns.remove(a);
                             }
-                            return false;
+                            return true;
                         })
                 , 0, 200, TimeUnit.MILLISECONDS);
     }

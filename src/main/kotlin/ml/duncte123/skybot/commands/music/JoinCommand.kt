@@ -52,6 +52,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             sendError(event.message)
             return
         }
+        cooldowns.remove(guild.idLong)
         if (audioManager.isConnected && mng.player.playingTrack != null) {
             sendMsg(event, "I'm already in a channel.")
             return
