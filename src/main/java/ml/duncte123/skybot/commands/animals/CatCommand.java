@@ -38,7 +38,7 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String jsonString = WebUtils.getText("http://random.cat/meow");
+            String jsonString = WebUtils.getText("http://random.cat/meow.php");
             JSONObject jsonObject = new JSONObject(jsonString);
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
