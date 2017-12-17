@@ -19,11 +19,13 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.batiaev.aiml.bot.BotImpl
+import com.batiaev.aiml.chat.Chat
 import com.batiaev.aiml.chat.ChatContext
 import com.google.code.chatterbotapi.ChatterBot
 import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
+import ml.duncte123.skybot.entities.DiscordChannel
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AiUtils
@@ -35,10 +37,10 @@ import org.slf4j.event.Level
 
 class ChatCommand : Command() {
 
-    private val builder: ChatterBot
-    private var oldBot: ChatterBotSession
-    //private val bot: BotImpl
-    //private val context = ChatContext(Settings.defaultName.toLowerCase())
+    //private val builder: ChatterBot
+    //private var oldBot: ChatterBotSession
+    private val bot: BotImpl
+    private val context = ChatContext(Settings.defaultName)
     private val responses = arrayOf(
         "My prefix in this guild is {PREFIX}",
         "Thanks for asking, my prefix here is {PREFIX}",
@@ -50,17 +52,24 @@ class ChatCommand : Command() {
         this.category = CommandCategory.FUN
         AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         //New chat Bot :D
-        builder = ChatterBotFactory()
-                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-        oldBot = builder.createSession()
+        //builder = ChatterBotFactory()
+        //        .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
+        //oldBot = builder.createSession()
 
-        //bot = AiUtils.get(Settings.defaultName.toLowerCase())
+        bot = AiUtils.get(Settings.defaultName.toLowerCase())
 
         AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
 
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+
+        if(!bot.wakeUp()) {
+            sendError(event.message)
+            sendMsg(event, "The chat is not available atm, try again later")
+            return
+        }
+
         if(args.isEmpty()){
             sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
@@ -81,8 +90,9 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message.replace(it.asMention, it.name) }
         message.replace("@here", "here").replace("@everyone", "everyone")
 
-        var response = oldBot.think(message)
-        //var response = bot.multisentenceRespond(message, context)
+        //var response = oldBot.think(message)
+        var response = bot.multisentenceRespond(message, context)
+        this.context.newState(message, response)
         if (response.startsWith(prefix = "<")) {
             response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
                     .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
@@ -97,6 +107,6 @@ class ChatCommand : Command() {
     override fun getName() = "chat"
 
     fun resetAi() {
-        oldBot = builder.createSession()
+        //oldBot = builder.createSession()
     }
 }

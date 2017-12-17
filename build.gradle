@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.0'
+    ext.kotlin_version = '1.2.10'
 
     repositories {
         mavenCentral()
@@ -32,7 +32,7 @@ plugins {
     id 'idea'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.10'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
@@ -96,13 +96,15 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.0'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.0'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.10'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.10'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
 
     //Bot?
     compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
-    compile group: 'com.github.AIMLang', name: 'aiml-java-interpreter', version: 'bd3160e1ce'
+    compile( group: 'com.github.AIMLang', name: 'aiml-java-interpreter', version: 'bd3160e1ce') {
+        exclude group: 'org.springframework.boot', module: 'spring-boot-autoconfigure'
+    }
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
