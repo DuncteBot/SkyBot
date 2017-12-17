@@ -102,6 +102,7 @@ dependencies {
 
     //Bot?
     compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
+    compile group: 'com.github.AIMLang', name: 'aiml-java-interpreter', version: 'bd3160e1ce'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
