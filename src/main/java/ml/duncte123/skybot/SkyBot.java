@@ -20,10 +20,7 @@ package ml.duncte123.skybot;
 
 import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
@@ -107,7 +104,7 @@ public class SkyBot {
                     .build();
         } catch (LoginException e) {
             //Kill the system if we can't log in
-            AirUtils.logger.error("Could not log in, check if your token is correct", e);
+            AirUtils.logger.error(TextColor.RED + "Could not log in, check if your token is correct" + TextColor.RESET, e);
             System.exit(-4);
         }
 
