@@ -215,7 +215,7 @@ public class BotListener extends ListenerAdapter {
         }
         
         //Update guild count from then the bot was offline (should never die tho)
-        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     /**
@@ -269,9 +269,9 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         //Temp disable that
-        //if 60 of a guild is bots, we'll leave it
+        //if 80 of a guild is bots, we'll leave it
 //        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-//        if (botToUserRatio[1] > 60) {
+//        if (botToUserRatio[1] > 80) {
 //            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
 //                    event.getGuild().getOwner().getAsMention(),
 //                    botToUserRatio[1],
@@ -286,14 +286,14 @@ public class BotListener extends ListenerAdapter {
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, message);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
-        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         AirUtils.log(Settings.defaultName + "GuildLeave", Level.INFO, "Leaving guild: " + event.getGuild().getName() + ".");
         GuildSettingsUtils.deleteGuild(event.getGuild());
-        AirUtils.updateGuildCount(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     /**

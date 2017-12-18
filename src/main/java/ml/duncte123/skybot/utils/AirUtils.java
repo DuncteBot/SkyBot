@@ -32,6 +32,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
@@ -584,6 +585,14 @@ public class AirUtils {
             e.printStackTrace();
             return e.toString();
         }
+    }
+
+    public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
+        JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
+        if(returnValue.getString("status").equalsIgnoreCase("failure")) {
+            throw new UnsupportedOperationException("Server responded with a unknown status message: " + returnValue.getString("message"));
+        }
+
     }
 
     /**
