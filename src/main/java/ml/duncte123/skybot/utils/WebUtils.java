@@ -24,23 +24,19 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
     private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
-    private static final OkHttpClient client;
-    private static final ScheduledExecutorService service
-            = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Web-Thread"));
+    //private static final OkHttpClient client;
+    private static final ThreadLocal<OkHttpClient> client = new ThreadLocal<>();
 
     static {
-        client = new OkHttpClient.Builder()
+        client.set(new OkHttpClient.Builder()
                 .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
                 .readTimeout(10, TimeUnit.SECONDS)// socket timeout
-        .build();
+        .build());
     }
 
     /**
@@ -72,10 +68,8 @@ public class WebUtils {
                                   .build();
         
         try {
-            return service.schedule(
-                    () -> client.newCall(request).execute(),
-                    0, TimeUnit.MILLISECONDS).get();
-        } catch (ExecutionException | InterruptedException e) {
+            return client.get().newCall(request).execute();
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -119,10 +113,8 @@ public class WebUtils {
                                   .build();
         
         try {
-            return service.schedule(
-                    () -> client.newCall(request).execute(),
-                    0, TimeUnit.MILLISECONDS).get();
-        } catch (ExecutionException | InterruptedException e) {
+            return client.get().newCall(request).execute();
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -176,10 +168,8 @@ public class WebUtils {
                 .build();
 
         try {
-            return service.schedule(
-                    () -> client.newCall(request).execute(),
-                    0, TimeUnit.MILLISECONDS).get();
-        } catch (ExecutionException | InterruptedException e) {
+            return client.get().newCall(request).execute();
+        } catch (IOException e) {
             e.printStackTrace();
             return null;
         }
@@ -208,6 +198,7 @@ public class WebUtils {
             return null;
         }
     }
+
 
     /**
      * This holds some variables that we will accept

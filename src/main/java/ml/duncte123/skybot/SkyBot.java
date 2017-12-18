@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
 
-import static ch.qos.logback.classic.Level.DEBUG;
 import static ch.qos.logback.classic.Level.INFO;
 import static org.slf4j.event.Level.ERROR;
 
@@ -51,7 +50,7 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
         //Set the logger to only info by default
         Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        l.setLevel(DEBUG);
+        l.setLevel(INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
