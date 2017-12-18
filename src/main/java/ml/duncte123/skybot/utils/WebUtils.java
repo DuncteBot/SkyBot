@@ -188,7 +188,7 @@ public class WebUtils {
             jo.put("longUrl", url);
 
             String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
-                    + AirUtils.config.getString("apis.googl"), jo).body().source().readUtf8();
+                    + AirUtils.config.getString("apis.googl", "Google api key"), jo).body().source().readUtf8();
 
             JSONObject returnJSON = new JSONObject(returnData);
             return returnJSON.get("id").toString();
@@ -198,7 +198,6 @@ public class WebUtils {
             return null;
         }
     }
-
 
     /**
      * This holds some variables that we will accept
