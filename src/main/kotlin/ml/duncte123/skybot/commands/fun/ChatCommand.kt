@@ -18,17 +18,13 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import com.batiaev.aiml.bot.BotImpl
-import com.batiaev.aiml.chat.Chat
 import com.batiaev.aiml.chat.ChatContext
-import com.google.code.chatterbotapi.ChatterBot
-import com.google.code.chatterbotapi.ChatterBotFactory
-import com.google.code.chatterbotapi.ChatterBotSession
-import com.google.code.chatterbotapi.ChatterBotType
+import ml.duncte123.skybot.entities.Bot
+import ml.duncte123.skybot.entities.BotImpl
 import ml.duncte123.skybot.entities.DiscordChannel
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AiUtils
+import ml.duncte123.skybot.utils.AIUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -37,9 +33,8 @@ import org.slf4j.event.Level
 
 class ChatCommand : Command() {
 
-    //private val builder: ChatterBot
-    //private var oldBot: ChatterBotSession
     private val bot: BotImpl
+    private val channel: DiscordChannel
     private val context = ChatContext(Settings.defaultName)
     private val responses = arrayOf(
         "My prefix in this guild is {PREFIX}",
@@ -52,11 +47,8 @@ class ChatCommand : Command() {
         this.category = CommandCategory.FUN
         AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
         //New chat Bot :D
-        //builder = ChatterBotFactory()
-        //        .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-        //oldBot = builder.createSession()
-
-        bot = AiUtils.get(Settings.defaultName.toLowerCase())
+        bot = AIUtils.get() as BotImpl
+        channel = DiscordChannel(bot as Bot)
 
         AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
@@ -84,13 +76,17 @@ class ChatCommand : Command() {
             return
         }
 
-        event.message.mentionedChannels.forEach { message.replace(it.asMention, it.name) }
-        event.message.mentionedRoles.forEach { message.replace(it.asMention, it.name) }
-        event.message.mentionedUsers.forEach { message.replace(it.asMention, it.name) }
-        event.message.emotes.forEach { message.replace(it.asMention, it.name) }
+        //We don't need this because we are using contentDisplay instead of contentRaw
+//        event.message.mentionedChannels.forEach { message.replace(it.asMention, it.name) }
+//        event.message.mentionedRoles.forEach { message.replace(it.asMention, it.name) }
+//        event.message.mentionedUsers.forEach { message.replace(it.asMention, it.name) }
+//        event.message.emotes.forEach { message.replace(it.asMention, it.name) }
         message.replace("@here", "here").replace("@everyone", "everyone")
 
-        //var response = oldBot.think(message)
+        AirUtils.logger.debug("Message: \"$message\"")
+        //Set the text channel in the bot
+        bot.channel = event.channel
+        channel.startChat(event.author.id)
         var response = bot.multisentenceRespond(message, context)
         this.context.newState(message, response)
         if (response.startsWith(prefix = "<")) {
@@ -105,8 +101,4 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
-
-    fun resetAi() {
-        //oldBot = builder.createSession()
-    }
 }

@@ -22,8 +22,8 @@
 <category><pattern>MY FAVORITE COLOR IS *</pattern>
 <template>I didn't recognize <star/> as a color.</template>
 </category>
-<category><pattern>MY FAVORITE COLOR IS GREEN</pattern>
-<template><set name="favoritecolor">Green</set> is my favorite color too! <think><set name="it"><set name="topic">Green</set></set></think></template>
+<category><pattern>MY FAVORITE COLOR IS RED</pattern>
+<template><set name="favoritecolor">Red</set> is my favorite color too! <think><set name="it"><set name="topic">Red</set></set></think></template>
 </category>
 <category><pattern>I LIKE <set>color</set></pattern>
 <template><srai>MY FAVORITE COLOR IS <star/></srai></template>

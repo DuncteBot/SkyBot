@@ -18,45 +18,26 @@
 
 package ml.duncte123.skybot.entities;
 
-import com.batiaev.aiml.channels.Channel;
 import com.batiaev.aiml.channels.ChannelType;
-import com.batiaev.aiml.channels.Provider;
+import com.batiaev.aiml.chat.ChatContext;
+import com.batiaev.aiml.chat.ChatContextStorage;
+import com.batiaev.aiml.core.Named;
+import net.dv8tion.jda.core.entities.TextChannel;
 
-public class DiscordChannel implements Provider, Channel {
+public interface Bot extends Named, com.batiaev.aiml.bot.Bot {
+    String getRespond(String var1);
 
-    private final Bot bot;
-
-    public DiscordChannel(Bot bot) {
-        this.bot = bot;
+    default void startChat(String userId, ChannelType channelType) {
+        this.setChatContext(this.getChatContextStorage().getContext(userId, channelType));
     }
 
-    @Override
-    public com.batiaev.aiml.bot.Bot getBot() {
-        return bot;
-    }
+    ChatContextStorage getChatContextStorage();
 
-    @Override
-    public ChannelType getType() {
-        return ChannelType.CONSOLE;
-    }
+    void setChatContext(ChatContext var1);
 
-    @Override
-    public ResponseHandler getResponseHandler() {
-        return s -> {
-            if(bot.getChannel().canTalk())
-                bot.getChannel().sendMessage(s).queue();
-        };
-    }
+    void setChannel(TextChannel c);
 
-    @Override
-    public String read() {
-        /* unused */
-        return "";
-    }
+    TextChannel getChannel();
 
-    @Override
-    public void write(String s) {
-        if(bot.getChannel().canTalk())
-            bot.getChannel().sendMessage(s).queue();
-    }
+    boolean wakeUp();
 }
