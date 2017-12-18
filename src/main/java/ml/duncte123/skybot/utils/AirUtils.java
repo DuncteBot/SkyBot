@@ -652,11 +652,11 @@ public class AirUtils {
     public static String flipTable() {
         switch (AirUtils.rand.nextInt(4)){
             case 0:
-                return "（╯°□°）╯︵┻━┻";
+                return "(╯°□°)╯︵┻━┻";
             case 1:
-                return "（ノ゜Д゜）ノ︵┻━┻";
+                return "(ノ゜Д゜)ノ︵┻━┻";
             case 2:
-                return  "（ノಥ益ಥ）ノ︵┻━┻";
+                return  "(ノಥ益ಥ)ノ︵┻━┻";
             case 3:
                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
            default:

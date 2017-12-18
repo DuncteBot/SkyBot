@@ -101,7 +101,6 @@ dependencies {
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
 
     //Bot?
-    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
     compile( group: 'com.github.AIMLang', name: 'aiml-java-interpreter', version: 'bd3160e1ce') {
         exclude group: 'org.springframework.boot', module: 'spring-boot-autoconfigure'
     }
