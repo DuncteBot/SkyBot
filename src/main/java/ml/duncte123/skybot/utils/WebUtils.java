@@ -30,14 +30,12 @@ public class WebUtils {
 
     private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     //private static final OkHttpClient client;
-    private static final ThreadLocal<OkHttpClient> client = new ThreadLocal<>();
-
-    static {
-        client.set(new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
-                .readTimeout(10, TimeUnit.SECONDS)// socket timeout
-        .build());
-    }
+    private static final ThreadLocal<OkHttpClient> client = ThreadLocal.withInitial(
+            () -> (new OkHttpClient.Builder())
+                    .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
+                    .readTimeout(10, TimeUnit.SECONDS)// socket timeout
+                    .build()
+    );
 
     /**
      * Reads contents from a website and returns it to a string
