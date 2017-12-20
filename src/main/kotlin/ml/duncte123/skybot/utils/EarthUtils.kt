@@ -67,8 +67,8 @@ class EarthUtils {
                         .put("isNative", stackTraceElement.isNativeMethod)
 
         @JvmStatic
-        fun write(file: String, content: String) {
-            val file = File(file)
+        fun write(a_file: String, content: String) {
+            val file = File(a_file)
 
             if (!file.exists())
                 file.createNewFile()
