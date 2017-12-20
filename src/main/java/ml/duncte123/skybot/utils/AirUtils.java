@@ -35,6 +35,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -593,17 +594,25 @@ public class AirUtils {
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
         if(returnValue.getString("status").equalsIgnoreCase("failure")) {
-            String exceptionMessage;
-            switch (returnValue.getString("message").toLowerCase()) {
-                case "unauthorized": {
-                    exceptionMessage = "Unauthorized access! %s";
-                    break;
-                }
+            String exceptionMessage = "%s";
+            try {
+                switch (returnValue.getInt("code")) {
+                    case 401: {
+                        exceptionMessage = "Unauthorized access! %s";
+                        break;
+                    }
+                    case 400: {
+                        exceptionMessage = "Bad request! %s";
+                        break;
+                    }
 
-                default: {
-                    exceptionMessage = "Server responded with a unknown status message: %s";
-                    break;
+                    default: {
+                        exceptionMessage = "Server responded with a unknown status message: %s";
+                        break;
+                    }
                 }
+            } catch (JSONException ex) {
+                throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")), ex);
             }
 
             throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
@@ -680,7 +689,7 @@ public class AirUtils {
             case 1:
                 return "(ノ゜Д゜)ノ︵┻━┻";
             case 2:
-                return  "(ノಥ益ಥ)ノ︵┻━┻";
+                return "(ノಥ益ಥ)ノ︵┻━┻";
             case 3:
                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
            default:
