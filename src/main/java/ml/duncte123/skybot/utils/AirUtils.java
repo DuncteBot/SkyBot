@@ -30,7 +30,10 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -590,9 +593,21 @@ public class AirUtils {
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
         if(returnValue.getString("status").equalsIgnoreCase("failure")) {
-            throw new UnsupportedOperationException("Server responded with a unknown status message: " + returnValue.getString("message"));
-        }
+            String exceptionMessage;
+            switch (returnValue.getString("message").toLowerCase()) {
+                case "unauthorized": {
+                    exceptionMessage = "Unauthorized access! %s";
+                    break;
+                }
 
+                default: {
+                    exceptionMessage = "Server responded with a unknown status message: %s";
+                    break;
+                }
+            }
+
+            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
+        }
     }
 
     /**

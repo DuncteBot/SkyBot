@@ -108,7 +108,7 @@ class EarthUtils {
 
         @JvmStatic
         private fun playerToJSON(player: AudioPlayer): JSONObject =
-                JSONObject().put("currentTrack", player.playingTrack.let { trackToJSON(it) }).put("paused",player.isPaused)
+                JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused",player.isPaused)
                         .put("volume", player.volume)
 
         @JvmStatic
