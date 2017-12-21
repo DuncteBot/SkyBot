@@ -98,7 +98,6 @@ public class SkyBot {
                     .setEventManager(new EventManager())
                     .setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
-                    .setSessionController(new SessionControllerAdapter())
                     .setGameProvider(shardId -> Game.of(type,
                             name.replace("{shardId}", Integer.toString(shardId + 1)))
                     )
