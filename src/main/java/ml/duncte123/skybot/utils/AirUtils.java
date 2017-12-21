@@ -362,7 +362,7 @@ public class AirUtils {
         MemberCacheView memberCache = g.getMemberCache();
         double totalCount = memberCache.size();
         double botCount = memberCache.parallelStream().filter(it -> it.getUser().isBot()).count();
-        double userCount = memberCache.parallelStream().filter(it -> !it.getUser().isBot()).count();
+        double userCount = totalCount - botCount;
         
         //percent in users
         double userCountP = (userCount / totalCount) * 100;
