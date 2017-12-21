@@ -71,7 +71,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.4.0_317'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'c7f7730'
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
