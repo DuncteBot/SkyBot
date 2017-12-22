@@ -60,7 +60,7 @@ public class BotinfoCommand extends Command {
                 .addField("General info", "**Creator:** duncte123#1245\n" +
                         "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
                         "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
-                        "**Support guild:** [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+                        "**Support guild:** [discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                         "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
                         "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.version, true)

@@ -449,7 +449,7 @@ public class AirUtils {
             uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
         }
         
-        return uptimeString.replaceFirst(",", "");
+        return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
     }
 
     /**
