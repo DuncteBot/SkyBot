@@ -152,7 +152,6 @@ public class Config {
      *
      * @param key   the key to add the value under
      * @param value the value that we need to add, in the form of json
-     * @throws Exception when we fail
      */
     public void put(String key, Object value) {
         ason.put(key, value);
