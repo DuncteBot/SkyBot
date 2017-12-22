@@ -36,7 +36,9 @@ public class Tag {
     /**
      * The tag constructor
      *
+     * @param tagId the id of the taf
      * @param author Who made the tag? Username#discrim
+     * @param authorId the id of the user
      * @param name   What is the tag called
      * @param text   What to put into the tag
      */
