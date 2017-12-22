@@ -42,36 +42,34 @@ public class GuildInfoCommand extends Command {
         Guild g = event.getGuild();
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
+            final String inviteStringTemplate = "[discord.gg/%s](https://discord.gg/%s)";
+            final String[] inviteString = new String[1];
+
+            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+                if (!g.getFeatures().contains("VANITY_URL")) {
+                    g.getInvites().complete().parallelStream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode(), inv.getCode()));
+                } else {
+                    String vanity = g.getVanityUrl().complete();
+                    inviteString[0] = String.format(inviteStringTemplate, vanity, vanity);
+                }
+            }
 
             double[] ratio = AirUtils.getBotRatio(g);
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                                      .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
-                                      .addField("Total Members", g.getMembers().size() + "", true)
-                                      .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
-                                      .addField("Guild Name", g.getName(), true)
-                                      .addField("Guild prefix", settings.getCustomPrefix(), true)
-                                      .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                                      .addField("Guild Region", g.getRegion().getName(), true)
-                                      .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
-            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().complete().parallelStream().findFirst().ifPresent(inv ->
-                            eb.addField("Guild invite",
-                                    " [discord.gg/" + inv.getCode() + "](https://discord.gg/" + inv.getCode() + ")",
-                                    true));
-                } else {
-                    String vanity = g.getVanityUrl().complete();
-                    eb.addField("Guild invite",
-                            " [discord.gg/" + vanity + "](https://discord.gg/" + vanity + ")",
-                            true);
-                }
-            }
+                                      .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+                                              "**Name:** " + g.getName() + "\n" +
+                                              "**Prefix:** " + settings.getCustomPrefix() + "\n" +
+                                              "**Region:** " + g.getRegion().getName() + "\n" +
+                                              "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                                              "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                                              "**Invite:** " + inviteString[0], false)
+                                      .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+                                              "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
+                                              "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
-            MessageEmbed messageEmbed = eb.build();
-
-            sendEmbed(event, messageEmbed);
+            sendEmbed(event, eb.build());
         } catch (Exception e) {
             sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
@@ -90,6 +88,6 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"serverinfo", "server"};
+        return new String[]{"serverinfo", "server", "guild"};
     }
 }

@@ -88,9 +88,13 @@ public class SkyBot {
         //Set the game from the config
         int gameId = AirUtils.config.getInt("discord.game.type", 3);
         String name = AirUtils.config.getString("discord.game.name", "over shard #{shardId}");
+        String[] url = {"https://www.twitch.tv/duncte123"};
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
+        if(type.equals(Game.GameType.STREAMING)) {
+            url[0] = AirUtils.config.getString("discord.game.streamUrl", url[0]);
+        }
 
         try {
             //Set up sharding for the bot
@@ -99,7 +103,7 @@ public class SkyBot {
                     .setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
                     .setGameProvider(shardId -> Game.of(type,
-                            name.replace("{shardId}", Integer.toString(shardId + 1)))
+                            name.replace("{shardId}", Integer.toString(shardId + 1)), url[0])
                     )
                     .setToken(token)
                     .build();

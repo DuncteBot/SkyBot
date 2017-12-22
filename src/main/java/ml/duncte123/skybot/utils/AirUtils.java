@@ -30,10 +30,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -43,6 +40,8 @@ import org.slf4j.event.Level;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 public class AirUtils {
@@ -374,6 +373,20 @@ public class AirUtils {
                 "In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
         
         return new double[]{Math.round(userCountP), Math.round(botCountP)};
+    }
+
+    /**
+     * This counts the users in a guild that have an animated avatar
+     * @param g the guild to count it in
+     * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
+     */
+    public static AtomicLong countAnimatedAvatars(Guild g) {
+
+        return new AtomicLong(g.getMemberCache().parallelStream()
+                .map(Member::getUser)
+                .filter(it -> it.getAvatarId() != null )
+	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
+        );
     }
 
     /**
