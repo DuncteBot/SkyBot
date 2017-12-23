@@ -42,8 +42,8 @@ public class GuildInfoCommand extends Command {
         Guild g = event.getGuild();
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
-            final String inviteStringTemplate = "[discord.gg/%s](https://discord.gg/%s)";
-            final String[] inviteString = new String[1];
+            final String inviteStringTemplate = "**Invite:** [discord.gg/%s](https://discord.gg/%s)";
+            final String[] inviteString = {""};
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
@@ -62,10 +62,10 @@ public class GuildInfoCommand extends Command {
                                               "**Region:** " + g.getRegion().getName() + "\n" +
                                               "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
                                               "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                                              "**Invite:** " + inviteString[0], false)
+                                              inviteString[0], false)
                                       .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                                               "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
-                                              "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
+                                              "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
