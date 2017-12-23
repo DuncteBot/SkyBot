@@ -28,3 +28,13 @@ appender("STDOUT", ConsoleAppender) {
     }
 }
 root(DEBUG, ["STDOUT"])
+
+//def bySecond = timestamp("yyyyMMdd'T'HHmmss")
+//
+//appender("FILE", FileAppender) {
+//    file = "log-${bySecond}.txt"
+//    encoder(PatternLayoutEncoder) {
+//        pattern = "%d{dd-MM-yyyy HH:mm:ss HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
+//    }
+//}
+//root(DEBUG, ["FILE"])

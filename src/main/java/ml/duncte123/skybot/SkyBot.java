@@ -23,7 +23,6 @@ import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
-import net.dv8tion.jda.core.utils.SessionControllerAdapter;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.LoggerFactory;
 
