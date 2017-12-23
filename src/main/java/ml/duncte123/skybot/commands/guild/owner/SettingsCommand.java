@@ -54,9 +54,10 @@ public class SettingsCommand extends Command {
                 TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild());
                 TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), event.getGuild());
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                        "**Show join messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
+                        "**Show join/leave messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
+                        "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
                         "**Modlog Channel:** " + (logChan !=null ? logChan.getAsMention(): "none") + "\n" +
                         "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
