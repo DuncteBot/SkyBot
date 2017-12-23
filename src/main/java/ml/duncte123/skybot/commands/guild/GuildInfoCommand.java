@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
@@ -56,16 +55,16 @@ public class GuildInfoCommand extends Command {
 
             double[] ratio = AirUtils.getBotRatio(g);
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                                      .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
-                                              "**Name:** " + g.getName() + "\n" +
-                                              "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                                              "**Region:** " + g.getRegion().getName() + "\n" +
-                                              "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
-                                              "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                                              inviteString[0], false)
-                                      .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
-                                              "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
-                                              "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
+                    .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+                            "**Name:** " + g.getName() + "\n" +
+                            "**Prefix:** " + settings.getCustomPrefix() + "\n" +
+                            "**Region:** " + g.getRegion().getName() + "\n" +
+                            "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                            "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                            "**Invite:** " + inviteString[0], false)
+                    .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+                            "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
+                            "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 

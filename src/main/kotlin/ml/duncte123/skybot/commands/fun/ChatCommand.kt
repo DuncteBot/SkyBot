@@ -37,10 +37,10 @@ class ChatCommand : Command() {
     private val channel: DiscordChannel
     private val context = ChatContext(Settings.defaultName)
     private val responses = arrayOf(
-        "My prefix in this guild is {PREFIX}",
-        "Thanks for asking, my prefix here is {PREFIX}",
-        "That should be {PREFIX}",
-        "It was {PREFIX} if I'm not mistaken"
+        "My prefix in this guild is *`{PREFIX}`*",
+        "Thanks for asking, my prefix here is *`{PREFIX}`*",
+        "That should be *`{PREFIX}`*",
+        "It was *`{PREFIX}`* if I'm not mistaken"
     )
 
     init {
@@ -67,21 +67,22 @@ class ChatCommand : Command() {
             return
         }
         val time = System.currentTimeMillis()
-        val message = event.message.contentDisplay.split( "\\s+".toRegex(),2)[1]
+        var message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
         if(message.contains("prefix")) {
             sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.rand.nextInt(responses.size)]
-                    .replace("{PREFIX}", "`${getSettings(event.guild).customPrefix}`"))
+                    .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
         }
 
         //We don't need this because we are using contentDisplay instead of contentRaw
-//        event.message.mentionedChannels.forEach { message.replace(it.asMention, it.name) }
-//        event.message.mentionedRoles.forEach { message.replace(it.asMention, it.name) }
-//        event.message.mentionedUsers.forEach { message.replace(it.asMention, it.name) }
-//        event.message.emotes.forEach { message.replace(it.asMention, it.name) }
-        message.replace("@here", "here").replace("@everyone", "everyone")
+        //We need it since contentDisplay leaves # and @
+        event.message.mentionedChannels.forEach { message = message.replace(it.asMention, it.name) }
+        event.message.mentionedRoles.forEach { message = message.replace(it.asMention, it.name) }
+        event.message.mentionedUsers.forEach { message = message.replace(it.asMention, it.name) }
+        event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
+        message = message.replace("@here", "here").replace("@everyone", "everyone")
 
         AirUtils.logger.debug("Message: \"$message\"")
         //Set the text channel in the bot
@@ -89,9 +90,8 @@ class ChatCommand : Command() {
         channel.startChat(event.author.id)
         var response = bot.multisentenceRespond(message, context)
         this.context.newState(message, response)
-        if (response.startsWith(prefix = "<")) {
-            response = """<${Jsoup.parse(response.substring(response.indexOfFirst { it == '<'}..(response.indexOfLast { it == '>' } + 1)))
-                    .getElementsByTag("a").first().attr("href")}>${response.subSequence((response.indexOfLast { it == '>' } + 1)..(response.length - 1))}"""
+        for (element in Jsoup.parse(response).getElementsByTag("a")) {
+            response = response.replace(oldValue = element.toString(), newValue = element.attr("href"))
         }
         sendMsg(event, "${event.author.asMention}, $response")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
