@@ -22,6 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -45,6 +46,8 @@ public class TrackScheduler extends AudioEventAdapter {
      */
     AudioTrack lastTrack;
 
+    final GuildMusicManager guildMusicManager;
+
     /**
      * Are we repeating the track
      */
@@ -55,9 +58,10 @@ public class TrackScheduler extends AudioEventAdapter {
      *
      * @param player Our audio player
      */
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
+        this.guildMusicManager = guildMusicManager;
     }
 
     /**
@@ -95,6 +99,10 @@ public class TrackScheduler extends AudioEventAdapter {
             } else {
                 nextTrack();
             }
+        }
+        if (queue.isEmpty() && player.getPlayingTrack() == null) {
+            AirUtils.audioUtils.getMusicManagers().entrySet().parallelStream().filter(entry -> entry.getValue().equals(guildMusicManager))
+                    .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
         }
     }
 

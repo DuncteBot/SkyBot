@@ -219,5 +219,8 @@ public class AudioUtils {
             channel.sendMessage(embed).queue();
         }
     }
-    
+
+    public Map<String, GuildMusicManager> getMusicManagers() {
+        return musicManagers;
+    }
 }
