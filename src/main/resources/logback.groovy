@@ -23,8 +23,8 @@ appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         //this one looks nice: [%red(%X{jda.shard.id}) / %red(%X{jda.shard.total})]
         //more nice stuff: %d{dd-MM-yyyy HH:mm:ss HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n
-        pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
-        pattern = "%d{dd-MM-yyyy HH:mm:ss HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
+        pattern = "[%d{dd.MM.yyyy HH:mm:ss}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) [%highlight(%level)] ==> %msg%n"
+        //pattern = "%d{dd-MM-yyyy HH:mm:ss HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
     }
 }
 root(DEBUG, ["STDOUT"])
