@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -58,6 +59,13 @@ public class UserinfoCommand extends Command {
                     members = event.getGuild().getMembersByNickname(name, true);
                 }
                 m = members.isEmpty() ? null : members.get(0);
+                if(m==null) {
+                    try {
+                        long memberId = MiscUtil.parseSnowflake(name);
+                        m = event.getGuild().getMemberById(memberId);
+                    }
+                    catch (NumberFormatException e) { /* ignored */ }
+                }
             }
         }
         
