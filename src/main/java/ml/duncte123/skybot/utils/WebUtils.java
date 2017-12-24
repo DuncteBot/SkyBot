@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -194,6 +195,30 @@ public class WebUtils {
         } catch (NullPointerException | IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * This translates a string into a different language
+     * @param sourceLang the source language (example: "nl")
+     * @param targetLang the target language (example: "en")
+     * @param input the user inpur (example: "Dit is een test")
+     * @return the output of the api
+     * THe examples above will output the following <code>["This is a test","Dit is een test",null,null,1]</code>
+     */
+    public static JSONArray translate(String sourceLang, String targetLang, String input) {
+        try {
+            return new JSONArray(
+                    getText("https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input)
+            ).getJSONArray(0).getJSONArray(0);
+        }
+        catch (IOException e) {
+            return new JSONArray()
+                    .put(input)
+                    .put("null")
+                    .put("")
+                    .put("")
+                    .put(0);
         }
     }
 

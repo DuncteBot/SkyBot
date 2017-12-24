@@ -19,6 +19,10 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.batiaev.aiml.chat.ChatContext
+import com.google.code.chatterbotapi.ChatterBot
+import com.google.code.chatterbotapi.ChatterBotFactory
+import com.google.code.chatterbotapi.ChatterBotSession
+import com.google.code.chatterbotapi.ChatterBotType
 import ml.duncte123.skybot.entities.Bot
 import ml.duncte123.skybot.entities.BotImpl
 import ml.duncte123.skybot.entities.DiscordChannel
@@ -33,6 +37,8 @@ import org.slf4j.event.Level
 
 class ChatCommand : Command() {
 
+    private val builder: ChatterBot
+    private var oldBot: ChatterBotSession
     private val bot: BotImpl
     private val channel: DiscordChannel
     private val context = ChatContext(Settings.defaultName)
@@ -49,6 +55,9 @@ class ChatCommand : Command() {
         //New chat Bot :D
         bot = AIUtils.get() as BotImpl
         channel = DiscordChannel(bot as Bot)
+        builder = ChatterBotFactory()
+                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
+        oldBot = builder.createSession()
 
         AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
     }
@@ -88,12 +97,21 @@ class ChatCommand : Command() {
         //Set the text channel in the bot
         bot.channel = event.channel
         channel.startChat(event.author.id)
-        var response = bot.multisentenceRespond(message, context)
-        this.context.newState(message, response)
+        var response = oldBot.think(message)
+
+        //Reset the ai if it dies
+        if(response == "You have been banned from talking to me.") {
+            this.resetAi()
+            response = oldBot.think(message)
+        }
+
+        var response2 = bot.multisentenceRespond(message, context)
+        this.context.newState(message, response2)
         for (element in Jsoup.parse(response).getElementsByTag("a")) {
             response = response.replace(oldValue = element.toString(), newValue = element.attr("href"))
         }
         sendMsg(event, "${event.author.asMention}, $response")
+        sendMsg(event, "AIML response: $response2")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
@@ -101,4 +119,8 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
+
+    fun resetAi() {
+        oldBot = builder.createSession()
+    }
 }
