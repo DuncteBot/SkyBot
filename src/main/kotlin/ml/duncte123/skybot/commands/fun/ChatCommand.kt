@@ -111,7 +111,6 @@ class ChatCommand : Command() {
             response = response.replace(oldValue = element.toString(), newValue = element.attr("href"))
         }
         sendMsg(event, "${event.author.asMention}, $response")
-        sendMsg(event, "AIML response: $response2")
         AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
