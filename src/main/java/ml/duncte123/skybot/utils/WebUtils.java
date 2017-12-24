@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.config.Config;
 import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
@@ -50,6 +52,16 @@ public class WebUtils {
     }
 
     /**
+     * Reads the contents of a url into an InputStream
+     * @param url the url to read
+     * @return the InputStream of the url
+     * @throws IOException when things break
+     */
+    public static InputStream getInputStream(String url) throws IOException {
+        return getRequest(url).body().byteStream();
+    }
+
+    /**
      * This makes a get request to the specified website
      *
      * @param url    The website to post to
@@ -57,17 +69,14 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
-        
-        Request request = new Request.Builder()
-                                  .url(url)
-                                  .get()
-                                  .addHeader("User-Agent", USER_AGENT)
-                                  .addHeader("Accept", accept.getType())
-                                  .addHeader("cache-control", "no-cache")
-                                  .build();
-        
         try {
-            return client.get().newCall(request).execute();
+            return client.get().newCall(new Request.Builder()
+                    .url(url)
+                    .get()
+                    .addHeader("User-Agent", USER_AGENT)
+                    .addHeader("Accept", accept.getType())
+                    .addHeader("cache-control", "no-cache")
+                    .build()).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
@@ -93,26 +102,20 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-        MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
-        
         StringBuilder postParams = new StringBuilder();
         
         for (Map.Entry<String, Object> entry : postFields.entrySet()) {
             postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
         
-        RequestBody body = RequestBody.create(mediaType, postParams.toString() + "dummy=param");
-        
-        Request request = new Request.Builder()
-                                  .url(url)
-                                  .post(body)
-                                  .addHeader("User-Agent", USER_AGENT)
-                                  .addHeader("Accept", accept.getType())
-                                  .addHeader("cache-control", "no-cache")
-                                  .build();
-        
         try {
-            return client.get().newCall(request).execute();
+            return client.get().newCall(new Request.Builder()
+                    .url(url)
+                    .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
+                    .addHeader("User-Agent", USER_AGENT)
+                    .addHeader("Accept", accept.getType())
+                    .addHeader("cache-control", "no-cache")
+                    .build()).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
