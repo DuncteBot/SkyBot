@@ -161,16 +161,12 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response postJSON(String url, JSONObject data) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .addHeader("User-Agent", USER_AGENT)
-                .build();
-
         try {
-            return client.get().newCall(request).execute();
+            return client.get().newCall(new Request.Builder()
+                    .url(url)
+                    .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
+                    .addHeader("User-Agent", USER_AGENT)
+                    .build()).execute();
         } catch (IOException e) {
             e.printStackTrace();
             return null;
