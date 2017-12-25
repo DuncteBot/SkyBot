@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -162,8 +163,23 @@ public class BotListener extends ListenerAdapter {
         }
 
         //If the topic contains -commands ignore it
-        if (event.getChannel().getTopic() != null && event.getChannel().getTopic().contains("-commands")) {
-            return;
+        if (event.getChannel().getTopic() != null) {
+            String[] blocked = event.getChannel().getTopic().split("-");
+            if (event.getChannel().getTopic().contains("-commands"))
+                return;
+            for (String s : blocked) {
+                if (isCategory(s)) {
+                    if (AirUtils.commandManager.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                            .contains(AirUtils.commandManager.getCommand(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
+                                    .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))) {
+                        return;
+                    }
+                } else {
+                    if (s.toLowerCase().equals(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
+                            .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))
+                        return;
+                }
+            }
         }
         
         //Replace the custom prefix
@@ -373,5 +389,9 @@ public class BotListener extends ListenerAdapter {
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
                 .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
+    }
+
+    private boolean isCategory(String name) {
+        return name.matches("(?i) ANIMALS|MAIN|FUN|MUSIC|MOD_ADMIN|NERD_STUFF|UNLISTED");
     }
 }
