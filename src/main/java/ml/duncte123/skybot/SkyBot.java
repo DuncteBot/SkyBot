@@ -95,6 +95,8 @@ public class SkyBot {
             url[0] = AirUtils.config.getString("discord.game.streamUrl", url[0]);
         }
 
+        AirUtils.logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
+
         try {
             //Set up sharding for the bot
             new DefaultShardManagerBuilder()

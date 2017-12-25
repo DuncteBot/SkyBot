@@ -19,20 +19,11 @@
 package ml.duncte123.skybot;
 
 import Java.lang.VRCubeException;
-import ml.duncte123.skybot.commands.animals.*;
-import ml.duncte123.skybot.commands.essentials.WolframAlphaCommand;
-import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
-import ml.duncte123.skybot.commands.guild.GuildInfoCommand;
-import ml.duncte123.skybot.commands.guild.mod.*;
-import ml.duncte123.skybot.commands.guild.owner.SettingsCommand;
-import ml.duncte123.skybot.commands.uncategorized.BotinfoCommand;
-import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
-import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.reflections.Reflections;
 
 import java.util.Arrays;
 import java.util.List;
@@ -53,40 +44,20 @@ public class CommandManager {
      * This makes sure that all the commands are added
      */
     public CommandManager() {
-        // default commands
-        this.addCommand(new HelpCommand());
-        this.addCommand(new UserinfoCommand());
-        this.addCommand(new BotinfoCommand());
-
-
-        //animal commands
-        this.addCommand(new LlamaCommand());
-        this.addCommand(new CatCommand());
-        this.addCommand(new KittyCommand());
-        this.addCommand(new DogCommand());
-        this.addCommand(new AlpacaCommand());
-        this.addCommand(new SealCommand());
-
-        //essentials commands
-        this.addCommand(new EvalCommand());
-
-        if (AirUtils.alphaEngine != null)
-            this.addCommand(new WolframAlphaCommand());
-
-        //guild commands
-        this.addCommand(new GuildInfoCommand());
-
-        //mod commands
-        this.addCommand(new BanCommand());
-        this.addCommand(new HackbanCommand());
-        this.addCommand(new SoftbanCommand());
-        this.addCommand(new UnbanCommand());
-        this.addCommand(new KickCommand());
-        this.addCommand(new CleanupCommand());
-        this.addCommand(new AnnounceCommand());
-
-        //Guild owner commands
-        this.addCommand(new SettingsCommand());
+        //Get reflections for this project
+        Reflections reflections = new Reflections("ml.duncte123.skybot");
+        //Only check for things that are commands
+        Set<Class<? extends Command>> cmds = reflections.getSubTypesOf(Command.class);
+        //Loop over them
+        for (Class<? extends Command> cmd : cmds) {
+            try {
+                //Add the command
+                this.addCommand(cmd.newInstance());
+            }
+            catch (Exception ignored) {
+                continue;
+            }
+        }
     }
     
     /**

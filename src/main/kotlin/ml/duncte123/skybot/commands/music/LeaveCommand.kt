@@ -54,5 +54,5 @@ class LeaveCommand : MusicCommand() {
 
     override fun getName(): String = "leave"
 
-    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit", "kill")
+    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit")
 }
