@@ -108,9 +108,7 @@ public class BotListener extends ListenerAdapter {
 
             MusicCommand.shutdown();
 
-            ShardManager manager = event.getJDA().asBot().getShardManager();
-            
-            manager.getShards().forEach(jda -> {
+            event.getJDA().asBot().getShardManager().getShards().forEach(jda -> {
                 jda.shutdown();
                 AirUtils.log(Level.INFO, String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             });
