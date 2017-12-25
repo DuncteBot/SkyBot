@@ -40,8 +40,8 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     override fun getJDA(): JDA                          = JDADelegate(this.jda)
     override fun getGuild(): Guild                      = GuildDelegate(this.guild)
 
-    override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) }
-    override fun getTextChannels(): List<TextChannel>   = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) }
+    override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) } as List<VoiceChannel>
+    override fun getTextChannels(): List<TextChannel>   = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } as List<TextChannel>
 
     override fun toString(): String = "GC:$name($id)"
 }

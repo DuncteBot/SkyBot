@@ -46,7 +46,7 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun getJDA(): JDA                                                      = JDADelegate(this.jda)
     override fun getGuild(): Guild                                                  = GuildDelegate(this.guild)
 
-    override fun getMembers(): List<Member>                                         = channel.members.map { MemberDelegate(it) }
+    override fun getMembers(): List<Member>                                         = channel.members.map { MemberDelegate(it) } as List<Member>
     override fun createCopy(): ChannelAction                                        = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getInvites(): RestAction<List<Invite>>                             = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManager(): ChannelManager                                       = throw VRCubeException("**\uD83D\uDD25 lit**")
