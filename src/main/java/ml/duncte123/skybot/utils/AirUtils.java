@@ -223,7 +223,7 @@ public class AirUtils {
                                                 res.getString("discriminator")),
                             "unbanned",
                             jda.getGuildById(res.getString("guildId")));
-                    smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    database.createStatement().executeQuery("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
             log("Unban checker", Level.DEBUG, "Checking done, unbanned " + usersUnbanned + " users.");
