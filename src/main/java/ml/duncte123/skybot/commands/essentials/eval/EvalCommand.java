@@ -59,6 +59,8 @@ public class EvalCommand extends Command {
                 return service;
             };
     private EvalFilter filter = new EvalFilter();
+
+    public boolean runIfNotOwner;
     
     /**
      * This initialises the engine
@@ -119,6 +121,9 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
+
+        if (isRanByBotOwner == !isRanByBotOwner)
+            return;
 
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
@@ -255,5 +260,17 @@ public class EvalCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"eval™", "evaluate", "evan", "eva;"};
+    }
+
+    public boolean toggleFilter() {
+        boolean ret = runIfNotOwner;
+        runIfNotOwner = !runIfNotOwner;
+        return ret;
+    }
+
+    public boolean setFilter(boolean status) {
+        boolean ret = runIfNotOwner;
+        runIfNotOwner = status;
+        return ret;
     }
 }

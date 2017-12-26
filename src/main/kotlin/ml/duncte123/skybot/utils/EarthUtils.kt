@@ -35,6 +35,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
+import java.time.OffsetDateTime
 
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
@@ -97,7 +98,7 @@ class EarthUtils {
 
         @JvmStatic
         fun audioJSON(): JSONObject {
-            val json = JSONObject()
+            val json = JSONObject().put("time", OffsetDateTime.now())
             AirUtils.audioUtils.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
             return json
         }
