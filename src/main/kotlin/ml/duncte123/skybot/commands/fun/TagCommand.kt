@@ -36,11 +36,12 @@ class TagCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val helpMessage = MessageBuilder()
-                .appendCodeBlock("$PREFIX$invoke help => shows this\n" +
-                        "$PREFIX$invoke list => lists all the tags\n" +
-                        "$PREFIX$invoke delete => removes a tag\n" +
-                        "$PREFIX$invoke author => displays who made the tag\n" +
-                        "$PREFIX$invoke create => make a new tag", "YAML").build()
+                .appendCodeBlock("Tag help:\n" +
+                        " $PREFIX$invoke help => shows this\n" +
+                        " $PREFIX$invoke list => lists all the tags\n" +
+                        " $PREFIX$invoke delete => removes a tag\n" +
+                        " $PREFIX$invoke author => displays who made the tag\n" +
+                        " $PREFIX$invoke create => make a new tag", getLang()).build()
 
         if (args.size == 0) {
             sendMsg(event, helpMessage)
@@ -118,4 +119,14 @@ class TagCommand : Command() {
     override fun getName() = "tag"
 
     override fun getAliases() = arrayOf("pasta", "tags", "t")
+
+    private fun getLang():String {
+        when(AirUtils.rand.nextInt(4)) {
+            0 -> return "YAML"
+            1 -> return "ldif"
+            2 -> return "PHP"
+            3 -> return "CSS"
+        }
+        return "ldif"
+    }
 }
