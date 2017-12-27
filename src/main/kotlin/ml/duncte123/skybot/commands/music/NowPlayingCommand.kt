@@ -33,7 +33,7 @@ class NowPlayingCommand : MusicCommand() {
         val mng = getMusicManager(event.guild)
         val player = mng.player
         val msg = if (player.playingTrack != null) {
-            "**Playing** " + player.playingTrack.info.title + "\n" + EmbedUtils.playerEmbed(mng)
+            "**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng)
         } else {
             "The player is not currently playing anything!"
         }
