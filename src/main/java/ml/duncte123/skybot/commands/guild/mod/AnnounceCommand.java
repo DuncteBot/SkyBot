@@ -65,7 +65,12 @@ public class AnnounceCommand extends Command {
             EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
             if (!event.getMessage().getAttachments().isEmpty()) {
-                event.getMessage().getAttachments().parallelStream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
+                event.getMessage().getAttachments().parallelStream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
+                    if (invoke.endsWith("2"))
+                        embed.setThumbnail(attachment.getUrl());
+                    else
+                        embed.setImage(attachment.getUrl());
+                });
             }
 
             //we are handling the sending here because we need to send to chann
@@ -91,5 +96,10 @@ public class AnnounceCommand extends Command {
     @Override
     public String getName() {
         return "announce";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"announce2"};
     }
 }
