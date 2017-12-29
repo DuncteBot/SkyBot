@@ -90,6 +90,7 @@ public class GuildSettingsUtils {
                 String logChannel = resSettings.getString("logChannelId");
                 String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
                 String leaveMessage = resSettings.getString("customLeaveMessage");
+                String autoroleId = resSettings.getString("autoRole");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
@@ -99,6 +100,7 @@ public class GuildSettingsUtils {
                         .setLogChannel(logChannel)
                         .setWelcomeLeaveChannel(welcomeLeaveChannel)
                         .setCustomLeaveMessage(leaveMessage)
+                        .setAutoroleRole(autoroleId)
                 );
             }
             
@@ -148,6 +150,7 @@ public class GuildSettingsUtils {
         String customJoinMessage = settings.getCustomJoinMessage();
         String customLeaveMessage = settings.getCustomLeaveMessage();
         String newPrefix = settings.getCustomPrefix();
+        String autoRole = settings.getAutoroleRole();
         String chanId = settings.getLogChannel() != null ? settings.getLogChannel() : "";
         String welcomeLeaveChannel = settings.getWelcomeLeaveChannel() != null ? settings.getWelcomeLeaveChannel() : "";
         String dbName = AirUtils.db.getName();
@@ -159,6 +162,7 @@ public class GuildSettingsUtils {
                     "enableSwearFilter= ? ," +
                     "customWelcomeMessage= ? ," +
                     "prefix= ? ," +
+                    "autoRole= ? ," +
                     "logChannelId= ? ," +
                     "welcomeLeaveChannel= ? ," +
                     "customLeaveMessage = ?" +
@@ -167,9 +171,10 @@ public class GuildSettingsUtils {
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);
             preparedStatement.setString(4, newPrefix);
-            preparedStatement.setString(5, chanId);
-            preparedStatement.setString(6, welcomeLeaveChannel);
-            preparedStatement.setString(7, customLeaveMessage);
+            preparedStatement.setString(5, autoRole);
+            preparedStatement.setString(6, chanId);
+            preparedStatement.setString(7, welcomeLeaveChannel);
+            preparedStatement.setString(8, customLeaveMessage);
             preparedStatement.executeUpdate();
             
         } catch (Exception e) {

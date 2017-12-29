@@ -15,26 +15,34 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
 import static ch.qos.logback.classic.Level.DEBUG
 
+def logToFile = false
+
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
         //this one looks nice: [%red(%X{jda.shard.id}) / %red(%X{jda.shard.total})]
-        //more nice stuff: %d{dd-MM-yyyy HH:mm:ss HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n
+        //more nice stuff: %d{dd-MM-yyyy HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n
         //pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
         pattern = "%d{dd-MM-yyyy HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
     }
 }
 root(INFO, ["STDOUT"])
 
-//def bySecond = timestamp("yyyyMMdd'T'HHmmss")
-//
-//appender("FILE", FileAppender) {
-//    file = "logs/log-${bySecond}-debug.txt"
-//    encoder(PatternLayoutEncoder) {
-//        pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
-//    }
-//}
-//root(DEBUG, ["FILE"])
+
+if(logToFile) {
+    def bySecond = timestamp("yyyyMMdd'T'HHmmss")
+
+    appender("FILE", FileAppender) {
+        file = "log-${bySecond}-debug.txt"
+        encoder(PatternLayoutEncoder) {
+            pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
+        }
+    }
+    root(DEBUG, ["FILE"])
+}
+
+

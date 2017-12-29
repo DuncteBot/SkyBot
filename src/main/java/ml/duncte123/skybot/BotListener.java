@@ -251,11 +251,15 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
         if (settings.isEnableJoinMessage()) {
-            String welcomeLeaveChannelId = settings.getWelcomeLeaveChannel() == null
-                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
+            String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getCustomJoinMessage())
+                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             welcomeLeaveChannel.sendMessage(msg).queue();
+        }
+
+        if(settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole()) && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+            event.getGuild().getController().addRolesToMember(event.getMember(), event.getGuild().getRoleById(settings.getAutoroleRole())).queue();
         }
     }
 

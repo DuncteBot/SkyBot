@@ -65,6 +65,8 @@ public class GuildSettings {
      */
     private String welcomeLeaveChannel = null;
 
+    private String autoroleRole = "";
+
     /**
      * This will init everything
      *
@@ -155,6 +157,28 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom prefix for the corresponding guild
+     *
+     * @param customPrefix The new prefix
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomPrefix(String customPrefix) {
+        this.customPrefix = customPrefix;
+        return this;
+    }
+
+    /**
+     * This sets the role id for the autorole
+     *
+     * @param autoroleRole the role to set the autorole to
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAutoroleRole(String autoroleRole) {
+        this.autoroleRole = autoroleRole;
+        return this;
+    }
+
+    /**
      * This will return the guild id that these options are for
      *
      * @return The id of that guild as a String
@@ -190,22 +214,19 @@ public class GuildSettings {
     }
 
     /**
-     * This will set the custom prefix for the corresponding guild
-     *
-     * @param customPrefix The new prefix
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomPrefix(String customPrefix) {
-        this.customPrefix = customPrefix;
-        return this;
-    }
-
-    /**
      * Returns the channel to log in
      * @return the channel to log in
      */
     public String getLogChannel() {
         return logChannel;
+    }
+
+    /**
+     * Returns the role id for the autorole feature
+     * @return the role id for the autorole feature
+     */
+    public String getAutoroleRole() {
+        return autoroleRole;
     }
 
     /**
@@ -221,7 +242,7 @@ public class GuildSettings {
      */
     @Override
     public String toString() {
-        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
-                (enableSwearFilter ? "Enabled" : "Disabled"), customJoinMessage);
+        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s)", guildId, customPrefix,
+                (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole);
     }
 }

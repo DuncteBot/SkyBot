@@ -27,9 +27,12 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
+
+import java.util.List;
 
 public class SettingsCommand extends Command {
 
@@ -58,6 +61,7 @@ public class SettingsCommand extends Command {
                         "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
+                        "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("") ? "Not Set": event.getGuild().getRoleById(settings.getAutoroleRole()).getAsMention() )+ "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
                         "**Modlog Channel:** " + (logChan !=null ? logChan.getAsMention(): "none") + "\n" +
                         "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
@@ -164,6 +168,35 @@ public class SettingsCommand extends Command {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
                 sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                 break;
+
+            case "autorole":
+
+                if(args.length == 0) {
+                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"autorole <role name/disable>`");
+                    return;
+                }
+
+                if("disable".equals(args[0])) {
+                    sendMsg(event, "AutoRole feature has been disabled");
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(""));
+                    return;
+                }
+
+                List<Role> rolesFound = event.getGuild().getRolesByName(StringUtils.join(args, " "), true);
+
+                if(rolesFound.size() == 0) {
+                    sendMsg(event, "I could not find any roles with that name");
+                    return;
+                }
+                if(rolesFound.get(0).getPosition() > event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
+                    sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
+                    return;
+                }
+
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(rolesFound.get(0).getId()));
+                sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
+
+                break;
         }
     }
 
@@ -200,7 +233,8 @@ public class SettingsCommand extends Command {
                 "setlogchannel",
                 "setwelcomechannel",
                 "setleavechannel",
-                "setleavemessage"
+                "setleavemessage",
+                "autorole"
         };
     }
 }
