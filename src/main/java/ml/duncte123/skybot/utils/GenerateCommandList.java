@@ -57,7 +57,7 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.commandManager.getCommands().parallelStream().forEach(c-> names.add(c.getName()));
+        AirUtils.commandManager.getCommands().stream().forEach(c-> names.add(c.getName()));
         Collections.sort(names);
 
         for (String n: names) {

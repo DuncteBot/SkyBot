@@ -76,19 +76,19 @@ public class CommandManager {
      * @return a possible null command for the name
      */
     public Command getCommand(String name) {
-        Optional<Command> cmd = commands.parallelStream().filter(c -> c.getName().equals(name)).findFirst();
+        Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
         if (cmd.isPresent()) {
             return cmd.get();
         }
 
-        cmd = commands.parallelStream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
+        cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
 
         return cmd.orElse(null);
     }
 
     public List<Command> getCommands(CommandCategory category) {
-        return commands.parallelStream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
+        return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
     
     /**
@@ -113,9 +113,9 @@ public class CommandManager {
         }
 
         //ParallelStream for less execution time
-        if (this.commands.parallelStream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
+        if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
-            List<String> aliases = Arrays.asList(this.commands.parallelStream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
             for (String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;

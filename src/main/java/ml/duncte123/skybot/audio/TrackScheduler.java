@@ -101,7 +101,7 @@ public class TrackScheduler extends AudioEventAdapter {
             }
         }
         if (queue.isEmpty()) {
-            AirUtils.audioUtils.getMusicManagers().entrySet().parallelStream().filter(entry -> entry.getValue().equals(guildMusicManager))
+            AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
                     .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
         }
     }

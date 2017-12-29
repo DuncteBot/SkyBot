@@ -358,7 +358,7 @@ public class AirUtils {
         
         MemberCacheView memberCache = g.getMemberCache();
         double totalCount = memberCache.size();
-        double botCount = memberCache.parallelStream().filter(it -> it.getUser().isBot()).count();
+        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
         double userCount = totalCount - botCount;
         
         //percent in users
@@ -380,7 +380,7 @@ public class AirUtils {
      */
     public static AtomicLong countAnimatedAvatars(Guild g) {
 
-        return new AtomicLong(g.getMemberCache().parallelStream()
+        return new AtomicLong(g.getMemberCache().stream()
                 .map(Member::getUser)
                 .filter(it -> it.getAvatarId() != null )
 	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
@@ -398,7 +398,7 @@ public class AirUtils {
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
         if (pubChann == null || !pubChann.canTalk()) {
-            return guild.getTextChannelCache().parallelStream().filter(TextChannel::canTalk).findFirst().orElse(null);
+            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
         }
         
         return pubChann;
@@ -639,8 +639,8 @@ public class AirUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
+        //That just breaks the bot
+//        audioUtils.musicManagers.forEach((a, b) ->  b.player.stopTrack());
     }
 
     /**

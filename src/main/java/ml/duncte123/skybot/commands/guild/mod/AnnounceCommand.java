@@ -65,7 +65,7 @@ public class AnnounceCommand extends Command {
             EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
             if (!event.getMessage().getAttachments().isEmpty()) {
-                event.getMessage().getAttachments().parallelStream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
+                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
                     if (invoke.endsWith("2"))
                         embed.setThumbnail(attachment.getUrl());
                     else

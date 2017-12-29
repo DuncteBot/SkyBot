@@ -121,11 +121,7 @@ public class BotListener extends ListenerAdapter {
             if (settingsUpdateTimerRunning)
                 this.settingsUpdateService.shutdown();
             
-            try {
-                AirUtils.db.getConnManager().close();
-            } catch (IOException e) {
-                /* ignored */
-            }
+            AirUtils.stop();
             
             System.exit(0);
         }
@@ -368,7 +364,7 @@ public class BotListener extends ListenerAdapter {
      */
     private void channelCheckThing(Guild g, VoiceChannel vc) {
 
-        if (vc.getMembers().parallelStream().filter(m -> !m.getUser().isBot()).count() < 1) {
+        if (vc.getMembers().stream().filter(m -> !m.getUser().isBot()).count() < 1) {
             GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);

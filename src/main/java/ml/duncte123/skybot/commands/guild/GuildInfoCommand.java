@@ -46,7 +46,7 @@ public class GuildInfoCommand extends Command {
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().complete().parallelStream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode(), inv.getCode()));
+                    g.getInvites().complete().stream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode(), inv.getCode()));
                 } else {
                     String vanity = g.getVanityUrl().complete();
                     inviteString[0] = String.format(inviteStringTemplate, vanity, vanity);

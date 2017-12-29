@@ -142,8 +142,8 @@ public class EvalCommand extends Command {
         try {
             try {
                 String importString = "import " +
-                        packageImports.parallelStream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
-                        classImports.parallelStream().collect(Collectors.joining("\n")) + "\n";
+                        packageImports.stream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
+                        classImports.stream().collect(Collectors.joining("\n")) + "\n";
                 
                 String script = importString + event.getMessage().getContentRaw().split("\\s+",2)[1];
                 
