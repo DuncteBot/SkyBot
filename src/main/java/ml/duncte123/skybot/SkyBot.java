@@ -48,9 +48,13 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        
         //Set the logger to only info by default
         Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
         l.setLevel(INFO);
+        // Making Skybot bannable
+        Requester.class.getField("USER_AGENT").setAccessible(true);
+        Requester.class.getField("USER_AGENT").set(null, "Discord Meme/Mozila 10.9");
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
