@@ -51,7 +51,7 @@ implements IEventManager {
         try {
             botListener.onEvent(event);
         } catch (Throwable thr) {
-            logger.warn("Error while handling event " + event + "; " + thr.getLocalizedMessage(), thr);
+            logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
     
