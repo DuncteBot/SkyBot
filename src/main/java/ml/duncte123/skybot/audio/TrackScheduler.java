@@ -28,6 +28,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 public class TrackScheduler extends AudioEventAdapter {
 
@@ -99,10 +100,9 @@ public class TrackScheduler extends AudioEventAdapter {
             } else {
                 nextTrack();
             }
-        }
-        if (queue.isEmpty()) {
-            AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
-                    .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
+        } else if (queue.isEmpty()) {
+            AirUtils.service.schedule(()-> AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
+                    .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey())), 5, TimeUnit.SECONDS);
         }
     }
 

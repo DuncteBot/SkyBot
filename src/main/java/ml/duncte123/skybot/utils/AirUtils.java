@@ -39,6 +39,8 @@ import org.slf4j.event.Level;
 
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
@@ -94,6 +96,9 @@ public class AirUtils {
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
+
+    public static final ScheduledExecutorService service
+            = Executors.newScheduledThreadPool(5, r -> new Thread(r, "Music-Shutdown-Thread"));
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -604,7 +609,7 @@ public class AirUtils {
 
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
-        if(returnValue.getString("status").equalsIgnoreCase("failure")) {
+        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
             String exceptionMessage = "%s";
             try {
                 switch (returnValue.getInt("code")) {
@@ -640,7 +645,10 @@ public class AirUtils {
             e.printStackTrace();
         }
         //That just breaks the bot
-//        audioUtils.musicManagers.forEach((a, b) ->  b.player.stopTrack());
+        audioUtils.musicManagers.forEach((a, b) ->  {
+            if (b.player.getPlayingTrack() != null)
+                b.player.stopTrack();
+        });
     }
 
     /**
