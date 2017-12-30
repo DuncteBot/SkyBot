@@ -171,6 +171,11 @@ public class SettingsCommand extends Command {
 
             case "autorole":
 
+                if(!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+                    sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
+                    return;
+                }
+
                 if(args.length == 0) {
                     sendMsg(event, "Incorrect usage: `"+this.PREFIX+"autorole <role name/disable>`");
                     return;
