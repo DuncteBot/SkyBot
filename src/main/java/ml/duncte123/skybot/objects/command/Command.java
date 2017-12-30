@@ -235,17 +235,27 @@ public abstract class Command {
     }
     
     /**
-     * This will chcek if we can send a embed and convert it to a message if we can't send embeds
+     * This will check if we can send a embed and convert it to a message if we can't send embeds
      *
      * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param embed The embed to send
      */
     protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        if (!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
-            sendMsg(event, EmbedUtils.embedToMessage(embed));
+        sendEmbed(event.getChannel(), embed);
+    }
+
+    /**
+     * This will check if we can send a embed and convert it to a message if we can't send embeds
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send the embed to
+     * @param embed The embed to send
+     */
+    protected void sendEmbed(TextChannel channel, MessageEmbed embed) {
+        if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
+            sendMsg(channel, EmbedUtils.embedToMessage(embed));
             return;
         }
-        sendMsg(event, embed);
+        sendMsg(channel, embed);
     }
     
     /**
@@ -257,6 +267,16 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
         sendMsg(event, (new MessageBuilder()).append(msg).build());
     }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected void sendMsg(TextChannel channel, String msg) {
+        sendMsg(channel, (new MessageBuilder()).append(msg).build());
+    }
     
     /**
      * This is a shortcut for sending messages to a channel
@@ -267,6 +287,16 @@ public abstract class Command {
     protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
     }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected void sendMsg(TextChannel channel, MessageEmbed msg) {
+        sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build());
+    }
     
     /**
      * This is a shortcut for sending messages to a channel
@@ -275,9 +305,19 @@ public abstract class Command {
      * @param msg   the message to send
      */
     protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
+        sendMsg(event.getChannel(), msg);
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected void sendMsg(TextChannel channel, Message msg) {
         //Only send a message if we can talk
-        if(event.getChannel().canTalk())
-            event.getChannel().sendMessage(msg).queue();
+        if(channel.canTalk())
+            channel.sendMessage(msg).queue();
     }
     
     @Override

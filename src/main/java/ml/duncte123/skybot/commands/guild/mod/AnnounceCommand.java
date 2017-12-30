@@ -53,9 +53,10 @@ public class AnnounceCommand extends Command {
         }
 
         try {
-            TextChannel chann = event.getMessage().getMentionedChannels().get(0);
+            TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
-            if (!chann.canTalk()) {
+            if (!targetChannel.canTalk()) {
+                sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
                 sendError(event.getMessage());
                 return;
             }
@@ -73,12 +74,7 @@ public class AnnounceCommand extends Command {
                 });
             }
 
-            //we are handling the sending here because we need to send to chann
-            if (!event.getGuild().getSelfMember().hasPermission(chann, Permission.MESSAGE_EMBED_LINKS)) {
-                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
-                return;
-            }
-            chann.sendMessage(embed.build()).queue();
+            sendEmbed(targetChannel, embed.build());
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {
