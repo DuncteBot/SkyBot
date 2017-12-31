@@ -265,7 +265,7 @@ public abstract class Command {
      * @param msg   the message to send
      */
     protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
-        sendMsg(event, (new MessageBuilder()).append(msg).build());
+        sendMsg(event.getChannel(), (new MessageBuilder()).append(msg).build());
     }
 
     /**
@@ -285,7 +285,7 @@ public abstract class Command {
      * @param msg   the message to send
      */
     protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
-        sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
+        sendMsg(event.getChannel(), (new MessageBuilder()).setEmbed(msg).build());
     }
 
     /**
