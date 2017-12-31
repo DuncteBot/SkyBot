@@ -61,7 +61,7 @@ public class GuildInfoCommand extends Command {
                             "**Region:** " + g.getRegion().getName() + "\n" +
                             "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
                             "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                            "**Invite:** " + inviteString[0], false)
+                            inviteString[0], false)
                     .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                             "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
                             "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
