@@ -193,7 +193,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "I could not find any roles with that name");
                     return;
                 }
-                if(rolesFound.get(0).getPosition() > event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
+                if(rolesFound.get(0).getPosition() >= event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
                     sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
                     return;
                 }
