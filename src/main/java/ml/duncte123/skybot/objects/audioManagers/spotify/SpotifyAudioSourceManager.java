@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.audioManagers.spotify;
 
 import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
-import com.google.common.util.concurrent.SettableFuture;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
@@ -29,10 +28,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.wrapper.spotify.Api;
-import com.wrapper.spotify.methods.AlbumRequest;
-import com.wrapper.spotify.methods.PlaylistRequest;
-import com.wrapper.spotify.methods.TrackRequest;
-import com.wrapper.spotify.methods.authentication.ClientCredentialsGrantRequest;
 import com.wrapper.spotify.models.*;
 import ml.duncte123.skybot.utils.AirUtils;
 import org.apache.http.client.config.RequestConfig;
