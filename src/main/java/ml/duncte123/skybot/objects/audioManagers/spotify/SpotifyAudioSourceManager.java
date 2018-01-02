@@ -194,31 +194,18 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private void updateAccessToken() {
-        /* Create a request object. */
-        final ClientCredentialsGrantRequest request = api.clientCredentialsGrant().build();
-
-        /* Use the request object to make the request, either asynchronously (getAsync) or synchronously (get) */
-        final SettableFuture<ClientCredentials> responseFuture = request.getAsync();
-
-        /* Add callbacks to handle success and failure */
-        Futures.addCallback(responseFuture, new FutureCallback<ClientCredentials>() {
+        Futures.addCallback(api.clientCredentialsGrant().build().getAsync(), new FutureCallback<ClientCredentials>() {
             @Override
             public void onSuccess(ClientCredentials clientCredentials) {
                 /* The tokens were retrieved successfully! */
                 logger.info("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
                 logger.info("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
-
-                /* Set access token on the Api object so that it's used going forward */
                 api.setAccessToken(clientCredentials.getAccessToken());
-
-                /* Please note that this flow does not return a refresh token.
-                 * That's only for the Authorization code flow */
             }
 
             @Override
             public void onFailure(Throwable throwable) {
-                /* An error occurred while getting the access token. This is probably caused by the client id or
-                 * client secret is invalid. */
+                logger.error("Something went wrong while loading the token from spotify", throwable);
             }
         });
     }
