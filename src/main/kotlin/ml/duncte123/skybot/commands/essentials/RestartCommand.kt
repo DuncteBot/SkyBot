@@ -22,14 +22,15 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.slf4j.LoggerFactory
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RestartCommand : Command() {
-    
+    val logger = LoggerFactory.getLogger(RestartCommand::class.java)
+
     init {
         this.category = CommandCategory.UNLISTED
     }
@@ -48,7 +49,7 @@ class RestartCommand : Command() {
             if (Settings.useJSON)
                 sendErrorJSON(event.message, ex, false)
             else {
-                AirUtils.logger.error(ex.localizedMessage, ex)
+                logger.error(ex.localizedMessage, ex)
                 sendError(event.message)
             }
         }

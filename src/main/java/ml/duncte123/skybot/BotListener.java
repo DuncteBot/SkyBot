@@ -24,11 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.BadWordFilter;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.bot.sharding.ShardManager;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -44,9 +40,9 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.slf4j.event.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +52,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
+
+    private Logger logger = LoggerFactory.getLogger(BotListener.class);
 
     /**
      * This filter helps us to fiter out swearing
@@ -104,13 +102,13 @@ public class BotListener extends ListenerAdapter {
         
         if (event.getMessage().getContentRaw().equals(Settings.prefix + "shutdown")
                     && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
-            AirUtils.log(Level.INFO, "Initialising shutdown!!!");
+            logger.info("Initialising shutdown!!!");
 
             MusicCommand.shutdown();
 
             event.getJDA().asBot().getShardManager().getShards().forEach(jda -> {
                 jda.shutdown();
-                AirUtils.log(Level.INFO, String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
+                logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             });
             
             //Kill other things
@@ -207,18 +205,18 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event){
-        AirUtils.log(Level.INFO, "Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
+        logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
         
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
-            AirUtils.log(Level.INFO, "Starting the unban timer.");
+            logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
             unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         
         if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
-            AirUtils.log(Level.INFO, "Starting the settings timer.");
+            logger.info("Starting the settings timer.");
             //This handles the updating from the setting and quotes
             settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
             settingsUpdateTimerRunning = true;
@@ -298,14 +296,14 @@ public class BotListener extends ListenerAdapter {
 //        }
         Guild g = event.getGuild();
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
-        AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, message);
+        logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
         AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        AirUtils.log(Settings.defaultName + "GuildLeave", Level.INFO, "Leaving guild: " + event.getGuild().getName() + ".");
+        logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
         GuildSettingsUtils.deleteGuild(event.getGuild());
         AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }

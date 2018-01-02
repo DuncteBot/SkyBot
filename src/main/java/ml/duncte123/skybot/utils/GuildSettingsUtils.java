@@ -20,11 +20,14 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
-import org.slf4j.event.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class GuildSettingsUtils {
+
+    private static Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     /**
      * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
@@ -39,7 +42,7 @@ public class GuildSettingsUtils {
      */
     public static void loadFooterQuotes() {
         if(!AirUtils.nonsqlite) return;
-        AirUtils.log(Level.DEBUG, "Loading footer quotes");
+        logger.debug("Loading footer quotes");
 
         String dbName = AirUtils.db.getName();
         
@@ -54,8 +57,8 @@ public class GuildSettingsUtils {
                 String user = resSettings.getString("name");
                 EmbedUtils.footerQuotes.put(quote, user);
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded " + EmbedUtils.footerQuotes.size() + " quotes.");
+
+            logger.debug("Loaded " + EmbedUtils.footerQuotes.size() + " quotes.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -71,7 +74,7 @@ public class GuildSettingsUtils {
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */
     public static void loadGuildSettings() {
-        AirUtils.log(Level.DEBUG, "Loading Guild settings.");
+        logger.debug("Loading Guild settings.");
         
         String dbName = AirUtils.db.getName();
         
@@ -103,8 +106,8 @@ public class GuildSettingsUtils {
                         .setAutoroleRole(autoroleId)
                 );
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
+
+            logger.debug("Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

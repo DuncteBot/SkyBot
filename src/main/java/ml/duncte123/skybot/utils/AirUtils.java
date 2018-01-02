@@ -35,7 +35,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import java.sql.*;
 import java.util.*;
@@ -65,7 +64,7 @@ public class AirUtils {
     /**
      * We are using slf4j to log things to the console
      */
-    public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
+    private static Logger logger = LoggerFactory.getLogger(AirUtils.class);
 
     /**
      * This holds the value if we should use a non-SQLite database
@@ -203,7 +202,7 @@ public class AirUtils {
      * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
-        log("Unban checker", Level.DEBUG, "Checking for users to unban");
+        logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
         Connection database = db.getConnManager().getConnection();
         
@@ -219,7 +218,7 @@ public class AirUtils {
                 
                 if (currDate.after(unbanDate)) {
                     usersUnbanned++;
-                    log(Level.INFO, "Unbanning " + res.getString("Username"));
+                    logger.info("Unbanning " + res.getString("Username"));
                     jda.getGuildCache().getElementById(res.getString("guildId")).getController()
                             .unban(res.getString("userId")).reason("Ban expired").queue();
                     modLog(new ConsoleUser(),
@@ -228,10 +227,10 @@ public class AirUtils {
                                                 res.getString("discriminator")),
                             "unbanned",
                             jda.getGuildById(res.getString("guildId")));
-                    database.createStatement().executeQuery("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    database.createStatement().executeUpdate("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
-            log("Unban checker", Level.DEBUG, "Checking done, unbanned " + usersUnbanned + " users.");
+            logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -312,48 +311,6 @@ public class AirUtils {
     }
 
     /**
-     * Logs a message to the console
-     *
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(Level lvl, String message) {
-        log(Settings.defaultName, lvl, message);
-    }
-
-    /**
-     * Logs a message to the console
-     *
-     * @param name    The name of the class that is calling it
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(String name, Level lvl, Object message) {
-        logger = LoggerFactory.getLogger(name);
-        
-        String msg = String.valueOf(message);
-        
-        switch (lvl) {
-            case ERROR:
-                logger.error(msg);
-                break;
-            case WARN:
-                logger.warn(msg);
-                break;
-            case INFO:
-                logger.info(msg);
-                break;
-            case DEBUG:
-                logger.debug(msg);
-                break;
-            case TRACE:
-                logger.trace(msg);
-                break;
-        }
-        logger = LoggerFactory.getLogger(Settings.defaultName);
-    }
-
-    /**
      * This will calculate the bot to user ratio
      *
      * @param g the {@link Guild} that we want to check
@@ -371,9 +328,8 @@ public class AirUtils {
         
         //percent in bots
         double botCountP = (botCount / totalCount) * 100;
-        
-        log(Level.DEBUG,
-                "In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
+
+        logger.debug("In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
         
         return new double[]{Math.round(userCountP), Math.round(botCountP)};
     }
@@ -491,7 +447,7 @@ public class AirUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        AirUtils.log(Level.DEBUG, "Loading tags.");
+        logger.debug("Loading tags.");
         
         Connection database = db.getConnManager().getConnection();
         try {
@@ -510,8 +466,8 @@ public class AirUtils {
                                                      resultSet.getString("tagText")
                 ));
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded " + tagsList.keySet().size() + " tags.");
+
+            logger.debug("Loaded " + tagsList.keySet().size() + " tags.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {

@@ -18,18 +18,18 @@
 
 package ml.duncte123.skybot;
 
-import ch.qos.logback.classic.Logger;
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.HelpEmbeds;
+import ml.duncte123.skybot.utils.TextColor;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-
-import static ch.qos.logback.classic.Level.INFO;
-import static org.slf4j.event.Level.ERROR;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -38,6 +38,8 @@ import static org.slf4j.event.Level.ERROR;
 @SinceSkybot(version = "3.0.0")
 @Author
 public class SkyBot {
+
+    private static Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
     /**
      * This is our main method
@@ -49,25 +51,25 @@ public class SkyBot {
     @Deprecated
     public static void main(String... args) throws Exception {
         //Set the logger to only info by default
-        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-        l.setLevel(INFO);
+//        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
+//        l.setLevel(INFO);
 
         //Set the value for other classes to use
         boolean useDatabase = AirUtils.nonsqlite;
         if (useDatabase) { //Don't try to connect if we don't want to
             if (!AirUtils.db.connManager.hasSettings()) {
-                AirUtils.log(Settings.defaultName + "Main", ERROR, "Can't load database settings. ABORTING!!!!!");
+                logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
             if (!AirUtils.db.isConnected()) {
-                AirUtils.log(Settings.defaultName + "Main", ERROR, "Can't connect to database. ABORTING!!!!!");
+                logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             }
         } else {
             int startIn = 5;
-            AirUtils.logger.warn("Using SQLite as the database");
-            AirUtils.logger.warn("Please note that is is not recommended and can break some features.");
-            AirUtils.logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
+            logger.warn("Using SQLite as the database");
+            logger.warn("Please note that is is not recommended and can break some features.");
+            logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
@@ -95,7 +97,7 @@ public class SkyBot {
             url[0] = AirUtils.config.getString("discord.game.streamUrl", url[0]);
         }
 
-        AirUtils.logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
+        logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
 
         try {
             //Set up sharding for the bot
@@ -110,7 +112,7 @@ public class SkyBot {
                     .build();
         } catch (LoginException e) {
             //Kill the system if we can't log in
-            AirUtils.logger.error(TextColor.RED + "Could not log in, check if your token is correct" + TextColor.RESET, e);
+            logger.error(TextColor.RED + "Could not log in, check if your token is correct" + TextColor.RESET, e);
             System.exit(-4);
         }
 

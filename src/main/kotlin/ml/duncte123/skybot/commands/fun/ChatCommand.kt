@@ -33,9 +33,10 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
-import org.slf4j.event.Level
+import org.slf4j.LoggerFactory
 
 class ChatCommand : Command() {
+    val logger = LoggerFactory.getLogger(ChatCommand::class.java)
 
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession
@@ -51,7 +52,7 @@ class ChatCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
-        AirUtils.log("ChatCommand", Level.INFO, "Starting AI")
+        logger.info("Starting AI")
         //New chat Bot :D
         bot = AIUtils.get() as BotImpl
         channel = DiscordChannel(bot as Bot)
@@ -59,7 +60,7 @@ class ChatCommand : Command() {
                 .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
         oldBot = builder.createSession()
 
-        AirUtils.log("ChatCommand", Level.INFO, "AI has been loaded.")
+        logger.info("AI has been loaded.")
     }
 
 
@@ -93,7 +94,7 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        AirUtils.logger.debug("Message: \"$message\"")
+        logger.debug("Message: \"$message\"")
         //Set the text channel in the bot
         bot.channel = event.channel
         channel.startChat(event.author.id)
@@ -111,7 +112,7 @@ class ChatCommand : Command() {
             response = response.replace(oldValue = element.toString(), newValue = element.attr("href"))
         }
         sendMsg(event, "${event.author.asMention}, $response")
-        AirUtils.log(Level.DEBUG, "New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+       logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
     override fun help() = "Have a chat with dunctebot\n" +

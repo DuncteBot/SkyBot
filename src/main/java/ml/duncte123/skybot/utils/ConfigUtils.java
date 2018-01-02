@@ -20,6 +20,8 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.config.ConfigLoader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.event.Level;
 
 import java.io.File;
@@ -27,17 +29,18 @@ import java.io.File;
 public class ConfigUtils {
 
     private Config config;
+    private Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
 
     /**
      * This will try to load the bot config and kill the program if it fails
      */
     public ConfigUtils() {
         try {
-            AirUtils.log(Level.INFO, "Loading config.json");
+            logger.info("Loading config.json");
             this.config = ConfigLoader.getConfig(new File("config.json"));
-            AirUtils.log(Level.INFO, "Loaded config.json");
+            logger.info("Loaded config.json");
         } catch (Exception e) {
-            AirUtils.logger.error("Could not load config, aborting", e);
+            logger.error("Could not load config, aborting", e);
             System.exit(-1);
         }
     }

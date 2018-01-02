@@ -30,6 +30,8 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
 import java.util.HashSet;
@@ -39,7 +41,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public abstract class Command {
-    
+
+    private static Logger logger = LoggerFactory.getLogger(Command.class);
+
     /**
      * A list of users that have upvoted the bot
      */
@@ -90,7 +94,7 @@ public abstract class Command {
             String token = AirUtils.config.getString("apis.discordbots_userToken", "");
             
             if (token == null || token.isEmpty()) {
-                AirUtils.logger.warn("Discord Bots token not found");
+                logger.warn("Discord Bots token not found");
                 return;
             }
             
@@ -114,7 +118,7 @@ public abstract class Command {
             /* ignored */
         }
         catch (IOException e1) {
-            AirUtils.logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
         }
         if (Settings.useCooldown)
             cooldown = true;
@@ -201,7 +205,7 @@ public abstract class Command {
      */
     protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
         if (print)
-            AirUtils.logger.error(error.getLocalizedMessage(), error);
+            logger.error(error.getLocalizedMessage(), error);
 
         //Makes no difference if we use sendError or check here both perm types
         if (message.getChannelType() == ChannelType.TEXT) {

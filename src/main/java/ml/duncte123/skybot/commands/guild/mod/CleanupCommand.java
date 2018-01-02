@@ -20,14 +20,10 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.MessageHistory;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.event.Level;
+import org.slf4j.LoggerFactory;
 
-import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -85,7 +81,7 @@ public class CleanupCommand extends Command {
                 event.getChannel().sendMessage("Removed " + msgLst.size() + " messages!").queue(
                         message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
                 );
-                AirUtils.log(Level.DEBUG, msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
+                LoggerFactory.getLogger(CleanupCommand.class).debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
             });
         } catch (Exception e) {
             sendMsg(event, "ERROR: " + e.getMessage());
