@@ -98,11 +98,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         if(isSpotifyAlbum(reference.identifier)) {
             Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
             if (res.matches()) {
-                final AlbumRequest request = api.getAlbum(res.group(res.groupCount())).build();
 
                 try {
                     final List<AudioTrack> playList = new ArrayList<>();
-                    final Album album = request.get();
+                    final Album album = api.getAlbum(res.group(res.groupCount())).build().get();
                     for(SimpleTrack t : album.getTracks().getItems()){
                         String fakeUrl = album.getArtists().get(0).getName() + " - "+ t.getName();
                         playList.add(((AudioPlaylist)youtubeSearchProvider.loadSearchResult(fakeUrl)).getTracks().get(0));
@@ -116,11 +115,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         } else if(isSpotifyPlaylist(reference.identifier)) {
             Matcher res = SPOTIFY_PLAYLIST_REGEX.matcher(reference.identifier);
             if (res.matches()) {
-                final PlaylistRequest request = api.getPlaylist(res.group(res.groupCount()-1), res.group(res.groupCount())).build();
 
                 try {
                     final List<AudioTrack> finalPlaylist = new ArrayList<>();
-                    final Playlist playlist = request.get();
+                    final Playlist playlist = api.getPlaylist(res.group(res.groupCount()-1), res.group(res.groupCount())).build().get();
                     for(PlaylistTrack playlistTrack : playlist.getTracks().getItems()){
                         String fakeUrl = playlistTrack.getTrack().getArtists().get(0).getName() + " - " + playlistTrack.getTrack().getName();
                         finalPlaylist.add(((AudioPlaylist)youtubeSearchProvider.loadSearchResult(fakeUrl)).getTracks().get(0));
@@ -134,10 +132,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         } else if(isSpotyfyTrack(reference.identifier)) {
             Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
             if (res.matches()) {
-                final TrackRequest request = api.getTrack(res.group(res.groupCount())).build();
 
                 try {
-                    final Track track = request.get();
+                    final Track track = api.getTrack(res.group(res.groupCount())).build().get();
                     logger.debug("Retrieved track " + track.getName());
                     logger.debug("Its popularity is " + track.getPopularity());
 
