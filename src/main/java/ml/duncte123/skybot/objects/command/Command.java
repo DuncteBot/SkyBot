@@ -187,7 +187,7 @@ public abstract class Command {
      *
      * @param message the message to add the reaction to
      */
-    protected void sendError(Message message) {
+    protected final void sendError(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
@@ -203,7 +203,7 @@ public abstract class Command {
      * @param message the message to add the reaction to
      * @param error the cause
      */
-    protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
+    protected final void sendErrorJSON(Message message, Throwable error, final boolean print) {
         if (print)
             logger.error(error.getLocalizedMessage(), error);
 
@@ -228,7 +228,7 @@ public abstract class Command {
      *
      * @param message the message to add the reaction to
      */
-    protected void sendSuccess(Message message) {
+    protected final void sendSuccess(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
@@ -244,7 +244,7 @@ public abstract class Command {
      * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param embed The embed to send
      */
-    protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
+    protected final void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
         sendEmbed(event.getChannel(), embed);
     }
 
@@ -254,12 +254,61 @@ public abstract class Command {
      * @param channel the {@link TextChannel TextChannel} that we want to send the embed to
      * @param embed The embed to send
      */
-    protected void sendEmbed(TextChannel channel, MessageEmbed embed) {
+    protected final void sendEmbed(TextChannel channel, MessageEmbed embed) {
         if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
             sendMsg(channel, EmbedUtils.embedToMessage(embed));
             return;
         }
         sendMsg(channel, embed);
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param delay the {@link Long} that is our delay
+     * @param unit  the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg   the message format to send
+     * @param args  the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormatAndDeleteAfter(GuildMessageReceivedEvent event, long delay, TimeUnit unit, String msg, Object... args) {
+        sendMsgFormatAndDeleteAfter(event.getChannel(), delay, unit, msg, args);
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send our message to
+     * @param delay   the {@link Long} that is our delay
+     * @param unit    the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormatAndDeleteAfter(TextChannel channel, long delay, TimeUnit unit, String msg, Object... args) {
+        if(channel.canTalk())
+            channel.sendMessage(new MessageBuilder().append(String.format(msg, args)).build()).queue(it -> it.delete().reason("automatic remove").queueAfter(delay, unit));
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel
+     *
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormat(GuildMessageReceivedEvent event, String msg, Object... args) {
+        sendMsg(event.getChannel(), (new MessageBuilder().append(String.format(msg, args)).build()));
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormat(TextChannel channel, String msg, Object... args) {
+        sendMsg(channel, (new MessageBuilder().append(String.format(msg, args)).build()));
     }
     
     /**
@@ -268,7 +317,7 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
+    protected final void sendMsg(GuildMessageReceivedEvent event, String msg) {
         sendMsg(event.getChannel(), (new MessageBuilder()).append(msg).build());
     }
 
@@ -278,7 +327,7 @@ public abstract class Command {
      * @param channel he {@link TextChannel TextChannel} that we want to send our message to
      * @param msg   the message to send
      */
-    protected void sendMsg(TextChannel channel, String msg) {
+    protected final void sendMsg(TextChannel channel, String msg) {
         sendMsg(channel, (new MessageBuilder()).append(msg).build());
     }
     
@@ -288,7 +337,7 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
+    protected final void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event.getChannel(), (new MessageBuilder()).setEmbed(msg).build());
     }
 
@@ -298,7 +347,7 @@ public abstract class Command {
      * @param channel he {@link TextChannel TextChannel} that we want to send our message to
      * @param msg   the message to send
      */
-    protected void sendMsg(TextChannel channel, MessageEmbed msg) {
+    protected final void sendMsg(TextChannel channel, MessageEmbed msg) {
         sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build());
     }
     
@@ -308,7 +357,7 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
+    protected final void sendMsg(GuildMessageReceivedEvent event, Message msg) {
         sendMsg(event.getChannel(), msg);
     }
 

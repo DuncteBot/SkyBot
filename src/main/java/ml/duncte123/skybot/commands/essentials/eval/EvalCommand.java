@@ -60,7 +60,7 @@ public class EvalCommand extends Command {
             };
     private EvalFilter filter = new EvalFilter();
 
-    private boolean runIfNotOwner = true;
+    private boolean runIfNotOwner;
     
     /**
      * This initialises the engine
@@ -114,6 +114,7 @@ public class EvalCommand extends Command {
         catch (ScriptException e) {
             e.printStackTrace();
         }
+        setFilter(false);
     }
     
     @Override
@@ -122,7 +123,7 @@ public class EvalCommand extends Command {
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
 
-        if (runIfNotOwner == !isRanByBotOwner)
+        if (runIfNotOwner && !isRanByBotOwner)
             return;
 
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
