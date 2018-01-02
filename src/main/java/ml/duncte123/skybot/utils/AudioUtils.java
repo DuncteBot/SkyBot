@@ -27,6 +27,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.audioManagers.spotify.SpotyfyAudioSourceManager;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -69,8 +70,10 @@ public class AudioUtils {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
         this.playerManager = new DefaultAudioPlayerManager();
-        
+
+        playerManager.registerSourceManager(new SpotyfyAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(playerManager);
+        AudioSourceManagers.registerLocalSource(playerManager);
         
         musicManagers = new HashMap<>();
     }

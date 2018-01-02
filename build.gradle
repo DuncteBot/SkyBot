@@ -38,7 +38,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.56.3'
+version '3.57.0'
 
 sourceCompatibility = 1.8
 
@@ -71,7 +71,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '34ef5bd'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8e8a47a'
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
@@ -96,6 +96,9 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // Reflection stuffz
     compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+
+    //Spotify API
+    compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
 
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.10'
