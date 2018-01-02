@@ -51,8 +51,8 @@ import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class SpotyfyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
-    private static final Logger logger = LoggerFactory.getLogger(SpotyfyAudioSourceManager.class);
+public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
+    private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
     private static final String PROTOCOL_REGEX = "?:spotify:(track:)|http://|https://[a-z]+\\.";
     private static final String DOMAIN_REGEX = "spotify\\.com/";
@@ -69,7 +69,7 @@ public class SpotyfyAudioSourceManager implements AudioSourceManager, HttpConfig
     private final YoutubeSearchProvider youtubeSearchProvider;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager();
 
-    public SpotyfyAudioSourceManager() {
+    public SpotifyAudioSourceManager() {
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
         String clientId = AirUtils.config.getString("apis.spotify.clientId", defaultValue);
         String clientSecret = AirUtils.config.getString("apis.spotify.clientSecret", defaultValue);
