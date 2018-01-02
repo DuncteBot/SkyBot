@@ -109,7 +109,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
                 } catch (Exception e) {
                     logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                 }
             }
         } else if(isSpotifyPlaylist(reference.identifier)) {
@@ -126,7 +126,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     return new BasicAudioPlaylist(playlist.getName(), finalPlaylist, finalPlaylist.get(0), false);
                 } catch (Exception e) {
                     logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                 }
             }
         } else if(isSpotyfyTrack(reference.identifier)) {
@@ -146,7 +146,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     return youtubeSearchProvider.loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName());
                 } catch (Exception e) {
                     logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                 }
             }
         }
@@ -170,7 +170,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public void shutdown() {
-
+        youtubeAudioSourceManager.shutdown();
     }
 
     @Override
