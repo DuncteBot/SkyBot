@@ -38,7 +38,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.57.0'
+version '3.58.0'
 
 sourceCompatibility = 1.8
 
@@ -96,7 +96,6 @@ dependencies {
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // Reflection stuffz
     compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
-
     //Spotify API
     compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
 
