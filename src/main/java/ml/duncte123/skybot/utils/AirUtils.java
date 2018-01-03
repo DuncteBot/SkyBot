@@ -420,9 +420,7 @@ public class AirUtils {
     private static WAEngine getWolframEngine() {
         WAEngine engine = new WAEngine();
         
-        String appId;
-        
-        appId = config.getString("apis.wolframalpha", "");
+        String appId = config.getString("apis.wolframalpha", "");
         
         if (appId == null || "".equals(appId)) {
             IllegalStateException e
