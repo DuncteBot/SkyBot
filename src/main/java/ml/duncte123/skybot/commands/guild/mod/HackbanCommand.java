@@ -22,7 +22,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class HackbanCommand extends Command {
@@ -53,13 +52,6 @@ public class HackbanCommand extends Command {
             args[0] = args[0].substring(2, args[0].length() - 1);
         else if (args[0].matches(".{2,32}#\\d{4}")) {
             event.getJDA().getUsersByName(args[0].substring(0, args[0].length() - 5), false).stream().findFirst().ifPresent(user -> args[0] = user.getId());
-        }
-
-        Member member = event.getGuild().getMemberById(args[0]);
-
-        if (member == null || !event.getGuild().getSelfMember().canInteract(member)) {
-            sendMsgFormat(event, "I could not find a user (member) with ID: %s!\nOr I can not ban it!", args[0]);
-            return;
         }
 
         try {

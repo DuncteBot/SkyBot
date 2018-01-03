@@ -55,7 +55,6 @@ public class CommandManager {
                 this.addCommand(cmd.newInstance());
             }
             catch (Exception ignored) {
-                continue;
             }
         }
     }
