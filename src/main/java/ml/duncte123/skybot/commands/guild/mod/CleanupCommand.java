@@ -21,9 +21,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.slf4j.LoggerFactory;
 
+import java.time.OffsetDateTime;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
@@ -77,10 +80,14 @@ public class CleanupCommand extends Command {
                 if(keepPinned.get())
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
+                List<Message> failed = msgLst.stream()
+                        .filter(message -> message.getCreationTime().isBefore(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
+
+                msgLst = msgLst.stream()
+                        .filter(message -> message.getCreationTime().isAfter(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
+
                 event.getChannel().deleteMessages(msgLst).queue();
-                event.getChannel().sendMessage("Removed " + msgLst.size() + " messages!").queue(
-                        message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-                );
+                sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
                 LoggerFactory.getLogger(CleanupCommand.class).debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
             });
         } catch (Exception e) {

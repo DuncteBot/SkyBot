@@ -245,7 +245,7 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         
         if (settings.isEnableJoinMessage()) {
-            String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getCustomJoinMessage())
+            String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getWelcomeLeaveChannel())
                     ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);

@@ -109,10 +109,10 @@ class ChatCommand : Command() {
         var response2 = bot.multisentenceRespond(message, context)
         this.context.newState(message, response2)
         for (element in Jsoup.parse(response).getElementsByTag("a")) {
-            response = response.replace(oldValue = element.toString(), newValue = element.attr("href"))
+            response2 = response2.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
         }
         sendMsg(event, "${event.author.asMention}, $response")
-       logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+        logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
