@@ -22,9 +22,11 @@ import java.io.File;
 
 public class FileUtils {
 
+    private static FileUtils instance = new FileUtils();
+
     public static File getFileFromResources(String fileName) {
         //Get file from resources folder
-        ClassLoader classLoader = FileUtils.class.getClass().getClassLoader();
+        ClassLoader classLoader = instance.getClass().getClassLoader();
         return new File(classLoader.getResource(fileName).getFile());
 
     }
