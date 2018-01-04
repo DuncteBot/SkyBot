@@ -71,9 +71,9 @@ public class AudioUtils {
         
         this.playerManager = new DefaultAudioPlayerManager();
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager());
-        AudioSourceManagers.registerRemoteSources(playerManager);
         AudioSourceManagers.registerLocalSource(playerManager);
+        AudioSourceManagers.registerRemoteSources(playerManager);
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager());
         
         musicManagers = new HashMap<>();
     }

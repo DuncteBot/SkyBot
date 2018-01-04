@@ -24,7 +24,7 @@ public class FileUtils {
 
     public static File getFileFromResources(String fileName) {
         //Get file from resources folder
-        ClassLoader classLoader = new FileUtils().getClass().getClassLoader();
+        ClassLoader classLoader = FileUtils.class.getClass().getClassLoader();
         return new File(classLoader.getResource(fileName).getFile());
 
     }

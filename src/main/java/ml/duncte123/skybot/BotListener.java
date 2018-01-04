@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Message;
@@ -106,11 +107,11 @@ public class BotListener extends ListenerAdapter {
 
             MusicCommand.shutdown();
 
-            event.getJDA().asBot().getShardManager().getShards().forEach(jda -> {
-                jda.shutdown();
-                logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
-            });
-            
+            event.getMessage().addReaction("✅").queue(
+                    success->killAllShards(event.getJDA().asBot().getShardManager()),
+                    failure->killAllShards(event.getJDA().asBot().getShardManager())
+            );
+
             //Kill other things
             ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
             if (unbanTimerRunning)
@@ -389,5 +390,12 @@ public class BotListener extends ListenerAdapter {
 
     private boolean isCategory(String name) {
         return name.matches("(?i) ANIMALS|MAIN|FUN|MUSIC|MOD_ADMIN|NERD_STUFF|UNLISTED");
+    }
+
+    private void killAllShards(ShardManager manager) {
+        manager.getShards().forEach(jda -> {
+            jda.shutdown();
+            logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
+        });
     }
 }
