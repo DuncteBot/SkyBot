@@ -118,7 +118,6 @@ public class BanneCommand extends Command {
     private BufferedImage joinBufferedImage(BufferedImage topPart,BufferedImage roles, BufferedImage bottomPart) {
 
         //do some calculate first
-        int offset = 5;
         int wid = topPart.getWidth();
         int height = topPart.getHeight()+bottomPart.getHeight()+roles.getHeight();
         //create a new buffer and draw two image into the new image
