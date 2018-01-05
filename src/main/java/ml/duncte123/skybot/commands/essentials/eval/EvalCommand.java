@@ -114,7 +114,7 @@ public class EvalCommand extends Command {
         catch (ScriptException e) {
             e.printStackTrace();
         }
-        setFilter(false);
+        setFilter(true);
     }
     
     @Override
