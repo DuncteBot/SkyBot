@@ -98,4 +98,18 @@ public class ScriptDelegate extends Script {
     public String toString() {
         return "Script" + (++counter);
     }
+    public String longestW(String sen){
+    String longWord = "";
+    int longWordCount= 0;
+
+    String[] senArray = sen.split(" ");
+    for(int i = 0; i < senArray.length; ++i){
+
+        if(senArray[i].length() > longWordCount){
+            longWordCount = senArray[i].length();
+            longWord = senArray[i];
+        }
+    }
+    return longWord;
+}
 }
