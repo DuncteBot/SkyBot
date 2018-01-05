@@ -118,14 +118,15 @@ public class HelpEmbeds {
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
+                .setThumbnail(Settings.defaultIcon)
                        .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
                        .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
-                       .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
-                       .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
-                       .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
-                       .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
-                       .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
-                       .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
+                       .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
+                       .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
+                       .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
+                       .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
+                       .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
+                       .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
                        .build();
     }
 
@@ -140,7 +141,7 @@ public class HelpEmbeds {
         StringBuilder out = new StringBuilder();
         
         for (String name : cmdNames) {
-            out.append("`").append(prefix).append(name).append("` ");
+            out.append("`").append(prefix).append(name).append("`, ");
         }
         
         return out.toString();
@@ -152,7 +153,7 @@ public class HelpEmbeds {
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
-    public static String generateCommands(String... cmdNames) {
-        return generateCommandsWithPrefix(Settings.prefix, cmdNames);
+    public static String generateCommandsWithoutPrefix(String... cmdNames) {
+        return generateCommandsWithPrefix("", cmdNames);
     }
 }
