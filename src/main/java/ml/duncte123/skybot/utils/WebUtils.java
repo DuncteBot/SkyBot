@@ -27,18 +27,15 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 public class WebUtils {
 
     private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
-    //private static final OkHttpClient client;
-    private static final ThreadLocal<OkHttpClient> client = ThreadLocal.withInitial(
-            () -> (new OkHttpClient.Builder())
-                    .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
-                    .readTimeout(10, TimeUnit.SECONDS)// socket timeout
-                    .build()
-    );
+    private static final OkHttpClient client = new OkHttpClient();
+    public static final ScheduledExecutorService service
+            = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Web-Thread"));
+    //private static final ThreadLocal<OkHttpClient> client = ThreadLocal.withInitial(OkHttpClient::new);
 
     /**
      * Reads contents from a website and returns it to a string
@@ -70,15 +67,23 @@ public class WebUtils {
      */
     public static Response getRequest(String url, AcceptType accept) {
         try {
-            return client.get().newCall(new Request.Builder()
-                    .url(url)
-                    .get()
-                    .addHeader("User-Agent", USER_AGENT)
-                    .addHeader("Accept", accept.getType())
-                    .addHeader("cache-control", "no-cache")
-                    .build()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Accept", accept.getType())
+                        .addHeader("cache-control", "no-cache")
+                        .build()).execute();
+                }
+                catch (IOException e) {
+                   // e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
+            //e.printStackTrace();
             return null;
         }
     }
@@ -107,16 +112,22 @@ public class WebUtils {
         for (Map.Entry<String, Object> entry : postFields.entrySet()) {
             postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
-        
         try {
-            return client.get().newCall(new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
-                    .addHeader("User-Agent", USER_AGENT)
-                    .addHeader("Accept", accept.getType())
-                    .addHeader("cache-control", "no-cache")
-                    .build()).execute();
-        } catch (IOException e) {
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
+                            .addHeader("User-Agent", USER_AGENT)
+                            .addHeader("Accept", accept.getType())
+                            .addHeader("cache-control", "no-cache")
+                            .build()).execute();
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }
@@ -162,13 +173,20 @@ public class WebUtils {
      */
     public static Response postJSON(String url, JSONObject data) {
         try {
-            return client.get().newCall(new Request.Builder()
-                    .url(url)
-                    .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
-                    .addHeader("User-Agent", USER_AGENT)
-                    .build()).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
+                            .addHeader("User-Agent", USER_AGENT)
+                            .build()).execute();
+                } catch (IOException e) {
+                    //e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
+            //e.printStackTrace();
             return null;
         }
     }
