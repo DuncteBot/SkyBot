@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 
@@ -82,6 +83,10 @@ public class BanCommand extends Command {
 
                 String unbanDate = "";
                 if (Integer.parseInt(timeParts[0]) > 0) {
+                    if(timeParts.length != 2) {
+                        sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                        return;
+                    }
                     //TODO make ban timed
 
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -133,19 +138,19 @@ public class BanCommand extends Command {
                 );
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (voidm) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                        (v) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
                 );
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+        } catch (HierarchyException e) {
+           // e.printStackTrace();
+            sendMsg(event, "ERROR: I can't ban that member.");
         }
     }
 
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                       "Usage: `" + Settings.prefix + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
+                       "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
     }
 
     @Override
