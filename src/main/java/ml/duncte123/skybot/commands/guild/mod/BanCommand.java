@@ -64,7 +64,7 @@ public class BanCommand extends Command {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            if (args.length > 1) {
+            if (args.length >= 2) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
@@ -131,7 +131,6 @@ public class BanCommand extends Command {
                             }
                         }
                 );
-                AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
                         (voidm) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())

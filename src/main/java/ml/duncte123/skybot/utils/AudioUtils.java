@@ -142,11 +142,15 @@ public class AudioUtils {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
-                
-                if (firstTrack == null) {
+
+                if(tracks.size() == 0) {
+                    sendEmbed(EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."), channel);
+                    return;
+
+                } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                String msg = "";
+                String msg;
                 
                 if (addPlayList) {
                     msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
