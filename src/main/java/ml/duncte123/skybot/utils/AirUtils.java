@@ -36,6 +36,7 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.SocketTimeoutException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executors;
@@ -554,8 +555,9 @@ public class AirUtils {
         postFields.put("auth", jda.getToken());
         try {
             return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().source().readUtf8();
-        }
-        catch (Exception e) {
+        } catch (SocketTimeoutException | NullPointerException ignored) {
+            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
+        } catch (Exception e) {
             e.printStackTrace();
             return e.toString();
         }
@@ -582,9 +584,14 @@ public class AirUtils {
                     }
                 }
             } catch (JSONException ex) {
-                throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")), ex);
+                String x = returnValue.getString("message");
+                if (x.equals("ignored exception"))
+                    return;
+                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
             }
-
+            String x = returnValue.getString("message");
+            if (x.equals("ignored exception"))
+                return;
             throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
         }
     }
