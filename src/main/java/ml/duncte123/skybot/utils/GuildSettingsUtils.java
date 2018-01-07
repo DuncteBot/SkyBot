@@ -179,7 +179,10 @@ public class GuildSettingsUtils {
             preparedStatement.setString(7, welcomeLeaveChannel);
             preparedStatement.setString(8, customLeaveMessage);
             preparedStatement.executeUpdate();
-            
+
+        } catch (SQLException ignored) {
+            if (!ignored.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
+                ignored.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
