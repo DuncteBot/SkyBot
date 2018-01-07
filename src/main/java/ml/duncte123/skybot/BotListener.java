@@ -281,20 +281,19 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        //Temp disable that
-        //if 80 of a guild is bots, we'll leave it
-//        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
-//        if (botToUserRatio[1] > 80) {
-//            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
-//                    event.getGuild().getOwner().getAsMention(),
-//                    botToUserRatio[1],
-//                    "%",
-//                    event.getGuild().getMemberCache().size())).queue(
-//                    message -> message.getGuild().leave().queue()
-//            );
-//            AirUtils.log(Settings.defaultName + "GuildJoin", Level.INFO, "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT");
-//            return;
-//        }
+        //if 70 of a guild is bots, we'll leave it
+        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+        if (botToUserRatio[1] > 70) {
+            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+                    event.getGuild().getOwner().getAsMention(),
+                    botToUserRatio[1],
+                    "%",
+                    event.getGuild().getMemberCache().size())).queue(
+                    message -> message.getGuild().leave().queue()
+            );
+            logger.info(TextColor.RED + "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT" + TextColor.RESET);
+            return;
+        }
         Guild g = event.getGuild();
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
