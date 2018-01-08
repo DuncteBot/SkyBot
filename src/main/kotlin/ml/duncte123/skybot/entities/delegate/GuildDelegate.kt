@@ -45,12 +45,12 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     override fun getManager(): GuildManager                                                 = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManagerUpdatable(): GuildManagerUpdatable                               = throw VRCubeException("**\uD83D\uDD25 lit**")
 
-    override fun getMember(user: User): Member                                              = MemberDelegate(z88Am1Alk.getMember(user))
+    override fun getMember(user: User): Member                                              = MemberDelegate(z88Am1Alk.getMember(user)!!)
     override fun getSelfMember(): Member                                                    = MemberDelegate(z88Am1Alk.selfMember)
-    override fun getRoleById(id: Long): Role                                                = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getRoleById(id: String): Role                                              = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getMemberById(userId: Long): Member                                        = MemberDelegate(z88Am1Alk.getMemberById(userId))
-    override fun getMemberById(userId: String): Member                                      = MemberDelegate(z88Am1Alk.getMemberById(userId))
+    override fun getRoleById(id: Long): Role                                                = RoleDelegate(z88Am1Alk.getRoleById(id)!!)
+    override fun getRoleById(id: String): Role                                              = RoleDelegate(z88Am1Alk.getRoleById(id)!!)
+    override fun getMemberById(userId: Long): Member                                        = MemberDelegate(z88Am1Alk.getMemberById(userId)!!)
+    override fun getMemberById(userId: String): Member                                      = MemberDelegate(z88Am1Alk.getMemberById(userId)!!)
 
     override fun getMembers(): List<Member>                                                 = z88Am1Alk.members.map { MemberDelegate(it) } as List<Member>
     override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) } as List<Member>

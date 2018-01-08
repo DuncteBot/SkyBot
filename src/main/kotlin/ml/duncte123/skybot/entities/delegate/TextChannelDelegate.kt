@@ -24,16 +24,12 @@ import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
-import net.dv8tion.jda.core.entities.Message
-import net.dv8tion.jda.core.entities.MessageEmbed
-import net.dv8tion.jda.core.entities.MessageHistory
-import net.dv8tion.jda.core.entities.TextChannel
+import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.requests.RestAction
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction
 import net.dv8tion.jda.core.requests.restaction.MessageAction
+import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationAction
-import java.io.File
-import java.io.InputStream
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 @SinceSkybot("3.51.5")
@@ -61,21 +57,21 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * All [RestAction]s are blocked, because we dont want that our bot has issues with Discord and upload.
      * Also we dont like that our console is spammed with [Exception]s
      */
-    override fun sendFile(file: File, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).contentRaw}**")
-    override fun sendFile(data: ByteArray, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.contentRaw}**")
-    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.contentRaw}**")
-    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.contentRaw}**")
+//    override fun sendFile(file: File, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}, ${requireNotNull(message).contentRaw}**")
+//    override fun sendFile(data: ByteArray, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ($fileName, ${data.size}), ${message.contentRaw}**")
+//    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.contentRaw}**")
+//    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.contentRaw}**")
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(embed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.contentRaw}**")
-    override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
+//    override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
     override fun sendMessageFormat(format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 
     /*
      * Editing RestActions
      */
     override fun editMessageById(messageId: String, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+//    override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: String, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: Long, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: Long, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
@@ -110,4 +106,8 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
     override fun getHistoryAfter(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     override fun toString(): String = "TC:$name($id)"
+    override fun getPermissionOverride(role: Role): PermissionOverride              = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(member: Member): PermissionOverride          = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun createPermissionOverride(role: Role): PermissionOverrideAction     = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 }

@@ -34,8 +34,8 @@ class FlipCommand : Command() {
         var output = ""
 
         if (event.message.mentionedUsers.size > 0) {
-            uname = event.guild.getMember(event.message.mentionedUsers[0]).effectiveName
-        } else if(args.size > 0) {
+            uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
+        } else if(args.isNotEmpty()) {
             uname = StringUtils.join(args, " ")
         }
 

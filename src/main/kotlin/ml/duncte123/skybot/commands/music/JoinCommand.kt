@@ -72,9 +72,9 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                sendMsg(event, "I don't have permission to join `${vc.name}`")
+                sendMsg(event, "I don't have permission to join `${vc?.name}`")
             } else {
-                sendMsg(event, "Error while joining channel `${vc.name}`: ${e.message}")
+                sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
         }
 

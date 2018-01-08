@@ -20,15 +20,26 @@
 
 package ml.duncte123.skybot.entities.delegate
 
+import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
+import net.dv8tion.jda.core.entities.Member
+import net.dv8tion.jda.core.entities.PermissionOverride
+import net.dv8tion.jda.core.entities.Role
 import net.dv8tion.jda.core.entities.VoiceChannel
+import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs) {
+
+    override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+
     override fun toString(): String = "VC:$name($id)"
 }
