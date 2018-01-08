@@ -33,6 +33,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
+import java.util.Objects;
 
 public class BanCommand extends Command {
 
@@ -40,8 +41,9 @@ public class BanCommand extends Command {
         this.category = CommandCategory.MOD_ADMIN;
     }
 
+    @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand( String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
@@ -61,10 +63,11 @@ public class BanCommand extends Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
+                        !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
+            //noinspection ConstantConditions
             if (args.length >= 2) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
@@ -72,7 +75,7 @@ public class BanCommand extends Command {
                 if (!AirUtils.isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                            (voidMethod) -> {
+                            (__) -> {
                                 AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                                 sendSuccess(event.getMessage());
                                 AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
@@ -123,7 +126,7 @@ public class BanCommand extends Command {
                     unbanDate = df.format(dt);
                 }
 
-                final String finalUnbanDate = (unbanDate == null || unbanDate.isEmpty() ? "" : unbanDate);
+                final String finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (Integer.parseInt(timeParts[0]) > 0) {

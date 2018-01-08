@@ -368,7 +368,9 @@ public class BotListener extends ListenerAdapter {
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
 
-            lastGuildChannel.get(g).sendMessage("Leaving voice channel because all the members have left it.").queue();
+            TextChannel textChannel = lastGuildChannel.get(g);
+            if (g.getSelfMember().hasPermission(textChannel, Permission.MESSAGE_WRITE))
+                textChannel.sendMessage("Leaving voice channel because all the members have left it.").queue();
             if (g.getAudioManager().isConnected()) {
                 g.getAudioManager().closeAudioConnection();
                 g.getAudioManager().setSendingHandler(null);
