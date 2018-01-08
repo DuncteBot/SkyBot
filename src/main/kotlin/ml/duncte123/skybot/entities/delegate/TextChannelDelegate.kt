@@ -68,14 +68,14 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(embed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.contentRaw}**")
-    //override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
+    override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
     override fun sendMessageFormat(format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 
     /*
      * Editing RestActions
      */
     override fun editMessageById(messageId: String, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    //override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: String, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: Long, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: Long, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
