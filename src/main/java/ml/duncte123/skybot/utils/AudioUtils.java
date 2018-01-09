@@ -220,7 +220,7 @@ public class AudioUtils {
      */
     private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
         TextChannel tc = (TextChannel) channel;
-        if(tc.canTalk()) {
+        if(tc.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
                 channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
                 return;

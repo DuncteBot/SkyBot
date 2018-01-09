@@ -132,7 +132,7 @@ public class AirUtils {
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.canTalk()) return;
+        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
@@ -359,7 +359,7 @@ public class AirUtils {
         
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
-        if (pubChann == null || !pubChann.canTalk()) {
+        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
         }
         

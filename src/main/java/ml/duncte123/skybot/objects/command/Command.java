@@ -285,7 +285,7 @@ public abstract class Command {
      * @param args    the arguments that should be used in the msg parameter
      */
     protected final void sendMsgFormatAndDeleteAfter(TextChannel channel, long delay, TimeUnit unit, String msg, Object... args) {
-        if(channel.canTalk())
+        if(channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
             channel.sendMessage(new MessageBuilder().append(String.format(msg, args)).build()).queue(it -> it.delete().reason("automatic remove").queueAfter(delay, unit));
     }
 
@@ -369,7 +369,7 @@ public abstract class Command {
      */
     protected void sendMsg(TextChannel channel, Message msg) {
         //Only send a message if we can talk
-        if(channel.canTalk())
+        if(channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
             channel.sendMessage(msg).queue();
     }
     

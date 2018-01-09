@@ -124,7 +124,7 @@ public class SettingsCommand extends Command {
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
                     TextChannel tc = event.getMessage().getMentionedChannels().get(0);
-                    if(!tc.canTalk()) {
+                    if(!tc.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
                         sendError(event.getMessage());
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
@@ -150,7 +150,7 @@ public class SettingsCommand extends Command {
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
                     TextChannel welcomeChannel = event.getMessage().getMentionedChannels().get(0);
-                    if(!welcomeChannel.canTalk()) {
+                    if(!welcomeChannel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
                         sendError(event.getMessage());
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
