@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
 import org.json.JSONException;
@@ -132,7 +133,7 @@ public class AirUtils {
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
+        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(logChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
@@ -359,7 +360,7 @@ public class AirUtils {
         
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
-        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
         }
         

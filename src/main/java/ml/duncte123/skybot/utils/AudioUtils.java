@@ -106,7 +106,7 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList) {
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
         final String trackUrl;
         
         //Strip <>'s that prevent discord from embedding link resources
@@ -216,16 +216,15 @@ public class AudioUtils {
      * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      *
      * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param channel {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param tc {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
-    private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
-        TextChannel tc = (TextChannel) channel;
-        if(tc.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+    private void sendEmbed(MessageEmbed embed, TextChannel tc) {
+        if(tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-                channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+                tc.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
                 return;
             }
-            channel.sendMessage(embed).queue();
+            tc.sendMessage(embed).queue();
         }
     }
 

@@ -55,7 +55,7 @@ public class AnnounceCommand extends Command {
         try {
             TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
-            if (!targetChannel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+            if (!targetChannel.getGuild().getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
                 sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
                 sendError(event.getMessage());
                 return;

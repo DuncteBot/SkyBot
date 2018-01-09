@@ -140,7 +140,7 @@ public class BotListener extends ListenerAdapter {
         
         String rw = event.getMessage().getContentRaw();
         
-        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)
                 && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
