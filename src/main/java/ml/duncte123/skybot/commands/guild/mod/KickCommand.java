@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -69,9 +70,9 @@ public class KickCommand extends Command {
                         sendSuccess(event.getMessage());
                     }
             );
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+        } catch (HierarchyException e) {
+            //e.printStackTrace();
+            sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 
 

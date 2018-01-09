@@ -85,7 +85,15 @@ public class BanCommand extends Command {
                 }
 
                 String unbanDate = "";
-                if (Integer.parseInt(timeParts[0]) > 0) {
+                int banTime = 0;
+                try {
+                    banTime = Integer.parseInt(timeParts[0]);
+                }
+                catch (NumberFormatException ignored) {
+                    sendMsg(event, ignored.getMessage()+" is not a valid number");
+                    return;
+                }
+                if (banTime > 0) {
                     if(timeParts.length != 2) {
                         sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
                         return;
@@ -101,22 +109,22 @@ public class BanCommand extends Command {
                                 sendMsg(event, "The minimum time for minutes is 10.");
                                 return;
                             }
-                            dt = DateUtils.addMinutes(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMinutes(dt, banTime);
                             break;
                         case "h":
-                            dt = DateUtils.addHours(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addHours(dt, banTime);
                             break;
                         case "d":
-                            dt = DateUtils.addDays(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addDays(dt, banTime);
                             break;
                         case "w":
-                            dt = DateUtils.addWeeks(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addWeeks(dt, banTime);
                             break;
                         case "M":
-                            dt = DateUtils.addMonths(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addMonths(dt, banTime);
                             break;
                         case "Y":
-                            dt = DateUtils.addYears(dt, Integer.parseInt(timeParts[0]));
+                            dt = DateUtils.addYears(dt, banTime);
                             break;
 
                         default:
@@ -127,9 +135,10 @@ public class BanCommand extends Command {
                 }
 
                 final String finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
+                final int finalBanTime = banTime;
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
-                            if (Integer.parseInt(timeParts[0]) > 0) {
+                            if (finalBanTime > 0) {
                                 AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
                                 AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
@@ -145,8 +154,8 @@ public class BanCommand extends Command {
                 );
             }
         } catch (HierarchyException e) {
-           // e.printStackTrace();
-            sendMsg(event, "ERROR: I can't ban that member.");
+            //e.printStackTrace();
+            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }
 
