@@ -43,8 +43,8 @@ public class CatCommand extends Command {
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
-            e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
+            //e.printStackTrace();
+            sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
         }
 
     }

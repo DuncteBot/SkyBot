@@ -39,7 +39,7 @@ public class LlamaCommand extends Command {
             JSONObject jsonObject = new JSONObject(jsonString);
             event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }

@@ -106,7 +106,7 @@ public abstract class Command {
                                                 .addHeader("Authorization", token)
                                                 .build())
                                         .execute();
-            JSONArray json = new JSONArray(response.body().source().readUtf8());
+            JSONArray json = new JSONArray(response.body().string());
             
             upvotedIds.clear();
 

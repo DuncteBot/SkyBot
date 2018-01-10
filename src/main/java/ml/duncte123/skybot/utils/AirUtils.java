@@ -555,7 +555,7 @@ public class AirUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().source().readUtf8();
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().string();
         } catch (SocketTimeoutException | NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {

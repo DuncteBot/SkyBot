@@ -46,7 +46,7 @@ public class KittyCommand extends Command {
             sendEmbed(event, EmbedUtils.embedImage(fullUrl));
         } catch (Exception e) {
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

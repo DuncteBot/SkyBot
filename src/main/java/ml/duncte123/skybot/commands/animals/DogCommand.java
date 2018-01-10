@@ -43,8 +43,8 @@ public class DogCommand extends Command {
                 sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
+            //e.printStackTrace();
+            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
         }
 
     }

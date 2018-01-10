@@ -40,14 +40,14 @@ public class AlpacaCommand extends Command {
             Element img = doc.select("img").first();
             sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }
 
     @Override
     public String help() {
-        return "Here is a alpaca";
+        return "Here is an alpaca";
     }
 
     @Override

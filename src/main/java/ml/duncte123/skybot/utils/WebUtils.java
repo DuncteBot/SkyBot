@@ -27,15 +27,17 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
     private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client = new OkHttpClient();
     public static final ScheduledExecutorService service
-            = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Web-Thread"));
-    //private static final ThreadLocal<OkHttpClient> client = ThreadLocal.withInitial(OkHttpClient::new);
+            = Executors.newScheduledThreadPool(2, r -> new Thread(r, "Web-Thread"));
 
     /**
      * Reads contents from a website and returns it to a string
@@ -45,7 +47,7 @@ public class WebUtils {
      * @throws IOException When something broke
      */
     public static String getText(String url) throws IOException {
-        return getRequest(url).body().source().readUtf8();
+        return getRequest(url).body().string();
     }
 
     /**
@@ -204,7 +206,7 @@ public class WebUtils {
             jo.put("longUrl", url);
 
             String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
-                    + AirUtils.config.getString("apis.googl", "Google api key"), jo).body().source().readUtf8();
+                    + AirUtils.config.getString("apis.googl", "Google api key"), jo).body().string();
 
             JSONObject returnJSON = new JSONObject(returnData);
             return returnJSON.get("id").toString();
