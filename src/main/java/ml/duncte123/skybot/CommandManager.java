@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
@@ -130,11 +131,12 @@ public class CommandManager {
     /**
      * This will run the command when we need them
      *
-     * @param rw the raw message
      * @param event the event for the message
      */
-    public void runCommand(String rw, GuildMessageReceivedEvent event) {
-        final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
+    public void runCommand(GuildMessageReceivedEvent event) {
+        final String[] split = event.getMessage().getContentRaw().replaceFirst(
+                Pattern.quote(Settings.prefix) + "|" + Settings.otherPrefix + "|" +
+                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()), "").split("\\s+");
         final String invoke = split[0].toLowerCase();
         final String[] args = Arrays.copyOfRange(split, 1, split.length);
 
