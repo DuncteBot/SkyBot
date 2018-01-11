@@ -45,6 +45,8 @@ implements DBConnectionManager {
         this.user = AirUtils.config.getString("sql.username", "exampleUser");
         this.pass = AirUtils.config.getString("sql.password", "Ex@mplePAss");
         this.dbName = AirUtils.config.getString("sql.database", "Example_database");
+
+        innitDB(getConnection());
     }
 
     /**
@@ -72,7 +74,7 @@ implements DBConnectionManager {
     @Override
     public boolean hasSettings() {
         try {
-            return !dbHost.isEmpty() && !user.isEmpty() && !pass.isEmpty() && !dbName.isEmpty();
+            return !dbHost.isEmpty() && !user.isEmpty() && !dbName.isEmpty();
         } catch (Exception e) {
             return false;
         }
@@ -109,6 +111,56 @@ implements DBConnectionManager {
                 connection.close();
         } catch (SQLException e) {
             throw new IOException(e);
+        }
+    }
+
+    private void innitDB(Connection connection) {
+        try {
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `bans` (\n" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `modUserId` varchar(255) NOT NULL,\n" +
+                    "  `userId` varchar(300) NOT NULL,\n" +
+                    "  `Username` varchar(266) NOT NULL,\n" +
+                    "  `discriminator` varchar(4) NOT NULL,\n" +
+                    "  `ban_date` datetime NOT NULL,\n" +
+                    "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
+                    "  `guildId` varchar(266) NOT NULL,\n" +
+                    "  PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (\n" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `name` varchar(200) NOT NULL COMMENT 'Username',\n" +
+                    "  `quote` text NOT NULL COMMENT 'Quote',\n" +
+                    "  PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags` (\n" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `author` varchar(255) NOT NULL,\n" +
+                    "  `authorId` varchar(255) NOT NULL,\n" +
+                    "  `tagName` varchar(10) NOT NULL,\n" +
+                    "  `tagText` text NOT NULL,\n" +
+                    "  PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;");
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (\n" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "  `guildId` text NOT NULL,\n" +
+                    "  `guildName` text CHARACTER SET utf8mb4,\n" +
+                    "  `prefix` varchar(255) NOT NULL DEFAULT '/',\n" +
+                    "  `autoRole` varchar(255) DEFAULT NULL,\n" +
+                    "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,\n" +
+                    "  `customLeaveMessage` text NOT NULL,\n" +
+                    "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
+                    "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
+                    "PRIMARY KEY (`id`)\n" +
+                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+            if(connection.createStatement().executeQuery("SELECT COUNT(id) FROM footerQuotes").getFetchSize() == 0) {
+                connection.createStatement().executeUpdate("INSERT INTO footerQuotes " +
+                        "VALUES (DEFAULT, 'duncte123', 'FIRST')");
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
     }
 }

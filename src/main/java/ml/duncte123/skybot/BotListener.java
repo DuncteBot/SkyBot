@@ -258,8 +258,8 @@ public class BotListener extends ListenerAdapter {
                     ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
-            if (msg.isEmpty())
-                msg = "\u200E";
+            if (msg.isEmpty() || welcomeLeaveChannel == null)
+               return;
             welcomeLeaveChannel.sendMessage(msg).queue();
         }
     }
@@ -385,8 +385,8 @@ public class BotListener extends ListenerAdapter {
 
     private void killAllShards(ShardManager manager) {
         manager.getShards().forEach(jda -> {
-            jda.shutdown();
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
+            jda.shutdown();
         });
     }
 }

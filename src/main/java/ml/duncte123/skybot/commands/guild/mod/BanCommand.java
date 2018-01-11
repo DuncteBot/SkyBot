@@ -93,6 +93,10 @@ public class BanCommand extends Command {
                     sendMsg(event, ignored.getMessage()+" is not a valid number");
                     return;
                 }
+                catch (ArrayIndexOutOfBoundsException /* https://youtube.com/DSHelmondGames */ pls_subscribe) {
+                    sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                    return;
+                }
                 if (banTime > 0) {
                     if(timeParts.length != 2) {
                         sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
