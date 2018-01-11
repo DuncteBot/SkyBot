@@ -325,22 +325,17 @@ public class BotListener extends ListenerAdapter {
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         if(event.getGuild().getAudioManager().isConnected()) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                if (event.getChannelLeft() != null) {
-                    if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
-                        return;
-                    }
-                    channelCheckThing(event.getGuild(), event.getChannelLeft());
-
+                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                    return;
                 }
+                channelCheckThing(event.getGuild(), event.getChannelLeft());
 
-                if (event.getChannelJoined() != null) {
-                    if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
-                            !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
-                        return;
-                        //System.out.println("Self (this might be buggy)");
-                    }
-                    channelCheckThing(event.getGuild(), event.getChannelJoined());
+                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
+                        !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                    return;
+                    //System.out.println("Self (this might be buggy)");
                 }
+                channelCheckThing(event.getGuild(), event.getChannelJoined());
             }
         }
     }
@@ -359,7 +354,7 @@ public class BotListener extends ListenerAdapter {
             manager.scheduler.queue.clear();
 
             TextChannel textChannel = lastGuildChannel.get(g);
-            if (g.getSelfMember().hasPermission(textChannel, Permission.MESSAGE_WRITE))
+            if (g.getSelfMember().hasPermission(textChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
                 textChannel.sendMessage("Leaving voice channel because all the members have left it.").queue();
             if (g.getAudioManager().isConnected()) {
                 g.getAudioManager().closeAudioConnection();
