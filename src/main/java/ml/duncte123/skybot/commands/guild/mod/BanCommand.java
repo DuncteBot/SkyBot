@@ -85,15 +85,15 @@ public class BanCommand extends Command {
                 }
 
                 String unbanDate = "";
-                int banTime = 0;
+                int banTime; // initial value is always 0
                 try {
                     banTime = Integer.parseInt(timeParts[0]);
                 }
-                catch (NumberFormatException ignored) {
-                    sendMsg(event, ignored.getMessage()+" is not a valid number");
+                catch (NumberFormatException e) {
+                    sendMsg(event, e.getMessage()+" is not a valid number");
                     return;
                 }
-                catch (ArrayIndexOutOfBoundsException /* https://youtube.com/DSHelmondGames */ pls_subscribe) {
+                catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */)  {
                     sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
                     return;
                 }
