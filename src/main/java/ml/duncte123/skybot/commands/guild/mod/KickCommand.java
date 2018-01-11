@@ -58,7 +58,7 @@ public class KickCommand extends Command {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) &&
-                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toKick))) {
+                        !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
@@ -70,7 +70,7 @@ public class KickCommand extends Command {
                         sendSuccess(event.getMessage());
                     }
             );
-        } catch (HierarchyException e) {
+        } catch (HierarchyException ignored) { // if we don't do anything with it and just catch it we should name it "ignored"
             //e.printStackTrace();
             sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
