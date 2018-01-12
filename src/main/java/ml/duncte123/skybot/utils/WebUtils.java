@@ -80,7 +80,7 @@ public class WebUtils {
                         .build()).execute();
                 }
                 catch (IOException e) {
-                   // e.printStackTrace();
+                    e.printStackTrace();
                     return null;
                 }
             }, 0L, TimeUnit.MICROSECONDS).get();
@@ -125,7 +125,7 @@ public class WebUtils {
                             .addHeader("cache-control", "no-cache")
                             .build()).execute();
                 } catch (IOException e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                     return null;
                 }
             }, 0L, TimeUnit.MICROSECONDS).get();
@@ -183,7 +183,7 @@ public class WebUtils {
                             .addHeader("User-Agent", USER_AGENT)
                             .build()).execute();
                 } catch (IOException e) {
-                    //e.printStackTrace();
+                    e.printStackTrace();
                     return null;
                 }
             }, 0L, TimeUnit.MICROSECONDS).get();

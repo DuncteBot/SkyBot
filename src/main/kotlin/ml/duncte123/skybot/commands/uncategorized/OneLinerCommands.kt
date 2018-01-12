@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.json.JSONObject
 import java.lang.management.ManagementFactory
 
 class OneLinerCommands : Command() {
@@ -64,6 +65,14 @@ class OneLinerCommands : Command() {
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
             "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
+
+            "yesno" -> {
+                val json = JSONObject(WebUtils.getText("https://yesno.wtf/api"))
+                sendEmbed(event, EmbedUtils.defaultEmbed()
+                        .setTitle(json.getString("answer"))
+                        .setImage(json.getString("image"))
+                        .build())
+            }
             else -> println("Invoke was invalid: $invoke")
         }
     }
@@ -78,7 +87,7 @@ class OneLinerCommands : Command() {
 
     override fun getName() = "ping"
     
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote")
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno")
 
     private fun getAverage(): Double = pingHistory.filter { it != -1L }.map { it.toDouble() }.average()
 }
