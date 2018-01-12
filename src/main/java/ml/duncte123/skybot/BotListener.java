@@ -161,7 +161,7 @@ public class BotListener extends ListenerAdapter {
             if (event.getChannel().getTopic().contains("-commands"))
                 return;
             for (String s : blocked) {
-                if (isCategory(s)) {
+                if (isCategory(s.toUpperCase())) {
                     if (AirUtils.commandManager.getCommands(CommandCategory.valueOf(s.toUpperCase()))
                             .contains(AirUtils.commandManager.getCommand(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
                                     .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))) {
@@ -375,7 +375,7 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean isCategory(String name) {
-        return name.matches("(?i) ANIMALS|MAIN|FUN|MUSIC|MOD_ADMIN|NERD_STUFF|UNLISTED");
+        return name.matches("(?i)ANIMALS|MAIN|FUN|MUSIC|MOD_ADMIN|NERD_STUFF|UNLISTED");
     }
 
     private void killAllShards(ShardManager manager) {
