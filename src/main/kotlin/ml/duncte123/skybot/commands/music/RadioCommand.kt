@@ -62,8 +62,8 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
 
         //nl_NL radio stations
-        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/ ")
-        radioStreams += RadioStream("radio538","http://20073.live.streamtheworld.com/RADIO538.mp3","https://www.538.nl/", false)
+        radioStreams += RadioStream("slam","http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC","https://live.slam.nl/slam-live/ ")
+        radioStreams += RadioStream("radio538","http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3","https://www.538.nl/", false)
 
         //International radio stations
         //TODO: add international radio stations
