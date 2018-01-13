@@ -67,7 +67,7 @@ public class RadioCommand : MusicCommand() {
 
         //International radio stations
         //TODO: add international radio stations
-        radioStreams += RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "trap.fm/")
+        radioStreams += RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "http://trap.fm/")
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -124,12 +124,12 @@ public class RadioCommand : MusicCommand() {
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
-        val string: String
-        string = if (!full) {
+        val string = streams.filter { if(!full) it.public else true }.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
+        /*string = if (!full) {
             streams.filter { it.public }.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
         } else {
             streams.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
-        }
+        }*/
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
