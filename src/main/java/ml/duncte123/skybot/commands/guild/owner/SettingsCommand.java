@@ -71,7 +71,7 @@ public class SettingsCommand extends Command {
 
             case "setprefix":
                 if (args.length < 1) {
-                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setPrefix <new prefix>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
                 String newPrefix = StringUtils.join(args);
@@ -81,7 +81,7 @@ public class SettingsCommand extends Command {
 
             case "setjoinmessage":
                 if (args.length < 1) {
-                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setJoinMessage <new join message>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
                 String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
@@ -91,7 +91,7 @@ public class SettingsCommand extends Command {
 
             case "setleavemessage":
                 if (args.length < 1) {
-                    sendMsg(event, "Correct usage is `" + this.PREFIX + "setleavemessage <new join message>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
                 String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
@@ -119,7 +119,7 @@ public class SettingsCommand extends Command {
 
             case "setlogchannel":
                 if(args.length < 1) {
-                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"setLogChannel [text channel]`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"setLogChannel [text channel]`");
                     return;
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
@@ -145,7 +145,7 @@ public class SettingsCommand extends Command {
             case "setwelcomechannel":
             case "setleavechannel":
                 if(args.length < 1) {
-                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"setwelcomechannel [text channel]`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"setwelcomechannel [text channel]`");
                     return;
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
@@ -177,7 +177,7 @@ public class SettingsCommand extends Command {
                 }
 
                 if(args.length == 0) {
-                    sendMsg(event, "Incorrect usage: `"+this.PREFIX+"autorole <role name/disable>`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"autorole <role name/disable>`");
                     return;
                 }
 
@@ -208,14 +208,14 @@ public class SettingsCommand extends Command {
     @Override
     public String help() {
         return "Modify the settings on the bot.\n" +
-                "`"+this.PREFIX+"settings` => Shows the current settings\n" +
-                "`"+this.PREFIX+"setPrefix <prefix>` => Sets the new prefix\n" +
-                "`"+this.PREFIX+"setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
-                "`"+this.PREFIX+"setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves\n" +
-                "`"+this.PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
-                "`"+this.PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
-                "`"+this.PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
-                "`"+this.PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n"
+                "`"+PREFIX+"settings` => Shows the current settings\n" +
+                "`"+PREFIX+"setPrefix <prefix>` => Sets the new prefix\n" +
+                "`"+PREFIX+"setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
+                "`"+PREFIX+"setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves\n" +
+                "`"+PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
+                "`"+PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
+                "`"+PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
+                "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n"
                 ;
     }
 

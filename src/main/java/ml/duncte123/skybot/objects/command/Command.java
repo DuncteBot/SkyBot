@@ -42,7 +42,7 @@ import java.util.concurrent.TimeUnit;
 
 public abstract class Command {
 
-    private static Logger logger = LoggerFactory.getLogger(Command.class);
+    protected static final Logger logger = LoggerFactory.getLogger(Command.class);
 
     /**
      * A list of users that have upvoted the bot
@@ -79,7 +79,7 @@ public abstract class Command {
     /**
      * This holds the prefix for us
      */
-    protected final String PREFIX = Settings.prefix;
+    protected static final String PREFIX = Settings.prefix;
     /**
      * This holds the category
      */

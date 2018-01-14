@@ -82,7 +82,7 @@ public class BotinfoCommand extends Command {
     
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `" + this.PREFIX + getName() + "`";
+        return "Gets some info about the bot\nUsage: `" + PREFIX + getName() + "`";
     }
     
     @Override

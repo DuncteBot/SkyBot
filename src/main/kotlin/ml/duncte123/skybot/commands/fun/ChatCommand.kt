@@ -30,7 +30,6 @@ import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 
 class ChatCommand : Command() {
-    val logger = LoggerFactory.getLogger(ChatCommand::class.java)
 
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession

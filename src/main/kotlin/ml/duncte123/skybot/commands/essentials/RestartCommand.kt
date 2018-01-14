@@ -29,7 +29,6 @@ import org.slf4j.LoggerFactory
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RestartCommand : Command() {
-    val logger = LoggerFactory.getLogger(RestartCommand::class.java)
 
     init {
         this.category = CommandCategory.UNLISTED
