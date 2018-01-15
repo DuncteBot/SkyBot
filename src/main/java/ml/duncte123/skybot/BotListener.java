@@ -370,6 +370,8 @@ public class BotListener extends ListenerAdapter {
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
+                .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
+                .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
                 .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
     }
