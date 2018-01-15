@@ -30,6 +30,7 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 
+@SuppressWarnings({"NonAtomicOperationOnVolatileField", "ResultOfMethodCallIgnored"})
 public class URLFetcher {
 
     // Largest result that will be allowed to be returned as a byte[] instead of in a file.
@@ -78,7 +79,7 @@ public class URLFetcher {
     /**
      * Doesn't mean that it finished successfully; could have been cancelled.
      *
-     * @return
+     * @return whether it's finish or not
      */
     public boolean isFinished() {
         return isFinished;
@@ -179,9 +180,7 @@ public class URLFetcher {
                         outStream.write(buf, 0, numRead);
                 }
                 // Might be useful someday to handle all the checked exceptions differently...
-            } catch (WAHttpException e) {
-                exception = e;
-            } catch (IOException e) {
+            } catch (WAHttpException | IOException e) {
                 exception = e;
             } catch (Exception e) {
                 exception = e;
@@ -189,7 +188,7 @@ public class URLFetcher {
                 if (responseStream != null)
                     try {
                         responseStream.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 if (trans != null)
                     trans.release();
@@ -198,7 +197,7 @@ public class URLFetcher {
                         bytes = ((ByteArrayOutputStream) outStream).toByteArray();
                     try {
                         outStream.close();
-                    } catch (Exception e) {
+                    } catch (Exception ignored) {
                     }
                 }
                 if (wasCancelled && downloadedFile != null) {

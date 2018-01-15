@@ -40,6 +40,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);

@@ -48,7 +48,7 @@ public class WAQueryImpl extends WAQueryParametersImpl implements WAQuery, Seria
     // Creates the URL representation of this query, not including server, path, and appid param. Result starts with &.
     public String toString() {
         
-        StringBuffer s = new StringBuffer(600);
+        StringBuilder s = new StringBuilder(600);
         
         List<String[]> params = getParameters();
         for (String[] param : params) {

@@ -32,7 +32,7 @@ class DialogCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (args.size < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Correct usage: `$PREFIX$name <words>`")
             return
         }

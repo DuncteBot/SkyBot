@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 public class SkybotCommandTest {
 
-    private static CommandManager manager;
+    private static final CommandManager manager;
 
     static {
         manager = new CommandManager();

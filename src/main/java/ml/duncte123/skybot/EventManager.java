@@ -34,7 +34,7 @@ implements IEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
-    private BotListener botListener = new BotListener();
+    private final BotListener botListener = new BotListener();
     
     @Override
     public void register(Object listener) {

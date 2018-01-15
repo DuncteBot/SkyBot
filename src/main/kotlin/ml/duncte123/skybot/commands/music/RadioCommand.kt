@@ -17,6 +17,7 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Suppress("MemberVisibilityCanPrivate")
 
 package ml.duncte123.skybot.commands.music
 

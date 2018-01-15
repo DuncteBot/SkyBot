@@ -35,6 +35,7 @@ import java.util.List;
  *
  * @author duncte123
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class GenerateCommandList {
 
     public static void inPHP() throws Exception{
@@ -57,7 +58,7 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.commandManager.getCommands().stream().forEach(c-> names.add(c.getName()));
+        AirUtils.commandManager.getCommands().forEach(c-> names.add(c.getName()));
         Collections.sort(names);
 
         for (String n: names) {

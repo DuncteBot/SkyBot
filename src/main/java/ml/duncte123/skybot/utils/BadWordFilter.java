@@ -107,8 +107,8 @@ public class BadWordFilter {
                     // for example, if you want to say the word bass, that should be possible.
                     String[] ignoreCheck = words.get(wordToCheck);
                     boolean ignore = false;
-                    for (int s = 0; s < ignoreCheck.length; s++)
-                        if (input.contains(ignoreCheck[s])) {
+                    for (String anIgnoreCheck : ignoreCheck)
+                        if (input.contains(anIgnoreCheck)) {
                             ignore = true;
                             break;
                         }

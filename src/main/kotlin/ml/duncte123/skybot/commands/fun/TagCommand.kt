@@ -43,7 +43,7 @@ class TagCommand : Command() {
                         " $PREFIX$invoke author => displays who made the tag\n" +
                         " $PREFIX$invoke create => make a new tag", getLang()).build()
 
-        if (args.size == 0) {
+        if (args.isEmpty()) {
             sendMsg(event, helpMessage)
         } else if (args.size == 1) {
 

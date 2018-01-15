@@ -39,7 +39,7 @@ import javax.security.auth.login.LoginException;
 @Author
 public class SkyBot {
 
-    private static Logger logger = LoggerFactory.getLogger(SkyBot.class);
+    private static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
     /**
      * This is our main method

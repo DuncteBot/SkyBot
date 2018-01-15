@@ -54,22 +54,22 @@ import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
 
-    private Logger logger = LoggerFactory.getLogger(BotListener.class);
+    private final Logger logger = LoggerFactory.getLogger(BotListener.class);
 
     /**
      * This filter helps us to fiter out swearing
      */
-    private BadWordFilter filter = new BadWordFilter();
+    private final BadWordFilter filter = new BadWordFilter();
 
     /**
      * When a command gets ran, it'll be stored in here
      */
-    private static Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
+    private static final Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
 
     /**
      * This timer is for checking unbans
      */
-    private ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1,
+    private final ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Unban-Thread"));
 
     /**
@@ -80,7 +80,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This timer is for checking new quotes
      */
-    private ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
+    private final ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Settings-Thread"));
 
     /**

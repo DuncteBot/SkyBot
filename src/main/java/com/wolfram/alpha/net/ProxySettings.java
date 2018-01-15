@@ -195,7 +195,7 @@ public class ProxySettings {
         // In older versions of Java you could return an empty list, but in newer ones there is a bug
         // where the java.net code will throw a NullPointerException if you return an empty list.
         private final List<Proxy> NO_PROXY_LIST = new ArrayList<>(1);
-        ProxySelector origSelector = null;
+        ProxySelector origSelector;
         
         private MyProxySelector() {
             origSelector = ProxySelector.getDefault();
@@ -211,19 +211,20 @@ public class ProxySettings {
         public List<Proxy> select(URI uri) {
             
             int useProxy = ProxySettings.getInstance().getUseProxy();
-            if (useProxy == PROXY_AUTOMATIC)
-                return origSelector.select(uri);
-            else if (useProxy == PROXY_MANUAL) {
-                Proxy p = ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
-                if (p != null) {
-                    List<Proxy> proxies = new ArrayList<>(1);
-                    proxies.add(p);
-                    return proxies;
-                } else {
+            switch (useProxy) {
+                case PROXY_AUTOMATIC:
+                    return origSelector.select(uri);
+                case PROXY_MANUAL:
+                    Proxy p = ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
+                    if (p != null) {
+                        List<Proxy> proxies = new ArrayList<>(1);
+                        proxies.add(p);
+                        return proxies;
+                    } else {
+                        return NO_PROXY_LIST;
+                    }
+                default:
                     return NO_PROXY_LIST;
-                }
-            } else {
-                return NO_PROXY_LIST;
             }
         }
         

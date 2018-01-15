@@ -27,7 +27,7 @@ import java.sql.*;
 
 public class GuildSettingsUtils {
 
-    private static Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     /**
      * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}

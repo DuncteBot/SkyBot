@@ -47,7 +47,7 @@ import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeade
 
 public class ClypitAudioSourceManager extends HttpAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
-    private final Pattern CLYPIT_REGEX = Pattern.compile("(http:\\/\\/|https:\\/\\/(www\\.)?)?clyp\\.it\\/(.*)");
+    private final Pattern CLYPIT_REGEX = Pattern.compile("(http://|https://(www\\.)?)?clyp\\.it/(.*)");
 
     @Override
     public String getSourceName() {

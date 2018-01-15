@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.slf4j.LoggerFactory;
 
 import java.time.OffsetDateTime;
 import java.util.List;

@@ -41,6 +41,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 
+@SuppressWarnings("SuspiciousSystemArraycopy")
 public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable {
     
     private static final String[] EMPTY_STRING_ARRAY = new String[]{};
@@ -91,13 +92,13 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         this.bytes = bytes;
         this.tempDir = tempDir;
         try {
-            /***
-             *  OLD SAX style, abandoned
-             *  SAXParserFactory factory = SAXParserFactory.newInstance();
-             *  SAXParser parser = factory.newSAXParser();
-             *  AlphaSAXHandler handler = new AlphaSAXHandler(this);
-             *  parser.parse(new ByteArrayInputStream(bytes), handler);
-             ***/
+            /*
+             * OLD SAX style, abandoned
+             * SAXParserFactory factory = SAXParserFactory.newInstance();
+             * SAXParser parser = factory.newSAXParser();
+             * AlphaSAXHandler handler = new AlphaSAXHandler(this);
+             * parser.parse(new ByteArrayInputStream(bytes), handler);
+             */
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(bytes));
@@ -401,7 +402,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element tipsElement = (Element) tipsElements.item(0);
                 NodeList children = tipsElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> tipElements = new ArrayList<Element>();
+                ArrayList<Element> tipElements = new ArrayList<>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)

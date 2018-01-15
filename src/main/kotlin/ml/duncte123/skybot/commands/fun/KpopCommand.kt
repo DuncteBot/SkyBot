@@ -48,19 +48,19 @@ class KpopCommand: Command() {
 
         try {
 
-            if (args.size > 0) {
+            res = if (args.isNotEmpty()) {
 
-                val statement = database.prepareStatement("SELECT * FROM ${dbName}.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
+                val statement = database.prepareStatement("SELECT * FROM $dbName.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
                 statement.setString(1, "%" + StringUtils.join(args, " ") + "%")
                 statement.setString(2, StringUtils.join(args, " "))
 
-                res = statement.executeQuery()
+                statement.executeQuery()
 
             } else {
 
                 val statement = database.createStatement()
 
-                res = statement.executeQuery("SELECT * FROM ${dbName}.kpop ORDER BY RAND() LIMIT 1")
+                statement.executeQuery("SELECT * FROM $dbName.kpop ORDER BY RAND() LIMIT 1")
             }
 
             while (res.next()) {

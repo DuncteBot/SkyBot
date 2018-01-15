@@ -136,7 +136,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
                 if (strm != null)
                     strm.close();
             }
-        } catch (IOException e) {
+        } catch (IOException ignored) {
         }
     }
 

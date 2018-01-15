@@ -33,7 +33,7 @@ import net.dv8tion.jda.core.requests.RestAction
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class UserDelegate(val yBGyt8Kduo: User) : User by yBGyt8Kduo {
+class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
     private val jda: JDA       = JDADelegate(yBGyt8Kduo.jda)
     override fun getJDA(): JDA = JDADelegate(this.jda)
 

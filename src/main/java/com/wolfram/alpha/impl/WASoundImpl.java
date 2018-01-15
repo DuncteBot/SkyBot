@@ -109,12 +109,17 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
             if (!url.equals("")) {
                 try {
                     String suffix;
-                    if (format == "WAV")
-                        suffix = ".wav";
-                    else if (format == "MIDI")
-                        suffix = ".mid";
-                    else
-                        suffix = ".tmp";
+                    switch (format) {
+                        case "WAV":
+                            suffix = ".wav";
+                            break;
+                        case "MIDI":
+                            suffix = ".mid";
+                            break;
+                        default:
+                            suffix = ".tmp";
+                            break;
+                    }
                     String outFile = File.createTempFile("WASound", suffix, tempDir).getAbsolutePath();
                     URLFetcher fetcher = new URLFetcher(new URL(url), outFile, http, null);
                     fetcher.fetch();

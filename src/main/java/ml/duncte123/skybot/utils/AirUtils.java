@@ -45,6 +45,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("ReturnInsideFinallyBlock")
 public class AirUtils {
 
     /**
@@ -244,7 +245,7 @@ public class AirUtils {
         }
     }
 
-    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)");
+    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)");
 
     /**
      * This will validate a link
@@ -361,7 +362,7 @@ public class AirUtils {
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
         if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+            return guild.getTextChannelCache().stream().filter(channel -> guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)).findFirst().orElse(null);
         }
         
         return pubChann;

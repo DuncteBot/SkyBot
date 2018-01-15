@@ -22,14 +22,13 @@ import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.config.ConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
 import java.io.File;
 
 public class ConfigUtils {
 
     private Config config;
-    private Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
+    private final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
 
     /**
      * This will try to load the bot config and kill the program if it fails

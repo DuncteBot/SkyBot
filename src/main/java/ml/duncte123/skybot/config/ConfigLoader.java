@@ -25,6 +25,7 @@ import org.json.JSONTokener;
 
 import java.io.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ConfigLoader {
 
     /**

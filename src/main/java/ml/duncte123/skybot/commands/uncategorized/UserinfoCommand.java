@@ -77,8 +77,7 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
         
         StringBuilder joinOrder = new StringBuilder();
-        List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        joins.sort(Comparator.comparing(Member::getJoinDate));
+        List<Member> joins = event.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate)).collect(Collectors.toList());
         int index = joins.indexOf(m);
         index -= 3;
         if (index < 0)

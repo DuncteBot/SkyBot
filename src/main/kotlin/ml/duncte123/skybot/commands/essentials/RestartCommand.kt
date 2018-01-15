@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.slf4j.LoggerFactory
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
