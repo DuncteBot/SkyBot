@@ -38,9 +38,16 @@ class SkipCommand : MusicCommand() {
             sendMsg(event, "The player is not playing.")
             return
         }
+        val count = if (args.isNotEmpty()) {
+            args[0].toInt()
+        } else {
+            1
+        }
 
-        scheduler.nextTrack()
-        sendMsg(event, "The current track was skipped.")
+        repeat(count) {
+            scheduler.nextTrack()
+        }
+        sendMsg(event, "Successfully skipped $count tracks.")
     }
 
     override fun help(): String = "Skips the current track."

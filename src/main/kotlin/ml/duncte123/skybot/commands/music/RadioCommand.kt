@@ -125,12 +125,8 @@ public class RadioCommand : MusicCommand() {
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
-        val string = streams.filter { if(!full) it.public else true }.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
-        /*string = if (!full) {
-            streams.filter { it.public }.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
-        } else {
-            streams.joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
-        }*/
+        val string = streams.filter { if(!full) it.public else true }
+                .joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }

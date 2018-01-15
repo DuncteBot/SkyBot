@@ -103,7 +103,7 @@ dependencies {
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.10'
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.10'
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.21.2'
 
     //Bot?
     compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
