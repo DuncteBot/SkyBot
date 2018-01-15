@@ -607,10 +607,12 @@ public class AirUtils {
             e.printStackTrace();
         }
         //That just breaks the bot
-        audioUtils.musicManagers.forEach((a, b) ->  {
-            if (b.player.getPlayingTrack() != null)
-                b.player.stopTrack();
-        });
+	try {
+            audioUtils.musicManagers.forEach((a, b) ->  {
+                if (b.player.getPlayingTrack() != null)
+                    b.player.stopTrack();
+            });
+	} catch (java.util.ConcurrentModificationException ignored) {}
     }
 
     /**
