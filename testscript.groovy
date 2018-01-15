@@ -15,6 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
+import ml.duncte123.skybot.utils.EmbedUtils
+
 def quick_mafs(int x) {
    def the_thing = x + 2 -1 
    return the_thing

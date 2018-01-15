@@ -54,30 +54,33 @@ class ImageCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!hasUpvoted(event.author)) {
+        //This command is hidden and needs patreon :P
+       /* if(!hasUpvoted(event.author)) {
             sendEmbed(event,
                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
                             "Please consider to give this bot an upvote over at " +
                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
             return
-        }
-        if(args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
-            return
-        }
-        var keyword = StringUtils.join(args, "+")
-        if(event.channel.isNSFW)
-            keyword += "+${pornKeywords[AirUtils.rand.nextInt(pornKeywords.size)]}"
+        }*/
+        if(patreonCheck(event.author, event.channel)) {
+            if (args.isEmpty()) {
+                sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
+                return
+            }
+            var keyword = StringUtils.join(args, "+")
+            if (event.channel.isNSFW)
+                keyword += "+${pornKeywords[AirUtils.rand.nextInt(pornKeywords.size)]}"
 
-        val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
-        val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-        val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
-        sendEmbed(event,
-                EmbedUtils.defaultEmbed()
-                        .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
-                        .setImage(randomItem.getString("link")).build()
-        )
+            val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
+            val jsonArray = jsonRaw.getJsonArray<Ason>("items")
+            val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
+            sendEmbed(event,
+                    EmbedUtils.defaultEmbed()
+                            .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
+                            .setImage(randomItem.getString("link")).build()
+            )
+        }
     }
 
     override fun help() = """Searches for an image on google

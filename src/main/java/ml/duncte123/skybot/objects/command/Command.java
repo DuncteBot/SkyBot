@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
@@ -85,6 +86,35 @@ public abstract class Command {
      * This holds the category
      */
     protected CommandCategory category = CommandCategory.MAIN;
+
+    /**
+     * This checks if the user is a patrons if ours
+     * well, it will do when we get it to work, for now it will always fail
+     * @param u The user to check
+     * @param tc the channel to send the message to
+     * @return false for now
+     */
+    protected boolean patreonCheck(User u, TextChannel tc) {
+        ShardManager manager = u.getJDA().asBot().getShardManager();
+        Guild supportGuild = manager.getGuildById("191245668617158656");
+        Member m = supportGuild.getMember(u);
+        if(m == null) {
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
+                    "not one of out patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
+                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
+            return false;
+        } else {
+            if(!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))){
+                sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
+                        "not one of out patrons.\n" +
+                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
+                return false;
+            }
+            return true;
+        }
+
+    }
     
     /**
      * Reloads the list of people who have upvoted this bot
