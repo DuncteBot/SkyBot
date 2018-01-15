@@ -240,6 +240,8 @@ public class BotListener extends ListenerAdapter {
                     ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
+            if (msg.isEmpty() || welcomeLeaveChannel == null)
+                return;
             welcomeLeaveChannel.sendMessage(msg).queue();
         }
 
@@ -373,7 +375,10 @@ public class BotListener extends ListenerAdapter {
                 .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
                 .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
                 .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
-                .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "");
+                .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "")
+
+                //This one can be kept a secret :P
+                .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left" );
     }
 
     private boolean isCategory(String name) {
