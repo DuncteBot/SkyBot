@@ -39,7 +39,7 @@ class SkipCommand : MusicCommand() {
             return
         }
         val count = if (args.isNotEmpty()) {
-            args[0].toInt()
+            args[0].toInt().coerceAtLeast(1)
         } else {
             1
         }
