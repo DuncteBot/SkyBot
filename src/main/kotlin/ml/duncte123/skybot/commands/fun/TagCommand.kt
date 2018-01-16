@@ -36,12 +36,13 @@ class TagCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val helpMessage = MessageBuilder()
-                .appendCodeBlock("Tag help:\n" +
-                        " $PREFIX$invoke help => shows this\n" +
-                        " $PREFIX$invoke list => lists all the tags\n" +
-                        " $PREFIX$invoke delete => removes a tag\n" +
-                        " $PREFIX$invoke author => displays who made the tag\n" +
-                        " $PREFIX$invoke create => make a new tag", getLang()).build()
+                .appendCodeBlock("Tag help: \n" +
+                        "\t$PREFIX\u200B$invoke help: shows this \n" +
+                        "\t$PREFIX\u200B$invoke list: lists all the tags \n" +
+                        "\t$PREFIX\u200B$invoke delete: removes a tag \n" +
+                        "\t$PREFIX\u200B$invoke author: displays who made the tag \n" +
+                        "\t$PREFIX\u200B$invoke create: make a new tag \n", getLang()).build()
+        println(helpMessage.contentRaw)
 
         if (args.isEmpty()) {
             sendMsg(event, helpMessage)
