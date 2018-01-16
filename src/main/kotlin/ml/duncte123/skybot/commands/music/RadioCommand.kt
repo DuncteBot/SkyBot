@@ -25,6 +25,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.entities.RadioStream
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.MessageBuilder
@@ -34,6 +35,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 @SinceSkybot("3.52.2")
 @DocumentationNeeded
 public class RadioCommand : MusicCommand() {
+
+    init {
+        //This command takes up a lot of data hence I made it a patron only command - duncte123
+        this.category = CommandCategory.PATRON
+    }
 
     var radioStreams: List<RadioStream> = ArrayList()
 
@@ -72,6 +78,8 @@ public class RadioCommand : MusicCommand() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if(!isPatron(event.author, event.channel))
+            return
         if (!channelChecks(event))
             return
 
