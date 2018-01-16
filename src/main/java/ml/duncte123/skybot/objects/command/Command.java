@@ -35,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -89,23 +90,28 @@ public abstract class Command {
 
     /**
      * This checks if the user is a patrons if ours
-     * well, it will do when we get it to work, for now it will always fail
+     * It checks if the user has the patreon role on our support guild
      * @param u The user to check
-     * @param tc the channel to send the message to
-     * @return false for now
+     * @param tc the channel to send the message to, if the text channel is null it wont send a message
+     * @return true if the user is a patron
      */
-    protected boolean patreonCheck(User u, TextChannel tc) {
-        ShardManager manager = u.getJDA().asBot().getShardManager();
-        Guild supportGuild = manager.getGuildById("191245668617158656");
+    protected boolean isPatron(User u, TextChannel tc) {
+        if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+            return true;
+        }
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
+        if (supportGuild == null) {
+            return false;
+        }
         Member m = supportGuild.getMember(u);
-        if(m == null) {
+        if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
                     "not one of out patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
                     "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
             return false;
         } else {
-            if(!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))){
+            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
                 sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
                         "not one of out patrons.\n" +
                         "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
@@ -113,7 +119,6 @@ public abstract class Command {
             }
             return true;
         }
-
     }
     
     /**
@@ -400,7 +405,7 @@ public abstract class Command {
      */
     protected void sendMsg(TextChannel channel, Message msg) {
         //Only send a message if we can talk
-        if(channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+        if(channel != null && channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
             channel.sendMessage(msg).queue();
     }
     

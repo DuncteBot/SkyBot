@@ -126,7 +126,7 @@ public class EvalCommand extends Command {
         if (runIfNotOwner && !isRanByBotOwner)
             return;
 
-        if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
+        if (!isRanByBotOwner && ( !hasUpvoted(event.getAuthor()) || !isPatron(event.getAuthor(), null) ) ) {
             sendError(event.getMessage());
             sendEmbed(event,
                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +

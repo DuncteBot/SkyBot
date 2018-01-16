@@ -32,25 +32,9 @@ class ImageCommand : Command() {
     private val url = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=${AirUtils.config.getString("apis.googl")}"
 
-    private val pornKeywords = arrayOf(
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "porn",
-            "yaoi",
-            "naked",
-            "",
-            ""
-    )
-
 
     init {
-        this.category = CommandCategory.UNLISTED
+        this.category = CommandCategory.PATRON
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -63,14 +47,12 @@ class ImageCommand : Command() {
                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
             return
         }*/
-        if(patreonCheck(event.author, event.channel)) {
+        if(isPatron(event.author, event.channel)) {
             if (args.isEmpty()) {
                 sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
             }
-            var keyword = StringUtils.join(args, "+")
-            if (event.channel.isNSFW)
-                keyword += "+${pornKeywords[AirUtils.rand.nextInt(pornKeywords.size)]}"
+            val keyword = StringUtils.join(args, "+")
 
             val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
             val jsonArray = jsonRaw.getJsonArray<Ason>("items")

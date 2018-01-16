@@ -29,7 +29,7 @@ public class HelpEmbeds {
     /**
      * This tells the fields to be inline or not
      */
-    private static boolean INLINE = false;
+    private static final boolean INLINE = false;
 
     /**
      * These lists hold the commands for each category
@@ -40,11 +40,7 @@ public class HelpEmbeds {
     private static List<String> musicCommands = new ArrayList<>();
     private static List<String> nerdCommands = new ArrayList<>();
     private static List<String> modAdminCommands = new ArrayList<>();
-
-    /**
-     * This is the embed containing all the commands
-     */
-    public static MessageEmbed commandList = getCommandList();
+    private static List<String> patronCommands = new ArrayList<>();
 
     /**
      * This loads all the commands in the lists
@@ -70,6 +66,8 @@ public class HelpEmbeds {
                 case NERD_STUFF:
                     nerdCommands.add(c.getName());
                     break;
+                case PATRON:
+                    patronCommands.add(c.getName());
                 default:
                     break;
             }
@@ -94,22 +92,14 @@ public class HelpEmbeds {
                     case NERD_STUFF:
                         nerdCommands.add(alias);
                         break;
+                    case PATRON:
+                        patronCommands.add(alias);
                     default:
                         break;
                 }
             }
         }
     }
-
-    /**
-     * This will return a embed containing all the commands
-     *
-     * @return a embed containing all the commands
-     */
-    public static MessageEmbed getCommandList() {
-        return getCommandListWithPrefix(Settings.prefix);
-    }
-
     /**
      * This will return a embed containing all the commands
      *
@@ -127,6 +117,7 @@ public class HelpEmbeds {
                        .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
                        .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
                        .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
+                       .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
                        .build();
     }
 
