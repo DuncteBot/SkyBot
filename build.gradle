@@ -113,6 +113,9 @@ dependencies {
 }
 
 javadoc {
+    failOnError = false
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author()
     options.encoding = 'UTF-8'
     options.addStringOption('-html5')
     exclude('ml/duncte123/skybot/commands')
