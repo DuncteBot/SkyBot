@@ -163,8 +163,8 @@ public abstract class Command {
     /**
      * Has this user upvoted the bot
      */
-    protected static boolean hasUpvoted(User user) {
-        return upvotedIds.contains(user.getId());
+    protected boolean hasUpvoted(User user) {
+        return isPatron(user, null) || upvotedIds.contains(user.getId());
     }
 
     /**

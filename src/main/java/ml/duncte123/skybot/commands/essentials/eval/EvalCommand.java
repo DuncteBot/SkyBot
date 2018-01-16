@@ -60,7 +60,7 @@ public class EvalCommand extends Command {
             };
     private EvalFilter filter = new EvalFilter();
 
-    private boolean runIfNotOwner;
+    private boolean runIfNotOwner = false;
     
     /**
      * This initialises the engine
@@ -114,7 +114,6 @@ public class EvalCommand extends Command {
         catch (ScriptException e) {
             e.printStackTrace();
         }
-        setFilter(true);
     }
     
     @Override
@@ -123,10 +122,10 @@ public class EvalCommand extends Command {
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
 
-        if (runIfNotOwner && !isRanByBotOwner)
+        if (!isRanByBotOwner && !runIfNotOwner)
             return;
 
-        if (!isRanByBotOwner && ( !hasUpvoted(event.getAuthor()) || !isPatron(event.getAuthor(), null) ) ) {
+        if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
