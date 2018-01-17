@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;

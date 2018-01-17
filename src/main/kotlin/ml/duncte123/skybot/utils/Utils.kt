@@ -28,6 +28,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.entities.delegate.*
+import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.Presence
@@ -36,6 +37,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.time.OffsetDateTime
+import java.util.*
 
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
@@ -119,7 +121,19 @@ class EarthUtils {
         @JvmStatic
         private fun trackToJSON(track: AudioTrack): JSONObject =
                 JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
-                    .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
-                    .put("title", track.info.title)
+                        .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
+                        .put("title", track.info.title)
+
+        @JvmStatic
+        fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
     }
+}
+
+inline fun <reified T> Array<T>.random(): T {
+    return this[Random().nextInt(this.size)]
+}
+
+
+infix fun Any.but(value: Any): Any {
+    return if (value == this) AssertionError("the new value can't be equals than the current.") but "a meme" else "${when {this is String -> this; else -> this::class.java.simpleName;}} but $value"
 }
