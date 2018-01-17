@@ -46,7 +46,7 @@ open class PlayCommand : MusicCommand() {
                 }
                 player.playingTrack != null -> sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
+                        "For example `db!play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
             var toPlay = StringUtils.join(args, " ")
