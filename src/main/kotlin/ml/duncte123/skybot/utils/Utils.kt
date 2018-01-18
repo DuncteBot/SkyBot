@@ -128,9 +128,11 @@ class EarthUtils {
                         .put("title", track.info.title)
 
         @JvmStatic
+        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
         fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
 
         @JvmStatic
+        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
         fun advancedMeme(jda: ShardManager): Any {
             var x: Any = "A meme"
             repeat(10) {
@@ -141,22 +143,27 @@ class EarthUtils {
     }
 }
 
+@SinceSkybot("3.57.7")
 inline fun <reified T> Array<out T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
+@SinceSkybot("3.57.7")
 inline fun <reified T> List<T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
+@SinceSkybot("3.57.7")
 inline fun <reified T> Set<T>.random(): T {
     return this.elementAt(Random().nextInt(this.size))
 }
 
+@SinceSkybot("3.57.7")
 inline fun <reified K, reified V> Map<K, V>.random(): V {
     return this[this.keys.random()]!!
 }
 
+@Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
 infix fun Any.but(value: Any): Any {
     return when {
         value == this -> AssertionError("the new value can't be equals than the current.")
@@ -169,6 +176,7 @@ infix fun Any.but(value: Any): Any {
     }
 }
 
+@Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
 fun main(args: Array<String>) = runBlocking {
     val res = Any() but Any()
     if (res is Deferred<*>) {
