@@ -74,7 +74,6 @@ public class CleanupCommand extends Command {
         }
 
         try {
-
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
                 if(keepPinned.get())
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
@@ -85,10 +84,16 @@ public class CleanupCommand extends Command {
                 msgLst = msgLst.stream()
                         .filter(message -> message.getCreationTime().isAfter(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
 
-                event.getChannel().deleteMessages(msgLst).queue();
+                if (msgLst.size() < 2) {
+                    failed.addAll(msgLst);
+                    msgLst.clear();
+                } else {
+                    event.getChannel().deleteMessages(msgLst).queue();
+                }
+
                 sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
                 logger.debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
-            }, error -> sendMsg(event, "ERROR: " error.getMessage()));
+            }, error -> sendMsg(event, "ERROR: " + error.getMessage()));
         } catch (Exception e) {
             sendMsg(event, "ERROR: " + e.getMessage());
         }

@@ -22,6 +22,9 @@ package ml.duncte123.skybot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import kotlinx.coroutines.experimental.Deferred
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.runBlocking
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
@@ -126,14 +129,49 @@ class EarthUtils {
 
         @JvmStatic
         fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
+
+        @JvmStatic
+        fun advancedMeme(jda: ShardManager): Any {
+            var x: Any = "A meme"
+            repeat(10) {
+                x = x but someMeme(jda)
+            }
+            return x
+        }
     }
 }
 
-inline fun <reified T> Array<T>.random(): T {
+inline fun <reified T> Array<out T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
+inline fun <reified T> List<T>.random(): T {
+    return this[Random().nextInt(this.size)]
+}
+
+inline fun <reified T> Set<T>.random(): T {
+    return this.elementAt(Random().nextInt(this.size))
+}
+
+inline fun <reified K, reified V> Map<K, V>.random(): V {
+    return this[this.keys.random()]!!
+}
 
 infix fun Any.but(value: Any): Any {
-    return if (value == this) AssertionError("the new value can't be equals than the current.") but "a meme" else "${when {this is String -> this; else -> this::class.java.simpleName;}} but $value"
+    return when {
+        value == this -> AssertionError("the new value can't be equals than the current.")
+        value is Boolean -> !value
+        value is String -> AirUtils.generateRandomString(value.length)
+        value::class.java == Any::class.java -> {
+            async { println("Well this is a special case. We return a Deferred :^)") }
+        }
+        else -> this
+    }
+}
+
+fun main(args: Array<String>) = runBlocking {
+    val res = Any() but Any()
+    if (res is Deferred<*>) {
+        res.await()
+    }
 }
