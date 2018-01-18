@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,11 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import gnu.trove.map.TLongLongMap;
+import gnu.trove.map.hash.TLongLongHashMap;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.DocumentationNeeded;
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -26,10 +31,34 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
 
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
 public abstract class MusicCommand extends Command {
+
+    @SinceSkybot(version = "3.54.2")
+    public static TLongLongMap cooldowns = new TLongLongHashMap();
+    @SinceSkybot(version = "3.54.2")
+    private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "MusicCooldown - Thread"));
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
+    }
+
+    static {
+        service.scheduleWithFixedDelay(() ->
+                        cooldowns.forEachEntry((a, b) -> {
+                            if (b > 0) {
+                                cooldowns.put(a, (b - 200));
+                                return true;
+                            } else if (b == 0) {
+                                cooldowns.remove(a);
+                            }
+                            return true;
+                        })
+                , 0, 200, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -80,5 +109,19 @@ public abstract class MusicCommand extends Command {
             return false;
         }
         return true;
+    }
+
+    @SinceSkybot(version = "3.54.2")
+    @DocumentationNeeded
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void addCooldown(long guildId) {
+        cooldowns.put(guildId, 12600);
+    }
+
+    @SinceSkybot(version = "3.54.2")
+    @DocumentationNeeded
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void shutdown() {
+        service.shutdown();
     }
 }

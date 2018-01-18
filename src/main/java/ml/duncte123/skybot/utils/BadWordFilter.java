@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
-import org.slf4j.event.Level;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -66,7 +66,7 @@ public class BadWordFilter {
                 }
                 
             }
-            AirUtils.log(Level.INFO, "Loaded " + counter + " words to filter out");
+            LoggerFactory.getLogger(BadWordFilter.class).info("Loaded " + counter + " words to filter out");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -107,8 +107,8 @@ public class BadWordFilter {
                     // for example, if you want to say the word bass, that should be possible.
                     String[] ignoreCheck = words.get(wordToCheck);
                     boolean ignore = false;
-                    for (int s = 0; s < ignoreCheck.length; s++)
-                        if (input.contains(ignoreCheck[s])) {
+                    for (String anIgnoreCheck : ignoreCheck)
+                        if (input.contains(anIgnoreCheck)) {
                             ignore = true;
                             break;
                         }

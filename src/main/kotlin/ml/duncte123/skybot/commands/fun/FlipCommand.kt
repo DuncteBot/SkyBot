@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -34,8 +34,8 @@ class FlipCommand : Command() {
         var output = ""
 
         if (event.message.mentionedUsers.size > 0) {
-            uname = event.guild.getMember(event.message.mentionedUsers[0]).effectiveName
-        } else if(args.size > 0) {
+            uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
+        } else if(args.isNotEmpty()) {
             uname = StringUtils.join(args, " ")
         }
 

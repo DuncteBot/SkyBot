@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,11 +20,14 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
-import org.slf4j.event.Level;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 
 public class GuildSettingsUtils {
+
+    private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     /**
      * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
@@ -39,7 +42,7 @@ public class GuildSettingsUtils {
      */
     public static void loadFooterQuotes() {
         if(!AirUtils.nonsqlite) return;
-        AirUtils.log(Level.DEBUG, "Loading footer quotes");
+        logger.debug("Loading footer quotes");
 
         String dbName = AirUtils.db.getName();
         
@@ -54,8 +57,8 @@ public class GuildSettingsUtils {
                 String user = resSettings.getString("name");
                 EmbedUtils.footerQuotes.put(quote, user);
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded " + EmbedUtils.footerQuotes.size() + " quotes.");
+
+            logger.debug("Loaded " + EmbedUtils.footerQuotes.size() + " quotes.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -71,7 +74,7 @@ public class GuildSettingsUtils {
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
      */
     public static void loadGuildSettings() {
-        AirUtils.log(Level.DEBUG, "Loading Guild settings.");
+        logger.debug("Loading Guild settings.");
         
         String dbName = AirUtils.db.getName();
         
@@ -88,6 +91,9 @@ public class GuildSettingsUtils {
                 String joinmsg = resSettings.getString("customWelcomeMessage");
                 String prefix = resSettings.getString("prefix");
                 String logChannel = resSettings.getString("logChannelId");
+                String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
+                String leaveMessage = resSettings.getString("customLeaveMessage");
+                String autoroleId = resSettings.getString("autoRole");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
@@ -95,10 +101,13 @@ public class GuildSettingsUtils {
                         .setCustomJoinMessage(joinmsg)
                         .setCustomPrefix(prefix)
                         .setLogChannel(logChannel)
+                        .setWelcomeLeaveChannel(welcomeLeaveChannel)
+                        .setCustomLeaveMessage(leaveMessage)
+                        .setAutoroleRole(autoroleId)
                 );
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
+
+            logger.debug("Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -142,8 +151,11 @@ public class GuildSettingsUtils {
         boolean enableJoinMessage = settings.isEnableJoinMessage();
         boolean enableSwearFilter = settings.isEnableSwearFilter();
         String customJoinMessage = settings.getCustomJoinMessage();
+        String customLeaveMessage = settings.getCustomLeaveMessage();
         String newPrefix = settings.getCustomPrefix();
+        String autoRole = settings.getAutoroleRole();
         String chanId = settings.getLogChannel() != null ? settings.getLogChannel() : "";
+        String welcomeLeaveChannel = settings.getWelcomeLeaveChannel() != null ? settings.getWelcomeLeaveChannel() : "";
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
@@ -153,15 +165,24 @@ public class GuildSettingsUtils {
                     "enableSwearFilter= ? ," +
                     "customWelcomeMessage= ? ," +
                     "prefix= ? ," +
-                    "logChannelId= ?" +
+                    "autoRole= ? ," +
+                    "logChannelId= ? ," +
+                    "welcomeLeaveChannel= ? ," +
+                    "customLeaveMessage = ?" +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, customJoinMessage);
             preparedStatement.setString(4, newPrefix);
-            preparedStatement.setString(5, chanId);
+            preparedStatement.setString(5, autoRole);
+            preparedStatement.setString(6, chanId);
+            preparedStatement.setString(7, welcomeLeaveChannel);
+            preparedStatement.setString(8, customLeaveMessage);
             preparedStatement.executeUpdate();
-            
+
+        } catch (SQLException ignored) {
+            if (!ignored.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
+                ignored.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -205,9 +226,11 @@ public class GuildSettingsUtils {
             
             if (rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
-                                                                          "customWelcomeMessage, prefix) " + "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ?)");
+                                                                          "customWelcomeMessage, prefix, customLeaveMessage) " +
+                        "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, Settings.prefix);
+                smt.setString(3, newGuildSettings.getCustomLeaveMessage());
                 smt.execute();
             }
         } catch (Exception e) {

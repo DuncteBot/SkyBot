@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.utils.Settings;
-import net.dv8tion.jda.core.entities.TextChannel;
 
 /**
  * This class will hold the settings for a guild
@@ -47,6 +46,11 @@ public class GuildSettings {
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
 
     /**
+     * This will hold the custom leave message
+     */
+    private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
+
+    /**
      * This will hold the custom prefix if the guild has set one
      */
     private String customPrefix = Settings.prefix;
@@ -55,6 +59,13 @@ public class GuildSettings {
      * This stores the channel that we log the bans in
      */
     private String logChannel = null;
+
+    /**
+     * This stores the channel in where the welcome or leave messages should display
+     */
+    private String welcomeLeaveChannel = null;
+
+    private String autoroleRole = "";
 
     /**
      * This will init everything
@@ -116,6 +127,16 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom leave message for the corresponding guild
+     * @param customLeaveMessage The new leave message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
+        this.customLeaveMessage = customLeaveMessage;
+        return this;
+    }
+
+    /**
      * This will set the channel that we log all the mod stuff in
      * @param tc the channel to log
      * @return the current {@link GuildSettings}
@@ -126,30 +147,13 @@ public class GuildSettings {
     }
 
     /**
-     * This will return the guild id that these options are for
-     *
-     * @return The id of that guild as a String
+     * This sets the channel in where the welcome or leave messages should display
+     * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
+     * @return the current {@link GuildSettings}
      */
-    public String getGuildId() {
-        return guildId;
-    }
-
-    /**
-     * This will return the cutstom join message set for that guild
-     *
-     * @return The custom join message
-     */
-    public String getCustomJoinMessage() {
-        return customJoinMessage;
-    }
-
-    /**
-     * Ths will return the prefix that the guild is using
-     *
-     * @return The prefix that the guild is using
-     */
-    public String getCustomPrefix() {
-        return customPrefix;
+    public GuildSettings setWelcomeLeaveChannel(String welcomeLeaveChannel) {
+        this.welcomeLeaveChannel = welcomeLeaveChannel;
+        return this;
     }
 
     /**
@@ -164,6 +168,52 @@ public class GuildSettings {
     }
 
     /**
+     * This sets the role id for the autorole
+     *
+     * @param autoroleRole the role to set the autorole to
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAutoroleRole(String autoroleRole) {
+        this.autoroleRole = autoroleRole;
+        return this;
+    }
+
+    /**
+     * This will return the guild id that these options are for
+     *
+     * @return The id of that guild as a String
+     */
+    public String getGuildId() {
+        return guildId;
+    }
+
+    /**
+     * This will return the custom join message set for that guild
+     *
+     * @return The custom join message
+     */
+    public String getCustomJoinMessage() {
+        return customJoinMessage;
+    }
+
+    /**
+     * Returns the custom leave message
+     * @return the custom leave message
+     */
+    public String getCustomLeaveMessage() {
+        return customLeaveMessage;
+    }
+
+    /**
+     * Ths will return the prefix that the guild is using
+     *
+     * @return The prefix that the guild is using
+     */
+    public String getCustomPrefix() {
+        return customPrefix;
+    }
+
+    /**
      * Returns the channel to log in
      * @return the channel to log in
      */
@@ -172,11 +222,27 @@ public class GuildSettings {
     }
 
     /**
+     * Returns the role id for the autorole feature
+     * @return the role id for the autorole feature
+     */
+    public String getAutoroleRole() {
+        return autoroleRole;
+    }
+
+    /**
+     * Returns the channel in where the welcome or leave messages should display
+     * @return the channel in where the welcome or leave messages should display
+     */
+    public String getWelcomeLeaveChannel() {
+        return welcomeLeaveChannel;
+    }
+
+    /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, Join message=%s)", guildId, customPrefix,
-                (enableSwearFilter ? "Enabled" : "Disabled"), customJoinMessage);
+        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s)", guildId, customPrefix,
+                (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole);
     }
 }

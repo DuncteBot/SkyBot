@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -59,6 +59,8 @@ public class EvalCommand extends Command {
                 return service;
             };
     private EvalFilter filter = new EvalFilter();
+
+    private boolean runIfNotOwner = false;
     
     /**
      * This initialises the engine
@@ -119,7 +121,10 @@ public class EvalCommand extends Command {
         boolean isRanByBotOwner = Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(
                 event.getAuthor().getId()) ||
                                           event.getAuthor().getId().equals(Settings.ownerId);
-        
+
+        if (!isRanByBotOwner && !runIfNotOwner)
+            return;
+
         if (!isRanByBotOwner && !hasUpvoted(event.getAuthor())) {
             sendError(event.getMessage());
             sendEmbed(event,
@@ -140,7 +145,7 @@ public class EvalCommand extends Command {
                         packageImports.stream().collect(Collectors.joining(".*\nimport ")) + ".*\n import " +
                         classImports.stream().collect(Collectors.joining("\n")) + "\n";
                 
-                String script = importString + event.getMessage().getRawContent().split("\\s+",2)[1];
+                String script = importString + event.getMessage().getContentRaw().split("\\s+",2)[1];
                 
                 int timeout = 5;
                 
@@ -153,6 +158,7 @@ public class EvalCommand extends Command {
                     engine.put("channel", event.getMessage().getTextChannel());
                     engine.put("guild", event.getGuild());
                     engine.put("member", event.getMember());
+                    engine.put("user", event.getAuthor());
                     engine.put("jda", event.getJDA());
                     engine.put("shardManager", event.getJDA().asBot().getShardManager());
                     engine.put("event", event);
@@ -183,7 +189,7 @@ public class EvalCommand extends Command {
                         (new MessageBuilder())
                                 .append(out.toString())
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                                .forEach(it -> event.getChannel().sendMessage(it).queue());
+                                .forEach(it -> sendMsg(event, it));
                     else {
                         if (filter.containsMentions(out.toString())) {
                             sendMsg(event, "**ERROR:** Mentioning people!");
@@ -210,7 +216,7 @@ public class EvalCommand extends Command {
                 if (!future.isCancelled()) future.cancel(true);
                 sendError(event.getMessage());
             } catch (IllegalArgumentException | VRCubeException e3) {
-                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getMessage());
+                sendMsg(event, "ERROR: " + e3.getClass().getName() + ": " + e3.getLocalizedMessage());
                 sendError(event.getMessage());
                 // Debuging System.out.println(EarthUtils.throwableToJSONObject(e3).toString(4));
             } catch (ArrayIndexOutOfBoundsException e4) {
@@ -253,6 +259,18 @@ public class EvalCommand extends Command {
     
     @Override
     public String[] getAliases() {
-        return new String[]{"eval™", "evaluate"};
+        return new String[]{"eval™", "evaluate", "evan", "eva;"};
+    }
+
+    public boolean toggleFilter() {
+        boolean ret = runIfNotOwner;
+        runIfNotOwner = !runIfNotOwner;
+        return ret;
+    }
+
+    public boolean setFilter(boolean status) {
+        boolean ret = runIfNotOwner;
+        runIfNotOwner = status;
+        return ret;
     }
 }

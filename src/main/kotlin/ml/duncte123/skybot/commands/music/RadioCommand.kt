@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,6 +17,7 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Suppress("MemberVisibilityCanPrivate")
 
 package ml.duncte123.skybot.commands.music
 
@@ -24,6 +25,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.entities.RadioStream
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.core.MessageBuilder
@@ -34,6 +36,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 @DocumentationNeeded
 public class RadioCommand : MusicCommand() {
 
+    init {
+        //This command takes up a lot of data hence I made it a patron only command - duncte123
+        this.category = CommandCategory.PATRON
+    }
+
     var radioStreams: List<RadioStream> = ArrayList()
 
     init {
@@ -43,7 +50,7 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("iloveradio","http://www.iloveradio.de/iloveradio.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilove2dance","http://www.iloveradio.de/ilove2dance.m3u","http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovetop100charts","http://www.iloveradio.de/ilovetop100charts.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovethebattle","http://www.iloveradio.de/ilovethebattle.m3u","http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovethebattle","http://www.iloveradio.de/ilovethebattle.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovedreist","http://www.iloveradio.de/ilovedreist.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovehiphop","http://www.iloveradio.de/ilovehiphopturnup.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovemashup","http://www.iloveradio.de/ilovemashup.m3u","http://www.iloveradio.de/streams/", false)
@@ -52,7 +59,7 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovepopstars","http://www.iloveradio.de/ilovepopstars.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("iloveandchill","http://www.iloveradio.de/iloveandchill.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("iloveberlin","http://www.iloveradio.de/iloveaboutberlin.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovexmas","http://www.iloveradio.de/ilovexmas.m3u","http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovexmas","http://www.iloveradio.de/ilovexmas.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovetop100pop","http://www.iloveradio.de/ilovetop100pop.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovetop100hiphop","http://www.iloveradio.de/ilovetop100hiphop.m3u","http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovetop100dance&dj","http://www.iloveradio.de/ilovetop100dancedjs.m3u","http://www.iloveradio.de/streams/", false)
@@ -62,14 +69,20 @@ public class RadioCommand : MusicCommand() {
         radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
 
         //nl_NL radio stations
-        radioStreams += RadioStream("slam","http://19993.live.streamtheworld.com/SLAM_MP3_SC?","https://live.slam.nl/slam-live/ ")
-        radioStreams += RadioStream("radio538","http://20073.live.streamtheworld.com/RADIO538.mp3","https://www.538.nl/", false)
+        radioStreams += RadioStream("slam","http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC","https://live.slam.nl/slam-live/")
+        radioStreams += RadioStream("radio538","http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3","https://www.538.nl/")
+        radioStreams += RadioStream("3fm","http://icecast.omroep.nl/3fm-sb-mp3","https://www.npo3fm.nl/")
+        radioStreams += RadioStream("skyradio","http://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC","http://www.skyradio.nl/", false)
+        radioStreams += RadioStream("qmusic","http://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3","http://qmusic.nl/", false)
 
         //International radio stations
         //TODO: add international radio stations
+        radioStreams += RadioStream("trapfm", "http://stream.trap.fm:6004/;stream.mp3", "http://trap.fm/")
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if(!isPatron(event.author, event.channel))
+            return
         if (!channelChecks(event))
             return
 
@@ -123,12 +136,10 @@ public class RadioCommand : MusicCommand() {
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
-        if (!full) {
-            streams.filter { it.public }
-        }
-        streams.map { "[${it.name}](${it.url}) from [${it.website}](${it.website})" }
-        MessageBuilder().append(streams.joinToString(separator = "\n")).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.rawContent).build())
+        val string = streams.filter { if(!full) it.public else true }
+                .joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
+        MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
     }
 }

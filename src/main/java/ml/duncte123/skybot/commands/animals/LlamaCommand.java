@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
@@ -34,12 +35,11 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String theLlama = (args.length < 1 ? "random" : args[0]);
-            String jsonString = WebUtils.getText("https://api.systemexit.co.uk/animals/llama/" + theLlama);
+            String jsonString = WebUtils.getText(Settings.apiBase + "/llama/json");
             JSONObject jsonObject = new JSONObject(jsonString);
             event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
         } catch (Exception e) {
-            e.printStackTrace();
+            //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }

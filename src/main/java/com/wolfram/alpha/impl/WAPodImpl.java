@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -87,7 +87,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             scanner = thisElement.getAttribute("scanner");
             try {
                 position = Integer.parseInt(thisElement.getAttribute("position"));
-            } catch (NumberFormatException e) {
+            } catch (NumberFormatException ignored) {
             }
             id = thisElement.getAttribute("id");
             asyncURL = thisElement.getAttribute("async");
@@ -112,7 +112,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in a <states> is a <state>
                 // or <statelist>, although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> stateAndStatelistNodes = new ArrayList<Node>(numSubElements);
+                List<Node> stateAndStatelistNodes = new ArrayList<>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -136,7 +136,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in an <infos> is an <info>,
                 // although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> infoNodes = new ArrayList<Node>(numSubElements);
+                List<Node> infoNodes = new ArrayList<>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -157,7 +157,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in a <sounds> is an <sound>,
                 // although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> soundNodes = new ArrayList<Node>(numSubElements);
+                List<Node> soundNodes = new ArrayList<>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -271,15 +271,8 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                     asyncURL = null;
                 }
                 acquireImages();
-            } catch (ParserConfigurationException e) {
+            } catch (ParserConfigurationException | FactoryConfigurationError | SAXException | IOException e) {
                 // Probably impossible in any realistic circumstance.
-                newAsyncException = new WAException(e);
-            } catch (FactoryConfigurationError e) {
-                // Probably impossible in any realistic circumstance.
-                newAsyncException = new WAException(e);
-            } catch (IOException e) {
-                newAsyncException = new WAException(e);
-            } catch (SAXException e) {
                 newAsyncException = new WAException(e);
             }
             if (newAsyncException != null) {

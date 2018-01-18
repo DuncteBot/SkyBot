@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -66,7 +66,7 @@ class AI(val user: String, val api: String) {
         val r: Response = WebUtils.postRequest(this.base + "create", postData, WebUtils.AcceptType.TEXT_JSON)
 
         try {
-            val returnData = JSONObject(r.body()?.source()?.readUtf8())
+            val returnData = JSONObject(r.body()?.string())
             nickname = returnData["nick"] as String?
             callback.accept(returnData)
         }
@@ -98,10 +98,10 @@ class AI(val user: String, val api: String) {
         postData += Pair("text", question)
 
 
-        val r: Response = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
+        val r = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
 
         try {
-            callback.accept(JSONObject(r.body()?.source()?.readUtf8()))
+            callback.accept(JSONObject(r.body()!!.string()))
         }
         catch (e: IOException) {
             //If the logger is set to debug, print the stacktrace

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -57,7 +58,7 @@ public class KickCommand extends Command {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) &&
-                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toKick))) {
+                        !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
@@ -69,9 +70,9 @@ public class KickCommand extends Command {
                         sendSuccess(event.getMessage());
                     }
             );
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+        } catch (HierarchyException ignored) { // if we don't do anything with it and just catch it we should name it "ignored"
+            //e.printStackTrace();
+            sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 
 

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -43,7 +43,7 @@ class PPlayCommand : MusicCommand() {
 
         var toPlay = StringUtils.join(args, " ")
         if (!AirUtils.isURL(toPlay)) {
-            toPlay = "ytsearch: " + toPlay
+            toPlay = "ytsearch:" + toPlay
         }
         if(toPlay.length > 1024) {
             sendError(event.message)
@@ -51,7 +51,9 @@ class PPlayCommand : MusicCommand() {
             return
         }
 
-        getAu().loadAndPlay(musicManager, event.channel, toPlay, true)
+        sendMsg(event, "Loading playlist.......\n" +
+                "This may take a while depending on the size.")
+        au.loadAndPlay(musicManager, event.channel, toPlay, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

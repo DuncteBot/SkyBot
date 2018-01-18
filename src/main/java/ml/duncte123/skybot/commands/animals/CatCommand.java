@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -38,13 +38,13 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String jsonString = WebUtils.getText("http://random.cat/meow");
+            String jsonString = WebUtils.getText("http://random.cat/meow.php");
             JSONObject jsonObject = new JSONObject(jsonString);
             String newJSON = jsonObject.getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
-            e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("OOPS: " + e.getMessage()));
+            //e.printStackTrace();
+            sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
         }
 
     }

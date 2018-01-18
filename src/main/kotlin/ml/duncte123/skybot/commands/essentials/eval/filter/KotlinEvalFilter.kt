@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -174,7 +174,7 @@ class KotlinEvalFilter : GroovyValueFilter() {
         val mentionFilter = Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here")!!
 
         @JvmField
-        val arrayFilter = Pattern.compile("(?i) ((\\[(\\s*[0-9]+\\s*)])|(\\[(\\s*)(0b)([01_]*)(\\s*)])|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))")
+        val arrayFilter = Pattern.compile("(?i) ((\\[(\\s*[0-9]+\\s*)])|(\\[(\\s*)(0b)([01_]*)(\\s*)])|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))")!!
         //                              Case insensitive  (Decimals and Octals   |         Binary         |          Hexadecimal)
     }
 }

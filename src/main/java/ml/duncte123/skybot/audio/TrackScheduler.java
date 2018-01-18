@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,6 +22,7 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -45,6 +46,8 @@ public class TrackScheduler extends AudioEventAdapter {
      */
     AudioTrack lastTrack;
 
+    final GuildMusicManager guildMusicManager;
+
     /**
      * Are we repeating the track
      */
@@ -55,9 +58,10 @@ public class TrackScheduler extends AudioEventAdapter {
      *
      * @param player Our audio player
      */
-    public TrackScheduler(AudioPlayer player) {
+    public TrackScheduler(AudioPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
+        this.guildMusicManager = guildMusicManager;
     }
 
     /**
@@ -95,6 +99,9 @@ public class TrackScheduler extends AudioEventAdapter {
             } else {
                 nextTrack();
             }
+        } else if (queue.isEmpty()) {
+            AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
+                .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
         }
     }
 

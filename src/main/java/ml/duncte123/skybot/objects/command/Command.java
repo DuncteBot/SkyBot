@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -30,16 +30,22 @@ import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class Command {
-    
+
+    protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
     /**
      * A list of users that have upvoted the bot
      */
@@ -75,11 +81,44 @@ public abstract class Command {
     /**
      * This holds the prefix for us
      */
-    protected final String PREFIX = Settings.prefix;
+    protected static final String PREFIX = Settings.prefix;
     /**
      * This holds the category
      */
     protected CommandCategory category = CommandCategory.MAIN;
+
+    /**
+     * This checks if the user is a patrons if ours
+     * It checks if the user has the patreon role on our support guild
+     * @param u The user to check
+     * @param tc the channel to send the message to, if the text channel is null it wont send a message
+     * @return true if the user is a patron
+     */
+    protected boolean isPatron(User u, TextChannel tc) {
+        if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+            return true;
+        }
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
+        if (supportGuild == null) {
+            return false;
+        }
+        Member m = supportGuild.getMember(u);
+        if (m == null) {
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
+                    "not one of out patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
+                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
+            return false;
+        } else {
+            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
+                sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are" +
+                        "not one of out patrons.\n" +
+                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
+                return false;
+            }
+            return true;
+        }
+    }
     
     /**
      * Reloads the list of people who have upvoted this bot
@@ -90,7 +129,7 @@ public abstract class Command {
             String token = AirUtils.config.getString("apis.discordbots_userToken", "");
             
             if (token == null || token.isEmpty()) {
-                AirUtils.logger.warn("Discord Bots token not found");
+                logger.warn("Discord Bots token not found");
                 return;
             }
             
@@ -102,7 +141,7 @@ public abstract class Command {
                                                 .addHeader("Authorization", token)
                                                 .build())
                                         .execute();
-            JSONArray json = new JSONArray(response.body().source().readUtf8());
+            JSONArray json = new JSONArray(response.body().string());
             
             upvotedIds.clear();
 
@@ -114,7 +153,7 @@ public abstract class Command {
             /* ignored */
         }
         catch (IOException e1) {
-            AirUtils.logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
         }
         if (Settings.useCooldown)
             cooldown = true;
@@ -123,8 +162,8 @@ public abstract class Command {
     /**
      * Has this user upvoted the bot
      */
-    protected static boolean hasUpvoted(User user) {
-        return upvotedIds.contains(user.getId());
+    protected boolean hasUpvoted(User user) {
+        return isPatron(user, null) || upvotedIds.contains(user.getId());
     }
 
     /**
@@ -183,7 +222,7 @@ public abstract class Command {
      *
      * @param message the message to add the reaction to
      */
-    protected void sendError(Message message) {
+    protected final void sendError(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
@@ -199,9 +238,9 @@ public abstract class Command {
      * @param message the message to add the reaction to
      * @param error the cause
      */
-    protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
+    protected final void sendErrorJSON(Message message, Throwable error, final boolean print) {
         if (print)
-            AirUtils.logger.error(error.getLocalizedMessage(), error);
+            logger.error(error.getLocalizedMessage(), error);
 
         //Makes no difference if we use sendError or check here both perm types
         if (message.getChannelType() == ChannelType.TEXT) {
@@ -224,7 +263,7 @@ public abstract class Command {
      *
      * @param message the message to add the reaction to
      */
-    protected void sendSuccess(Message message) {
+    protected final void sendSuccess(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
@@ -235,17 +274,76 @@ public abstract class Command {
     }
     
     /**
-     * This will chcek if we can send a embed and convert it to a message if we can't send embeds
+     * This will check if we can send a embed and convert it to a message if we can't send embeds
      *
      * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param embed The embed to send
      */
-    protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        if (!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
-            sendMsg(event, EmbedUtils.embedToMessage(embed));
+    protected final void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
+        sendEmbed(event.getChannel(), embed);
+    }
+
+    /**
+     * This will check if we can send a embed and convert it to a message if we can't send embeds
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send the embed to
+     * @param embed The embed to send
+     */
+    protected final void sendEmbed(TextChannel channel, MessageEmbed embed) {
+        if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
+            sendMsg(channel, EmbedUtils.embedToMessage(embed));
             return;
         }
-        sendMsg(event, embed);
+        sendMsg(channel, embed);
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param delay the {@link Long} that is our delay
+     * @param unit  the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg   the message format to send
+     * @param args  the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormatAndDeleteAfter(GuildMessageReceivedEvent event, long delay, TimeUnit unit, String msg, Object... args) {
+        sendMsgFormatAndDeleteAfter(event.getChannel(), delay, unit, msg, args);
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send our message to
+     * @param delay   the {@link Long} that is our delay
+     * @param unit    the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormatAndDeleteAfter(TextChannel channel, long delay, TimeUnit unit, String msg, Object... args) {
+        if(channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+            channel.sendMessage(new MessageBuilder().append(String.format(msg, args)).build()).queue(it -> it.delete().reason("automatic remove").queueAfter(delay, unit));
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel
+     *
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormat(GuildMessageReceivedEvent event, String msg, Object... args) {
+        sendMsg(event.getChannel(), (new MessageBuilder().append(String.format(msg, args)).build()));
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel
+     *
+     * @param channel the {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg     the message format to send
+     * @param args    the arguments that should be used in the msg parameter
+     */
+    protected final void sendMsgFormat(TextChannel channel, String msg, Object... args) {
+        sendMsg(channel, (new MessageBuilder().append(String.format(msg, args)).build()));
     }
     
     /**
@@ -254,8 +352,18 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
-        sendMsg(event, (new MessageBuilder()).append(msg).build());
+    protected final void sendMsg(GuildMessageReceivedEvent event, String msg) {
+        sendMsg(event.getChannel(), (new MessageBuilder()).append(msg).build());
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected final void sendMsg(TextChannel channel, String msg) {
+        sendMsg(channel, (new MessageBuilder()).append(msg).build());
     }
     
     /**
@@ -264,8 +372,18 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
-        sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
+    protected final void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
+        sendMsg(event.getChannel(), (new MessageBuilder()).setEmbed(msg).build());
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected final void sendMsg(TextChannel channel, MessageEmbed msg) {
+        sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build());
     }
     
     /**
@@ -274,10 +392,20 @@ public abstract class Command {
      * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
      */
-    protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
+    protected final void sendMsg(GuildMessageReceivedEvent event, Message msg) {
+        sendMsg(event.getChannel(), msg);
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     */
+    protected void sendMsg(TextChannel channel, Message msg) {
         //Only send a message if we can talk
-        if(event.getChannel().canTalk())
-            event.getChannel().sendMessage(msg).queue();
+        if(channel != null && channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+            channel.sendMessage(msg).queue();
     }
     
     @Override

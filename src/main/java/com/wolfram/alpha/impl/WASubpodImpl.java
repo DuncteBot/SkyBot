@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -45,7 +45,7 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
     private volatile boolean imageAcquired = false;
     private Object userData;
     private transient HttpProvider http;
-    private Visitable[] contentElements = EMPTY_VISITABLE_ARRAY;
+    private Visitable[] contentElements;
 
     
     WASubpodImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
@@ -56,7 +56,7 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
         
         NodeList subElements = thisElement.getChildNodes();
         int numSubElements = subElements.getLength();
-        List<Visitable> contentList = new ArrayList<Visitable>(numSubElements);
+        List<Visitable> contentList = new ArrayList<>(numSubElements);
         for (int i = 0; i < numSubElements; i++) {
             Node child = subElements.item(i);
             String name = child.getNodeName();

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -39,9 +39,13 @@ class ListCommand : MusicCommand() {
                         sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"))
                     } else {
                         var queueLength: Long = 0
+                        val maxTracks = 10
                         val sb = StringBuilder()
                         sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
-                        for (track in queue) {
+                        for ((index, track) in queue.withIndex()) {
+                            if(index == maxTracks) {
+                                break
+                            }
                             queueLength += track.duration
                             sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                             sb.append(track.info.title).append("\n")

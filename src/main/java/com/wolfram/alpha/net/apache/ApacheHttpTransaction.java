@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -63,7 +63,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
      * content using getResponseAsString() or getResponseAsStream(). If it throws, then
      * you do not have to read. You must always call release().
      *
-     * @throws HttpHandlerException
+     * @throws WAHttpException which can be any other exception lol
      */
     public void execute() throws WAHttpException {
 
@@ -113,9 +113,9 @@ public class ApacheHttpTransaction implements HttpTransaction {
     /**
      * Only works for simple headers (ones that do not contain mltiple elements).
      *
-     * @param headerName
-     * @return
-     * @throws IOException
+     * @param headerName the key name of the header
+     * @return the response header as a {@link String}
+     * @throws IOException lol
      */
     public String getResponseHeader(String headerName) throws IOException {
 

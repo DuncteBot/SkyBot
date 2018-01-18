@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -26,7 +26,8 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String ownerId = BuildConfig.ownerId;
+    public static final String ownerId = AirUtils.config.getString("discord.botOwnerId", BuildConfig.ownerId);
+    // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
      * This contains a list of different id's

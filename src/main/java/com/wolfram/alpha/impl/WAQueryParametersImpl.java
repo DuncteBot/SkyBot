@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -36,7 +36,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     private static final long serialVersionUID = 2222070970297271641L;
     protected String input;
     protected String appid;
-    protected List<String> formats = new ArrayList<String>(5);
+    protected List<String> formats = new ArrayList<>(5);
     protected double async = -1;
     protected double scanTimeout = -1;
     protected double podTimeout = -1;
@@ -57,14 +57,14 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     protected boolean includeRelatedLinks;
     protected boolean allowReinterpret = true;
     protected String signature;
-    protected List<String[]> extraParams = new ArrayList<String[]>(1);
-    protected List<String> podTitles = new ArrayList<String>(5);
-    protected List<String> podScanners = new ArrayList<String>(5);
-    protected List<Integer> podIndices = new ArrayList<Integer>(5);
-    protected List<String> includePodIDs = new ArrayList<String>(5);
-    protected List<String> excludePodIDs = new ArrayList<String>(5);
-    protected List<WAPodState> podStates = new ArrayList<WAPodState>(5);
-    protected List<String> assumptions = new ArrayList<String>(5);
+    protected List<String[]> extraParams = new ArrayList<>(1);
+    protected List<String> podTitles = new ArrayList<>(5);
+    protected List<String> podScanners = new ArrayList<>(5);
+    protected List<Integer> podIndices = new ArrayList<>(5);
+    protected List<String> includePodIDs = new ArrayList<>(5);
+    protected List<String> excludePodIDs = new ArrayList<>(5);
+    protected List<WAPodState> podStates = new ArrayList<>(5);
+    protected List<String> assumptions = new ArrayList<>(5);
     
     
     /********************************  Constructor  ********************************/
@@ -100,7 +100,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         this.podTitles.addAll(Arrays.asList(orig.getPodTitles()));
         this.podScanners.addAll(Arrays.asList(orig.getPodScanners()));
         for (int index : orig.getPodIndexes())
-            this.podIndices.add(new Integer(index));
+            this.podIndices.add(index);
         this.includePodIDs.addAll(Arrays.asList(orig.getIncludePodIDs()));
         this.excludePodIDs.addAll(Arrays.asList(orig.getExcludePodIDs()));
         this.podStates.addAll(Arrays.asList(orig.getPodStates()));
@@ -195,7 +195,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         if (latitude == null || longitude == null)
             return null;
         else
-            return new double[]{latitude.doubleValue(), longitude.doubleValue()};
+            return new double[]{latitude, longitude};
     }
     
     public void setLatLong(String latlong) throws IllegalArgumentException {
@@ -207,11 +207,11 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     }
     
     public void setLatitude(double latitude) {
-        this.latitude = new Double(latitude);
+        this.latitude = latitude;
     }
     
     public void setLongitude(double longitude) {
-        this.longitude = new Double(longitude);
+        this.longitude = longitude;
     }
     
     public String getLocation() {
@@ -309,13 +309,13 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         int[] result = new int[podIndices.size()];
         int i = 0;
         for (Integer index : podIndices) {
-            result[i++] = index.intValue();
+            result[i++] = index;
         }
         return result;
     }
     
     public void addPodIndex(int podindex) {
-        Integer index = new Integer(podindex);
+        Integer index = podindex;
         if (!podIndices.contains(index))
             podIndices.add(index);
     }
@@ -464,7 +464,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     // Leave out appid and sig.
     public List<String[]> getParameters() {
         
-        List<String[]> params = new ArrayList<String[]>(15);
+        List<String[]> params = new ArrayList<>(15);
         StringBuilder s = new StringBuilder();
         String[] param;
         
@@ -539,7 +539,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         if (metric != null) {
             param = new String[2];
             param[0] = "units";
-            param[1] = metric.booleanValue() ? "metric" : "nonmetric";
+            param[1] = metric ? "metric" : "nonmetric";
             params.add(param);
         }
         if (currency != null) {
@@ -557,7 +557,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         if (allowTranslation != null) {
             param = new String[2];
             param[0] = "translation";
-            param[1] = allowTranslation.booleanValue() ? "true" : "false";
+            param[1] = allowTranslation ? "true" : "false";
             params.add(param);
         }
         if (includeRelatedLinks) {
@@ -661,7 +661,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
         int questionMarkPos = url.indexOf("?");
         // Works for ? not present (questionMarkPos == -1, then)
         String queryString = url.substring(questionMarkPos + 1);
-        HashMap<String, List<String>> parmsMap = new HashMap<String, List<String>>();
+        HashMap<String, List<String>> parmsMap = new HashMap<>();
         String params[] = queryString.split("&");
         for (String param : params) {
             String temp[] = param.split("=");
@@ -670,7 +670,7 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
                     String value = java.net.URLDecoder.decode(temp[1], "UTF-8");
                     List<String> values = parmsMap.get(temp[0]);
                     if (values == null)
-                        values = new ArrayList<String>();
+                        values = new ArrayList<>();
                     values.add(value);
                     parmsMap.put(temp[0], values);
                 } catch (UnsupportedEncodingException e) {
@@ -739,12 +739,17 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
             List<String> async = parmsMap.get("async");
             if (async != null) {
                 String asyncValue = async.get(0);
-                if (asyncValue.equals("true"))
-                    setAsync(0);
-                else if (asyncValue.equals("false"))
-                    setAsync(-1);
-                else
-                    setAsync(Double.parseDouble(asyncValue));
+                switch (asyncValue) {
+                    case "true":
+                        setAsync(0);
+                        break;
+                    case "false":
+                        setAsync(-1);
+                        break;
+                    default:
+                        setAsync(Double.parseDouble(asyncValue));
+                        break;
+                }
             }
             List<String> scantimeout = parmsMap.get("scantimeout");
             if (scantimeout != null) setScanTimeout(Double.parseDouble(scantimeout.get(0)));
@@ -760,10 +765,10 @@ public class WAQueryParametersImpl implements WAQueryParameters, Serializable {
     
     public String toWebsiteURL() {
         
-        StringBuffer url = new StringBuffer("http://www.wolframalpha.com/input/?i=");
+        StringBuilder url = new StringBuilder("http://www.wolframalpha.com/input/?i=");
         try {
             url.append(URLEncoder.encode(input, "UTF-8"));
-        } catch (UnsupportedEncodingException e) {
+        } catch (UnsupportedEncodingException ignored) {
         }
         for (String a : getAssumptions()) {
             url.append("&a=");

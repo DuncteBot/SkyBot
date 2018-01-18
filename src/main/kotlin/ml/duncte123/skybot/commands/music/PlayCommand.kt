@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -46,12 +46,12 @@ open class PlayCommand : MusicCommand() {
                 }
                 player.playingTrack != null -> sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example [this song](https://soundcloud.com/ejectusb/imagine-dragons-whatever-it-takes-ejectusb-remix)")
+                        "For example `db!play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
             var toPlay = StringUtils.join(args, " ")
             if (!AirUtils.isURL(toPlay)) {
-                toPlay = "ytsearch: " + toPlay
+                toPlay = "ytsearch:" + toPlay
             }
 
             if(toPlay.length > 1024) {

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,7 +23,7 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -34,7 +34,7 @@ implements IEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
-    private BotListener botListener = new BotListener();
+    private final BotListener botListener = new BotListener();
     
     @Override
     public void register(Object listener) {
@@ -51,12 +51,12 @@ implements IEventManager {
         try {
             botListener.onEvent(event);
         } catch (Throwable thr) {
-            logger.warn("Error while handling event " + event + "; " + thr.getLocalizedMessage(), thr);
+            logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
     
     @Override
     public List<Object> getRegisteredListeners() {
-        return Arrays.asList(botListener);
+        return Collections.singletonList(botListener);
     }
 }

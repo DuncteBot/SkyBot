@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -38,9 +38,16 @@ class SkipCommand : MusicCommand() {
             sendMsg(event, "The player is not playing.")
             return
         }
+        val count = if (args.isNotEmpty()) {
+            args[0].toInt().coerceAtLeast(1)
+        } else {
+            1
+        }
 
-        scheduler.nextTrack()
-        sendMsg(event, "The current track was skipped.")
+        repeat(count) {
+            scheduler.nextTrack()
+        }
+        sendMsg(event, "Successfully skipped $count tracks.")
     }
 
     override fun help(): String = "Skips the current track."

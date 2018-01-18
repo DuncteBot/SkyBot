@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -48,10 +48,14 @@ public class HackbanCommand extends Command {
             return;
         }
 
+        if (args[0].matches("<@\\d{17,20}>"))
+            args[0] = args[0].substring(2, args[0].length() - 1);
+        else if (args[0].matches(".{2,32}#\\d{4}")) {
+            event.getJDA().getUsersByName(args[0].substring(0, args[0].length() - 5), false).stream().findFirst().ifPresent(user -> args[0] = user.getId());
+        }
+
         try {
-            event.getGuild().getController().ban(args[0], 0).queue((v) -> {
-                sendMsg(event, "User has been banned!");
-            });
+            event.getGuild().getController().ban(args[0], 0).queue((v) -> sendMsg(event, "User has been banned!"));
         } catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -109,12 +109,17 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
             if (!url.equals("")) {
                 try {
                     String suffix;
-                    if (format == "WAV")
-                        suffix = ".wav";
-                    else if (format == "MIDI")
-                        suffix = ".mid";
-                    else
-                        suffix = ".tmp";
+                    switch (format) {
+                        case "WAV":
+                            suffix = ".wav";
+                            break;
+                        case "MIDI":
+                            suffix = ".mid";
+                            break;
+                        default:
+                            suffix = ".tmp";
+                            break;
+                    }
                     String outFile = File.createTempFile("WASound", suffix, tempDir).getAbsolutePath();
                     URLFetcher fetcher = new URLFetcher(new URL(url), outFile, http, null);
                     fetcher.fetch();

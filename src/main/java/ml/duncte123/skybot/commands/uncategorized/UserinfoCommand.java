@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.format.DateTimeFormatter;
@@ -58,6 +59,13 @@ public class UserinfoCommand extends Command {
                     members = event.getGuild().getMembersByNickname(name, true);
                 }
                 m = members.isEmpty() ? null : members.get(0);
+                if(m==null) {
+                    try {
+                        long memberId = MiscUtil.parseSnowflake(name);
+                        m = event.getGuild().getMemberById(memberId);
+                    }
+                    catch (NumberFormatException e) { /* ignored */ }
+                }
             }
         }
         
@@ -69,13 +77,12 @@ public class UserinfoCommand extends Command {
         u = m.getUser();
         
         StringBuilder joinOrder = new StringBuilder();
-        List<Member> joins = event.getGuild().getMemberCache().stream().collect(Collectors.toList());
-        joins.sort(Comparator.comparing(Member::getJoinDate));
+        List<Member> joins = event.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate)).collect(Collectors.toList());
         int index = joins.indexOf(m);
         index -= 3;
         if (index < 0)
             index = 0;
-        joinOrder.append("\n" + "Join Order: ");
+        joinOrder.append("\n");
         if (joins.get(index).equals(m))
             joinOrder.append("[").append(joins.get(index).getEffectiveName()).append("](https://bot.duncte123.me/)");
         else
@@ -94,16 +101,16 @@ public class UserinfoCommand extends Command {
         
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                                   .setColor(m.getColor())
-                                  .setDescription("User info for " + u.getName() + "#" + u.getDiscriminator())
+                                  .setDescription("User info for " + m.getAsMention())
                                   .setThumbnail(u.getEffectiveAvatarUrl())
                                   .addField("Username + Discriminator", String.format("%#s", u), true)
                                   .addField("User Id", u.getId(), true)
                                   .addField("Status", AirUtils.gameToString(m.getGame()), true)
-                                  .addField("Nickname", (m.getNickname() == null ? "**_no nickname_**" : m.getNickname()), true)
-                                  .addField("Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                                  .addField("Joined", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                                  .addField("Display name", m.getEffectiveName(), true)
+                                  .addField("Account Created", u.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
+                                  .addField("Joined server", m.getJoinDate().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
                                   .addField("Join order", joinOrder.toString(), true)
-                                  .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " " + m.getOnlineStatus().name().toLowerCase(), true)
+                                  .addField("Online Status", AirUtils.convertStatus(m.getOnlineStatus()) + " " + m.getOnlineStatus().name().toLowerCase().replaceAll("_", " "), true)
                                   .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                                   .build();
         

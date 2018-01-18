@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -53,26 +53,28 @@ public class AnnounceCommand extends Command {
         }
 
         try {
-            TextChannel chann = event.getMessage().getMentionedChannels().get(0);
+            TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
-            if (!chann.canTalk()) {
+            if (!targetChannel.getGuild().getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+                sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
                 sendError(event.getMessage());
                 return;
             }
 
-            String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
+            String msg = event.getMessage().getContentRaw().split("\\s+", 3)[2];
             @SinceSkybot(version = "3.52.3")
-            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg);
+            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
             if (!event.getMessage().getAttachments().isEmpty()) {
-                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
+                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
+                    if (invoke.endsWith("2"))
+                        embed.setThumbnail(attachment.getUrl());
+                    else
+                        embed.setImage(attachment.getUrl());
+                });
             }
-            
-            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
-            } else {
-                chann.sendMessage(embed.build()).queue();
-            }
+
+            sendEmbed(targetChannel, embed.build());
             sendSuccess(event.getMessage());
             
         } catch (Exception e) {
@@ -83,11 +85,17 @@ public class AnnounceCommand extends Command {
     
     @Override
     public String help() {
-        return "Announces a message.";
+        return "Announces a message.\n" +
+                "Usage `" + PREFIX + getName() + " <message>`";
     }
     
     @Override
     public String getName() {
         return "announce";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"announce2"};
     }
 }

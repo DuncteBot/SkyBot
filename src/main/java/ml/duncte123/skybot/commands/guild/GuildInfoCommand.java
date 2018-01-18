@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -26,7 +26,6 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.time.format.DateTimeFormatter;
@@ -42,29 +41,34 @@ public class GuildInfoCommand extends Command {
         Guild g = event.getGuild();
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
+            //https://stackoverflow.com/a/1915107/4453592
+            final String inviteStringTemplate = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
+            final String[] inviteString = {""};
+
+            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+                if (!g.getFeatures().contains("VANITY_URL")) {
+                    g.getInvites().complete().stream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode()));
+                } else {
+                    inviteString[0] = String.format(inviteStringTemplate, g.getVanityUrl().complete());
+                }
+            }
 
             double[] ratio = AirUtils.getBotRatio(g);
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                                      .addField("Guild Owner", g.getOwner().getEffectiveName(), true)
-                                      .addField("Total Members", g.getMembers().size() + "", true)
-                                      .addField("Verification Level", AirUtils.verificationLvlToName(g.getVerificationLevel()), true)
-                                      .addField("Guild Name", g.getName(), true)
-                                      .addField("Guild prefix", settings.getCustomPrefix(), true)
-                                      .addField("Guild Creation Time", g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME), true)
-                                      .addField("Guild Region", g.getRegion().getName(), true)
-                                      .addField("Bot to user ratio", ratio[1] + "% of this guild is a bot (total users " + g.getMembers().size() + ")", true);
-            if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                g.getInvites().queue(i -> eb.addField("Guild Invite",
-                        "[https://discord.gg/" + i.get(0).getCode() +
-                                "](https://discord.gg/" + i.get(0).getCode() + ")",
-                        true));
-            }
+                    .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+                            "**Name:** " + g.getName() + "\n" +
+                            "**Prefix:** " + settings.getCustomPrefix() + "\n" +
+                            "**Region:** " + g.getRegion().getName() + "\n" +
+                            "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                            "**Verification level:** " + AirUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                            inviteString[0], false)
+                    .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+                            "**(Possible) Nitro users:** " + AirUtils.countAnimatedAvatars(g).get() + "\n" +
+                            "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
-            MessageEmbed messageEmbed = eb.build();
-
-            sendEmbed(event, messageEmbed);
+            sendEmbed(event, eb.build());
         } catch (Exception e) {
             sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
@@ -83,6 +87,6 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"serverinfo", "server"};
+        return new String[]{"serverinfo", "server", "guild"};
     }
 }

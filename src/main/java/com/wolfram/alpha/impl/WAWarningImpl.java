@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -50,7 +50,7 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
         
         type = thisElement.getNodeName();
         text = thisElement.getAttribute("text");
-        ArrayList<String[]> attrPairs = new ArrayList<String[]>();
+        ArrayList<String[]> attrPairs = new ArrayList<>();
         NamedNodeMap attrs = thisElement.getAttributes();
         int numAttrs = attrs.getLength();
         for (int i = 0; i < numAttrs; i++) {

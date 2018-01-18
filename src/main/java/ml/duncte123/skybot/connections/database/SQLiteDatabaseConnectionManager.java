@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -132,10 +132,13 @@ implements DBConnectionManager {
                                                          "guildId TEXT NOT NULL," +
                                                          "guildName TEXT NOT NULL," +
                                                          "logChannelId TEXT NULL," +
+                                                         "welcomeLeaveChannel TEXT NULL," +
                                                          "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
+                                                         "autoRole VARCHAR(255) NULL," +
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "customWelcomeMessage TEXT NOT NULL);");
+                                                         "customWelcomeMessage TEXT NOT NULL," +
+                                                         "customLeaveMessage TEXT NOT NULL);");
             
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
                                                          "(id INTEGER PRIMARY KEY AUTOINCREMENT," +

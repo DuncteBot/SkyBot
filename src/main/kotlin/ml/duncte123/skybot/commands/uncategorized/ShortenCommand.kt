@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -36,7 +36,7 @@ class ShortenCommand : Command() {
         sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
-    override fun help(): String = """"Shortens a url
+    override fun help(): String = """Shortens a url
             |Usage: `${Settings.prefix}$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"

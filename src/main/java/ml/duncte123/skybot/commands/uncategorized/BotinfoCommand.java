@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -57,14 +57,19 @@ public class BotinfoCommand extends Command {
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("General info", "**Creator:** duncte123#1245\n" +
-                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
-                        "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
-                        "**Support guild:** [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                        "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
-                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
-                        "**Bot version:** " + Settings.version, true)
-                .addField("System info", "**Operating System:** " + OS + "\n" +
+                .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
+                        "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
+                        "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n", true)
+//                .addField("General info", "**Creator:** duncte123#1245\n" +
+//                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
+//                        "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
+//                        "**Support guild:** [discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+//                        "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
+//                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+//                        "**Bot version:** " + Settings.version, true)
+                .addField("Other info",  "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+                        "**Bot version:** " + Settings.version + "\n"
+                        + "**Operating System:** " + OS + "\n" +
                          "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
@@ -77,7 +82,7 @@ public class BotinfoCommand extends Command {
     
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `" + this.PREFIX + getName() + "`";
+        return "Gets some info about the bot\nUsage: `" + PREFIX + getName() + "`";
     }
     
     @Override

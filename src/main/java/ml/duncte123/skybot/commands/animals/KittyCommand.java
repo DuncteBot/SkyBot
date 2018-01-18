@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -27,8 +27,6 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
 
-import java.net.URL;
-
 public class KittyCommand extends Command {
 
     public KittyCommand() {
@@ -48,7 +46,7 @@ public class KittyCommand extends Command {
             sendEmbed(event, EmbedUtils.embedImage(fullUrl));
         } catch (Exception e) {
             sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
-            e.printStackTrace();
+            //e.printStackTrace();
         }
     }
 

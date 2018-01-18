@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.config;
 
+import com.afollestad.ason.Ason;
 import org.apache.commons.text.translate.UnicodeUnescaper;
 import org.json.JSONObject;
 import org.json.JSONTokener;
 
 import java.io.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ConfigLoader {
 
     /**
@@ -59,7 +61,8 @@ public class ConfigLoader {
 
         @Override
         public void save() throws Exception {
-            final String json = this.config.toString(4);
+            final String rawJson = this.config.toString();
+            final String json = new Ason(rawJson).toString(4);
             try {
                 final BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
@@ -67,6 +70,7 @@ public class ConfigLoader {
                 writer.close();
             } catch (final IOException e) {
                 e.printStackTrace();
+                throw e;
             }
         }
     }

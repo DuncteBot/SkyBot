@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -27,10 +27,11 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -69,8 +70,11 @@ public class AudioUtils {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
         this.playerManager = new DefaultAudioPlayerManager();
-        
+
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager());
+        playerManager.registerSourceManager(new ClypitAudioSourceManager());
         AudioSourceManagers.registerRemoteSources(playerManager);
+        AudioSourceManagers.registerLocalSource(playerManager);
         
         musicManagers = new HashMap<>();
     }
@@ -101,7 +105,7 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList) {
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
         final String trackUrl;
         
         //Strip <>'s that prevent discord from embedding link resources
@@ -137,11 +141,15 @@ public class AudioUtils {
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
-                
-                if (firstTrack == null) {
+
+                if(tracks.size() == 0) {
+                    sendEmbed(EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."), channel);
+                    return;
+
+                } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                String msg = "";
+                String msg;
                 
                 if (addPlayList) {
                     msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
@@ -207,17 +215,19 @@ public class AudioUtils {
      * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      *
      * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param channel {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param tc {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
-    private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
-        TextChannel tc = (TextChannel) channel;
-        if(tc.canTalk()) {
+    private void sendEmbed(MessageEmbed embed, TextChannel tc) {
+        if(tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-                channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
+                tc.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
                 return;
             }
-            channel.sendMessage(embed).queue();
+            tc.sendMessage(embed).queue();
         }
     }
-    
+
+    public Map<String, GuildMusicManager> getMusicManagers() {
+        return musicManagers;
+    }
 }

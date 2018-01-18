@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -37,26 +37,21 @@ public class UnbanCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
-        if (args[0].isEmpty()) {
+        if (args.length < 1) {
             sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
             return;
         }
 
         try {
             Guild guild = event.getGuild();
-            List<User> bannedUsers = guild.getBans().complete();
-            for (User bannedUser : bannedUsers) {
+            List<Guild.Ban> bannedUsers = guild.getBanList().complete();
+            for (Guild.Ban ban : bannedUsers) {
+                User bannedUser = ban.getUser();
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
                     event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.").queue();

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,7 @@ public class HelpEmbeds {
     /**
      * This tells the fields to be inline or not
      */
-    private static boolean INLINE = false;
+    private static final boolean INLINE = false;
 
     /**
      * These lists hold the commands for each category
@@ -40,11 +40,7 @@ public class HelpEmbeds {
     private static List<String> musicCommands = new ArrayList<>();
     private static List<String> nerdCommands = new ArrayList<>();
     private static List<String> modAdminCommands = new ArrayList<>();
-
-    /**
-     * This is the embed containing all the commands
-     */
-    public static MessageEmbed commandList = getCommandList();
+    private static List<String> patronCommands = new ArrayList<>();
 
     /**
      * This loads all the commands in the lists
@@ -70,6 +66,8 @@ public class HelpEmbeds {
                 case NERD_STUFF:
                     nerdCommands.add(c.getName());
                     break;
+                case PATRON:
+                    patronCommands.add(c.getName());
                 default:
                     break;
             }
@@ -94,22 +92,14 @@ public class HelpEmbeds {
                     case NERD_STUFF:
                         nerdCommands.add(alias);
                         break;
+                    case PATRON:
+                        patronCommands.add(alias);
                     default:
                         break;
                 }
             }
         }
     }
-
-    /**
-     * This will return a embed containing all the commands
-     *
-     * @return a embed containing all the commands
-     */
-    public static MessageEmbed getCommandList() {
-        return getCommandListWithPrefix(Settings.prefix);
-    }
-
     /**
      * This will return a embed containing all the commands
      *
@@ -118,14 +108,16 @@ public class HelpEmbeds {
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
+                .setThumbnail(Settings.defaultIcon)
                        .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
                        .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
-                       .addField("Main commands", generateCommandsWithPrefix(prefix, mainCommands.toArray(new String[0])), INLINE)
-                       .addField("Animal commands", generateCommandsWithPrefix(prefix, animalCommands.toArray(new String[0])), INLINE)
-                       .addField("Music commands", generateCommandsWithPrefix(prefix, musicCommands.toArray(new String[0])), INLINE)
-                       .addField("Fun commands", generateCommandsWithPrefix(prefix, funCommands.toArray(new String[0])), INLINE)
-                       .addField("Nerd commands", generateCommandsWithPrefix(prefix, nerdCommands.toArray(new String[0])), INLINE)
-                       .addField("Mod/Admin commands", generateCommandsWithPrefix(prefix, modAdminCommands.toArray(new String[0])), INLINE)
+                       .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
+                       .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
+                       .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
+                       .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
+                       .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
+                       .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
+                       .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
                        .build();
     }
 
@@ -140,7 +132,7 @@ public class HelpEmbeds {
         StringBuilder out = new StringBuilder();
         
         for (String name : cmdNames) {
-            out.append("`").append(prefix).append(name).append("` ");
+            out.append("`").append(prefix).append(name).append("`, ");
         }
         
         return out.toString();
@@ -152,7 +144,7 @@ public class HelpEmbeds {
      * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
-    public static String generateCommands(String... cmdNames) {
-        return generateCommandsWithPrefix(Settings.prefix, cmdNames);
+    public static String generateCommandsWithoutPrefix(String... cmdNames) {
+        return generateCommandsWithPrefix("", cmdNames);
     }
 }

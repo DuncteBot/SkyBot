@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,29 +18,26 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.config.Config;
 import okhttp3.*;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
+import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 public class WebUtils {
 
-    private static String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
-    private static final OkHttpClient client;
-
-    static {
-        client = new OkHttpClient.Builder()
-                .connectTimeout(10, TimeUnit.SECONDS)// connect timeout
-                .readTimeout(10, TimeUnit.SECONDS)// socket timeout
-        .build();
-    }
+    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
+    private static final OkHttpClient client = new OkHttpClient();
+    public static final ScheduledExecutorService service
+            = Executors.newScheduledThreadPool(2, r -> new Thread(r, "Web-Thread"));
 
     /**
      * Reads contents from a website and returns it to a string
@@ -50,22 +47,17 @@ public class WebUtils {
      * @throws IOException When something broke
      */
     public static String getText(String url) throws IOException {
-        URL website = new URL(url);
-        URLConnection connection = website.openConnection();
-        connection.addRequestProperty("User-Agent", "B1nzy's personal pc");
-        BufferedReader in = new BufferedReader(
-                                      new InputStreamReader(
-                                                   connection.getInputStream()));
-        
-        StringBuilder response = new StringBuilder();
-        String inputLine;
-        
-        while ((inputLine = in.readLine()) != null)
-            response.append(inputLine);
-        
-        in.close();
-        
-        return response.toString();
+        return getRequest(url).body().string();
+    }
+
+    /**
+     * Reads the contents of a url into an InputStream
+     * @param url the url to read
+     * @return the InputStream of the url
+     * @throws IOException when things break
+     */
+    public static InputStream getInputStream(String url) throws IOException {
+        return getRequest(url).body().byteStream();
     }
 
     /**
@@ -76,19 +68,24 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
-        
-        Request request = new Request.Builder()
-                                  .url(url)
-                                  .get()
-                                  .addHeader("User-Agent", USER_AGENT)
-                                  .addHeader("Accept", accept.getType())
-                                  .addHeader("cache-control", "no-cache")
-                                  .build();
-        
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Accept", accept.getType())
+                        .addHeader("cache-control", "no-cache")
+                        .build()).execute();
+                }
+                catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
+            //e.printStackTrace();
             return null;
         }
     }
@@ -112,27 +109,27 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
-        MediaType mediaType = MediaType.parse(AcceptType.URLENCODED.getType());
-        
         StringBuilder postParams = new StringBuilder();
         
         for (Map.Entry<String, Object> entry : postFields.entrySet()) {
             postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
-        
-        RequestBody body = RequestBody.create(mediaType, postParams.toString() + "dummy=param");
-        
-        Request request = new Request.Builder()
-                                  .url(url)
-                                  .post(body)
-                                  .addHeader("User-Agent", USER_AGENT)
-                                  .addHeader("Accept", accept.getType())
-                                  .addHeader("cache-control", "no-cache")
-                                  .build();
-        
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
+                            .addHeader("User-Agent", USER_AGENT)
+                            .addHeader("Accept", accept.getType())
+                            .addHeader("cache-control", "no-cache")
+                            .build()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return null;
         }
@@ -177,18 +174,21 @@ public class WebUtils {
      * @return The {@link Response} from the webserver
      */
     public static Response postJSON(String url, JSONObject data) {
-        RequestBody body = RequestBody.create(MediaType.parse("application/json"), data.toString());
-
-        Request request = new Request.Builder()
-                .url(url)
-                .post(body)
-                .addHeader("User-Agent", USER_AGENT)
-                .build();
-
         try {
-            return client.newCall(request).execute();
-        } catch (IOException e) {
-            e.printStackTrace();
+            return service.schedule(() -> {
+                try {
+                    return client.newCall(new Request.Builder()
+                            .url(url)
+                            .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
+                            .addHeader("User-Agent", USER_AGENT)
+                            .build()).execute();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }, 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
+            //e.printStackTrace();
             return null;
         }
     }
@@ -206,7 +206,7 @@ public class WebUtils {
             jo.put("longUrl", url);
 
             String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
-                    + AirUtils.config.getString("apis.googl"), jo).body().source().readUtf8();
+                    + AirUtils.config.getString("apis.googl", "Google api key"), jo).body().string();
 
             JSONObject returnJSON = new JSONObject(returnData);
             return returnJSON.get("id").toString();
@@ -214,6 +214,30 @@ public class WebUtils {
         } catch (NullPointerException | IOException e) {
             e.printStackTrace();
             return null;
+        }
+    }
+
+    /**
+     * This translates a string into a different language
+     * @param sourceLang the source language (example: "nl")
+     * @param targetLang the target language (example: "en")
+     * @param input the user inpur (example: "Dit is een test")
+     * @return the output of the api
+     * THe examples above will output the following <code>["This is a test","Dit is een test",null,null,1]</code>
+     */
+    public static JSONArray translate(String sourceLang, String targetLang, String input) {
+        try {
+            return new JSONArray(
+                    getText("https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input)
+            ).getJSONArray(0).getJSONArray(0);
+        }
+        catch (IOException e) {
+            return new JSONArray()
+                    .put(input)
+                    .put("null")
+                    .put("")
+                    .put("")
+                    .put(0);
         }
     }
 

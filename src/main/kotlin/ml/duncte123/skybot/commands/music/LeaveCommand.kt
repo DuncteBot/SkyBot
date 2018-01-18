@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,12 +29,21 @@ class LeaveCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (!channelChecks(event))
             return
-        val manager = getAudioManager(event.guild)
+        val guild = event.guild
+        val cooldowns = MusicCommand.cooldowns
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
+            sendMsg(event, """I still have cooldown!
+                    |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
+            sendError(event.message)
+            return
+        }
+        val manager = getAudioManager(guild)
 
         if (manager.isConnected) {
             getMusicManager(event.guild).player.stopTrack()
             manager.sendingHandler = null
             manager.closeAudioConnection()
+            MusicCommand.addCooldown(guild.idLong)
             sendMsg(event, "Leaving your channel")
         } else {
             sendMsg(event, "I'm not connected to any channels.")
@@ -45,5 +54,5 @@ class LeaveCommand : MusicCommand() {
 
     override fun getName(): String = "leave"
 
-    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit", "kill")
+    override fun getAliases(): Array<String> = arrayOf("disconnect", "exit")
 }

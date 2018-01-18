@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -152,7 +152,6 @@ public class Config {
      *
      * @param key   the key to add the value under
      * @param value the value that we need to add, in the form of json
-     * @throws Exception when we fail
      */
     public void put(String key, Object value) {
         ason.put(key, value);

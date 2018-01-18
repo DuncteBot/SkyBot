@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,6 @@ package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.KotlinCommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -30,15 +29,23 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
+import java.net.SocketTimeoutException;
 import java.sql.*;
 import java.util.*;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("ReturnInsideFinallyBlock")
 public class AirUtils {
 
     /**
@@ -55,12 +62,12 @@ public class AirUtils {
     /**
      * This will hold the command setup and the registered commands
      */
-    public static CommandManager commandManager = new KotlinCommandManager();
+    public static CommandManager commandManager = new CommandManager();
 
     /**
      * We are using slf4j to log things to the console
      */
-    public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
+    private static Logger logger = LoggerFactory.getLogger(AirUtils.class);
 
     /**
      * This holds the value if we should use a non-SQLite database
@@ -91,6 +98,9 @@ public class AirUtils {
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
+
+    public static final ScheduledExecutorService service
+            = Executors.newScheduledThreadPool(5, r -> new Thread(r, "Music-Shutdown-Thread"));
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -124,7 +134,7 @@ public class AirUtils {
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.canTalk()) return;
+        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(logChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
@@ -183,7 +193,7 @@ public class AirUtils {
         postFields.put("guildId", guildId);
         
         try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/", postFields).close();
+            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -195,7 +205,7 @@ public class AirUtils {
      * @param jda the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager jda) {
-        log("Unban checker", Level.DEBUG, "Checking for users to unban");
+        logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
         Connection database = db.getConnManager().getConnection();
         
@@ -211,7 +221,7 @@ public class AirUtils {
                 
                 if (currDate.after(unbanDate)) {
                     usersUnbanned++;
-                    log(Level.INFO, "Unbanning " + res.getString("Username"));
+                    logger.info("Unbanning " + res.getString("Username"));
                     jda.getGuildCache().getElementById(res.getString("guildId")).getController()
                             .unban(res.getString("userId")).reason("Ban expired").queue();
                     modLog(new ConsoleUser(),
@@ -220,10 +230,10 @@ public class AirUtils {
                                                 res.getString("discriminator")),
                             "unbanned",
                             jda.getGuildById(res.getString("guildId")));
-                    smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    database.createStatement().executeUpdate("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
-            log("Unban checker", Level.DEBUG, "Checking done, unbanned " + usersUnbanned + " users.");
+            logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -235,7 +245,7 @@ public class AirUtils {
         }
     }
 
-    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)");
+    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)");
 
     /**
      * This will validate a link
@@ -304,48 +314,6 @@ public class AirUtils {
     }
 
     /**
-     * Logs a message to the console
-     *
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(Level lvl, String message) {
-        log(Settings.defaultName, lvl, message);
-    }
-
-    /**
-     * Logs a message to the console
-     *
-     * @param name    The name of the class that is calling it
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(String name, Level lvl, Object message) {
-        logger = LoggerFactory.getLogger(name);
-        
-        String msg = String.valueOf(message);
-        
-        switch (lvl) {
-            case ERROR:
-                logger.error(msg);
-                break;
-            case WARN:
-                logger.warn(msg);
-                break;
-            case INFO:
-                logger.info(msg);
-                break;
-            case DEBUG:
-                logger.debug(msg);
-                break;
-            case TRACE:
-                logger.trace(msg);
-                break;
-        }
-        logger = LoggerFactory.getLogger(Settings.defaultName);
-    }
-
-    /**
      * This will calculate the bot to user ratio
      *
      * @param g the {@link Guild} that we want to check
@@ -353,28 +321,34 @@ public class AirUtils {
      */
     public static double[] getBotRatio(Guild g) {
         
-        double totalCount = g.getMemberCache().size();
-        double botCount = 0;
-        double userCount = 0;
-        
-        for (Member m : g.getMembers()) {
-            if (m.getUser().isBot()) {
-                botCount++;
-            } else {
-                userCount++;
-            }
-        }
+        MemberCacheView memberCache = g.getMemberCache();
+        double totalCount = memberCache.size();
+        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
+        double userCount = totalCount - botCount;
         
         //percent in users
         double userCountP = (userCount / totalCount) * 100;
         
         //percent in bots
         double botCountP = (botCount / totalCount) * 100;
-        
-        log(Level.DEBUG,
-                "In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
+
+        logger.debug("In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
         
         return new double[]{Math.round(userCountP), Math.round(botCountP)};
+    }
+
+    /**
+     * This counts the users in a guild that have an animated avatar
+     * @param g the guild to count it in
+     * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
+     */
+    public static AtomicLong countAnimatedAvatars(Guild g) {
+
+        return new AtomicLong(g.getMemberCache().stream()
+                .map(Member::getUser)
+                .filter(it -> it.getAvatarId() != null )
+	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
+        );
     }
 
     /**
@@ -387,8 +361,8 @@ public class AirUtils {
         
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
         
-        if (pubChann == null || !pubChann.canTalk()) {
-            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
+        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+            return guild.getTextChannelCache().stream().filter(channel -> guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)).findFirst().orElse(null);
         }
         
         return pubChann;
@@ -437,7 +411,7 @@ public class AirUtils {
             uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
         }
         
-        return uptimeString.replaceFirst(",", "");
+        return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
     }
 
     /**
@@ -447,20 +421,19 @@ public class AirUtils {
      * token
      */
     private static WAEngine getWolframEngine() {
-        WAEngine engine = new WAEngine();
+        String appId = config.getString("apis.wolframalpha", "");
         
-        String appId;
-        
-        appId = config.getString("apis.wolframalpha", "");
-        
-        if (appId == null || "".equals(appId)) {
+        if (appId == null || appId.isEmpty()) {
             IllegalStateException e
                     = new IllegalStateException("Wolfram Alpha App ID not specified."
                                                 + " Please generate one at "
                                                 + "https://developer.wolframalpha.com/portal/myapps/");
-            logger.error(e.getMessage(), e);
+            //The logger can be null during tests
+            if(logger != null)
+                logger.error(e.getMessage(), e);
             return null;
         }
+        WAEngine engine = new WAEngine();
         
         engine.setAppID(appId);
         
@@ -476,7 +449,7 @@ public class AirUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        AirUtils.log(Level.DEBUG, "Loading tags.");
+        logger.debug("Loading tags.");
         
         Connection database = db.getConnManager().getConnection();
         try {
@@ -495,8 +468,8 @@ public class AirUtils {
                                                      resultSet.getString("tagText")
                 ));
             }
-            
-            AirUtils.log(Level.DEBUG, "Loaded " + tagsList.keySet().size() + " tags.");
+
+            logger.debug("Loaded " + tagsList.keySet().size() + " tags.");
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -584,11 +557,45 @@ public class AirUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
-        }
-        catch (Exception e) {
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().string();
+        } catch (SocketTimeoutException | NullPointerException ignored) {
+            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
+        } catch (Exception e) {
             e.printStackTrace();
             return e.toString();
+        }
+    }
+
+    public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
+        JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
+        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
+            String exceptionMessage = "%s";
+            try {
+                switch (returnValue.getInt("code")) {
+                    case 401: {
+                        exceptionMessage = "Unauthorized access! %s";
+                        break;
+                    }
+                    case 400: {
+                        exceptionMessage = "Bad request! %s";
+                        break;
+                    }
+
+                    default: {
+                        exceptionMessage = "Server responded with a unknown status message: %s";
+                        break;
+                    }
+                }
+            } catch (JSONException ex) {
+                String x = returnValue.getString("message");
+                if (x.equals("ignored exception"))
+                    return;
+                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
+            }
+            String x = returnValue.getString("message");
+            if (x.equals("ignored exception"))
+                return;
+            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
         }
     }
 
@@ -601,8 +608,13 @@ public class AirUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
+        //That just breaks the bot
+	try {
+            audioUtils.musicManagers.forEach((a, b) ->  {
+                if (b.player.getPlayingTrack() != null)
+                    b.player.stopTrack();
+            });
+	} catch (java.util.ConcurrentModificationException ignored) {}
     }
 
     /**
@@ -649,5 +661,24 @@ public class AirUtils {
      */
     public static String generateRandomString() {
         return generateRandomString(10);
+    }
+
+    /**
+     * Returns a flipped table
+     * @return a flipped table
+     */
+    public static String flipTable() {
+        switch (AirUtils.rand.nextInt(4)){
+            case 0:
+                return "(╯°□°)╯︵┻━┻";
+            case 1:
+                return "(ノ゜Д゜)ノ︵┻━┻";
+            case 2:
+                return "(ノಥ益ಥ)ノ︵┻━┻";
+            case 3:
+               return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+           default:
+               return "I CAN'T FLIP THIS TABLE";
+        }
     }
 }

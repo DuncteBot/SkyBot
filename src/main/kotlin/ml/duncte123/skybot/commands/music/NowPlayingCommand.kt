@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -33,7 +33,7 @@ class NowPlayingCommand : MusicCommand() {
         val mng = getMusicManager(event.guild)
         val player = mng.player
         val msg = if (player.playingTrack != null) {
-            "**Playing** " + player.playingTrack.info.title + "\n" + EmbedUtils.playerEmbed(mng)
+            "**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng)
         } else {
             "The player is not currently playing anything!"
         }

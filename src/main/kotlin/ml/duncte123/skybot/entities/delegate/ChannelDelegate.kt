@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -46,7 +46,7 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun getJDA(): JDA                                                      = JDADelegate(this.jda)
     override fun getGuild(): Guild                                                  = GuildDelegate(this.guild)
 
-    override fun getMembers(): List<Member>                                         = channel.members.map { MemberDelegate(it) }
+    override fun getMembers(): List<Member>                                         = channel.members.map { MemberDelegate(it) } as List<Member>
     override fun createCopy(): ChannelAction                                        = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getInvites(): RestAction<List<Invite>>                             = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManager(): ChannelManager                                       = throw VRCubeException("**\uD83D\uDD25 lit**")

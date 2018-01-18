@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -35,6 +35,7 @@ import java.util.List;
  *
  * @author duncte123
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class GenerateCommandList {
 
     public static void inPHP() throws Exception{
@@ -57,7 +58,7 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.commandManager.getCommands().parallelStream().forEach(c-> names.add(c.getName()));
+        AirUtils.commandManager.getCommands().forEach(c-> names.add(c.getName()));
         Collections.sort(names);
 
         for (String n: names) {

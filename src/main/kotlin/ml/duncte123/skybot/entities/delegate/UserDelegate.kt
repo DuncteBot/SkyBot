@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -33,10 +33,10 @@ import net.dv8tion.jda.core.requests.RestAction
 @SinceSkybot("3.51.5")
 @DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class UserDelegate(val yBGyt8Kduo: User) : User by yBGyt8Kduo {
+class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
     private val jda: JDA       = JDADelegate(yBGyt8Kduo.jda)
     override fun getJDA(): JDA = JDADelegate(this.jda)
 
-    override fun getMutualGuilds(): List<Guild>                   = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) }
+    override fun getMutualGuilds(): List<Guild>                   = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) } as List<Guild>
     override fun openPrivateChannel(): RestAction<PrivateChannel> = throw VRCubeException("**\uD83D\uDD25 lit**")
 }
