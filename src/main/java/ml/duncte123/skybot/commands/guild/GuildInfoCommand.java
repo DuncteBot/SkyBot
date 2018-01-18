@@ -41,15 +41,15 @@ public class GuildInfoCommand extends Command {
         Guild g = event.getGuild();
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
-            final String inviteStringTemplate = "**Invite:** [discord.gg/%s](https://discord.gg/%s)";
+            //https://stackoverflow.com/a/1915107/4453592
+            final String inviteStringTemplate = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
             final String[] inviteString = {""};
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().complete().stream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode(), inv.getCode()));
+                    g.getInvites().complete().stream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode()));
                 } else {
-                    String vanity = g.getVanityUrl().complete();
-                    inviteString[0] = String.format(inviteStringTemplate, vanity, vanity);
+                    inviteString[0] = String.format(inviteStringTemplate, g.getVanityUrl().complete());
                 }
             }
 
