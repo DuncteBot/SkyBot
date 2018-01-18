@@ -421,18 +421,19 @@ public class AirUtils {
      * token
      */
     private static WAEngine getWolframEngine() {
-        WAEngine engine = new WAEngine();
-        
         String appId = config.getString("apis.wolframalpha", "");
         
-        if (appId == null || "".equals(appId)) {
+        if (appId == null || appId.isEmpty()) {
             IllegalStateException e
                     = new IllegalStateException("Wolfram Alpha App ID not specified."
                                                 + " Please generate one at "
                                                 + "https://developer.wolframalpha.com/portal/myapps/");
-            logger.error(e.getMessage(), e);
+            //The logger can be null during tests
+            if(logger != null)
+                logger.error(e.getMessage(), e);
             return null;
         }
+        WAEngine engine = new WAEngine();
         
         engine.setAppID(appId);
         
