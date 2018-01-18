@@ -88,7 +88,7 @@ public class CleanupCommand extends Command {
                 event.getChannel().deleteMessages(msgLst).queue();
                 sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
                 logger.debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
-            });
+            }, error -> sendMsg(event, "ERROR: " error.getMessage()));
         } catch (Exception e) {
             sendMsg(event, "ERROR: " + e.getMessage());
         }
