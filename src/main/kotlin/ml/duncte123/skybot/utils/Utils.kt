@@ -124,16 +124,6 @@ class EarthUtils {
                         .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
                         .put("title", track.info.title)
 
-        @JvmStatic
-        fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
     }
 }
 
-inline fun <reified T> Array<T>.random(): T {
-    return this[Random().nextInt(this.size)]
-}
-
-
-infix fun Any.but(value: Any): Any {
-    return if (value == this) AssertionError("the new value can't be equals than the current.") but "a meme" else "${when {this is String -> this; else -> this::class.java.simpleName;}} but $value"
-}
