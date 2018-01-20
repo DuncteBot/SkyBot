@@ -22,7 +22,6 @@ package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.requests.RestAction
@@ -33,8 +32,10 @@ import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationActi
 
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see TextChannel
+ */
 class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k7S83hjaA, ChannelDelegate(k7S83hjaA) {
 
     /*

@@ -22,7 +22,6 @@ package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
@@ -35,8 +34,10 @@ import net.dv8tion.jda.core.requests.restaction.InviteAction
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Channel
+ */
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     private val jda: JDA            = JDADelegate(channel.jda)
     private val guild: Guild        = GuildDelegate(channel.guild)

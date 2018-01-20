@@ -35,8 +35,10 @@ import net.dv8tion.jda.core.managers.GuildManagerUpdatable
 import net.dv8tion.jda.core.requests.RestAction
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Guild
+ */
 class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     private val jda: JDA = JDADelegate(z88Am1Alk.jda)
     private val manager: GuildManager? = null

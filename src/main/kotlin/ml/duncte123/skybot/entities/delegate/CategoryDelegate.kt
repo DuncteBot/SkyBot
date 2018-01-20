@@ -30,6 +30,9 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 @Suppress("DELEGATED_MEMBER_HIDES_SUPERTYPE_OVERRIDE")
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Category
+ */
 class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDelegate(a6sG3x_Hw) {
     private val guild: Guild = GuildDelegate(a6sG3x_Hw.guild)
 
@@ -39,7 +42,7 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     override fun getParent(): Category?                 = null
 
     /**
-     * @returns a never null [JDA] ([GuildDelegate])
+     * @returns a never null [JDA] ([JDADelegate])
      */
     override fun getJDA(): JDA                          = JDADelegate(this.jda)
 
