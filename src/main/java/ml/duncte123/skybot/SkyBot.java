@@ -19,10 +19,7 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.TextColor;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import org.apache.commons.lang3.time.DateUtils;
@@ -78,7 +75,7 @@ public class SkyBot {
         GuildSettingsUtils.loadAllSettings();
 
         //Load the tags
-        AirUtils.loadAllTags();
+        TagUtils.loadAllTags();
 
         //Set the token to a string
         String token = AirUtils.config.getString("discord.token", "Your Bot Token");
