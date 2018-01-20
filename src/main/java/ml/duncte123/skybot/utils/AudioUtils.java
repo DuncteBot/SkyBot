@@ -46,8 +46,9 @@ public class AudioUtils {
 
     /**
      * This is the default volume that the player will play at
+     * I've set it to 100 to save some resources
      */
-    private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
+    private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
 
     /**
      * This is the title that you see in the embeds from the player
@@ -66,7 +67,7 @@ public class AudioUtils {
     /**
      * This will set everything up and get the player ready
      */
-    public AudioUtils() {
+    AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
         this.playerManager = new DefaultAudioPlayerManager();
