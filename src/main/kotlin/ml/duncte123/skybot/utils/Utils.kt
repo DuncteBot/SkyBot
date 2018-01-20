@@ -29,7 +29,6 @@ import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
 import ml.duncte123.skybot.Anything
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
@@ -46,7 +45,6 @@ import java.time.OffsetDateTime
 import java.util.*
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded("Array<T>.random()", "List<T>.random()", "Set<T>.random()", "Map<K, V>.random()")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class EarthUtils {
     companion object {
@@ -334,7 +332,7 @@ inline fun <reified K, reified V> Map<K, V>.random(): V {
  *
  * @returns an random object of the [Map]
  */
-@SinceSkybot("3.57.7")
+@SinceSkybot("3.57.8")
 inline infix fun <reified K, reified V> Map<K, V>.random(action: (V) -> Unit): V {
     val v = this.random()
     action.invoke(v)
