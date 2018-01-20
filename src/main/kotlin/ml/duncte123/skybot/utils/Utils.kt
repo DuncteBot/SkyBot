@@ -17,6 +17,7 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+//@file:Suppress("UNCHECKED_CAST")
 
 package ml.duncte123.skybot.utils
 
@@ -24,7 +25,9 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.runBlocking
+import ml.duncte123.skybot.Anything
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
@@ -246,24 +249,96 @@ class EarthUtils {
     }
 }
 
+/**
+ * This function gets an random object of the [Array] based on the [Array.size] using [Random.nextInt]
+ *
+ * @returns an random object of the [Array] matching the type [T]
+ */
 @SinceSkybot("3.57.7")
 inline fun <reified T> Array<out T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
+/**
+ * This function gets an random object of the [Array] based on the [Array.size] using [Random.nextInt]
+ * and executes the lambda accepting the random object.
+ *
+ * @returns an random object of the [Array] matching the type [T]
+ */
+@SinceSkybot("3.57.8")
+inline infix fun <reified T> Array<out T>.random(action : (T) -> Unit): T {
+    val t = this.random()
+    action.invoke(t)
+    return t
+}
+
+/**
+ * This function gets an random object of the [List] based on the [List.size] using [Random.nextInt]
+ *
+ * @returns an random object of the [List] matching the type [T]
+ */
 @SinceSkybot("3.57.7")
 inline fun <reified T> List<T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
+/**
+ * This function gets an random object of the [List] based on the [List.size] using [Random.nextInt]
+ * and executes the lambda accepting the random object.
+ *
+ * @returns an random object of the [List] matching the type [T]
+ */
+@SinceSkybot("3.57.8")
+inline infix fun <reified T> List<T>.random(action : (T) -> Unit): T {
+    val t = this.random()
+    action.invoke(t)
+    return t
+}
+
+/**
+ * This function gets an random object of the [Set] based on the [Set.elementAt] using [Set.size] and [Random.nextInt]
+ *
+ * @returns an random object of the [Set] matching the type [T]
+ */
 @SinceSkybot("3.57.7")
 inline fun <reified T> Set<T>.random(): T {
     return this.elementAt(Random().nextInt(this.size))
 }
 
+/**
+ * This function gets an random object of the [Set] based on the [Set.elementAt] using [Set.size] and [Random.nextInt]
+ * and executes the lambda accepting the random object.
+ *
+ * @returns an random object of the [Set] matching the type [T]
+ */
+@SinceSkybot("3.57.8")
+inline infix fun <reified T> Set<T>.random(action : (T) -> Unit): T {
+    val t = this.random()
+    action.invoke(t)
+    return t
+}
+
+/**
+ * This function gets an random object of the [Map] based on [Map.keys] and [Set.random]
+ *
+ * @returns an random object of the [Map]
+ */
 @SinceSkybot("3.57.7")
 inline fun <reified K, reified V> Map<K, V>.random(): V {
     return this[this.keys.random()]!!
+}
+
+/**
+ * This function gets an random object of the [Map] based on [Map.keys] and [Set.random]
+ * and executes the lambda accepting the random object.
+ *
+ * @returns an random object of the [Map]
+ */
+@SinceSkybot("3.57.7")
+inline infix fun <reified K, reified V> Map<K, V>.random(action: (V) -> Unit): V {
+    val v = this.random()
+    action.invoke(v)
+    return v
 }
 
 @Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
@@ -273,7 +348,10 @@ infix fun Any.but(value: Any): Any {
         value is Boolean -> !value
         value is String -> AirUtils.generateRandomString(value.length)
         value::class.java == Any::class.java -> {
-            async { println("Well this is a special case. We return a Deferred :^)") }
+            async {
+                delay(3200)
+                print("memes")
+            }
         }
         else -> this
     }
@@ -281,8 +359,8 @@ infix fun Any.but(value: Any): Any {
 
 @Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
 fun main(args: Array<String>) = runBlocking {
-    val res = Any() but Any()
+    val res = Anything() but Any()
     if (res is Deferred<*>) {
-        res.await()
+        res.join()
     }
 }
