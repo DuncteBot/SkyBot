@@ -74,7 +74,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
-                String newPrefix = StringUtils.join(args);
+                String newPrefix = StringUtils.join(args, " ");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
