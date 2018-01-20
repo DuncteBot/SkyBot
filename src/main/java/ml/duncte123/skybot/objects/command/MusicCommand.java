@@ -21,7 +21,6 @@ package ml.duncte123.skybot.objects.command;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.DocumentationNeeded;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -111,15 +110,19 @@ public abstract class MusicCommand extends Command {
         return true;
     }
 
+    /**
+     * @param guildId the {@link Guild} id that should receive the cooldown.
+     */
     @SinceSkybot(version = "3.54.2")
-    @DocumentationNeeded
     @Author(nickname = "Sanduhr32", author = "Maurice R S")
     public static void addCooldown(long guildId) {
         cooldowns.put(guildId, 12600);
     }
 
+    /**
+     * This method shuts down the service that cares for the dynamic cooldown decreasing.
+     */
     @SinceSkybot(version = "3.54.2")
-    @DocumentationNeeded
     @Author(nickname = "Sanduhr32", author = "Maurice R S")
     public static void shutdown() {
         service.shutdown();

@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.DocumentationNeeded;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -60,7 +59,13 @@ public class GuildUtils {
         }
     }
 
-    @DocumentationNeeded
+
+    /**
+     * This method updates the guild count and checks it on startup and every time we join or leave a guild.
+     * @throws UnsupportedOperationException if the request failed.
+     * @param jda the jda
+     * @param newGuildCount the new guild count
+     */
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
         if (returnValue.getString("status").equalsIgnoreCase("failure")) {

@@ -22,7 +22,6 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.entities.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -33,7 +32,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
-@DocumentationNeeded
 public class RadioCommand : MusicCommand() {
 
     init {
@@ -137,7 +135,7 @@ public class RadioCommand : MusicCommand() {
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
         val string = streams.filter { if(!full) it.public else true }
-                .joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
+                .joinToString(separator = "\n") { it.toEmbedString() }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
