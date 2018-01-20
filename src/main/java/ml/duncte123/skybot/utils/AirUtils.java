@@ -27,22 +27,16 @@ import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketTimeoutException;
 import java.sql.*;
 import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("ReturnInsideFinallyBlock")
@@ -268,26 +262,6 @@ public class AirUtils {
     }
 
     /**
-     * This will convert the VerificationLevel from the guild to how it is displayed in the settings
-     *
-     * @param lvl The level to convert
-     * @return The converted verification level
-     */
-    // Null safety
-    public static String verificationLvlToName(Guild.VerificationLevel lvl) {
-        if (Guild.VerificationLevel.LOW.equals(lvl)) {
-            return "Low";
-        } else if (Guild.VerificationLevel.MEDIUM.equals(lvl)) {
-            return "Medium";
-        } else if (Guild.VerificationLevel.HIGH.equals(lvl)) {
-            return "(╯°□°）╯︵ ┻━┻";
-        } else if (Guild.VerificationLevel.VERY_HIGH.equals(lvl)) {
-            return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-        }
-        return "None";
-    }
-
-    /**
      * This converts the game that a user is playing into a nice and readable format
      *
      * @param g the {@link net.dv8tion.jda.core.entities.Game Game} that the {@link net.dv8tion.jda.core.entities.Member Member} has
@@ -311,61 +285,6 @@ public class AirUtils {
         
         String gameName = g.getName();
         return gameType + " " + gameName;
-    }
-
-    /**
-     * This will calculate the bot to user ratio
-     *
-     * @param g the {@link Guild} that we want to check
-     * @return the percentage of users and the percentage of bots in a nice compact array
-     */
-    public static double[] getBotRatio(Guild g) {
-        
-        MemberCacheView memberCache = g.getMemberCache();
-        double totalCount = memberCache.size();
-        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
-        double userCount = totalCount - botCount;
-        
-        //percent in users
-        double userCountP = (userCount / totalCount) * 100;
-        
-        //percent in bots
-        double botCountP = (botCount / totalCount) * 100;
-
-        logger.debug("In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
-        
-        return new double[]{Math.round(userCountP), Math.round(botCountP)};
-    }
-
-    /**
-     * This counts the users in a guild that have an animated avatar
-     * @param g the guild to count it in
-     * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
-     */
-    public static AtomicLong countAnimatedAvatars(Guild g) {
-
-        return new AtomicLong(g.getMemberCache().stream()
-                .map(Member::getUser)
-                .filter(it -> it.getAvatarId() != null )
-	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
-        );
-    }
-
-    /**
-     * This will get the first channel of a guild that we can write in/should be able to write in
-     *
-     * @param guild The guild that we want to get the main channel from
-     * @return the Text channel that we can send our messages in.
-     */
-    public static TextChannel getPublicChannel(Guild guild) {
-        
-        TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
-        
-        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            return guild.getTextChannelCache().stream().filter(channel -> guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)).findFirst().orElse(null);
-        }
-        
-        return pubChann;
     }
 
     /**
@@ -546,60 +465,6 @@ public class AirUtils {
     }
 
     /**
-     * This sends a post request to the bot lists with the new guild count
-     *
-     * @param jda           the jda instance for the token
-     * @param newGuildCount the new guild count
-     * @return the response from the server
-     */
-    public static String updateGuildCount(JDA jda, long newGuildCount) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", newGuildCount);
-        postFields.put("auth", jda.getToken());
-        try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().string();
-        } catch (SocketTimeoutException | NullPointerException ignored) {
-            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.toString();
-        }
-    }
-
-    public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
-        JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
-        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
-            String exceptionMessage = "%s";
-            try {
-                switch (returnValue.getInt("code")) {
-                    case 401: {
-                        exceptionMessage = "Unauthorized access! %s";
-                        break;
-                    }
-                    case 400: {
-                        exceptionMessage = "Bad request! %s";
-                        break;
-                    }
-
-                    default: {
-                        exceptionMessage = "Server responded with a unknown status message: %s";
-                        break;
-                    }
-                }
-            } catch (JSONException ex) {
-                String x = returnValue.getString("message");
-                if (x.equals("ignored exception"))
-                    return;
-                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
-            }
-            String x = returnValue.getString("message");
-            if (x.equals("ignored exception"))
-                return;
-            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
-        }
-    }
-
-    /**
      * Stops everything
      */
     public static void stop() {
@@ -624,7 +489,7 @@ public class AirUtils {
      * @return the channel
      */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
-        if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
+        if(channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
         TextChannel tc;
         try{

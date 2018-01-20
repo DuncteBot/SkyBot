@@ -214,7 +214,7 @@ public class BotListener extends ListenerAdapter {
         }
         
         //Update guild count from then the bot was offline (should never die tho)
-        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     /**
@@ -237,7 +237,7 @@ public class BotListener extends ListenerAdapter {
         
         if (settings.isEnableJoinMessage()) {
             String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getWelcomeLeaveChannel())
-                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
+                    ? GuildUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             if (msg.isEmpty() || welcomeLeaveChannel == null)
@@ -257,7 +257,7 @@ public class BotListener extends ListenerAdapter {
         if (settings.isEnableJoinMessage()) {
             String welcomeLeaveChannelId =
                     (settings.getWelcomeLeaveChannel() == null || settings.getWelcomeLeaveChannel().isEmpty())
-                    ? AirUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
+                    ? GuildUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
             if (msg.isEmpty() || welcomeLeaveChannel == null)
@@ -274,9 +274,9 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         //if 70 of a guild is bots, we'll leave it
-        double[] botToUserRatio = AirUtils.getBotRatio(event.getGuild());
+        double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
         if (botToUserRatio[1] > 70) {
-            AirUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+            GuildUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
                     event.getGuild().getOwner().getAsMention(),
                     botToUserRatio[1],
                     "%",
@@ -290,14 +290,14 @@ public class BotListener extends ListenerAdapter {
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
-        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
         GuildSettingsUtils.deleteGuild(event.getGuild());
-        AirUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
     }
     
     /**

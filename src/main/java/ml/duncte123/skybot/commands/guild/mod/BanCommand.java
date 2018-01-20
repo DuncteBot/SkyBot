@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
@@ -78,7 +79,7 @@ public class BanCommand extends Command {
                             (__) -> {
                                 AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                                 sendSuccess(event.getMessage());
-                                AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
+                                GuildUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
                             }
                     );
                     return;
