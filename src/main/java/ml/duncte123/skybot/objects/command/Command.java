@@ -290,11 +290,13 @@ public abstract class Command {
      * @param embed The embed to send
      */
     protected final void sendEmbed(TextChannel channel, MessageEmbed embed) {
-        if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
-            sendMsg(channel, EmbedUtils.embedToMessage(embed));
-            return;
+        if(channel != null) {
+            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
+                sendMsg(channel, EmbedUtils.embedToMessage(embed));
+                return;
+            }
+            sendMsg(channel, embed);
         }
-        sendMsg(channel, embed);
     }
 
     /**

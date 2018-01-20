@@ -260,11 +260,11 @@ public class AirUtils {
     /**
      * This will check if the number that we are trying to parse is an int
      *
-     * @param isint the int to check
+     * @param integer the int to check
      * @return true if it is an int
      */
-    public static boolean isInt(String isint) {
-        return isint.matches("^\\d+$");
+    public static boolean isInt(String integer) {
+        return integer.matches("^\\d+$");
     }
 
     /**
