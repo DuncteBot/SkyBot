@@ -43,7 +43,7 @@ public class UnbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
             return;
         }
 

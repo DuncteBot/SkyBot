@@ -80,7 +80,8 @@ public class GenerateCommandList {
                 if (cmd.getAliases().length > 0) {
                     writer.append("<br />")
                             .append("Aliases: ")
-                            .append(StringUtils.join(cmd.getAliases(), ", "));
+                            .append(Settings.otherPrefix)
+                            .append(StringUtils.join(cmd.getAliases(), ", " + Settings.otherPrefix));
                 }
                 writer.append("\",");
                 writer.newLine();

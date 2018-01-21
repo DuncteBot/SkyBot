@@ -81,7 +81,7 @@ public abstract class Command {
     /**
      * This holds the prefix for us
      */
-    protected static final String PREFIX = Settings.prefix;
+    protected static final String PREFIX = Settings.otherPrefix;
     /**
      * This holds the category
      */

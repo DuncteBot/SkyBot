@@ -37,7 +37,7 @@ class ShortenCommand : Command() {
     }
 
     override fun help(): String = """Shortens a url
-            |Usage: `${Settings.prefix}$name <link to shorten>`""".trimMargin()
+            |Usage: `$PREFIX$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"
 

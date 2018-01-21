@@ -50,7 +50,7 @@ public class KickCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [Reason]");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 

@@ -48,7 +48,7 @@ public class AnnounceCommand extends Command {
         }
         
         if (event.getMessage().getMentionedChannels().size() < 1) {
-            sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
+            sendMsg(event, "Correct usage is `" + PREFIX + getName() + " [#Channel] [Message]`");
             return;
         }
 

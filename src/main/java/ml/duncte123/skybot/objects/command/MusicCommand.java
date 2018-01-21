@@ -99,7 +99,7 @@ public abstract class MusicCommand extends Command {
         AudioManager audioManager = getAudioManager(event.getGuild());
 
         if (!audioManager.isConnected()) {
-            sendMsg(event, "I'm not in a voice channel, use `" + Settings.prefix + "join` to make me join a channel");
+            sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }
 

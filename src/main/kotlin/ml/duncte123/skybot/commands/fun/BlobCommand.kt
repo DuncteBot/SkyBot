@@ -53,7 +53,7 @@ class BlobCommand : Command() {
     }
     
     override fun help() = "Gives you a blob.\n" +
-            "Usage: `${Settings.prefix}$name [blob name]`"
+            "Usage: `$PREFIX$name [blob name]`"
     
     override fun getName() = "blob"
 }

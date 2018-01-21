@@ -142,7 +142,7 @@ public class BotListener extends ListenerAdapter {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                             event.getAuthor().getId(),
-                            Settings.prefix)
+                            Settings.otherPrefix)
             ).queue();
             return;
         }else if (!rw.startsWith(Settings.prefix) &&
