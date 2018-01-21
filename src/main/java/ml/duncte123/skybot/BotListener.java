@@ -199,7 +199,7 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
+            unbanService.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         

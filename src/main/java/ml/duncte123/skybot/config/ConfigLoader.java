@@ -61,8 +61,7 @@ public class ConfigLoader {
 
         @Override
         public void save() throws Exception {
-            final String rawJson = this.config.toString();
-            final String json = new Ason(rawJson).toString(4);
+            final String json = this.config.toString();
             try {
                 final BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
