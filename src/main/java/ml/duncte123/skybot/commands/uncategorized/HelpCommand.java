@@ -50,7 +50,7 @@ public class HelpCommand extends Command {
                 }
             }
             
-            sendMsg(event, "That command could not be found, try " + Settings.prefix + "help for a list of commands");
+            sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
             return;
         }
         
@@ -68,7 +68,7 @@ public class HelpCommand extends Command {
     
     @Override
     public String help() {
-        return "Shows a list of all the commands.\nUsage: `" + Settings.prefix + "help [command]`";
+        return "Shows a list of all the commands.\nUsage: `" + PREFIX + "help [command]`";
     }
     
     @Override

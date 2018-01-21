@@ -51,6 +51,28 @@ public class WebUtils {
     }
 
     /**
+     * Reads json data from a web page and returns it
+     *
+     * @param url The url to read
+     * @return The text contents
+     * @throws IOException When something broke
+     */
+    public static JSONObject getJSONObject(String url) throws IOException {
+        return new JSONObject(getText(url));
+    }
+
+    /**
+     * Reads json data from a web page and returns it
+     *
+     * @param url The url to read
+     * @return The text contents
+     * @throws IOException When something broke
+     */
+    public static JSONArray getJSONArray(String url) throws IOException {
+        return new JSONArray(getText(url));
+    }
+
+    /**
      * Reads the contents of a url into an InputStream
      * @param url the url to read
      * @return the InputStream of the url

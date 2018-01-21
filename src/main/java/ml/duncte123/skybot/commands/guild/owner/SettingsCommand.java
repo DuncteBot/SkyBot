@@ -74,12 +74,13 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
-                String newPrefix = StringUtils.join(args);
+                String newPrefix = StringUtils.join(args, " ");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
             case "setjoinmessage":
+            case "setwelcomenmessage":
                 if (args.length < 1) {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
@@ -215,7 +216,8 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
                 "`"+PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
                 "`"+PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
-                "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n"
+                "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
+                "`"+PREFIX+"autorole <role>` => Gives members a role when they join"
                 ;
     }
 
@@ -231,6 +233,7 @@ public class SettingsCommand extends Command {
                 "togglejoinmessage",
                 "disablejoinmessage",
                 "setjoinmessage",
+                "setwelcomenmessage",
                 "enableswearfilter",
                 "disableswearfilter",
                 "toggleswearfilter",

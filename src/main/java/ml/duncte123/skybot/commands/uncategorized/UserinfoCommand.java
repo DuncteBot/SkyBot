@@ -119,7 +119,7 @@ public class UserinfoCommand extends Command {
     
     @Override
     public String help() {
-        return "Get information from yourself or from another user.\nUsage: `" + Settings.prefix + getName() + " [username]`";
+        return "Get information from yourself or from another user.\nUsage: `" + PREFIX + getName() + " [username]`";
     }
     
     @Override

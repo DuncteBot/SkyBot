@@ -27,10 +27,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Message;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -145,7 +142,7 @@ public class BotListener extends ListenerAdapter {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                             event.getAuthor().getId(),
-                            Settings.prefix)
+                            Settings.otherPrefix)
             ).queue();
             return;
         }else if (!rw.startsWith(Settings.prefix) &&
@@ -202,7 +199,7 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning && AirUtils.nonsqlite) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            unbanService.scheduleAtFixedRate(() -> AirUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
+            unbanService.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         
@@ -246,7 +243,9 @@ public class BotListener extends ListenerAdapter {
         }
 
         if(settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole()) && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            event.getGuild().getController().addRolesToMember(event.getMember(), event.getGuild().getRoleById(settings.getAutoroleRole())).queue();
+            Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
+            if(r != null && !event.getGuild().getPublicRole().equals(r))
+                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue();
         }
     }
 

@@ -44,7 +44,7 @@ public class HackbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <userId>");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <userId>");
             return;
         }
 
@@ -64,7 +64,7 @@ public class HackbanCommand extends Command {
 
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Settings.prefix + getName() + " <userId>";
+        return "Ban a user before he/she can join your guild.\nUsage: " + PREFIX + getName() + " <userId>";
     }
 
     @Override

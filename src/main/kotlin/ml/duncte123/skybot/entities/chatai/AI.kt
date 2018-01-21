@@ -37,7 +37,7 @@ class AI(val user: String, val api: String) {
 
     private val base = "https://cleverbot.io/1.0/"
     var nickname: String? = null
-    private val log = LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME) as ch.qos.logback.classic.Logger
+    private val logger = LoggerFactory.getLogger(AI::class.java)
 
     /**
      * This sets the name of the bot
@@ -72,12 +72,12 @@ class AI(val user: String, val api: String) {
         }
         catch (e: IOException) {
             //If the logger is set to debug, print the stacktrace
-            if(log.level == Level.DEBUG)
+            if(logger.isDebugEnabled)
                 e.printStackTrace()
         }
         catch (e: NullPointerException) {
             //If the logger is set to debug, print the stacktrace
-            if(log.level == Level.DEBUG)
+            if(logger.isDebugEnabled)
                 e.printStackTrace()
 
             callback.accept(JSONObject()
@@ -105,12 +105,12 @@ class AI(val user: String, val api: String) {
         }
         catch (e: IOException) {
             //If the logger is set to debug, print the stacktrace
-            if(log.level == Level.DEBUG)
+            if(logger.isDebugEnabled)
                 e.printStackTrace()
         }
         catch (e: NullPointerException) {
             //If the logger is set to debug, print the stacktrace
-            if(log.level == Level.DEBUG)
+            if(logger.isDebugEnabled)
                 e.printStackTrace()
 
             callback.accept(JSONObject()

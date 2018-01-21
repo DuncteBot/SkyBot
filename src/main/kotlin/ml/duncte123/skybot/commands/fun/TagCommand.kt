@@ -43,8 +43,6 @@ class TagCommand : Command() {
                         "\t$PREFIX\u200B$invoke delete: removes a tag \n" +
                         "\t$PREFIX\u200B$invoke author: displays who made the tag \n" +
                         "\t$PREFIX\u200B$invoke create: make a new tag \n", getLang()).build()
-        println(helpMessage.contentRaw)
-
         if (args.isEmpty()) {
             sendMsg(event, helpMessage)
         } else if (args.size == 1) {

@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -43,7 +43,7 @@ public class UnbanCommand extends Command {
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
             return;
         }
 
@@ -55,7 +55,7 @@ public class UnbanCommand extends Command {
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
                     event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.").queue();
-                    AirUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
+                    ModerationUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
                     return;
                 }
             }

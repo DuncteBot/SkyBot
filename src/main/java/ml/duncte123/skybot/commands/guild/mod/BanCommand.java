@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
@@ -57,7 +57,7 @@ public class BanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
             return;
         }
 
@@ -77,9 +77,8 @@ public class BanCommand extends Command {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (__) -> {
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                                 sendSuccess(event.getMessage());
-                                GuildUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
                             }
                     );
                     return;
@@ -144,18 +143,18 @@ public class BanCommand extends Command {
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
-                                AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                                ModerationUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
                             } else {
                                 final String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                             }
                         }
                 );
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (v) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                        (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
                 );
             }
         } catch (HierarchyException e) {

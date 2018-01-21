@@ -172,12 +172,12 @@ public class GuildSettingsUtils {
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
-            preparedStatement.setString(3, customJoinMessage);
-            preparedStatement.setString(4, newPrefix);
+            preparedStatement.setString(3, customJoinMessage.replaceAll("\\P{Print}", ""));
+            preparedStatement.setString(4, newPrefix.replaceAll("\\P{Print}", ""));
             preparedStatement.setString(5, autoRole);
             preparedStatement.setString(6, chanId);
             preparedStatement.setString(7, welcomeLeaveChannel);
-            preparedStatement.setString(8, customLeaveMessage);
+            preparedStatement.setString(8, customLeaveMessage.replaceAll("\\P{Print}", ""));
             preparedStatement.executeUpdate();
 
         } catch (SQLException ignored) {
@@ -230,7 +230,7 @@ public class GuildSettingsUtils {
                         "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, Settings.prefix);
-                smt.setString(3, newGuildSettings.getCustomLeaveMessage());
+                smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
                 smt.execute();
             }
         } catch (Exception e) {
