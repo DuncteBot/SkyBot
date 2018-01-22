@@ -38,7 +38,13 @@ class TextToBricksCommand: Command() {
 
         sendEmbed(event,
                 EmbedUtils.embedMessage(
-                        StringUtils.join(args, " ").replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:").replace(Regex("([0-9])"), "\$1\u20E3")
+                        StringUtils.join(args, " ")
+                                .toLowerCase()
+                                .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
+                                .replace(Regex("([0-9])"), "\$1\u20E3")
+                                .replace("!!", ":bangbang:")
+                                .replace("!", ":exclamation:")
+                                .replace("?", ":question:")
                 )
         )
     }
