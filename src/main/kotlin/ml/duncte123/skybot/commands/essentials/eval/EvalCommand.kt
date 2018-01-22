@@ -20,10 +20,7 @@ package ml.duncte123.skybot.commands.essentials.eval
 
 import Java.lang.VRCubeException
 import groovy.lang.GroovyShell
-import kotlinx.coroutines.experimental.CoroutineScope
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.cancel
-import kotlinx.coroutines.experimental.withTimeoutOrNull
+import kotlinx.coroutines.experimental.*
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
@@ -32,6 +29,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.codehaus.groovy.control.CompilationFailedException
@@ -45,6 +43,7 @@ import java.util.function.Consumer
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
+import kotlin.system.measureTimeMillis
 
 class EvalCommand : Command() {
 
@@ -111,7 +110,7 @@ class EvalCommand : Command() {
 
     }
 
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
 
         if (!isRanByBotOwner && !runIfNotOwner)
@@ -151,7 +150,7 @@ class EvalCommand : Command() {
             engine.put("args", args)
 
             @SinceSkybot("3.58.0")
-            async {
+            async(start = CoroutineStart.ATOMIC) {
                 return@async eval(event, isRanByBotOwner, engine, script, timeout)
             }
         } else {
@@ -204,68 +203,71 @@ class EvalCommand : Command() {
 
     @SinceSkybot("3.58.0")
     suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, engine: ScriptEngine, script: String, millis: Long) {
-        lateinit var coroutine: CoroutineScope
-        val out = withTimeoutOrNull(millis) {
-            engine.put("scope", this)
-            coroutine = this
-            try {
-                engine.eval(script)
-            } catch (ex: Throwable) {
-                ex
-            }
-        }
-        when (out) {
-            null -> {
-                coroutine.coroutineContext.cancel()
-                sendSuccess(event.message)
-            }
-            is ArrayIndexOutOfBoundsException -> {
-                sendSuccess(event.message)
-            }
-            is ExecutionException, is ScriptException -> {
-                out as Exception
-                event.channel.sendMessage("ERROR: " + out.cause.toString()).queue()
-                //e.printStackTrace();
-                sendError(event.message)
-            }
-            is TimeoutException, is InterruptedException, is IllegalStateException -> {
-                coroutine.coroutineContext.cancel()
-                event.channel.sendMessage("ERROR: " + out.toString()).queue()
-                if (coroutine.isActive)
-                    coroutine.coroutineContext.cancel()
-                sendError(event.message)
-            }
-            is IllegalArgumentException, is VRCubeException -> {
-                out as RuntimeException
-                sendMsg(event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
-                sendError(event.message)
-            }
-            is Throwable -> {
-                if (Settings.useJSON)
-                    sendErrorJSON(event.message, out, true)
-                else {
-                    sendMsg(event, "ERROR: " + out.toString())
-                    out.printStackTrace()
+        val time = measureTimeMillis {
+            lateinit var coroutine: CoroutineScope
+            val out = withTimeoutOrNull(millis) {
+                engine.put("scope", this)
+                coroutine = this
+                try {
+                    engine.eval(script)
+                } catch (ex: Throwable) {
+                    ex
                 }
             }
-            else -> {
-                if (isRanByBotOwner) {
-                    MessageBuilder()
-                            .append(out.toString())
-                            .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                            .forEach { it -> sendMsg(event, it) }
-                } else {
-                    if (filter.containsMentions(out.toString())) {
-                        sendMsg(event, "**ERROR:** Mentioning people!")
-                        sendError(event.message)
+            when (out) {
+                null -> {
+                    coroutine.coroutineContext.cancel()
+                    sendSuccess(event.message)
+                }
+                is ArrayIndexOutOfBoundsException -> {
+                    sendSuccess(event.message)
+                }
+                is ExecutionException, is ScriptException -> {
+                    out as Exception
+                    event.channel.sendMessage("ERROR: " + out.cause.toString()).queue()
+                    //e.printStackTrace();
+                    sendError(event.message)
+                }
+                is TimeoutException, is InterruptedException, is IllegalStateException -> {
+                    coroutine.coroutineContext.cancel()
+                    event.channel.sendMessage("ERROR: " + out.toString()).queue()
+                    if (coroutine.isActive)
+                        coroutine.coroutineContext.cancel()
+                    sendError(event.message)
+                }
+                is IllegalArgumentException, is VRCubeException -> {
+                    out as RuntimeException
+                    sendMsg(event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
+                    sendError(event.message)
+                }
+                is Throwable -> {
+                    if (Settings.useJSON)
+                        sendErrorJSON(event.message, out, true)
+                    else {
+                        sendMsg(event, "ERROR: " + out.toString())
+                        out.printStackTrace()
+                    }
+                }
+                else -> {
+                    if (isRanByBotOwner) {
+                        MessageBuilder()
+                                .append(out.toString())
+                                .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                                .forEach { it -> sendMsg(event, it) }
                     } else {
-                        sendMsg(event, "**" + event.author.name
-                                + ":** " + out.toString()
-                                .replace("@here".toRegex(), "@h\u0435re")
-                                .replace("@everyone".toRegex(), "@\u0435veryone"))
+                        if (filter.containsMentions(out.toString())) {
+                            sendMsg(event, "**ERROR:** Mentioning people!")
+                            sendError(event.message)
+                        } else {
+                            sendMsg(event, "**" + event.author.name
+                                    + ":** " + out.toString()
+                                    .replace("@here".toRegex(), "@h\u0435re")
+                                    .replace("@everyone".toRegex(), "@\u0435veryone"))
+                        }
                     }
                 }
             }
         }
+        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script${TextColor.RESET}")
     }
 }
