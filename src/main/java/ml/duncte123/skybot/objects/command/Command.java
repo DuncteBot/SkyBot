@@ -229,7 +229,7 @@ public abstract class Command {
                 return;
             }
         }
-        message.addReaction("❌").queue();
+        message.addReaction("❌").queue(null, it -> {});
     }
 
     /**
@@ -250,7 +250,7 @@ public abstract class Command {
             }
         }
 
-        message.addReaction("❌").queue();
+        message.addReaction("❌").queue(null, it -> {});
 
         message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
                 new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
@@ -270,7 +270,7 @@ public abstract class Command {
                 return;
             }
         }
-        message.addReaction("✅").queue();
+        message.addReaction("✅").queue(null, it -> {});
     }
     
     /**
