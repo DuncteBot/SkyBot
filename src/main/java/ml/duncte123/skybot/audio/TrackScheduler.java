@@ -22,7 +22,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import ml.duncte123.skybot.utils.AirUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -99,9 +98,6 @@ public class TrackScheduler extends AudioEventAdapter {
             } else {
                 nextTrack();
             }
-        } else if (queue.isEmpty()) {
-            AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
-                .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
         }
     }
 

@@ -24,6 +24,8 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.ErrorResponseException;
+import net.dv8tion.jda.core.requests.RestAction;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -40,11 +42,19 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
+    private final Consumer<Throwable> CUSTOM_QUEUE_ERROR = it -> {
+        if(it instanceof ErrorResponseException){
+            if(((ErrorResponseException) it).getErrorCode() != 10008)
+                logger.error("RestAction queue returned failure", it);
+        }
+    };
 
     /**
      * A list of users that have upvoted the bot
@@ -133,14 +143,13 @@ public abstract class Command {
                 return;
             }
             
-            Response response = new OkHttpClient()
-                                        .newCall(
+            Response response = WebUtils.executeRequest(
                                             new Request.Builder()
                                                 .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                                                 .get()
                                                 .addHeader("Authorization", token)
-                                                .build())
-                                        .execute();
+                                                .build()
+            );
             JSONArray json = new JSONArray(response.body().string());
             
             upvotedIds.clear();
@@ -230,7 +239,7 @@ public abstract class Command {
                 return;
             }
         }
-        message.addReaction("❌").queue();
+        message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
     }
 
     /**
@@ -251,7 +260,7 @@ public abstract class Command {
             }
         }
 
-        message.addReaction("❌").queue();
+        message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
 
         message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
                 new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
@@ -271,7 +280,7 @@ public abstract class Command {
                 return;
             }
         }
-        message.addReaction("✅").queue();
+        message.addReaction("✅").queue(null, CUSTOM_QUEUE_ERROR);
     }
     
     /**

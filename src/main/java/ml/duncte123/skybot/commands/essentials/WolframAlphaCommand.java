@@ -50,18 +50,18 @@ public class WolframAlphaCommand extends Command {
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
 
-        eb.setTitle("**Input:** " + result.getQuery().getInput(),
-                result.getQuery().toWebsiteURL());
+        eb.setTitle("**Input:** " + a(result.getQuery().getInput()),
+                a(result.getQuery().toWebsiteURL()));
 
         for (WAPod pod : result.getPods()) {
-            String name = pod.getTitle();
+            String name = a(pod.getTitle());
 
             StringBuilder embeds = new StringBuilder();
 
             for (WASubpod sp : pod.getSubpods()) {
                 StringBuilder e = new StringBuilder();
 
-                e.append(sp.getTitle());
+                e.append(a(sp.getTitle()));
 
                 for (Visitable v : sp.getContents()) {
                     final String[] d = new String[0];
@@ -100,15 +100,22 @@ public class WolframAlphaCommand extends Command {
                     e.append(d[0]).append("\n\n");
                 }
                 
-                embeds.append(e.toString().trim()).append("\n\n");
+                embeds.append(a(e.toString().trim())).append("\n\n");
             }
             
-            eb.addField(name, embeds.toString().trim(), false);
+            eb.addField(name, a(embeds.toString().trim()), false);
         }
         
         return eb.build();
     }
 
+    private static String a(String s) {
+        if(s == null) return "null";
+
+        if(s.length() <= 2000 - 6) return s;
+
+        return s.substring(2000 - 6 - 1) + '\u2026';
+    }
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if(!isPatron(event.getAuthor(), event.getChannel())) return;
