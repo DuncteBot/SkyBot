@@ -90,26 +90,15 @@ public class WebUtilsJava {
      * @return The {@link Response} from the webserver
      */
     public static Response getRequest(String url, AcceptType accept) {
-        try {
-            return service.schedule(() -> {
-                try {
-                    return client.newCall(new Request.Builder()
-                            .url(url)
-                            .get()
-                            .addHeader("User-Agent", USER_AGENT)
-                            .addHeader("Accept", accept.getType())
-                            .addHeader("cache-control", "no-cache")
-                            .build()).execute();
-                }
-                catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }, 0L, TimeUnit.MICROSECONDS).get();
-        } catch (InterruptedException | ExecutionException e) {
-            //e.printStackTrace();
-            return null;
-        }
+        return executeRequest(
+                new Request.Builder()
+                        .url(url)
+                        .get()
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Accept", accept.getType())
+                        .addHeader("cache-control", "no-cache")
+                        .build()
+        );
     }
 
     /**
@@ -136,25 +125,16 @@ public class WebUtilsJava {
         for (Map.Entry<String, Object> entry : postFields.entrySet()) {
             postParams.append(entry.getKey()).append("=").append(entry.getValue()).append("&");
         }
-        try {
-            return service.schedule(() -> {
-                try {
-                    return client.newCall(new Request.Builder()
-                            .url(url)
-                            .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
-                            .addHeader("User-Agent", USER_AGENT)
-                            .addHeader("Accept", accept.getType())
-                            .addHeader("cache-control", "no-cache")
-                            .build()).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }, 0L, TimeUnit.MICROSECONDS).get();
-        } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
-            return null;
-        }
+
+        return executeRequest(
+                new Request.Builder()
+                        .url(url)
+                        .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.getType()), Config.replaceLast(postParams.toString(), "\\&", "")))
+                        .addHeader("User-Agent", USER_AGENT)
+                        .addHeader("Accept", accept.getType())
+                        .addHeader("cache-control", "no-cache")
+                        .build()
+        );
     }
 
     /**
@@ -196,23 +176,13 @@ public class WebUtilsJava {
      * @return The {@link Response} from the webserver
      */
     public static Response postJSON(String url, JSONObject data) {
-        try {
-            return service.schedule(() -> {
-                try {
-                    return client.newCall(new Request.Builder()
-                            .url(url)
-                            .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
-                            .addHeader("User-Agent", USER_AGENT)
-                            .build()).execute();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                    return null;
-                }
-            }, 0L, TimeUnit.MICROSECONDS).get();
-        } catch (InterruptedException | ExecutionException e) {
-            //e.printStackTrace();
-            return null;
-        }
+        return executeRequest(
+                new Request.Builder()
+                        .url(url)
+                        .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
+                        .addHeader("User-Agent", USER_AGENT)
+                        .build()
+        );
     }
 
     /**
@@ -260,6 +230,22 @@ public class WebUtilsJava {
                     .put("")
                     .put("")
                     .put(0);
+        }
+    }
+
+    /**
+     * Executes a web request
+     * @param request the {@link Request Request} to execute
+     * @return the {@link Response Response} from the web server
+     */
+    public static Response executeRequest(Request request) {
+        try {
+            return service.schedule(() ->
+                            client.newCall(request).execute()
+                    , 0L, TimeUnit.MICROSECONDS).get();
+        } catch (InterruptedException | ExecutionException e) {
+            //e.printStackTrace();
+            return null;
         }
     }
 
