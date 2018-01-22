@@ -78,7 +78,7 @@ public class SkyBot {
         TagUtils.loadAllTags();
 
         //Set the token to a string
-        String token = AirUtils.config.getString("discord.tokenu", "Your Bot Token");
+        String token = AirUtils.config.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
         int TOTAL_SHARDS = AirUtils.config.getInt("discord.totalShards", 1);
