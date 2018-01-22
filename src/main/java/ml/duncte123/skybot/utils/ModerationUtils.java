@@ -139,13 +139,13 @@ public class ModerationUtils {
         if(u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
-            Object[] out = new Object[0];
+            int[] out = new int[0];
             WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId(), it -> {
                 out[0] = it.getJSONArray("warnings").length();
                 return null;
             });
             //noinspection ConstantConditions
-            return (int) out[0];
+            return out[0];
         }
         catch (IOException e) {
             e.printStackTrace();

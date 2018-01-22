@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,9 +38,8 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            WebUtils.getText("http://random.cat/meow.php", it -> {
-                JSONObject jsonObject = new JSONObject(it);
-                String newJSON = jsonObject.getString("file");
+            WebUtils.getJSONObject("http://random.cat/meow.php", it -> {
+                String newJSON = it.getString("file");
                 try {
                     event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
                 } catch (IOException e) {

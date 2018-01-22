@@ -24,7 +24,6 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.Settings;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 
 public class LlamaCommand extends Command {
 
@@ -35,9 +34,8 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            WebUtils.getText(Settings.apiBase + "/llama/json", it -> {
-                JSONObject jsonObject = new JSONObject(it);
-                event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
+            WebUtils.getJSONObject(Settings.apiBase + "/llama/json", it -> {
+                event.getChannel().sendMessage(EmbedUtils.embedImage(it.getString("file"))).queue();
                 return null;
             });
         } catch (Exception e) {
