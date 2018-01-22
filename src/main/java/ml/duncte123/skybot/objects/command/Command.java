@@ -25,10 +25,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
-import net.dv8tion.jda.core.requests.RestAction;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -63,11 +60,11 @@ public abstract class Command {
         @Override
         public boolean contains(Object o) {
             if(o.getClass() != String.class) return false;
-            
+
             if(super.contains(o)) return true;
-            
+
             reloadUpvoted();
-            
+
             return super.contains(o);
         }
     };
@@ -87,7 +84,7 @@ public abstract class Command {
     static {
         reloadUpvoted();
     }
-    
+
     /**
      * This holds the prefix for us
      */
@@ -129,7 +126,7 @@ public abstract class Command {
             return true;
         }
     }
-    
+
     /**
      * Reloads the list of people who have upvoted this bot
      */
@@ -137,37 +134,42 @@ public abstract class Command {
         if (cooldown && Settings.useCooldown) return;
         try {
             String token = AirUtils.config.getString("apis.discordbots_userToken", "");
-            
+
             if (token == null || token.isEmpty()) {
                 logger.warn("Discord Bots token not found");
                 return;
             }
-            
-            Response response = WebUtils.executeRequest(
-                                            new Request.Builder()
-                                                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                                                .get()
-                                                .addHeader("Authorization", token)
-                                                .build()
-            );
-            JSONArray json = new JSONArray(response.body().string());
-            
-            upvotedIds.clear();
 
-            for (int i = 0; i < json.length(); i++) {
-                upvotedIds.add(json.getString(i));
-            }
+            WebUtils.execDBRequest(new Request.Builder()
+                            .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                            .get()
+                            .addHeader("Authorization", token)
+                            .build(),
+                    it -> {
+                        JSONArray json = null;
+                        try {
+                            json = new JSONArray(it.body().string());
+                        }
+                        catch (IOException e1) {
+                            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+                        }
+
+                        upvotedIds.clear();
+
+                        for (int i = 0; i < json.length(); i++) {
+                            upvotedIds.add(json.getString(i));
+                        }
+                        return null;
+                    });
+
         } catch (JSONException e) {
             //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
             /* ignored */
         }
-        catch (IOException e1) {
-            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-        }
         if (Settings.useCooldown)
             cooldown = true;
     }
-    
+
     /**
      * Has this user upvoted the bot
      */
@@ -183,7 +185,7 @@ public abstract class Command {
     public CommandCategory getCategory() {
         return this.category;
     }
-    
+
     /**
      * This is the action of the command, this will hold what the commands needs to to
      *
@@ -193,21 +195,21 @@ public abstract class Command {
      */
     @SuppressWarnings("NullableProblems")
     public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
-    
+
     /**
      * The usage instructions of the command
      *
      * @return a String
      */
     public abstract String help();
-    
+
     /**
      * This will hold the command name aka what the user puts after the prefix
      *
      * @return The command name
      */
     public abstract String getName();
-    
+
     /**
      * This wil hold any aliases that this command might have
      *
@@ -216,7 +218,7 @@ public abstract class Command {
     public String[] getAliases() {
         return new String[0];
     }
-    
+
     /**
      * This returns the settings for the given guild
      *
@@ -226,7 +228,7 @@ public abstract class Command {
     protected GuildSettings getSettings(Guild guild) {
         return GuildSettingsUtils.getGuild(guild);
     }
-    
+
     /**
      * This will react with a ❌ if the user doesn't have permission to run the command
      *
@@ -267,7 +269,7 @@ public abstract class Command {
                         error.getClass().getSimpleName())).build()).build()
         ).queue();
     }
-    
+
     /**
      * This will react with a ✅ if the user doesn't have permission to run the command
      *
@@ -282,7 +284,7 @@ public abstract class Command {
         }
         message.addReaction("✅").queue(null, CUSTOM_QUEUE_ERROR);
     }
-    
+
     /**
      * This will check if we can send a embed and convert it to a message if we can't send embeds
      *
@@ -357,7 +359,7 @@ public abstract class Command {
     protected final void sendMsgFormat(TextChannel channel, String msg, Object... args) {
         sendMsg(channel, (new MessageBuilder().append(String.format(msg, args)).build()));
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -377,7 +379,7 @@ public abstract class Command {
     protected final void sendMsg(TextChannel channel, String msg) {
         sendMsg(channel, (new MessageBuilder()).append(msg).build());
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -397,7 +399,7 @@ public abstract class Command {
     protected final void sendMsg(TextChannel channel, MessageEmbed msg) {
         sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build());
     }
-    
+
     /**
      * This is a shortcut for sending messages to a channel
      *
@@ -419,12 +421,12 @@ public abstract class Command {
         if(channel != null && channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
             channel.sendMessage(msg).queue();
     }
-    
+
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -433,9 +435,9 @@ public abstract class Command {
         if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
             return false;
         }
-        
+
         Command command = (Command) obj;
-        
+
         return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }
 }

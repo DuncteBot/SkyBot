@@ -229,6 +229,13 @@ object WebUtils {
 
     }
 
+    @JvmStatic
+    fun execDBRequest(request: Request, action: (Response?) -> Unit) {
+        launch {
+            action.invoke(executeRequest(request))
+        }
+    }
+
     /**
      * This holds some variables that we will accept
      */
