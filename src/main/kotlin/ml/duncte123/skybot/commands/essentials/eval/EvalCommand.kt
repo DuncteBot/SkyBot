@@ -27,7 +27,6 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
 import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
@@ -111,25 +110,25 @@ class EvalCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        @Suppress("DEPRECATION")
         val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
 
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
-        if (!isRanByBotOwner && !hasUpvoted(event.author)) {
-            sendError(event.message)
-            sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                            "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
+        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) {
             return
         }
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\n", postfix = "\n")
 
-        val script = importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+        val script = try {
+            importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+        } catch (ex: ArrayIndexOutOfBoundsException) {
+            sendSuccess(event.message)
+            return
+        }
 
         var timeout = 5000L
 

@@ -233,6 +233,7 @@ class EarthUtils {
 
         @JvmStatic
         @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
+        @Suppress("DEPRECATION")
         fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
 
         @JvmStatic
