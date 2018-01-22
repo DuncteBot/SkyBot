@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -141,26 +140,28 @@ public abstract class Command {
                 return;
             }
 
-            Response it = WebUtilsJava.executeRequest(
-                    new Request.Builder()
+            WebUtils.execDBRequest(new Request.Builder()
                             .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                             .get()
                             .addHeader("Authorization", token)
-                            .build()
-            );
-            JSONArray json = null;
-            try {
-                json = new JSONArray(it.body().string());
-            }
-            catch (IOException e1) {
-                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-            }
+                            .build(),
+                    it -> {
+                        JSONArray json = null;
+                        try {
+                            json = new JSONArray(it.body().string());
+                        }
+                        catch (IOException e1) {
+                            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+                        }
 
-            upvotedIds.clear();
+                        upvotedIds.clear();
 
-            for (int i = 0; i < json.length(); i++) {
-                upvotedIds.add(json.getString(i));
-            }
+                        for (int i = 0; i < json.length(); i++) {
+                            upvotedIds.add(json.getString(i));
+                        }
+                        return null;
+                    });
+
         } catch (JSONException e) {
             //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
             /* ignored */
