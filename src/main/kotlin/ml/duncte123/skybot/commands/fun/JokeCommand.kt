@@ -57,13 +57,13 @@ class JokeCommand : Command() {
         }
 
         if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
-            jokeIndex.put(event.guild.id, 0)
+            jokeIndex[event.guild.id] = 0
         }
 
         val jokeI = jokeIndex.getOrDefault(event.guild.id, 0)
 
         val jokeData: JSONObject = JSONArray(posts).getJSONObject(jokeI).getJSONObject("data")
-        jokeIndex.put(event.guild.id, jokeI + 1)
+        jokeIndex[event.guild.id] = jokeI + 1
         val title: String = jokeData.getString("title")
         val text: String = jokeData.getString("selftext")
         val url: String = jokeData.getString("url")

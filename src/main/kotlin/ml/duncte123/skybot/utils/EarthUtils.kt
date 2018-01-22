@@ -33,6 +33,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.entities.delegate.*
+import ml.duncte123.skybot.random
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
@@ -42,7 +43,6 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.time.OffsetDateTime
-import java.util.*
 
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -246,98 +246,6 @@ class EarthUtils {
             return x
         }
     }
-}
-
-/**
- * This function gets an random object of the [Array] based on the [Array.size] using [Random.nextInt]
- *
- * @returns an random object of the [Array] matching the type [T]
- */
-@SinceSkybot("3.57.7")
-inline fun <reified T> Array<out T>.random(): T {
-    return this[Random().nextInt(this.size)]
-}
-
-/**
- * This function gets an random object of the [Array] based on the [Array.size] using [Random.nextInt]
- * and executes the lambda accepting the random object.
- *
- * @returns an random object of the [Array] matching the type [T]
- */
-@SinceSkybot("3.57.8")
-inline infix fun <reified T> Array<out T>.random(action : (T) -> Unit): T {
-    val t = this.random()
-    action.invoke(t)
-    return t
-}
-
-/**
- * This function gets an random object of the [List] based on the [List.size] using [Random.nextInt]
- *
- * @returns an random object of the [List] matching the type [T]
- */
-@SinceSkybot("3.57.7")
-inline fun <reified T> List<T>.random(): T {
-    return this[Random().nextInt(this.size)]
-}
-
-/**
- * This function gets an random object of the [List] based on the [List.size] using [Random.nextInt]
- * and executes the lambda accepting the random object.
- *
- * @returns an random object of the [List] matching the type [T]
- */
-@SinceSkybot("3.57.8")
-inline infix fun <reified T> List<T>.random(action : (T) -> Unit): T {
-    val t = this.random()
-    action.invoke(t)
-    return t
-}
-
-/**
- * This function gets an random object of the [Set] based on the [Set.elementAt] using [Set.size] and [Random.nextInt]
- *
- * @returns an random object of the [Set] matching the type [T]
- */
-@SinceSkybot("3.57.7")
-inline fun <reified T> Set<T>.random(): T {
-    return this.elementAt(Random().nextInt(this.size))
-}
-
-/**
- * This function gets an random object of the [Set] based on the [Set.elementAt] using [Set.size] and [Random.nextInt]
- * and executes the lambda accepting the random object.
- *
- * @returns an random object of the [Set] matching the type [T]
- */
-@SinceSkybot("3.57.8")
-inline infix fun <reified T> Set<T>.random(action : (T) -> Unit): T {
-    val t = this.random()
-    action.invoke(t)
-    return t
-}
-
-/**
- * This function gets an random object of the [Map] based on [Map.keys] and [Set.random]
- *
- * @returns an random object of the [Map]
- */
-@SinceSkybot("3.57.7")
-inline fun <reified K, reified V> Map<K, V>.random(): V {
-    return this[this.keys.random()]!!
-}
-
-/**
- * This function gets an random object of the [Map] based on [Map.keys] and [Set.random]
- * and executes the lambda accepting the random object.
- *
- * @returns an random object of the [Map]
- */
-@SinceSkybot("3.57.8")
-inline infix fun <reified K, reified V> Map<K, V>.random(action: (V) -> Unit): V {
-    val v = this.random()
-    action.invoke(v)
-    return v
 }
 
 @Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)

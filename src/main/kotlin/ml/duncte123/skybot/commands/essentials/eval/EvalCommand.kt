@@ -27,6 +27,7 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.Settings
 import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
@@ -117,6 +118,12 @@ class EvalCommand : Command() {
             return
 
         if (!isRanByBotOwner && !isPatron(event.author, event.channel)) {
+            sendError(event.message)
+            sendEmbed(event,
+                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
+                            "Please consider to give this bot an upvote over at " +
+                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
+                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
             return
         }
 
