@@ -54,14 +54,16 @@ class ImageCommand : Command() {
             }
             val keyword = StringUtils.join(args, "+")
 
-            val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
-            val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-            val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
-            sendEmbed(event,
-                    EmbedUtils.defaultEmbed()
-                            .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
-                            .setImage(randomItem.getString("link")).build()
-            )
+            WebUtils.getText(String.format(url, keyword)) {
+                val jsonRaw = Ason(it)
+                val jsonArray = jsonRaw.getJsonArray<Ason>("items")
+                val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
+                sendEmbed(event,
+                        EmbedUtils.defaultEmbed()
+                                .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
+                                .setImage(randomItem.getString("link")).build()
+                )
+            }
         }
     }
 

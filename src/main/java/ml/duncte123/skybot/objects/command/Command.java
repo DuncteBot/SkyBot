@@ -191,6 +191,7 @@ public abstract class Command {
      * @param args   The command agruments
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
+    @SuppressWarnings("NullableProblems")
     public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
     
     /**

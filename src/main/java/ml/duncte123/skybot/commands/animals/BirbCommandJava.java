@@ -35,9 +35,10 @@ public class BirbCommandJava extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String imgName = WebUtils.getText("https://proximyst.com:4500/random/path/text");
-            
-            sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + imgName + "/image"));
+            WebUtils.getText("https://proximyst.com:4500/random/path/text", it -> {
+                sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + it + "/image"));
+                return null;
+            });
         } catch (IOException e) {
             sendMsg(event, "ERROR: " + e.getMessage());
         }

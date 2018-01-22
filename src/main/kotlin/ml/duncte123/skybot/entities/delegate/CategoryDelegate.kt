@@ -17,6 +17,7 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Suppress("USELESS_CAST")
 
 package ml.duncte123.skybot.entities.delegate
 

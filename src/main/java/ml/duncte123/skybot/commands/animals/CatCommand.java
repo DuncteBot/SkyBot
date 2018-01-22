@@ -23,8 +23,8 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class CatCommand extends Command {
@@ -38,10 +38,15 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String jsonString = WebUtils.getText("http://random.cat/meow.php");
-            JSONObject jsonObject = new JSONObject(jsonString);
-            String newJSON = jsonObject.getString("file");
-            event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
+            WebUtils.getJSONObject("http://random.cat/meow.php", it -> {
+                String newJSON = it.getString("file");
+                try {
+                    event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
+                } catch (IOException e) {
+                    sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+                }
+                return null;
+            });
         } catch (Exception e) {
             //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));

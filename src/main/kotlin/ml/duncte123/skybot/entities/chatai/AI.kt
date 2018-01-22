@@ -18,12 +18,9 @@
 
 package ml.duncte123.skybot.entities.chatai
 
-import ch.qos.logback.classic.Level
 import ml.duncte123.skybot.utils.WebUtils
-import okhttp3.Response
 import org.json.JSONException
 import org.json.JSONObject
-import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.util.function.Consumer
@@ -63,30 +60,29 @@ class AI(val user: String, val api: String) {
         if(nickname != null)
             postData += Pair("nick", nickname)
 
-        val r: Response = WebUtils.postRequest(this.base + "create", postData, WebUtils.AcceptType.TEXT_JSON)
+        WebUtils.postRequest(this.base + "create", postData, WebUtils.AcceptType.TEXT_JSON) {
+            try {
+                val returnData = JSONObject(it?.body()?.string())
+                nickname = returnData["nick"] as String?
+                callback.accept(returnData)
+            }
+            catch (e: IOException) {
+                //If the logger is set to debug, print the stacktrace
+                if(logger.isDebugEnabled)
+                    e.printStackTrace()
+            }
+            catch (e: NullPointerException) {
+                //If the logger is set to debug, print the stacktrace
+                if(logger.isDebugEnabled)
+                    e.printStackTrace()
 
-        try {
-            val returnData = JSONObject(r.body()?.string())
-            nickname = returnData["nick"] as String?
-            callback.accept(returnData)
+                callback.accept(JSONObject()
+                        .put("status", "failure")
+                        .put("response", e.message)
+                )
+            }
+            catch (ignored: JSONException) {}
         }
-        catch (e: IOException) {
-            //If the logger is set to debug, print the stacktrace
-            if(logger.isDebugEnabled)
-                e.printStackTrace()
-        }
-        catch (e: NullPointerException) {
-            //If the logger is set to debug, print the stacktrace
-            if(logger.isDebugEnabled)
-                e.printStackTrace()
-
-            callback.accept(JSONObject()
-                    .put("status", "failure")
-                    .put("response", e.message)
-            )
-        }
-        catch (ignored: JSONException) {}
-
         return this
     }
 
@@ -98,25 +94,26 @@ class AI(val user: String, val api: String) {
         postData += Pair("text", question)
 
 
-        val r = WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON)
+        WebUtils.postRequest(this.base + "ask", postData, WebUtils.AcceptType.TEXT_JSON) {r ->
 
-        try {
-            callback.accept(JSONObject(r.body()!!.string()))
-        }
-        catch (e: IOException) {
-            //If the logger is set to debug, print the stacktrace
-            if(logger.isDebugEnabled)
-                e.printStackTrace()
-        }
-        catch (e: NullPointerException) {
-            //If the logger is set to debug, print the stacktrace
-            if(logger.isDebugEnabled)
-                e.printStackTrace()
+            try {
+                callback.accept(JSONObject(r!!.body()!!.string()))
+            }
+            catch (e: IOException) {
+                //If the logger is set to debug, print the stacktrace
+                if(logger.isDebugEnabled)
+                    e.printStackTrace()
+            }
+            catch (e: NullPointerException) {
+                //If the logger is set to debug, print the stacktrace
+                if(logger.isDebugEnabled)
+                    e.printStackTrace()
 
-            callback.accept(JSONObject()
-                    .put("status", "failure")
-                    .put("response", e.message)
-            )
+                callback.accept(JSONObject()
+                        .put("status", "failure")
+                        .put("response", e.message)
+                )
+            }
         }
     }
 
