@@ -233,6 +233,11 @@ public class WebUtils {
         }
     }
 
+    /**
+     * Executes a web request
+     * @param request the {@link Request Request} to execute
+     * @return the {@link Response Response} from the web server
+     */
     public static Response executeRequest(Request request) {
         try {
             return service.schedule(() ->
