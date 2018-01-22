@@ -88,9 +88,6 @@ public class AirUtils {
      */
     public static DBManager db = new DBManager();
 
-    public static final ScheduledExecutorService service
-            = Executors.newScheduledThreadPool(5, r -> new Thread(r, "Music-Shutdown-Thread"));
-
     /**
      * This converts the online status of a user to a fancy emote
      *
