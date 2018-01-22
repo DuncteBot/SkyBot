@@ -102,7 +102,7 @@ public class CleanupCommand extends Command {
     @Override
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
-                "Usage: `"+PREFIX+getName()+ "[ammount] [keep-pinned]`";
+                "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned]`";
     }
 
     @Override
