@@ -33,6 +33,9 @@ import net.dv8tion.jda.core.requests.restaction.RoleAction
 
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Role
+ */
 class RoleDelegate(private val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
 
     private val jda: JDA     = JDADelegate(uA83D3Ax_ky.jda)

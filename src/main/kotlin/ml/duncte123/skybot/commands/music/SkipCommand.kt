@@ -39,7 +39,11 @@ class SkipCommand : MusicCommand() {
             return
         }
         val count = if (args.isNotEmpty()) {
-            args[0].toInt().coerceAtLeast(1)
+            if (!args[0].matches("\\d{1,10}".toRegex())) {
+                1
+            } else {
+                args[0].toInt().coerceIn(1, scheduler.queue.size)
+            }
         } else {
             1
         }

@@ -84,7 +84,7 @@ public class CleanupCommand extends Command {
                 msgLst = msgLst.stream()
                         .filter(message -> message.getCreationTime().isAfter(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
 
-                if (msgLst.size() < 2) {
+                if (msgLst.size() < 3) {
                     failed.addAll(msgLst);
                     msgLst.clear();
                 } else {

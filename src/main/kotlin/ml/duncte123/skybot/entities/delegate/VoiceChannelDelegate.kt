@@ -37,6 +37,11 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
  */
 class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel by I99h9uhOs, ChannelDelegate(I99h9uhOs) {
 
+    /**
+     * This documentation is for the following four functions.
+     *
+     * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
+     */
     override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")

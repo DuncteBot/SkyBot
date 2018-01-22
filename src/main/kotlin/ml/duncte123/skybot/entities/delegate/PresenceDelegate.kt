@@ -42,7 +42,7 @@ class PresenceDelegate(private val presence: Presence) : Presence by presence {
     override fun getJDA(): JDA                                                = JDADelegate(presence.jda)
 
     /**
-     * This documentation is for the following four functions.
+     * This documentation is for the following seven functions.
      *
      * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
      */
