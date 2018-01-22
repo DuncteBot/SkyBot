@@ -64,32 +64,40 @@ public class WolframAlphaCommand extends Command {
                 e.append(sp.getTitle());
 
                 for (Visitable v : sp.getContents()) {
-                    String d = "";
+                    final String[] d = {""};
 
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + i.getAlt() + "]("
-                                + WebUtils.shortenUrl(i.getURL()) + ")";
+                        WebUtils.shortenUrl(i.getURL(), it -> {
+                            d[0] += "[" + i.getAlt() + "](" + it + ")";
+                            return null;
+                        });
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
 
-                        d += i.getText();
+                        d[0] += i.getText();
 
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
 
-                        d += "[" + l.getText() + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
+                        WebUtils.shortenUrl(l.getURL(), it -> {
+                            d[0] += "[" + l.getText() + "](" + it + ")";
+                            return null;
+                        });
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
 
-                        d += pt.getText();
+                        d[0] += pt.getText();
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += WebUtils.shortenUrl(sound.getURL());
+                        WebUtils.shortenUrl(sound.getURL(), it -> {
+                            d[0] += it;
+                            return null;
+                        });
                     }
                     
-                    e.append(d).append("\n\n");
+                    e.append(d[0]).append("\n\n");
                 }
                 
                 embeds.append(e.toString().trim()).append("\n\n");

@@ -27,9 +27,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import okhttp3.Response;
-import org.json.JSONArray;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -124,7 +121,10 @@ public class ModerationUtils {
         postFields.put("guildId", guildId);
 
         try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields).close();
+            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields, WebUtils.AcceptType.URLENCODED, it -> {
+                it.close();
+                return null;
+            });
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -139,8 +139,13 @@ public class ModerationUtils {
         if(u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
-            return WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId())
-                    .getJSONArray("warnings").length();
+            Object[] out = new Object[0];
+            WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId(), it -> {
+                out[0] = it.getJSONArray("warnings").length();
+                return null;
+            });
+            //noinspection ConstantConditions
+            return (int) out[0];
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -163,7 +168,10 @@ public class ModerationUtils {
         postFields.put("token", jda.getToken());
 
         try {
-            WebUtils.postRequest(Settings.apiBase + "/addWarning/json", postFields).close();
+            WebUtils.postRequest(Settings.apiBase + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED, it -> {
+                it.close();
+                return null;
+            });
         }
         catch (NullPointerException e) {
             e.printStackTrace();

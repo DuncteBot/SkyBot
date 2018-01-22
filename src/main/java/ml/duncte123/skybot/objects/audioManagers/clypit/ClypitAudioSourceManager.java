@@ -33,7 +33,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import ml.duncte123.skybot.utils.WebUtils;
 import org.apache.http.HttpStatus;
-import org.json.JSONObject;
 
 import java.io.IOException;
 import java.net.URI;
@@ -58,15 +57,17 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
         if(m.matches()) {
+            final Object[] out = new Object[1];
             try {
                 String clypitId = m.group(m.groupCount());
-                JSONObject audioUrl = new JSONObject(WebUtils.getText("https://api.clyp.it/" + clypitId));
-                AudioReference httpReference = getAsHttpReference(new AudioReference(audioUrl.getString("Mp3Url"), audioUrl.getString("Title")));
-                if (httpReference == null) {
+                WebUtils.getJSONObject("https://api.clyp.it/" + clypitId, it -> {
+                    AudioReference httpReference = getAsHttpReference(new AudioReference(it.getString("Mp3Url"), it.getString("Title")));
+                    if (httpReference == null) {
+                        out[0] = null;
+                    }
+                    out[0] = handleLoadResult(detectContainer(httpReference)) ;
                     return null;
-                }
-
-                return handleLoadResult(detectContainer(httpReference));
+                });
             }
             catch (IOException e) {
                 return null;

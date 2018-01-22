@@ -42,6 +42,7 @@ object WebUtils {
      * @throws IOException When something broke
      */
     @Throws(IOException::class)
+    @JvmStatic
     fun getText(url: String, action: (String) -> Unit) {
         getRequest(url) {
             action.invoke(it!!.body()!!.string())
@@ -56,6 +57,7 @@ object WebUtils {
      * @throws IOException When something broke
      */
     @Throws(IOException::class)
+    @JvmStatic
     fun getJSONObject(url: String, action: (JSONObject) -> Unit) {
         getText(url) {
             action.invoke(JSONObject(it))
@@ -70,6 +72,7 @@ object WebUtils {
      * @throws IOException When something broke
      */
     @Throws(IOException::class)
+    @JvmStatic
     fun getJSONArray(url: String, action: (JSONArray) -> Unit) {
         getText(url) {
             action.invoke(JSONArray(it))
@@ -83,6 +86,7 @@ object WebUtils {
      * @throws IOException when things break
      */
     @Throws(IOException::class)
+    @JvmStatic
     fun getInputStream(url: String, action: (InputStream) -> Unit) {
         getRequest(url) {
             action.invoke(it?.body()?.byteStream()!!)
@@ -96,7 +100,7 @@ object WebUtils {
      * @param accept What we will accept, [AcceptType]
      * @return The [Response] from the webserver
      */
-    @JvmOverloads
+    @JvmStatic
     fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML, action: (Response?) -> Unit) {
         launch {
             action.invoke(executeRequest(
@@ -118,7 +122,7 @@ object WebUtils {
      * @param accept     What we will accept, [AcceptType]
      * @return The [Response] from the webserver
      */
-    @JvmOverloads
+    @JvmStatic
     fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED, action: (Response?) -> Unit) {
         val postParams = StringBuilder()
 
@@ -144,7 +148,7 @@ object WebUtils {
      * @param accept What we will accept, [AcceptType]
      * @return The [Response] from the webserver
      */
-    @JvmOverloads
+    @JvmStatic
     fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON, action: (Response?) -> Unit) {
         return postRequest(url, HashMap(), accept, action)
     }
@@ -155,6 +159,7 @@ object WebUtils {
      * @param data the JSON data to post
      * @return The [Response] from the webserver
      */
+    @JvmStatic
     fun postJSON(url: String, data: JSONObject, action: (Response?) -> Unit) {
         launch {
             action.invoke(executeRequest(
@@ -172,6 +177,7 @@ object WebUtils {
      * @param url The URL to shorten
      * @return The shortened URL. `null` if any error occurred
      */
+    @JvmStatic
     fun shortenUrl(url: String, action: (String?) -> Unit) {
         try {
             val jo = JSONObject()
@@ -196,6 +202,7 @@ object WebUtils {
      * @return the output of the api
      * THe examples above will output the following `["This is a test","Dit is een test",null,null,1]`
      */
+    @JvmStatic
     fun translate(sourceLang: String, targetLang: String, input: String): JSONArray {
         var json: JSONArray? = null
         getJSONArray("https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input") {
@@ -209,6 +216,7 @@ object WebUtils {
      * @param request the {@link Request Request} to execute
      * @returns the [Response] from the web server
      */
+    @JvmStatic
     suspend fun executeRequest(request: Request): Response? {
         return try {
             async { client.newCall(request).execute() }.await()

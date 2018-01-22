@@ -34,14 +34,16 @@ public class DogCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         String base = "https://random.dog/";
         try {
-            String jsonString = WebUtils.getText(base + "woof");
-            String finalS = base + jsonString;
+            WebUtils.getText(base + "woof", it -> {
+                String finalS = base + it;
 
-            if (finalS.contains(".mp4")) {
-                sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
-            } else {
-                sendEmbed(event, EmbedUtils.embedImage(finalS));
-            }
+                if (finalS.contains(".mp4")) {
+                    sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
+                } else {
+                    sendEmbed(event, EmbedUtils.embedImage(finalS));
+                }
+                return null;
+            });
         } catch (Exception e) {
             //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
