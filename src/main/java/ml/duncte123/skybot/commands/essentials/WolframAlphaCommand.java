@@ -64,7 +64,7 @@ public class WolframAlphaCommand extends Command {
                 e.append(sp.getTitle());
 
                 for (Visitable v : sp.getContents()) {
-                    final String[] d = {""};
+                    final String[] d = new String[0];
 
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
