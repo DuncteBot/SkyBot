@@ -40,8 +40,7 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400") { rawJSON ->
-            val jsonObject = JSONObject(rawJSON)
+        WebUtils.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400") { jsonObject ->
 
             val posts = jsonObject.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
                 (if(event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
@@ -53,7 +52,7 @@ class JokeCommand : Command() {
                 sendError(event.message)
                 sendMsg(event, """Whoops I could not find any jokes.
                 |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
-                return@getText
+                return@getJSONObject
             }
 
             if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
