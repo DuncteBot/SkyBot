@@ -22,7 +22,6 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.Settings
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
@@ -33,7 +32,9 @@ class ShortenCommand : Command() {
             sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
             return
         }
-        sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
+        WebUtils.shortenUrl(args[0]) {
+            sendMsg(event, "Here is your shortened url: <$it>")
+        }
     }
 
     override fun help(): String = """Shortens a url

@@ -131,7 +131,6 @@ public class AudioUtils {
                 
                 mng.scheduler.queue(track);
                 sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
-                
             }
             
             /**
@@ -206,9 +205,7 @@ public class AudioUtils {
                 }
             }
         }
-        
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
-        
         return mng;
     }
 

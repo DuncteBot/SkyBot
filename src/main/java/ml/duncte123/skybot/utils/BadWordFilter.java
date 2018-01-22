@@ -84,11 +84,9 @@ public class BadWordFilter {
         }
         
         // remove leetspeak
-        input = input.replaceAll("1", "i");
-        input = input.replaceAll("!", "i");
+        input = input.replaceAll("[1!]", "i");
         input = input.replaceAll("3", "e");
-        input = input.replaceAll("4", "a");
-        input = input.replaceAll("@", "a");
+        input = input.replaceAll("[4@]", "a");
         input = input.replaceAll("5", "s");
         input = input.replaceAll("7", "t");
         input = input.replaceAll("0", "o");

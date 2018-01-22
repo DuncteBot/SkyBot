@@ -22,21 +22,19 @@ import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
-import ml.duncte123.skybot.objects.ConsoleUser;
-import ml.duncte123.skybot.objects.FakeUser;
-import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("ReturnInsideFinallyBlock")
@@ -88,9 +86,6 @@ public class AirUtils {
      */
     public static DBManager db = new DBManager();
 
-    public static final ScheduledExecutorService service
-            = Executors.newScheduledThreadPool(5, r -> new Thread(r, "Music-Shutdown-Thread"));
-
     /**
      * This converts the online status of a user to a fancy emote
      *
@@ -111,8 +106,6 @@ public class AirUtils {
         }
     }
 
-    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)");
-
     /**
      * This will validate a link
      *
@@ -120,7 +113,7 @@ public class AirUtils {
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        return URL_REGEX.matcher(url).find();
+        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)").matcher(url).find();
     }
 
     /**
@@ -130,7 +123,7 @@ public class AirUtils {
      * @return true if it is an int
      */
     public static boolean isInt(String integer) {
-        return integer.matches("^\\d+$");
+        return integer.matches("^\\d{1,11}$");
     }
 
     /**

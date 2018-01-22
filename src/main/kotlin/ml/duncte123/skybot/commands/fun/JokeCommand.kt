@@ -40,36 +40,37 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val rawJSON = WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400")
-        val jsonObject = JSONObject(rawJSON)
+        WebUtils.getText("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400") { rawJSON ->
+            val jsonObject = JSONObject(rawJSON)
 
-        val posts = jsonObject.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
-                    (if(event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
-                            it.getJSONObject("data").getString("selftext").length <= 550
-                            && it.getJSONObject("data").getString("title").length <= 256)
-        })
+            val posts = jsonObject.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
+                (if(event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
+                        it.getJSONObject("data").getString("selftext").length <= 550
+                        && it.getJSONObject("data").getString("title").length <= 256)
+            })
 
-        if(posts.isEmpty()) {
-            sendError(event.message)
-            sendMsg(event, """Whoops I could not find any jokes.
+            if(posts.isEmpty()) {
+                sendError(event.message)
+                sendMsg(event, """Whoops I could not find any jokes.
                 |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
-            return
+                return@getText
+            }
+
+            if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
+                jokeIndex[event.guild.id] = 0
+            }
+
+            val jokeI = jokeIndex.getOrDefault(event.guild.id, 0)
+
+            val jokeData: JSONObject = JSONArray(posts).getJSONObject(jokeI).getJSONObject("data")
+            jokeIndex[event.guild.id] = jokeI + 1
+            val title: String = jokeData.getString("title")
+            val text: String = jokeData.getString("selftext")
+            val url: String = jokeData.getString("url")
+
+            sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
+
         }
-
-        if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
-            jokeIndex[event.guild.id] = 0
-        }
-
-        val jokeI = jokeIndex.getOrDefault(event.guild.id, 0)
-
-        val jokeData: JSONObject = JSONArray(posts).getJSONObject(jokeI).getJSONObject("data")
-        jokeIndex[event.guild.id] = jokeI + 1
-        val title: String = jokeData.getString("title")
-        val text: String = jokeData.getString("selftext")
-        val url: String = jokeData.getString("url")
-
-        sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
-
     }
 
     override fun help() = "See a funny joke. Dad's love them!\n" +
