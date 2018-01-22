@@ -143,14 +143,13 @@ public abstract class Command {
                 return;
             }
             
-            Response response = new OkHttpClient()
-                                        .newCall(
+            Response response = WebUtils.executeRequest(
                                             new Request.Builder()
                                                 .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                                                 .get()
                                                 .addHeader("Authorization", token)
-                                                .build())
-                                        .execute();
+                                                .build()
+            );
             JSONArray json = new JSONArray(response.body().string());
             
             upvotedIds.clear();
