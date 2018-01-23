@@ -216,9 +216,7 @@ public class ModerationUtils {
                                 "unbanned",
                                 jda.getGuildById(res.getString("guildId")));
                         database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
-                    } catch (NullPointerException ex) {
-                        modLog(new ConsoleUser(), new FakeUser("BanFailure", "404", "0000"), "Unban failed!", jda.getGuildById(res.getString("guildId")));
-                    }
+                    } catch (NullPointerException ignored) { }
                 }
             }
             logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
