@@ -23,18 +23,11 @@ package ml.duncte123.skybot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.runBlocking
-import ml.duncte123.skybot.Anything
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.entities.delegate.*
-import ml.duncte123.skybot.random
-import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.Presence
@@ -230,44 +223,5 @@ class EarthUtils {
                 JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
                         .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
                         .put("title", track.info.title)
-
-        @JvmStatic
-        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
-        @Suppress("DEPRECATION")
-        fun someMeme(jda: ShardManager) = jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name but jda.getUserById(Settings.wbkxwkZPaG4ni5lm8laY.random())!!.name
-
-        @JvmStatic
-        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
-        fun advancedMeme(jda: ShardManager): Any {
-            var x: Any = "A meme"
-            repeat(10) {
-                x = x but someMeme(jda)
-            }
-            return x
-        }
-    }
-}
-
-@Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
-infix fun Any.but(value: Any): Any {
-    return when {
-        value == this -> AssertionError("the new value can't be equals than the current.")
-        value is Boolean -> !value
-        value is String -> AirUtils.generateRandomString(value.length)
-        value::class.java == Any::class.java -> {
-            async {
-                delay(3200)
-                print("memes")
-            }
-        }
-        else -> this
-    }
-}
-
-@Deprecated("The following code may be removed!", level = DeprecationLevel.WARNING)
-fun main(args: Array<String>) = runBlocking {
-    val res = Anything() but Any()
-    if (res is Deferred<*>) {
-        res.join()
     }
 }

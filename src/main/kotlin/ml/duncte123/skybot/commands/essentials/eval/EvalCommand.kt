@@ -153,6 +153,7 @@ class EvalCommand : Command() {
             engine.put("shardManager", event.jda.asBot().shardManager)
             engine.put("event", event)
 
+            engine.put("skraa", script)
             engine.put("args", args)
 
             @SinceSkybot("3.58.0")

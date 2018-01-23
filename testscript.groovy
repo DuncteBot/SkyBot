@@ -34,31 +34,31 @@ def quick_mafs(int x) {
 return quick_mafs(2) + "\nThe thing goes skrra"*/
 import org.apache.commons.lang3.text.WordUtils
 
-List<String> headers = new ArrayList<>();
-headers.add("Shard ID");
-headers.add("Status");
-headers.add("Ping");
-headers.add("Guild Count");
-headers.add("Connected VCs");
+List<String> headers = new ArrayList<>()
+headers.add("Shard ID")
+headers.add("Status")
+headers.add("Ping")
+headers.add("Guild Count")
+headers.add("Connected VCs")
 
-List<List<String>> table = new ArrayList<>();
-List<JDA> shards = event.getJDA().asBot().getShardManager().getShards();
-Collections.reverse(shards);
+List<List<String>> table = new ArrayList<>()
+List<JDA> shards = (ArrayList) event.getJDA().asBot().getShardManager().getShards()
+Collections.reverse(shards)
 for (JDA jda : shards) {
-    List<String> row = new ArrayList<>();
+    List<String> row = new ArrayList<>()
     row.add( (jda.getShardInfo().getShardId() + 1 ) +
-            (event.getJDA().getShardInfo().getShardId() == jda.getShardInfo().getShardId() ? " (current)" : ""));
-    row.add(WordUtils.capitalizeFully(jda.getStatus().toString().replace("_", " ")));
-    row.add(String.valueOf(jda.getPing()));
-    row.add(String.valueOf(jda.getGuilds().size()));
+            (event.getJDA().getShardInfo().getShardId() == jda.getShardInfo().getShardId() ? " (current)" : ""))
+    row.add(WordUtils.capitalizeFully(jda.getStatus().toString().replace("_", " ")))
+    row.add(String.valueOf(jda.getPing()))
+    row.add(String.valueOf(jda.getGuilds().size()))
     row.add(String.valueOf(jda.getVoiceChannels().stream().filter({
         it.getMembers().contains(it.getGuild()
                 .getSelfMember())
-    }).count()));
-    table.add(row);
+    }).count()))
+    table.add(row)
     if (table.size() == 20) {
         channel.sendMessage( makeAsciiTable(headers, table)).queue()
-        table = new ArrayList<>();
+        table = new ArrayList<>()
     }
 }
 if (table.size() > 0) {
@@ -66,52 +66,52 @@ if (table.size() > 0) {
 }
 
 private String makeAsciiTable(List<String> headers, List<List<String>> table) {
-   StringBuilder sb = new StringBuilder();
-   int padding = 1;
-   int[] widths = new int[headers.size()];
+   StringBuilder sb = new StringBuilder()
+   int padding = 1
+   int[] widths = new int[headers.size()]
    for (int i = 0; i < widths.length; i++) {
-      widths[i] = 0;
+      widths[i] = 0
    }
    for (int i = 0; i < headers.size(); i++) {
       if (headers.get(i).length() > widths[i]) {
-         widths[i] = headers.get(i).length();
+         widths[i] = headers.get(i).length()
       }
    }
    for (List<String> row : table) {
       for (int i = 0; i < row.size(); i++) {
-         String cell = row.get(i);
+         String cell = row.get(i)
          if (cell.length() > widths[i]) {
-            widths[i] = cell.length();
+            widths[i] = cell.length()
          }
       }
    }
-   sb.append("```").append("prolog").append("\n");
-   StringBuilder formatLine = new StringBuilder("║");
+   sb.append("```").append("prolog").append("\n")
+   StringBuilder formatLine = new StringBuilder("║")
    for (int width : widths) {
-      formatLine.append(" %-").append(width).append("s ║");
+      formatLine.append(" %-").append(width).append("s ║")
    }
-   formatLine.append("\n");
-   sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
-   sb.append(String.format(formatLine.toString(), headers.toArray()));
-   sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+   formatLine.append("\n")
+   sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths))
+   sb.append(String.format(formatLine.toString(), headers.toArray()))
+   sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths))
    for (List<String> row : table) {
-      sb.append(String.format(formatLine.toString(), row.toArray()));
+      sb.append(String.format(formatLine.toString(), row.toArray()))
    }
-   sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
-   sb.append("```");
-   return sb.toString();
+   sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths))
+   sb.append("```")
+   return sb.toString()
 }
 
 private String appendSeparatorLine(String left, String middle, String right, int padding, int... sizes) {
-   boolean first = true;
-   StringBuilder ret = new StringBuilder();
+   boolean first = true
+   StringBuilder ret = new StringBuilder()
    for (int size : sizes) {
       if (first) {
-         first = false;
-         ret.append(left).append(StringUtils.repeat("═", size + padding * 2));
+         first = false
+         ret.append(left).append(StringUtils.repeat("═", size + padding * 2))
       } else {
-         ret.append(middle).append(StringUtils.repeat("═", size + padding * 2));
+         ret.append(middle).append(StringUtils.repeat("═", size + padding * 2))
       }
    }
-   return ret.append(right).append("\n").toString();
+   return ret.append(right).append("\n").toString()
 }
