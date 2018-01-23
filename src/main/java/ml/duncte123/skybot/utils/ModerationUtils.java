@@ -206,15 +206,19 @@ public class ModerationUtils {
                 if (currDate.after(unbanDate)) {
                     usersUnbanned++;
                     logger.debug("Unbanning " + res.getString("Username"));
-                    jda.getGuildCache().getElementById(res.getString("guildId")).getController()
-                            .unban(res.getString("userId")).reason("Ban expired").queue();
-                    modLog(new ConsoleUser(),
-                            new FakeUser(res.getString("Username"),
-                                                res.getString("userId"),
-                                                res.getString("discriminator")),
-                            "unbanned",
-                            jda.getGuildById(res.getString("guildId")));
-                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    try {
+                        jda.getGuildCache().getElementById(res.getString("guildId")).getController()
+                                .unban(res.getString("userId")).reason("Ban expired").queue();
+                        modLog(new ConsoleUser(),
+                                new FakeUser(res.getString("Username"),
+                                        res.getString("userId"),
+                                        res.getString("discriminator")),
+                                "unbanned",
+                                jda.getGuildById(res.getString("guildId")));
+                        database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    } catch (NullPointerException ex) {
+                        modLog(new ConsoleUser(), new FakeUser("BanFailure", "404", "0000"), "Unban failed!", jda.getGuildById(res.getString("guildId")));
+                    }
                 }
             }
             logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
