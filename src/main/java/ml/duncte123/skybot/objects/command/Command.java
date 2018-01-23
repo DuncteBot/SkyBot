@@ -103,6 +103,7 @@ public abstract class Command {
      * @return true if the user is a patron
      */
     protected boolean isPatron(User u, TextChannel tc) {
+        //noinspection deprecation
         if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
             return true;
         }

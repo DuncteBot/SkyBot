@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
 public class ApacheHttpTransaction implements HttpTransaction {
 
     private HttpClient httpClient;
