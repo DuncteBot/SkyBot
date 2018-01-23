@@ -54,7 +54,7 @@ class EvalCommand : Command() {
     private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
-    private var runIfNotOwner = false
+    private var runIfNotOwner = true
 
     /**
      * This initialises the engine
@@ -117,15 +117,7 @@ class EvalCommand : Command() {
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
-        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) {
-            sendError(event.message)
-            sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                            "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
-            return
-        }
+        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\n", postfix = "\n")
