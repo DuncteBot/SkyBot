@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -139,13 +140,8 @@ public class ModerationUtils {
         if(u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
-            int[] out = new int[0];
-            WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId(), it -> {
-                out[0] = it.getJSONArray("warnings").length();
-                return null;
-            });
-            //noinspection ConstantConditions
-            return out[0];
+            JSONObject it = WebUtilsJava.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId());
+            return it.getJSONArray("warnings").length();
         }
         catch (IOException e) {
             e.printStackTrace();

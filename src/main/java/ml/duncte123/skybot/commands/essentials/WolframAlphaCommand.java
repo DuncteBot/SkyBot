@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.WebUtils;
+import ml.duncte123.skybot.utils.WebUtilsJava;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -43,9 +43,9 @@ public class WolframAlphaCommand extends Command {
      * @param result The result generated
      * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
      */
-    public static MessageEmbed generateEmbed(
-                                            GuildMessageReceivedEvent event,
-                                            WAQueryResult result) {
+    private MessageEmbed generateEmbed(
+            GuildMessageReceivedEvent event,
+            WAQueryResult result) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
@@ -64,49 +64,40 @@ public class WolframAlphaCommand extends Command {
                 e.append(a(sp.getTitle()));
 
                 for (Visitable v : sp.getContents()) {
-                    final String[] d = new String[0];
+                    String d = "";
 
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-
-                        WebUtils.shortenUrl(i.getURL(), it -> {
-                            d[0] += "[" + i.getAlt() + "](" + it + ")";
-                            return null;
-                        });
+                        d += "[" + a(i.getAlt()) + "]("
+                                + WebUtilsJava.shortenUrl(i.getURL()) + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
 
-                        d[0] += i.getText();
+                        d += a(i.getText());
 
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
 
-                        WebUtils.shortenUrl(l.getURL(), it -> {
-                            d[0] += "[" + l.getText() + "](" + it + ")";
-                            return null;
-                        });
+                        d += "[" + a(l.getText()) + "](" + WebUtilsJava.shortenUrl(l.getURL()) + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
 
-                        d[0] += pt.getText();
+                        d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        WebUtils.shortenUrl(sound.getURL(), it -> {
-                            d[0] += it;
-                            return null;
-                        });
+                        d += WebUtilsJava.shortenUrl(sound.getURL());
                     }
-                    
-                    e.append(d[0]).append("\n\n");
+
+                    e.append(d).append("\n\n");
                 }
-                
+
                 embeds.append(a(e.toString().trim())).append("\n\n");
             }
-            
+
             eb.addField(name, a(embeds.toString().trim()), false);
         }
-        
+
         return eb.build();
     }
 
@@ -122,21 +113,21 @@ public class WolframAlphaCommand extends Command {
         if(!isPatron(event.getAuthor(), event.getChannel())) return;
         sendMsg(event, "This command is being worked on.");
         WAEngine engine = AirUtils.alphaEngine;
-        
+
         if (engine == null) {
             sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
-        
+
         if (args.length == 0) {
             sendMsg(event, ":x: Must give a question!!!");
             return;
         }
-        
+
         String queryString
                 = event.getMessage().getContentRaw()
-                      .substring(event.getMessage().getContentRaw()
-                             .split(" ")[0].length());
+                .substring(event.getMessage().getContentRaw()
+                        .split(" ")[0].length());
 
         WAQuery query = engine.createQuery(queryString);
 
@@ -146,11 +137,11 @@ public class WolframAlphaCommand extends Command {
             result = engine.performQuery(query);
         } catch (WAException e) {
             event.getChannel().sendMessage(":x: Error: "
-                               + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+                    + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
             e.printStackTrace();
             return;
         }
-        
+
         sendEmbed(event, generateEmbed(event, result));
     }
 

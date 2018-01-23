@@ -36,7 +36,7 @@ public class WebUtilsJava {
 
     private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client = new OkHttpClient();
-    public static final ScheduledExecutorService service
+    private static final ScheduledExecutorService service
             = Executors.newScheduledThreadPool(2, r -> new Thread(r, "Web-Thread"));
 
     /**

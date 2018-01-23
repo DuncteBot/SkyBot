@@ -231,7 +231,7 @@ class WebUtils {
         }
 
         @JvmStatic
-        fun execDBRequest(request: Request, action: (Response?) -> Unit) {
+        fun execCustomRequest(request: Request, action: (Response?) -> Unit) {
             launch {
                 action.invoke(executeRequest(request))
             }

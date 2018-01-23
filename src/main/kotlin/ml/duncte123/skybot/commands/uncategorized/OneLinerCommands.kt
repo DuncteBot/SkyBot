@@ -67,8 +67,7 @@ class OneLinerCommands : Command() {
             "quote" -> WebUtils.getText("http://inspirobot.me/api?generate=true") { sendEmbed(event, EmbedUtils.embedImage(it)) }
 
             "yesno" -> {
-                WebUtils.getText("https://yesno.wtf/api") {
-                    val json = JSONObject(it)
+                WebUtils.getJSONObject("https://yesno.wtf/api") { json ->
                     sendEmbed(event, EmbedUtils.defaultEmbed()
                             .setTitle(json.getString("answer"))
                             .setImage(json.getString("image"))
