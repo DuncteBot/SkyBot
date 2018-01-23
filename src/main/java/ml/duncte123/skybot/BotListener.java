@@ -245,7 +245,11 @@ public class BotListener extends ListenerAdapter {
         if(settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole()) && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if(r != null && !event.getGuild().getPublicRole().equals(r))
-                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue();
+                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
+                    TextChannel tc = GuildUtils.getPublicChannel(event.getGuild());
+                    if(tc != null && event.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+                        tc.sendMessage("Error while trying to add a role to a user: " + it.toString()).queue();
+                });
         }
     }
 
