@@ -41,7 +41,7 @@ group = 'ml.duncte123.skybot'
 
 version '3.58.1'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'
@@ -136,12 +136,12 @@ compileJava.options.encoding = 'UTF-8'
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "1.9"
     }
 }
 compileTestKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "1.9"
     }
 }
 kotlin {
