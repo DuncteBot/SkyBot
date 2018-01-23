@@ -136,12 +136,17 @@ public class ModerationUtils {
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(User u) {
+    public static int getWarningCountForUser(User u, Guild g) {
         if(u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
             final int[] out = new int[1];
-            WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId(), it -> {
+            WebUtils.getJSONObject(String.format(
+                    "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
+                    Settings.apiBase,
+                    u.getId(),
+                    g.getId())
+            , it -> {
                 out[0] = it.getJSONArray("warnings").length();
                 return null;
             });
@@ -160,10 +165,11 @@ public class ModerationUtils {
      * @param reason the reason for the warn
      * @param jda a jda instance because we need the token for auth
      */
-    public static void addWarningToDb(User moderator, User target, String reason, JDA jda) {
+    public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("mod_id", moderator.getId());
         postFields.put("user_id", target.getId());
+        postFields.put("guild_id", guild.getId());
         postFields.put("reason", reason.isEmpty()? "No Reason provided" : " for " + reason);
         postFields.put("token", jda.getToken());
 
