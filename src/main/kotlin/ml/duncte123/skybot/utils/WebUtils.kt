@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.runBlocking
 import ml.duncte123.skybot.config.Config
 import okhttp3.*
 import org.json.JSONArray
@@ -103,7 +104,7 @@ class WebUtils {
          */
         @JvmStatic
         fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML, action: (Response?) -> Unit) {
-            launch {
+            runBlocking {
                 action.invoke(executeRequest(
                         Request.Builder()
                                 .url(url)
@@ -130,7 +131,7 @@ class WebUtils {
             for ((key, value) in postFields) {
                 postParams.append(key).append("=").append(value).append("&")
             }
-            launch {
+            runBlocking {
                 action.invoke(executeRequest(
                         Request.Builder()
                                 .url(url)
@@ -162,7 +163,7 @@ class WebUtils {
          */
         @JvmStatic
         fun postJSON(url: String, data: JSONObject, action: (Response?) -> Unit) {
-            launch {
+            runBlocking {
                 action.invoke(executeRequest(
                         Request.Builder()
                                 .url(url)
@@ -232,7 +233,7 @@ class WebUtils {
 
         @JvmStatic
         fun execCustomRequest(request: Request, action: (Response?) -> Unit) {
-            launch {
+            runBlocking {
                 action.invoke(executeRequest(request))
             }
         }

@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.WebUtils;
 import ml.duncte123.skybot.utils.WebUtilsJava;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -64,32 +65,40 @@ public class WolframAlphaCommand extends Command {
                 e.append(a(sp.getTitle()));
 
                 for (Visitable v : sp.getContents()) {
-                    String d = "";
+                    final String[] d = new String[1];
 
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getAlt()) + "]("
-                                + WebUtilsJava.shortenUrl(i.getURL()) + ")";
+                        WebUtils.shortenUrl(i.getURL(), it -> {
+                            d[0] += "[" + a(i.getAlt()) + "](" + it + ")";
+                            return null;
+                        });
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
 
-                        d += a(i.getText());
+                        d[0] += a(i.getText());
 
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
 
-                        d += "[" + a(l.getText()) + "](" + WebUtilsJava.shortenUrl(l.getURL()) + ")";
+                        WebUtils.shortenUrl(l.getURL(), it -> {
+                            d[0] += "[" + a(l.getText()) + "](" + it + ")";
+                            return null;
+                        });
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
 
-                        d += a(pt.getText());
+                        d[0] += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += WebUtilsJava.shortenUrl(sound.getURL());
+                        WebUtils.shortenUrl(sound.getURL(), it -> {
+                            d[0] += it;
+                            return null;
+                        });
                     }
 
-                    e.append(d).append("\n\n");
+                    e.append(d[0]).append("\n\n");
                 }
 
                 embeds.append(a(e.toString().trim())).append("\n\n");
