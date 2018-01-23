@@ -74,7 +74,7 @@ class EvalCommand : Command() {
                 return super.evaluate(scriptText)
             }
         }
-        engine = ScriptEngineManager(protectedShell.getClassLoader()).getEngineByName("groovy")
+        engine = ScriptEngineManager().getEngineByName("groovy")
         packageImports = listOf(
                 "java.io",
                 "java.lang",
@@ -158,7 +158,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             async(start = CoroutineStart.ATOMIC) {
-                return@async eval(event, isRanByBotOwner, engine, script, timeout)
+                return@async eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
             protectedShell.setVariable("user", UserDelegate(event.author))
@@ -171,7 +171,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             async {
-                return@async eval(event, isRanByBotOwner, engine, script, timeout)
+                return@async eval(event, isRanByBotOwner, script, timeout)
             }
         }
 
@@ -209,14 +209,15 @@ class EvalCommand : Command() {
     }
 
     @SinceSkybot("3.58.0")
-    suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, engine: ScriptEngine, script: String, millis: Long) {
+    suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
             lateinit var coroutine: CoroutineScope
             val out = withTimeoutOrNull(millis) {
                 engine.put("scope", this)
                 coroutine = this
                 try {
-                    engine.eval(script)
+                    if(isRanByBotOwner) engine.eval(script)
+                    else protectedShell.evaluate(script)
                 } catch (ex: Throwable) {
                     ex
                 }
