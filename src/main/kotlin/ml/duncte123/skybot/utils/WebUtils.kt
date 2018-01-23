@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.config.Config
 import okhttp3.*
 import org.json.JSONArray

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.objects.guild;
 
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.Settings;
 
 /**
  * This class will hold the settings for a guild

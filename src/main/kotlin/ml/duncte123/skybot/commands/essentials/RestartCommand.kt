@@ -22,7 +22,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.Settings
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @SinceSkybot("3.50.X")

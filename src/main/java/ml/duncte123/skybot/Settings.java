@@ -16,9 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.BuildConfig;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import java.awt.*;
 

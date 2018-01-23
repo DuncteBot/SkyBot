@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import kotlin.Deprecated;
 import kotlin.DeprecationLevel;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.config.Config;
 import okhttp3.*;
 import org.json.JSONArray;

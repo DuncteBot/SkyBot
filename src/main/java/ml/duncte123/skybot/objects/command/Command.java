@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;

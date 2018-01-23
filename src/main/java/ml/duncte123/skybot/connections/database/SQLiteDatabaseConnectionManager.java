@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.Settings;
 import org.sqlite.JDBC;
 
 import java.io.File;
