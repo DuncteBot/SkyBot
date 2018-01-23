@@ -40,9 +40,9 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        WebUtils.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400") { jsonObject ->
+        WebUtils.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400") {
 
-            val posts = jsonObject.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
+            val posts = this.getJSONObject("data").getJSONArray("children").filter({ it as JSONObject
                 (if(event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
                         it.getJSONObject("data").getString("selftext").length <= 550
                         && it.getJSONObject("data").getString("title").length <= 256)

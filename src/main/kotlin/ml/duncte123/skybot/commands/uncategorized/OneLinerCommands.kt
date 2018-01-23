@@ -25,7 +25,6 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.json.JSONObject
 import java.lang.management.ManagementFactory
 
 class OneLinerCommands : Command() {
@@ -64,13 +63,13 @@ class OneLinerCommands : Command() {
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
-            "quote" -> WebUtils.getText("http://inspirobot.me/api?generate=true") { sendEmbed(event, EmbedUtils.embedImage(it)) }
+            "quote" -> WebUtils.getText("http://inspirobot.me/api?generate=true") { sendEmbed(event, EmbedUtils.embedImage(this)) }
 
             "yesno" -> {
-                WebUtils.getJSONObject("https://yesno.wtf/api") { json ->
+                WebUtils.getJSONObject("https://yesno.wtf/api") {
                     sendEmbed(event, EmbedUtils.defaultEmbed()
-                            .setTitle(json.getString("answer"))
-                            .setImage(json.getString("image"))
+                            .setTitle(this.getString("answer"))
+                            .setImage(this.getString("image"))
                             .build())
                 }
             }

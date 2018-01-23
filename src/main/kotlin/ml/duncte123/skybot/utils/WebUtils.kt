@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils
 
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.runBlocking
 import ml.duncte123.skybot.config.Config
 import okhttp3.*
@@ -45,9 +44,9 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getText(url: String, action: (String) -> Unit) {
+        fun getText(url: String, action: String.() -> Unit) {
             getRequest(url) {
-                action.invoke(it!!.body()!!.string())
+                action.invoke(this!!.body()!!.string())
             }
         }
 
@@ -60,9 +59,9 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getJSONObject(url: String, action: (JSONObject) -> Unit) {
+        fun getJSONObject(url: String, action: JSONObject.() -> Unit) {
             getText(url) {
-                action.invoke(JSONObject(it))
+                action.invoke(JSONObject(this))
             }
         }
 
@@ -75,9 +74,9 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getJSONArray(url: String, action: (JSONArray) -> Unit) {
+        fun getJSONArray(url: String, action: JSONArray.() -> Unit) {
             getText(url) {
-                action.invoke(JSONArray(it))
+                action.invoke(JSONArray(this))
             }
         }
 
@@ -89,9 +88,9 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getInputStream(url: String, action: (InputStream) -> Unit) {
+        fun getInputStream(url: String, action: InputStream.() -> Unit) {
             getRequest(url) {
-                action.invoke(it?.body()?.byteStream()!!)
+                action.invoke(this?.body()?.byteStream()!!)
             }
         }
 
@@ -103,7 +102,7 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML, action: (Response?) -> Unit) {
+        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML, action: Response?.() -> Unit) {
             runBlocking {
                 action.invoke(executeRequest(
                         Request.Builder()
@@ -125,7 +124,7 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED, action: (Response?) -> Unit) {
+        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED, action: Response?.() -> Unit) {
             val postParams = StringBuilder()
 
             for ((key, value) in postFields) {
@@ -151,7 +150,7 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON, action: (Response?) -> Unit) {
+        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON, action: Response?.() -> Unit) {
             return postRequest(url, HashMap(), accept, action)
         }
 
@@ -162,7 +161,7 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postJSON(url: String, data: JSONObject, action: (Response?) -> Unit) {
+        fun postJSON(url: String, data: JSONObject, action: Response?.() -> Unit) {
             runBlocking {
                 action.invoke(executeRequest(
                         Request.Builder()
@@ -180,14 +179,14 @@ class WebUtils {
          * @return The shortened URL. `null` if any error occurred
          */
         @JvmStatic
-        fun shortenUrl(url: String, action: (String?) -> Unit) {
+        fun shortenUrl(url: String, action: String?.() -> Unit) {
             try {
                 val jo = JSONObject()
 
                 jo.put("longUrl", url)
 
                 postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.config.getString("apis.googl", "Google api key"), jo) {
-                    action.invoke(JSONObject(it!!.body()!!.string()).get("id").toString())
+                    action.invoke(JSONObject(this!!.body()!!.string()).get("id").toString())
                 }
             } catch (e: NullPointerException) {
                 e.printStackTrace()
@@ -208,7 +207,7 @@ class WebUtils {
         fun translate(sourceLang: String, targetLang: String, input: String): JSONArray {
             var json: JSONArray? = null
             getJSONArray("https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input") {
-                json = it.getJSONArray(0).getJSONArray(0)
+                json = this.getJSONArray(0).getJSONArray(0)
             }
             return json!!
         }
@@ -232,7 +231,7 @@ class WebUtils {
         }
 
         @JvmStatic
-        fun execCustomRequest(request: Request, action: (Response?) -> Unit) {
+        fun execCustomRequest(request: Request, action: Response?.() -> Unit) {
             runBlocking {
                 action.invoke(executeRequest(request))
             }

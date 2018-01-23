@@ -33,7 +33,7 @@ class ShortenCommand : Command() {
             return
         }
         WebUtils.shortenUrl(args[0]) {
-            sendMsg(event, "Here is your shortened url: <$it>")
+            sendMsg(event, "Here is your shortened url: <$this>")
         }
     }
 

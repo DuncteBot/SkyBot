@@ -55,7 +55,7 @@ class ImageCommand : Command() {
             val keyword = StringUtils.join(args, "+")
 
             WebUtils.getText(String.format(url, keyword)) {
-                val jsonRaw = Ason(it)
+                val jsonRaw = Ason(this)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                 val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
                 sendEmbed(event,

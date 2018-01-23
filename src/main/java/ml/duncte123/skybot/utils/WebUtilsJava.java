@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
+import kotlin.Deprecated;
+import kotlin.DeprecationLevel;
 import ml.duncte123.skybot.config.Config;
 import okhttp3.*;
 import org.json.JSONArray;
@@ -46,6 +48,7 @@ public class WebUtilsJava {
      * @return The text contents
      * @throws IOException When something broke
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static String getText(String url) throws IOException {
         return getRequest(url).body().string();
     }
@@ -57,6 +60,7 @@ public class WebUtilsJava {
      * @return The text contents
      * @throws IOException When something broke
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static JSONObject getJSONObject(String url) throws IOException {
         return new JSONObject(getText(url));
     }
@@ -68,6 +72,7 @@ public class WebUtilsJava {
      * @return The text contents
      * @throws IOException When something broke
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static JSONArray getJSONArray(String url) throws IOException {
         return new JSONArray(getText(url));
     }
@@ -78,6 +83,7 @@ public class WebUtilsJava {
      * @return the InputStream of the url
      * @throws IOException when things break
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static InputStream getInputStream(String url) throws IOException {
         return getRequest(url).body().byteStream();
     }
@@ -89,6 +95,7 @@ public class WebUtilsJava {
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response getRequest(String url, AcceptType accept) {
         return executeRequest(
                 new Request.Builder()
@@ -107,6 +114,7 @@ public class WebUtilsJava {
      * @param url The website to post to
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response getRequest(String url) {
         return getRequest(url, AcceptType.TEXT_HTML);
     }
@@ -119,6 +127,7 @@ public class WebUtilsJava {
      * @param accept     What we will accept, {@link AcceptType AcceptType}
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response postRequest(String url, Map<String, Object> postFields, AcceptType accept) {
         StringBuilder postParams = new StringBuilder();
 
@@ -144,6 +153,7 @@ public class WebUtilsJava {
      * @param postFields the params for the post
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response postRequest(String url, Map<String, Object> postFields) {
         return postRequest(url, postFields, AcceptType.URLENCODED);
     }
@@ -155,6 +165,7 @@ public class WebUtilsJava {
      * @param accept What we will accept, {@link AcceptType AcceptType}
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response postRequest(String url, AcceptType accept) {
         return postRequest(url, new HashMap<>(), accept);
     }
@@ -165,6 +176,7 @@ public class WebUtilsJava {
      * @param url The website to post to
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response postRequest(String url) {
         return postRequest(url, AcceptType.TEXT_JSON);
     }
@@ -175,6 +187,7 @@ public class WebUtilsJava {
      * @param data the JSON data to post
      * @return The {@link Response} from the webserver
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static Response postJSON(String url, JSONObject data) {
         return executeRequest(
                 new Request.Builder()
@@ -186,30 +199,6 @@ public class WebUtilsJava {
     }
 
     /**
-     * Shortens a URL with the <a href="https://goo.gl" target="">goo.gl</a> api
-     *
-     * @param url The URL to shorten
-     * @return The shortened URL. <code>null</code> if any error occurred
-     */
-    public static String shortenUrl(String url) {
-        try {
-            JSONObject jo = new JSONObject();
-
-            jo.put("longUrl", url);
-
-            String returnData = postJSON("https://www.googleapis.com/urlshortener/v1/url?key="
-                    + AirUtils.config.getString("apis.googl", "Google api key"), jo).body().string();
-
-            JSONObject returnJSON = new JSONObject(returnData);
-            return returnJSON.get("id").toString();
-
-        } catch (NullPointerException | IOException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
-
-    /**
      * This translates a string into a different language
      * @param sourceLang the source language (example: "nl")
      * @param targetLang the target language (example: "en")
@@ -217,6 +206,7 @@ public class WebUtilsJava {
      * @return the output of the api
      * THe examples above will output the following <code>["This is a test","Dit is een test",null,null,1]</code>
      */
+    @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
     public static JSONArray translate(String sourceLang, String targetLang, String input) {
         try {
             return getJSONArray(

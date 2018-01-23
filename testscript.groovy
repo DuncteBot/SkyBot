@@ -15,7 +15,8 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
-import ml.duncte123.skybot.utils.EmbedUtils
+import net.dv8tion.jda.core.JDA
+import org.apache.commons.lang3.StringUtils
 
 def quick_mafs(int x) {
    def the_thing = x + 2 -1 
@@ -31,10 +32,7 @@ def quick_mafs(int x) {
              .queue()
 
 return quick_mafs(2) + "\nThe thing goes skrra"*/
-
-import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
-import net.dv8tion.jda.core.JDA;
+import org.apache.commons.lang3.text.WordUtils
 
 List<String> headers = new ArrayList<>();
 headers.add("Shard ID");
@@ -44,7 +42,7 @@ headers.add("Guild Count");
 headers.add("Connected VCs");
 
 List<List<String>> table = new ArrayList<>();
-List<JDA> shards = new ArrayList<>(event.getJDA().asBot().getShardManager().getShards());
+List<JDA> shards = event.getJDA().asBot().getShardManager().getShards();
 Collections.reverse(shards);
 for (JDA jda : shards) {
     List<String> row = new ArrayList<>();
@@ -67,7 +65,7 @@ if (table.size() > 0) {
     channel.sendMessage(  makeAsciiTable(headers, table)).queue()
 }
 
-private String makeAsciiTable(java.util.List<String> headers, java.util.List<java.util.List<String>> table) {
+private String makeAsciiTable(List<String> headers, List<List<String>> table) {
    StringBuilder sb = new StringBuilder();
    int padding = 1;
    int[] widths = new int[headers.size()];
@@ -79,7 +77,7 @@ private String makeAsciiTable(java.util.List<String> headers, java.util.List<jav
          widths[i] = headers.get(i).length();
       }
    }
-   for (java.util.List<String> row : table) {
+   for (List<String> row : table) {
       for (int i = 0; i < row.size(); i++) {
          String cell = row.get(i);
          if (cell.length() > widths[i]) {
@@ -96,7 +94,7 @@ private String makeAsciiTable(java.util.List<String> headers, java.util.List<jav
    sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
    sb.append(String.format(formatLine.toString(), headers.toArray()));
    sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
-   for (java.util.List<String> row : table) {
+   for (List<String> row : table) {
       sb.append(String.format(formatLine.toString(), row.toArray()));
    }
    sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
