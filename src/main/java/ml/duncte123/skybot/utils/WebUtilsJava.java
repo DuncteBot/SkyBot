@@ -219,8 +219,8 @@ public class WebUtilsJava {
      */
     public static JSONArray translate(String sourceLang, String targetLang, String input) {
         try {
-            return new JSONArray(
-                    getText("https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input)
+            return getJSONArray(
+                    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input
             ).getJSONArray(0).getJSONArray(0);
         }
         catch (IOException e) {
