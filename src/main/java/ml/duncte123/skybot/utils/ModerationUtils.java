@@ -187,9 +187,9 @@ public class ModerationUtils {
     /**
      * This will check if there are users that can be unbanned
      *
-     * @param jda the current shard manager for this bot
+     * @param shardManager the current shard manager for this bot
      */
-    public static void checkUnbans(ShardManager jda) {
+    public static void checkUnbans(ShardManager shardManager) {
         logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
         Connection database = AirUtils.db.getConnManager().getConnection();
@@ -208,16 +208,16 @@ public class ModerationUtils {
                     usersUnbanned++;
                     logger.debug("Unbanning " + res.getString("Username"));
                     try {
-                        jda.getGuildCache().getElementById(res.getString("guildId")).getController()
+                        shardManager.getGuildCache().getElementById(res.getString("guildId")).getController()
                                 .unban(res.getString("userId")).reason("Ban expired").queue();
                         modLog(new ConsoleUser(),
                                 new FakeUser(res.getString("Username"),
                                         res.getString("userId"),
                                         res.getString("discriminator")),
                                 "unbanned",
-                                jda.getGuildById(res.getString("guildId")));
-                        database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                                shardManager.getGuildById(res.getString("guildId")));
                     } catch (NullPointerException ignored) { }
+                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
             logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
