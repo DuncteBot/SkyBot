@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.BuildConfig;
 import ml.duncte123.skybot.utils.AirUtils;
 
 import java.awt.*;
@@ -35,6 +34,7 @@ public class Settings {
      *
      * @deprecated because the bot will break if you mess with this.
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public static final String[] wbkxwkZPaG4ni5lm8laY = {
             new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
