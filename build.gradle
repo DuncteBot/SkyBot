@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.20'
+    ext.kotlin_version = '1.2.21'
 
     repositories {
         mavenCentral()
@@ -33,7 +33,7 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
@@ -101,8 +101,8 @@ dependencies {
     compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.20'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.20'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.21.2'
 
     //Bot?

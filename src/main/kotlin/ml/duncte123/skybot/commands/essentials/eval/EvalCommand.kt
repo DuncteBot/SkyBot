@@ -88,7 +88,7 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.utils",
                 "ml.duncte123.skybot.entities",
                 "ml.duncte123.skybot.entities.delegate",
-                "ml.duncte123.skybot.utils")
+                "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"

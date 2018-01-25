@@ -24,6 +24,8 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
 public class Config {
 
@@ -144,6 +146,38 @@ public class Config {
             return ason.has(key);
         } catch (NullPointerException e) {
             return false;
+        }
+    }
+
+
+    /**
+     * This method gets the array from the key and converts it into a list for better handling
+     *
+     * @param key the key of the array
+     * @return the array as {@link java.util.List}
+     */
+    public List<?> getArray(String key) {
+        if (!hasKey(key)) {
+            List empty = Collections.emptyList();
+            ason.put("key", empty);
+            return empty;
+        } else {
+            return ason.getJsonArray(key).toList();
+        }
+    }
+
+
+    /**
+     * Gets anything
+     *
+     * @param key the key of the object
+     * @return the found object
+     */
+    public Object get(String key) {
+        if (!hasKey(key)) {
+            return null;
+        } else {
+            return ason.get(key);
         }
     }
 

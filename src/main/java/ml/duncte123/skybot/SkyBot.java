@@ -36,7 +36,7 @@ import javax.security.auth.login.LoginException;
 @Author
 public class SkyBot {
 
-    private static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
+    public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
     /**
      * This is our main method
