@@ -25,9 +25,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
  * This is a dummy command to test some things with commands
  */
 public class DummyCommand extends Command {
+    boolean hasRun = false;
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        //Do nothing
+        hasRun = true;
     }
 
     @Override

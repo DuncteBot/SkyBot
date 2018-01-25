@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -135,16 +136,20 @@ public class ModerationUtils {
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(User u) {
+    public static int getWarningCountForUser(User u, Guild g) {
         if(u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
-            int[] out = new int[0];
-            WebUtils.getJSONObject(Settings.apiBase + "/getWarnsForUser/json?user_id=" + u.getId(), it -> {
+            final int[] out = new int[1];
+            WebUtils.getJSONObject(String.format(
+                    "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
+                    Settings.apiBase,
+                    u.getId(),
+                    g.getId())
+            , it -> {
                 out[0] = it.getJSONArray("warnings").length();
                 return null;
             });
-            //noinspection ConstantConditions
             return out[0];
         }
         catch (IOException e) {
@@ -160,10 +165,11 @@ public class ModerationUtils {
      * @param reason the reason for the warn
      * @param jda a jda instance because we need the token for auth
      */
-    public static void addWarningToDb(User moderator, User target, String reason, JDA jda) {
+    public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("mod_id", moderator.getId());
         postFields.put("user_id", target.getId());
+        postFields.put("guild_id", guild.getId());
         postFields.put("reason", reason.isEmpty()? "No Reason provided" : " for " + reason);
         postFields.put("token", jda.getToken());
 
@@ -181,9 +187,9 @@ public class ModerationUtils {
     /**
      * This will check if there are users that can be unbanned
      *
-     * @param jda the current shard manager for this bot
+     * @param shardManager the current shard manager for this bot
      */
-    public static void checkUnbans(ShardManager jda) {
+    public static void checkUnbans(ShardManager shardManager) {
         logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
         Connection database = AirUtils.db.getConnManager().getConnection();
@@ -201,14 +207,16 @@ public class ModerationUtils {
                 if (currDate.after(unbanDate)) {
                     usersUnbanned++;
                     logger.debug("Unbanning " + res.getString("Username"));
-                    jda.getGuildCache().getElementById(res.getString("guildId")).getController()
-                            .unban(res.getString("userId")).reason("Ban expired").queue();
-                    modLog(new ConsoleUser(),
-                            new FakeUser(res.getString("Username"),
-                                                res.getString("userId"),
-                                                res.getString("discriminator")),
-                            "unbanned",
-                            jda.getGuildById(res.getString("guildId")));
+                    try {
+                        shardManager.getGuildCache().getElementById(res.getString("guildId")).getController()
+                                .unban(res.getString("userId")).reason("Ban expired").queue();
+                        modLog(new ConsoleUser(),
+                                new FakeUser(res.getString("Username"),
+                                        res.getString("userId"),
+                                        res.getString("discriminator")),
+                                "unbanned",
+                                shardManager.getGuildById(res.getString("guildId")));
+                    } catch (NullPointerException ignored) { }
                     database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }

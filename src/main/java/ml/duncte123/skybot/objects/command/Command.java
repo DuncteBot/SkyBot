@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
@@ -26,6 +27,7 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import okhttp3.Request;
+import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -88,7 +90,7 @@ public abstract class Command {
     /**
      * This holds the prefix for us
      */
-    protected static final String PREFIX = Settings.otherPrefix;
+    protected static final String PREFIX = Settings.prefix;
     /**
      * This holds the category
      */
@@ -102,6 +104,7 @@ public abstract class Command {
      * @return true if the user is a patron
      */
     protected boolean isPatron(User u, TextChannel tc) {
+        //noinspection deprecation
         if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
             return true;
         }
@@ -140,27 +143,24 @@ public abstract class Command {
                 return;
             }
 
-            WebUtils.execDBRequest(new Request.Builder()
+            Response it = WebUtilsJava.executeRequest(new Request.Builder()
                             .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                             .get()
                             .addHeader("Authorization", token)
-                            .build(),
-                    it -> {
-                        JSONArray json = null;
-                        try {
-                            json = new JSONArray(it.body().string());
-                        }
-                        catch (IOException e1) {
-                            logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-                        }
+                            .build());
+            JSONArray json = null;
+            try {
+                json = new JSONArray(it.body().string());
+            }
+            catch (IOException e1) {
+                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+            }
 
-                        upvotedIds.clear();
+            upvotedIds.clear();
 
-                        for (int i = 0; i < json.length(); i++) {
-                            upvotedIds.add(json.getString(i));
-                        }
-                        return null;
-                    });
+            for (int i = 0; i < json.length(); i++) {
+                upvotedIds.add(json.getString(i));
+            }
 
         } catch (JSONException e) {
             //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);

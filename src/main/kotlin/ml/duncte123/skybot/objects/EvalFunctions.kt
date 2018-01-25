@@ -16,32 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.essentials.eval.filter
+package ml.duncte123.skybot.objects
 
-import ml.duncte123.skybot.entities.delegate.*
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.entities.Member
-import net.dv8tion.jda.core.entities.User
-import net.dv8tion.jda.core.managers.Presence
+class EvalFunctions {
 
-class KotlinMappingFilter {
-    companion object {
-        fun transform(o: Any?): Any? {
-            if(o == null) return null
-            
-            if (o is JDA)
-                return JDADelegate(o)
-            if (o is Guild)
-                return GuildDelegate(o)
-            if (o is Member)
-                return MemberDelegate(o)
-            if (o is Presence)
-                return PresenceDelegate(o)
-            if (o is User)
-                return UserDelegate(o)
-        
-            return o
-        }
+    fun isEven(number: Int): Boolean {
+        return number % 2 == 0
+    }
+
+    fun quick_mafs(x: Int): Int {
+        val the_thing = x + 2 - 1
+        return the_thing
     }
 }

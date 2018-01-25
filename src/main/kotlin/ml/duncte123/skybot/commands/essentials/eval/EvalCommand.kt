@@ -21,14 +21,14 @@ package ml.duncte123.skybot.commands.essentials.eval
 import Java.lang.VRCubeException
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
+import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.Settings
 import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -54,7 +54,7 @@ class EvalCommand : Command() {
     private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
-    private var runIfNotOwner = false
+    private var runIfNotOwner = true
 
     /**
      * This initialises the engine
@@ -74,7 +74,7 @@ class EvalCommand : Command() {
                 return super.evaluate(scriptText)
             }
         }
-        engine = ScriptEngineManager(protectedShell.getClassLoader()).getEngineByName("groovy")
+        engine = ScriptEngineManager().getEngineByName("groovy")
         packageImports = listOf(
                 "java.io",
                 "java.lang",
@@ -93,21 +93,6 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         )
-
-        //Add functions to the owner eval
-        //This is because I want to use those methods in the eval
-        try {
-            engine.eval("def isEven(int number) {\n" +
-                    "return number % 2 == 0\n" +
-                    "}\n")
-            engine.eval("def quick_mafs(int x) {\n" +
-                    "def the_thing = x + 2 -1 \n " +
-                    "return the_thing \n" +
-                    "}")
-        } catch (e: ScriptException) {
-            e.printStackTrace()
-        }
-
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -117,15 +102,7 @@ class EvalCommand : Command() {
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
-        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) {
-            sendError(event.message)
-            sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                            "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
-            return
-        }
+        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\n", postfix = "\n")
@@ -153,11 +130,14 @@ class EvalCommand : Command() {
             engine.put("shardManager", event.jda.asBot().shardManager)
             engine.put("event", event)
 
+            engine.put("skraa", script)
             engine.put("args", args)
+
+            engine.put("funs", EvalFunctions())
 
             @SinceSkybot("3.58.0")
             async(start = CoroutineStart.ATOMIC) {
-                return@async eval(event, isRanByBotOwner, engine, script, timeout)
+                return@async eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
             protectedShell.setVariable("user", UserDelegate(event.author))
@@ -170,7 +150,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             async {
-                return@async eval(event, isRanByBotOwner, engine, script, timeout)
+                return@async eval(event, isRanByBotOwner, script, timeout)
             }
         }
 
@@ -208,14 +188,15 @@ class EvalCommand : Command() {
     }
 
     @SinceSkybot("3.58.0")
-    suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, engine: ScriptEngine, script: String, millis: Long) {
+    suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
             lateinit var coroutine: CoroutineScope
             val out = withTimeoutOrNull(millis) {
                 engine.put("scope", this)
                 coroutine = this
                 try {
-                    engine.eval(script)
+                    if(isRanByBotOwner) engine.eval(script)
+                    else protectedShell.evaluate(script)
                 } catch (ex: Throwable) {
                     ex
                 }

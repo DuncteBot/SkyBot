@@ -57,7 +57,7 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
         if(m.matches()) {
-            final Object[] out = new Object[1];
+            final AudioItem[] out = new AudioItem[1];
             try {
                 String clypitId = m.group(m.groupCount());
                 WebUtils.getJSONObject("https://api.clyp.it/" + clypitId, it -> {
@@ -68,6 +68,7 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
                     out[0] = handleLoadResult(detectContainer(httpReference)) ;
                     return null;
                 });
+                return out[0];
             }
             catch (IOException e) {
                 return null;

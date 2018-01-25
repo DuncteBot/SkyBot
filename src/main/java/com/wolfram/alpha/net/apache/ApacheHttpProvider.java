@@ -41,6 +41,7 @@ import org.apache.http.params.HttpProtocolParams;
 
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
 public class ApacheHttpProvider implements HttpProvider {
 
     

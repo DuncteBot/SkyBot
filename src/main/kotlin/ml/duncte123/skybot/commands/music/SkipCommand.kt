@@ -42,7 +42,7 @@ class SkipCommand : MusicCommand() {
             if (!args[0].matches("\\d{1,10}".toRegex())) {
                 1
             } else {
-                args[0].toInt().coerceIn(1, scheduler.queue.size)
+                args[0].toInt().coerceIn(1, scheduler.queue.size.coerceAtLeast(1))
             }
         } else {
             1

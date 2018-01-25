@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import okhttp3.Response;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -51,8 +51,16 @@ public class GuildUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            Response it = WebUtilsJava.postRequest(Settings.apiBase + "/postGuildCount/json", postFields, WebUtilsJava.AcceptType.URLENCODED);
-            return it.body().string();
+            final String[] out = new String[1];
+            WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields, WebUtils.AcceptType.URLENCODED, it -> {
+                try {
+                    out[0] = it.body().string();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                return null;
+            });
+            return out[0];
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {

@@ -35,7 +35,7 @@ class BirbCommand : Command() {
         try {
             WebUtils.getText("https://proximyst.com:4500/random/path/text") {
                 sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" +
-                        "$it/image"))
+                        "$this/image"))
             }
         } catch (e: IOException) {
             sendMsg(event, "ERROR: " + e.message)

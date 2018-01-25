@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.utils.Settings;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;

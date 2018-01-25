@@ -39,9 +39,9 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.58.0'
+version '3.58.2'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'

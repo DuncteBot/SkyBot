@@ -67,4 +67,14 @@ public class SkybotCommandTest {
         assertNotNull("The dummy command is not registered", manager.getCommand("dummy"));
         assertTrue("Could not remove the dummy command", manager.removeCommand("dummy"));
     }
+
+    @Test
+    public void testCommandRun() {
+        DummyCommand cmd = new DummyCommand();
+        manager.addCommand(cmd);
+        //We are not using the args so they can be null
+        manager.runCommand(new FakeGuildMessageReceivedEvent());
+
+        assertTrue("Command did not run", cmd.hasRun);
+    }
 }
