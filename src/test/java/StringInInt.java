@@ -3,7 +3,6 @@ import sun.misc.Unsafe;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 
-
 public class StringInInt {
     private static Integer integer;
 

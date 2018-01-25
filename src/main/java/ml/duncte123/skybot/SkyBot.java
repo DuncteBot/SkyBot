@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import ml.duncte123.skybot.unstable.UnstableSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
@@ -47,6 +48,11 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+
+        if (AirUtils.config.hasKey("launch_unstable") && AirUtils.config.getBoolean("launch_unstable", false)) {
+            new UnstableSettings();
+        }
+
         //Set the logger to only info by default
 //        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 //        l.setLevel(INFO);

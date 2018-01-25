@@ -55,9 +55,13 @@ public class Settings {
      */
     public static final String otherPrefix = "db.";
     /**
+     * Whether the bot is unstable or not
+     */
+    public static boolean isUnstable = false;
+    /**
      * This is the version of the bot
      */
-    public static final String version = BuildConfig.VERSION;
+    public static String version = BuildConfig.VERSION;
     /**
      * This is the name that your bot has
      */
