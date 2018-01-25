@@ -25,6 +25,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
+import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -92,21 +93,6 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         )
-
-        //Add functions to the owner eval
-        //This is because I want to use those methods in the eval
-        try {
-            engine.eval("def isEven(int number) {\n" +
-                    "return number % 2 == 0\n" +
-                    "}\n")
-            engine.eval("def quick_mafs(int x) {\n" +
-                    "def the_thing = x + 2 -1 \n " +
-                    "return the_thing \n" +
-                    "}")
-        } catch (e: ScriptException) {
-            e.printStackTrace()
-        }
-
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -146,6 +132,8 @@ class EvalCommand : Command() {
 
             engine.put("skraa", script)
             engine.put("args", args)
+
+            engine.put("funs", EvalFunctions())
 
             @SinceSkybot("3.58.0")
             async(start = CoroutineStart.ATOMIC) {

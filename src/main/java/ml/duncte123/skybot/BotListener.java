@@ -143,13 +143,13 @@ public class BotListener extends ListenerAdapter {
             event.getChannel().sendMessage(
                     String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                             event.getAuthor().getId(),
-                            Settings.otherPrefix)
+                            Settings.prefix)
             ).queue();
             return;
-        }else if (!rw.startsWith(Settings.prefix) &&
+        }else if (!rw.toLowerCase().startsWith(Settings.prefix.toLowerCase()) &&
                 !rw.startsWith(settings.getCustomPrefix())
                 && !rw.startsWith(event.getGuild().getSelfMember().getAsMention())
-                && !rw.startsWith(Settings.otherPrefix)) {
+                && !rw.toLowerCase().startsWith(Settings.otherPrefix.toLowerCase())) {
             return;
         }
 

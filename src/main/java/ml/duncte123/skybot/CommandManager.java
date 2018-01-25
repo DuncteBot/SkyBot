@@ -134,15 +134,15 @@ public class CommandManager {
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-                Pattern.quote(Settings.prefix.toLowerCase()) + "|" + Pattern.quote(Settings.otherPrefix) + "|" +
-                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()), "").split("\\s+");
+                "(?i)" + Pattern.quote(Settings.prefix) + "|" + Pattern.quote(Settings.otherPrefix) + "|" +
+                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
+                "").split("\\s+");
         final String invoke = split[0].toLowerCase();
-        final String[] args = Arrays.copyOfRange(split, 1, split.length);
 
         Command cmd = getCommand(invoke);
 
         if(cmd != null)
-            cmd.executeCommand(invoke, args, event);
+            cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
     }
     
 }
