@@ -30,8 +30,8 @@ import java.util.Map;
 
 public class BadWordFilter {
     
-    private static int largestWordLength = 0;
-    private static Map<String, String[]> words = new HashMap<>();
+    private int largestWordLength = 0;
+    private Map<String, String[]> words = new HashMap<>();
     
     public BadWordFilter() {
         try {
@@ -78,7 +78,7 @@ public class BadWordFilter {
      * @param input The sentence to check
      * @return every word as a item in array
      */
-    public static ArrayList<String> badWordsFound(String input) {
+    public ArrayList<String> badWordsFound(String input) {
         if (input == null) {
             return new ArrayList<>();
         }
