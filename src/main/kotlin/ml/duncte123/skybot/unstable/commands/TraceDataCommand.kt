@@ -18,7 +18,7 @@
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
-package ml.duncte123.skybot.commands.essentials
+package ml.duncte123.skybot.unstable.commands
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
@@ -43,7 +43,7 @@ class TraceDataCommand : Command() {
         when {
             args.isEmpty() -> ComparatingUtils.provideData(event.channel)
             args.size == 1 && args[0] == "exact" -> ComparatingUtils.provideExactData(event.channel)
-            args.size == 1 && args[0] == "test" -> throw TFException("Test you know.....")
+            args.size == 1 && args[0] == "test" -> throw TFException("Test you know...")
         }
     }
 

@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.58.2'
+version '3.58.UNSTABLE'
 
 sourceCompatibility = 1.9
 
@@ -64,6 +64,7 @@ buildConfig {
     appName = project.name
     version = project.version
     buildConfigField("String", "ownerId", "191231307290771456")
+    buildConfigField("boolean", "UNSTABLE", "true")
     packageName = project.group
     charset = 'UTF-8'
 

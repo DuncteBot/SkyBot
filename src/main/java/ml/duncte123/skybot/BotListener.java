@@ -198,6 +198,8 @@ public class BotListener extends ListenerAdapter {
         logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
 
         if (Settings.isUnstable) {
+            if (event.getJDA().getSelfUser().getIdLong() == 210363111729790977L)
+                return;
             //noinspection unchecked
             List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
             event.getJDA().getGuilds().forEach(g -> {
@@ -305,6 +307,8 @@ public class BotListener extends ListenerAdapter {
         }
         Guild g = event.getGuild();
         if (Settings.isUnstable) {
+            if (event.getJDA().getSelfUser().getIdLong() == 210363111729790977L)
+                return;
             //noinspection unchecked
             List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
             if (!ids.contains(g.getIdLong())) {

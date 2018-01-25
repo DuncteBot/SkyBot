@@ -19,7 +19,6 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import ml.duncte123.skybot.unstable.UnstableSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
@@ -50,7 +49,7 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
 
         if (AirUtils.config.hasKey("launch_unstable") && AirUtils.config.getBoolean("launch_unstable", false)) {
-            new UnstableSettings();
+            logger.info(TextColor.RED_BACKGROUND+TextColor.YELLOW+"USING UNSTABLE BUILD!"+TextColor.RESET);
         }
 
         //Set the logger to only info by default
