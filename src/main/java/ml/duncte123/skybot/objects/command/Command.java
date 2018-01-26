@@ -318,6 +318,30 @@ public abstract class Command {
      * @param delay the {@link Long} that is our delay
      * @param unit  the {@link TimeUnit} that is our unit that uses the delay parameter
      * @param msg   the message format to send
+     */
+    protected final void sendMsgAndDeleteAfter(GuildMessageReceivedEvent event, long delay, TimeUnit unit, String msg) {
+        sendMsgFormatAndDeleteAfter(event.getChannel(), delay, unit, msg, "");
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param tc an instance of {@link TextChannel TextChannel}
+     * @param delay the {@link Long} that is our delay
+     * @param unit  the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg   the message format to send
+     */
+    protected final void sendMsgAndDeleteAfter(TextChannel tc, long delay, TimeUnit unit, String msg) {
+        sendMsgFormatAndDeleteAfter(tc, delay, unit, msg, "");
+    }
+
+    /**
+     * This is a shortcut for sending formatted messages to a channel which also deletes it after delay unit
+     *
+     * @param event an instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param delay the {@link Long} that is our delay
+     * @param unit  the {@link TimeUnit} that is our unit that uses the delay parameter
+     * @param msg   the message format to send
      * @param args  the arguments that should be used in the msg parameter
      */
     protected final void sendMsgFormatAndDeleteAfter(GuildMessageReceivedEvent event, long delay, TimeUnit unit, String msg, Object... args) {

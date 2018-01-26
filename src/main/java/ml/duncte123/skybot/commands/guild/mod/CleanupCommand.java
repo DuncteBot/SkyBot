@@ -65,9 +65,7 @@ public class CleanupCommand extends Command {
                     return;
                 }
                 if (total < 2 || total > 100) {
-                    event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
-                            message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-                    );
+                    sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 100");
                     return;
                 }
             }
