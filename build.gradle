@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.58.2'
+version '3.58.3'
 
 sourceCompatibility = 1.9
 
