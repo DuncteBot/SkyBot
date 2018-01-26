@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
@@ -35,7 +36,10 @@ class ShortenCommand : Command() {
         }
 
         if(!hasUpvoted(event.author)) {
-            sendMsg(event, "You cannot use the shorten command as you haven't up-voted the bot")
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+                    "You cannot use the shorten command as you haven't up-voted the bot." +
+                    " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
+                    ") or become a patreon [here](https://patreon.com/duncte123)").build())
             return
         }
 
