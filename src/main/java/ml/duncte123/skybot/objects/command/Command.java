@@ -335,7 +335,8 @@ public abstract class Command {
      */
     protected final void sendMsgFormatAndDeleteAfter(TextChannel channel, long delay, TimeUnit unit, String msg, Object... args) {
         if(channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
-            channel.sendMessage(new MessageBuilder().append(String.format(msg, args)).build()).queue(it -> it.delete().reason("automatic remove").queueAfter(delay, unit));
+            channel.sendMessage(new MessageBuilder().append(String.format(msg, args)).build())
+                    .queue(it -> it.delete().reason("automatic remove").queueAfter(delay, unit, null, CUSTOM_QUEUE_ERROR));
     }
 
     /**
