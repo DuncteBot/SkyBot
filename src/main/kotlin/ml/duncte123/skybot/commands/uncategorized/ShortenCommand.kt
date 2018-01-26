@@ -27,11 +27,18 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (args.isEmpty() || args[0].isEmpty()) {
             sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
             return
         }
+
+        if(!hasUpvoted(event.author)) {
+            sendMsg(event, "You cannot use the shorten command as you haven't up-voted the bot")
+            return
+        }
+
         WebUtils.shortenUrl(args[0]) {
             sendMsg(event, "Here is your shortened url: <$this>")
         }
