@@ -22,6 +22,13 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -35,6 +42,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 
 import java.util.HashMap;
 import java.util.List;
@@ -74,7 +83,20 @@ public class AudioUtils {
 
         playerManager.registerSourceManager(new SpotifyAudioSourceManager());
         playerManager.registerSourceManager(new ClypitAudioSourceManager());
-        AudioSourceManagers.registerRemoteSources(playerManager);
+
+        //Disable cookies for youtube
+        YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+        youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
+
+        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+        playerManager.registerSourceManager(new HttpAudioSourceManager());
+
+
         AudioSourceManagers.registerLocalSource(playerManager);
         
         musicManagers = new HashMap<>();
