@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -34,12 +35,12 @@ class PauseCommand : MusicCommand() {
         val player = getMusicManager(event.guild).player
 
         if (player.playingTrack == null) {
-            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
+            MessageUtils.sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
         player.isPaused = !player.isPaused
-        sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        MessageUtils.sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
     override fun help(): String = "Pauses the current song"

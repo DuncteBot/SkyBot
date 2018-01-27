@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -59,12 +60,12 @@ public class ShardInfoCommand extends Command {
                     .getSelfMember())).count()));
             table.add(row);
             if (table.size() == 20) {
-                sendMsg(event, makeAsciiTable(headers, table));
+                MessageUtils.sendMsg(event, makeAsciiTable(headers, table));
                 table = new ArrayList<>();
             }
         }
         if (table.size() > 0) {
-            sendMsg(event, makeAsciiTable(headers, table));
+            MessageUtils.sendMsg(event, makeAsciiTable(headers, table));
         }
     }
 

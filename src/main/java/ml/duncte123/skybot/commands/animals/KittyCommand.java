@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -43,9 +44,9 @@ public class KittyCommand extends Command {
 
             String fullUrl = doc.select("url").first().text();
 
-            sendEmbed(event, EmbedUtils.embedImage(fullUrl));
+            MessageUtils.sendEmbed(event, EmbedUtils.embedImage(fullUrl));
         } catch (Exception e) {
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.toString()));
             //e.printStackTrace();
         }
     }

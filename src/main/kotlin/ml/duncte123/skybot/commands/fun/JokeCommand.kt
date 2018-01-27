@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONArray
@@ -49,8 +50,8 @@ class JokeCommand : Command() {
             })
 
             if(posts.isEmpty()) {
-                sendError(event.message)
-                sendMsg(event, """Whoops I could not find any jokes.
+                MessageUtils.sendError(event.message)
+                MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
                 |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
                 return@getJSONObject
             }
@@ -67,7 +68,7 @@ class JokeCommand : Command() {
             val text: String = jokeData.getString("selftext")
             val url: String = jokeData.getString("url")
 
-            sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
+            MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
 
         }
     }

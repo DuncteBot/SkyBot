@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -33,12 +34,12 @@ class ShuffleCommand : MusicCommand() {
 
         val scheduler = getMusicManager(event.guild).scheduler
         if (scheduler.queue.isEmpty()) {
-            sendMsg(event, "There are no songs to shuffle")
+            MessageUtils.sendMsg(event, "There are no songs to shuffle")
             return
         }
 
         scheduler.shuffle()
-        sendMsg(event, "The queue has been shuffled!")
+        MessageUtils.sendMsg(event, "The queue has been shuffled!")
     }
 
     override fun help(): String = "Shuffles the current queue"

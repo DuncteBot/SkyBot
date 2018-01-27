@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -68,9 +69,9 @@ public class GuildInfoCommand extends Command {
             //If the guild doesn't have a icon we show a nice blob
             eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
-            sendEmbed(event, eb.build());
+            MessageUtils.sendEmbed(event, eb.build());
         } catch (Exception e) {
-            sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
+            MessageUtils.sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
         }
     }

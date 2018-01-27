@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -119,16 +120,16 @@ public class WolframAlphaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if(!isPatron(event.getAuthor(), event.getChannel())) return;
-        sendMsg(event, "This command is being worked on.");
+        MessageUtils.sendMsg(event, "This command is being worked on.");
         WAEngine engine = AirUtils.alphaEngine;
 
         if (engine == null) {
-            sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
+            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
         if (args.length == 0) {
-            sendMsg(event, ":x: Must give a question!!!");
+            MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
 
@@ -150,7 +151,7 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        sendEmbed(event, generateEmbed(event, result));
+        MessageUtils.sendEmbed(event, generateEmbed(event, result));
     }
 
     @Override

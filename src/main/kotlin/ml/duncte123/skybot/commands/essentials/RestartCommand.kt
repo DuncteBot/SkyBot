@@ -23,6 +23,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @SinceSkybot("3.50.X")
@@ -42,14 +43,14 @@ class RestartCommand : Command() {
             when (args.size) {
                 0 -> shardManager.restart()
                 1 -> shardManager.restart(args[0].toInt())
-                else -> sendError(event.message)
+                else -> MessageUtils.sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON)
-                sendErrorJSON(event.message, ex, false)
+                MessageUtils.sendErrorJSON(event.message, ex, false)
             else {
                 logger.error(ex.localizedMessage, ex)
-                sendError(event.message)
+                MessageUtils.sendError(event.message)
             }
         }
     }

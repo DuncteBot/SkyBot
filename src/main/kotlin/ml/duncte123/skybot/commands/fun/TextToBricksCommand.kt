@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -32,11 +33,11 @@ class TextToBricksCommand: Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (args.isEmpty()) {
-            sendMsg(event, "Correct usage: `$PREFIX$invoke <words>`")
+            MessageUtils.sendMsg(event, "Correct usage: `$PREFIX$invoke <words>`")
             return
         }
 
-        sendEmbed(event,
+        MessageUtils.sendEmbed(event,
                 EmbedUtils.embedMessage(
                         StringUtils.join(args, " ")
                                 .toLowerCase()

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -37,12 +38,12 @@ public class UnbanCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
             return;
         }
 
@@ -61,7 +62,7 @@ public class UnbanCommand extends Command {
             event.getChannel().sendMessage("This user is not banned").queue();
         } catch (Exception e) {
             e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

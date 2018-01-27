@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -35,12 +36,12 @@ public class HelpCommand extends Command {
             
             for (Command cmd : AirUtils.commandManager.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
-                    sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                    MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
                     return;
                 } else {
                     for (String alias : cmd.getAliases()) {
                         if (alias.equals(toSearch)) {
-                            sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                            MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
                             return;
                         }
                         
@@ -49,7 +50,7 @@ public class HelpCommand extends Command {
                 }
             }
             
-            sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
+            MessageUtils.sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
             return;
         }
         
@@ -57,11 +58,11 @@ public class HelpCommand extends Command {
                 pc -> pc.sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).queue(
                         msg -> event.getChannel().sendMessage(event.getMember().getAsMention() + " check your DM's").queue(),
                         //When sending fails, send to the channel
-                        err -> sendMsg(event, (new MessageBuilder())
+                        err -> MessageUtils.sendMsg(event, (new MessageBuilder())
                                                                       .append("Message could not be delivered to dm's and has been send in this channel.")
                                                                       .setEmbed(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).build())
                 ),
-                err -> sendMsg(event, "ERROR: " + err.getMessage())
+                err -> MessageUtils.sendMsg(event, "ERROR: " + err.getMessage())
         );
     }
     

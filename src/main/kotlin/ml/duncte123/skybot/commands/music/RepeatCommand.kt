@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -34,7 +35,7 @@ class RepeatCommand : MusicCommand() {
         val scheduler = getMusicManager(event.guild).scheduler
 
         scheduler.isRepeating = !scheduler.isRepeating
-        sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
+        MessageUtils.sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
     }
 
     override fun help(): String = "Makes the player repeat the currently playing song"

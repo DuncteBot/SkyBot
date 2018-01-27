@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
@@ -49,7 +50,7 @@ class ImageCommand : Command() {
         }*/
         if(isPatron(event.author, event.channel)) {
             if (args.isEmpty()) {
-                sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
+                MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
             }
             val keyword = StringUtils.join(args, "+")
@@ -58,7 +59,7 @@ class ImageCommand : Command() {
                 val jsonRaw = Ason(this)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                 val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
-                sendEmbed(event,
+                MessageUtils.sendEmbed(event,
                         EmbedUtils.defaultEmbed()
                                 .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
                                 .setImage(randomItem.getString("link")).build()

@@ -36,7 +36,6 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
-import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -233,10 +232,10 @@ public class AudioUtils {
     }
 
     /**
-     * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      *
-     * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param tc {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param embed   {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
+     * @param tc {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
     private void sendEmbed(MessageEmbed embed, TextChannel tc) {
         if(tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
