@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import java.sql.ResultSet
@@ -75,9 +76,9 @@ class KpopCommand: Command() {
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
                     .setFooter("Query id: $id", Settings.defaultIcon)
-            sendEmbed(event, eb.build())
+            MessageUtils.sendEmbed(event, eb.build())
         } catch (e: Exception) {
-            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
+            MessageUtils.sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
             e.printStackTrace()
         } finally {
             try {

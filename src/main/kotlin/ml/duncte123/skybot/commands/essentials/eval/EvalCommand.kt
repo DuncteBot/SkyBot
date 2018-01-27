@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -110,7 +111,7 @@ class EvalCommand : Command() {
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
         } catch (ex: ArrayIndexOutOfBoundsException) {
-            sendSuccess(event.message)
+            MessageUtils.sendSuccess(event.message)
             return
         }
 
@@ -204,34 +205,34 @@ class EvalCommand : Command() {
             when (out) {
                 null -> {
                     coroutine.coroutineContext.cancel()
-                    sendSuccess(event.message)
+                    MessageUtils.sendSuccess(event.message)
                 }
                 is ArrayIndexOutOfBoundsException -> {
-                    sendSuccess(event.message)
+                    MessageUtils.sendSuccess(event.message)
                 }
                 is ExecutionException, is ScriptException -> {
                     out as Exception
                     event.channel.sendMessage("ERROR: " + out.cause.toString()).queue()
                     //e.printStackTrace();
-                    sendError(event.message)
+                    MessageUtils.sendError(event.message)
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     coroutine.coroutineContext.cancel()
                     event.channel.sendMessage("ERROR: " + out.toString()).queue()
                     if (coroutine.isActive)
                         coroutine.coroutineContext.cancel()
-                    sendError(event.message)
+                    MessageUtils.sendError(event.message)
                 }
                 is IllegalArgumentException, is VRCubeException -> {
                     out as RuntimeException
-                    sendMsg(event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
-                    sendError(event.message)
+                    MessageUtils.sendMsg(event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
+                    MessageUtils.sendError(event.message)
                 }
                 is Throwable -> {
                     if (Settings.useJSON)
-                        sendErrorJSON(event.message, out, true)
+                        MessageUtils.sendErrorJSON(event.message, out, true)
                     else {
-                        sendMsg(event, "ERROR: " + out.toString())
+                        MessageUtils.sendMsg(event, "ERROR: " + out.toString())
                         out.printStackTrace()
                     }
                 }
@@ -240,13 +241,13 @@ class EvalCommand : Command() {
                         MessageBuilder()
                                 .append(out.toString())
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                                .forEach { it -> sendMsg(event, it) }
+                                .forEach { it -> MessageUtils.sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
-                            sendMsg(event, "**ERROR:** Mentioning people!")
-                            sendError(event.message)
+                            MessageUtils.sendMsg(event, "**ERROR:** Mentioning people!")
+                            MessageUtils.sendError(event.message)
                         } else {
-                            sendMsg(event, "**" + event.author.name
+                            MessageUtils.sendMsg(event, "**" + event.author.name
                                     + ":** " + out.toString()
                                     .replace("@here".toRegex(), "@h\u0435re")
                                     .replace("@everyone".toRegex(), "@\u0435veryone"))

@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -40,7 +41,7 @@ public class LlamaCommand extends Command {
             });
         } catch (Exception e) {
             //e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }
 

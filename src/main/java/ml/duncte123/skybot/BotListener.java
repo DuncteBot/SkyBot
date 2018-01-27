@@ -37,6 +37,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,6 +49,7 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
@@ -85,6 +87,16 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+
+    /**
+     * A custom consumer that cancels the stupid unknown message error
+     */
+    private final Consumer<Throwable> CUSTOM_QUEUE_ERROR = it -> {
+        if(it instanceof ErrorResponseException){
+            if(((ErrorResponseException) it).getErrorCode() != 10008)
+                logger.error("RestAction queue returned failure", it);
+        }
+    };
 
     /**
      * Listen for messages send to the bot
@@ -129,10 +141,12 @@ public class BotListener extends ListenerAdapter {
                     && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
                 Message messageToCheck = event.getMessage();
                 if (filter.filterText(messageToCheck.getContentRaw())) {
-                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay()).queue();
+                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+                            .queue(null, CUSTOM_QUEUE_ERROR);
                     event.getChannel().sendMessage(
-                            String.format("Hello there, %s please do not use cursive language within this Discord.", event.getAuthor().getAsMention())).queue(
-                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS));
+                            String.format("Hello there, %s please do not use cursive language within this Discord.",
+                                    event.getAuthor().getAsMention())).queue(
+                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return;
                 }
         }
@@ -294,7 +308,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(GuildJoinEvent event) {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
-        if (botToUserRatio[1] > 70) {
+        if (botToUserRatio[1] >= 60) {
             GuildUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
                     event.getGuild().getOwner().getAsMention(),
                     botToUserRatio[1],

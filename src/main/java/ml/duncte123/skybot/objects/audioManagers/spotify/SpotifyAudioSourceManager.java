@@ -61,9 +61,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private final Api api;
     private final YoutubeSearchProvider youtubeSearchProvider;
-    private final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager();
+    private final YoutubeAudioSourceManager youtubeAudioSourceManager;
 
-    public SpotifyAudioSourceManager() {
+    public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager) {
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
         String clientId = AirUtils.config.getString("apis.spotify.clientId", defaultValue);
         String clientSecret = AirUtils.config.getString("apis.spotify.clientSecret", defaultValue);
@@ -71,8 +71,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             logger.error("Could not load Spotify keys\n" + defaultValue);
             api = null;
             youtubeSearchProvider = null;
+            this.youtubeAudioSourceManager = null;
             return;
         }
+        this.youtubeAudioSourceManager = youtubeAudioSourceManager;
         youtubeSearchProvider = new YoutubeSearchProvider(youtubeAudioSourceManager);
         api = Api.builder()
                 .clientId(clientId)

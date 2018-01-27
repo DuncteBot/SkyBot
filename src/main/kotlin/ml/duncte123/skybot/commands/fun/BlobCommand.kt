@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils

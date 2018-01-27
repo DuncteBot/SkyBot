@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -113,7 +114,7 @@ public class UserinfoCommand extends Command {
                                   .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                                   .build();
         
-        sendEmbed(event, eb);
+        MessageUtils.sendEmbed(event, eb);
     }
     
     @Override

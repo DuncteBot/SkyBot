@@ -27,6 +27,7 @@ import com.google.code.chatterbotapi.ChatterBotType
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 
@@ -56,7 +57,7 @@ class ChatCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if(args.isEmpty()){
-            sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
+            MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
         val time = System.currentTimeMillis()
@@ -64,7 +65,7 @@ class ChatCommand : Command() {
         event.channel.sendTyping().queue()
 
         if(event.message.contentRaw.contains("prefix")) {
-            sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.rand.nextInt(responses.size)]
+            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.rand.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
         }
@@ -92,7 +93,7 @@ class ChatCommand : Command() {
         for (element in Jsoup.parse(response).getElementsByTag("a")) {
             response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
         }
-        sendMsg(event, "${event.author.asMention}, $response")
+        MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
         logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -36,11 +37,11 @@ public class BirbCommandJava extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             WebUtils.getText("https://proximyst.com:4500/random/path/text", it -> {
-                sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + it + "/image"));
+                MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + it + "/image"));
                 return null;
             });
         } catch (IOException e) {
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

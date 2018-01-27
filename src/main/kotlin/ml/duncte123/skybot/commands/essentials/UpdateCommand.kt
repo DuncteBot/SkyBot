@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class UpdateCommand: Command() {
@@ -36,18 +37,18 @@ class UpdateCommand: Command() {
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
                 && Settings.ownerId != event.author.id) {
             event.channel.sendMessage(":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***").queue()
-            sendError(event.message)
+            MessageUtils.sendError(event.message)
             return
         }
 
         if(!Settings.enableUpdaterCommand) {
             val message = "The updater is not enabled. " +
                     "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
-            sendEmbed(event, EmbedUtils.embedMessage(message))
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
             return
         }
-        
-        sendMsg(event, "✅ Updating")
+
+        MessageUtils.sendMsg(event, "✅ Updating")
         
         // This will also shutdown eval
         event.jda.asBot().shardManager.shutdown()

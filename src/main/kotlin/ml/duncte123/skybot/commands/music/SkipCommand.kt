@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -35,7 +36,7 @@ class SkipCommand : MusicCommand() {
         val scheduler = manager.scheduler
 
         if (manager.player.playingTrack == null) {
-            sendMsg(event, "The player is not playing.")
+            MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
         val count = if (args.isNotEmpty()) {
@@ -51,7 +52,7 @@ class SkipCommand : MusicCommand() {
         repeat(count) {
             scheduler.nextTrack()
         }
-        sendMsg(event, "Successfully skipped $count tracks.")
+        MessageUtils.sendMsg(event, "Successfully skipped $count tracks.")
     }
 
     override fun help(): String = "Skips the current track."

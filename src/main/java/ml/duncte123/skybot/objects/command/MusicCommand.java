@@ -25,6 +25,7 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.managers.AudioManager;
@@ -98,12 +99,12 @@ public abstract class MusicCommand extends Command {
         AudioManager audioManager = getAudioManager(event.getGuild());
 
         if (!audioManager.isConnected()) {
-            sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
+            MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }
 
         if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
-            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+            MessageUtils.sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
         return true;

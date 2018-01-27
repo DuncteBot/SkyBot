@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -77,7 +78,7 @@ public class BotinfoCommand extends Command {
                                                      "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version:** " + PlayerLibrary.VERSION, false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
-        sendEmbed(event, eb);
+        MessageUtils.sendEmbed(event, eb);
     }
     
     @Override

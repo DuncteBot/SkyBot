@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.mod
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -29,20 +30,20 @@ class WarnCommand: Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You don't have permission to run this command")
-            sendError(event.message)
+            MessageUtils.sendMsg(event, "You don't have permission to run this command")
+            MessageUtils.sendError(event.message)
             return
         }
 
         if(args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
-            sendMsg(event, "Must mention a member")
-            sendError(event.message)
+            MessageUtils.sendMsg(event, "Must mention a member")
+            MessageUtils.sendError(event.message)
             return
         }
         val target = event.message.mentionedMembers[0]
         if(!event.member.canInteract(target)) {
-            sendMsg(event, "You can't warn that member because he/she has a higher position then you")
-            sendError(event.message)
+            MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher position then you")
+            MessageUtils.sendError(event.message)
             return
         }
         if(ModerationUtils.getWarningCountForUser(target.user, event.guild) >= 3) {
@@ -64,7 +65,7 @@ class WarnCommand: Command() {
             //Ignore the fail consumer, we don't want to have spam in the console
             it.sendMessage(dmMessage).queue(null, {})
         }
-        sendSuccess(event.message)
+        MessageUtils.sendSuccess(event.message)
 
     }
 

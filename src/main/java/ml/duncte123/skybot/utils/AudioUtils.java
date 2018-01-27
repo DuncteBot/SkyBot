@@ -22,6 +22,13 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -29,12 +36,13 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
-import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 
 import java.util.HashMap;
 import java.util.List;
@@ -72,9 +80,23 @@ public class AudioUtils {
         
         this.playerManager = new DefaultAudioPlayerManager();
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager());
+        //Disable cookies for youtube
+        YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+        youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
+
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
         playerManager.registerSourceManager(new ClypitAudioSourceManager());
-        AudioSourceManagers.registerRemoteSources(playerManager);
+
+
+        playerManager.registerSourceManager(youtubeAudioSourceManager);
+        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+        playerManager.registerSourceManager(new BandcampAudioSourceManager());
+        playerManager.registerSourceManager(new VimeoAudioSourceManager());
+        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+        playerManager.registerSourceManager(new BeamAudioSourceManager());
+        playerManager.registerSourceManager(new HttpAudioSourceManager());
+
+
         AudioSourceManagers.registerLocalSource(playerManager);
         
         musicManagers = new HashMap<>();
@@ -130,7 +152,7 @@ public class AudioUtils {
                 }
                 
                 mng.scheduler.queue(track);
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
             
             /**
@@ -143,7 +165,7 @@ public class AudioUtils {
                 List<AudioTrack> tracks = playlist.getTracks();
 
                 if(tracks.size() == 0) {
-                    sendEmbed(EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."), channel);
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
                 } else if (firstTrack == null) {
@@ -164,7 +186,7 @@ public class AudioUtils {
                     }
                     mng.scheduler.queue(firstTrack);
                 }
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
             
             /**
@@ -172,7 +194,7 @@ public class AudioUtils {
              */
             @Override
             public void noMatches() {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
             
             /**
@@ -181,7 +203,8 @@ public class AudioUtils {
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage() + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }
@@ -207,22 +230,6 @@ public class AudioUtils {
         }
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         return mng;
-    }
-
-    /**
-     * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     *
-     * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param tc {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     */
-    private void sendEmbed(MessageEmbed embed, TextChannel tc) {
-        if(tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-                tc.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-                return;
-            }
-            tc.sendMessage(embed).queue();
-        }
     }
 
     public Map<String, GuildMusicManager> getMusicManagers() {

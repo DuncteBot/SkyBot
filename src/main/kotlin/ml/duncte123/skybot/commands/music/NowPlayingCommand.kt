@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.music
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -37,7 +38,7 @@ class NowPlayingCommand : MusicCommand() {
         } else {
             "The player is not currently playing anything!"
         }
-        sendEmbed(event, EmbedUtils.embedMessage(msg))
+        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(msg))
     }
 
     override fun help(): String = "Prints information about the currently playing song (title, current time)"

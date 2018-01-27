@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -42,7 +43,7 @@ public class CleanupCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY)) {
-            sendMsg(event, "You don't have permission to run this command!");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command!");
             return;
         }
 
@@ -60,14 +61,12 @@ public class CleanupCommand extends Command {
                 try {
                     total = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
-                    sendError(event.getMessage());
-                    sendMsg(event, "Error: Amount to clear is not a valid number");
+                    MessageUtils.sendError(event.getMessage());
+                    MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
                     return;
                 }
                 if (total < 2 || total > 100) {
-                    event.getChannel().sendMessage("Error: count must be minimal 2 and maximal 100").queue(
-                            message -> message.delete().queueAfter(5, TimeUnit.SECONDS)
-                    );
+                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 100");
                     return;
                 }
             }
@@ -91,11 +90,11 @@ public class CleanupCommand extends Command {
                     event.getChannel().deleteMessages(msgLst).queue();
                 }
 
-                sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
+                MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
                 logger.debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
-            }, error -> sendMsg(event, "ERROR: " + error.getMessage()));
+            }, error -> MessageUtils.sendMsg(event, "ERROR: " + error.getMessage()));
         } catch (Exception e) {
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 
