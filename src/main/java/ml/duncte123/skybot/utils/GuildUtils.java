@@ -30,7 +30,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
@@ -51,16 +50,7 @@ public class GuildUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            final String[] out = new String[1];
-            WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields, WebUtils.AcceptType.URLENCODED, it -> {
-                try {
-                    out[0] = it.body().string();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            });
-            return out[0];
+            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields, WebUtils.AcceptType.URLENCODED).body().string();
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {
