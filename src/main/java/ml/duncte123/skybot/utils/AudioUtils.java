@@ -81,12 +81,13 @@ public class AudioUtils {
         
         this.playerManager = new DefaultAudioPlayerManager();
 
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager());
-        playerManager.registerSourceManager(new ClypitAudioSourceManager());
-
         //Disable cookies for youtube
         YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
         youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
+
+        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+        playerManager.registerSourceManager(new ClypitAudioSourceManager());
+
 
         playerManager.registerSourceManager(youtubeAudioSourceManager);
         playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
