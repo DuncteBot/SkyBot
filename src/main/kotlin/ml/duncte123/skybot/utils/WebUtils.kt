@@ -22,18 +22,22 @@ import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.config.Config
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
-import java.util.concurrent.ExecutionException
+
+
+
+
 
 class WebUtils {
 
     companion object {
-        private const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)"
+        const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)"
         private val client = OkHttpClient()
 
         /**
@@ -45,10 +49,8 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getText(url: String, action: String.() -> Unit) {
-            getRequest(url) {
-                action.invoke(this!!.body()!!.string())
-            }
+        fun getText(url: String): String {
+            return getRequest(url).body()!!.string()
         }
 
         /**
@@ -60,10 +62,8 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getJSONObject(url: String, action: JSONObject.() -> Unit) {
-            getText(url) {
-                action.invoke(JSONObject(this))
-            }
+        fun getJSONObject(url: String): JSONObject {
+            return JSONObject(getText(url))
         }
 
         /**
@@ -75,10 +75,8 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getJSONArray(url: String, action: JSONArray.() -> Unit) {
-            getText(url) {
-                action.invoke(JSONArray(this))
-            }
+        fun getJSONArray(url: String): JSONArray {
+            return JSONArray(getText(url))
         }
 
         /**
@@ -89,10 +87,8 @@ class WebUtils {
          */
         @Throws(IOException::class)
         @JvmStatic
-        fun getInputStream(url: String, action: InputStream.() -> Unit) {
-            getRequest(url) {
-                action.invoke(this?.body()?.byteStream()!!)
-            }
+        fun getInputStream(url: String): InputStream {
+            return getRequest(url).body()?.byteStream()!!
         }
 
         /**
@@ -103,16 +99,16 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML, action: Response?.() -> Unit) {
-            runBlocking {
-                action.invoke(executeRequest(
+        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML): Response {
+            return runBlocking {
+                executeRequest(
                         Request.Builder()
                                 .url(url)
                                 .get()
                                 .addHeader("User-Agent", USER_AGENT)
                                 .addHeader("Accept", accept.type)
                                 .addHeader("cache-control", "no-cache")
-                                .build()))
+                                .build())
             }
         }
 
@@ -125,21 +121,21 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED, action: Response?.() -> Unit) {
+        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED): Response {
             val postParams = StringBuilder()
 
             for ((key, value) in postFields) {
                 postParams.append(key).append("=").append(value).append("&")
             }
-            runBlocking {
-                action.invoke(executeRequest(
+            return runBlocking {
+                executeRequest(
                         Request.Builder()
                                 .url(url)
                                 .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.type), Config.replaceLast(postParams.toString(), "\\&", "")))
                                 .addHeader("User-Agent", USER_AGENT)
                                 .addHeader("Accept", accept.type)
                                 .addHeader("cache-control", "no-cache")
-                                .build()))
+                                .build())
             }
         }
 
@@ -151,8 +147,8 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON, action: Response?.() -> Unit) {
-            return postRequest(url, HashMap(), accept, action)
+        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON): Response {
+            return postRequest(url, HashMap(), accept)
         }
 
         /**
@@ -162,14 +158,14 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postJSON(url: String, data: JSONObject, action: Response?.() -> Unit) {
-            runBlocking {
-                action.invoke(executeRequest(
+        fun postJSON(url: String, data: JSONObject): Response {
+            return runBlocking {
+                executeRequest(
                         Request.Builder()
                                 .url(url)
                                 .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
                                 .addHeader("User-Agent", USER_AGENT)
-                                .build()))
+                                .build())
             }
         }
 
@@ -180,20 +176,20 @@ class WebUtils {
          * @return The shortened URL. `null` if any error occurred
          */
         @JvmStatic
-        fun shortenUrl(url: String, action: String?.() -> Unit) {
+        fun shortenUrl(url: String): String {
             try {
                 val jo = JSONObject()
 
                 jo.put("longUrl", url)
 
-                postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.config.getString("apis.googl", "Google api key"), jo) {
-                    action.invoke(JSONObject(this!!.body()!!.string()).get("id").toString())
-                }
+                val response = postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.config.getString("apis.googl", "Google api key"), jo)
+                return JSONObject(response.body()?.string()).get("id").toString()
             } catch (e: NullPointerException) {
-                e.printStackTrace()
+                ComparatingUtils.checkEx(e)
             } catch (e: IOException) {
-                e.printStackTrace()
+                ComparatingUtils.checkEx(e)
             }
+            return ""
         }
 
         /**
@@ -206,11 +202,8 @@ class WebUtils {
          */
         @JvmStatic
         fun translate(sourceLang: String, targetLang: String, input: String): JSONArray {
-            var json: JSONArray? = null
-            getJSONArray("https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input") {
-                json = this.getJSONArray(0).getJSONArray(0)
-            }
-            return json!!
+            return getJSONArray("https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input")
+                    .getJSONArray(0).getJSONArray(0)
         }
 
         /**
@@ -219,24 +212,28 @@ class WebUtils {
          * @returns the [Response] from the web server
          */
         @JvmStatic
-        suspend fun executeRequest(request: Request): Response? {
-            return try {
-                async { client.newCall(request).execute() }.await()
-            } catch (e: InterruptedException) {
-                //e.printStackTrace();
-                null
-            } catch (e: ExecutionException) {
-                null
-            }
+        suspend fun executeRequest(request: Request): Response {
+            return async { client.newCall(request).execute() }.await()
 
         }
 
-        @JvmStatic
-        fun execCustomRequest(request: Request, action: Response?.() -> Unit) {
-            runBlocking {
-                action.invoke(executeRequest(request))
+        private fun postRawToService(service: WebUtils.Service, raw: String): JSONObject {
+            val req = Request.Builder()
+                    .post(RequestBody.create(MediaType.parse("text/plain"), raw))
+                    .url(service.url)
+                    .build()
+            try {
+                val res = client.newCall(req).execute()
+                return if (!res.isSuccessful) JSONObject().put("key", "about.md") else JSONObject(res.body()!!.string())
+            } catch (e: IOException) {
+                ComparatingUtils.checkEx(e)
             }
+
+            return JSONObject().put("key", "about.md")
         }
+
+        fun hastebin(s: String): String = "hastebin.com" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
+        fun wastebin(s: String): String = "wastebin.party" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
     }
     /**
      * This holds some variables that we will accept
@@ -248,4 +245,15 @@ class WebUtils {
         TEXT_XML("application/xml"),
         URLENCODED("application/x-www-form-urlencoded")
     }
+
+    enum class Service(val url: String) {
+        HASTEBIN("https://hastebin.com/documents"),
+        WASTEBIN("https://wastebin.party/documents")
+    }
 }
+
+/*
+ * Global wrapping fun for every class
+ */
+fun hastebin(s: String): String = WebUtils.hastebin(s)
+fun wastebin(s: String): String = WebUtils.wastebin(s)

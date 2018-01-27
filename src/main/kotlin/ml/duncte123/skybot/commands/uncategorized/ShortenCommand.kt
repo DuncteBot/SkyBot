@@ -32,9 +32,7 @@ class ShortenCommand : Command() {
             sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
             return
         }
-        WebUtils.shortenUrl(args[0]) {
-            sendMsg(event, "Here is your shortened url: <$this>")
-        }
+            sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
     override fun help(): String = """Shortens a url

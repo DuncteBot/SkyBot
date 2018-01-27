@@ -63,15 +63,14 @@ class OneLinerCommands : Command() {
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
-            "quote" -> WebUtils.getText("http://inspirobot.me/api?generate=true") { sendEmbed(event, EmbedUtils.embedImage(this)) }
+            "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
 
             "yesno" -> {
-                WebUtils.getJSONObject("https://yesno.wtf/api") {
-                    sendEmbed(event, EmbedUtils.defaultEmbed()
-                            .setTitle(this.getString("answer"))
-                            .setImage(this.getString("image"))
-                            .build())
-                }
+                val json = WebUtils.getJSONObject("https://yesno.wtf/api")
+                sendEmbed(event, EmbedUtils.defaultEmbed()
+                        .setTitle(json.getString("answer"))
+                        .setImage(json.getString("image"))
+                        .build())
             }
             else -> println("Invoke was invalid: $invoke")
         }

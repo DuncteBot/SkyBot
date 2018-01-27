@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.unstable.utils
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.utils.hastebin
 import net.dv8tion.jda.core.entities.MessageChannel
 import org.apache.commons.lang3.StringUtils
 
@@ -89,10 +90,26 @@ class ComparatingUtils {
             channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
+        fun provideAtomicData(channel: MessageChannel, ex: String) {
+            val headers = listOf("Type", "Message", "Count", "Trace")
+            val table: ArrayList<List<String>> = ArrayList()
+            val data = exceptionMap.entries.first { it.key.name == ex }.value
+
+            val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "================================", prefix = "\n\n\n\n", postfix = "\n\n\n\n")
+
+            val haste = hastebin(hastedata)
+
+            data.keys.forEachIndexed { index, exceptionType ->
+                table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
+            }
+
+            channel.sendMessage(makeAsciiTable(headers = headers, table = table)).queue()
+        }
+
         private fun makeAsciiTable(headers: List<String>, table: List<List<String>>): String {
             val sb = StringBuilder()
             val padding = 1
-            val widths = IntArray(headers.size)
+            val widths = IntArray(size = headers.size)
             for (i in widths.indices) {
                 widths[i] = 0
             }
@@ -113,13 +130,13 @@ class ComparatingUtils {
                 formatLine.append(" %-").append(width).append("s ║")
             }
             formatLine.append("\n")
-            sb.append(appendSeparatorLine("╔", "╦", "╗", padding, *widths))
-            sb.append(String.format(formatLine.toString(), *headers.toTypedArray()))
-            sb.append(appendSeparatorLine("╠", "╬", "╣", padding, *widths))
+            sb.append(appendSeparatorLine(left = "╔", middle = "╦", right = "╗", padding = padding, sizes = *widths))
+            sb.append(String.format(format = formatLine.toString(), args = *headers.toTypedArray()))
+            sb.append(appendSeparatorLine(left = "╠", middle = "╬", right = "╣", padding = padding, sizes = *widths))
             for (row in table) {
-                sb.append(String.format(formatLine.toString(), *row.toTypedArray()))
+                sb.append(String.format(format = formatLine.toString(), args = *row.toTypedArray()))
             }
-            sb.append(appendSeparatorLine("╚", "╩", "╝", padding, *widths))
+            sb.append(appendSeparatorLine(left = "╚", middle = "╩", right = "╝", padding = padding, sizes = *widths))
             sb.append("```")
             return sb.toString()
         }
@@ -156,4 +173,13 @@ infix fun Throwable.compare(other: Throwable): Boolean {
     val messageMatch = this.localizedMessage == other.localizedMessage
     val stacktraceMatch = other.stackTrace.map { this.stackTrace.contains(it) }.filter { false }.count() < 4
     return classesMatch && messageMatch || messageMatch && stacktraceMatch
+}
+
+infix fun Throwable.printStackTrace(s: String): String {
+    var s = s
+    s += "${this::class.java.name}: ${this.localizedMessage}\n"
+    this.stackTrace.forEach {
+        s += "\t$it\n"
+    }
+    return s
 }

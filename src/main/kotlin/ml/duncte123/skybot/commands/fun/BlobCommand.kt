@@ -37,18 +37,14 @@ class BlobCommand : Command() {
         if (args.isNotEmpty()) {
             blob = StringUtils.join(*args)
         }
-        
-        WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png") {
-            val responseBody = this!!.body()
 
-            if (responseBody!!.contentLength() <= 0) {
-                sendMsg(event, "This blob was not found on the server!!!")
-                this.close()
-                return@getRequest
-            }
-
-            event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue { this.close() }
+        val responseBody = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png").body()
+        if (responseBody!!.contentLength() <= 0) {
+            sendMsg(event, "This blob was not found on the server!!!")
+            return
         }
+
+        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue()
 
         
 

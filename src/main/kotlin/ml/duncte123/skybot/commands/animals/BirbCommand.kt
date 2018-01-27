@@ -33,10 +33,8 @@ class BirbCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         try {
-            WebUtils.getText("https://proximyst.com:4500/random/path/text") {
-                sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" +
-                        "$this/image"))
-            }
+            sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + WebUtils.getText("https://proximyst.com:4500/random/path/text") +
+                    "/image"))
         } catch (e: IOException) {
             sendMsg(event, "ERROR: " + e.message)
         }
