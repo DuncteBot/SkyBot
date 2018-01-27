@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.58.3'
+version '3.58.4'
 
 sourceCompatibility = 1.9
 
@@ -72,7 +72,8 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'e7c8c3b'
+    //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'e7c8c3b'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.0_330'
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
