@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
