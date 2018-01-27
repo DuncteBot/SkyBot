@@ -152,7 +152,7 @@ public class AudioUtils {
                 }
                 
                 mng.scheduler.queue(track);
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
             
             /**
@@ -165,7 +165,7 @@ public class AudioUtils {
                 List<AudioTrack> tracks = playlist.getTracks();
 
                 if(tracks.size() == 0) {
-                    sendEmbed(EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."), channel);
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
                 } else if (firstTrack == null) {
@@ -186,7 +186,7 @@ public class AudioUtils {
                     }
                     mng.scheduler.queue(firstTrack);
                 }
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
             
             /**
@@ -194,7 +194,7 @@ public class AudioUtils {
              */
             @Override
             public void noMatches() {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
             
             /**
@@ -203,7 +203,8 @@ public class AudioUtils {
              */
             @Override
             public void loadFailed(FriendlyException exception) {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage() + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }
@@ -229,22 +230,6 @@ public class AudioUtils {
         }
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         return mng;
-    }
-
-    /**
-     * {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     *
-     * @param embed   {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param tc {@link MessageUtils#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     */
-    private void sendEmbed(MessageEmbed embed, TextChannel tc) {
-        if(tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-                tc.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-                return;
-            }
-            tc.sendMessage(embed).queue();
-        }
     }
 
     public Map<String, GuildMusicManager> getMusicManagers() {
