@@ -43,9 +43,7 @@ class TraceDataCommand : Command() {
         when {
             args.isEmpty() -> ComparatingUtils.provideData(event.channel)
             args.size == 1 && args[0] == "exact" -> ComparatingUtils.provideExactData(event.channel)
-            args.size == 1 && args[0] == "test" -> {
-                throw TFException("lol")
-            }
+            args.size == 1 && args[0] == "test" -> throw TFException("lol")
             args.size == 2 && args[0] == "atomic" -> ComparatingUtils.provideAtomicData(event.channel, args[1])
         }
     }
