@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
@@ -47,7 +48,8 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         val mng = getMusicManager(guild)
         val audioManager = getAudioManager(guild)
         val cooldowns = MusicCommand.cooldowns
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
+        @Suppress("DEPRECATION")
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)
