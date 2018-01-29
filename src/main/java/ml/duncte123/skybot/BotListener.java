@@ -212,16 +212,16 @@ public class BotListener extends ListenerAdapter {
         logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
 
         if (Settings.isUnstable) {
-            if (event.getJDA().getSelfUser().getIdLong() == 210363111729790977L)
-                return;
-            //noinspection unchecked
-            List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
-            event.getJDA().getGuilds().forEach(g -> {
-                if (!ids.contains(g.getIdLong())) {
-                    g.leave().queue();
-                    logger.info(TextColor.ORANGE+"Leaving Guild: "+g.getName()+", because its not authorized for/in the UNSTABLE project."+TextColor.RESET);
-                }
-            });
+            if (event.getJDA().getSelfUser().getIdLong() != 210363111729790977L) {
+                //noinspection unchecked
+                List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
+                event.getJDA().getGuilds().forEach(g -> {
+                    if (!ids.contains(g.getIdLong())) {
+                        g.leave().queue();
+                        logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);
+                    }
+                });
+            }
         }
 
         //Start the timers if they have not been started yet
@@ -321,14 +321,14 @@ public class BotListener extends ListenerAdapter {
         }
         Guild g = event.getGuild();
         if (Settings.isUnstable) {
-            if (event.getJDA().getSelfUser().getIdLong() == 210363111729790977L)
-                return;
-            //noinspection unchecked
-            List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
-            if (!ids.contains(g.getIdLong())) {
-                g.leave().queue();
-                logger.info(TextColor.ORANGE+"Leaving Guild: "+g.getName()+", because its not authorized for/in the UNSTABLE project."+TextColor.RESET);
-                return;
+            if (event.getJDA().getSelfUser().getIdLong() != 210363111729790977L) {
+                    //noinspection unchecked
+                    List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
+                if (!ids.contains(g.getIdLong())) {
+                    g.leave().queue();
+                    logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);
+                    return;
+                }
             }
         }
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
