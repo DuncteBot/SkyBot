@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.TextColor;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 
@@ -148,8 +147,7 @@ public class CommandManager {
                 cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
             } catch (Throwable ex) {
                 if (Settings.isUnstable) {
-                    boolean[] data = ComparatingUtils.execCheck(ex);
-                    SkyBot.logger.info(TextColor.CYAN+String.format("ExceptionData: [HadKey: %b, HadMatching: %b, Added: %b]", data[0], data[1], data[2])+TextColor.RESET);
+                    ComparatingUtils.execCheck(ex);
                 }
             }
         }

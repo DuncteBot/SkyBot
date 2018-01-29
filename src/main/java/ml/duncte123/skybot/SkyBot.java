@@ -19,9 +19,11 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.requests.RestAction;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,6 +51,7 @@ public class SkyBot {
     public static void main(String... args) throws Exception {
 
         if (AirUtils.config.hasKey("launch_unstable") && AirUtils.config.getBoolean("launch_unstable", false)) {
+            RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
             logger.info(TextColor.RED_BACKGROUND+TextColor.YELLOW+"USING UNSTABLE BUILD!"+TextColor.RESET);
         }
 

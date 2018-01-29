@@ -16,14 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:JvmName("ComparatingUtilsKt")
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 package ml.duncte123.skybot.unstable.utils
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.utils.TextColor
 import ml.duncte123.skybot.utils.hastebin
 import net.dv8tion.jda.core.entities.MessageChannel
 import org.apache.commons.lang3.StringUtils
+import org.slf4j.LoggerFactory
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ComparatingUtils {
@@ -53,7 +56,10 @@ class ComparatingUtils {
                 exceptionMap[throwable::class.java]!!.keys.first().increase()
                 false
             }
-            return booleanArrayOf(mapHasKey, exactMatch, added)
+            val data = booleanArrayOf(mapHasKey, exactMatch, added)
+            LoggerFactory.getLogger(ComparatingUtils::class.java)
+                    .info("${TextColor.CYAN}ExceptionData: [HadKey: ${data[0]}, HadMatching: ${data[1]}, Added: ${data[2]}]${TextColor.RESET}")
+            return data
         }
 
         @JvmStatic
