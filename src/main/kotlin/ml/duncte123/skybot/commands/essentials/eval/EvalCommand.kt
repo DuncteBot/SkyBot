@@ -28,6 +28,7 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
@@ -199,6 +200,8 @@ class EvalCommand : Command() {
                     if(isRanByBotOwner) engine.eval(script)
                     else protectedShell.evaluate(script)
                 } catch (ex: Throwable) {
+
+                    ComparatingUtils.checkEx(ex)
                     ex
                 }
             }
@@ -212,28 +215,25 @@ class EvalCommand : Command() {
                 }
                 is ExecutionException, is ScriptException -> {
                     out as Exception
-                    event.channel.sendMessage("ERROR: " + out.cause.toString()).queue()
-                    //e.printStackTrace();
-                    MessageUtils.sendError(event.message)
+                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.cause.toString())
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
+                    out as Exception
                     coroutine.coroutineContext.cancel()
-                    event.channel.sendMessage("ERROR: " + out.toString()).queue()
                     if (coroutine.isActive)
                         coroutine.coroutineContext.cancel()
-                    MessageUtils.sendError(event.message)
+                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is VRCubeException -> {
                     out as RuntimeException
-                    MessageUtils.sendMsg(event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
-                    MessageUtils.sendError(event.message)
+                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
                 }
                 is Throwable -> {
                     if (Settings.useJSON)
                         MessageUtils.sendErrorJSON(event.message, out, true)
                     else {
                         MessageUtils.sendMsg(event, "ERROR: " + out.toString())
-                        out.printStackTrace()
+                        // out.printStackTrace()
                     }
                 }
                 else -> {
@@ -244,8 +244,7 @@ class EvalCommand : Command() {
                                 .forEach { it -> MessageUtils.sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
-                            MessageUtils.sendMsg(event, "**ERROR:** Mentioning people!")
-                            MessageUtils.sendError(event.message)
+                            MessageUtils.sendErrorWithMessage(event.message, event, "**ERROR:** Mentioning people!")
                         } else {
                             MessageUtils.sendMsg(event, "**" + event.author.name
                                     + ":** " + out.toString()

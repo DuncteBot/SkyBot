@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
+import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.config.Config
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -213,6 +214,7 @@ class WebUtils {
 
         }
 
+        @DocumentationNeeded
         private fun postRawToService(service: WebUtils.Service, raw: String): JSONObject {
             val req = Request.Builder()
                     .post(RequestBody.create(MediaType.parse("text/plain"), raw))
@@ -228,8 +230,9 @@ class WebUtils {
             return JSONObject().put("key", "about.md")
         }
 
-        fun hastebin(s: String): String = "hastebin.com" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
-        fun wastebin(s: String): String = "wastebin.party" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
+        @DocumentationNeeded
+        fun hastebin(s: String): String = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
+        fun wastebin(s: String): String = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
     }
     /**
      * This holds some variables that we will accept
