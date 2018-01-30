@@ -34,6 +34,10 @@ class RepeatCommand : MusicCommand() {
 
         val scheduler = getMusicManager(event.guild).scheduler
 
+        if (args.size == 1 && args[0] == "playlist") {
+            scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
+        }
+
         scheduler.isRepeating = !scheduler.isRepeating
         MessageUtils.sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
     }

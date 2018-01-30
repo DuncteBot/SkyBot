@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
-import java.io.IOException;
 import java.net.URL;
 
 public class CatCommand extends Command {
@@ -39,20 +39,13 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            WebUtils.getJSONObject("http://random.cat/meow.php", it -> {
-                String newJSON = it.getString("file");
-                try {
-                    event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
-                } catch (IOException e) {
-                    MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
-                }
-                return null;
-            });
+            String newJSON = WebUtils.getJSONObject("http://random.cat/meow.php").getString("file");
+            event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
             //e.printStackTrace();
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+            ComparatingUtils.execCheck(e);
         }
-
     }
 
     @Override

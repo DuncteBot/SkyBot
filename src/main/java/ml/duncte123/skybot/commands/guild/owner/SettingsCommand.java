@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
@@ -34,6 +33,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
+
+import static ml.duncte123.skybot.utils.MessageUtils.*;
 
 public class SettingsCommand extends Command {
 
@@ -45,7 +46,7 @@ public class SettingsCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         //noinspection deprecation
         if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command");
+            sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
@@ -68,38 +69,38 @@ public class SettingsCommand extends Command {
                         "**Modlog Channel:** " + (logChan !=null ? logChan.getAsMention(): "none") + "\n" +
                         "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
                 );
-                MessageUtils.sendEmbed(event, message);
+                sendEmbed(event, message);
                 break;
 
             case "setprefix":
                 if (args.length < 1) {
-                    MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
                 String newPrefix = StringUtils.join(args, " ");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
-                MessageUtils.sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
+                sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
             case "setjoinmessage":
             case "setwelcomenmessage":
                 if (args.length < 1) {
-                    MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
                 String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
-                MessageUtils.sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
+                sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
 
             case "setleavemessage":
                 if (args.length < 1) {
-                    MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
+                    sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
                 String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomLeaveMessage(newLeaveMessage));
-                MessageUtils.sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
+                sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
 
             case "enablejoinmessage":
@@ -108,7 +109,7 @@ public class SettingsCommand extends Command {
                 isEnabled = settings.isEnableJoinMessage();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                         settings.setEnableJoinMessage(!isEnabled));
-                MessageUtils.sendMsg(event, "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                sendMsg(event, "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
             case "enableswearfilter":
@@ -117,75 +118,75 @@ public class SettingsCommand extends Command {
                 isEnabled = settings.isEnableSwearFilter();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(),
                         settings.setEnableSwearFilter(!isEnabled));
-                MessageUtils.sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
+                sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
             case "setlogchannel":
                 if(args.length < 1) {
-                    MessageUtils.sendMsg(event, "Incorrect usage: `"+PREFIX+"setLogChannel [text channel]`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"setLogChannel [text channel]`");
                     return;
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
                     TextChannel tc = event.getMessage().getMentionedChannels().get(0);
                     if(!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                        MessageUtils.sendError(event.getMessage());
-                        MessageUtils.sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
+                        sendError(event.getMessage());
+                        sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
                     GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
-                    MessageUtils.sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
+                    sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                     return;
                 }
 
                 TextChannel tc = AirUtils.getLogChannel(StringUtils.join(args), event.getGuild());
                 if(tc == null) {
-                    MessageUtils.sendMsg(event, "This channel could not be found.");
+                    sendMsg(event, "This channel could not be found.");
                     return;
                 }
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setLogChannel(tc.getId()));
-                MessageUtils.sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
+                sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                 break;
             case "setwelcomechannel":
             case "setleavechannel":
                 if(args.length < 1) {
-                    MessageUtils.sendMsg(event, "Incorrect usage: `"+PREFIX+"setwelcomechannel [text channel]`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"setwelcomechannel [text channel]`");
                     return;
                 }
                 if(event.getMessage().getMentionedChannels().size() > 0) {
                     TextChannel welcomeChannel = event.getMessage().getMentionedChannels().get(0);
                     if(!welcomeChannel.getGuild().getSelfMember().hasPermission(welcomeChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                        MessageUtils.sendError(event.getMessage());
-                        MessageUtils.sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
+                        sendError(event.getMessage());
+                        sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
                     GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
-                    MessageUtils.sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
+                    sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                     return;
                 }
 
                 TextChannel welcomeChannel = AirUtils.getLogChannel(StringUtils.join(args), event.getGuild());
                 if(welcomeChannel == null) {
-                    MessageUtils.sendMsg(event, "This channel could not be found.");
+                    sendMsg(event, "This channel could not be found.");
                     return;
                 }
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
-                MessageUtils.sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
+                sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                 break;
 
             case "autorole":
 
                 if(!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-                    MessageUtils.sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
+                    sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
                     return;
                 }
 
                 if(args.length == 0) {
-                    MessageUtils.sendMsg(event, "Incorrect usage: `"+PREFIX+"autorole <role name/disable>`");
+                    sendMsg(event, "Incorrect usage: `"+PREFIX+"autorole <role name/disable>`");
                     return;
                 }
 
                 if("disable".equals(args[0])) {
-                    MessageUtils.sendMsg(event, "AutoRole feature has been disabled");
+                    sendMsg(event, "AutoRole feature has been disabled");
                     GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(""));
                     return;
                 }
@@ -193,16 +194,16 @@ public class SettingsCommand extends Command {
                 List<Role> rolesFound = event.getGuild().getRolesByName(StringUtils.join(args, " "), true);
 
                 if(rolesFound.size() == 0) {
-                    MessageUtils.sendMsg(event, "I could not find any roles with that name");
+                    sendMsg(event, "I could not find any roles with that name");
                     return;
                 }
                 if(rolesFound.get(0).getPosition() >= event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
-                    MessageUtils.sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
+                    sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
                     return;
                 }
 
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(rolesFound.get(0).getId()));
-                MessageUtils.sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
+                sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
         }

@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -64,15 +65,14 @@ class OneLinerCommands : Command() {
 
             "uptime" -> MessageUtils.sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
-            "quote" -> WebUtils.getText("http://inspirobot.me/api?generate=true") { MessageUtils.sendEmbed(event, EmbedUtils.embedImage(this)) }
+            "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
 
             "yesno" -> {
-                WebUtils.getJSONObject("https://yesno.wtf/api") {
-                    MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
-                            .setTitle(this.getString("answer"))
-                            .setImage(this.getString("image"))
-                            .build())
-                }
+                val json = WebUtils.getJSONObject("https://yesno.wtf/api")
+                sendEmbed(event, EmbedUtils.defaultEmbed()
+                        .setTitle(json.getString("answer"))
+                        .setImage(json.getString("image"))
+                        .build())
             }
             else -> println("Invoke was invalid: $invoke")
         }

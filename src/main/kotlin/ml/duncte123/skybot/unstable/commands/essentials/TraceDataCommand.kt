@@ -16,36 +16,41 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.animals
+@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
+package ml.duncte123.skybot.unstable.commands.essentials
+
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.TFException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.io.IOException
 
-class BirbCommand : Command() {
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+class TraceDataCommand : Command() {
 
     init {
-        this.category = CommandCategory.ANIMALS
+        this.category = CommandCategory.UNLISTED
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        try {
-            sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/${WebUtils.getText("https://proximyst.com:4500/random/path/text")}/image"))
-        } catch (e: IOException) {
-            sendMsg(event, "ERROR: " + e.message)
-            ComparatingUtils.checkEx(e)
+        @Suppress("DEPRECATION")
+        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id))
+            return
+
+        when {
+            args.isEmpty() -> ComparatingUtils.provideData(event.channel)
+            args.size == 1 && args[0] == "exact" -> ComparatingUtils.provideExactData(event.channel)
+            args.size == 1 && args[0] == "test" -> throw TFException("lol")
+            args.size == 2 && args[0] == "atomic" -> ComparatingUtils.provideAtomicData(event.channel, args[1])
         }
     }
 
-    override fun getName() = "birb"
+    override fun help(): String = """Hidden Command for the devs only""".trimMargin()
 
-    override fun help() = "Here is a birb"
+    override fun getName(): String = "tracedata"
 
-    override fun getAliases()= arrayOf("bird")
+    override fun getAliases(): Array<String> = arrayOf("traces", "debugdata", "stacks")
 }

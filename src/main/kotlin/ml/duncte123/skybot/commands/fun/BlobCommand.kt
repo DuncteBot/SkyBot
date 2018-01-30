@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
@@ -38,18 +38,14 @@ class BlobCommand : Command() {
         if (args.isNotEmpty()) {
             blob = StringUtils.join(*args)
         }
-        
-        WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png") {
-            val responseBody = this!!.body()
 
-            if (responseBody!!.contentLength() <= 0) {
-                MessageUtils.sendMsg(event, "This blob was not found on the server!!!")
-                this.close()
-                return@getRequest
-            }
-
-            event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue { this.close() }
+        val responseBody = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png").body()
+        if (responseBody!!.contentLength() <= 0) {
+            sendMsg(event, "This blob was not found on the server!!!")
+            return
         }
+
+        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue()
 
         
 

@@ -55,6 +55,10 @@ public class Settings {
      */
     public static final String otherPrefix = "db.";
     /**
+     * Whether the bot is unstable or not
+     */
+    public static final boolean isUnstable = BuildConfig.UNSTABLE && AirUtils.config.getBoolean("launch_unstable", false);
+    /**
      * This is the version of the bot
      */
     public static final String version = BuildConfig.VERSION;
