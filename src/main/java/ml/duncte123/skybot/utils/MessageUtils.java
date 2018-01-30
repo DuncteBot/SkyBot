@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.DocumentationNeeded;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -59,13 +58,26 @@ public class MessageUtils {
         message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
     }
 
-    @DocumentationNeeded
+    /**
+     * This method uses the sendError and sendMsg methods
+     *
+     * @param message the {@link Message} for the sendError method
+     * @param textChannel the {@link TextChannel} for the sendMsg method
+     * @param text the {@link String} for the sendMsg method
+     */
     public static void sendErrorWithMessage(Message message, TextChannel textChannel, String text) {
         sendError(message);
         sendMsg(textChannel, text);
     }
 
-    @DocumentationNeeded
+
+    /**
+     * This method uses the sendError and sendMsg methods
+     *
+     * @param message the {@link Message} for the sendError method
+     * @param event the {@link GuildMessageReceivedEvent} for the sendMsg method
+     * @param text the {@link String} for the sendMsg method
+     */
     public static void sendErrorWithMessage(Message message, GuildMessageReceivedEvent event, String text) {
         sendError(message);
         sendMsg(event, text);
@@ -112,13 +124,25 @@ public class MessageUtils {
         message.addReaction("✅").queue(null, CUSTOM_QUEUE_ERROR);
     }
 
-    @DocumentationNeeded
+    /**
+     * This method uses the sendSuccess and sendMsg methods
+     *
+     * @param message the {@link Message} for the sendSuccess method
+     * @param channel the {@link TextChannel} for the sendMsg method
+     * @param text the {@link String} for the sendMsg method
+     */
     public static void sendSuccessWithMessage(Message message, TextChannel channel, String text) {
         sendSuccess(message);
         sendMsg(channel, text);
     }
 
-    @DocumentationNeeded
+    /**
+     * This method uses the sendSuccess and sendMsg methods
+     *
+     * @param message the {@link Message} for the sendSuccess method
+     * @param event the {@link GuildMessageReceivedEvent} for the sendMsg method
+     * @param text the {@link String} for the sendMsg method
+     */
     public static void sendSuccessWithMessage(Message message, GuildMessageReceivedEvent event, String text) {
         sendSuccess(message);
         sendMsg(event, text);

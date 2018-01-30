@@ -20,7 +20,6 @@ package ml.duncte123.skybot.utils
 
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.runBlocking
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.config.Config
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -205,7 +204,7 @@ class WebUtils {
 
         /**
          * Executes a web request
-         * @param request the {@link Request Request} to execute
+         * @param request the [Request] to execute
          * @returns the [Response] from the web server
          */
         @JvmStatic
@@ -214,7 +213,12 @@ class WebUtils {
 
         }
 
-        @DocumentationNeeded
+        /**
+         * Posts String data to services like hastebin.com
+         * @param service the services that is used
+         * @param raw the [String] with the data
+         * @returns the [JSONObject] data with the sent back key for the url to share
+         */
         private fun postRawToService(service: WebUtils.Service, raw: String): JSONObject {
             val req = Request.Builder()
                     .post(RequestBody.create(MediaType.parse("text/plain"), raw))
@@ -230,8 +234,21 @@ class WebUtils {
             return JSONObject().put("key", "about.md")
         }
 
-        @DocumentationNeeded
+        /**
+         * Posts [String]s to hastebin.com
+         * @param s the [String]
+         * @returns the url of the created post as kotlin file
+         *
+         * @see WebUtils.postRawToService([Service], [String])
+         */
         fun hastebin(s: String): String = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
+        /**
+         * Posts [String]s to wastebin.party
+         * @param s the [String]
+         * @returns the url of the created post as kotlin file
+         *
+         * @see WebUtils.postRawToService([Service], [String])
+         */
         fun wastebin(s: String): String = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
     }
     /**
@@ -254,5 +271,11 @@ class WebUtils {
 /*
  * Global wrapping fun for every class
  */
+/**
+ * @see WebUtils.hastebin([String])
+ */
 fun hastebin(s: String): String = WebUtils.hastebin(s)
+/**
+ * @see WebUtils.wastebin([String])
+ */
 fun wastebin(s: String): String = WebUtils.wastebin(s)
