@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.58.UNSTABLE'
+version '3.58.5'
 
 sourceCompatibility = 1.9
 
@@ -64,7 +64,7 @@ buildConfig {
     appName = project.name
     version = project.version
     buildConfigField("String", "ownerId", "191231307290771456")
-    buildConfigField("boolean", "UNSTABLE", "true")
+    buildConfigField("boolean", "UNSTABLE", "false")
     packageName = project.group
     charset = 'UTF-8'
 
@@ -73,7 +73,7 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211' //'e7c8c3b'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211' // JUST for Minn one day  and than another JDA branch that is on "to test"  'e7c8c3b'
     //compile group: 'net.dv8tion', name: 'JDA', version: '3.5.0_331'
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'

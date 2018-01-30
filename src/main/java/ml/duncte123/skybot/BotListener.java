@@ -424,6 +424,7 @@ public class BotListener extends ListenerAdapter {
                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "")
 
                 //This one can be kept a secret :P
+                .replaceAll("\\{\\{AUTO_ROLE_NAME}", event.getGuild().getRoleById(GuildSettingsUtils.getGuild(event.getGuild()).getAutoroleRole()).getName())
                 .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left" );
     }
 
