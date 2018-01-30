@@ -112,6 +112,18 @@ public class MessageUtils {
         message.addReaction("✅").queue(null, CUSTOM_QUEUE_ERROR);
     }
 
+    @DocumentationNeeded
+    public static void sendSuccessWithMessage(Message message, TextChannel channel, String text) {
+        sendSuccess(message);
+        sendMsg(channel, text);
+    }
+
+    @DocumentationNeeded
+    public static void sendSuccessWithMessage(Message message, GuildMessageReceivedEvent event, String text) {
+        sendSuccess(message);
+        sendMsg(event, text);
+    }
+
     /**
      * This will check if we can send a embed and convert it to a message if we can't send embeds
      *
