@@ -47,7 +47,7 @@ import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeade
 
 public class ClypitAudioSourceManager extends HttpAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
-    private final Pattern CLYPIT_REGEX = Pattern.compile("(http://|https://(www\\.)?)?clyp\\.it/(.*)");
+    private static final Pattern CLYPIT_REGEX = Pattern.compile("(http://|https://(www\\.)?)?clyp\\.it/(.*)");
 
     @Override
     public String getSourceName() {
@@ -58,13 +58,11 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
         if(m.matches()) {
-            AudioItem out;
             try {
                 String clypitId = m.group(m.groupCount());
                 JSONObject json = WebUtils.getJSONObject("https://api.clyp.it/" + clypitId);
                 AudioReference httpReference = getAsHttpReference(new AudioReference(json.getString("Mp3Url"), json.getString("Title")));
-                out = handleLoadResult(detectContainer(httpReference)) ;
-                return out;
+                return handleLoadResult(detectContainer(httpReference));
             }
             catch (IOException e) {
                 return null;

@@ -52,7 +52,10 @@ class SkipCommand : MusicCommand() {
         repeat(count) {
             scheduler.nextTrack()
         }
-        MessageUtils.sendMsg(event, "Successfully skipped $count tracks.")
+        MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
+                if(manager.player.playingTrack != null){
+                    "\nNow playing: ${manager.player.playingTrack.info.title}"
+                } else "")
     }
 
     override fun help(): String = "Skips the current track."

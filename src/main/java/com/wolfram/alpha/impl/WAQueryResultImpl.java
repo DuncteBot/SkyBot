@@ -216,11 +216,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         
         if (!imagesAcquired) {
             for (WAPodImpl pod : pods) {
-                try {
-                    pod.acquireImages();
-                } catch (WAException e) {
-                    // What to do here? Need to finish getting all even if there is an exception.
-                }
+                pod.acquireImages();
             }
             imagesAcquired = true;
         }
