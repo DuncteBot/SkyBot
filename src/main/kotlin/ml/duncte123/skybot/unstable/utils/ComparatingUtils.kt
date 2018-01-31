@@ -164,11 +164,12 @@ class ComparatingUtils {
 
 
 
-    class ExceptionType(public val ex: Throwable, public val message: String, public val stackTrace: Array<out StackTraceElement>) {
+    class ExceptionType(val ex: Throwable, val message: String, val stackTrace: Array<out StackTraceElement>) {
         constructor(ex: Throwable) : this(ex, ex.localizedMessage, ex.stackTrace)
-        public var count = 1L
 
-        public fun increase() {
+        var count = 1L
+
+        fun increase() {
             ++count
         }
     }

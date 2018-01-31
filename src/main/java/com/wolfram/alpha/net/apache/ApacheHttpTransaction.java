@@ -101,7 +101,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
     }
 
 
-    public String[][] getResponseHeaders() throws IOException {
+    public String[][] getResponseHeaders() {
 
         Header[] hdrs = response.getAllHeaders();
         String[][] result = new String[hdrs.length][];
@@ -116,9 +116,8 @@ public class ApacheHttpTransaction implements HttpTransaction {
      *
      * @param headerName the key name of the header
      * @return the response header as a {@link String}
-     * @throws IOException lol
      */
-    public String getResponseHeader(String headerName) throws IOException {
+    public String getResponseHeader(String headerName) {
 
         Header hdr = response.getFirstHeader(headerName);
         return hdr == null ? null : hdr.getValue();
@@ -129,7 +128,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         return entity == null ? -1 : entity.getContentLength();
     }
 
-    public String getCharSet() throws IOException {
+    public String getCharSet() {
         return EntityUtils.getContentCharSet(entity);
     }
     

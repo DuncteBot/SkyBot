@@ -86,13 +86,13 @@ public class J2SEHttpTransaction implements HttpTransaction {
         return conn.getContentLength();
     }
 
-    public String getCharSet() throws IOException {
+    public String getCharSet() {
         String charset = "ISO-8859-1";
         return charset;
 
     }
 
-    public String[][] getResponseHeaders() throws IOException {
+    public String[][] getResponseHeaders() {
 
         // TODO Auto-generated method stub
         return null;

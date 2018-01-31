@@ -67,7 +67,7 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
 
     
     // This ctor for use when not being created from an <img> element, like for the thumbnail images in WARelatedExample.
-    WAImageImpl(String url, HttpProvider http, File tempDir) throws WAException {
+    WAImageImpl(String url, HttpProvider http, File tempDir) {
         
         this.http = http;
         this.tempDir = tempDir;

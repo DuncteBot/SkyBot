@@ -29,9 +29,9 @@ import java.io.File;
 
 public interface WAImage extends Visitable {
     
-    public static final int FORMAT_UNKNOWN = 0;
-    public static final int FORMAT_GIF = 1;
-    public static final int FORMAT_PNG = 2;
+    int FORMAT_UNKNOWN = 0;
+    int FORMAT_GIF = 1;
+    int FORMAT_PNG = 2;
     
     String getURL();
     

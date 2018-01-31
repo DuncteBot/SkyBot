@@ -158,12 +158,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) throws IOException {
+    public void encodeTrack(AudioTrack track, DataOutput output) {
 
     }
 
     @Override
-    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) throws IOException {
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
         return new SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
     }
 

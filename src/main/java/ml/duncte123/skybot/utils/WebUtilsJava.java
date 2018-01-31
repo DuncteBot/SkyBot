@@ -82,10 +82,9 @@ public class WebUtilsJava {
      * Reads the contents of a url into an InputStream
      * @param url the url to read
      * @return the InputStream of the url
-     * @throws IOException when things break
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
-    public static InputStream getInputStream(String url) throws IOException {
+    public static InputStream getInputStream(String url) {
         return getRequest(url).body().byteStream();
     }
 

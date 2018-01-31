@@ -389,8 +389,7 @@ public class BotListener extends ListenerAdapter {
             if (g.getAudioManager().isConnected()) {
                 g.getAudioManager().closeAudioConnection();
                 g.getAudioManager().setSendingHandler(null);
-                if(AirUtils.audioUtils.getMusicManagers().containsKey(g.getId()))
-                    AirUtils.audioUtils.getMusicManagers().remove(g.getId());
+                AirUtils.audioUtils.getMusicManagers().remove(g.getId());
             }
         }
     }

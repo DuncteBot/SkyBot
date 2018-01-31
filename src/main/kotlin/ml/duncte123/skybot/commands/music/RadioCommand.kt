@@ -33,7 +33,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
-public class RadioCommand : MusicCommand() {
+class RadioCommand : MusicCommand() {
 
     init {
         //This command takes up a lot of data hence I made it a patron only command - duncte123

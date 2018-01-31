@@ -25,7 +25,7 @@ import ml.duncte123.skybot.SinceSkybot
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
-class RadioStream(public val name: String, public val url: String, public val website: String?, val public: Boolean = true) {
+class RadioStream(val name: String, val url: String, val website: String?, val public: Boolean = true) {
     fun hasWebsite() = !website.isNullOrBlank()
 
     fun toEmbedString(): String = "[$name]($url) ${if (hasWebsite()) "from [$website]($website)" else ""}"

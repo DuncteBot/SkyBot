@@ -38,7 +38,7 @@ public class WALinkImpl implements WALink, Serializable {
     private String title;
 
     
-    WALinkImpl(Element thisElement) throws WAException {
+    WALinkImpl(Element thisElement) {
         url = thisElement.getAttribute("url");
         text = thisElement.getAttribute("text");
         title = thisElement.getAttribute("title");

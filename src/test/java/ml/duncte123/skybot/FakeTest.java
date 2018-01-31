@@ -40,11 +40,9 @@ public class FakeTest {
      * Test basic
      * Mock primitives and String
      *
-     * @throws Throwable Should never happen
      */
     @Test
-    public void basic()
-            throws Throwable {
+    public void basic() {
         User user = new FakeInterface<>(User.class).create();
 
         assertEquals(user.getName(), "");
@@ -54,11 +52,9 @@ public class FakeTest {
      * Test medium
      * Mock Lists, don't share objects
      *
-     * @throws Throwable Should never happen
      */
     @Test
-    public void medium()
-            throws Throwable {
+    public void medium() {
         Member member = new FakeInterface<>(Member.class).create();
         JDA jda = member.getJDA();
         

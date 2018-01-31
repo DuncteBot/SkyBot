@@ -8,7 +8,7 @@ import java.util.*
  * @returns an random object of the [Array] matching the type [T]
  */
 @SinceSkybot("3.57.7")
-public inline fun <reified T> Array<out T>.random(): T {
+inline fun <reified T> Array<out T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
@@ -19,7 +19,7 @@ public inline fun <reified T> Array<out T>.random(): T {
  * @returns an random object of the [Array] matching the type [T]
  */
 @SinceSkybot("3.57.8")
-public inline infix fun <reified T> Array<out T>.random(action : (T) -> Unit): T {
+inline infix fun <reified T> Array<out T>.random(action : (T) -> Unit): T {
     val t = this.random()
     action.invoke(t)
     return t
@@ -31,7 +31,7 @@ public inline infix fun <reified T> Array<out T>.random(action : (T) -> Unit): T
  * @returns an random object of the [List] matching the type [T]
  */
 @SinceSkybot("3.57.7")
-public inline fun <reified T> List<T>.random(): T {
+inline fun <reified T> List<T>.random(): T {
     return this[Random().nextInt(this.size)]
 }
 
@@ -42,7 +42,7 @@ public inline fun <reified T> List<T>.random(): T {
  * @returns an random object of the [List] matching the type [T]
  */
 @SinceSkybot("3.57.8")
-public inline infix fun <reified T> List<T>.random(action : (T) -> Unit): T {
+inline infix fun <reified T> List<T>.random(action : (T) -> Unit): T {
     val t = this.random()
     action.invoke(t)
     return t
@@ -54,7 +54,7 @@ public inline infix fun <reified T> List<T>.random(action : (T) -> Unit): T {
  * @returns an random object of the [Set] matching the type [T]
  */
 @SinceSkybot("3.57.7")
-public inline fun <reified T> Set<T>.random(): T {
+inline fun <reified T> Set<T>.random(): T {
     return this.elementAt(Random().nextInt(this.size))
 }
 
@@ -65,7 +65,7 @@ public inline fun <reified T> Set<T>.random(): T {
  * @returns an random object of the [Set] matching the type [T]
  */
 @SinceSkybot("3.57.8")
-public inline infix fun <reified T> Set<T>.random(action : (T) -> Unit): T {
+inline infix fun <reified T> Set<T>.random(action : (T) -> Unit): T {
     val t = this.random()
     action.invoke(t)
     return t
@@ -77,7 +77,7 @@ public inline infix fun <reified T> Set<T>.random(action : (T) -> Unit): T {
  * @returns an random object of the [Map]
  */
 @SinceSkybot("3.57.7")
-public inline fun <reified K, reified V> Map<K, V>.random(): V {
+inline fun <reified K, reified V> Map<K, V>.random(): V {
     return this[this.keys.random()]!!
 }
 
@@ -88,7 +88,7 @@ public inline fun <reified K, reified V> Map<K, V>.random(): V {
  * @returns an random object of the [Map]
  */
 @SinceSkybot("3.57.8")
-public inline infix fun <reified K, reified V> Map<K, V>.random(action: (V) -> Unit): V {
+inline infix fun <reified K, reified V> Map<K, V>.random(action: (V) -> Unit): V {
     val v = this.random()
     action.invoke(v)
     return v

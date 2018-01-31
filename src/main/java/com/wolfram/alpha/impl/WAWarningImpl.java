@@ -46,7 +46,7 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
     private String[][] attributes = NO_ATTRIBUTES;
     
     
-    WAWarningImpl(Element thisElement) throws WAException {
+    WAWarningImpl(Element thisElement) {
         
         type = thisElement.getNodeName();
         text = thisElement.getAttribute("text");

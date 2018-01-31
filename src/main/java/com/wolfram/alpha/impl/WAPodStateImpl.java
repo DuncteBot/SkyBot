@@ -71,7 +71,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
     }
     
     
-    private synchronized void createFromDOM(Element thisElement) throws WAException {
+    private synchronized void createFromDOM(Element thisElement) {
         
         // Two types:
         //

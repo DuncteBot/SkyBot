@@ -48,7 +48,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
     private boolean[] valids;
     
     
-    WAAssumptionImpl(Element thisElement) throws WAException {
+    WAAssumptionImpl(Element thisElement) {
         
         type = thisElement.getAttribute("type");
         word = thisElement.getAttribute("word");

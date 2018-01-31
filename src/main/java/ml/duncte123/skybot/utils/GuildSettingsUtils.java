@@ -255,8 +255,7 @@ public class GuildSettingsUtils {
      * @param g the guild to remove from the database
      */
     public static void deleteGuild(Guild g) {
-        if (AirUtils.guildSettings.containsKey(g.getId()))
-            AirUtils.guildSettings.remove(g.getId());
+        AirUtils.guildSettings.remove(g.getId());
         
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();

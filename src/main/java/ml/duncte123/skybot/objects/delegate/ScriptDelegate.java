@@ -73,12 +73,12 @@ public class ScriptDelegate extends Script {
     }
 
     @Override
-    public Object evaluate(File file) throws CompilationFailedException, IOException {
+    public Object evaluate(File file) throws CompilationFailedException {
         throw new VRCubeException("How did you get access to the file class?");
     }
 
     @Override
-    public void run(File file, String[] arguments) throws CompilationFailedException, IOException {
+    public void run(File file, String[] arguments) throws CompilationFailedException {
         throw new VRCubeException("I am a bot, I can't run");
     }
 

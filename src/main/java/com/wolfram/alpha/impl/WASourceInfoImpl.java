@@ -41,7 +41,7 @@ public class WASourceInfoImpl implements WASourceInfo, Serializable {
     private String text;
     
     
-    WASourceInfoImpl(Element thisElement) throws WAException {
+    WASourceInfoImpl(Element thisElement) {
         
         text = thisElement.getAttribute("text");
         url = thisElement.getAttribute("url");
