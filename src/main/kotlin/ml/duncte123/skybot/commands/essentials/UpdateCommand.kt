@@ -36,7 +36,7 @@ class UpdateCommand: Command() {
         @Suppress("DEPRECATION")
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
                 && Settings.ownerId != event.author.id) {
-            event.channel.sendMessage(":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***").queue()
+            MessageUtils.sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
             return
         }

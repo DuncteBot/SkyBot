@@ -37,8 +37,9 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            JSONObject it = WebUtils.getJSONObject(Settings.apiBase + "/llama/json");
-            event.getChannel().sendMessage(EmbedUtils.embedImage(it.getString("file"))).queue();
+            MessageUtils.sendMsg(event, EmbedUtils.embedImage(
+                    WebUtils.getJSONObject(Settings.apiBase + "/llama/json").getString("file")
+            ));
         } catch (Exception e) {
             //e.printStackTrace();
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));

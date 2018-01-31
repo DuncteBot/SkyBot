@@ -42,7 +42,7 @@ class OneLinerCommands : Command() {
                 val time = System.currentTimeMillis()
                 val avg = if (!getAverage().isNaN()) "\nAverage music ping: ${getAverage()}ms" else ""
 
-                event.channel.sendMessage("PONG!").queue {
+                MessageUtils.sendMsg(event, "PONG!") {
                     it.editMessage("PONG!\n" +
                             "Message ping is: ${System.currentTimeMillis() - time}ms\n" +
                             "Websocket ping: ${event.jda.ping}ms\n" +
@@ -56,8 +56,11 @@ class OneLinerCommands : Command() {
 
             "wam" -> MessageUtils.sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
 
-            "mineh" -> event.channel.sendMessage(MessageBuilder().setTTS(true).append("Insert creepy music here").build())
-                    .queue { MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")) }
+            "mineh" -> MessageUtils.sendMsg(event, MessageBuilder().setTTS(true).append("Insert creepy music here").build()) {
+                sendEmbed(event,
+                        EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
+                )
+            }
 
 
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"

@@ -137,8 +137,8 @@ public class WolframAlphaCommand extends Command {
         try {
             result = engine.performQuery(query);
         } catch (WAException e) {
-            event.getChannel().sendMessage(":x: Error: "
-                    + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+            MessageUtils.sendMsg(event, ":x: Error: "
+                    + e.getClass().getSimpleName() + ": " + e.getMessage());
             e.printStackTrace();
             return;
         }

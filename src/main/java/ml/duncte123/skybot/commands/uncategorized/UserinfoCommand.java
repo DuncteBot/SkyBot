@@ -70,7 +70,7 @@ public class UserinfoCommand extends Command {
         }
         
         if (m == null) {
-            event.getChannel().sendMessage("This user could not be found.").queue();
+            MessageUtils.sendMsg(event, "This user could not be found.");
             return;
         }
         

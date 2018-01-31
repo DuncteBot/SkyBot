@@ -56,7 +56,7 @@ public class HelpCommand extends Command {
         
         event.getAuthor().openPrivateChannel().queue(
                 pc -> pc.sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).queue(
-                        msg -> event.getChannel().sendMessage(event.getMember().getAsMention() + " check your DM's").queue(),
+                        msg -> MessageUtils.sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                         //When sending fails, send to the channel
                         err -> MessageUtils.sendMsg(event, (new MessageBuilder())
                                                                       .append("Message could not be delivered to dm's and has been send in this channel.")

@@ -143,9 +143,11 @@ public class BotListener extends ListenerAdapter {
                 if (filter.filterText(messageToCheck.getContentRaw())) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                             .queue(null, CUSTOM_QUEUE_ERROR);
-                    event.getChannel().sendMessage(
+
+                    MessageUtils.sendMsg(event,
                             String.format("Hello there, %s please do not use cursive language within this Discord.",
-                                    event.getAuthor().getAsMention())).queue(
+                                event.getAuthor().getAsMention()
+                            ),
                             m -> m.delete().queueAfter(10, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return;
                 }
@@ -153,13 +155,12 @@ public class BotListener extends ListenerAdapter {
         
         String rw = event.getMessage().getContentRaw();
         
-        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && event.getChannel().getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
                 && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
-            event.getChannel().sendMessage(
-                    String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                            event.getAuthor().getId(),
-                            Settings.prefix)
-            ).queue();
+            MessageUtils.sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                    event.getAuthor().getId(),
+                    Settings.prefix)
+            );
             return;
         }else if (!rw.toLowerCase().startsWith(Settings.prefix.toLowerCase()) &&
                 !rw.startsWith(settings.getCustomPrefix())
@@ -259,17 +260,16 @@ public class BotListener extends ListenerAdapter {
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
-                welcomeLeaveChannel.sendMessage(msg).queue();
+                MessageUtils.sendMsg(welcomeLeaveChannel, msg);
         }
 
-        if(settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole()) && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+        if(settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole())
+                && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if(r != null && !event.getGuild().getPublicRole().equals(r))
                 event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
-                    TextChannel tc = GuildUtils.getPublicChannel(event.getGuild());
-                    if(tc != null && event.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
-                        tc.sendMessage("Error while trying to add a role to a user: " + it.toString() + "\n" +
-                                "Make sure that the role " + r.getAsMention() + " is below my role").queue();
+                    MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),"Error while trying to add a role to a user: " + it.toString() + "\n" +
+                            "Make sure that the role " + r.getAsMention() + " is below my role");
                 });
         }
     }
@@ -284,9 +284,8 @@ public class BotListener extends ListenerAdapter {
                     ? GuildUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
-            if (msg.isEmpty() || welcomeLeaveChannel == null)
-               return;
-            welcomeLeaveChannel.sendMessage(msg).queue();
+            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
+               MessageUtils.sendMsg(welcomeLeaveChannel, msg);
         }
     }
 
@@ -300,12 +299,15 @@ public class BotListener extends ListenerAdapter {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
         if (botToUserRatio[1] >= 60) {
-            GuildUtils.getPublicChannel(event.getGuild()).sendMessage(String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). Iḿ outta here.",
+            MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),
+                    String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
                     event.getGuild().getOwner().getAsMention(),
                     botToUserRatio[1],
                     "%",
-                    event.getGuild().getMemberCache().size())).queue(
-                    message -> message.getGuild().leave().queue()
+                    event.getGuild().getMemberCache().size()
+            ),
+                    message -> message.getGuild().leave().queue(),
+                    er -> event.getGuild().leave().queue()
             );
             logger.info(TextColor.RED + "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT" + TextColor.RESET);
             return;
@@ -382,9 +384,7 @@ public class BotListener extends ListenerAdapter {
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
 
-            TextChannel textChannel = lastGuildChannel.get(g);
-            if (g.getSelfMember().hasPermission(textChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
-                textChannel.sendMessage("Leaving voice channel because all the members have left it.").queue();
+            MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
             if (g.getAudioManager().isConnected()) {
                 g.getAudioManager().closeAudioConnection();
                 g.getAudioManager().setSendingHandler(null);

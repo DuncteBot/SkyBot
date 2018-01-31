@@ -22,9 +22,11 @@
 package ml.duncte123.skybot.unstable.utils
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
 import ml.duncte123.skybot.utils.hastebin
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
 
@@ -68,7 +70,7 @@ class ComparatingUtils {
         }
 
         @JvmStatic
-        fun provideData(channel: MessageChannel) {
+        fun provideData(channel: TextChannel) {
             val headers = listOf("Exception Class", "Types", "StackTrace length")
             val table: ArrayList<List<String>> = ArrayList()
             exceptionMap.forEach { cls, lowerMap ->
@@ -78,11 +80,11 @@ class ComparatingUtils {
                 row.add(lowerMap.values.map { it.size.toDouble() }.average().toString())
                 table.add(row)
             }
-            channel.sendMessage(makeAsciiTable(headers, table)).queue()
+            MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
         }
 
         @JvmStatic
-        fun provideExactData(channel: MessageChannel) {
+        fun provideExactData(channel: TextChannel) {
             val headers = listOf("Exception Class", "Types", "Count", "Message", "Trace length")
             val table: ArrayList<List<String>> = ArrayList()
             exceptionMap.forEach { cls, lowerMap ->
@@ -93,10 +95,10 @@ class ComparatingUtils {
                     row = ArrayList()
                 }
             }
-            channel.sendMessage(makeAsciiTable(headers, table)).queue()
+            MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
         }
 
-        fun provideAtomicData(channel: MessageChannel, ex: String) {
+        fun provideAtomicData(channel: TextChannel, ex: String) {
             val headers = listOf("Type", "Message", "Count", "Trace")
             val table: ArrayList<List<String>> = ArrayList()
             val data = exceptionMap.entries.first { it.key.name == ex }.value
@@ -109,7 +111,7 @@ class ComparatingUtils {
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
             }
 
-            channel.sendMessage(makeAsciiTable(headers = headers, table = table)).queue()
+            MessageUtils.sendMsg(channel, makeAsciiTable(headers = headers, table = table))
         }
 
         private fun makeAsciiTable(headers: List<String>, table: List<List<String>>): String {
