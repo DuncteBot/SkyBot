@@ -29,6 +29,7 @@ import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
+import org.w3c.dom.Text
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ComparatingUtils {
@@ -70,7 +71,7 @@ class ComparatingUtils {
         }
 
         @JvmStatic
-        fun provideData(channel: TextChannel) {
+        fun provideData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Types", "StackTrace length")
             val table: ArrayList<List<String>> = ArrayList()
             exceptionMap.forEach { cls, lowerMap ->
@@ -80,11 +81,12 @@ class ComparatingUtils {
                 row.add(lowerMap.values.map { it.size.toDouble() }.average().toString())
                 table.add(row)
             }
-            MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
         @JvmStatic
-        fun provideExactData(channel: TextChannel) {
+        fun provideExactData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Types", "Count", "Message", "Trace length")
             val table: ArrayList<List<String>> = ArrayList()
             exceptionMap.forEach { cls, lowerMap ->
@@ -95,10 +97,11 @@ class ComparatingUtils {
                     row = ArrayList()
                 }
             }
-            MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
-        fun provideAtomicData(channel: TextChannel, ex: String) {
+        fun provideAtomicData(channel: MessageChannel, ex: String) {
             val headers = listOf("Type", "Message", "Count", "Trace")
             val table: ArrayList<List<String>> = ArrayList()
             val data = exceptionMap.entries.first { it.key.name == ex }.value
@@ -111,7 +114,8 @@ class ComparatingUtils {
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
             }
 
-            MessageUtils.sendMsg(channel, makeAsciiTable(headers = headers, table = table))
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
         private fun makeAsciiTable(headers: List<String>, table: List<List<String>>): String {
