@@ -198,8 +198,9 @@ class WebUtils {
          */
         @JvmStatic
         fun translate(sourceLang: String, targetLang: String, input: String): JSONArray {
-            return getJSONArray("https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input")
-                    .getJSONArray(0).getJSONArray(0)
+            return getJSONArray(
+                    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=$sourceLang&tl=$targetLang&dt=t&q=$input"
+            ).getJSONArray(0).getJSONArray(0)
         }
 
         /**
