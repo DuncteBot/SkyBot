@@ -372,6 +372,27 @@ public class MessageUtils {
      *
      * @param channel he {@link TextChannel TextChannel} that we want to send our message to
      * @param msg   the message to send
+     */
+    public static void sendMsg(TextChannel channel, Message msg) {
+        sendMsg(channel, msg, null, null);
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
+     * @param success The success consumer
+     */
+    public static void sendMsg(TextChannel channel, Message msg, Consumer<Message> success) {
+        sendMsg(channel, msg, success, null);
+    }
+
+    /**
+     * This is a shortcut for sending messages to a channel
+     *
+     * @param channel he {@link TextChannel TextChannel} that we want to send our message to
+     * @param msg   the message to send
      * @param success The success consumer
      * @param failure the failure consumer
      */
