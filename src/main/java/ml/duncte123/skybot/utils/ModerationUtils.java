@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.FakeUser;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -56,25 +55,17 @@ public class ModerationUtils {
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
         TextChannel logChannel = AirUtils.getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(logChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
         }
-
-        String punishedUserMention = "<@" + punishedUser.getId() + ">";
         MessageBuilder message = new MessageBuilder()
                 .append("_Relevant user: ")
-                .append(punishedUserMention)
+                .append(String.format("%#s", punishedUser))
                 .append("_")
                 .setEmbed(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
                         + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason)));
-
-        /*logChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
-                        msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
-        );*/
-        logChannel.sendMessage(message.build()).queue();
+        MessageUtils.sendMsg(logChannel, message.build());
     }
 
     /**

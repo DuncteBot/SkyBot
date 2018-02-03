@@ -22,11 +22,14 @@
 package ml.duncte123.skybot.unstable.utils
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
 import ml.duncte123.skybot.utils.hastebin
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
+import org.w3c.dom.Text
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ComparatingUtils {
@@ -78,7 +81,8 @@ class ComparatingUtils {
                 row.add(lowerMap.values.map { it.size.toDouble() }.average().toString())
                 table.add(row)
             }
-            channel.sendMessage(makeAsciiTable(headers, table)).queue()
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
         @JvmStatic
@@ -93,7 +97,8 @@ class ComparatingUtils {
                     row = ArrayList()
                 }
             }
-            channel.sendMessage(makeAsciiTable(headers, table)).queue()
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
         fun provideAtomicData(channel: MessageChannel, ex: String) {
@@ -109,7 +114,8 @@ class ComparatingUtils {
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
             }
 
-            channel.sendMessage(makeAsciiTable(headers = headers, table = table)).queue()
+            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
         private fun makeAsciiTable(headers: List<String>, table: List<List<String>>): String {

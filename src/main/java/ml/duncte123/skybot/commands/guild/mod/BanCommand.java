@@ -132,7 +132,7 @@ public class BanCommand extends Command {
                             break;
 
                         default:
-                            event.getChannel().sendMessage(timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y").queue();
+                            MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
                             return;
                     }
                     unbanDate = df.format(dt);
