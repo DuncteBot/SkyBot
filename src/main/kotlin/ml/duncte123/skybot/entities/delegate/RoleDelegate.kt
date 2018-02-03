@@ -22,7 +22,6 @@ package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
@@ -33,15 +32,28 @@ import net.dv8tion.jda.core.requests.restaction.AuditableRestAction
 import net.dv8tion.jda.core.requests.restaction.RoleAction
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Role
+ */
 class RoleDelegate(private val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
+
     private val jda: JDA     = JDADelegate(uA83D3Ax_ky.jda)
     private val guild: Guild = GuildDelegate(uA83D3Ax_ky.guild)
-
+    /**
+     * @returns a never null [JDA] ([JDADelegate])
+     */
     override fun getJDA(): JDA                               = JDADelegate(this.jda)
+    /**
+     * @returns a never null [Guild] ([GuildDelegate])
+     */
     override fun getGuild(): Guild                           = GuildDelegate(this.guild)
 
+    /**
+     * This documentation is for the following four functions.
+     *
+     * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
+     */
     override fun getManager(): RoleManager                   = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManagerUpdatable(): RoleManagerUpdatable = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun delete(): AuditableRestAction<Void>         = throw VRCubeException("**\uD83D\uDD25 lit**")

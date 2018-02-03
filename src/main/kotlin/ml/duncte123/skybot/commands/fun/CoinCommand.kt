@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
 
@@ -38,7 +39,8 @@ class CoinCommand: Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         event.channel.sendTyping().queue{
             event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
-                sendEmbed(event, EmbedUtils.embedImage("https://dshelmondgames.ml/img/coin/" + imagesArr[AirUtils.rand.nextInt(2)]))
+                MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://dshelmondgames.ml/img/coin/"
+                        + imagesArr[AirUtils.rand.nextInt(2)]))
             })
         }
     }

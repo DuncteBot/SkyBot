@@ -30,8 +30,8 @@ import java.util.Map;
 
 public class BadWordFilter {
     
-    private static int largestWordLength = 0;
-    private static Map<String, String[]> words = new HashMap<>();
+    private int largestWordLength = 0;
+    private Map<String, String[]> words = new HashMap<>();
     
     public BadWordFilter() {
         try {
@@ -78,17 +78,15 @@ public class BadWordFilter {
      * @param input The sentence to check
      * @return every word as a item in array
      */
-    public static ArrayList<String> badWordsFound(String input) {
+    public ArrayList<String> badWordsFound(String input) {
         if (input == null) {
             return new ArrayList<>();
         }
         
         // remove leetspeak
-        input = input.replaceAll("1", "i");
-        input = input.replaceAll("!", "i");
+        input = input.replaceAll("[1!]", "i");
         input = input.replaceAll("3", "e");
-        input = input.replaceAll("4", "a");
-        input = input.replaceAll("@", "a");
+        input = input.replaceAll("[4@]", "a");
         input = input.replaceAll("5", "s");
         input = input.replaceAll("7", "t");
         input = input.replaceAll("0", "o");

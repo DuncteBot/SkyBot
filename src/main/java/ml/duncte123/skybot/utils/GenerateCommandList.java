@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import org.apache.commons.lang3.StringUtils;
@@ -80,7 +81,8 @@ public class GenerateCommandList {
                 if (cmd.getAliases().length > 0) {
                     writer.append("<br />")
                             .append("Aliases: ")
-                            .append(StringUtils.join(cmd.getAliases(), ", "));
+                            .append(Settings.otherPrefix)
+                            .append(StringUtils.join(cmd.getAliases(), ", " + Settings.otherPrefix));
                 }
                 writer.append("\",");
                 writer.newLine();

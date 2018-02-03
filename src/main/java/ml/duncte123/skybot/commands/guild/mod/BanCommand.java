@@ -21,7 +21,8 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -51,12 +52,12 @@ public class BanCommand extends Command {
         };
 
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
             return;
         }
 
@@ -64,7 +65,7 @@ public class BanCommand extends Command {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
                         !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-                sendMsg(event, "You are not permitted to perform this action.");
+                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             //noinspection ConstantConditions
@@ -76,9 +77,8 @@ public class BanCommand extends Command {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (__) -> {
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
-                                sendSuccess(event.getMessage());
-                                AirUtils.getPublicChannel(event.getGuild()).sendMessage("User " + String.format("%#s", toBan) + " got bent.").queue();
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                MessageUtils.sendSuccess(event.getMessage());
                             }
                     );
                     return;
@@ -90,16 +90,16 @@ public class BanCommand extends Command {
                     banTime = Integer.parseInt(timeParts[0]);
                 }
                 catch (NumberFormatException e) {
-                    sendMsg(event, e.getMessage()+" is not a valid number");
+                    MessageUtils.sendMsg(event, e.getMessage()+" is not a valid number");
                     return;
                 }
                 catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */)  {
-                    sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
                     return;
                 }
                 if (banTime > 0) {
                     if(timeParts.length != 2) {
-                        sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                        MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
                         return;
                     }
                     //TODO make ban timed
@@ -110,7 +110,7 @@ public class BanCommand extends Command {
                     switch (timeParts[1]) {
                         case "m":
                             if (Integer.parseInt(timeParts[0]) < 10) {
-                                sendMsg(event, "The minimum time for minutes is 10.");
+                                MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
                                 return;
                             }
                             dt = DateUtils.addMinutes(dt, banTime);
@@ -132,7 +132,7 @@ public class BanCommand extends Command {
                             break;
 
                         default:
-                            event.getChannel().sendMessage(timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y").queue();
+                            MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
                             return;
                     }
                     unbanDate = df.format(dt);
@@ -143,23 +143,23 @@ public class BanCommand extends Command {
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
-                                AirUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                                ModerationUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
                             } else {
                                 final String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
-                                AirUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                             }
                         }
                 );
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (v) -> AirUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                        (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
                 );
             }
         } catch (HierarchyException e) {
             //e.printStackTrace();
-            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
+            MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }
 

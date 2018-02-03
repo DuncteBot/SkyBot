@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.User;
@@ -38,12 +38,12 @@ public class UnbanCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <username>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
             return;
         }
 
@@ -54,15 +54,15 @@ public class UnbanCommand extends Command {
                 User bannedUser = ban.getUser();
                 if (bannedUser.getName().equalsIgnoreCase(args[0])) {
                     guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
-                    event.getChannel().sendMessage("User " + bannedUser.getName() + " unbanned.").queue();
-                    AirUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
+                    MessageUtils.sendMsg(event, "User " + bannedUser.getName() + " unbanned.");
+                    ModerationUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
                     return;
                 }
             }
-            event.getChannel().sendMessage("This user is not banned").queue();
+            MessageUtils.sendMsg(event, "This user is not banned");
         } catch (Exception e) {
             e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 

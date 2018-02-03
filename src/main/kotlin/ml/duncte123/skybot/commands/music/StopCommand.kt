@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -37,14 +38,14 @@ class StopCommand : MusicCommand() {
         val scheduler = musicManager.scheduler
 
         if (musicManager.player.playingTrack == null) {
-            sendMsg(event, "The player is not playing.")
+            MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
 
         scheduler.queue.clear()
         player.stopTrack()
         player.isPaused = false
-        sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
+        MessageUtils.sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
     override fun help(): String = "Stops the music player."

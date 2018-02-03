@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.20'
+    ext.kotlin_version = '1.2.21'
 
     repositories {
         mavenCentral()
@@ -33,15 +33,15 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.10'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
 group = 'ml.duncte123.skybot'
 
-version '3.57.8'
+version '3.59.0'
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.4.1'
@@ -64,6 +64,7 @@ buildConfig {
     appName = project.name
     version = project.version
     buildConfigField("String", "ownerId", "191231307290771456")
+    buildConfigField("boolean", "UNSTABLE", "false")
     packageName = project.group
     charset = 'UTF-8'
 
@@ -72,7 +73,8 @@ buildConfig {
 
 dependencies {
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'e7c8c3b'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211' // JUST for Minn one day  and than another JDA branch that is on "to test"  'e7c8c3b'
+    //compile group: 'net.dv8tion', name: 'JDA', version: '3.5.0_331'
     //Lavaplayer
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
     //jda-nas
@@ -101,8 +103,8 @@ dependencies {
     compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.20'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.20'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.21.2'
 
     //Bot?

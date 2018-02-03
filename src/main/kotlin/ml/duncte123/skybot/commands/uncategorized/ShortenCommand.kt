@@ -22,22 +22,34 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (args.isEmpty() || args[0].isEmpty()) {
             sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
             return
         }
+
+        if(!hasUpvoted(event.author)) {
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+                    "You cannot use the shorten command as you haven't up-voted the bot." +
+                            " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
+                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
+            return
+        }
+
         sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
     }
 
     override fun help(): String = """Shortens a url
-            |Usage: `${Settings.prefix}$name <link to shorten>`""".trimMargin()
+            |Usage: `$PREFIX$name <link to shorten>`""".trimMargin()
 
     override fun getName(): String = "shorten"
 

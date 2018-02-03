@@ -16,9 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.utils;
+package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.BuildConfig;
+import ml.duncte123.skybot.utils.AirUtils;
 
 import java.awt.*;
 
@@ -34,6 +34,7 @@ public class Settings {
      *
      * @deprecated because the bot will break if you mess with this.
      */
+    @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public static final String[] wbkxwkZPaG4ni5lm8laY = {
             new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
@@ -48,11 +49,15 @@ public class Settings {
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String prefix = AirUtils.config.getString("discord.prefix", "/");
+    public static final String prefix = AirUtils.config.getString("discord.prefix", "db!");
     /**
      * This is another prefix because I can
      */
-    public static final String otherPrefix = "db!";
+    public static final String otherPrefix = "db.";
+    /**
+     * Whether the bot is unstable or not
+     */
+    public static final boolean isUnstable = BuildConfig.UNSTABLE && AirUtils.config.getBoolean("launch_unstable", false);
     /**
      * This is the version of the bot
      */

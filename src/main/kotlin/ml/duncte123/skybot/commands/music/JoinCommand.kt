@@ -21,8 +21,10 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.audio.hooks.ConnectionListener
 import net.dv8tion.jda.core.audio.hooks.ConnectionStatus
@@ -38,7 +40,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if (!event.member.voiceState.inVoiceChannel()) {
-            sendMsg(event, "Please join a voice channel first.")
+            MessageUtils.sendMsg(event, "Please join a voice channel first.")
             return
         }
         val vc = event.member.voiceState.channel
@@ -46,15 +48,16 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         val mng = getMusicManager(guild)
         val audioManager = getAudioManager(guild)
         val cooldowns = MusicCommand.cooldowns
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
-            sendMsg(event, """I still have cooldown!
+        @Suppress("DEPRECATION")
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
+            MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            sendError(event.message)
+            MessageUtils.sendError(event.message)
             return
         }
         cooldowns.remove(guild.idLong)
         if (audioManager.isConnected && mng.player.playingTrack != null) {
-            sendMsg(event, "I'm already in a channel.")
+            MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
 
@@ -69,12 +72,12 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             if (audioManager.connectionListener == null)
                 audioManager.connectionListener = this
 
-            sendSuccess(event.message)
+            MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
-                sendMsg(event, "I don't have permission to join `${vc?.name}`")
+                MessageUtils.sendMsg(event, "I don't have permission to join `${vc?.name}`")
             } else {
-                sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
+                MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
         }
 

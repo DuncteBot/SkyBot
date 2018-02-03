@@ -17,12 +17,12 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Suppress("USELESS_CAST")
 
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
@@ -35,14 +35,23 @@ import net.dv8tion.jda.core.requests.restaction.InviteAction
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Channel
+ */
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     private val jda: JDA            = JDADelegate(channel.jda)
     private val guild: Guild        = GuildDelegate(channel.guild)
     private val parent: Category?   = null
 
+    /**
+     * @returns a [Category] ([CategoryDelegate]) if the [Channel] has one
+     */
     override fun getParent(): Category?                                             = CategoryDelegate(requireNotNull(channel.parent))
+
+    /**
+     * @returns a never null [JDA] ([GuildDelegate])
+     */
     override fun getJDA(): JDA                                                      = JDADelegate(this.jda)
     override fun getGuild(): Guild                                                  = GuildDelegate(this.guild)
 
@@ -54,9 +63,23 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun delete(): AuditableRestAction<Void>                                = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun createCopy(guild: Guild): ChannelAction                            = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun createInvite(): InviteAction                                       = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getMemberPermissionOverrides(): MutableList<PermissionOverride>    = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    /**
+     * This documentation is for the following three functions.
+     *
+     * This function blocks getting any [List]<[PermissionOverride]>
+     *
+     * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit**"
+     */
+    override fun getMemberPermissionOverrides(): List<PermissionOverride>    = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getRolePermissionOverrides(): List<PermissionOverride>             = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getPermissionOverrides(): List<PermissionOverride>                 = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    /**
+     * This documentation is for the following four functions.
+     *
+     * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
+     */
     override fun getPermissionOverride(role: Role): PermissionOverride              = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun getPermissionOverride(member: Member): PermissionOverride          = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
     override fun createPermissionOverride(role: Role): PermissionOverrideAction     = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")

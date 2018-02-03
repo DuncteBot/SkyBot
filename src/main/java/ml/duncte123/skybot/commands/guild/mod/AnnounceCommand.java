@@ -22,7 +22,7 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -43,12 +43,12 @@ public class AnnounceCommand extends Command {
         };
         
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "I'm sorry but you don't have permission to run this command.");
+            MessageUtils.sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
         
         if (event.getMessage().getMentionedChannels().size() < 1) {
-            sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
+            MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + getName() + " [#Channel] [Message]`");
             return;
         }
 
@@ -56,8 +56,8 @@ public class AnnounceCommand extends Command {
             TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
             if (!targetChannel.getGuild().getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
-                sendError(event.getMessage());
+                MessageUtils.sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
+                MessageUtils.sendError(event.getMessage());
                 return;
             }
 
@@ -74,11 +74,11 @@ public class AnnounceCommand extends Command {
                 });
             }
 
-            sendEmbed(targetChannel, embed.build());
-            sendSuccess(event.getMessage());
+            MessageUtils.sendEmbed(targetChannel, embed.build());
+            MessageUtils.sendSuccess(event.getMessage());
             
         } catch (Exception e) {
-            sendMsg(event, "WHOOPS: " + e.getMessage());
+            MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }
     }

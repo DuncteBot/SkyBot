@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -171,7 +172,10 @@ public class EmbedUtils {
             msg.append("***").append(embed.getAuthor().getName()).append("***\n\n");
         }
         if (embed.getDescription() != null) {
-            msg.append("_").append(embed.getDescription()).append("_\n\n");
+            msg.append("_").append(embed.getDescription()
+                    // Reformat
+                    .replaceAll("\\[(.+)\\]\\((.+)\\)", "$1 (Link: $2)")
+            ).append("_\n\n");
         }
         for (MessageEmbed.Field f : embed.getFields()) {
             msg.append("__").append(f.getName()).append("__\n").append(f.getValue()).append("\n\n");

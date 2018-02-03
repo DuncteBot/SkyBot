@@ -21,7 +21,9 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -31,10 +33,11 @@ class LeaveCommand : MusicCommand() {
             return
         val guild = event.guild
         val cooldowns = MusicCommand.cooldowns
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0) {
-            sendMsg(event, """I still have cooldown!
+        @Suppress("DEPRECATION")
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
+            MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
-            sendError(event.message)
+            MessageUtils.sendError(event.message)
             return
         }
         val manager = getAudioManager(guild)
@@ -44,9 +47,9 @@ class LeaveCommand : MusicCommand() {
             manager.sendingHandler = null
             manager.closeAudioConnection()
             MusicCommand.addCooldown(guild.idLong)
-            sendMsg(event, "Leaving your channel")
+            MessageUtils.sendMsg(event, "Leaving your channel")
         } else {
-            sendMsg(event, "I'm not connected to any channels.")
+            MessageUtils.sendMsg(event, "I'm not connected to any channels.")
         }
     }
 

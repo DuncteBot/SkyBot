@@ -22,7 +22,6 @@ import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
-import ml.duncte123.skybot.utils.AirUtils;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -52,6 +51,12 @@ public class TrackScheduler extends AudioEventAdapter {
      * Are we repeating the track
      */
     private boolean repeating = false;
+
+
+    /**
+     * Are we repeating playlists
+     */
+    private boolean repeatPlayList = false;
 
     /**
      * This instantiates our player
@@ -95,13 +100,14 @@ public class TrackScheduler extends AudioEventAdapter {
 
         if (endReason.mayStartNext) {
             if (repeating) {
-                player.startTrack(lastTrack.makeClone(), false);
+                if (!repeatPlayList) {
+                    player.playTrack(lastTrack.makeClone());
+                } else {
+                    this.queue(lastTrack.makeClone());
+                }
             } else {
                 nextTrack();
             }
-        } else if (queue.isEmpty()) {
-            AirUtils.audioUtils.getMusicManagers().entrySet().stream().filter(entry -> entry.getValue().equals(guildMusicManager))
-                .findFirst().ifPresent(entry -> AirUtils.audioUtils.getMusicManagers().remove(entry.getKey()));
         }
     }
 
@@ -115,12 +121,30 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     /**
+     * This will tell you if the player is repeating playlists
+     *
+     * @return true if the player is set to repeat playlists
+     */
+    public boolean isRepeatingPlaylists() {
+        return repeatPlayList;
+    }
+
+    /**
      * tell the player if needs to repeat
      *
      * @param repeating if the player needs to repeat
      */
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
+    }
+
+    /**
+     * tell the player if needs to repeat playlists
+     *
+     * @param repeatingPlaylists if the player needs to repeat playlists
+     */
+    public void setRepeatingPlaylists(boolean repeatingPlaylists) {
+        this.repeatPlayList = repeatingPlaylists;
     }
 
     /**

@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.music
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -37,7 +38,7 @@ class PPlayCommand : MusicCommand() {
         val musicManager = getMusicManager(guild)
 
         if (args.isEmpty()) {
-            sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
+            MessageUtils.sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
             return
         }
 
@@ -46,12 +47,12 @@ class PPlayCommand : MusicCommand() {
             toPlay = "ytsearch:" + toPlay
         }
         if(toPlay.length > 1024) {
-            sendError(event.message)
-            sendMsg(event, "Input cannot be longer than 1024 characters.")
+            MessageUtils.sendError(event.message)
+            MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
         }
 
-        sendMsg(event, "Loading playlist.......\n" +
+        MessageUtils.sendMsg(event, "Loading playlist.......\n" +
                 "This may take a while depending on the size.")
         au.loadAndPlay(musicManager, event.channel, toPlay, true)
     }

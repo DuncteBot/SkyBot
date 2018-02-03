@@ -227,7 +227,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     }
     
     
-    public void acquireImages() throws WAException {
+    public void acquireImages() {
         
         WASubpodImpl[] sps;
         synchronized (this) {

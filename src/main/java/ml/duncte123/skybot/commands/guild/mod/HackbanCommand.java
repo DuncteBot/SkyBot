@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -39,12 +39,12 @@ public class HackbanCommand extends Command {
         };
 
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <userId>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <userId>");
             return;
         }
 
@@ -55,16 +55,16 @@ public class HackbanCommand extends Command {
         }
 
         try {
-            event.getGuild().getController().ban(args[0], 0).queue((v) -> sendMsg(event, "User has been banned!"));
+            event.getGuild().getController().ban(args[0], 0).queue((v) -> MessageUtils.sendMsg(event, "User has been banned!"));
         } catch (Exception e) {
             e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Settings.prefix + getName() + " <userId>";
+        return "Ban a user before he/she can join your guild.\nUsage: " + PREFIX + getName() + " <userId>";
     }
 
     @Override

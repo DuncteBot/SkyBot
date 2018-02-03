@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import org.apache.commons.lang3.text.WordUtils
@@ -33,7 +34,7 @@ class DialogCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (args.isEmpty()) {
-            sendMsg(event, "Correct usage: `$PREFIX$name <words>`")
+            MessageUtils.sendMsg(event, "Correct usage: `$PREFIX$name <words>`")
             return
         }
 
@@ -54,7 +55,7 @@ class DialogCommand : Command() {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```")
-        sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
+        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
     }
 
     override fun help() = "Gives you a nice dialog\n" +

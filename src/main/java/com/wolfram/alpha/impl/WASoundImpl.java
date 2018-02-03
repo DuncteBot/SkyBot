@@ -56,7 +56,7 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
     private transient File tempDir;
 
     
-    WASoundImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
+    WASoundImpl(Element thisElement, HttpProvider http, File tempDir) {
         
         url = thisElement.getAttribute("url");
         format = thisElement.getAttribute("type");

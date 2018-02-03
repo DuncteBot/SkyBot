@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.music
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -42,10 +43,10 @@ open class PlayCommand : MusicCommand() {
             when {
                 player.isPaused -> {
                     player.isPaused = false
-                    sendMsg(event, "Playback has been resumed.")
+                    MessageUtils.sendMsg(event, "Playback has been resumed.")
                 }
-                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
-                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
+                player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
+                scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
                         "For example `db!play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
@@ -55,8 +56,8 @@ open class PlayCommand : MusicCommand() {
             }
 
             if(toPlay.length > 1024) {
-                sendError(event.message)
-                sendMsg(event, "Input cannot be longer than 1024 characters.")
+                MessageUtils.sendError(event.message)
+                MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
 

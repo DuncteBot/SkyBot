@@ -21,15 +21,16 @@
 package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.TFException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see JDA
+ */
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobs\u2122"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)

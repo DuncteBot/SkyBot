@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
@@ -34,6 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 
 import java.util.List;
 
+import static ml.duncte123.skybot.utils.MessageUtils.*;
+
 public class SettingsCommand extends Command {
 
     public SettingsCommand() {
@@ -42,6 +44,7 @@ public class SettingsCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        //noinspection deprecation
         if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
             sendMsg(event, "You don't have permission to run this command");
             return;
@@ -74,17 +77,18 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
-                String newPrefix = StringUtils.join(args);
+                String newPrefix = StringUtils.join(args, " ");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
             case "setjoinmessage":
+            case "setwelcomenmessage":
                 if (args.length < 1) {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
+                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
@@ -94,7 +98,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
-                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n");
+                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
@@ -215,7 +219,8 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"toggleJoinMessage` => Turns the join message on or off\n" +
                 "`"+PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
                 "`"+PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
-                "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n"
+                "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
+                "`"+PREFIX+"autorole <role>` => Gives members a role when they join"
                 ;
     }
 
@@ -231,6 +236,7 @@ public class SettingsCommand extends Command {
                 "togglejoinmessage",
                 "disablejoinmessage",
                 "setjoinmessage",
+                "setwelcomenmessage",
                 "enableswearfilter",
                 "disableswearfilter",
                 "toggleswearfilter",

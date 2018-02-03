@@ -38,7 +38,7 @@ public class WAPlainTextImpl implements WAPlainText, Visitable, Serializable {
     private String text;
     
     
-    WAPlainTextImpl(Element thisElement) throws WAException {
+    WAPlainTextImpl(Element thisElement) {
         NodeList children = thisElement.getChildNodes();
         text = children.getLength() > 0 ? children.item(0).getNodeValue() : "";
     }

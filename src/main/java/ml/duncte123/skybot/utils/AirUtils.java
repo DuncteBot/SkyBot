@@ -22,27 +22,19 @@ import com.wolfram.alpha.WAEngine;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
-import ml.duncte123.skybot.objects.ConsoleUser;
-import ml.duncte123.skybot.objects.FakeUser;
-import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
-import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import org.json.JSONException;
-import org.json.JSONObject;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.net.SocketTimeoutException;
-import java.sql.*;
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.atomic.AtomicLong;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @SuppressWarnings("ReturnInsideFinallyBlock")
@@ -80,11 +72,6 @@ public class AirUtils {
     public static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
-     * This stores all the tags
-     */
-    public static Map<String, Tag> tagsList = new TreeMap<>();
-
-    /**
      * This is our audio handler
      */
     public static AudioUtils audioUtils = new AudioUtils();
@@ -98,9 +85,6 @@ public class AirUtils {
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
-
-    public static final ScheduledExecutorService service
-            = Executors.newScheduledThreadPool(5, r -> new Thread(r, "Music-Shutdown-Thread"));
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -123,168 +107,23 @@ public class AirUtils {
     }
 
     /**
-     * This will send a message to a channel called modlog
-     *
-     * @param mod          The mod that performed the punishment
-     * @param punishedUser The user that got punished
-     * @param punishment   The type of punishment
-     * @param reason       The reason of the punishment
-     * @param time         How long it takes for the punishment to get removed
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
-        TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.getGuild().getSelfMember().hasPermission(logChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) return;
-        String length = "";
-        if (time != null && !time.isEmpty()) {
-            length = " lasting " + time + "";
-        }
-        
-        String punishedUserMention = "<@" + punishedUser.getId() + ">";
-
-        logChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
-                        msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
-        );
-    }
-
-    /**
-     * A version of {@link AirUtils#modLog(User, User, String, String, String, Guild)} but without the time
-     *
-     * @param mod          The mod that performed the punishment
-     * @param punishedUser The user that got punished
-     * @param punishment   The type of punishment
-     * @param reason       The reason of the punishment
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
-        modLog(mod, punishedUser, punishment, reason, "", g);
-    }
-
-    /**
-     * To log a unban or a unmute
-     *
-     * @param mod          The mod that permed the executeCommand
-     * @param unbannedUser The user that the executeCommand is for
-     * @param punishment   The type of punishment that got removed
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
-        modLog(mod, unbannedUser, punishment, "", g);
-    }
-
-    /**
-     * Add the banned user to the database
-     *
-     * @param modID             The user id from the mod
-     * @param userName          The username from the banned user
-     * @param userDiscriminator the discriminator from the user
-     * @param userId            the id from the banned users
-     * @param unbanDate         When we need to unban the user
-     * @param guildId           What guild the user got banned in
-     */
-    public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-        Map<String, Object> postFields = new TreeMap<>();
-        postFields.put("modId", modID);
-        postFields.put("username", userName);
-        postFields.put("discriminator", userDiscriminator);
-        postFields.put("userId", userId);
-        postFields.put("unbanDate", unbanDate);
-        postFields.put("guildId", guildId);
-        
-        try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields).close();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will check if there are users that can be unbanned
-     *
-     * @param jda the current shard manager for this bot
-     */
-    public static void checkUnbans(ShardManager jda) {
-        logger.debug("Checking for users to unban");
-        int usersUnbanned = 0;
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            
-            Statement smt = database.createStatement();
-            
-            ResultSet res = smt.executeQuery("SELECT * FROM " + db.getName() + ".bans");
-            
-            while (res.next()) {
-                java.util.Date unbanDate = res.getTimestamp("unban_date");
-                java.util.Date currDate = new java.util.Date();
-                
-                if (currDate.after(unbanDate)) {
-                    usersUnbanned++;
-                    logger.info("Unbanning " + res.getString("Username"));
-                    jda.getGuildCache().getElementById(res.getString("guildId")).getController()
-                            .unban(res.getString("userId")).reason("Ban expired").queue();
-                    modLog(new ConsoleUser(),
-                            new FakeUser(res.getString("Username"),
-                                                res.getString("userId"),
-                                                res.getString("discriminator")),
-                            "unbanned",
-                            jda.getGuildById(res.getString("guildId")));
-                    database.createStatement().executeUpdate("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
-                }
-            }
-            logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-    }
-
-    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)");
-
-    /**
      * This will validate a link
      *
      * @param url The thing to check
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        return URL_REGEX.matcher(url).find();
+        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)").matcher(url).find();
     }
 
     /**
      * This will check if the number that we are trying to parse is an int
      *
-     * @param isint the int to check
+     * @param integer the int to check
      * @return true if it is an int
      */
-    public static boolean isInt(String isint) {
-        return isint.matches("^\\d+$");
-    }
-
-    /**
-     * This will convert the VerificationLevel from the guild to how it is displayed in the settings
-     *
-     * @param lvl The level to convert
-     * @return The converted verification level
-     */
-    // Null safety
-    public static String verificationLvlToName(Guild.VerificationLevel lvl) {
-        if (Guild.VerificationLevel.LOW.equals(lvl)) {
-            return "Low";
-        } else if (Guild.VerificationLevel.MEDIUM.equals(lvl)) {
-            return "Medium";
-        } else if (Guild.VerificationLevel.HIGH.equals(lvl)) {
-            return "(╯°□°）╯︵ ┻━┻";
-        } else if (Guild.VerificationLevel.VERY_HIGH.equals(lvl)) {
-            return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-        }
-        return "None";
+    public static boolean isInt(String integer) {
+        return integer.matches("^\\d{1,11}$");
     }
 
     /**
@@ -311,61 +150,6 @@ public class AirUtils {
         
         String gameName = g.getName();
         return gameType + " " + gameName;
-    }
-
-    /**
-     * This will calculate the bot to user ratio
-     *
-     * @param g the {@link Guild} that we want to check
-     * @return the percentage of users and the percentage of bots in a nice compact array
-     */
-    public static double[] getBotRatio(Guild g) {
-        
-        MemberCacheView memberCache = g.getMemberCache();
-        double totalCount = memberCache.size();
-        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
-        double userCount = totalCount - botCount;
-        
-        //percent in users
-        double userCountP = (userCount / totalCount) * 100;
-        
-        //percent in bots
-        double botCountP = (botCount / totalCount) * 100;
-
-        logger.debug("In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
-        
-        return new double[]{Math.round(userCountP), Math.round(botCountP)};
-    }
-
-    /**
-     * This counts the users in a guild that have an animated avatar
-     * @param g the guild to count it in
-     * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
-     */
-    public static AtomicLong countAnimatedAvatars(Guild g) {
-
-        return new AtomicLong(g.getMemberCache().stream()
-                .map(Member::getUser)
-                .filter(it -> it.getAvatarId() != null )
-	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
-        );
-    }
-
-    /**
-     * This will get the first channel of a guild that we can write in/should be able to write in
-     *
-     * @param guild The guild that we want to get the main channel from
-     * @return the Text channel that we can send our messages in.
-     */
-    public static TextChannel getPublicChannel(Guild guild) {
-        
-        TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
-        
-        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            return guild.getTextChannelCache().stream().filter(channel -> guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)).findFirst().orElse(null);
-        }
-        
-        return pubChann;
     }
 
     /**
@@ -446,160 +230,6 @@ public class AirUtils {
     }
 
     /**
-     * Attempts to load all the tags from the database
-     */
-    public static void loadAllTags() {
-        logger.debug("Loading tags.");
-        
-        Connection database = db.getConnManager().getConnection();
-        try {
-            Statement smt = database.createStatement();
-            
-            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
-            
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tagName");
-                
-                tagsList.put(tagName, new Tag(
-                                                     resultSet.getInt("id"),
-                                                     resultSet.getString("author"),
-                                                     resultSet.getString("authorId"),
-                                                     tagName,
-                                                     resultSet.getString("tagText")
-                ));
-            }
-
-            logger.debug("Loaded " + tagsList.keySet().size() + " tags.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Attempts to register a new tag
-     *
-     * @param author The user that created the tag
-     * @param tag    the {@link Tag} to add
-     * @return True if the tag is added
-     */
-    public static boolean registerNewTag(User author, Tag tag) {
-        if (tagsList.containsKey(tag.getName())) //Return false if the tag is already here
-            return false;
-        
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
-                                                                            "VALUES(? , ? , ? , ?)");
-            statement.setString(1, String.format("%#s", author));
-            statement.setString(2, author.getId());
-            statement.setString(3, tag.getName());
-            statement.setString(4, tag.getText());
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-        
-        tagsList.put(tag.getName(), tag);
-        return true;
-    }
-
-    /**
-     * Attempts to delete a tag
-     *
-     * @param tag the {@link Tag} to delete
-     * @return true if the tag is deleted
-     */
-    public static boolean deleteTag(Tag tag) {
-        
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
-            statement.setString(1, tag.getName());
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                tagsList.remove(tag.getName());
-                database.close();
-                return true;
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * This sends a post request to the bot lists with the new guild count
-     *
-     * @param jda           the jda instance for the token
-     * @param newGuildCount the new guild count
-     * @return the response from the server
-     */
-    public static String updateGuildCount(JDA jda, long newGuildCount) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", newGuildCount);
-        postFields.put("auth", jda.getToken());
-        try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields).body().string();
-        } catch (SocketTimeoutException | NullPointerException ignored) {
-            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return e.toString();
-        }
-    }
-
-    public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
-        JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
-        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
-            String exceptionMessage = "%s";
-            try {
-                switch (returnValue.getInt("code")) {
-                    case 401: {
-                        exceptionMessage = "Unauthorized access! %s";
-                        break;
-                    }
-                    case 400: {
-                        exceptionMessage = "Bad request! %s";
-                        break;
-                    }
-
-                    default: {
-                        exceptionMessage = "Server responded with a unknown status message: %s";
-                        break;
-                    }
-                }
-            } catch (JSONException ex) {
-                String x = returnValue.getString("message");
-                if (x.equals("ignored exception"))
-                    return;
-                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
-            }
-            String x = returnValue.getString("message");
-            if (x.equals("ignored exception"))
-                return;
-            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
-        }
-    }
-
-    /**
      * Stops everything
      */
     public static void stop() {
@@ -624,7 +254,7 @@ public class AirUtils {
      * @return the channel
      */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
-        if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
+        if(channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
         TextChannel tc;
         try{

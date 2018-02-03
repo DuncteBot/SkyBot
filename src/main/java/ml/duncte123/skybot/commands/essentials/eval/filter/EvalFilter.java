@@ -159,7 +159,7 @@ public class EvalFilter extends GroovyValueFilter {
     }
     
     @Override
-    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) throws Throwable {
+    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) {
         throw new VRCubeException(
                                          String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
                                                  receiver.toString(),

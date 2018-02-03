@@ -22,19 +22,18 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.entities.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
-@DocumentationNeeded
-public class RadioCommand : MusicCommand() {
+class RadioCommand : MusicCommand() {
 
     init {
         //This command takes up a lot of data hence I made it a patron only command - duncte123
@@ -92,7 +91,7 @@ public class RadioCommand : MusicCommand() {
 
         when (args.size) {
             0 -> {
-                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
+                MessageUtils.sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
             }
             1 -> {
                 when (args[0]) {
@@ -107,8 +106,8 @@ public class RadioCommand : MusicCommand() {
                     else -> {
                         val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
                         if (radio == null) {
-                            sendMsg(event, "The stream is invalid!")
-                            sendError(event.message)
+                            MessageUtils.sendMsg(event, "The stream is invalid!")
+                            MessageUtils.sendError(event.message)
                             return@executeCommand
                         }
                         au.loadAndPlay(mng, event.channel, radio.url, false)
@@ -120,8 +119,8 @@ public class RadioCommand : MusicCommand() {
                 }
             }
             else -> {
-                sendMsg(event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
-                sendError(event.message)
+                MessageUtils.sendMsg(event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
+                MessageUtils.sendError(event.message)
             }
         }
     }
@@ -137,9 +136,9 @@ public class RadioCommand : MusicCommand() {
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
         val string = streams.filter { if(!full) it.public else true }
-                .joinToString(separator = "\n") { "[${it.name}](${it.url}) ${if (it.hasWebsite()) "from [${it.website}](${it.website})" else ""}" }
+                .joinToString(separator = "\n") { it.toEmbedString() }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
+            MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
     }
 }

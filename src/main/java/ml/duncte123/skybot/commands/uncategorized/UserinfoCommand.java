@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -70,7 +70,7 @@ public class UserinfoCommand extends Command {
         }
         
         if (m == null) {
-            event.getChannel().sendMessage("This user could not be found.").queue();
+            MessageUtils.sendMsg(event, "This user could not be found.");
             return;
         }
         
@@ -114,12 +114,12 @@ public class UserinfoCommand extends Command {
                                   .addField("Is a bot", (u.isBot() ? "Yep, this user is a bot" : "Nope, this user is not a bot"), true)
                                   .build();
         
-        sendEmbed(event, eb);
+        MessageUtils.sendEmbed(event, eb);
     }
     
     @Override
     public String help() {
-        return "Get information from yourself or from another user.\nUsage: `" + Settings.prefix + getName() + " [username]`";
+        return "Get information from yourself or from another user.\nUsage: `" + PREFIX + getName() + " [username]`";
     }
     
     @Override

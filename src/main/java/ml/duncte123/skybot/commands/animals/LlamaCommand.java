@@ -18,10 +18,12 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.json.JSONObject;
@@ -35,12 +37,13 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String jsonString = WebUtils.getText(Settings.apiBase + "/llama/json");
-            JSONObject jsonObject = new JSONObject(jsonString);
-            event.getChannel().sendMessage(EmbedUtils.embedImage(jsonObject.getString("file"))).queue();
+            MessageUtils.sendEmbed(event, EmbedUtils.embedImage(
+                    WebUtils.getJSONObject(Settings.apiBase + "/llama/json").getString("file")
+            ));
         } catch (Exception e) {
             //e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
+            ComparatingUtils.execCheck(e);
         }
     }
 

@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -45,12 +45,12 @@ public class KickCommand extends Command {
         };
 
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [Reason]");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 
@@ -59,20 +59,20 @@ public class KickCommand extends Command {
             User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) &&
                         !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
-                sendMsg(event, "You are not permitted to perform this action.");
+                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     (noting) -> {
-                        AirUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());
-                        sendSuccess(event.getMessage());
+                        ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());
+                        MessageUtils.sendSuccess(event.getMessage());
                     }
             );
         } catch (HierarchyException ignored) { // if we don't do anything with it and just catch it we should name it "ignored"
             //e.printStackTrace();
-            sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
+            MessageUtils.sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 
 

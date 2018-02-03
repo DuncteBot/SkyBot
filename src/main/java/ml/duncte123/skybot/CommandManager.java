@@ -21,8 +21,8 @@ package ml.duncte123.skybot;
 import Java.lang.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Settings;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 
@@ -135,15 +135,21 @@ public class CommandManager {
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-                Pattern.quote(Settings.prefix) + "|" + Settings.otherPrefix + "|" +
-                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()), "").split("\\s+");
+                "(?i)" + Pattern.quote(Settings.prefix) + "|" + Pattern.quote(Settings.otherPrefix) + "|" +
+                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
+                "").split("\\s+");
         final String invoke = split[0].toLowerCase();
-        final String[] args = Arrays.copyOfRange(split, 1, split.length);
 
         Command cmd = getCommand(invoke);
 
-        if(cmd != null)
-            cmd.executeCommand(invoke, args, event);
+        if(cmd != null) {
+            try {
+                cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
+            } catch (Throwable ex) {
+                if (Settings.isUnstable) {
+                    ComparatingUtils.execCheck(ex);
+                }
+            }
+        }
     }
-    
 }
