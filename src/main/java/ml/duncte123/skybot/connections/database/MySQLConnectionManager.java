@@ -23,6 +23,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.DriverManager;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 
 /**
@@ -155,9 +156,12 @@ implements DBConnectionManager {
                     "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
-            if(connection.createStatement().executeQuery("SELECT COUNT(id) FROM footerQuotes").getFetchSize() == 0) {
-                connection.createStatement().executeUpdate("INSERT INTO footerQuotes " +
-                        "VALUES (DEFAULT, 'duncte123', 'FIRST')");
+            ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
+            while (res.next()) {
+                if(res.getInt("items") == 0) {
+                    connection.createStatement().execute("INSERT INTO footerQuotes " +
+                            "VALUES (DEFAULT, 'duncte123', 'FIRST')");
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
