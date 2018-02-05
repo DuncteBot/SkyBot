@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -27,12 +28,17 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 
+import java.util.regex.Pattern;
+
 public class HelpCommand extends Command {
     
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (args.length > 0) {
-            String toSearch = StringUtils.join(args, " ");
+            String toSearch = StringUtils.join(args, " ")
+                    .replaceFirst("(" + Pattern.quote(Settings.prefix) + "|" +
+                            Pattern.quote(Settings.otherPrefix) + "|" +
+                            Pattern.quote( getSettings(event.getGuild()).getCustomPrefix() ) + ")", "");
             
             for (Command cmd : AirUtils.commandManager.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
