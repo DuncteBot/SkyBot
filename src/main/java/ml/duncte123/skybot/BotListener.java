@@ -427,7 +427,7 @@ public class BotListener extends ListenerAdapter {
     private boolean unstableCheckThingy(SelfUser selfUser, Guild g) {
         if (Settings.isUnstable && selfUser.getIdLong() != 210363111729790977L) {
             //noinspection unchecked
-            List<Long> ids = (List<Long>) AirUtils.config.getArray("access_ids");
+            List<Long> ids = AirUtils.config.getArray("access_ids");
             if (!ids.contains(g.getIdLong())) {
                 g.leave().queue();
                 logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);

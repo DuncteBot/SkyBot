@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.config;
 
 import com.afollestad.ason.Ason;
+import org.json.JSONArray;
 
 import java.io.File;
 import java.util.Collections;
@@ -153,13 +154,14 @@ public class Config {
      * @param key the key of the array
      * @return the array as {@link java.util.List}
      */
-    public List<?> getArray(String key) {
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArray(String key) {
         if (!hasKey(key)) {
-            List empty = Collections.emptyList();
-            config.put("key", empty);
+            List<T> empty = Collections.emptyList();
+            config.put(key, new JSONArray(empty));
             return empty;
         } else {
-            return config.getJsonArray(key).toList();
+            return (List<T>) config.getJsonArray(key).toList();
         }
     }
 
