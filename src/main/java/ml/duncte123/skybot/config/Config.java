@@ -147,19 +147,32 @@ public class Config {
         }
     }
 
-
     /**
      * This method gets the array from the key and converts it into a list for better handling
      *
      * @param key the key of the array
      * @return the array as {@link java.util.List}
      */
-    @SuppressWarnings("unchecked")
     public <T> List<T> getArray(String key) {
+        return getArray(key, null);
+    }
+
+    /**
+     * This method gets the array from the key and converts it into a list for better handling
+     *
+     * @param key the key of the array
+     * @param defaultValue The default value that the array needs to have
+     * @return the array as {@link java.util.List}
+     */
+    @SuppressWarnings("unchecked")
+    public <T> List<T> getArray(String key, List defaultValue) {
         if (!hasKey(key)) {
-            List<T> empty = Collections.emptyList();
-            config.put(key, new JSONArray(empty));
-            return empty;
+            List<T> toPut = Collections.emptyList();
+            if(defaultValue != null) {
+                toPut = defaultValue;
+            }
+            config.put(key, new JSONArray(toPut));
+            return toPut;
         } else {
             return (List<T>) config.getJsonArray(key).toList();
         }
