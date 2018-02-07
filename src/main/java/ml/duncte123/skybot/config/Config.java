@@ -171,7 +171,7 @@ public class Config {
             if(defaultValue != null) {
                 toPut = defaultValue;
             }
-            config.put(key, new JSONArray(toPut));
+            put(key, new JSONArray(toPut));
             return toPut;
         } else {
             return (List<T>) config.getJsonArray(key).toList();
@@ -199,7 +199,7 @@ public class Config {
      * @param key   the key to add the value under
      * @param value the value that we need to add, in the form of json
      */
-    public void put(String key, Object value) {
+    public void put(String key, Object... value) {
         config.put(key, value);
         try {
             this.save();
