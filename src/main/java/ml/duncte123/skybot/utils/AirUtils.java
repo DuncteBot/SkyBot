@@ -19,6 +19,9 @@
 package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
+import me.duncte123.weebJava.TokenType;
+import me.duncte123.weebJava.WeebApiBuilder;
+import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -85,6 +88,10 @@ public class AirUtils {
      * This is our database manager, it is a util for the connection
      */
     public static DBManager db = new DBManager();
+
+    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
+            .setToken(config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
+            .build();
 
     /**
      * This converts the online status of a user to a fancy emote

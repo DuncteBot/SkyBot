@@ -16,17 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command;
+package ml.duncte123.skybot.commands.weeb;
 
-public enum CommandCategory {
+import ml.duncte123.skybot.objects.command.Command;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
-    ANIMALS,
-    MAIN,
-    FUN,
-    MUSIC,
-    MOD_ADMIN,
-    NERD_STUFF,
-    PATRON,
-    WEEB,
-    UNLISTED
+public class HugCommand extends Command {
+    @Override
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+
+    }
+
+    @Override
+    public String help() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return null;
+    }
 }
