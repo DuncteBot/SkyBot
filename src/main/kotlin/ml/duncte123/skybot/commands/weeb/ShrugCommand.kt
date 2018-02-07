@@ -29,7 +29,7 @@ class ShrugCommand : WeebCommandBase() {
     }
 
     override fun help() = """¯\_(ツ)_/¯
-        |Usage: `$name`
+        |Usage: `$PREFIX$name`
     """.trimMargin()
 
     override fun getName() = "shrug"

@@ -18,11 +18,16 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.MessageEmbed
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
 abstract class WeebCommandBase : Command() {
     init {
@@ -31,7 +36,8 @@ abstract class WeebCommandBase : Command() {
 
     fun getDefaultWeebEmbed(): EmbedBuilder {
         return EmbedUtils.defaultEmbed()
-                .setFooter("[Powered by weeb.sh & weeb.java](http://google.com/)", null)
+                .setFooter("Powered by weeb.sh & weeb.java", null)
+                .setTimestamp(null)
     }
 
     fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {
@@ -40,5 +46,23 @@ abstract class WeebCommandBase : Command() {
 
     fun getWeebEmbedImage(imageUrl: String): MessageEmbed {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
+    }
+
+    fun thatStuffThatINeedToDoALotOfTimes(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        val imageUrl = AirUtils.WEEB_API.getRandomImage(type).url
+
+        if(args.isEmpty()) {
+            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                    "${Settings.defaultName} $thing ${event.member.effectiveName}", imageUrl))
+        } else {
+            if(!event.message.mentionedMembers.isEmpty()) {
+                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                        "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
+                        , imageUrl))
+            } else {
+                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                        "${event.member.effectiveName} $thing ${StringUtils.join(args, " ")}", imageUrl))
+            }
+        }
     }
 }

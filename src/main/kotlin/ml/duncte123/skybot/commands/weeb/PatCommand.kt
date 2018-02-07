@@ -20,14 +20,14 @@ package ml.duncte123.skybot.commands.weeb
 
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class HugCommand : WeebCommandBase() {
+class PatCommand : WeebCommandBase() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
+        thatStuffThatINeedToDoALotOfTimes("pat", "pats", args, event)
     }
 
-    override fun help() = """Hug a user.
-        |Usage: `$PREFIX$name [username/@user]`
+    override fun help() = """Pats a user.
+        |Usage `$PREFIX$name [username/@user]`
     """.trimMargin()
 
-    override fun getName() = "hug"
+    override fun getName() = "pat"
 }
