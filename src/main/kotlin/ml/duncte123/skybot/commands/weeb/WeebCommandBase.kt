@@ -49,7 +49,7 @@ abstract class WeebCommandBase : Command() {
     }
 
     fun thatStuffThatINeedToDoALotOfTimes(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val imageUrl = AirUtils.WEEB_API.getRandomImage(type).url
+        val imageUrl = AirUtils.WEEB_API.getRandomImage(type, "${event.channel.isNSFW}").url
 
         if(args.isEmpty()) {
             MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
