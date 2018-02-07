@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import lavalink.client.player.IPlayer;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 public class AudioPlayerSenderHandler implements AudioSendHandler {
@@ -27,14 +27,14 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     /**
      * This is our audio player
      */
-    private final AudioPlayer audioPlayer;
+    private final IPlayer audioPlayer;
 
     /**
      * I don't know what this does but it seems important
      */
     private AudioFrame lastFrame;
 
-    public AudioPlayerSenderHandler(AudioPlayer audioPlayer) {
+    public AudioPlayerSenderHandler(IPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
@@ -45,10 +45,11 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean canProvide() {
-        if (lastFrame == null) {
+       /* if (lastFrame == null) {
             lastFrame = audioPlayer.provide();
         }
-        return lastFrame != null;
+        return lastFrame != null;*/
+       return true;
     }
 
     /**
@@ -58,13 +59,14 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public byte[] provide20MsAudio() {
-        if (lastFrame == null) {
+        /*if (lastFrame == null) {
             lastFrame = audioPlayer.provide();
         }
 
         byte[] data = lastFrame != null ? lastFrame.data : null;
         lastFrame = null;
-        return data;
+        return data;*/
+        return null;
     }
 
     /**

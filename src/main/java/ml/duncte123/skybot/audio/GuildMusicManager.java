@@ -18,15 +18,15 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import lavalink.client.io.Link;
+import lavalink.client.player.IPlayer;
 
 public class GuildMusicManager {
 
     /**
      * This is our player
      */
-    public final AudioPlayer player;
+    public final IPlayer player;
 
     /**
      * This is the scheduler
@@ -43,8 +43,8 @@ public class GuildMusicManager {
      *
      * @param manager The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager AudioPlayerManager} for the corresponding guild
      */
-    public GuildMusicManager(AudioPlayerManager manager) {
-        player = manager.createPlayer();
+    public GuildMusicManager(Link manager) {
+        player = manager.getPlayer();
         scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);

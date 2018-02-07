@@ -27,6 +27,10 @@
     "discordbots_userToken": "",
     "weeb.sh": {
       "wolketoken": "INSERT_WEEB_WOLKETOKEN"
-    },
+    }
+  },
+  "lavalink": {
+    "wsurl": "ws://localhost",
+    "pass": "my-secret-password"
   }
 }

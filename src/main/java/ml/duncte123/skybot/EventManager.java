@@ -19,10 +19,12 @@
 package ml.duncte123.skybot;
 
 import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -50,6 +52,7 @@ implements IEventManager {
     public void handle(Event event) {
         try {
             botListener.onEvent(event);
+            SkyBot.getInstance().getLavalink().onEvent(event);
         } catch (Throwable thr) {
             logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }

@@ -19,9 +19,11 @@
 package ml.duncte123.skybot;
 
 import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import lavalink.client.io.Lavalink;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.RestAction;
 import org.apache.commons.lang3.time.DateUtils;
@@ -29,6 +31,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -39,6 +43,13 @@ import javax.security.auth.login.LoginException;
 public class SkyBot {
 
     public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
+
+    private static ShardManager shardManager = null;
+    private static Lavalink lavalink = null;
+
+    private static final SkyBot instance = new SkyBot();
+
+    private SkyBot() {}
 
     /**
      * This is our main method
@@ -103,10 +114,24 @@ public class SkyBot {
         }
 
         logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
+        lavalink = new Lavalink(
+                "210363111729790977",
+                AirUtils.config.getInt("discord.totalShards"),
+                shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
+        );
+        try {
+            lavalink.addNode(
+                    new URI(AirUtils.config.getString("lavalink.wsurl")),
+                    AirUtils.config.getString("lavalink.pass")
+            );
+        }
+        catch (URISyntaxException e) {
+            e.printStackTrace();
+        }
 
         try {
             //Set up sharding for the bot
-            new DefaultShardManagerBuilder()
+            shardManager = new DefaultShardManagerBuilder()
                     .setEventManager(new EventManager())
                     .setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
@@ -123,5 +148,17 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+    }
+
+    public ShardManager getShardManager() {
+        return shardManager;
+    }
+
+    public static SkyBot getInstance() {
+        return instance;
+    }
+
+    public Lavalink getLavalink() {
+        return lavalink;
     }
 }

@@ -20,8 +20,10 @@
 
 package ml.duncte123.skybot.commands.music
 
+import lavalink.client.io.Link
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
@@ -48,6 +50,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         val mng = getMusicManager(guild)
         val audioManager = getAudioManager(guild)
         val cooldowns = MusicCommand.cooldowns
+        val link = SkyBot.getInstance().lavalink.getLink(event.guild)
         @Suppress("DEPRECATION")
         if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
@@ -56,21 +59,22 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             return
         }
         cooldowns.remove(guild.idLong)
-        if (audioManager.isConnected && mng.player.playingTrack != null) {
+        if (audioManager.state == Link.State.CONNECTING && mng.player.playingTrack != null) {
             MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
 
         try {
-            if (audioManager.isConnected)
-                audioManager.closeAudioConnection()
+            if (audioManager.state == Link.State.CONNECTING)
+                link.disconnect()
 
-            audioManager.openAudioConnection(vc)
+            //audioManager.openAudioConnection(vc)
+            link.connect(vc)
             MusicCommand.addCooldown(guild.idLong)
 
             //Set the listener if it's not set yet
-            if (audioManager.connectionListener == null)
-                audioManager.connectionListener = this
+            /*if (audioManager.connectionListener == null)
+                audioManager.connectionListener = this*/
 
             MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {

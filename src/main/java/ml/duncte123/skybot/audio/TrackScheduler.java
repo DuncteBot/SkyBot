@@ -18,17 +18,17 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import lavalink.client.player.IPlayer;
+import lavalink.client.player.event.PlayerEventListenerAdapter;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TrackScheduler extends AudioEventAdapter {
+public class TrackScheduler extends PlayerEventListenerAdapter {
 
     /**
      * This stores our queue
@@ -38,7 +38,7 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * Hey look at that, it's our player
      */
-    final AudioPlayer player;
+    final IPlayer player;
 
     /**
      * This is the last playing track
@@ -63,7 +63,7 @@ public class TrackScheduler extends AudioEventAdapter {
      *
      * @param player Our audio player
      */
-    public TrackScheduler(AudioPlayer player, GuildMusicManager guildMusicManager) {
+    public TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
@@ -75,7 +75,10 @@ public class TrackScheduler extends AudioEventAdapter {
      * @param track The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} to queue
      */
     public void queue(AudioTrack track) {
-        if (!player.startTrack(track, true)) {
+        /*if (!player.startTrack(track, true)) {
+            queue.offer(track);
+        }*/
+        if(player.getPlayingTrack() != null) {
             queue.offer(track);
         }
     }
@@ -84,7 +87,8 @@ public class TrackScheduler extends AudioEventAdapter {
      * Starts the next track
      */
     public void nextTrack() {
-        player.startTrack(queue.poll(), false);
+        //player.startTrack(queue.poll(), false);
+        player.playTrack(queue.poll());
     }
 
     /**
@@ -95,7 +99,7 @@ public class TrackScheduler extends AudioEventAdapter {
      * @param endReason Why did this track end?
      */
     @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+    public void onTrackEnd(IPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
 
         if (endReason.mayStartNext) {

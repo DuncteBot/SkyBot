@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import lavalink.client.io.Lavalink;
+import lavalink.client.io.Link;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
@@ -42,6 +44,8 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -87,6 +91,7 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+
 
     /**
      * A custom consumer that cancels the stupid unknown message error
@@ -385,9 +390,11 @@ public class BotListener extends ListenerAdapter {
             manager.scheduler.queue.clear();
 
             MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
-            if (g.getAudioManager().isConnected()) {
-                g.getAudioManager().closeAudioConnection();
-                g.getAudioManager().setSendingHandler(null);
+            Link l = SkyBot.getInstance().getLavalink().getLink(g);
+            if (l.getState().equals(Link.State.CONNECTED)) {
+                //g.getAudioManager().closeAudioConnection();
+                l.destroy();
+                //g.getAudioManager().setSendingHandler(null);
                 AirUtils.audioUtils.getMusicManagers().remove(g.getId());
             }
         }
@@ -436,4 +443,5 @@ public class BotListener extends ListenerAdapter {
         }
         return false;
     }
+
 }

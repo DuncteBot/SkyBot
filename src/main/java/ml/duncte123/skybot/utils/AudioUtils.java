@@ -33,14 +33,12 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 
@@ -222,7 +220,7 @@ public class AudioUtils {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
                 if (mng == null) {
-                    mng = new GuildMusicManager(playerManager);
+                    mng = new GuildMusicManager(SkyBot.getInstance().getLavalink().getLink(guild));
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }

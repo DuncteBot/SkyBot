@@ -20,8 +20,10 @@ package ml.duncte123.skybot.objects.command;
 
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
+import lavalink.client.io.Link;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -85,8 +87,8 @@ public abstract class MusicCommand extends Command {
      * @param guild the guild to get the audio manager for
      * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
      */
-    protected AudioManager getAudioManager(Guild guild) {
-        return guild.getAudioManager();
+    protected Link getAudioManager(Guild guild) {
+        return SkyBot.getInstance().getLavalink().getLink(guild);
     }
 
     /**
@@ -96,14 +98,14 @@ public abstract class MusicCommand extends Command {
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        AudioManager audioManager = getAudioManager(event.getGuild());
+        Link audioManager = getAudioManager(event.getGuild());
 
-        if (!audioManager.isConnected()) {
+        if (!audioManager.getState().equals(Link.State.CONNECTED)) {
             MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }
 
-        if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
+        if (audioManager.getChannel() != null && !audioManager.getChannel().equals(event.getMember().getVoiceState().getChannel())) {
             MessageUtils.sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
