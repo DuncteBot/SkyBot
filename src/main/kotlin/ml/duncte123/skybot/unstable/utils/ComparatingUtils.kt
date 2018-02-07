@@ -29,13 +29,12 @@ import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
 import org.slf4j.LoggerFactory
-import org.w3c.dom.Text
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ComparatingUtils {
 
     companion object {
-        @JvmField
+        @JvmStatic
         var exceptionMap: Map<Class<*>, Map<ExceptionType, Array<out StackTraceElement>>> = HashMap()
 
         @JvmStatic
@@ -61,7 +60,7 @@ class ComparatingUtils {
             }
             val data = booleanArrayOf(mapHasKey, exactMatch, added)
             LoggerFactory.getLogger(ComparatingUtils::class.java)
-                    .info("${TextColor.CYAN}ExceptionData: [HadKey: ${data[0]}, HadMatching: ${data[1]}, Added: ${data[2]}]${TextColor.RESET}")
+                    .debug("${TextColor.CYAN}ExceptionData: [HadKey: ${data[0]}, HadMatching: ${data[1]}, Added: ${data[2]}]${TextColor.RESET}")
             return data
         }
 
@@ -106,7 +105,7 @@ class ComparatingUtils {
             val table: ArrayList<List<String>> = ArrayList()
             val data = exceptionMap.entries.first { it.key.name == ex }.value
 
-            val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "================================", prefix = "\n\n\n\n", postfix = "\n\n\n\n")
+            val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "\n\n\n\n================================\n\n\n\n", prefix = "\n\n\n\n")
 
             val haste = hastebin(hastedata)
 
