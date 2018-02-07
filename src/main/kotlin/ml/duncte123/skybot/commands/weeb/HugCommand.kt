@@ -16,17 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command;
+package ml.duncte123.skybot.commands.weeb
 
-public enum CommandCategory {
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-    ANIMALS,
-    MAIN,
-    FUN,
-    MUSIC,
-    MOD_ADMIN,
-    NERD_STUFF,
-    PATRON,
-    WEEB,
-    UNLISTED
+class HugCommand : WeebCommandBase() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
+    }
+
+    override fun help() = """Hug a user.
+        |Usage: `$PREFIX$name [username/@user]`
+    """.trimMargin()
+
+    override fun getName() = "hug"
 }

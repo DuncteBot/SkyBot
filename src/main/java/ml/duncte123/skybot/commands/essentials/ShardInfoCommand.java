@@ -79,6 +79,11 @@ public class ShardInfoCommand extends Command {
         return "shardinfo";
     }
 
+    @Override
+    public String[] getAliases() {
+        return new String[] {"shards"};
+    }
+
     /*
      * These 2 functions have been inspired from FlareBot
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
