@@ -27,7 +27,7 @@ import ml.duncte123.skybot.entities.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.*
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
@@ -37,7 +37,7 @@ class RadioCommand : MusicCommand() {
 
     init {
         //This command takes up a lot of data hence I made it a patron only command - duncte123
-        this.category = CommandCategory.PATRON
+        this.category = CommandCategory.MUSIC
     }
 
     var radioStreams: List<RadioStream> = ArrayList()
@@ -81,8 +81,13 @@ class RadioCommand : MusicCommand() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!isPatron(event.author, event.channel))
+        if(!hasUpvoted(event.author)) {
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+                    "You cannot use the shorten command as you haven't up-voted the bot." +
+                            " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
+                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
             return
+        }
         if (!channelChecks(event))
             return
 
@@ -92,7 +97,7 @@ class RadioCommand : MusicCommand() {
 
         when (args.size) {
             0 -> {
-                MessageUtils.sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
+                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
             }
             1 -> {
                 when (args[0]) {
@@ -107,8 +112,7 @@ class RadioCommand : MusicCommand() {
                     else -> {
                         val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
                         if (radio == null) {
-                            MessageUtils.sendMsg(event, "The stream is invalid!")
-                            MessageUtils.sendError(event.message)
+                            sendErrorWithMessage(event.message, event, "The stream is invalid!")
                             return@executeCommand
                         }
                         au.loadAndPlay(mng, event.channel, radio.url, false)
@@ -120,15 +124,15 @@ class RadioCommand : MusicCommand() {
                 }
             }
             else -> {
-                MessageUtils.sendMsg(event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
-                MessageUtils.sendError(event.message)
+                sendErrorWithMessage(event.message, event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
             }
         }
     }
 
     override fun help(): String = """Adds a radio http stream to your queue and goes to it!
-            |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
-            |Usage: `$PREFIX$name <(full)list/station name>`""".trimMargin()
+        |**YOU HAVE TO UPVOTE!**
+        |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
+        |Usage: `$PREFIX$name <(full)list/station name>`""".trimMargin()
 
     override fun getName(): String = "radio"
 
@@ -139,7 +143,7 @@ class RadioCommand : MusicCommand() {
         val string = streams.filter { if(!full) it.public else true }
                 .joinToString(separator = "\n") { it.toEmbedString() }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
-            MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
+            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
     }
 }

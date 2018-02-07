@@ -26,6 +26,7 @@ import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import okhttp3.*
 import org.json.JSONArray
 import org.json.JSONObject
+import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
@@ -35,6 +36,7 @@ class WebUtils {
     companion object {
         const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)"
         private val client = OkHttpClient()
+        private val LOGGER = LoggerFactory.getLogger(WebUtils::class.java)
 
         /**
          * Reads contents from a website and returns it to a string
@@ -242,7 +244,11 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
-        fun hastebin(s: String): String = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
+        fun hastebin(s: String): String {
+            val returnValue = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
+            LOGGER.info("${TextColor.PURPLE}Generated hastebin link: $returnValue${TextColor.RESET}")
+            return returnValue
+        }
         /**
          * Posts [String]s to wastebin.party
          * @param s the [String]
@@ -250,7 +256,11 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
-        fun wastebin(s: String): String = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
+        fun wastebin(s: String): String {
+            val returnValue = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
+            LOGGER.info("${TextColor.PURPLE}Generated wastebin link: $returnValue${TextColor.RESET}")
+            return returnValue
+        }
     }
     /**
      * This holds some variables that we will accept
