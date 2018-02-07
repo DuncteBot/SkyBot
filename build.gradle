@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.59.0'
+version '3.60.0'
 
 sourceCompatibility = 1.9
 
@@ -95,14 +95,14 @@ dependencies {
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension
     compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
-    // Logback core
-    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     // Logback classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // Reflection stuffz
     compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
     //Spotify API
     compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
+    //Weeb api
+    compile group: 'com.github.duncte123', name: 'weeb.java', version: 'master-SNAPSHOT'
 
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'

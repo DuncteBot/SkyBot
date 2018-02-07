@@ -24,6 +24,9 @@
     "googl": "",
     "thecatapi": "",
     "wolframalpha": "",
-    "discordbots_userToken": ""
+    "discordbots_userToken": "",
+    "weeb.sh": {
+      "wolketoken": "INSERT_WEEB_WOLKETOKEN"
+    },
   }
 }

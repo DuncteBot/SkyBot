@@ -16,17 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command;
+package ml.duncte123.skybot.commands.weeb
 
-public enum CommandCategory {
+import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import ml.duncte123.skybot.utils.MessageUtils.*
 
-    ANIMALS,
-    MAIN,
-    FUN,
-    MUSIC,
-    MOD_ADMIN,
-    NERD_STUFF,
-    PATRON,
-    WEEB,
-    UNLISTED
+class ShrugCommand : WeebCommandBase() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
+                AirUtils.WEEB_API.getRandomImage("shrug").url))
+    }
+
+    override fun help() = """¯\_(ツ)_/¯
+        |Usage: `$PREFIX$name`
+    """.trimMargin()
+
+    override fun getName() = "shrug"
 }
