@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.60.0'
+version '3.60.1'
 
 sourceCompatibility = 1.9
 
@@ -78,7 +78,7 @@ dependencies {
 //    compile files("D:\\Sanduhr32\\programming\\REPOS\\Sanduhr32\\JDA\\build\\libs\\JDA-3.5.0_DEV-withDependencies.jar")
     compile 'com.github.Sanduhr32:JDA:a003f6dd26'
     //Lavaplayer
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.47'
     //jda-nas
     compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.6'
     //Commons text, because UnicodeUnescaper
