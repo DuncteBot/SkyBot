@@ -95,8 +95,6 @@ dependencies {
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension
     compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
-    // Logback core
-    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     // Logback classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
     // Reflection stuffz

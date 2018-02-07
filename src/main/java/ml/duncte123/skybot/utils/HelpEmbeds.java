@@ -43,6 +43,7 @@ public class HelpEmbeds {
     private static List<String> nerdCommands = new ArrayList<>();
     private static List<String> modAdminCommands = new ArrayList<>();
     private static List<String> patronCommands = new ArrayList<>();
+    private static List<String> weebCommands = new ArrayList<>();
 
     /**
      * This loads all the commands in the lists
@@ -70,6 +71,10 @@ public class HelpEmbeds {
                     break;
                 case PATRON:
                     patronCommands.add(c.getName());
+                    break;
+                case WEEB:
+                    weebCommands.add(c.getName());
+                    break;
                 default:
                     break;
             }
@@ -96,6 +101,10 @@ public class HelpEmbeds {
                         break;
                     case PATRON:
                         patronCommands.add(alias);
+                        break;
+                    case WEEB:
+                        weebCommands.add(alias);
+                        break;
                     default:
                         break;
                 }
@@ -115,6 +124,7 @@ public class HelpEmbeds {
                        .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
                        .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
                        .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
+                       .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
                        .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
                        .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
                        .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)

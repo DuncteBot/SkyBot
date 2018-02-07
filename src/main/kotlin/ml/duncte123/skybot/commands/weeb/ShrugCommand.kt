@@ -16,25 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.weeb;
+package ml.duncte123.skybot.commands.weeb
 
-import ml.duncte123.skybot.objects.command.Command;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import ml.duncte123.skybot.utils.AirUtils
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import ml.duncte123.skybot.utils.MessageUtils.*
 
-public class HugCommand extends Command {
-    @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-
+class ShrugCommand : WeebCommandBase() {
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
+                AirUtils.WEEB_API.getRandomImage("shrug").url))
     }
 
-    @Override
-    public String help() {
-        return null;
-    }
+    override fun help() = """¯\_(ツ)_/¯
+        |Usage: `$name`
+    """.trimMargin()
 
-    @Override
-    public String getName() {
-        return null;
-    }
+    override fun getName() = "shrug"
 }
