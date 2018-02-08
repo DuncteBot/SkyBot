@@ -138,7 +138,7 @@ public class BotListener extends ListenerAdapter {
             
             AirUtils.stop();
 
-            SkyBot.getInstance().getLavalink().shutdown();
+            //SkyBot.getInstance().getLavalink().shutdown();
 
             try {
                 Thread.sleep(4 * 1000);
@@ -396,10 +396,9 @@ public class BotListener extends ListenerAdapter {
             manager.scheduler.queue.clear();
 
             MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
-            Link l = SkyBot.getInstance().getLavalink().getLink(g);
-            if (l.getState() == Link.State.CONNECTED) {
+            if (MusicCommand.isConnected(g)) {
                 //g.getLink().closeAudioConnection();
-                l.destroy();
+                MusicCommand.closeAudioConnection(g);
                 //g.getLink().setSendingHandler(null);
                 AirUtils.audioUtils.getMusicManagers().remove(g.getId());
             }

@@ -33,6 +33,7 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
@@ -73,33 +74,35 @@ public class AudioUtils {
      * This will set everything up and get the player ready
      */
     AudioUtils() {
+        initPlayerManager();
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
         musicManagers = new HashMap<>();
     }
 
     private void initPlayerManager() {
+        if(playerManager == null) {
+            playerManager = new DefaultAudioPlayerManager();
 
-        playerManager = new DefaultAudioPlayerManager();
+            //Disable cookies for youtube
+            YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+            youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
 
-        //Disable cookies for youtube
-        YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-        youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
-
-        playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
-        playerManager.registerSourceManager(new ClypitAudioSourceManager());
-
-
-        playerManager.registerSourceManager(youtubeAudioSourceManager);
-        playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
-        playerManager.registerSourceManager(new BandcampAudioSourceManager());
-        playerManager.registerSourceManager(new VimeoAudioSourceManager());
-        playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
-        playerManager.registerSourceManager(new BeamAudioSourceManager());
-        playerManager.registerSourceManager(new HttpAudioSourceManager());
+            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+            playerManager.registerSourceManager(new ClypitAudioSourceManager());
 
 
-        AudioSourceManagers.registerLocalSource(playerManager);
+            playerManager.registerSourceManager(youtubeAudioSourceManager);
+            playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+            playerManager.registerSourceManager(new BandcampAudioSourceManager());
+            playerManager.registerSourceManager(new VimeoAudioSourceManager());
+            playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+            playerManager.registerSourceManager(new BeamAudioSourceManager());
+            playerManager.registerSourceManager(new HttpAudioSourceManager());
+
+
+            AudioSourceManagers.registerLocalSource(playerManager);
+        }
     }
 
     public AudioPlayerManager getPlayerManager() {
@@ -142,9 +145,9 @@ public class AudioUtils {
         } else {
             trackUrl = trackUrlRaw;
         }
-        
+
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
-            
+
 
             @Override
             public void trackLoaded(AudioTrack track) {
@@ -152,7 +155,7 @@ public class AudioUtils {
                 if (mng.player.getPlayingTrack() == null) {
                     msg += "\nand the Player has started playing;";
                 }
-                
+
                 mng.scheduler.queue(track);
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
@@ -162,7 +165,7 @@ public class AudioUtils {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
 
-                if(tracks.size() == 0) {
+                if (tracks.size() == 0) {
                     MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
@@ -170,7 +173,7 @@ public class AudioUtils {
                     firstTrack = playlist.getTracks().get(0);
                 }
                 String msg;
-                
+
                 if (addPlayList) {
                     msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
                     if (mng.player.getPlayingTrack() == null) {
@@ -186,7 +189,7 @@ public class AudioUtils {
                 }
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
-            
+
 
             @Override
             public void noMatches() {

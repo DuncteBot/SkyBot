@@ -46,7 +46,6 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean canProvide() {
-        System.out.println("Handler: before wrapper");
         LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
         System.out.println("Handler: after wrapper");
         if (lastFrame == null) {
@@ -72,7 +71,6 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean isOpus() {
-        System.out.println("Handler: isOpus");
         return true;
     }
 }

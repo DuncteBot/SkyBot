@@ -135,7 +135,7 @@ public class SkyBot {
             //Set up sharding for the bot
             shardManager = new DefaultShardManagerBuilder()
                     .setEventManager(new EventManager())
-                    .setAudioSendFactory(new NativeAudioSendFactory())
+                    //.setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
                     .setGameProvider(shardId -> Game.of(type,
                             name.replace("{shardId}", Integer.toString(shardId + 1)), url[0])

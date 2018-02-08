@@ -48,7 +48,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val link = getLink(guild)
-        val mng = getMusicManager(guild)
+        //val mng = getMusicManager(guild)
         val cooldowns = MusicCommand.cooldowns
 
         @Suppress("DEPRECATION")
@@ -66,9 +66,9 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         }
         try {
             if (isConnected(event.guild))
-                link.disconnect()
+                closeAudioConnection(event.guild)
             //audioManager.openAudioConnection(vc)
-            link.connect(vc)
+            openAudioConnection(vc)
             //guild.audioManager.sendingHandler = mng.getSendHandler()
             MusicCommand.addCooldown(guild.idLong)
 

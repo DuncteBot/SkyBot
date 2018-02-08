@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.Executors;
@@ -81,8 +82,28 @@ public abstract class MusicCommand extends Command {
         return AirUtils.audioUtils.getMusicManager(guild);
     }
 
-    protected boolean isConnected(Guild g) {
-        return getLink(g).getState() != Link.State.NOT_CONNECTED;
+    public static boolean isConnected(Guild g) {
+        return isLavaLinkEnabled() ?
+                getLink(g).getState() == Link.State.CONNECTED :
+                g.getAudioManager().isConnected();
+    }
+
+    private static boolean isLavaLinkEnabled() {
+        return AirUtils.config.getBoolean("lavalink.enable");
+    }
+
+    protected static void openAudioConnection(VoiceChannel vc) {
+        if(isLavaLinkEnabled())
+            getLink(vc.getGuild()).connect(vc);
+        else
+            vc.getGuild().getAudioManager().openAudioConnection(vc);
+    }
+
+    public static void closeAudioConnection(Guild g) {
+        if(isLavaLinkEnabled())
+            getLink(g).disconnect();
+        else
+            g.getAudioManager().closeAudioConnection();
     }
 
     /**
@@ -91,7 +112,7 @@ public abstract class MusicCommand extends Command {
      * @param guild the guild to get the audio manager for
      * @return the {@link Link Link} for the guild
      */
-    protected Link getLink(Guild guild) {
+    protected static Link getLink(Guild guild) {
         return SkyBot.getInstance().getLavalink().getLink(guild);
     }
 

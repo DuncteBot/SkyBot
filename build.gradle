@@ -78,7 +78,7 @@ dependencies {
     compile 'com.github.Sanduhr32:JDA:a003f6dd26'
     //Lavaplayer/Lavalink
     //compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.47'
-    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'f95d7f3') {
+    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'fa6f096') {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
         exclude group: 'net.dv8tion', module: 'JDA'
     }

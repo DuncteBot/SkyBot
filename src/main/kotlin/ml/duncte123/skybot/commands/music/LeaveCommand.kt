@@ -20,7 +20,6 @@
 
 package ml.duncte123.skybot.commands.music
 
-import lavalink.client.io.Link
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -41,13 +40,13 @@ class LeaveCommand : MusicCommand() {
             MessageUtils.sendError(event.message)
             return
         }
-        val manager = getLink(guild)
+        val manager = getMusicManager(guild)
 
-        if (isConnected(event.guild)) {
+        if (isConnected(guild)) {
             manager.player.stopTrack()
             //manager.sendingHandler = null
             //manager.closeAudioConnection()
-            manager.disconnect()
+            closeAudioConnection(guild)
             //event.guild.audioManager.sendingHandler = null
             MusicCommand.addCooldown(guild.idLong)
             MessageUtils.sendMsg(event, "Leaving your channel")

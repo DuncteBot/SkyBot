@@ -21,7 +21,6 @@ package ml.duncte123.skybot.audio;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
-import lavalink.client.player.LavaplayerPlayerWrapper;
 import lavalink.client.player.event.PlayerEventListenerAdapter;
 
 import java.util.Collections;
@@ -81,7 +80,6 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         /*if (!player.startTrack(track, true)) {
             queue.offer(track);
         }*/
-        System.out.println("Track: thing");
         if(player.getPlayingTrack() != null) {
             queue.offer(track);
         } else {
