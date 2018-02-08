@@ -30,7 +30,6 @@ import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -77,17 +76,22 @@ public abstract class MusicCommand extends Command {
      * @param guild the guild to get the music manager for
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
+    //@Deprecated(message = "Use #getLink(guild)")
     protected GuildMusicManager getMusicManager(Guild guild) {
         return AirUtils.audioUtils.getMusicManager(guild);
     }
 
+    protected boolean isConnected(Guild g) {
+        return getLink(g).getState() != Link.State.NOT_CONNECTED;
+    }
+
     /**
-     * This is a shortcut for getting the audio manager
+     * This is a shortcut for getting the the link
      *
      * @param guild the guild to get the audio manager for
-     * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
+     * @return the {@link Link Link} for the guild
      */
-    protected Link getAudioManager(Guild guild) {
+    protected Link getLink(Guild guild) {
         return SkyBot.getInstance().getLavalink().getLink(guild);
     }
 
@@ -98,9 +102,10 @@ public abstract class MusicCommand extends Command {
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        Link audioManager = getAudioManager(event.getGuild());
+        Link audioManager = getLink(event.getGuild());
 
-        if (audioManager.getState() == Link.State.NOT_CONNECTED) {
+//        if (audioManager.getState() != Link.State.CONNECTED) {
+        if (!isConnected(event.getGuild())) {
             MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }

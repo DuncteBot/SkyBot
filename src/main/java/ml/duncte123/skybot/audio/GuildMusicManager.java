@@ -20,6 +20,10 @@ package ml.duncte123.skybot.audio;
 
 import lavalink.client.io.Link;
 import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavaplayerPlayerWrapper;
+import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.utils.AirUtils;
+import net.dv8tion.jda.core.entities.Guild;
 
 public class GuildMusicManager {
 
@@ -41,11 +45,14 @@ public class GuildMusicManager {
     /**
      * Constructor
      *
-     * @param manager The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager AudioPlayerManager} for the corresponding guild
+     * @param g The guild that we wannt the manager for
      */
-    public GuildMusicManager(Link manager) {
-        player = manager.getPlayer();
-        scheduler = new TrackScheduler(player, this);
+    public GuildMusicManager(Guild g) {
+        player = AirUtils.config.getBoolean("lavalink.enable") ?
+                SkyBot.getInstance().getLavalink().getLink(g).getPlayer() :
+                new LavaplayerPlayerWrapper(AirUtils.audioUtils.getPlayerManager().createPlayer());
+
+        scheduler = new TrackScheduler(player);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
     }

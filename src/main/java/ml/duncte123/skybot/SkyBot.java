@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import javax.security.auth.login.LoginException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Base64;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -115,18 +116,19 @@ public class SkyBot {
 
         logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
         lavalink = new Lavalink(
-                "210363111729790977",
-                AirUtils.config.getInt("discord.totalShards"),
+                getIdFromToken(token),
+                TOTAL_SHARDS,
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
-        try {
-            lavalink.addNode(
-                    new URI(AirUtils.config.getString("lavalink.wsurl")),
-                    AirUtils.config.getString("lavalink.pass")
-            );
-        }
-        catch (URISyntaxException e) {
-            e.printStackTrace();
+        if(AirUtils.config.getBoolean("lavalink.enable", false)) {
+            try {
+                lavalink.addNode(
+                        new URI(AirUtils.config.getString("lavalink.wsurl", "ws://localhost")),
+                        AirUtils.config.getString("lavalink.pass", "youshalnotpass")
+                );
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
 
         try {
@@ -160,5 +162,19 @@ public class SkyBot {
 
     public Lavalink getLavalink() {
         return lavalink;
+    }
+
+    /**
+     * This is a simple util function that extracts the bot id from the token
+     * @param token the token of your bot
+     * @return the client id of the bot
+     */
+    private static String getIdFromToken(String token) {
+
+        return new String(
+                Base64.getDecoder().decode(
+                        token.split("\\.")[0]
+                )
+        );
     }
 }

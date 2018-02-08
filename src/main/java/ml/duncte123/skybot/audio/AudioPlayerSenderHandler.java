@@ -20,6 +20,7 @@ package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavaplayerPlayerWrapper;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 public class AudioPlayerSenderHandler implements AudioSendHandler {
@@ -45,11 +46,13 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean canProvide() {
-       /* if (lastFrame == null) {
-            lastFrame = audioPlayer.provide();
+        System.out.println("Handler: before wrapper");
+        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        System.out.println("Handler: after wrapper");
+        if (lastFrame == null) {
+            lastFrame = lavaplayerPlayer.provide();
         }
-        return lastFrame != null;*/
-       return true;
+        return lastFrame != null;
     }
 
     /**
@@ -59,14 +62,7 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public byte[] provide20MsAudio() {
-        /*if (lastFrame == null) {
-            lastFrame = audioPlayer.provide();
-        }
-
-        byte[] data = lastFrame != null ? lastFrame.data : null;
-        lastFrame = null;
-        return data;*/
-        return null;
+        return lastFrame.data;
     }
 
     /**
@@ -76,6 +72,7 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean isOpus() {
+        System.out.println("Handler: isOpus");
         return true;
     }
 }

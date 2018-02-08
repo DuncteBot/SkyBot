@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
@@ -47,7 +48,7 @@ open class PlayCommand : MusicCommand() {
                 }
                 player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example `db!play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
+                        "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
             var toPlay = StringUtils.join(args, " ")

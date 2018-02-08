@@ -23,7 +23,6 @@ package ml.duncte123.skybot.commands.music
 import lavalink.client.io.Link
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -42,9 +41,9 @@ class LeaveCommand : MusicCommand() {
             MessageUtils.sendError(event.message)
             return
         }
-        val manager = getAudioManager(guild)
+        val manager = getLink(guild)
 
-        if (manager.state == Link.State.CONNECTING) {
+        if (isConnected(event.guild)) {
             manager.player.stopTrack()
             //manager.sendingHandler = null
             //manager.closeAudioConnection()

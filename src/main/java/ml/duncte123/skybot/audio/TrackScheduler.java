@@ -21,6 +21,7 @@ package ml.duncte123.skybot.audio;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavaplayerPlayerWrapper;
 import lavalink.client.player.event.PlayerEventListenerAdapter;
 
 import java.util.Collections;
@@ -38,14 +39,14 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
     /**
      * Hey look at that, it's our player
      */
-    final IPlayer player;
+    private final IPlayer player;
 
     /**
      * This is the last playing track
      */
-    AudioTrack lastTrack;
+    private AudioTrack lastTrack;
 
-    final GuildMusicManager guildMusicManager;
+    //private final GuildMusicManager guildMusicManager;
 
     /**
      * Are we repeating the track
@@ -58,15 +59,17 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
      */
     private boolean repeatPlayList = false;
 
+    //private LavaplayerPlayerWrapper lavaplayerPlayer;
+
     /**
      * This instantiates our player
      *
      * @param player Our audio player
      */
-    public TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player) {
         this.player = player;
         this.queue = new LinkedList<>();
-        this.guildMusicManager = guildMusicManager;
+        //this.guildMusicManager = guildMusicManager;
     }
 
     /**
@@ -78,8 +81,11 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
         /*if (!player.startTrack(track, true)) {
             queue.offer(track);
         }*/
+        System.out.println("Track: thing");
         if(player.getPlayingTrack() != null) {
             queue.offer(track);
+        } else {
+            player.playTrack(track);
         }
     }
 

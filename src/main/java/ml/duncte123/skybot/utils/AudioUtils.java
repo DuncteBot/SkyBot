@@ -33,7 +33,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
@@ -63,7 +62,7 @@ public class AudioUtils {
     /**
      * This will hold the manager for the audio player
      */
-    private final AudioPlayerManager playerManager;
+    private static AudioPlayerManager playerManager;
 
     /**
      * This will store all the music managers for all the guilds that we are playing music in
@@ -76,7 +75,12 @@ public class AudioUtils {
     AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
         
-        this.playerManager = new DefaultAudioPlayerManager();
+        musicManagers = new HashMap<>();
+    }
+
+    private void initPlayerManager() {
+
+        playerManager = new DefaultAudioPlayerManager();
 
         //Disable cookies for youtube
         YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
@@ -96,8 +100,11 @@ public class AudioUtils {
 
 
         AudioSourceManagers.registerLocalSource(playerManager);
-        
-        musicManagers = new HashMap<>();
+    }
+
+    public AudioPlayerManager getPlayerManager() {
+        initPlayerManager();
+        return playerManager;
     }
 
     /**
@@ -220,7 +227,7 @@ public class AudioUtils {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
                 if (mng == null) {
-                    mng = new GuildMusicManager(SkyBot.getInstance().getLavalink().getLink(guild));
+                    mng = new GuildMusicManager(guild);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }

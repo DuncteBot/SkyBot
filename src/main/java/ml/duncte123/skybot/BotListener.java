@@ -137,8 +137,14 @@ public class BotListener extends ListenerAdapter {
                 this.settingsUpdateService.shutdown();
             
             AirUtils.stop();
-            
-            System.exit(0);
+
+            SkyBot.getInstance().getLavalink().shutdown();
+
+            try {
+                Thread.sleep(4 * 1000);
+                System.exit(0);
+            }
+            catch (InterruptedException ignored) {}
         }
 
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
@@ -392,9 +398,9 @@ public class BotListener extends ListenerAdapter {
             MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
             Link l = SkyBot.getInstance().getLavalink().getLink(g);
             if (l.getState() == Link.State.CONNECTED) {
-                //g.getAudioManager().closeAudioConnection();
+                //g.getLink().closeAudioConnection();
                 l.destroy();
-                //g.getAudioManager().setSendingHandler(null);
+                //g.getLink().setSendingHandler(null);
                 AirUtils.audioUtils.getMusicManagers().remove(g.getId());
             }
         }

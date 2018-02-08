@@ -31,6 +31,7 @@
   },
   "lavalink": {
     "wsurl": "ws://localhost",
-    "pass": "my-secret-password"
+    "pass": "my-secret-password",
+    "enable": false
   }
 }
