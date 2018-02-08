@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.audio;
 
-import lavalink.client.io.Link;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
 import ml.duncte123.skybot.SkyBot;
@@ -40,7 +39,7 @@ public class GuildMusicManager {
     /**
      * This is what actually sends the audio
      */
-    public final AudioPlayerSenderHandler sendHandler;
+    private final AudioPlayerSenderHandler sendHandler;
 
     /**
      * Constructor

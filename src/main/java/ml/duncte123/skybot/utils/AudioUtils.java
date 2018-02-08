@@ -145,10 +145,7 @@ public class AudioUtils {
         
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
             
-            /**
-             * fires when a track is loaded
-             * @param track The current {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack track} that has been loaded
-             */
+
             @Override
             public void trackLoaded(AudioTrack track) {
                 String msg = "Adding to queue: " + track.getInfo().title;
@@ -159,11 +156,7 @@ public class AudioUtils {
                 mng.scheduler.queue(track);
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
-            
-            /**
-             * Fires when a playlist is loaded
-             * @param playlist The {@link com.sedmelluq.discord.lavaplayer.track.AudioPlaylist playlist} that has been loaded
-             */
+
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
@@ -194,18 +187,12 @@ public class AudioUtils {
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
             
-            /**
-             * When noting is found for the search
-             */
+
             @Override
             public void noMatches() {
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
-            
-            /**
-             * When something broke and you need to scream at <em>duncte123#1245</em>
-             * @param exception A {@link com.sedmelluq.discord.lavaplayer.tools.FriendlyException FriendlyException}
-             */
+
             @Override
             public void loadFailed(FriendlyException exception) {
                 MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
@@ -220,7 +207,7 @@ public class AudioUtils {
      * @param guild The guild that we need the manager for
      * @return The music manager for that guild
      */
-    public synchronized GuildMusicManager getMusicManager(Guild guild) {
+    public GuildMusicManager getMusicManager(Guild guild) {
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
