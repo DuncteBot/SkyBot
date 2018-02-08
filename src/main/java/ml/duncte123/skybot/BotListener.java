@@ -391,7 +391,7 @@ public class BotListener extends ListenerAdapter {
 
             MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
             Link l = SkyBot.getInstance().getLavalink().getLink(g);
-            if (l.getState().equals(Link.State.CONNECTED)) {
+            if (l.getState() == Link.State.CONNECTED) {
                 //g.getAudioManager().closeAudioConnection();
                 l.destroy();
                 //g.getAudioManager().setSendingHandler(null);

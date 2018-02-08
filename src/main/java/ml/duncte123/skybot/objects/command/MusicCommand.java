@@ -100,7 +100,7 @@ public abstract class MusicCommand extends Command {
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
         Link audioManager = getAudioManager(event.getGuild());
 
-        if (!audioManager.getState().equals(Link.State.CONNECTED)) {
+        if (audioManager.getState() == Link.State.NOT_CONNECTED) {
             MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }

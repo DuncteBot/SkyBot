@@ -34,7 +34,7 @@ class LeaveCommand : MusicCommand() {
         if (!channelChecks(event))
             return
         val guild = event.guild
-        val cooldowns = MusicCommand.cooldowns
+        //val cooldowns = MusicCommand.cooldowns
         @Suppress("DEPRECATION")
         if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
@@ -45,10 +45,11 @@ class LeaveCommand : MusicCommand() {
         val manager = getAudioManager(guild)
 
         if (manager.state == Link.State.CONNECTING) {
-            getMusicManager(event.guild).player.stopTrack()
+            manager.player.stopTrack()
             //manager.sendingHandler = null
             //manager.closeAudioConnection()
-            SkyBot.getInstance().lavalink.getLink(event.guild).destroy()
+            manager.destroy()
+            event.guild.audioManager.sendingHandler = null
             MusicCommand.addCooldown(guild.idLong)
             MessageUtils.sendMsg(event, "Leaving your channel")
         } else {
