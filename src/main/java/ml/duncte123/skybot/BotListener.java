@@ -141,7 +141,7 @@ public class BotListener extends ListenerAdapter {
             //SkyBot.getInstance().getLavalink().shutdown();
 
             try {
-                Thread.sleep(4 * 1000);
+                Thread.sleep(3 * 1000);
                 System.exit(0);
             }
             catch (InterruptedException ignored) {}
