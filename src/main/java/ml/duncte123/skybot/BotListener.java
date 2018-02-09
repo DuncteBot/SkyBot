@@ -348,7 +348,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if(event.getGuild().getAudioManager().isConnected()) {
+        if(LavalinkManager.ins.isConnected(event.getGuild())) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
@@ -366,7 +366,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        if(event.getGuild().getAudioManager().isConnected()) {
+        if(LavalinkManager.ins.isConnected(event.getGuild())) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
                     return;
