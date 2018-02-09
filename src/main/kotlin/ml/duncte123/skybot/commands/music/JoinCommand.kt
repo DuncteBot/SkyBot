@@ -20,7 +20,6 @@
 
 package ml.duncte123.skybot.commands.music
 
-import lavalink.client.io.Link
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
@@ -47,9 +46,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
 
         val vc = event.member.voiceState.channel
         val guild = event.guild
-        val link = getLink(guild)
-        //val mng = getMusicManager(guild)
-        val cooldowns = MusicCommand.cooldowns
+        val mng = getMusicManager(guild)
 
         @Suppress("DEPRECATION")
         if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
@@ -60,22 +57,13 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         }
         cooldowns.remove(guild.idLong)
 
-        if (isConnected(event.guild) && link.player.playingTrack != null) {
+        if (getLavalinkManager().isConnected(event.guild) && mng.player.playingTrack != null) {
             MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
         try {
-            if (isConnected(event.guild))
-                closeAudioConnection(event.guild)
-            //audioManager.openAudioConnection(vc)
-            openAudioConnection(vc)
-            //guild.audioManager.sendingHandler = mng.getSendHandler()
+            getLavalinkManager().openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
-
-            //Set the listener if it's not set yet
-            /*if (audioManager.connectionListener == null)
-                audioManager.connectionListener = this*/
-
             MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {

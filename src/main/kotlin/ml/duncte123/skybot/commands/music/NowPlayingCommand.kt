@@ -36,7 +36,7 @@ class NowPlayingCommand : MusicCommand() {
         val msg = if (player.playingTrack != null) {
             "**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng)
         } else {
-            "The player is not currently playing anything!"
+            "The fredboat.audio.player is not currently playing anything!"
         }
         MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(msg))
     }

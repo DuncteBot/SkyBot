@@ -21,7 +21,6 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
@@ -62,7 +61,7 @@ open class PlayCommand : MusicCommand() {
                 return
             }
 
-            au.loadAndPlay(mng, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, toPlay, false)
         }
     }
 

@@ -35,7 +35,7 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     private AudioFrame lastFrame;
 
-    public AudioPlayerSenderHandler(IPlayer audioPlayer) {
+    AudioPlayerSenderHandler(IPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
@@ -47,7 +47,6 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     @Override
     public boolean canProvide() {
         LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
-        System.out.println("Handler: after wrapper");
         if (lastFrame == null) {
             lastFrame = lavaplayerPlayer.provide();
         }
@@ -61,7 +60,14 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public byte[] provide20MsAudio() {
-        return lastFrame.data;
+        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        if (lastFrame == null) {
+            lastFrame = lavaplayerPlayer.provide();
+        }
+
+        byte[] data = lastFrame != null ? lastFrame.data : null;
+        lastFrame = null;
+        return data;
     }
 
     /**

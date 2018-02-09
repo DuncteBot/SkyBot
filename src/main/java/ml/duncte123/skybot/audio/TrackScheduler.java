@@ -18,17 +18,18 @@
 
 package ml.duncte123.skybot.audio;
 
+import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
-import lavalink.client.player.event.PlayerEventListenerAdapter;
+import lavalink.client.player.event.AudioEventAdapterWrapped;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TrackScheduler extends PlayerEventListenerAdapter {
+public class TrackScheduler extends AudioEventAdapterWrapped {
 
     /**
      * This stores our queue
@@ -74,12 +75,9 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
     /**
      * Queue a track
      *
-     * @param track The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} to queue
+     * @param track The {@link AudioTrack AudioTrack} to queue
      */
     public void queue(AudioTrack track) {
-        /*if (!player.startTrack(track, true)) {
-            queue.offer(track);
-        }*/
         if(player.getPlayingTrack() != null) {
             queue.offer(track);
         } else {
@@ -91,19 +89,18 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
      * Starts the next track
      */
     public void nextTrack() {
-        //player.startTrack(queue.poll(), false);
         player.playTrack(queue.poll());
     }
 
     /**
      * Gets run when a track ends
      *
-     * @param player    The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayer AudioTrack} for that guild
-     * @param track     The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} that ended
+     * @param player    The {@link AudioPlayer AudioTrack} for that guild
+     * @param track     The {@link AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
-    public void onTrackEnd(IPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
 
         if (endReason.mayStartNext) {
@@ -111,7 +108,7 @@ public class TrackScheduler extends PlayerEventListenerAdapter {
                 if (!repeatPlayList) {
                     player.playTrack(lastTrack.makeClone());
                 } else {
-                    this.queue(lastTrack.makeClone());
+                    queue(lastTrack.makeClone());
                 }
             } else {
                 nextTrack();

@@ -23,7 +23,6 @@
 package com.wolfram.alpha.impl;
 
 import com.wolfram.alpha.WAAssumption;
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Element;

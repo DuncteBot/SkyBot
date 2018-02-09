@@ -30,8 +30,12 @@
     }
   },
   "lavalink": {
-    "wsurl": "ws://localhost",
-    "pass": "my-secret-password",
-    "enable": false
+    "nodes": [
+      {
+        "wsurl": "ws://localhost",
+        "pass": "youshallnotpass"
+      }
+    ],
+    "enable": true
   }
 }

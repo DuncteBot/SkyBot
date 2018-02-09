@@ -33,7 +33,6 @@ import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
@@ -51,17 +50,17 @@ import java.util.logging.Level;
 public class AudioUtils {
 
     /**
-     * This is the default volume that the player will play at
+     * This is the default volume that the fredboat.audio.player will play at
      * I've set it to 100 to save some resources
      */
     private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
 
     /**
-     * This is the title that you see in the embeds from the player
+     * This is the title that you see in the embeds from the fredboat.audio.player
      */
     public final String embedTitle = "AirPlayer";
     /**
-     * This will hold the manager for the audio player
+     * This will hold the manager for the audio fredboat.audio.player
      */
     private static AudioPlayerManager playerManager;
 
@@ -70,12 +69,15 @@ public class AudioUtils {
      */
     final Map<String, GuildMusicManager> musicManagers;
 
+    public static final AudioUtils ins = new AudioUtils();
+
     /**
-     * This will set everything up and get the player ready
+     * This will set everything up and get the fredboat.audio.player ready
      */
-    AudioUtils() {
-        initPlayerManager();
+    private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
+
+        initPlayerManager();
         
         musicManagers = new HashMap<>();
     }
@@ -86,7 +88,8 @@ public class AudioUtils {
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-            youtubeAudioSourceManager.configureRequests(config -> RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
+            youtubeAudioSourceManager.configureRequests(config ->
+                    RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());

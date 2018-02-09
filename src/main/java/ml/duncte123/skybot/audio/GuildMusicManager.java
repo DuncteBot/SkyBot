@@ -18,10 +18,8 @@
 
 package ml.duncte123.skybot.audio;
 
+import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
-import lavalink.client.player.LavaplayerPlayerWrapper;
-import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.entities.Guild;
 
 public class GuildMusicManager {
@@ -47,10 +45,7 @@ public class GuildMusicManager {
      * @param g The guild that we wannt the manager for
      */
     public GuildMusicManager(Guild g) {
-        player = AirUtils.config.getBoolean("lavalink.enable") ?
-                SkyBot.getInstance().getLavalink().getLink(g).getPlayer() :
-                new LavaplayerPlayerWrapper(AirUtils.audioUtils.getPlayerManager().createPlayer());
-
+        player = LavalinkManager.ins.createPlayer(g.getId());
         scheduler = new TrackScheduler(player);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);

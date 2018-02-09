@@ -18,8 +18,7 @@
 
 package ml.duncte123.skybot;
 
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
-import lavalink.client.io.Lavalink;
+import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
@@ -31,9 +30,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Base64;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -46,7 +42,6 @@ public class SkyBot {
     public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
     private static ShardManager shardManager = null;
-    private static Lavalink lavalink = null;
 
     private static final SkyBot instance = new SkyBot();
 
@@ -115,22 +110,7 @@ public class SkyBot {
         }
 
         logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
-        lavalink = new Lavalink(
-                getIdFromToken(token),
-                TOTAL_SHARDS,
-                shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
-        );
-        if(AirUtils.config.getBoolean("lavalink.enable", false)) {
-            try {
-                lavalink.addNode(
-                        new URI(AirUtils.config.getString("lavalink.wsurl", "ws://localhost")),
-                        AirUtils.config.getString("lavalink.pass", "youshalnotpass")
-                );
-            } catch (URISyntaxException e) {
-                e.printStackTrace();
-            }
-        }
-
+        LavalinkManager.ins.start();
         try {
             //Set up sharding for the bot
             shardManager = new DefaultShardManagerBuilder()
@@ -158,23 +138,5 @@ public class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
-    }
-
-    public Lavalink getLavalink() {
-        return lavalink;
-    }
-
-    /**
-     * This is a simple util function that extracts the bot id from the token
-     * @param token the token of your bot
-     * @return the client id of the bot
-     */
-    private static String getIdFromToken(String token) {
-
-        return new String(
-                Base64.getDecoder().decode(
-                        token.split("\\.")[0]
-                )
-        );
     }
 }

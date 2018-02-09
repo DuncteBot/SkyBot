@@ -42,7 +42,7 @@ class RepeatCommand : MusicCommand() {
         MessageUtils.sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
     }
 
-    override fun help(): String = "Makes the player repeat the currently playing song"
+    override fun help(): String = "Makes the fredboat.audio.player repeat the currently playing song"
 
     override fun getName(): String = "repeat"
 

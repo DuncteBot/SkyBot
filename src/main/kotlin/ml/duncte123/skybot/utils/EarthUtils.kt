@@ -155,7 +155,7 @@ class EarthUtils {
         @JvmStatic
         fun audioJSON(): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
-            AirUtils.audioUtils.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
+            AudioUtils.ins.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
             return json
         }
 
@@ -173,7 +173,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun gMMtoJSON(manager: GuildMusicManager): JSONObject =
-                JSONObject().put("player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
+                JSONObject().put("fredboat/audio/player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
 
         /**
          * This is a little function that converts a [AudioPlayer] into a [JSONObject]

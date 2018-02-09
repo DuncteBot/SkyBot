@@ -18,14 +18,12 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.utils.AirUtils;
+import fredboat.audio.player.LavalinkManager;
 import net.dv8tion.jda.core.events.Event;
-import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -53,8 +51,8 @@ implements IEventManager {
     @Override
     public void handle(Event event) {
         try {
-            if(AirUtils.config.getBoolean("lavalink.enable"))
-                SkyBot.getInstance().getLavalink().onEvent(event);
+            if(LavalinkManager.ins.isEnabled())
+                LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
         } catch (Throwable thr) {
             logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
@@ -63,8 +61,8 @@ implements IEventManager {
     
     @Override
     public List<Object> getRegisteredListeners() {
-        if(AirUtils.config.getBoolean("lavalink.enable"))
-            return Arrays.asList(SkyBot.getInstance().getLavalink(), botListener);
+        if(LavalinkManager.ins.isEnabled())
+            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener);
         else
             return Collections.singletonList(botListener);
     }
