@@ -198,7 +198,10 @@ class EvalCommand : Command() {
                 coroutine = this
                 try {
                     if(isRanByBotOwner) engine.eval(script)
-                    else protectedShell.evaluate(script)
+                    else {
+                        filter.register()
+                        protectedShell.evaluate(script)
+                    }
                 } catch (ex: Throwable) {
 
                     ComparatingUtils.checkEx(ex)
