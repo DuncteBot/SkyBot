@@ -99,8 +99,8 @@ class EvalCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
-
+        //val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
+        val isRanByBotOwner = false
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
@@ -198,7 +198,10 @@ class EvalCommand : Command() {
                 coroutine = this
                 try {
                     if(isRanByBotOwner) engine.eval(script)
-                    else protectedShell.evaluate(script)
+                    else {
+                        filter.register()
+                        protectedShell.evaluate(script)
+                    }
                 } catch (ex: Throwable) {
 
                     ComparatingUtils.checkEx(ex)
@@ -226,7 +229,7 @@ class EvalCommand : Command() {
                 }
                 is IllegalArgumentException, is VRCubeException -> {
                     out as RuntimeException
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
+                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.toString())
                 }
                 is Throwable -> {
                     if (Settings.useJSON)

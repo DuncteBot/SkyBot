@@ -155,7 +155,7 @@ public class EvalFilter extends GroovyValueFilter {
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-        throw new VRCubeException("Class not allowed: " + o.getClass().getName());
+        throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1] );
     }
     
     @Override
