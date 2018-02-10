@@ -36,7 +36,7 @@ class SkipCommand : MusicCommand() {
         val scheduler = manager.scheduler
 
         if (manager.player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "The fredboat.audio.player is not playing.")
+            MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
         val count = if (args.isNotEmpty()) {

@@ -50,17 +50,17 @@ import java.util.logging.Level;
 public class AudioUtils {
 
     /**
-     * This is the default volume that the fredboat.audio.player will play at
+     * This is the default volume that the player will play at
      * I've set it to 100 to save some resources
      */
     private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
 
     /**
-     * This is the title that you see in the embeds from the fredboat.audio.player
+     * This is the title that you see in the embeds from the player
      */
     public final String embedTitle = "AirPlayer";
     /**
-     * This will hold the manager for the audio fredboat.audio.player
+     * This will hold the manager for the audio player
      */
     private static AudioPlayerManager playerManager;
 
@@ -72,7 +72,7 @@ public class AudioUtils {
     public static final AudioUtils ins = new AudioUtils();
 
     /**
-     * This will set everything up and get the fredboat.audio.player ready
+     * This will set everything up and get the player ready
      */
     private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);

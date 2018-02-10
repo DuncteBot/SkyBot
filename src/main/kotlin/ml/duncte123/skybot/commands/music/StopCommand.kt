@@ -38,7 +38,7 @@ class StopCommand : MusicCommand() {
         val scheduler = musicManager.scheduler
 
         if (musicManager.player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "The fredboat.audio.player is not playing.")
+            MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
 
@@ -48,7 +48,7 @@ class StopCommand : MusicCommand() {
         MessageUtils.sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
-    override fun help(): String = "Stops the music fredboat.audio.player."
+    override fun help(): String = "Stops the music player."
 
     override fun getName(): String = "stop"
 }

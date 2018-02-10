@@ -35,7 +35,7 @@ import java.io.Serializable;
 import java.net.URL;
 
 // This class is written exactly like WAImageImpl, as if sound downloads will be done in advance and stored
-// as files to be passed to the media fredboat.audio.player. The fredboat.audio.player also supports streaming, though, and that would be
+// as files to be passed to the media player. The player also supports streaming, though, and that would be
 // a better choice. At the moment, there appear to be problems with streaming. I have encountered failures in MEdiaPlayer.prepare(),
 // and although these might be problems with our servers not being set up to deliver progressive downloads,
 // the internet is filled with people claiming problems with streaming on various devices and Android versions.

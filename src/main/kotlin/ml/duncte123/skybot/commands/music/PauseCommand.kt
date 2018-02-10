@@ -35,12 +35,12 @@ class PauseCommand : MusicCommand() {
         val player = getMusicManager(event.guild).player
 
         if (player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "Cannot pause or resume fredboat.audio.player because no track is loaded for playing.")
+            MessageUtils.sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
         player.isPaused = !player.isPaused
-        MessageUtils.sendMsg(event, "The fredboat.audio.player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        MessageUtils.sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
     override fun help(): String = "Pauses the current song"

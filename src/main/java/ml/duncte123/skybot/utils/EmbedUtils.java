@@ -92,7 +92,7 @@ public class EmbedUtils {
     }
 
     /**
-     * This will generate a nice fredboat.audio.player embed for us
+     * This will generate a nice player embed for us
      *
      * @param mng the {@link net.dv8tion.jda.core.entities.Guild} that we need the info for
      * @return the String that we can place in our embed
@@ -125,7 +125,7 @@ public class EmbedUtils {
     /**
      * This will give a nice emote depending on how loud we are sending the music
      *
-     * @param volume the volume of our fredboat.audio.player
+     * @param volume the volume of our player
      * @return the volume icon emote
      */
     public static String getVolumeIcon(int volume) {
@@ -142,7 +142,7 @@ public class EmbedUtils {
     }
 
     /**
-     * This wil format our current fredboat.audio.player time in this format: hh:mm:ss
+     * This wil format our current player time in this format: hh:mm:ss
      *
      * @param duration how far we are in the track
      * @return our formatted time
