@@ -40,7 +40,7 @@ implements DBConnectionManager {
     private final String pass;
     private final String dbName;
 
-    public MySQLConnectionManager() {
+    MySQLConnectionManager() {
         this.dbHost = AirUtils.config.getString("sql.host", "sql.example.com");
         this.port = AirUtils.config.getInt("sql.port", 3306);
         this.user = AirUtils.config.getString("sql.username", "exampleUser");
@@ -150,8 +150,9 @@ implements DBConnectionManager {
                     "  `autoRole` varchar(255) DEFAULT NULL,\n" +
                     "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0',\n" +
                     "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci NOT NULL,\n" +
-                    "  `customLeaveMessage` text NOT NULL,\n" +
+                    "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
+                    "  `customLeaveMessage` text DEFAULT NULL,\n" +
+                    "  `serverDesc` text DEFAULT NULL,\n" +
                     "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
                     "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +

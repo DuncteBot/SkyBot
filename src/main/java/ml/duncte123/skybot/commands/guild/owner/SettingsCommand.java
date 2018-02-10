@@ -194,8 +194,12 @@ public class SettingsCommand extends Command {
                 List<Role> rolesFound = event.getGuild().getRolesByName(StringUtils.join(args, " "), true);
 
                 if(rolesFound.size() == 0) {
-                    sendMsg(event, "I could not find any roles with that name");
-                    return;
+                    if(event.getMessage().getMentionedRoles().size() > 0) {
+                        rolesFound.add(event.getMessage().getMentionedRoles().get(0));
+                    } else {
+                        sendMsg(event, "I could not find any roles with that name");
+                        return;
+                    }
                 }
                 if(rolesFound.get(0).getPosition() >= event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
                     sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
@@ -205,6 +209,18 @@ public class SettingsCommand extends Command {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(rolesFound.get(0).getId()));
                 sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
 
+                break;
+
+            case "setdescription":
+                if(args.length < 1) {
+                    sendError(event.getMessage());
+                    sendMsg(event, "Incorrect usage\n" +
+                            "Correct usage : `" + PREFIX + invoke + " <description>`");
+                    return;
+                }
+                String description = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\n","\\\\n");
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setServerDesc(description) );
+                sendMsg(event, "Description has been updated, check `" + PREFIX + "guildinfo` to see your description");
                 break;
         }
     }
@@ -245,7 +261,8 @@ public class SettingsCommand extends Command {
                 "setwelcomechannel",
                 "setleavechannel",
                 "setleavemessage",
-                "autorole"
+                "autorole",
+                "setdescription"
         };
     }
 }

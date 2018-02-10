@@ -138,6 +138,7 @@ implements DBConnectionManager {
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "customWelcomeMessage TEXT NOT NULL," +
+                                                         "serverDesc TEXT NULL," +
                                                          "customLeaveMessage TEXT NOT NULL);");
             
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +

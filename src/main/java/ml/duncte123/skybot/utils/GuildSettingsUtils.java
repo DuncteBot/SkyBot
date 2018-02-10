@@ -89,14 +89,13 @@ public class GuildSettingsUtils {
                 String guildId = resSettings.getString("guildId");
                 boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
-                String joinmsg = resSettings.getString("customWelcomeMessage")
-                        .replaceAll("\\\\n", "\n");
+                String joinmsg = replaceNewLines(resSettings.getString("customWelcomeMessage"));
                 String prefix = resSettings.getString("prefix");
                 String logChannel = resSettings.getString("logChannelId");
                 String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
-                String leaveMessage = resSettings.getString("customLeaveMessage")
-                        .replaceAll("\\\\n", "\n");
+                String leaveMessage = replaceNewLines(resSettings.getString("customLeaveMessage"));
                 String autoroleId = resSettings.getString("autoRole");
+                String serverDesc = replaceNewLines(resSettings.getString("serverDesc"));
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
@@ -107,6 +106,7 @@ public class GuildSettingsUtils {
                         .setWelcomeLeaveChannel(welcomeLeaveChannel)
                         .setCustomLeaveMessage(leaveMessage)
                         .setAutoroleRole(autoroleId)
+                        .setServerDesc(serverDesc)
                 );
             }
 
@@ -157,8 +157,9 @@ public class GuildSettingsUtils {
         String customLeaveMessage = settings.getCustomLeaveMessage();
         String newPrefix = settings.getCustomPrefix();
         String autoRole = settings.getAutoroleRole();
-        String chanId = settings.getLogChannel() != null ? settings.getLogChannel() : "";
-        String welcomeLeaveChannel = settings.getWelcomeLeaveChannel() != null ? settings.getWelcomeLeaveChannel() : "";
+        String chanId = settings.getLogChannel();
+        String welcomeLeaveChannel = settings.getWelcomeLeaveChannel();
+        String serverDesc = settings.getServerDesc();
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
@@ -171,7 +172,8 @@ public class GuildSettingsUtils {
                     "autoRole= ? ," +
                     "logChannelId= ? ," +
                     "welcomeLeaveChannel= ? ," +
-                    "customLeaveMessage = ?" +
+                    "customLeaveMessage = ? ," +
+                    "serverDesc = ?" +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
@@ -181,11 +183,12 @@ public class GuildSettingsUtils {
             preparedStatement.setString(6, chanId);
             preparedStatement.setString(7, welcomeLeaveChannel);
             preparedStatement.setString(8, customLeaveMessage.replaceAll("\\P{Print}", ""));
+            preparedStatement.setString(9, serverDesc.replaceAll("\\P{Print}", ""));
             preparedStatement.executeUpdate();
 
-        } catch (SQLException ignored) {
-            if (!ignored.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
-                ignored.printStackTrace();
+        } catch (SQLException e1) {
+            if (!e1.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
+                e1.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
@@ -208,8 +211,8 @@ public class GuildSettingsUtils {
             return AirUtils.guildSettings.get(g.getId());
         }
         
-        boolean ENABLE_JOIN_MSG = false;
-        boolean ENABLE_SWEAR_FILTER = false;
+        final boolean ENABLE_JOIN_MSG = false;
+        final boolean ENABLE_SWEAR_FILTER = false;
         String defaultMsg = "Welcome {{USER_MENTION}}, to the official {{GUILD_NAME}} guild.";
         GuildSettings newGuildSettings = new GuildSettings(g.getId())
                                              .setEnableJoinMessage(ENABLE_JOIN_MSG)
@@ -274,5 +277,11 @@ public class GuildSettingsUtils {
                 e2.printStackTrace();
             }
         }
+    }
+
+    private static String replaceNewLines(String entery) {
+        if(entery == null || entery.isEmpty())
+            return null;
+        return entery.replaceAll("\\\\n", "\n");
     }
 }

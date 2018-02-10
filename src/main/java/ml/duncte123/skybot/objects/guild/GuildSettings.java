@@ -28,7 +28,7 @@ public class GuildSettings {
     /**
      * the id of the guild that the settings are for
      */
-    private String guildId;
+    private final String guildId;
 
     /**
      * if we should enable the join messages
@@ -65,7 +65,15 @@ public class GuildSettings {
      */
     private String welcomeLeaveChannel = null;
 
-    private String autoroleRole = "";
+    /**
+     * This holds the id of the role that should be given at startup
+     */
+    private String autoroleRole = null;
+
+    /**
+     * This holds the value of the custom server description
+     */
+    private String serverDesc = null;
 
     /**
      * This will init everything
@@ -179,6 +187,16 @@ public class GuildSettings {
     }
 
     /**
+     * Sets the current sever description to show up in db!guildinfo
+     * @param serverDesc the custom server description
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setServerDesc(String serverDesc) {
+        this.serverDesc = serverDesc;
+        return this;
+    }
+
+    /**
      * This will return the guild id that these options are for
      *
      * @return The id of that guild as a String
@@ -235,6 +253,14 @@ public class GuildSettings {
      */
     public String getWelcomeLeaveChannel() {
         return welcomeLeaveChannel;
+    }
+
+    /**
+     * Returns the custom server description
+     * @return the custom server description
+     */
+    public String getServerDesc() {
+        return serverDesc;
     }
 
     /**
