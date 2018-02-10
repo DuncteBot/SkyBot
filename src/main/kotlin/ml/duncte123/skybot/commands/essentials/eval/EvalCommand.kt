@@ -99,8 +99,7 @@ class EvalCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        //val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
-        val isRanByBotOwner = false
+        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
