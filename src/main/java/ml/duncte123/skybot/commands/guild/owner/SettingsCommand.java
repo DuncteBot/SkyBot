@@ -88,7 +88,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
+                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\n","\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
@@ -98,7 +98,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
-                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\\\\n","\n").replaceAll("\n", "\r\n");
+                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+",2)[1].replaceAll("\n","\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;

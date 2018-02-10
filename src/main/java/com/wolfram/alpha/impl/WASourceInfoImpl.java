@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASourceInfo;
 import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Element;

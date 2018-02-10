@@ -89,11 +89,13 @@ public class GuildSettingsUtils {
                 String guildId = resSettings.getString("guildId");
                 boolean enableJoinMsg = resSettings.getBoolean("enableJoinMessage");
                 boolean enableSwearFilter = resSettings.getBoolean("enableSwearFilter");
-                String joinmsg = resSettings.getString("customWelcomeMessage");
+                String joinmsg = resSettings.getString("customWelcomeMessage")
+                        .replaceAll("\\\\n", "\n");
                 String prefix = resSettings.getString("prefix");
                 String logChannel = resSettings.getString("logChannelId");
                 String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
-                String leaveMessage = resSettings.getString("customLeaveMessage");
+                String leaveMessage = resSettings.getString("customLeaveMessage")
+                        .replaceAll("\\\\n", "\n");
                 String autoroleId = resSettings.getString("autoRole");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)

@@ -89,6 +89,30 @@ class WebUtils {
             return getRequest(url).body()?.byteStream()!!
         }
 
+        /*@JvmStatic
+        fun getUserIdFromToken(token: String): String {
+            try {
+                val response = runBlocking {
+                    executeRequest(
+                            Request.Builder()
+                                    .url("${Requester.DISCORD_API_PREFIX}/users/@me")
+                                    .get()
+                                    .addHeader("User-Agent", USER_AGENT)
+                                    .addHeader("Authorization", "Bot $token")
+                                    .addHeader("cache-control", "no-cache")
+                                    .build())
+                }
+
+                val json = JSONObject(response.body()!!.string())
+
+                return json.getString("id")
+            }
+            catch (e: IOException) {
+                e.printStackTrace()
+                return ""
+            }
+        }*/
+
         /**
          * This makes a get request to the specified website
          *

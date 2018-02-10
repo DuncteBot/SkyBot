@@ -53,7 +53,7 @@ class PlayRawCommand : PlayCommand() {
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
-            au.loadAndPlay(musicManager, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(musicManager, event.channel, toPlay, false)
         }
     }
 

@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;

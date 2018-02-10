@@ -16,21 +16,37 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.weeb
+package ml.duncte123.skybot.audio;
 
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import com.afollestad.ason.Ason;
 
-class ShrugCommand : WeebCommandBase() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
-                AirUtils.WEEB_API.getRandomImage("shrug").url))
+import java.net.URI;
+import java.net.URISyntaxException;
+
+public class LavalinkNode {
+
+    private final String wsUrl;
+    private final String pass;
+
+    public LavalinkNode(Ason ason) {
+        this.wsUrl = ason.getString("wsurl");
+        this.pass = ason.getString("pass");
     }
 
-    override fun help() = """¯\_(ツ)_/¯
-        |Usage: `$PREFIX$name`
-    """.trimMargin()
+    public String getPass() {
+        return pass;
+    }
 
-    override fun getName() = "shrug"
+    public String getWsUrl() {
+        return wsUrl;
+    }
+
+    public URI getWsURI() {
+        try {
+            return new URI(wsUrl);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }

@@ -6255,9 +6255,9 @@ power:tower
 tower:power
 answer:tower
 yer:layer
-layer:player
-player:layer
-prayer:player
+layer:fredboat.audio.player
+fredboat.audio.player:layer
+prayer:fredboat.audio.player
 employer:prayer
 lawyer:employer
 air:fair

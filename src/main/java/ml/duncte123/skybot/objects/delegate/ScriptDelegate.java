@@ -20,12 +20,10 @@ package ml.duncte123.skybot.objects.delegate;
 
 import Java.lang.VRCubeException;
 import groovy.lang.Binding;
-import groovy.lang.MetaClass;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ScriptDelegate extends Script {
 

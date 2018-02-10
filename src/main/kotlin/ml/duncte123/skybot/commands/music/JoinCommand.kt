@@ -43,11 +43,11 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             MessageUtils.sendMsg(event, "Please join a voice channel first.")
             return
         }
+
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val mng = getMusicManager(guild)
-        val audioManager = getAudioManager(guild)
-        val cooldowns = MusicCommand.cooldowns
+
         @Suppress("DEPRECATION")
         if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
@@ -56,22 +56,14 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             return
         }
         cooldowns.remove(guild.idLong)
-        if (audioManager.isConnected && mng.player.playingTrack != null) {
+
+        if (getLavalinkManager().isConnected(event.guild) && mng.player.playingTrack != null) {
             MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
-
         try {
-            if (audioManager.isConnected)
-                audioManager.closeAudioConnection()
-
-            audioManager.openAudioConnection(vc)
+            getLavalinkManager().openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
-
-            //Set the listener if it's not set yet
-            if (audioManager.connectionListener == null)
-                audioManager.connectionListener = this
-
             MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
@@ -79,6 +71,9 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             } else {
                 MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
+        }
+        catch (e1: Exception) {
+            e1.printStackTrace()
         }
 
     }

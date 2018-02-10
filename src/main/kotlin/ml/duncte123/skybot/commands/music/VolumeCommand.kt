@@ -47,7 +47,7 @@ class VolumeCommand: MusicCommand() {
         }
     }
 
-    override fun help() = """Sets the new volume on the player.
+    override fun help() = """Sets the new volume on the fredboat.audio.player.
         |Usage: `$PREFIX$name [new volume]`
     """.trimMargin()
 
