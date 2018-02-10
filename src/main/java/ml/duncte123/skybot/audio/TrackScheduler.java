@@ -89,7 +89,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Starts the next track
      */
     public void nextTrack() {
-        player.playTrack(queue.poll());
+        if(queue.peek() != null)
+            player.playTrack(queue.poll());
     }
 
     /**
@@ -102,15 +103,19 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
-
+        System.out.println("track ended");
         if (endReason.mayStartNext) {
+            System.out.println("can start");
             if (repeating) {
+                System.out.println("repeating");
                 if (!repeatPlayList) {
+                    System.out.println("a playlist.....");
                     player.playTrack(lastTrack.makeClone());
                 } else {
                     queue(lastTrack.makeClone());
                 }
             } else {
+                System.out.println("starting next track");
                 nextTrack();
             }
         }
