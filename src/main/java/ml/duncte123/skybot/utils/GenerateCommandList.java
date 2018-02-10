@@ -81,8 +81,8 @@ public class GenerateCommandList {
                 if (cmd.getAliases().length > 0) {
                     writer.append("<br />")
                             .append("Aliases: ")
-                            .append(Settings.otherPrefix)
-                            .append(StringUtils.join(cmd.getAliases(), ", " + Settings.otherPrefix));
+                            .append(Settings.prefix)
+                            .append(StringUtils.join(cmd.getAliases(), ", " + Settings.prefix));
                 }
                 writer.append("\",");
                 writer.newLine();
