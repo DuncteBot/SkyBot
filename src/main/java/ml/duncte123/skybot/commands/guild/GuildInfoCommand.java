@@ -55,7 +55,11 @@ public class GuildInfoCommand extends Command {
             }
 
             double[] ratio = GuildUtils.getBotRatio(g);
-            EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            EmbedBuilder eb = EmbedUtils.defaultEmbed();
+            if(settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
+                eb.addField("Server Description", settings.getServerDesc() + "\n", false);
+            }
+                    eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
                     .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
                             "**Name:** " + g.getName() + "\n" +
                             "**Prefix:** " + settings.getCustomPrefix() + "\n" +
@@ -66,8 +70,6 @@ public class GuildInfoCommand extends Command {
                     .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                             "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g).get() + "\n" +
                             "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
-            //If the guild doesn't have a icon we show a nice blob
-            eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png");
 
             MessageUtils.sendEmbed(event, eb.build());
         } catch (Exception e) {
