@@ -50,7 +50,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new Ason(Files.toString(file, Charsets.UTF_8)));
+            super(null, new Ason( Files.asCharSource(file, Charsets.UTF_8).read() ));
             this.configFile = file;
         }
 

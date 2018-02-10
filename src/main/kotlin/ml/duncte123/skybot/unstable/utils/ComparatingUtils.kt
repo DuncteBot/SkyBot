@@ -187,8 +187,8 @@ infix fun Throwable.compare(other: Throwable): Boolean {
     return classesMatch && messageMatch || messageMatch && stacktraceMatch
 }
 
-infix fun Throwable.printStackTrace(s: String): String {
-    var s = s
+infix fun Throwable.printStackTrace(input: String): String {
+    var s = input
     s += "${this::class.java.name}: ${this.localizedMessage}\n"
     this.stackTrace.forEach {
         s += "\t$it\n"

@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAPlainText;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;

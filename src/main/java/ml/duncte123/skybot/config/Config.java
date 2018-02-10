@@ -151,7 +151,7 @@ public class Config {
      * This method gets the array from the key and converts it into a list for better handling
      *
      * @param key the key of the array
-     * @return the array as {@link java.util.List}
+     * @return the array as {@link List}
      */
     public <T> List<T> getArray(String key) {
         return getArray(key, null);
@@ -162,7 +162,7 @@ public class Config {
      *
      * @param key the key of the array
      * @param defaultValue The default value that the array needs to have
-     * @return the array as {@link java.util.List}
+     * @return the array as {@link List}
      */
     @SuppressWarnings("unchecked")
     public <T> List<T> getArray(String key, List defaultValue) {

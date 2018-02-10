@@ -23,6 +23,7 @@ package ml.duncte123.skybot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import lavalink.client.player.IPlayer
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
@@ -154,7 +155,7 @@ class EarthUtils {
         @JvmStatic
         fun audioJSON(): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
-            AirUtils.audioUtils.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
+            AudioUtils.ins.musicManagers.entries.forEach { json.put(it.key, JSONObject().put("guildId", it.key).put("manager", gMMtoJSON(it.value))) }
             return json
         }
 
@@ -172,7 +173,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun gMMtoJSON(manager: GuildMusicManager): JSONObject =
-                JSONObject().put("player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
+                JSONObject().put("fredboat/audio/player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
 
         /**
          * This is a little function that converts a [AudioPlayer] into a [JSONObject]
@@ -187,7 +188,7 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        private fun playerToJSON(player: AudioPlayer): JSONObject =
+        private fun playerToJSON(player: IPlayer): JSONObject =
                 JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused",player.isPaused)
                         .put("volume", player.volume)
         /**

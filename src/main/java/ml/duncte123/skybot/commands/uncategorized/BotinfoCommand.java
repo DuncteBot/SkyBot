@@ -20,10 +20,10 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;

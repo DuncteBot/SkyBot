@@ -18,10 +18,11 @@
 
 package ml.duncte123.skybot;
 
-import com.sedmelluq.discord.lavaplayer.jdaudp.NativeAudioSendFactory;
+import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.RestAction;
 import org.apache.commons.lang3.time.DateUtils;
@@ -39,6 +40,12 @@ import javax.security.auth.login.LoginException;
 public class SkyBot {
 
     public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
+
+    private static ShardManager shardManager = null;
+
+    private static final SkyBot instance = new SkyBot();
+
+    private SkyBot() {}
 
     /**
      * This is our main method
@@ -103,12 +110,12 @@ public class SkyBot {
         }
 
         logger.info(AirUtils.commandManager.getCommands().size() + " commands loaded.");
-
+        LavalinkManager.ins.start();
         try {
             //Set up sharding for the bot
-            new DefaultShardManagerBuilder()
+            shardManager = new DefaultShardManagerBuilder()
                     .setEventManager(new EventManager())
-                    .setAudioSendFactory(new NativeAudioSendFactory())
+                    //.setAudioSendFactory(new NativeAudioSendFactory())
                     .setShardsTotal(TOTAL_SHARDS)
                     .setGameProvider(shardId -> Game.of(type,
                             name.replace("{shardId}", Integer.toString(shardId + 1)), url[0])
@@ -123,5 +130,13 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+    }
+
+    public ShardManager getShardManager() {
+        return shardManager;
+    }
+
+    public static SkyBot getInstance() {
+        return instance;
     }
 }

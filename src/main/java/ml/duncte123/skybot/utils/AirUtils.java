@@ -72,12 +72,7 @@ public class AirUtils {
     /**
      * This will store the settings for every guild that we are in
      */
-    public static Map<String, GuildSettings> guildSettings = new HashMap<>();
-
-    /**
-     * This is our audio handler
-     */
-    public static AudioUtils audioUtils = new AudioUtils();
+    static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This helps us to make the coinflip command and the footer quotes work
@@ -245,13 +240,12 @@ public class AirUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //That just breaks the bot
-	try {
-            audioUtils.musicManagers.forEach((a, b) ->  {
-                if (b.player.getPlayingTrack() != null)
-                    b.player.stopTrack();
-            });
-	} catch (java.util.ConcurrentModificationException ignored) {}
+        try {
+                AudioUtils.ins.musicManagers.forEach((a, b) ->  {
+                    if (b.player.getPlayingTrack() != null)
+                        b.player.stopTrack();
+                });
+        } catch (java.util.ConcurrentModificationException ignored) {}
     }
 
     /**

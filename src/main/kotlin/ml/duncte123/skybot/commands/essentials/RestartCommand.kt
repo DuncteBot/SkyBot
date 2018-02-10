@@ -19,10 +19,10 @@
 package ml.duncte123.skybot.commands.essentials
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 

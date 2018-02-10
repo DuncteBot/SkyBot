@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import fredboat.audio.player.LavalinkManager;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
@@ -88,6 +89,7 @@ public class BotListener extends ListenerAdapter {
      */
     private boolean settingsUpdateTimerRunning = false;
 
+
     /**
      * A custom consumer that cancels the stupid unknown message error
      */
@@ -123,6 +125,10 @@ public class BotListener extends ListenerAdapter {
                     failure->killAllShards(event.getJDA().asBot().getShardManager())
             );
 
+            if(LavalinkManager.ins.isEnabled()) {
+                LavalinkManager.ins.getLavalink().shutdown();
+            }
+
             //Kill other things
             ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
             if (unbanTimerRunning)
@@ -132,8 +138,14 @@ public class BotListener extends ListenerAdapter {
                 this.settingsUpdateService.shutdown();
             
             AirUtils.stop();
-            
-            System.exit(0);
+
+            try {
+                Thread.sleep(3 * 1000);
+                System.exit(0);
+            }
+            catch (InterruptedException ignored) {}
+
+            return;
         }
 
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
@@ -336,9 +348,9 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if(event.getGuild().getAudioManager().isConnected()) {
+        if(LavalinkManager.ins.isConnected(event.getGuild())) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                 }
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
@@ -354,15 +366,15 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        if(event.getGuild().getAudioManager().isConnected()) {
+        if(LavalinkManager.ins.isConnected(event.getGuild())) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                if (!event.getChannelLeft().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                 }
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
 
                 if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
-                        !event.getChannelJoined().getId().equals(event.getGuild().getAudioManager().getConnectedChannel().getId())) {
+                        !event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                     //System.out.println("Self (this might be buggy)");
                 }
@@ -379,16 +391,17 @@ public class BotListener extends ListenerAdapter {
     private void channelCheckThing(Guild g, VoiceChannel vc) {
 
         if (vc.getMembers().stream().filter(m -> !m.getUser().isBot()).count() < 1) {
-            GuildMusicManager manager = AirUtils.audioUtils.getMusicManager(g);
+            GuildMusicManager manager = AudioUtils.ins.getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
 
             MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
-            if (g.getAudioManager().isConnected()) {
-                g.getAudioManager().closeAudioConnection();
-                g.getAudioManager().setSendingHandler(null);
-                AirUtils.audioUtils.getMusicManagers().remove(g.getId());
+            if (LavalinkManager.ins.isConnected(g)) {
+                //g.getLavalinkManager().closeAudioConnection();
+                LavalinkManager.ins.closeConnection(g);
+                //g.getLavalinkManager().setSendingHandler(null);
+                AudioUtils.ins.getMusicManagers().remove(g.getId());
             }
         }
     }
@@ -436,4 +449,5 @@ public class BotListener extends ListenerAdapter {
         }
         return false;
     }
+
 }

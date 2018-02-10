@@ -18,17 +18,16 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -60,13 +59,15 @@ public abstract class MusicCommand extends Command {
                 , 0, 200, TimeUnit.MILLISECONDS);
     }
 
+    private static AudioUtils audioUtils = AudioUtils.ins;
+
     /**
      * Returns the autio utils
      *
      * @return the audio utils
      */
-    protected AudioUtils getAu() {
-        return AirUtils.audioUtils;
+    protected AudioUtils getAudioUtils() {
+        return audioUtils;
     }
 
     /**
@@ -75,18 +76,18 @@ public abstract class MusicCommand extends Command {
      * @param guild the guild to get the music manager for
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
+    //@Deprecated(message = "Use #getLavalinkManager(guild)")
     protected GuildMusicManager getMusicManager(Guild guild) {
-        return AirUtils.audioUtils.getMusicManager(guild);
+        return getAudioUtils().getMusicManager(guild);
     }
 
     /**
-     * This is a shortcut for getting the audio manager
+     * This is a shortcut for getting the the link
      *
-     * @param guild the guild to get the audio manager for
-     * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
+     * @return the {@link LavalinkManager LavalinkManager}
      */
-    protected AudioManager getAudioManager(Guild guild) {
-        return guild.getAudioManager();
+    protected static LavalinkManager getLavalinkManager() {
+        return LavalinkManager.ins;
     }
 
     /**
@@ -96,15 +97,16 @@ public abstract class MusicCommand extends Command {
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        AudioManager audioManager = getAudioManager(event.getGuild());
-
-        if (!audioManager.isConnected()) {
+        LavalinkManager lavalinkManager = getLavalinkManager();
+        if (!lavalinkManager.isConnected(event.getGuild())) {
             MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }
 
-        if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
-            MessageUtils.sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+        if (lavalinkManager.getConnectedChannel(event.getGuild()) != null && !lavalinkManager.getConnectedChannel(event.getGuild())
+                .getMembers().contains(event.getMember())) {
+            MessageUtils.sendMsg(event,
+                    "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
         return true;
