@@ -92,8 +92,8 @@ public class GuildSettingsUtils {
                 String joinmsg = replaceNewLines(resSettings.getString("customWelcomeMessage"));
                 String prefix = resSettings.getString("prefix");
                 String logChannel = resSettings.getString("logChannelId");
-                String welcomeLeaveChannel = replaceNewLines(resSettings.getString("welcomeLeaveChannel"));
-                String leaveMessage = resSettings.getString("customLeaveMessage");
+                String welcomeLeaveChannel = resSettings.getString("welcomeLeaveChannel");
+                String leaveMessage = replaceNewLines(resSettings.getString("customLeaveMessage"));
                 String autoroleId = resSettings.getString("autoRole");
                 String serverDesc = replaceNewLines(resSettings.getString("serverDesc"));
 
