@@ -23,6 +23,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedList;
@@ -30,6 +32,8 @@ import java.util.List;
 import java.util.Queue;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
+
+    private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
 
     /**
      * This stores our queue
@@ -103,19 +107,19 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
-        System.out.println("track ended");
+        logger.debug("track ended");
         if (endReason.mayStartNext) {
-            System.out.println("can start");
+            logger.debug("can start");
             if (repeating && lastTrack != null) {
-                System.out.println("repeating");
+                logger.debug("repeating");
                 if (!repeatPlayList) {
-                    System.out.println("a playlist.....");
+                    logger.debug("a playlist.....");
                     player.playTrack(lastTrack.makeClone());
                 } else {
                     queue(lastTrack.makeClone());
                 }
             } else {
-                System.out.println("starting next track");
+                logger.debug("starting next track");
                 nextTrack();
             }
         }
