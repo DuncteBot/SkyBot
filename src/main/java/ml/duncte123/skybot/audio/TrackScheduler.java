@@ -106,7 +106,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         System.out.println("track ended");
         if (endReason.mayStartNext) {
             System.out.println("can start");
-            if (repeating) {
+            if (repeating && lastTrack != null) {
                 System.out.println("repeating");
                 if (!repeatPlayList) {
                     System.out.println("a playlist.....");
