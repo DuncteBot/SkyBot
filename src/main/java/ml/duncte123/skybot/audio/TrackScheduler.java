@@ -23,6 +23,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import ml.duncte123.skybot.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     private AudioTrack lastTrack;
 
-    //private final GuildMusicManager guildMusicManager;
+    private final GuildMusicManager guildMusicManager;
 
     /**
      * Are we repeating the track
@@ -70,10 +71,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      *
      * @param player Our audio player
      */
-    TrackScheduler(IPlayer player) {
+    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
-        //this.guildMusicManager = guildMusicManager;
+        this.guildMusicManager = guildMusicManager;
     }
 
     /**
@@ -93,8 +94,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Starts the next track
      */
     public void nextTrack() {
-        if(queue.peek() != null)
-            player.playTrack(queue.poll());
+        if(queue.peek() != null) {
+            AudioTrack nextTrack = queue.poll();
+            if(nextTrack != null) {
+                player.playTrack(nextTrack);
+                MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + nextTrack.getInfo().title);
+            }
+        } else if(player.getPlayingTrack() != null)
+            player.seekTo(player.getPlayingTrack().getDuration());
     }
 
     /**

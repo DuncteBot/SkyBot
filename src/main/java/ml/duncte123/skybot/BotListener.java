@@ -209,8 +209,6 @@ public class BotListener extends ListenerAdapter {
                 cmd.executeCommand("chat", args, event);
             return;
         }
-        //Store the channel
-        lastGuildChannel.put(event.getGuild(), event.getChannel());
         //Handle the command
         AirUtils.commandManager.runCommand(event);
     }
@@ -354,7 +352,6 @@ public class BotListener extends ListenerAdapter {
                     return;
                 }
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
-                MusicCommand.cooldowns.put(event.getGuild().getIdLong(), 12600);
             }
         }
     }
@@ -395,8 +392,9 @@ public class BotListener extends ListenerAdapter {
             manager.player.stopTrack();
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
+            MusicCommand.cooldowns.put(g.getIdLong(), 12600);
 
-            MessageUtils.sendMsg(lastGuildChannel.get(g), "Leaving voice channel because all the members have left it.");
+            MessageUtils.sendMsg(manager.latestChannel, "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {
                 //g.getLavalinkManager().closeAudioConnection();
                 LavalinkManager.ins.closeConnection(g);

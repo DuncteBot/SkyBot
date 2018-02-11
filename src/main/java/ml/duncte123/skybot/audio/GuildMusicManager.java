@@ -21,8 +21,14 @@ package ml.duncte123.skybot.audio;
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 public class GuildMusicManager {
+
+    /**
+     * This is the text channel were we will announce our songs
+     */
+    public TextChannel latestChannel = null;
 
     /**
      * This is our player
@@ -46,7 +52,7 @@ public class GuildMusicManager {
      */
     public GuildMusicManager(Guild g) {
         player = LavalinkManager.ins.createPlayer(g.getId());
-        scheduler = new TrackScheduler(player);
+        scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
     }

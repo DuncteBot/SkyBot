@@ -32,7 +32,9 @@ class PauseCommand : MusicCommand() {
         if (!channelChecks(event))
             return
 
-        val player = getMusicManager(event.guild).player
+        val mng = getMusicManager(event.guild)
+        val player = mng.player
+        mng.latestChannel = event.channel
 
         if (player.playingTrack == null) {
             MessageUtils.sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")

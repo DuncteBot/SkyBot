@@ -52,7 +52,8 @@ open class PlayCommand : MusicCommand() {
         } else {
             var toPlay = StringUtils.join(args, " ")
             if (!AirUtils.isURL(toPlay)) {
-                toPlay = "ytsearch:" + toPlay
+//                toPlay = "ytsearch:" + toPlay
+                toPlay = "scsearch:" + toPlay
             }
 
             if(toPlay.length > 1024) {

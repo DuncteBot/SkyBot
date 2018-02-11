@@ -18,13 +18,14 @@
 
 package ml.duncte123.skybot.objects.audioManagers.spotify;
 
+
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-public class SpotifyAudioTrack extends YoutubeAudioTrack {
+public class SpotifyAudioTrackYT extends YoutubeAudioTrack {
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+    public SpotifyAudioTrackYT(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
         super(trackInfo, sourceManager);
     }
 }

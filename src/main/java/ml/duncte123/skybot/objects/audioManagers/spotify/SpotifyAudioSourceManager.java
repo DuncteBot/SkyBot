@@ -22,19 +22,31 @@ import com.google.common.util.concurrent.FutureCallback;
 import com.google.common.util.concurrent.Futures;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioTrack;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeSearchProvider;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.JsonBrowser;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
+import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.wrapper.spotify.Api;
 import com.wrapper.spotify.models.*;
 import ml.duncte123.skybot.utils.AirUtils;
+import org.apache.http.HttpResponse;
 import org.apache.http.client.config.RequestConfig;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.utils.URIBuilder;
+import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -43,6 +55,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
 
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
@@ -61,26 +75,30 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private final Api api;
     private final YoutubeSearchProvider youtubeSearchProvider;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
+    private final SoundCloudAudioSourceManager manager = null;
 
+//    public SpotifyAudioSourceManager(SoundCloudAudioSourceManager manager) {
     public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager) {
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
         String clientId = AirUtils.config.getString("apis.spotify.clientId", defaultValue);
         String clientSecret = AirUtils.config.getString("apis.spotify.clientSecret", defaultValue);
         if(clientId == null || clientSecret == null || clientId.equals(defaultValue) || clientId.equals(defaultValue)) {
             logger.error("Could not load Spotify keys\n" + defaultValue);
-            api = null;
+            this.api = null;
+            //this.manager = null;
             youtubeSearchProvider = null;
             this.youtubeAudioSourceManager = null;
-            return;
+        } else {
+            //this.manager = manager;
+            this.youtubeAudioSourceManager = youtubeAudioSourceManager;
+            youtubeSearchProvider = new YoutubeSearchProvider(youtubeAudioSourceManager);
+            this.api = Api.builder()
+                    .clientId(clientId)
+                    .clientSecret(clientSecret)
+                    .build();
+            final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
+            service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
         }
-        this.youtubeAudioSourceManager = youtubeAudioSourceManager;
-        youtubeSearchProvider = new YoutubeSearchProvider(youtubeAudioSourceManager);
-        api = Api.builder()
-                .clientId(clientId)
-                .clientSecret(clientSecret)
-                .build();
-        final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
-        service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
     }
 
     @Override
@@ -90,6 +108,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
+        if(this.youtubeAudioSourceManager == null)
+            return null;
+
         if(isSpotifyAlbum(reference.identifier)) {
             Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
             if (res.matches()) {
@@ -103,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     }
                     return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
                 } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
+                    logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }
@@ -121,7 +142,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     }
                     return new BasicAudioPlaylist(playlist.getName(), finalPlaylist, finalPlaylist.get(0), false);
                 } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
+                    logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }
@@ -142,13 +163,70 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     }
                     return youtubeSearchProvider.loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName());
                 } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
+                    logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }
             }
         }
         return null;
+
+        /*if(this.manager == null)
+            return null;
+
+        if(isSpotifyAlbum(reference.identifier)) {
+            Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
+            if (res.matches()) {
+
+                try {
+                    final List<AudioTrack> playList = new ArrayList<>();
+                    final Album album = api.getAlbum(res.group(res.groupCount())).build().get();
+                    for(SimpleTrack t : album.getTracks().getItems()){
+                        String fakeUrl = album.getArtists().get(0).getName() + " - "+ t.getName();
+                        playList.add( ((AudioPlaylist) loadSearchResult(fakeUrl, 0, 1)).getTracks().get(0) );
+                    }
+                    return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
+                } catch (Exception e) {
+                    logger.error("Something went wrong!", e);
+                    //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    return null;
+                }
+            }
+        } else if(isSpotifyPlaylist(reference.identifier)) {
+            Matcher res = SPOTIFY_PLAYLIST_REGEX.matcher(reference.identifier);
+            if (res.matches()) {
+
+                try {
+                    final List<AudioTrack> finalPlaylist = new ArrayList<>();
+                    final Playlist playlist = api.getPlaylist(res.group(res.groupCount()-1), res.group(res.groupCount())).build().get();
+                    for(PlaylistTrack playlistTrack : playlist.getTracks().getItems()){
+                        String fakeUrl = playlistTrack.getTrack().getArtists().get(0).getName() + " - " + playlistTrack.getTrack().getName();
+                        List<AudioTrack> playlist1 = ((AudioPlaylist)loadSearchResult(fakeUrl, 0, 1)).getTracks();
+                        if(playlist1.size() > 0)
+                            finalPlaylist.add(playlist1.get(0));
+                    }
+                    return new BasicAudioPlaylist(playlist.getName(), finalPlaylist, finalPlaylist.get(0), false);
+                } catch (Exception e) {
+                    logger.error("Something went wrong!", e);
+                    //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    return null;
+                }
+            }
+        } else if(isSpotyfyTrack(reference.identifier)) {
+            Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
+            if (res.matches()) {
+
+                try {
+                    final Track track = api.getTrack(res.group(res.groupCount())).build().get();
+                    return loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName(), 0, 1);
+                } catch (Exception e) {
+                    logger.error("Something went wrong!", e);
+                    //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    return null;
+                }
+            }
+        }
+        return null;*/
     }
 
     @Override
@@ -163,12 +241,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
-        return new SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
+        return new SpotifyAudioTrackYT(trackInfo, youtubeAudioSourceManager);
     }
 
     @Override
     public void shutdown() {
-        youtubeAudioSourceManager.shutdown();
+        //youtubeAudioSourceManager.shutdown();
     }
 
     @Override
@@ -203,5 +281,101 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                 logger.error("Something went wrong while loading the token from spotify", throwable);
             }
         });
+    }
+
+    private AudioItem loadSearchResult(String query, int offset, int rawLimit) {
+        int limit = Math.min(rawLimit, 200);
+
+        try (HttpInterface httpInterface = manager.getHttpInterface()) {
+            return withClientIdRetry(httpInterface,
+                    (response) -> loadSearchResultsFromResponse(response, query),
+                    () -> buildSearchUri(query, offset, limit)
+            );
+        } catch (IOException e) {
+            throw new FriendlyException("Loading search results from SoundCloud failed.", SUSPICIOUS, e);
+        }
+    }
+
+    private AudioItem loadSearchResultsFromResponse(HttpResponse response, String query) throws IOException {
+        try {
+            JsonBrowser searchResults = JsonBrowser.parse(response.getEntity().getContent());
+            return extractTracksFromSearchResults(query, searchResults);
+        } finally {
+            EntityUtils.consumeQuietly(response.getEntity());
+        }
+    }
+
+    private AudioItem extractTracksFromSearchResults(String query, JsonBrowser searchResults) {
+        List<AudioTrack> tracks = new ArrayList<>();
+
+        for (JsonBrowser item : searchResults.get("collection").values()) {
+            if (!item.isNull()) {
+                tracks.add(buildAudioTrack(item, null));
+            }
+        }
+
+        return new BasicAudioPlaylist("Search results for: " + query, tracks, null, true);
+    }
+
+    private AudioTrack buildAudioTrack(JsonBrowser trackInfoJson, String secretToken) {
+        String trackId = trackInfoJson.get("id").text();
+
+        AudioTrackInfo trackInfo = new AudioTrackInfo(
+                trackInfoJson.get("title").text(),
+                trackInfoJson.get("user").get("username").text(),
+                trackInfoJson.get("duration").as(Integer.class),
+                secretToken != null ? trackId + "|" + secretToken : trackId,
+                false,
+                trackInfoJson.get("permalink_url").text()
+        );
+
+        return new SoundCloudAudioTrack(trackInfo, manager);
+    }
+
+    private URI buildSearchUri(String query, int offset, int limit) {
+        try {
+            return new URIBuilder("https://api-v2.soundcloud.com/search/tracks")
+                    .addParameter("q", query)
+                    .addParameter("client_id", manager.getClientId())
+                    .addParameter("offset", String.valueOf(offset))
+                    .addParameter("limit", String.valueOf(limit))
+                    .build();
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private <T> T withClientIdRetry(HttpInterface httpInterface, ResponseHandler<T> handler, URIProvider uriProvider) throws IOException {
+        try {
+            HttpResponse response = httpInterface.execute(new HttpGet(uriProvider.provide()));
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            try {
+                if (statusCode != 401) {
+                    return handler.handle(response);
+                }
+            } finally {
+                EntityUtils.consumeQuietly(response.getEntity());
+            }
+
+            manager.updateClientId();
+            response = httpInterface.execute(new HttpGet(uriProvider.provide()));
+
+            try {
+                return handler.handle(response);
+            } finally {
+                EntityUtils.consumeQuietly(response.getEntity());
+            }
+        } catch (URISyntaxException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private interface ResponseHandler<T> {
+        T handle(HttpResponse response) throws IOException;
+    }
+
+    private interface URIProvider {
+        URI provide() throws URISyntaxException;
     }
 }

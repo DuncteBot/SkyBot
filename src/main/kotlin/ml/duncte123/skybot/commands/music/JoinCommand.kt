@@ -47,6 +47,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val mng = getMusicManager(guild)
+        mng.latestChannel = event.channel
 
         @Suppress("DEPRECATION")
         if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {

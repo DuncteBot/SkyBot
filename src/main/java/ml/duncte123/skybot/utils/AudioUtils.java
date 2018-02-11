@@ -91,12 +91,14 @@ public class AudioUtils {
             youtubeAudioSourceManager.configureRequests(config ->
                     RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
 
+            SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
+
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
 
 
             playerManager.registerSourceManager(youtubeAudioSourceManager);
-            playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
+            playerManager.registerSourceManager(soundcloud);
             playerManager.registerSourceManager(new BandcampAudioSourceManager());
             playerManager.registerSourceManager(new VimeoAudioSourceManager());
             playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());

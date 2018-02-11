@@ -32,6 +32,7 @@ class NowPlayingCommand : MusicCommand() {
         if (!channelChecks(event))
             return
         val mng = getMusicManager(event.guild)
+        mng.latestChannel = event.channel
         val player = mng.player
         val msg = if (player.playingTrack != null) {
             "**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng)

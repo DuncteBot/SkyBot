@@ -32,7 +32,9 @@ import java.util.*
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val scheduler = getMusicManager(event.guild).scheduler
+        val mng = getMusicManager(event.guild)
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
 
         val queue: Queue<AudioTrack> = scheduler.queue
                 synchronized (queue) {

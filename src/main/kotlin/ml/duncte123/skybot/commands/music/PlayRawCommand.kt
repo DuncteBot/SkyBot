@@ -33,9 +33,10 @@ class PlayRawCommand : PlayCommand() {
             return
 
         val guild = event.guild
-        val musicManager = getMusicManager(guild)
-        val player = musicManager.player
-        val scheduler = musicManager.scheduler
+        val mng = getMusicManager(guild)
+        val player = mng.player
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
 
         if (args.isEmpty()) {
             when {
@@ -53,7 +54,7 @@ class PlayRawCommand : PlayCommand() {
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
-            audioUtils.loadAndPlay(musicManager, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, toPlay, false)
         }
     }
 

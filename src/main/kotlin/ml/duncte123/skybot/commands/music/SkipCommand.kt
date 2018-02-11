@@ -32,10 +32,11 @@ class SkipCommand : MusicCommand() {
         if (!channelChecks(event))
             return
 
-        val manager = getMusicManager(event.guild)
-        val scheduler = manager.scheduler
+        val mng = getMusicManager(event.guild)
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
 
-        if (manager.player.playingTrack == null) {
+        if (mng.player.playingTrack == null) {
             MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
@@ -53,8 +54,8 @@ class SkipCommand : MusicCommand() {
             scheduler.nextTrack()
         }
         MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
-                if(manager.player.playingTrack != null){
-                    "\nNow playing: ${manager.player.playingTrack.info.title}"
+                if(mng.player.playingTrack != null){
+                    "\nNow playing: ${mng.player.playingTrack.info.title}"
                 } else "")
     }
 

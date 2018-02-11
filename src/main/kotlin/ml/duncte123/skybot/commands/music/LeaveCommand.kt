@@ -45,6 +45,7 @@ class LeaveCommand : MusicCommand() {
             manager.player.stopTrack()
             getLavalinkManager().closeConnection(guild)
             guild.audioManager.sendingHandler = null
+            getMusicManager(guild).latestChannel = event.channel
             MusicCommand.addCooldown(guild.idLong)
             MessageUtils.sendMsg(event, "Leaving your channel")
         } else {

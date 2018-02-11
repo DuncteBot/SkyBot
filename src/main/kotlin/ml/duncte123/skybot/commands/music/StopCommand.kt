@@ -33,11 +33,12 @@ class StopCommand : MusicCommand() {
             return
 
         val guild = event.guild
-        val musicManager = getMusicManager(guild)
-        val player = musicManager.player
-        val scheduler = musicManager.scheduler
+        val mng = getMusicManager(guild)
+        val player = mng.player
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
 
-        if (musicManager.player.playingTrack == null) {
+        if (mng.player.playingTrack == null) {
             MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }

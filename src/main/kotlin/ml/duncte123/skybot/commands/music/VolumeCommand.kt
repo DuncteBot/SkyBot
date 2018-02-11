@@ -29,7 +29,9 @@ class VolumeCommand: MusicCommand() {
         if(!isPatron(event.author, event.channel))
             return
 
-        val player = getMusicManager(event.guild).player
+        val mng = getMusicManager(event.guild)
+        val player = mng.player
+        mng.latestChannel = event.channel
 
         if(args.isEmpty()) {
             MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
