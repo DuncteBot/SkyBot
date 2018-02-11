@@ -62,7 +62,7 @@ class EvalCommand : Command() {
      * This initialises the engine
      */
     init {
-        this.category = CommandCategory.UNLISTED
+        this.category = CommandCategory.PATRON
         // The GroovyShell is for the public eval
         protectedShell = object : GroovyShell(
                 CompilerConfiguration()
@@ -164,13 +164,11 @@ class EvalCommand : Command() {
         services.clear()
     }
 
-    override fun help(): String {
-        return "A simple eval command"
-    }
+    override fun help() = """Evaluate java code on the bot
+        |Usage: `$PREFIX$name <java/groovy code>`
+    """.trimMargin()
 
-    override fun getName(): String {
-        return "eval"
-    }
+    override fun getName() = "eval"
 
     override fun getAliases(): Array<String> {
         return arrayOf("eval™", "evaluate", "evan", "eva;")
