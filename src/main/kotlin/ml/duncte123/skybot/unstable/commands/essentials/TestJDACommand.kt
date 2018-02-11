@@ -45,7 +45,7 @@ class TestJDACommand : Command() {
                 val sesid = game.asRichPresence().sessionId
                 sesid?.let { event.channel.sendActivity(activity.setSessionId(it)).queue() }
             }*/
-            sendMsg(event.channel, "")
+            sendMsg(event.channel, "o no")
         } else {
             sendMsg(event.channel, "YOU CRAZY?!")
         }
