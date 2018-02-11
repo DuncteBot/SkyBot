@@ -124,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     }
                     return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
                 } catch (Exception e) {
-                    logger.error("Something went wrong!", e);
+                    //logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }
@@ -142,7 +142,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     }
                     return new BasicAudioPlaylist(playlist.getName(), finalPlaylist, finalPlaylist.get(0), false);
                 } catch (Exception e) {
-                    logger.error("Something went wrong!", e);
+                    //logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }
@@ -153,17 +153,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
                 try {
                     final Track track = api.getTrack(res.group(res.groupCount())).build().get();
-                    logger.debug("Retrieved track " + track.getName());
-                    logger.debug("Its popularity is " + track.getPopularity());
-
-                    if (track.isExplicit()) {
-                        logger.debug("This track is explicit!");
-                    } else {
-                        logger.debug("It's OK, this track isn't explicit.");
-                    }
                     return youtubeSearchProvider.loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName());
                 } catch (Exception e) {
-                    logger.error("Something went wrong!", e);
+                    //logger.error("Something went wrong!", e);
                     //throw new FriendlyException("DuncteBot: " + e.getMessage(), FriendlyException.Severity.FAULT, e);
                     return null;
                 }

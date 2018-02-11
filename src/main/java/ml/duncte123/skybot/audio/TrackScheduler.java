@@ -117,11 +117,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");
-            if (repeating && lastTrack != null) {
+            if (repeating) {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
                     logger.debug("a playlist.....");
-                    player.playTrack(lastTrack.makeClone());
+                    if(lastTrack != null)
+                        player.playTrack(lastTrack.makeClone());
                 } else {
                     queue(lastTrack.makeClone());
                 }
