@@ -152,6 +152,7 @@ public class BanCommand extends Command {
                             }
                         }
                 );
+                MessageUtils.sendSuccess(event.getMessage());
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
                         (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())

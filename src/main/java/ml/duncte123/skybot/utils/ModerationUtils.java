@@ -59,13 +59,14 @@ public class ModerationUtils {
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
         }
-        MessageBuilder message = new MessageBuilder()
-                .append("_Relevant user: ")
-                .append(String.format("%#s", punishedUser))
-                .append("_")
-                .setEmbed(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                        + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason)));
-        MessageUtils.sendMsg(logChannel, message.build());
+
+        MessageUtils.sendMsg(logChannel, String.format("User **%s** got **%s** by **%s**%s%s",
+                String.format("%#s", punishedUser),
+                punishment,
+                String.format("%#s", mod),
+                length,
+                reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+        ));
     }
 
     /**
