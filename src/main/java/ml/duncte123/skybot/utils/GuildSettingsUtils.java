@@ -177,13 +177,13 @@ public class GuildSettingsUtils {
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
-            preparedStatement.setString(3, customJoinMessage.replaceAll("\\P{Print}", ""));
-            preparedStatement.setString(4, newPrefix.replaceAll("\\P{Print}", ""));
+            preparedStatement.setString(3, replaceUnicode(customJoinMessage));
+            preparedStatement.setString(4, replaceUnicode(newPrefix));
             preparedStatement.setString(5, autoRole);
             preparedStatement.setString(6, chanId);
             preparedStatement.setString(7, welcomeLeaveChannel);
-            preparedStatement.setString(8, customLeaveMessage.replaceAll("\\P{Print}", ""));
-            preparedStatement.setString(9, serverDesc.replaceAll("\\P{Print}", ""));
+            preparedStatement.setString(8, replaceUnicode(customLeaveMessage));
+            preparedStatement.setString(9, replaceUnicode(serverDesc));
             preparedStatement.executeUpdate();
 
         } catch (SQLException e1) {
@@ -283,5 +283,11 @@ public class GuildSettingsUtils {
         if(entery == null || entery.isEmpty())
             return null;
         return entery.replaceAll("\\\\n", "\n");
+    }
+
+    private static String replaceUnicode(String entery) {
+        if(entery == null || entery.isEmpty())
+            return null;
+        return entery.replaceAll("\\P{Print}", "");
     }
 }
