@@ -173,7 +173,7 @@ public class GuildSettingsUtils {
                     "logChannelId= ? ," +
                     "welcomeLeaveChannel= ? ," +
                     "customLeaveMessage = ? ," +
-                    "serverDesc = ?" +
+                    "serverDesc = ? " +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
