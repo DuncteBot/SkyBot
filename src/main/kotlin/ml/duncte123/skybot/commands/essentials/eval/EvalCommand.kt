@@ -206,7 +206,7 @@ class EvalCommand : Command() {
                 }
             }
             when (out) {
-                null -> {
+                null, (out as String).isBlank() -> {
                     coroutine.coroutineContext.cancel()
                     MessageUtils.sendSuccess(event.message)
                 }

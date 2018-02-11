@@ -143,7 +143,7 @@ class WebUtils {
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED): Response {
+        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.TEXT_PLAIN): Response {
             val postParams = StringBuilder()
 
             for ((key, value) in postFields) {
