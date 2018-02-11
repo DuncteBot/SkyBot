@@ -236,7 +236,9 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"toggleSwearFilter` => Turns the swearword filter on or off\n" +
                 "`"+PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
                 "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
-                "`"+PREFIX+"autorole <role>` => Gives members a role when they join"
+                "`"+PREFIX+"autorole <role>` => Gives members a role when they join\n" +
+                "`"+PREFIX+"setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo"
+
                 ;
     }
 

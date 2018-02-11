@@ -120,10 +120,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             if (repeating) {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
-                    logger.debug("a playlist.....");
-                    if(lastTrack != null)
-                        player.playTrack(lastTrack.makeClone());
+                    this.player.playTrack(lastTrack.makeClone());
+                    MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + lastTrack.getInfo().title);
                 } else {
+                    logger.debug("a playlist.....");
                     queue(lastTrack.makeClone());
                 }
             } else {
