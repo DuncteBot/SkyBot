@@ -924,12 +924,6 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                 return false;
             }
 
-            @Nullable
-            @Override
-            public MessageActivity getActivity() {
-                return null;
-            }
-
             @Nonnull
             @Override
             public MessageAction editMessage(CharSequence newContent) {
