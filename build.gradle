@@ -95,7 +95,7 @@ dependencies {
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.12'
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.13'
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension
