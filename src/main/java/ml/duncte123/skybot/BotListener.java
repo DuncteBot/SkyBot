@@ -63,11 +63,6 @@ public class BotListener extends ListenerAdapter {
     private final BadWordFilter filter = new BadWordFilter();
 
     /**
-     * When a command gets ran, it'll be stored in here
-     */
-    private static final Map<Guild, TextChannel> lastGuildChannel = new HashMap<>();
-
-    /**
      * This timer is for checking unbans
      */
     private final ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1,
