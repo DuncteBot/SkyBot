@@ -22,15 +22,21 @@ package ml.duncte123.skybot.unstable.commands.essentials
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class TestJDACommand : Command() {
+
+    init {
+        this.category = CommandCategory.UNLISTED
+    }
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val activity = event.message.activity
+        val activity = event.message/*.activity*/
         if (activity != null) {
-            var base = String.format("Wow you have activity!!!!Type: %d, Party: %s",
+            /*var base = String.format("Wow you have activity!!!!Type: %d, Party: %s",
                     activity.type.id, activity.partyId)
             activity.application?.let { base += ", and an application!1elf! Name: ${it.name}, ID: ${it.id},DESC ${it.description}" }
             sendMsg(event.channel, base)
@@ -38,7 +44,8 @@ class TestJDACommand : Command() {
             if (game.isRich) {
                 val sesid = game.asRichPresence().sessionId
                 sesid?.let { event.channel.sendActivity(activity.setSessionId(it)).queue() }
-            }
+            }*/
+            sendMsg(event.channel, "")
         } else {
             sendMsg(event.channel, "YOU CRAZY?!")
         }
