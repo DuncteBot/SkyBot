@@ -29,8 +29,8 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import org.jetbrains.annotations.NotNull;
 
-import javax.annotation.Nonnull;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -112,7 +112,7 @@ public class LavalinkManager {
         }
     }
 
-    public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
+    public VoiceChannel getConnectedChannel(@NotNull Guild guild) {
         //NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the
@@ -130,7 +130,6 @@ public class LavalinkManager {
      * @return the client id of the bot
      */
     private String getIdFromToken(String token) {
-
         return new String(
                 Base64.getDecoder().decode(
                         token.split("\\.")[0]
