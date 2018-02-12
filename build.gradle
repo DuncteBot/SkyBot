@@ -77,12 +77,12 @@ dependencies {
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.5.0_338'
-    //compile 'com.github.Sanduhr32:JDA:a003f6dd26'
     //Lavaplayer/Lavalink
-    //compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.47'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.49'
     compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'fa6f096') {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
         exclude group: 'net.dv8tion', module: 'JDA'
+        exclude group: "com.sedmelluq", module: "lavaplayer"
     }
     //jda-nas
     compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.6'
