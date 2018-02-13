@@ -80,14 +80,65 @@ class OneLinerCommands : Command() {
             else -> println("Invoke was invalid: $invoke")
         }
     }
+
+    override fun help(invoke: String?): String {
+
+        return when(invoke) {
+            "cookie" -> {
+                """blobnomcookie
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "trigger" -> {
+                """Use when you are triggered.
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "wam" -> {
+                """you need more WAM!
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "mineh" -> {
+                """HERE COMES MINEH!
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "invite" -> {
+                """Gives you the bot invite
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "uptime" -> {
+                """Shows the bot uptime
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "quote" -> {
+                """Shows an inspiring quote
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "yesno" -> {
+                """chooses between yes or no
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            else -> {
+                "invalid invoke"
+            }
+        }
+    }
+
     override fun help() = """`${PREFIX}ping` => Shows the delay from the bot to the discord servers.
             |`${PREFIX}cookie` => blobnomcookie.
-            |`${PREFIX}trigger` => use when you are triggered.
-            |`${PREFIX}wam` => you need more WAM!.
+            |`${PREFIX}trigger` => Use when you are triggered.
+            |`${PREFIX}wam` => You need more WAM!.
             |`${PREFIX}mineh` => HERE COMES MINEH!
-            |`${PREFIX}invite` => gives you the bot invite
-            |`${PREFIX}uptime` => shows the bot uptime
-            |`${PREFIX}quote` => Shows an inspiring quote""".trimMargin()
+            |`${PREFIX}invite` => Gives you the bot invite
+            |`${PREFIX}uptime` => Shows the bot uptime
+            |`${PREFIX}quote` => Shows an inspiring quote
+            |`${PREFIX}yesno` => chooses between yes or no""".trimMargin()
 
     override fun getName() = "ping"
     

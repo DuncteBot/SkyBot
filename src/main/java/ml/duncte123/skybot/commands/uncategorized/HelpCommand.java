@@ -32,22 +32,27 @@ import java.util.regex.Pattern;
 
 public class HelpCommand extends Command {
     
+    @SuppressWarnings("NullableProblems")
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (args.length > 0) {
-            String toSearch = StringUtils.join(args, " ")
+            String toSearch = StringUtils.join(args, " ").toLowerCase()
                     .replaceFirst("(" + Pattern.quote(Settings.prefix) + "|" +
                             Pattern.quote(Settings.otherPrefix) + "|" +
                             Pattern.quote( getSettings(event.getGuild()).getCustomPrefix() ) + ")", "");
             
             for (Command cmd : AirUtils.commandManager.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
-                    MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                    MessageUtils.sendMsg(event, "Command help for `" +
+                            cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
+                            (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
                     return;
                 } else {
                     for (String alias : cmd.getAliases()) {
                         if (alias.equals(toSearch)) {
-                            MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" + cmd.help() + (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                            MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" +
+                                    cmd.help(alias) + (cmd.getAliases().length > 0 ? "\nAliases: "
+                                    + StringUtils.join(cmd.getAliases(), ", ") : ""));
                             return;
                         }
                         

@@ -191,9 +191,22 @@ public abstract class Command {
     /**
      * The usage instructions of the command
      *
-     * @return a String
+     * @return the help instructions of the command
+     * @see #help(String)
      */
     public abstract String help();
+
+    /**
+     * The usage instructions of the command
+     * @param invoke the command that you want the help info for
+     *               Some commands are packed together and they will return specific info depending on what you put into
+     *               the command
+     * @return the help instructions of the command
+     * @see #help()
+     */
+    public String help(String invoke) {
+        return help();
+    }
 
     /**
      * This will hold the command name aka what the user puts after the prefix

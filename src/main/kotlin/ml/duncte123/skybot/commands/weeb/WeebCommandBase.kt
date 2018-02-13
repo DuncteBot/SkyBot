@@ -65,8 +65,4 @@ abstract class WeebCommandBase : Command() {
             }
         }
     }
-
-    override fun help() = """No Description provided.
-        |Usage: `$PREFIX$name [username/@user]`
-    """.trimMargin()
 }

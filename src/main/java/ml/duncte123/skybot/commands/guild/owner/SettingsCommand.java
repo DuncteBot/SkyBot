@@ -235,6 +235,48 @@ public class SettingsCommand extends Command {
     }
 
     @Override
+    public String help(String invoke) {
+        switch (invoke) {
+            case "settings": case "options":
+                return "Shows the current settings\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
+            case "setprefix":
+                return "Sets the new prefix\n" +
+                        "Usage: `"+PREFIX+invoke+" <prefix>`";
+            case "setjoinmessage": case "setwelcomenmessage":
+                return "Sets the message that the bot shows when a new member joins\n" +
+                        "Usage: `"+PREFIX+invoke+" <join message>`";
+            case "setleavemessage":
+                return "Sets the message that the bot shows when a member leaves\n" +
+                        "Usage: `"+PREFIX+invoke+" <leave message>`";
+            case "enablejoinmessage": case "disablejoinmessage": case "togglejoinmessage":
+                return "Turns the join message on or off\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
+            case "enableswearfilter": case "disableswearfilter": case "toggleswearfilter":
+                return "Turns the swearword filter on or off\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
+            case "setlogchannel":
+                return "Sets the channel to log messages in\n" +
+                        "Usage: `"+PREFIX+invoke+" <text channel>`";
+            case "setwelcomechannel": case "setleavechannel":
+                return "Sets the channel that displays the welcome and leave messages\n" +
+                        "Usage: `"+PREFIX+invoke+" <channel>`";
+            case "autorole":
+                return "Gives members a role when they join\n" +
+                        "Usage: `"+PREFIX+invoke+" <role>`";
+            case "setdescription":
+                return "Set a custom description in " + PREFIX + "guildinfo\n" +
+                        "Usage: `"+PREFIX+invoke+" <desc>`";
+            case "toggleannouncetracks":
+                return "Toggles if the player should announce the next playing track\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
+
+            default:
+                return "invalid invoke";
+        }
+    }
+
+    @Override
     public String help() {
         return "Modify the settings on the bot.\n" +
                 "`"+PREFIX+"settings` => Shows the current settings\n" +
@@ -248,7 +290,6 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"autorole <role>` => Gives members a role when they join\n" +
                 "`"+PREFIX+"setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo\n" +
                 "`"+PREFIX+"toggleannouncetracks` => Toggles if the player should announce the next playing track"
-
                 ;
     }
 
