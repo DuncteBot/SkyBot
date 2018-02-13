@@ -124,8 +124,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                     announceNextTrack(lastTrack);
                 } else {
                     logger.debug("a playlist.....");
-                    queue(lastTrack.makeClone());
                     nextTrack();
+                    //Offer it to the queue to prevent the player from playing it
+                    queue.offer(lastTrack.makeClone());
                 }
             } else {
                 logger.debug("starting next track");
