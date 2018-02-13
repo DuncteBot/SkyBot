@@ -206,7 +206,7 @@ class EvalCommand : Command() {
                 }
             }
             when (out) {
-                null, (out as String).isBlank() -> {
+                null -> {
                     coroutine.coroutineContext.cancel()
                     MessageUtils.sendSuccess(event.message)
                 }
@@ -237,6 +237,10 @@ class EvalCommand : Command() {
                     }
                 }
                 else -> {
+                    if(out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
+                        MessageUtils.sendSuccess(event.message)
+                        return
+                    }
                     if (isRanByBotOwner) {
                         MessageBuilder()
                                 .append(out.toString())

@@ -62,9 +62,11 @@ public class SettingsCommand extends Command {
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
                         "**Show join/leave messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
+                        "**Announce next track:** " + (settings.isAnnounceTracks() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
-                        "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("") ? "Not Set": event.getGuild().getRoleById(settings.getAutoroleRole()).getAsMention() )+ "\n" +
+                        "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("")
+                                            ? "Not Set": event.getGuild().getRoleById(settings.getAutoroleRole()).getAsMention() )+ "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
                         "**Modlog Channel:** " + (logChan !=null ? logChan.getAsMention(): "none") + "\n" +
                         "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
@@ -222,6 +224,13 @@ public class SettingsCommand extends Command {
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setServerDesc(description) );
                 sendMsg(event, "Description has been updated, check `" + PREFIX + "guildinfo` to see your description");
                 break;
+
+            case "toggleannouncetracks":
+                boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAnnounceTracks(shouldAnnounceTracks) );
+                sendMsg(event, "Announcing the next track has been **"
+                        + ( shouldAnnounceTracks ? "enabled" : "disabled" ) + "**" );
+                break;
         }
     }
 
@@ -237,7 +246,8 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"setLogChannel <text channel>` => Sets the channel to log messages in\n" +
                 "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
                 "`"+PREFIX+"autorole <role>` => Gives members a role when they join\n" +
-                "`"+PREFIX+"setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo"
+                "`"+PREFIX+"setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo\n" +
+                "`"+PREFIX+"toggleannouncetracks` => Toggles if the player should announce the next playing track"
 
                 ;
     }
@@ -264,7 +274,8 @@ public class SettingsCommand extends Command {
                 "setleavechannel",
                 "setleavemessage",
                 "autorole",
-                "setdescription"
+                "setdescription",
+                "toggleannouncetracks"
         };
     }
 }

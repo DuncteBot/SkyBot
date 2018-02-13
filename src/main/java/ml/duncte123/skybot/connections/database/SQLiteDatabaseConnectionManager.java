@@ -137,6 +137,7 @@ implements DBConnectionManager {
                                                          "autoRole VARCHAR(255) NULL," +
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                                                         "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
                                                          "customWelcomeMessage TEXT NOT NULL," +
                                                          "serverDesc TEXT NULL," +
                                                          "customLeaveMessage TEXT NOT NULL);");

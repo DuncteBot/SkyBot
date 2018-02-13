@@ -75,6 +75,8 @@ public class GuildSettings {
      */
     private String serverDesc = null;
 
+    private boolean announceTracks = false;
+
     /**
      * This will init everything
      *
@@ -261,6 +263,24 @@ public class GuildSettings {
      */
     public String getServerDesc() {
         return serverDesc;
+    }
+
+    /**
+     * Sets if the audio player should announce the tracks
+     * @param announceTracks true to announce tracks
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAnnounceTracks(boolean announceTracks) {
+        this.announceTracks = announceTracks;
+        return this;
+    }
+
+    /**
+     * Returns if we should announce the next track
+     * @return if we should announce the next track
+     */
+    public boolean isAnnounceTracks() {
+        return announceTracks;
     }
 
     /**

@@ -96,6 +96,7 @@ public class GuildSettingsUtils {
                 String leaveMessage = replaceNewLines(resSettings.getString("customLeaveMessage"));
                 String autoroleId = resSettings.getString("autoRole");
                 String serverDesc = replaceNewLines(resSettings.getString("serverDesc"));
+                boolean announceNextTrack = resSettings.getBoolean("announceNextTrack");
 
                 AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
                         .setEnableJoinMessage(enableJoinMsg)
@@ -107,6 +108,7 @@ public class GuildSettingsUtils {
                         .setCustomLeaveMessage(leaveMessage)
                         .setAutoroleRole(autoroleId)
                         .setServerDesc(serverDesc)
+                        .setAnnounceTracks(announceNextTrack)
                 );
             }
 
@@ -160,6 +162,8 @@ public class GuildSettingsUtils {
         String chanId = settings.getLogChannel();
         String welcomeLeaveChannel = settings.getWelcomeLeaveChannel();
         String serverDesc = settings.getServerDesc();
+        boolean announceNextTrack = settings.isAnnounceTracks();
+
         String dbName = AirUtils.db.getName();
         Connection database = AirUtils.db.getConnManager().getConnection();
         
@@ -173,7 +177,8 @@ public class GuildSettingsUtils {
                     "logChannelId= ? ," +
                     "welcomeLeaveChannel= ? ," +
                     "customLeaveMessage = ? ," +
-                    "serverDesc = ? " +
+                    "serverDesc = ? ," +
+                    "announceNextTrack = ? " +
                     "WHERE guildId='" + guildId + "'");
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
@@ -184,6 +189,7 @@ public class GuildSettingsUtils {
             preparedStatement.setString(7, welcomeLeaveChannel);
             preparedStatement.setString(8, replaceUnicode(customLeaveMessage));
             preparedStatement.setString(9, replaceUnicode(serverDesc));
+            preparedStatement.setBoolean(10, announceNextTrack);
             preparedStatement.executeUpdate();
 
         } catch (SQLException e1) {

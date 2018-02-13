@@ -78,8 +78,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private final YoutubeSearchProvider youtubeSearchProvider;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final SoundCloudAudioSourceManager manager = null;
+    private final ScheduledExecutorService service;
 
-//    public SpotifyAudioSourceManager(SoundCloudAudioSourceManager manager) {
+    //    public SpotifyAudioSourceManager(SoundCloudAudioSourceManager manager) {
     public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager) {
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
         String clientId = AirUtils.config.getString("apis.spotify.clientId", defaultValue);
@@ -89,6 +90,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             this.api = null;
             //this.manager = null;
             youtubeSearchProvider = null;
+            this.service = null;
             this.youtubeAudioSourceManager = null;
         } else {
             //this.manager = manager;
@@ -98,7 +100,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     .clientId(clientId)
                     .clientSecret(clientSecret)
                     .build();
-            final ScheduledExecutorService service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
+            this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
             service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
         }
     }
@@ -245,7 +247,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public void shutdown() {
-        //youtubeAudioSourceManager.shutdown();
+        if(this.youtubeAudioSourceManager != null)
+            this.youtubeAudioSourceManager.shutdown();
+        if(this.service != null)
+            this.service.shutdown();
+
     }
 
     @Override
