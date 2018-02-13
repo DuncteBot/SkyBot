@@ -110,9 +110,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         return "spotify";
     }
 
-    @Override
     public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
-
     }
 
     @Override
