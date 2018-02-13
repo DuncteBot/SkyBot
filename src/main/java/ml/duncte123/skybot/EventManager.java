@@ -19,13 +19,13 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 /**
@@ -37,6 +37,7 @@ implements IEventManager {
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
     private final BotListener botListener = new BotListener();
+    private final DeHoistListener deHoistListener = new DeHoistListener();
     
     @Override
     public void register(Object listener) {
@@ -54,6 +55,7 @@ implements IEventManager {
             if(LavalinkManager.ins.isEnabled())
                 LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
+            deHoistListener.onEvent(event);
         } catch (Throwable thr) {
             logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
@@ -62,8 +64,8 @@ implements IEventManager {
     @Override
     public List<Object> getRegisteredListeners() {
         if(LavalinkManager.ins.isEnabled())
-            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener);
+            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener);
         else
-            return Collections.singletonList(botListener);
+            return Arrays.asList(botListener, deHoistListener);
     }
 }

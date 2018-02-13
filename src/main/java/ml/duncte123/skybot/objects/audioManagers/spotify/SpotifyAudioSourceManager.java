@@ -110,7 +110,14 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         return "spotify";
     }
 
+    @Override
+    public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
+        // not needed
+    }
+
+    @Override
     public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
+        // also not needed
     }
 
     @Override
@@ -249,11 +256,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             this.youtubeAudioSourceManager.shutdown();
         if(this.service != null)
             this.service.shutdown();
-
-    }
-
-    @Override
-    public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
 
     }
 

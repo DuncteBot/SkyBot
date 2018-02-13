@@ -75,7 +75,15 @@ public class GuildSettings {
      */
     private String serverDesc = null;
 
+    /**
+     * If we should announce the next track
+     */
     private boolean announceTracks = false;
+
+    /**
+     * If we should auto de-hoist people (soon™)
+     */
+    private boolean autoDeHoist = false;
 
     /**
      * This will init everything
@@ -281,6 +289,24 @@ public class GuildSettings {
      */
     public boolean isAnnounceTracks() {
         return announceTracks;
+    }
+
+    /**
+     * This sets if we should auto de-hoist people
+     * @param autoDeHoist if we should auto de-hoist people
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
+        this.autoDeHoist = autoDeHoist;
+        return this;
+    }
+
+    /**
+     * Returns if we should auto de-hoist people (soon™)
+     * @return if we should auto de-hoist people (soon™)
+     */
+    public boolean isAutoDeHoist() {
+        return autoDeHoist;
     }
 
     /**
