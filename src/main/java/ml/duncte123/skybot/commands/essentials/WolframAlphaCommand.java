@@ -124,7 +124,6 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-
         MessageUtils.sendMsg(event, "Calculating.....", message -> {
             String queryString
                     = event.getMessage().getContentRaw()
@@ -132,21 +131,17 @@ public class WolframAlphaCommand extends Command {
                             .split(" ")[0].length());
 
             WAQuery query = engine.createQuery(queryString);
-
             WAQueryResult result;
-
             try {
                 result = engine.performQuery(query);
             } catch (WAException e) {
-                /*MessageUtils.sendMsg(event, ":x: Error: "
-                        + e.getClass().getSimpleName() + ": " + e.getMessage());*/
                 message.editMessage(":x: Error: "
                         + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
                 e.printStackTrace();
                 return;
             }
-            //MessageUtils.sendEmbed(event, generateEmbed(event, result));
-            message.editMessage(generateEmbed(event, result)).queue();
+            message.editMessage("Result:")
+                    .embed(generateEmbed(event, result)).queue();
         });
     }
 
