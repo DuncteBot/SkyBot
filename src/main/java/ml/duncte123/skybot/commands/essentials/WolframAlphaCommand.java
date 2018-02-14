@@ -112,38 +112,42 @@ public class WolframAlphaCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if(!isPatron(event.getAuthor(), event.getChannel())) return;
-        MessageUtils.sendMsg(event, "This command is being worked on.");
-        WAEngine engine = AirUtils.alphaEngine;
-
-        if (engine == null) {
-            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
-            return;
-        }
 
         if (args.length == 0) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
 
-        String queryString
-                = event.getMessage().getContentRaw()
-                .substring(event.getMessage().getContentRaw()
-                        .split(" ")[0].length());
-
-        WAQuery query = engine.createQuery(queryString);
-
-        WAQueryResult result;
-
-        try {
-            result = engine.performQuery(query);
-        } catch (WAException e) {
-            MessageUtils.sendMsg(event, ":x: Error: "
-                    + e.getClass().getSimpleName() + ": " + e.getMessage());
-            e.printStackTrace();
+        WAEngine engine = AirUtils.alphaEngine;
+        if (engine == null) {
+            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
-        MessageUtils.sendEmbed(event, generateEmbed(event, result));
+
+        MessageUtils.sendMsg(event, "Calculating.....", message -> {
+            String queryString
+                    = event.getMessage().getContentRaw()
+                    .substring(event.getMessage().getContentRaw()
+                            .split(" ")[0].length());
+
+            WAQuery query = engine.createQuery(queryString);
+
+            WAQueryResult result;
+
+            try {
+                result = engine.performQuery(query);
+            } catch (WAException e) {
+                /*MessageUtils.sendMsg(event, ":x: Error: "
+                        + e.getClass().getSimpleName() + ": " + e.getMessage());*/
+                message.editMessage(":x: Error: "
+                        + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+                e.printStackTrace();
+                return;
+            }
+            //MessageUtils.sendEmbed(event, generateEmbed(event, result));
+            message.editMessage(generateEmbed(event, result)).queue();
+        });
     }
 
     @Override
