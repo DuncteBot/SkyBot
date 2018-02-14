@@ -39,39 +39,27 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        Guild g = event.getGuild();
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         try {
+            Guild g = event.getGuild();
             //https://stackoverflow.com/a/1915107/4453592
             final String inviteStringTemplate = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
-            final String[] inviteString = {""};
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().complete().stream().findFirst().ifPresent(inv -> inviteString[0] = String.format(inviteStringTemplate, inv.getCode()));
+                    g.getInvites().queue(invites ->
+                            invites.stream().findFirst().ifPresent(invite ->
+                                    sendGuildInfoEmbed(event, String.format(inviteStringTemplate, invite.getCode()))
+                            )
+                    );
                 } else {
-                    inviteString[0] = String.format(inviteStringTemplate, g.getVanityUrl().complete());
+                    g.getVanityUrl().queue(invite ->
+                            sendGuildInfoEmbed(event, String.format(inviteStringTemplate, invite))
+                    );
                 }
+            } else {
+                sendGuildInfoEmbed(event, "");
             }
 
-            double[] ratio = GuildUtils.getBotRatio(g);
-            EmbedBuilder eb = EmbedUtils.defaultEmbed();
-            if(settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
-                eb.addField("Server Description", settings.getServerDesc() + "\n", false);
-            }
-                    eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
-                    .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
-                            "**Name:** " + g.getName() + "\n" +
-                            "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                            "**Region:** " + g.getRegion().getName() + "\n" +
-                            "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
-                            "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                            inviteString[0], false)
-                    .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
-                            "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g).get() + "\n" +
-                            "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
-
-            MessageUtils.sendEmbed(event, eb.build());
         } catch (Exception e) {
             MessageUtils.sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
             e.printStackTrace();
@@ -92,4 +80,28 @@ public class GuildInfoCommand extends Command {
     public String[] getAliases() {
         return new String[]{"serverinfo", "server", "guild"};
     }
+
+    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, String inviteString) {
+        Guild g = event.getGuild();
+        double[] ratio = GuildUtils.getBotRatio(g);
+        EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        GuildSettings settings = GuildSettingsUtils.getGuild(g);
+        if(settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
+            eb.addField("Server Description", settings.getServerDesc() + "\n", false);
+        }
+        eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
+                .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+                        "**Name:** " + g.getName() + "\n" +
+                        "**Prefix:** " + settings.getCustomPrefix() + "\n" +
+                        "**Region:** " + g.getRegion().getName() + "\n" +
+                        "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                        "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                        inviteString, false)
+                .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+                        "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g).get() + "\n" +
+                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
+
+        MessageUtils.sendEmbed(event, eb.build());
+    }
+
 }
