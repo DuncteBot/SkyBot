@@ -89,11 +89,8 @@ class DeHoistListener : ListenerAdapter() {
      */
     private fun shouldChangeName(member: Member) : Boolean {
         val memberName = member.effectiveName
-        println(memberName)
-        val flag = ( !memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
+        return ( !memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
                 member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
                 GuildSettingsUtils.getGuild(member.guild).isAutoDeHoist)
-        println(flag)
-        return flag
     }
 }
