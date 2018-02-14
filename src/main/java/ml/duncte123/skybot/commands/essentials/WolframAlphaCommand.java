@@ -56,34 +56,29 @@ public class WolframAlphaCommand extends Command {
 
         for (WAPod pod : result.getPods()) {
             String name = a(pod.getTitle());
-
             StringBuilder embeds = new StringBuilder();
-
+            //Loop over the subpods
             for (WASubpod sp : pod.getSubpods()) {
+                //yet another stringbuilder
                 StringBuilder e = new StringBuilder();
-
+                //append the title
                 e.append(a(sp.getTitle()));
-
+                //loop over the contents
                 for (Visitable v : sp.getContents()) {
                     String d = "";
-
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getAlt()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
+                        d += "[" + a(i.getTitle()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
-
                         d += a(i.getText());
-
+                        //Ramid when?
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-
-
                         d += "[" + a(l.getText()) + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
-
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
