@@ -20,12 +20,11 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.entities.SizedList
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.*
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.WebUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
 
@@ -77,6 +76,33 @@ class OneLinerCommands : Command() {
                         .setImage(json.getString("image"))
                         .build())
             }
+            "kickme" -> {
+                if(args.isEmpty() || args[0] !== "YESIMSURE") {
+                    sendMsg(event, """"**WARNING** this command will kick you from this server
+                        |If you are sure that you want to kick yourself off this server use `${PREFIX}kickme YESIMSURE`
+                        |By running `${PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
+                        |DuncteBot and any of it's developers are not responsible for your own kick by running this command
+                    """.trimMargin())
+                } else if(!args.isEmpty() && args[0] === "YESIMSURE") {
+                    //Check for perms
+                    if(event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
+                        MessageUtils.sendSuccess(event.message)
+                        //Kick the user
+                        sendMsg(event, "Your kick will commerce in 20 seconds") {
+                            it.guild.controller.kick(event.member)
+                                    .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
+                                    .queue {
+                                        ModerationUtils.modLog(event.jda.selfUser,
+                                                event.author, "kicked", "Used the kickme command", event.guild)
+                                    }
+                        }
+                    } else {
+                        sendMsg(event, """"I'm missing the permission to kick you.
+                            |You got lucky this time ${event.member.asMention}.
+                        """.trimMargin())
+                    }
+                }
+            }
             else -> println("Invoke was invalid: $invoke")
         }
     }
@@ -120,7 +146,12 @@ class OneLinerCommands : Command() {
                 """.trimMargin()
             }
             "yesno" -> {
-                """chooses between yes or no
+                """Chooses between yes or no
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "kickme" -> {
+                """Kickes you off the server
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
@@ -138,11 +169,13 @@ class OneLinerCommands : Command() {
             |`${PREFIX}invite` => Gives you the bot invite
             |`${PREFIX}uptime` => Shows the bot uptime
             |`${PREFIX}quote` => Shows an inspiring quote
-            |`${PREFIX}yesno` => chooses between yes or no""".trimMargin()
+            |`${PREFIX}yesno` => Chooses between yes or no
+            |`${PREFIX}kickme` => Kicks you off the server
+    """.trimMargin()
 
     override fun getName() = "ping"
     
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno")
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme")
 
     private fun getAverage(): Double = pingHistory.filter { it != -1L }.map { it.toDouble() }.average()
 }
