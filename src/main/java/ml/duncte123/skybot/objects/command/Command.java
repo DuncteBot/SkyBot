@@ -107,14 +107,14 @@ public abstract class Command {
         Member m = supportGuild.getMember(u);
         if (m == null) {
             MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                    "not one of out patrons.\n" +
+                    "not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
                     "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
             return false;
         } else {
             if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
                 MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                        "not one of out patrons.\n" +
+                        "not one of our patrons.\n" +
                         "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
                 return false;
             }
