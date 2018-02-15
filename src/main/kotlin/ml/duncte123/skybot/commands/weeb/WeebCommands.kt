@@ -32,6 +32,7 @@ class WeebCommands : WeebCommandBase() {
             "punch" -> thatStuffThatINeedToDoALotOfTimes("punch", "punches", args, event)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
+            "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
         }
     }
 
@@ -41,6 +42,7 @@ class WeebCommands : WeebCommandBase() {
         |`${PREFIX}pat` => Pat a user
         |`${PREFIX}punch` => Punch a user in their face
         |`${PREFIX}shrug` => ¯\_(ツ)_/¯
+        |`${PREFIX}lick` => Lick a user
     """.trimMargin()
 
     override fun help(invoke: String?): String {
@@ -68,6 +70,11 @@ class WeebCommands : WeebCommandBase() {
             "shrug" -> {
                 """¯\_(ツ)_/¯
                     |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "lick" -> {
+                """Lick a user
+                    |Usage: `$PREFIX$invoke [username/@user]`
                 """.trimMargin()
             }
             else -> {
