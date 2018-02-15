@@ -41,11 +41,11 @@ implements DBConnectionManager {
     private final String dbName;
 
     MySQLConnectionManager() {
-        this.dbHost = AirUtils.config.getString("sql.host", "sql.example.com");
-        this.port = AirUtils.config.getInt("sql.port", 3306);
-        this.user = AirUtils.config.getString("sql.username", "exampleUser");
-        this.pass = AirUtils.config.getString("sql.password", "Ex@mplePAss");
-        this.dbName = AirUtils.config.getString("sql.database", "Example_database");
+        this.dbHost = AirUtils.CONFIG.getString("sql.host", "sql.example.com");
+        this.port = AirUtils.CONFIG.getInt("sql.port", 3306);
+        this.user = AirUtils.CONFIG.getString("sql.username", "exampleUser");
+        this.pass = AirUtils.CONFIG.getString("sql.password", "Ex@mplePAss");
+        this.dbName = AirUtils.CONFIG.getString("sql.database", "Example_database");
 
         innitDB(getConnection());
     }

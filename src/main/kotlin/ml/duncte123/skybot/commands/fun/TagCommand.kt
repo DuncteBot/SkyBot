@@ -122,7 +122,7 @@ class TagCommand : Command() {
     override fun getAliases() = arrayOf("pasta", "tags", "t")
 
     private fun getLang():String {
-        when(AirUtils.rand.nextInt(4)) {
+        when(AirUtils.RAND.nextInt(4)) {
             0 -> return "YAML"
             1 -> return "ldif"
             2 -> return "PHP"

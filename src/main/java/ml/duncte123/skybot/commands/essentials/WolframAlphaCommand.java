@@ -113,7 +113,7 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        WAEngine engine = AirUtils.alphaEngine;
+        WAEngine engine = AirUtils.ALPHA_ENGINE;
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;

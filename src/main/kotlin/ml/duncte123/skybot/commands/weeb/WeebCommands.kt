@@ -26,7 +26,6 @@ class WeebCommands : WeebCommandBase() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "hug" -> thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
-
             "lewd" -> sendEmbed(event,
                     getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd", "${event.channel.isNSFW}").url))
             "pat" -> thatStuffThatINeedToDoALotOfTimes("pat", "pats", args, event)

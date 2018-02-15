@@ -204,7 +204,7 @@ class WebUtils {
 
                 jo.put("longUrl", url)
 
-                val response = postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.config.getString("apis.googl", "Google api key"), jo)
+                val response = postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.CONFIG.getString("apis.googl", "Google api key"), jo)
                 return JSONObject(response.body()?.string()).get("id").toString()
             } catch (e: NullPointerException) {
                 ComparatingUtils.checkEx(e)

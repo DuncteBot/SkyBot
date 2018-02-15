@@ -37,8 +37,8 @@ class KpopCommand: Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        val dbName = AirUtils.db.name
-        val database = AirUtils.db.connManager.connection
+        val dbName = AirUtils.DB.name
+        val database = AirUtils.DB.connManager.connection
 
         var id = ""
         var name = ""

@@ -41,11 +41,11 @@ public class TagUtils {
     public static void loadAllTags() {
         logger.debug("Loading tags.");
 
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         try {
             Statement smt = database.createStatement();
 
-            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + AirUtils.db.getName() + ".tags");
+            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".tags");
 
             while (resultSet.next()) {
                 String tagName = resultSet.getString("tagName");
@@ -82,10 +82,10 @@ public class TagUtils {
         if (tagsList.containsKey(tag.getName())) //Return false if the tag is already here
             return false;
 
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
 
         try {
-            PreparedStatement statement = database.prepareStatement("INSERT INTO " + AirUtils.db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
+            PreparedStatement statement = database.prepareStatement("INSERT INTO " + AirUtils.DB.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
                                                                             "VALUES(? , ? , ? , ?)");
             statement.setString(1, String.format("%#s", author));
             statement.setString(2, author.getId());
@@ -115,10 +115,10 @@ public class TagUtils {
      */
     public static boolean deleteTag(Tag tag) {
 
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
 
         try {
-            PreparedStatement statement = database.prepareStatement("DELETE FROM " + AirUtils.db.getName() + ".tags WHERE tagName= ? ");
+            PreparedStatement statement = database.prepareStatement("DELETE FROM " + AirUtils.DB.getName() + ".tags WHERE tagName= ? ");
             statement.setString(1, tag.getName());
             statement.execute();
         } catch (Exception e) {

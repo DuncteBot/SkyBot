@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -172,13 +171,13 @@ public class ModerationUtils {
     public static void checkUnbans(ShardManager shardManager) {
         logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
 
         try {
 
             Statement smt = database.createStatement();
 
-            ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.db.getName() + ".bans");
+            ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
 
             while (res.next()) {
                 java.util.Date unbanDate = res.getTimestamp("unban_date");
@@ -197,7 +196,7 @@ public class ModerationUtils {
                                 "unbanned",
                                 shardManager.getGuildById(res.getString("guildId")));
                     } catch (NullPointerException ignored) { }
-                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
             logger.debug("Checking done, unbanned " + usersUnbanned + " users.");

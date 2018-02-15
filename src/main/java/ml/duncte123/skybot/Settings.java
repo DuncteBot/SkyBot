@@ -26,7 +26,7 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String ownerId = AirUtils.config.getString("discord.botOwnerId", BuildConfig.ownerId);
+    public static final String ownerId = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.ownerId);
     // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
@@ -49,15 +49,15 @@ public class Settings {
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String prefix = AirUtils.config.getString("discord.prefix", "db!");
+    public static final String prefix = AirUtils.CONFIG.getString("discord.prefix", "DB!");
     /**
      * This is another prefix because I can
      */
-    public static final String otherPrefix = "db.";
+    public static final String otherPrefix = "DB.";
     /**
      * Whether the bot is unstable or not
      */
-    public static final boolean isUnstable = BuildConfig.UNSTABLE && AirUtils.config.getBoolean("launch_unstable", false);
+    public static final boolean isUnstable = BuildConfig.UNSTABLE && AirUtils.CONFIG.getBoolean("launch_unstable", false);
     /**
      * This is the version of the bot
      */
@@ -73,7 +73,7 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = Color.decode(AirUtils.config.getString("discord.embedColour", "#0751c6"));
+    public static final Color defaultColour = Color.decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
 
     public static boolean useCooldown = false;
 

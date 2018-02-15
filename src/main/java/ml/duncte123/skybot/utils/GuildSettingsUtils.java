@@ -42,12 +42,12 @@ public class GuildSettingsUtils {
      * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
      */
     public static void loadFooterQuotes() {
-        if(!AirUtils.nonsqlite) return;
+        if(!AirUtils.NONE_SQLITE) return;
         logger.debug("Loading footer quotes");
 
-        String dbName = AirUtils.db.getName();
+        String dbName = AirUtils.DB.getName();
         
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         try {
             Statement smt = database.createStatement();
             
@@ -77,9 +77,9 @@ public class GuildSettingsUtils {
     public static void loadGuildSettings() {
         logger.debug("Loading Guild settings.");
         
-        String dbName = AirUtils.db.getName();
+        String dbName = AirUtils.DB.getName();
         
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         try {
             Statement smt = database.createStatement();
             
@@ -164,8 +164,8 @@ public class GuildSettingsUtils {
         String serverDesc = settings.getServerDesc();
         boolean announceNextTrack = settings.isAnnounceTracks();
 
-        String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        String dbName = AirUtils.DB.getName();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         
         try {
             PreparedStatement preparedStatement = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
@@ -226,8 +226,8 @@ public class GuildSettingsUtils {
                                              .setCustomJoinMessage(defaultMsg)
                                              .setCustomPrefix(Settings.prefix);
         
-        String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        String dbName = AirUtils.DB.getName();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         
         try {
             ResultSet resultSet = database.createStatement()
@@ -268,8 +268,8 @@ public class GuildSettingsUtils {
     public static void deleteGuild(Guild g) {
         AirUtils.guildSettings.remove(g.getId());
         
-        String dbName = AirUtils.db.getName();
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        String dbName = AirUtils.DB.getName();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
         
         try {
             Statement smt = database.createStatement();

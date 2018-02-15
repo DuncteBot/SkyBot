@@ -75,9 +75,9 @@ public class EmbedUtils {
     public static EmbedBuilder defaultEmbed() {
         EmbedBuilder eb = new EmbedBuilder()
                                   .setColor(Settings.defaultColour);
-        if (AirUtils.nonsqlite) {
+        if (AirUtils.NONE_SQLITE) {
             //Get a random index from the quotes
-            int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+            int randomIndex = AirUtils.RAND.nextInt(footerQuotes.size());
             //Get the quote as a string
             String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
             String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);

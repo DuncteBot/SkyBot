@@ -46,28 +46,28 @@ public class AirUtils {
     /**
      * This is our config file
      */
-    public static Config config = new ConfigUtils().loadConfig();
+    public static final Config CONFIG = new ConfigUtils().loadConfig();
 
     /**
      * The {@link WAEngine engine} to query Wolfram|Alpha
      * This has to be loadded before the commands are loaded
      */
-    public static final WAEngine alphaEngine = getWolframEngine();
+    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
 
     /**
      * This will hold the command setup and the registered commands
      */
-    public static CommandManager commandManager = new CommandManager();
+    public static final CommandManager COMMAND_MANAGER = new CommandManager();
 
     /**
      * We are using slf4j to log things to the console
      */
-    private static Logger logger = LoggerFactory.getLogger(AirUtils.class);
+    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
 
     /**
      * This holds the value if we should use a non-SQLite database
      */
-    public static boolean nonsqlite = config.getBoolean("use_database", false);
+    public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
 
     /**
      * This will store the settings for every guild that we are in
@@ -77,15 +77,15 @@ public class AirUtils {
     /**
      * This helps us to make the coinflip command and the footer quotes work
      */
-    public static Random rand = new Random();
+    public static final Random RAND = new Random();
 
     /**
      * This is our database manager, it is a util for the connection
      */
-    public static DBManager db = new DBManager();
+    public static final DBManager DB = new DBManager();
 
     public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
-            .setToken(config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
+            .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
 
     /**
@@ -207,7 +207,7 @@ public class AirUtils {
      * token
      */
     private static WAEngine getWolframEngine() {
-        String appId = config.getString("apis.wolframalpha", "");
+        String appId = CONFIG.getString("apis.wolframalpha", "");
         
         if (appId == null || appId.isEmpty()) {
             IllegalStateException e
@@ -236,7 +236,7 @@ public class AirUtils {
      */
     public static void stop() {
         try {
-            db.getConnManager().getConnection().close();
+            DB.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -280,7 +280,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (rand.nextFloat() * chars.length());
+            int index = (int) (RAND.nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -299,7 +299,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (AirUtils.rand.nextInt(4)){
+        switch (AirUtils.RAND.nextInt(4)){
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:

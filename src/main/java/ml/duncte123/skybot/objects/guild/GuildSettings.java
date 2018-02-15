@@ -197,7 +197,7 @@ public class GuildSettings {
     }
 
     /**
-     * Sets the current sever description to show up in db!guildinfo
+     * Sets the current sever description to show up in DB!guildinfo
      * @param serverDesc the custom server description
      * @return the current {@link GuildSettings}
      */

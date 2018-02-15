@@ -128,7 +128,7 @@ public abstract class Command {
     protected static void reloadUpvoted() {
         if (cooldown && Settings.useCooldown) return;
         try {
-            String token = AirUtils.config.getString("apis.discordbots_userToken", "");
+            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
 
             if (token == null || token.isEmpty()) {
                 logger.warn("Discord Bots token not found");

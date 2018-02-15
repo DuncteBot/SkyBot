@@ -44,9 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -125,7 +123,7 @@ public class BotListener extends ListenerAdapter {
             }
 
             //Kill other things
-            ((EvalCommand) AirUtils.commandManager.getCommand("eval")).shutdown();
+            ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
             if (unbanTimerRunning)
                 this.unbanService.shutdown();
             
@@ -183,8 +181,8 @@ public class BotListener extends ListenerAdapter {
                 return;
             for (String s : blocked) {
                 if (isCategory(s.toUpperCase())) {
-                    if (AirUtils.commandManager.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                            .contains(AirUtils.commandManager.getCommand(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
+                    if (AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                            .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
                                     .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))) {
                         return;
                     }
@@ -199,13 +197,13 @@ public class BotListener extends ListenerAdapter {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
             final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command
-            Command cmd = AirUtils.commandManager.getCommand("chat");
+            Command cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
                 cmd.executeCommand("chat", args, event);
             return;
         }
         //Handle the command
-        AirUtils.commandManager.runCommand(event);
+        AirUtils.COMMAND_MANAGER.runCommand(event);
     }
     
     /**
@@ -223,14 +221,14 @@ public class BotListener extends ListenerAdapter {
         }
 
         //Start the timers if they have not been started yet
-        if (!unbanTimerRunning && AirUtils.nonsqlite) {
+        if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
             unbanService.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()),10, 10, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
         
-        if (!settingsUpdateTimerRunning && AirUtils.nonsqlite) {
+        if (!settingsUpdateTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the settings timer.");
             //This handles the updating from the setting and quotes
             settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
@@ -433,7 +431,7 @@ public class BotListener extends ListenerAdapter {
     private boolean unstableCheckThingy(SelfUser selfUser, Guild g) {
         if (Settings.isUnstable && selfUser.getIdLong() != 210363111729790977L) {
             //noinspection unchecked
-            List<Long> ids = AirUtils.config.getArray("access_ids");
+            List<Long> ids = AirUtils.CONFIG.getArray("access_ids");
             if (!ids.contains(g.getIdLong())) {
                 g.leave().queue();
                 logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);

@@ -32,7 +32,7 @@ import org.apache.commons.lang3.StringUtils
 class ImageCommand : Command() {
 
     private val url = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-            "&hl=en&searchType=image&key=${AirUtils.config.getString("apis.googl")}"
+            "&hl=en&searchType=image&key=${AirUtils.CONFIG.getString("apis.googl")}"
 
 
     init {
@@ -58,7 +58,7 @@ class ImageCommand : Command() {
 
             val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
             val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-            val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
+            val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
             sendEmbed(event,
                     EmbedUtils.defaultEmbed()
                             .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))

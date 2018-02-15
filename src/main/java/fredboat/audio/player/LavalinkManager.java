@@ -53,16 +53,16 @@ public class LavalinkManager {
     public void start() {
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(AirUtils.config.getString("discord.token"));
+        String userId = getIdFromToken(AirUtils.CONFIG.getString("discord.token"));
 
         lavalink = new Lavalink(
                 userId,
-                AirUtils.config.getInt("discord.totalShards", 1),
+                AirUtils.CONFIG.getInt("discord.totalShards", 1),
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
         defaultNodes.add(new LavalinkNode(new Ason("{\"wsurl\": \"ws://localhost\",\"pass\": \"youshallnotpass\"}")));
-        List<Ason> nodes = AirUtils.config.getArray("lavalink.nodes", defaultNodes);
+        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes);
         List<LavalinkNode> nodeList = new ArrayList<>();
         nodes.forEach(it -> nodeList.add(new LavalinkNode(it)));
 
@@ -81,7 +81,7 @@ public class LavalinkManager {
     }
 
     public boolean isEnabled() {
-        return AirUtils.config.getBoolean("lavalink.enable", false);
+        return AirUtils.CONFIG.getBoolean("lavalink.enable", false);
     }
 
     public IPlayer createPlayer(String guildId) {

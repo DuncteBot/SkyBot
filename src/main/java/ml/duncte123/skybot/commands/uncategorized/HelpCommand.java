@@ -41,7 +41,7 @@ public class HelpCommand extends Command {
                             Pattern.quote(Settings.otherPrefix) + "|" +
                             Pattern.quote( getSettings(event.getGuild()).getCustomPrefix() ) + ")", "");
             
-            for (Command cmd : AirUtils.commandManager.getCommands()) {
+            for (Command cmd : AirUtils.COMMAND_MANAGER.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
                     MessageUtils.sendMsg(event, "Command help for `" +
                             cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +

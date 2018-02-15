@@ -40,7 +40,7 @@ class CoinCommand: Command() {
         event.channel.sendTyping().queue{
             event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
                 MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://dshelmondgames.ml/img/coin/"
-                        + imagesArr[AirUtils.rand.nextInt(2)]))
+                        + imagesArr[AirUtils.RAND.nextInt(2)]))
             })
         }
     }
