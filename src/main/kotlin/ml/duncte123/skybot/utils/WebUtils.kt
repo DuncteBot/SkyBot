@@ -34,7 +34,7 @@ import java.util.*
 class WebUtils {
 
     companion object {
-        const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)"
+        const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)"
         private val client = OkHttpClient()
         private val LOGGER = LoggerFactory.getLogger(WebUtils::class.java)
 

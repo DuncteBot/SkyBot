@@ -37,8 +37,8 @@ public class HelpCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (args.length > 0) {
             String toSearch = StringUtils.join(args, " ").toLowerCase()
-                    .replaceFirst("(" + Pattern.quote(Settings.prefix) + "|" +
-                            Pattern.quote(Settings.otherPrefix) + "|" +
+                    .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
+                            Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                             Pattern.quote( getSettings(event.getGuild()).getCustomPrefix() ) + ")", "");
             
             for (Command cmd : AirUtils.COMMAND_MANAGER.getCommands()) {

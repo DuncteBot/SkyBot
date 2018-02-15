@@ -69,7 +69,7 @@ public class BotinfoCommand extends Command {
 //                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
 //                        "**Bot version:** " + Settings.version, true)
                 .addField("Other info",  "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
-                        "**Bot version:** " + Settings.version + "\n"
+                        "**Bot version:** " + Settings.VERSION + "\n"
                         + "**Operating System:** " + OS + "\n" +
                          "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +

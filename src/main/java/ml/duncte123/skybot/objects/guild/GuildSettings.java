@@ -53,7 +53,7 @@ public class GuildSettings {
     /**
      * This will hold the custom prefix if the guild has set one
      */
-    private String customPrefix = Settings.prefix;
+    private String customPrefix = Settings.PREFIX;
 
     /**
      * This stores the channel that we log the bans in

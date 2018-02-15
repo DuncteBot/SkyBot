@@ -26,7 +26,7 @@ public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String ownerId = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.ownerId);
+    public static final String OWNER_ID = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.ownerId);
     // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
@@ -45,15 +45,15 @@ public class Settings {
     /**
      * This is the base url from the custom api
      */
-    public static final String apiBase = "https://bot.duncte123.me/api";
+    public static final String API_BASE = "https://bot.duncte123.me/api";
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String prefix = AirUtils.CONFIG.getString("discord.prefix", "DB!");
+    public static final String PREFIX = AirUtils.CONFIG.getString("discord.prefix", "DB!");
     /**
      * This is another prefix because I can
      */
-    public static final String otherPrefix = "DB.";
+    public static final String OTHER_PREFIX = "db.";
     /**
      * Whether the bot is unstable or not
      */
@@ -61,15 +61,15 @@ public class Settings {
     /**
      * This is the version of the bot
      */
-    public static final String version = BuildConfig.VERSION;
+    public static final String VERSION = BuildConfig.VERSION;
     /**
      * This is the name that your bot has
      */
-    public static final String defaultName = "DuncteBot";
+    public static final String DEFAULT_NAME = "DuncteBot";
     /**
      * The icon url for the embeds
      */
-    public static final String defaultIcon = "https://bot.duncte123.me/img/favicon.png";
+    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
     /**
      * The colour of the bar that your embed has
      */

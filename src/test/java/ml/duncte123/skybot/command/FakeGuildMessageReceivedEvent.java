@@ -341,7 +341,7 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
             @Nonnull
             @Override
             public String getContentRaw() {
-                return Settings.prefix + new DummyCommand().getName();
+                return Settings.PREFIX + new DummyCommand().getName();
             }
 
             @Nonnull

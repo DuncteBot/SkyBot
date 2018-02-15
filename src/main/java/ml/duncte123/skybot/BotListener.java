@@ -107,7 +107,7 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         //noinspection deprecation
-        if (event.getMessage().getContentRaw().equals(Settings.prefix + "shutdown")
+        if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
                     && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             logger.info("Initialising shutdown!!!");
 
@@ -164,13 +164,13 @@ public class BotListener extends ListenerAdapter {
                 && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
             MessageUtils.sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                     event.getAuthor().getId(),
-                    Settings.prefix)
+                    Settings.PREFIX)
             );
             return;
-        }else if (!rw.toLowerCase().startsWith(Settings.prefix.toLowerCase()) &&
+        }else if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
                 !rw.startsWith(settings.getCustomPrefix())
                 && !rw.startsWith(event.getGuild().getSelfMember().getAsMention())
-                && !rw.toLowerCase().startsWith(Settings.otherPrefix.toLowerCase())) {
+                && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return;
         }
 
@@ -182,19 +182,19 @@ public class BotListener extends ListenerAdapter {
             for (String s : blocked) {
                 if (isCategory(s.toUpperCase())) {
                     if (AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                            .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
-                                    .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))) {
+                            .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                                    .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+",2)[0].toLowerCase()))) {
                         return;
                     }
                 } else {
-                    if (s.toLowerCase().equals(rw.replaceFirst(Settings.otherPrefix, Settings.prefix)
-                            .replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+",2)[0].toLowerCase()))
+                    if (s.toLowerCase().equals(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                            .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+",2)[0].toLowerCase()))
                         return;
                 }
             }
         }
         if (rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
-            final String[] split = rw.replaceFirst(Pattern.quote(Settings.prefix), "").split("\\s+");
+            final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
             final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command
             Command cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");

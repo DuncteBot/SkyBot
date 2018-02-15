@@ -224,7 +224,7 @@ public class GuildSettingsUtils {
                                              .setEnableJoinMessage(ENABLE_JOIN_MSG)
                                              .setEnableSwearFilter(ENABLE_SWEAR_FILTER)
                                              .setCustomJoinMessage(defaultMsg)
-                                             .setCustomPrefix(Settings.prefix);
+                                             .setCustomPrefix(Settings.PREFIX);
         
         String dbName = AirUtils.DB.getName();
         Connection database = AirUtils.DB.getConnManager().getConnection();
@@ -241,7 +241,7 @@ public class GuildSettingsUtils {
                                                                           "customWelcomeMessage, prefix, customLeaveMessage) " +
                         "VALUES('" + g.getId() + "',  ? ,'" + defaultMsg + "', ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
-                smt.setString(2, Settings.prefix);
+                smt.setString(2, Settings.PREFIX);
                 smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
                 smt.execute();
             }

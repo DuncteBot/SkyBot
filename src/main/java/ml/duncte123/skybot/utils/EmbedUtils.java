@@ -83,9 +83,9 @@ public class EmbedUtils {
             String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
             String finalQuote = StringUtils.abbreviate(quote, 100) + " - " + user;
             //Set the quote in the footer
-            eb.setFooter(finalQuote, Settings.defaultIcon);
+            eb.setFooter(finalQuote, Settings.DEFAULT_ICON);
         } else {
-            eb.setFooter(Settings.defaultName, Settings.defaultIcon)
+            eb.setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
                     .setTimestamp(Instant.now());
         }
         return eb;

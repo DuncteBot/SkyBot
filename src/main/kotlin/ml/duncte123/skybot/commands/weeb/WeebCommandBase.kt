@@ -53,7 +53,7 @@ abstract class WeebCommandBase : Command() {
 
         if(args.isEmpty()) {
             MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${Settings.defaultName} $thing ${event.member.effectiveName}", imageUrl))
+                    "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
         } else {
             if(!event.message.mentionedMembers.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(

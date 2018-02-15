@@ -75,7 +75,7 @@ class KpopCommand: Command() {
                     .setDescription("Here is a kpop member from the group $group")
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
-                    .setFooter("Query id: $id", Settings.defaultIcon)
+                    .setFooter("Query id: $id", Settings.DEFAULT_ICON)
             MessageUtils.sendEmbed(event, eb.build())
         } catch (e: Exception) {
             MessageUtils.sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")

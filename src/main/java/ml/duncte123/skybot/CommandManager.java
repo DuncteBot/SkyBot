@@ -135,7 +135,7 @@ public class CommandManager {
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-                "(?i)" + Pattern.quote(Settings.prefix) + "|" + Pattern.quote(Settings.otherPrefix) + "|" +
+                "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                         Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
                 "").split("\\s+");
         final String invoke = split[0].toLowerCase();

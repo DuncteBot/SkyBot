@@ -119,7 +119,7 @@ public class HelpEmbeds {
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
-                .setThumbnail(Settings.defaultIcon)
+                .setThumbnail(Settings.DEFAULT_ICON)
                        .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
                        .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
                        .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)

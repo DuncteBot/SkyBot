@@ -36,8 +36,8 @@ class ChatCommand : Command() {
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession
     private val responses = arrayOf(
-        "My prefix in this guild is *`{PREFIX}`*",
-        "Thanks for asking, my prefix here is *`{PREFIX}`*",
+        "My PREFIX in this guild is *`{PREFIX}`*",
+        "Thanks for asking, my PREFIX here is *`{PREFIX}`*",
         "That should be *`{PREFIX}`*",
         "It was *`{PREFIX}`* if I'm not mistaken"
     )
@@ -64,7 +64,7 @@ class ChatCommand : Command() {
         var message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
-        if(event.message.contentRaw.contains("prefix")) {
+        if(event.message.contentRaw.contains("PREFIX")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return

@@ -89,6 +89,7 @@ class WeebCommands : WeebCommandBase() {
             "lewd",
             "pat",
             "punch",
-            "shrug"
+            "shrug",
+            "lick"
     )
 }

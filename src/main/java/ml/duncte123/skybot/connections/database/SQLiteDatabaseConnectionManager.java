@@ -133,7 +133,7 @@ implements DBConnectionManager {
                                                          "guildName TEXT NOT NULL," +
                                                          "logChannelId TEXT NULL," +
                                                          "welcomeLeaveChannel TEXT NULL," +
-                                                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
+                                                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
                                                          "autoRole VARCHAR(255) NULL," +
                                                          "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
                                                          "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
