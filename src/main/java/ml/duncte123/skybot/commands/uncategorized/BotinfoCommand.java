@@ -41,6 +41,12 @@ public class BotinfoCommand extends Command {
     
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
+        if("support".equals(invoke)) {
+            MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
+            return;
+        }
+
         User u = event.getJDA().getSelfUser();
         
         String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
@@ -60,7 +66,8 @@ public class BotinfoCommand extends Command {
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                         "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
-                        "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n", true)
+                        "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
+                        "\nIf you need any support you can join the support guild [here](https://discord.gg/NKM9Xtk)", true)
 //                .addField("General info", "**Creator:** duncte123#1245\n" +
 //                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
 //                        "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
@@ -93,7 +100,7 @@ public class BotinfoCommand extends Command {
     
     @Override
     public String[] getAliases() {
-        return new String[]{"about", "info"};
+        return new String[]{"about", "info", "support"};
     }
     
 }
