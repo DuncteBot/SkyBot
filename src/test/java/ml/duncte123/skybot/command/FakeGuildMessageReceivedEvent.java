@@ -608,12 +608,6 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
                             @Nonnull
                             @Override
-                            public RestAction<List<User>> getBans() {
-                                return null;
-                            }
-
-                            @Nonnull
-                            @Override
                             public RestAction<List<Ban>> getBanList() {
                                 return null;
                             }
