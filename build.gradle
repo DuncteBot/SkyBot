@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.61.8'
+version '3.61.9'
 
 sourceCompatibility = 1.9
 
@@ -76,7 +76,7 @@ dependencies {
     compile 'ml.duncte123:weebJava:0.1.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.0_338'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_339'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.49'
     compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'fa6f096') {
