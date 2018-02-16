@@ -113,7 +113,8 @@ public class ModerationUtils {
         postFields.put("guildId", guildId);
 
         try {
-            WebUtils.postRequest(Settings.API_BASE + "/ban/json", postFields, WebUtils.AcceptType.URLENCODED);
+            WebUtils.postRequest(
+                    Settings.API_BASE + "/ban/json", postFields, WebUtils.AcceptType.URLENCODED).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -156,7 +157,8 @@ public class ModerationUtils {
         postFields.put("token", jda.getToken());
 
         try {
-            WebUtils.postRequest(Settings.API_BASE + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED);
+            WebUtils.postRequest(
+                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED).close();
         }
         catch (NullPointerException e) {
             e.printStackTrace();
