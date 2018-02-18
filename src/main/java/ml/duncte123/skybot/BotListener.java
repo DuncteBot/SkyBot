@@ -357,11 +357,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         if(LavalinkManager.ins.isConnected(event.getGuild())) {
-            if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
+            //if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                 }
-                channelCheckThing(event.getGuild(), event.getChannelLeft());
+                //channelCheckThing(event.getGuild(), event.getChannelLeft());
 
                 if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
                         !event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
@@ -369,7 +369,7 @@ public class BotListener extends ListenerAdapter {
                     //System.out.println("Self (this might be buggy)");
                 }
                 channelCheckThing(event.getGuild(), event.getChannelJoined());
-            }
+            //}
         }
     }
 
@@ -386,6 +386,9 @@ public class BotListener extends ListenerAdapter {
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
             MusicCommand.cooldowns.put(g.getIdLong(), 12600);
+
+            if(g.getAudioManager().getConnectionListener() != null)
+                g.getAudioManager().setConnectionListener(null);
 
             MessageUtils.sendMsg(manager.latestChannel, "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {

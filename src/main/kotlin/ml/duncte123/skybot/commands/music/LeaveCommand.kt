@@ -47,6 +47,8 @@ class LeaveCommand : MusicCommand() {
             guild.audioManager.sendingHandler = null
             getMusicManager(guild).latestChannel = event.channel
             MusicCommand.addCooldown(guild.idLong)
+            if(guild.audioManager.connectionListener != null)
+                guild.audioManager.connectionListener = null
             MessageUtils.sendMsg(event, "Leaving your channel")
         } else {
             MessageUtils.sendMsg(event, "I'm not connected to any channels.")

@@ -18,35 +18,25 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.afollestad.ason.Ason;
+public class LavalinkNode  {
 
-import java.net.URI;
-import java.net.URISyntaxException;
+    public final String wsurl;
+    public final String pass;
 
-public class LavalinkNode {
-
-    private final String wsUrl;
-    private final String pass;
-
-    public LavalinkNode(Ason ason) {
-        this.wsUrl = ason.getString("wsurl");
-        this.pass = ason.getString("pass");
+    public LavalinkNode(String wsurl, String pass) {
+        this.wsurl = wsurl;
+        this.pass = pass;
     }
 
-    public String getPass() {
+    public LavalinkNode() {
+        this("ws://localhost", "youshallnotpass");
+    }
+
+    /*public String getPass() {
         return pass;
     }
 
-    public String getWsUrl() {
-        return wsUrl;
-    }
-
-    public URI getWsURI() {
-        try {
-            return new URI(wsUrl);
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-            return null;
-        }
-    }
+    public String getWsurl() {
+        return wsurl;
+    }*/
 }

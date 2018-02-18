@@ -19,6 +19,7 @@
 package fredboat.audio.player;
 
 import com.afollestad.ason.Ason;
+import com.afollestad.ason.AsonArray;
 import lavalink.client.io.Lavalink;
 import lavalink.client.io.Link;
 import lavalink.client.player.IPlayer;
@@ -29,8 +30,11 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.sf.json.JSONArray;
 import org.jetbrains.annotations.NotNull;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -61,23 +65,15 @@ public class LavalinkManager {
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
-        defaultNodes.add(new LavalinkNode(new Ason("{\"wsurl\": \"ws://localhost\",\"pass\": \"youshallnotpass\"}")));
-        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes);
+        defaultNodes.add(new LavalinkNode("ws://localhost","youshallnotpass"));
+        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes );
         List<LavalinkNode> nodeList = new ArrayList<>();
-        nodes.forEach(it -> nodeList.add(new LavalinkNode(it)));
+
+        nodes.forEach(it -> nodeList.add( Ason.deserialize(it, LavalinkNode.class) ));
 
         nodeList.forEach(it ->
-                lavalink.addNode(it.getWsURI(), it.getPass())
+                lavalink.addNode(toURI(it.wsurl), it.pass)
         );
-
-        /*try {
-            lavalink.addNode(
-                    new URI(AirUtils.config.getString("lavalink.wsurl", "ws://localhost")),
-                    AirUtils.config.getString("lavalink.pass", "youshalnotpass")
-            );
-        } catch (URISyntaxException e) {
-            e.printStackTrace();
-        }*/
     }
 
     public boolean isEnabled() {
@@ -135,5 +131,14 @@ public class LavalinkManager {
                         token.split("\\.")[0]
                 )
         );
+    }
+
+    private URI toURI(String uri) {
+        try {
+            return new URI(uri);
+        } catch (URISyntaxException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 }
