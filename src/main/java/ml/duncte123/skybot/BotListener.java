@@ -384,12 +384,12 @@ public class BotListener extends ListenerAdapter {
         if(LavalinkManager.ins.isConnected(event.getGuild())) {
             //if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
-                    return;
+                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+                    //return;
                 }
                 //channelCheckThing(event.getGuild(), event.getChannelLeft());
 
-                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
-                        !event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
+                if (!event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                     //System.out.println("Self (this might be buggy)");
                 }
