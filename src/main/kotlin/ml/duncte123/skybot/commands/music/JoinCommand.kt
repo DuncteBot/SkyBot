@@ -63,11 +63,11 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             return
         }
         try {
+            if(guild.audioManager.connectionListener == null)
+                guild.audioManager.connectionListener = this
             getLavalinkManager().openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
             MessageUtils.sendSuccess(event.message)
-            if(guild.audioManager.connectionListener == null)
-                guild.audioManager.connectionListener = this
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
                 MessageUtils.sendMsg(event, "I don't have permission to join `${vc?.name}`")
