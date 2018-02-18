@@ -183,7 +183,7 @@ public class GuildSettingsUtils {
             preparedStatement.setBoolean(1, enableJoinMessage);
             preparedStatement.setBoolean(2, enableSwearFilter);
             preparedStatement.setString(3, replaceUnicode(customJoinMessage));
-            preparedStatement.setString(4, replaceUnicode(newPrefix));
+            preparedStatement.setNString(4, replaceUnicode(newPrefix));
             preparedStatement.setString(5, autoRole);
             preparedStatement.setString(6, chanId);
             preparedStatement.setString(7, welcomeLeaveChannel);
