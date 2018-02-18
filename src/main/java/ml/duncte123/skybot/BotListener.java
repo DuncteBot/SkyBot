@@ -392,9 +392,7 @@ public class BotListener extends ListenerAdapter {
 
             MessageUtils.sendMsg(manager.latestChannel, "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {
-                //g.getLavalinkManager().closeAudioConnection();
                 LavalinkManager.ins.closeConnection(g);
-                //g.getLavalinkManager().setSendingHandler(null);
                 AudioUtils.ins.getMusicManagers().remove(g.getId());
             }
         }

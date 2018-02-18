@@ -40,6 +40,7 @@ public class SettingsCommand extends Command {
 
     public SettingsCommand() {
         this.category = CommandCategory.MOD_ADMIN;
+        this.displayAliasesInHelp = true;
     }
 
     @Override

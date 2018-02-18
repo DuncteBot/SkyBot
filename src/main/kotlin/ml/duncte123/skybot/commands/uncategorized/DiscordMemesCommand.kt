@@ -28,6 +28,7 @@ class DiscordMemesCommand : WeebCommandBase() {
 
     init {
         this.category = CommandCategory.MAIN
+        this.displayAliasesInHelp = false
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {

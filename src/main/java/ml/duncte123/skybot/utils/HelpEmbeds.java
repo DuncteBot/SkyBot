@@ -76,35 +76,36 @@ public class HelpEmbeds {
                     weebCommands.add(c.getName());
                     break;
             }
-            
-            for (String alias : c.getAliases()) {
-                switch (c.getCategory()) {
-                    case MAIN:
-                        mainCommands.add(alias);
-                        break;
-                    case FUN:
-                        funCommands.add(alias);
-                        break;
-                    case ANIMALS:
-                        animalCommands.add(alias);
-                        break;
-                    case MUSIC:
-                        musicCommands.add(alias);
-                        break;
-                    case MOD_ADMIN:
-                        modAdminCommands.add(alias);
-                        break;
-                    case NERD_STUFF:
-                        nerdCommands.add(alias);
-                        break;
-                    case PATRON:
-                        patronCommands.add(alias);
-                        break;
-                    case WEEB:
-                        weebCommands.add(alias);
-                        break;
+
+            if(c.isDisplayAliasesInHelp())
+                for (String alias : c.getAliases()) {
+                    switch (c.getCategory()) {
+                        case MAIN:
+                            mainCommands.add(alias);
+                            break;
+                        case FUN:
+                            funCommands.add(alias);
+                            break;
+                        case ANIMALS:
+                            animalCommands.add(alias);
+                            break;
+                        case MUSIC:
+                            musicCommands.add(alias);
+                            break;
+                        case MOD_ADMIN:
+                            modAdminCommands.add(alias);
+                            break;
+                        case NERD_STUFF:
+                            nerdCommands.add(alias);
+                            break;
+                        case PATRON:
+                            patronCommands.add(alias);
+                            break;
+                        case WEEB:
+                            weebCommands.add(alias);
+                            break;
+                    }
                 }
-            }
         }
     }
     /**

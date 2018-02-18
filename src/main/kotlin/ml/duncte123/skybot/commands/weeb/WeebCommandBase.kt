@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils
 abstract class WeebCommandBase : Command() {
     init {
         this.category = CommandCategory.WEEB
+        this.displayAliasesInHelp = true
     }
 
     fun getDefaultWeebEmbed(): EmbedBuilder {

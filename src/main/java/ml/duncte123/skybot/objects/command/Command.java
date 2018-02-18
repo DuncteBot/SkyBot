@@ -89,6 +89,19 @@ public abstract class Command {
     protected CommandCategory category = CommandCategory.MAIN;
 
     /**
+     * This tells the bot to display the aliases of the command in the help command
+     */
+    protected boolean displayAliasesInHelp = false;
+
+    /**
+     * Returns if the bot should take up the aliases in the help command
+     * @return if the bot should take up the aliases in the help command
+     */
+    public boolean isDisplayAliasesInHelp() {
+        return displayAliasesInHelp;
+    }
+
+    /**
      * This checks if the user is a patrons if ours
      * It checks if the user has the patreon role on our support guild
      * @param u The user to check

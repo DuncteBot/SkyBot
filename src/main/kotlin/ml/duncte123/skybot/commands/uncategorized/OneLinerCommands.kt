@@ -35,6 +35,10 @@ class OneLinerCommands : Command() {
         @JvmStatic
         val pingHistory: SizedList<Long> = SizedList(25)
     }
+
+    init {
+        this.displayAliasesInHelp = true
+    }
     
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
