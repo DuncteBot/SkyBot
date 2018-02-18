@@ -75,8 +75,6 @@ public class HelpEmbeds {
                 case WEEB:
                     weebCommands.add(c.getName());
                     break;
-                default:
-                    break;
             }
             
             for (String alias : c.getAliases()) {
@@ -104,8 +102,6 @@ public class HelpEmbeds {
                         break;
                     case WEEB:
                         weebCommands.add(alias);
-                        break;
-                    default:
                         break;
                 }
             }
