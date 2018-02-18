@@ -39,7 +39,7 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
             "weeb_image" -> {
                 if(args.isEmpty()) {
-                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}image categories` for all categories")
+                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb_image categories` for all categories")
                     return
                 }
                 if(args[0] == "categories") {

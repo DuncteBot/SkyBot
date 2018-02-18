@@ -97,9 +97,9 @@ class UserinfoCommand : Command() {
 
         MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
                 .setColor(m.color)
-                .setDescription("User info for " + m.asMention)
+                .setDescription("User info for " + m.asMention + "\n\n")
                 .setThumbnail(u.effectiveAvatarUrl)
-                .setDescription("""**Username + Discriminator:** ${String.format("%#s", u)}
+                .appendDescription("""**Username + Discriminator:** ${String.format("%#s", u)}
                     |**User Id:** ${u.id}
                     |**Status:** ${AirUtils.gameToString(m.game)}
                     |**Display Name:** ${m.effectiveName}

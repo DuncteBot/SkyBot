@@ -61,9 +61,11 @@ public class SettingsCommand extends Command {
                 TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), event.getGuild());
                 TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), event.getGuild());
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                        "**Show join/leave messages:** " + (settings.isEnableJoinMessage() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
-                        "**Swearword filter:** " + (settings.isEnableSwearFilter() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
-                        "**Announce next track:** " + (settings.isAnnounceTracks() ? "<:check:314349398811475968>" : "<:xmark:314349398824058880>") + "\n" +
+                        "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
+                        "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
+                        "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
+                        "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
+                        "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
                         "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("")
@@ -232,6 +234,20 @@ public class SettingsCommand extends Command {
                 sendMsg(event, "Announcing the next track has been **"
                         + ( shouldAnnounceTracks ? "enabled" : "disabled" ) + "**" );
                 break;
+
+            case "togglefilterinvites":
+                boolean shouldFilterInvites = !settings.isFilterInvites();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setFilterInvites(shouldFilterInvites) );
+                sendMsg(event, "Filtering discord invites has been **"
+                        + ( shouldFilterInvites ? "enabled" : "disabled" ) + "**" );
+                break;
+
+            case "toggleautodehoist":
+                boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoDeHoist(shouldAutoDeHoist) );
+                sendMsg(event, "Filtering discord invites has been **"
+                        + ( shouldAutoDeHoist ? "enabled" : "disabled" ) + "**" );
+                break;
         }
     }
 
@@ -271,6 +287,12 @@ public class SettingsCommand extends Command {
             case "toggleannouncetracks":
                 return "Toggles if the player should announce the next playing track\n" +
                         "Usage: `"+PREFIX+invoke+"`";
+            case "togglefilterinvites":
+                return "Toggles if the bot should delete messages that contain invites\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
+            case "toggleautodehoist":
+                return "Toggles if if the bot should auto de-hoist users\n" +
+                        "Usage: `"+PREFIX+invoke+"`";
 
             default:
                 return "invalid invoke";
@@ -290,7 +312,9 @@ public class SettingsCommand extends Command {
                 "`"+PREFIX+"setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
                 "`"+PREFIX+"autorole <role>` => Gives members a role when they join\n" +
                 "`"+PREFIX+"setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo\n" +
-                "`"+PREFIX+"toggleannouncetracks` => Toggles if the player should announce the next playing track"
+                "`"+PREFIX+"toggleannouncetracks` => Toggles if the player should announce the next playing track\n" +
+                "`"+PREFIX+"togglefilterinvites` => Toggles if the bot should delete messages that contain invites\n" +
+                "`"+PREFIX+"toggleautodehoist` => Toggles if if the bot should auto de-hoist users\n"
                 ;
     }
 
@@ -317,7 +341,14 @@ public class SettingsCommand extends Command {
                 "setleavemessage",
                 "autorole",
                 "setdescription",
-                "toggleannouncetracks"
+                "toggleannouncetracks",
+                "togglefilterinvites",
+                "toggleautodehoist"
         };
+    }
+
+
+    private String boolToEmoji(boolean flag) {
+        return flag ? "<:check:414777605141561344>" : "<:xmark:414777605250875402>";
     }
 }

@@ -29,6 +29,7 @@ import java.sql.SQLException;
 /**
  * Represents a server database
  */
+@SuppressWarnings("SqlDialectInspection")
 class MySQLConnectionManager
 implements DBConnectionManager {
 
@@ -151,6 +152,8 @@ implements DBConnectionManager {
                     "  `autoRole` varchar(255) DEFAULT NULL,\n" +
                     "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0',\n" +
                     "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `autoDeHoist` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `filterInvites` tinyint(1) NOT NULL DEFAULT '0',\n" +
                     "  `announceNextTrack` tinyint(1) NOT NULL DEFAULT '1',\n" +
                     "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
                     "  `customLeaveMessage` text DEFAULT NULL,\n" +

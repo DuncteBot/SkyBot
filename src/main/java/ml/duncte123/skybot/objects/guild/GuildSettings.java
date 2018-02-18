@@ -25,65 +25,19 @@ import ml.duncte123.skybot.Settings;
  */
 public class GuildSettings {
 
-    /**
-     * the id of the guild that the settings are for
-     */
     private final String guildId;
-
-    /**
-     * if we should enable the join messages
-     */
     private boolean enableJoinMessage = false;
-
-    /**
-     * if we should enable the swear filter
-     */
     private boolean enableSwearFilter = false;
-
-    /**
-     * This will hold the custom join message
-     */
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
-
-    /**
-     * This will hold the custom leave message
-     */
     private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
-
-    /**
-     * This will hold the custom prefix if the guild has set one
-     */
     private String customPrefix = Settings.PREFIX;
-
-    /**
-     * This stores the channel that we log the bans in
-     */
     private String logChannel = null;
-
-    /**
-     * This stores the channel in where the welcome or leave messages should display
-     */
     private String welcomeLeaveChannel = null;
-
-    /**
-     * This holds the id of the role that should be given at startup
-     */
     private String autoroleRole = null;
-
-    /**
-     * This holds the value of the custom server description
-     */
     private String serverDesc = null;
-
-    /**
-     * If we should announce the next track
-     */
     private boolean announceTracks = false;
-
-    /**
-     * If we should auto de-hoist people (soon™)
-     */
     private boolean autoDeHoist = false;
+    private boolean filterInvites = false;
 
     /**
      * This will init everything
@@ -307,6 +261,23 @@ public class GuildSettings {
      */
     public boolean isAutoDeHoist() {
         return autoDeHoist;
+    }
+
+    /**
+     * Returns if we should filter discord invites
+     * @return if we should filter discord invites
+     */
+    public boolean isFilterInvites() {
+        return filterInvites;
+    }
+
+    /**
+     * @param filterInvites Sets if we should filter out invites in messages
+     * @return
+     */
+    public GuildSettings setFilterInvites(boolean filterInvites) {
+        this.filterInvites = filterInvites;
+        return this;
     }
 
     /**

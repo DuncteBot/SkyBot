@@ -90,12 +90,12 @@ public class GuildUtils {
                 String x = returnValue.getString("message");
                 if (x.equals("ignored exception"))
                     return;
-                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
+                logger.error(String.format(exceptionMessage, x), ex);
             }
             String x = returnValue.getString("message");
             if (x.equals("ignored exception"))
                 return;
-            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
+            logger.error(String.format(exceptionMessage, returnValue.getString("message")));
         }
     }
 
