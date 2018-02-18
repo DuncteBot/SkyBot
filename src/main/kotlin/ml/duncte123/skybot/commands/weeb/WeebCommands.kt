@@ -20,7 +20,10 @@ package ml.duncte123.skybot.commands.weeb
 
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
+import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.apache.commons.lang3.StringUtils
 
 class WeebCommands : WeebCommandBase() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -34,6 +37,21 @@ class WeebCommands : WeebCommandBase() {
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
             "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
+            "weeb_image" -> {
+                if(args.isEmpty()) {
+                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}image categories` for all categories")
+                    return
+                }
+                if(args[0] == "categories") {
+                    sendMsg(event, MessageBuilder()
+                            .append("Here is a list of all the valid categories")
+                            .appendCodeBlock(StringUtils.join(AirUtils.WEEB_API.types, ", "), "LDIF")
+                            .build())
+                    return
+                }
+                val img =  AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, " "))
+                sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
+            }
         }
     }
 
@@ -45,6 +63,7 @@ class WeebCommands : WeebCommandBase() {
         |`${PREFIX}shrug` => ¯\_(ツ)_/¯
         |`${PREFIX}lick` => Lick a user
         |`${PREFIX}owo` => OwO what's this
+        |`${PREFIX}weeb_image <category>` => Gives you a random image from weeb.sh with that type
     """.trimMargin()
 
     override fun help(invoke: String?): String {
@@ -84,6 +103,11 @@ class WeebCommands : WeebCommandBase() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
              }
+             "weeb_image" -> {
+                 """Gives you a random image from weeb.sh with that type
+                    |Usage: `$PREFIX$invoke <category>`
+                """.trimMargin()
+             }
             else -> {
              "wrong invoke"
             }
@@ -98,6 +122,7 @@ class WeebCommands : WeebCommandBase() {
             "punch",
             "shrug",
             "lick",
-            "owo"
+            "owo",
+            "weeb_image"
     )
 }
