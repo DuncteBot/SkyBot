@@ -29,6 +29,7 @@ import java.sql.SQLException;
 /**
  * Represents a server database
  */
+@SuppressWarnings("SqlDialectInspection")
 class MySQLConnectionManager
 implements DBConnectionManager {
 
@@ -63,6 +64,7 @@ implements DBConnectionManager {
                     user, pass);
             return connection;
         } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
             return null;
         }
     }
@@ -127,13 +129,13 @@ implements DBConnectionManager {
                     "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
                     "  `guildId` varchar(266) NOT NULL,\n" +
                     "  PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (\n" +
                     "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `name` varchar(200) NOT NULL COMMENT 'Username',\n" +
                     "  `quote` text NOT NULL COMMENT 'Quote',\n" +
                     "  PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags` (\n" +
                     "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `author` varchar(255) NOT NULL,\n" +
@@ -141,7 +143,7 @@ implements DBConnectionManager {
                     "  `tagName` varchar(10) NOT NULL,\n" +
                     "  `tagText` text NOT NULL,\n" +
                     "  PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4;");
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (\n" +
                     "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `guildId` text NOT NULL,\n" +
@@ -150,6 +152,8 @@ implements DBConnectionManager {
                     "  `autoRole` varchar(255) DEFAULT NULL,\n" +
                     "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0',\n" +
                     "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `autoDeHoist` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `filterInvites` tinyint(1) NOT NULL DEFAULT '0',\n" +
                     "  `announceNextTrack` tinyint(1) NOT NULL DEFAULT '1',\n" +
                     "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
                     "  `customLeaveMessage` text DEFAULT NULL,\n" +
@@ -157,7 +161,7 @@ implements DBConnectionManager {
                     "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
                     "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +
-                    ") ENGINE=MyISAM DEFAULT CHARSET=latin1;");
+                    ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
             while (res.next()) {
                 if(res.getInt("items") == 0) {

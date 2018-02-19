@@ -49,6 +49,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
@@ -81,6 +82,8 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(?:https?://)(?:www\\.)?discord(?:app)?\\.(?:com|gg)+/(?:invite/)*([A-Za-z_0-9]+)");
 
 
     /**
@@ -141,24 +144,46 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
+
+        String rw = event.getMessage().getContentRaw();
+
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
-                    && settings.isEnableSwearFilter()
                     && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+
+
+            if(settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(messageToCheck.getContentRaw())) {
+                if (filter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                             .queue(null, CUSTOM_QUEUE_ERROR);
 
                     MessageUtils.sendMsg(event,
                             String.format("Hello there, %s please do not use cursive language within this Discord.",
-                                event.getAuthor().getAsMention()
+                                    event.getAuthor().getAsMention()
                             ),
-                            m -> m.delete().queueAfter(10, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
+                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return;
                 }
+            }
+
+            if(settings.isFilterInvites()) {
+                Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
+                if(matcher.find()) {
+                    //Get the invite Id from the message
+                    String inviteID = matcher.group(matcher.groupCount());
+
+                    Invite.resolve(event.getJDA(), inviteID).queue(invite -> {
+                        //Check if the invite is for this guild, if it is not delete the message
+                        if(!invite.getGuild().getId().equals(event.getGuild().getId())) {
+                            event.getMessage().delete().reason("Contained Invite").queue(it ->
+                                    MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
+                                            ", please don't post invite links here", m -> m.delete().queueAfter(3, TimeUnit.SECONDS))
+                            );
+                        }
+                    });
+                }
+            }
         }
-        
-        String rw = event.getMessage().getContentRaw();
         
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
                 && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
@@ -359,12 +384,12 @@ public class BotListener extends ListenerAdapter {
         if(LavalinkManager.ins.isConnected(event.getGuild())) {
             //if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
                 if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
-                    return;
+                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+                    //return;
                 }
                 //channelCheckThing(event.getGuild(), event.getChannelLeft());
 
-                if (event.getGuild().getAudioManager().getConnectedChannel() != null &&
-                        !event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
+                if (!event.getChannelJoined().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
                     return;
                     //System.out.println("Self (this might be buggy)");
                 }
