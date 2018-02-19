@@ -47,7 +47,7 @@ import java.util.Set;
 
 public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
-    public FakeGuildMessageReceivedEvent() {
+    public FakeGuildMessageReceivedEvent(DummyCommand cmd) {
         super(new JDA() {
             @Nonnull
             @Override
@@ -335,19 +335,19 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
             @Nonnull
             @Override
             public String getContentDisplay() {
-                return null;
+                return Settings.PREFIX + cmd.getName() + " bla bla bla";
             }
 
             @Nonnull
             @Override
             public String getContentRaw() {
-                return Settings.PREFIX + new DummyCommand().getName();
+                return Settings.PREFIX + cmd.getName() + " bla bla bla";
             }
 
             @Nonnull
             @Override
             public String getContentStripped() {
-                return null;
+                return Settings.PREFIX + cmd.getName() + " bla bla bla";
             }
 
             @Nonnull

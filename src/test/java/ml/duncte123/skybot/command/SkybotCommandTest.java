@@ -29,11 +29,7 @@ import static org.junit.Assert.*;
 
 public class SkybotCommandTest {
 
-    private static final CommandManager manager;
-
-    static {
-        manager = new CommandManager();
-    }
+    private final CommandManager manager = new CommandManager();
 
     @Test
     public void testCommandGetterForName() {
@@ -73,7 +69,7 @@ public class SkybotCommandTest {
         DummyCommand cmd = new DummyCommand();
         manager.addCommand(cmd);
         //We are not using the args so they can be null
-        manager.runCommand(new FakeGuildMessageReceivedEvent());
+        manager.runCommand(new FakeGuildMessageReceivedEvent(cmd));
 
         assertTrue("Command did not run", cmd.hasRun);
     }

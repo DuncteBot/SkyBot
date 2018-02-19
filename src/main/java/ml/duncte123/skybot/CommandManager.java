@@ -46,16 +46,13 @@ public class CommandManager {
      */
     public CommandManager() {
         //Get reflections for this project
-        Reflections reflections = new Reflections("ml.duncte123.skybot");
-        //Only check for things that are commands
-        Set<Class<? extends Command>> cmds = reflections.getSubTypesOf(Command.class);
-        //Loop over them
-        for (Class<? extends Command> cmd : cmds) {
+        Reflections reflections = new Reflections("ml.duncte123.skybot.commands");
+        //Loop over them commands
+        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
             try {
                 //Add the command
-                this.addCommand(cmd.newInstance());
-            }
-            catch (Exception ignored) {
+                this.addCommand(cmd.getDeclaredConstructor().newInstance());
+            } catch (Exception ignored) {
             }
         }
     }
