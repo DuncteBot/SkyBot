@@ -23,7 +23,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.entities.RadioStream
+import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -46,33 +46,33 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
-        radioStreams += RadioStream("iloveradio","http://www.iloveradio.de/iloveradio.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilove2dance","http://www.iloveradio.de/ilove2dance.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100charts","http://www.iloveradio.de/ilovetop100charts.m3u","http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovethebattle","http://www.iloveradio.de/ilovethebattle.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovedreist","http://www.iloveradio.de/ilovedreist.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovehiphop","http://www.iloveradio.de/ilovehiphopturnup.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovemashup","http://www.iloveradio.de/ilovemashup.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovebass","http://www.iloveradio.de/ilovebass.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovehistory","http://www.iloveradio.de/ilovehitshistory.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovepopstars","http://www.iloveradio.de/ilovepopstars.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveandchill","http://www.iloveradio.de/iloveandchill.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveberlin","http://www.iloveradio.de/iloveaboutberlin.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovexmas","http://www.iloveradio.de/ilovexmas.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100pop","http://www.iloveradio.de/ilovetop100pop.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100hiphop","http://www.iloveradio.de/ilovetop100hiphop.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100dance&dj","http://www.iloveradio.de/ilovetop100dancedjs.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveurban","http://www.iloveradio.de/ilovebigfmurbanclubbeats.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovegroovenight","http://www.iloveradio.de/ilovebigfmgroovenight.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovenitroxedm","http://www.iloveradio.de/ilovebigfmnitroxedm.m3u","http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovenitroxdeep","http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u","http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveradio", "http://www.iloveradio.de/iloveradio.m3u", "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilove2dance", "http://www.iloveradio.de/ilove2dance.m3u", "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovetop100charts", "http://www.iloveradio.de/ilovetop100charts.m3u", "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovethebattle", "http://www.iloveradio.de/ilovethebattle.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovedreist", "http://www.iloveradio.de/ilovedreist.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovehiphop", "http://www.iloveradio.de/ilovehiphopturnup.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovemashup", "http://www.iloveradio.de/ilovemashup.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovebass", "http://www.iloveradio.de/ilovebass.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovehistory", "http://www.iloveradio.de/ilovehitshistory.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovepopstars", "http://www.iloveradio.de/ilovepopstars.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveandchill", "http://www.iloveradio.de/iloveandchill.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveberlin", "http://www.iloveradio.de/iloveaboutberlin.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovexmas", "http://www.iloveradio.de/ilovexmas.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovetop100pop", "http://www.iloveradio.de/ilovetop100pop.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovetop100hiphop", "http://www.iloveradio.de/ilovetop100hiphop.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovetop100dance&dj", "http://www.iloveradio.de/ilovetop100dancedjs.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveurban", "http://www.iloveradio.de/ilovebigfmurbanclubbeats.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovegroovenight", "http://www.iloveradio.de/ilovebigfmgroovenight.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovenitroxedm", "http://www.iloveradio.de/ilovebigfmnitroxedm.m3u", "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("ilovenitroxdeep", "http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u", "http://www.iloveradio.de/streams/", false)
 
         //nl_NL radio stations
-        radioStreams += RadioStream("slam","http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC","https://live.slam.nl/slam-live/")
-        radioStreams += RadioStream("radio538","http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3","https://www.538.nl/")
-        radioStreams += RadioStream("3fm","http://icecast.omroep.nl/3fm-sb-mp3","https://www.npo3fm.nl/")
-        radioStreams += RadioStream("skyradio","http://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC","http://www.skyradio.nl/", false)
-        radioStreams += RadioStream("qmusic","http://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3","http://qmusic.nl/", false)
+        radioStreams += RadioStream("slam", "http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/")
+        radioStreams += RadioStream("radio538", "http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3", "https://www.538.nl/")
+        radioStreams += RadioStream("3fm", "http://icecast.omroep.nl/3fm-sb-mp3", "https://www.npo3fm.nl/")
+        radioStreams += RadioStream("skyradio", "http://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC", "http://www.skyradio.nl/", false)
+        radioStreams += RadioStream("qmusic", "http://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3", "http://qmusic.nl/", false)
 
         //International radio stations
         //TODO: add international radio stations

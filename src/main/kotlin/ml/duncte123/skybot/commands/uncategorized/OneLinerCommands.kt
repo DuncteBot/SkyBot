@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import ml.duncte123.skybot.entities.SizedList
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.*
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed

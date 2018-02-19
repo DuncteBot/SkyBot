@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -77,7 +78,11 @@ public class AnnounceCommand extends Command {
             MessageUtils.sendEmbed(targetChannel, embed.build());
             MessageUtils.sendSuccess(event.getMessage());
             
-        } catch (Exception e) {
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            MessageUtils.sendErrorWithMessage(event.getMessage(), event, "Please! You either forgot the text or to mention the channel!");
+            ComparatingUtils.execCheck(ex);
+        }
+        catch (Exception e) {
             MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }

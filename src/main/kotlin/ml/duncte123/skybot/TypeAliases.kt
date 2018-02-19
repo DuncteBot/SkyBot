@@ -21,7 +21,7 @@
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.entities.SizedList
+import ml.duncte123.skybot.utils.SizedList
 @SinceSkybot("3.51.10") @Author(nickname = "Sanduhr32", author = "Maurice R S") typealias Anything = Any
 @SinceSkybot("3.51.10") @Author(nickname = "Sanduhr32", author = "Maurice R S") typealias FixedList<E> = SizedList<E>
 @SinceSkybot("3.53.4") @Author(nickname = "Sanduhr32", author = "Maurice R S") typealias TFException = TableFlipException

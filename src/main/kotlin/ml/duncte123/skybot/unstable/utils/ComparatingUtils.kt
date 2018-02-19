@@ -16,8 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:JvmName("ComparatingUtilsKt")
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:JvmName("ComparatingUtilsKt")
 
 package ml.duncte123.skybot.unstable.utils
 
@@ -86,12 +86,12 @@ class ComparatingUtils {
 
         @JvmStatic
         fun provideExactData(channel: MessageChannel) {
-            val headers = listOf("Exception Class", "Types", "Count", "Message", "Trace length")
+            val headers = listOf("Exception Class", "Count", "Message", "Trace length")
             val table: ArrayList<List<String>> = ArrayList()
             exceptionMap.forEach { cls, lowerMap ->
                 var row = ArrayList<String>()
                 lowerMap.forEach { type, trace ->
-                    row.add(cls.name); row.add(type.ex::class.java.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
+                    row.add(cls.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
                     table.add(row)
                     row = ArrayList()
                 }
@@ -167,8 +167,6 @@ class ComparatingUtils {
         }
     }
 
-
-
     class ExceptionType(val ex: Throwable, val message: String, val stackTrace: Array<out StackTraceElement>) {
         constructor(ex: Throwable) : this(ex, ex.localizedMessage, ex.stackTrace)
 
@@ -184,7 +182,7 @@ infix fun Throwable.compare(other: Throwable): Boolean {
     val classesMatch = this::class.java == other::class.java
     val messageMatch = this.localizedMessage == other.localizedMessage
     val stacktraceMatch = other.stackTrace.map { this.stackTrace.contains(it) }.filter { false }.count() < 4
-    return classesMatch && messageMatch || messageMatch && stacktraceMatch
+    return (classesMatch && stacktraceMatch && messageMatch) || (classesMatch && stacktraceMatch || messageMatch && stacktraceMatch)
 }
 
 infix fun Throwable.printStackTrace(input: String): String {

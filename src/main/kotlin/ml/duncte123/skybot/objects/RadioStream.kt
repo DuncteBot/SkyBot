@@ -18,7 +18,7 @@
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
-package ml.duncte123.skybot.entities
+package ml.duncte123.skybot.objects
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
