@@ -72,6 +72,11 @@ class UserinfoCommand : Command() {
 
         u = m.user
 
+        if(invoke == "avatar") {
+            MessageUtils.sendMsg(event, "**${String.format("%#s",u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+            return
+        }
+
         val joinOrder = StringBuilder()
         val joins = event.guild.memberCache.stream().sorted(
                 Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
@@ -108,6 +113,8 @@ class UserinfoCommand : Command() {
                     |**Join Order:** $joinOrder
                     |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                     |**Bot Account?** ${if (u.isBot)  "Yes" else "No"}
+                    |
+                    |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                 """.trimMargin()).build())
     }
 
@@ -115,6 +122,6 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i")
+    override fun getAliases() = arrayOf("user", "i", "avatar")
 
 }
