@@ -64,7 +64,7 @@ class ChatCommand : Command() {
         var message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
         event.channel.sendTyping().queue()
 
-        if(event.message.contentRaw.contains("PREFIX")) {
+        if(event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
