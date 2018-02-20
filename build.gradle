@@ -73,7 +73,7 @@ buildConfig {
 
 dependencies {
     //Weeb api
-    compile 'ml.duncte123:weebJava:0.1.0'
+    compile 'me.duncte123:weebJava:0.1.1'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_339'
