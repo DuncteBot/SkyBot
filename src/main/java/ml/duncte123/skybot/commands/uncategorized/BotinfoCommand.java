@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
+import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -68,13 +69,6 @@ public class BotinfoCommand extends Command {
                         "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                         "\nIf you need any support you can join the support guild [here](https://discord.gg/NKM9Xtk)", true)
-//                .addField("General info", "**Creator:** duncte123#1245\n" +
-//                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
-//                        "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
-//                        "**Support guild:** [discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-//                        "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
-//                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
-//                        "**Bot version:** " + Settings.version, true)
                 .addField("Other info",  "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.VERSION + "\n"
                         + "**Operating System:** " + OS + "\n" +
@@ -82,8 +76,11 @@ public class BotinfoCommand extends Command {
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
                 .addField("Lang & lib info", "**Coded in:** Java and Kotlin\n\n" +
-                                                     "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version:** " + PlayerLibrary.VERSION, false)
-                .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
+                                                     "**JDA version:** " + JDAInfo.VERSION + "" +
+                        "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
+                        "**Weeb.java version:** " + WeebApi.VERSION, false)
+                .addField("Donate", "If you want to help me out and support the bot please consider to " +
+                        "[donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
         MessageUtils.sendEmbed(event, eb);
     }
