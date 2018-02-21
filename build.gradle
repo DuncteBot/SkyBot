@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version '3.61.12'
+version "3.61.12_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -155,4 +155,13 @@ kotlin {
     experimental {
         coroutines "enable"
     }
+}
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }
