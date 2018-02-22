@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
-import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -107,7 +106,7 @@ class EvalCommand : Command() {
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\n", postfix = "\n") + "\n" +
-                "import static ml.duncte123.skybot.objects.EvalFunctions.*"
+                "import static ml.duncte123.skybot.objects.EvalFunctions.*\n"
 
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
@@ -121,7 +120,7 @@ class EvalCommand : Command() {
         if (isRanByBotOwner) {
             timeout = 60000L
 
-            engine.put("COMMAND_MANAGER", AirUtils.COMMAND_MANAGER)
+            engine.put("commandManger", AirUtils.COMMAND_MANAGER)
 
             engine.put("message", event.message)
             engine.put("channel", event.message.textChannel)
