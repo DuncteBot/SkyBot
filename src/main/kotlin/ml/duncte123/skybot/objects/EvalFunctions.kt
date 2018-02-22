@@ -20,12 +20,16 @@ package ml.duncte123.skybot.objects
 
 class EvalFunctions {
 
-    fun isEven(number: Int): Boolean {
-        return number % 2 == 0
-    }
+    companion object {
+        @JvmStatic
+        fun isEven(number: Int): Boolean {
+            return number % 2 == 0
+        }
 
-    fun quick_mafs(x: Int): Int {
-        val the_thing = x + 2 - 1
-        return the_thing
+        @JvmStatic
+        fun quick_mafs(x: Int): Int {
+            val the_thing = x + 2 - 1
+            return the_thing
+        }
     }
 }

@@ -106,7 +106,8 @@ class EvalCommand : Command() {
         if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
-                classImports.joinToString(separator = "\n", postfix = "\n")
+                classImports.joinToString(separator = "\n", postfix = "\n") + "\n" +
+                "import static ml.duncte123.skybot.objects.EvalFunctions.*"
 
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
@@ -133,8 +134,6 @@ class EvalCommand : Command() {
 
             engine.put("skraa", script)
             engine.put("args", args)
-
-            engine.put("funs", EvalFunctions())
 
             @SinceSkybot("3.58.0")
             async(start = CoroutineStart.ATOMIC) {
