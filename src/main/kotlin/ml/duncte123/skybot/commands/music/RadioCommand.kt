@@ -113,7 +113,7 @@ class RadioCommand : MusicCommand() {
                     else -> {
                         val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
                         if (radio == null) {
-                            sendErrorWithMessage(event.message, event, "The stream is invalid!")
+                            sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand
                         }
                         audioUtils.loadAndPlay(mng, event.channel, radio.url, false)
@@ -125,7 +125,7 @@ class RadioCommand : MusicCommand() {
                 }
             }
             else -> {
-                sendErrorWithMessage(event.message, event, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
+                sendErrorWithMessage(event.message, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
             }
         }
     }

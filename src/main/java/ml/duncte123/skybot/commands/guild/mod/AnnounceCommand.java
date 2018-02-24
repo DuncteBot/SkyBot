@@ -79,7 +79,7 @@ public class AnnounceCommand extends Command {
             MessageUtils.sendSuccess(event.getMessage());
             
         } catch (ArrayIndexOutOfBoundsException ex) {
-            MessageUtils.sendErrorWithMessage(event.getMessage(), event, "Please! You either forgot the text or to mention the channel!");
+            MessageUtils.sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
             ComparatingUtils.execCheck(ex);
         }
         catch (Exception e) {

@@ -213,18 +213,18 @@ class EvalCommand : Command() {
                 }
                 is ExecutionException, is ScriptException -> {
                     out as Exception
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.cause.toString())
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     out as Exception
                     coroutine.coroutineContext.cancel()
                     if (coroutine.isActive)
                         coroutine.coroutineContext.cancel()
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.toString())
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is VRCubeException -> {
                     out as RuntimeException
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.toString())
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is Throwable -> {
                     if (Settings.useJSON)
@@ -246,7 +246,7 @@ class EvalCommand : Command() {
                                 .forEach { it -> MessageUtils.sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
-                            MessageUtils.sendErrorWithMessage(event.message, event, "**ERROR:** Mentioning people!")
+                            MessageUtils.sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
                         } else {
                             MessageUtils.sendMsg(event, "**" + event.author.name
                                     + ":** " + out.toString()

@@ -42,7 +42,7 @@ class WarnCommand: Command() {
         }
         val target = event.message.mentionedMembers[0]
         if (target.user == event.jda.selfUser) {
-            MessageUtils.sendErrorWithMessage(event.message, event, "You can not warn me")
+            MessageUtils.sendErrorWithMessage(event.message, "You can not warn me")
             return
         }
         if(!event.member.canInteract(target)) {

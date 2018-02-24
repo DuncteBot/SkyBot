@@ -60,31 +60,14 @@ public class MessageUtils {
             }
         }
         message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
-    }
-
-    /**
+    } /**
      * This method uses the sendError and sendMsg methods
-     *
-     * @param message the {@link Message} for the sendError method
-     * @param textChannel the {@link TextChannel} for the sendMsg method
+     *  @param message the {@link Message} for the sendError method
      * @param text the {@link String} for the sendMsg method
      */
-    public static void sendErrorWithMessage(Message message, TextChannel textChannel, String text) {
+    public static void sendErrorWithMessage(Message message, String text) {
         sendError(message);
-        sendMsg(textChannel, text);
-    }
-
-
-    /**
-     * This method uses the sendError and sendMsg methods
-     *
-     * @param message the {@link Message} for the sendError method
-     * @param event the {@link GuildMessageReceivedEvent} for the sendMsg method
-     * @param text the {@link String} for the sendMsg method
-     */
-    public static void sendErrorWithMessage(Message message, GuildMessageReceivedEvent event, String text) {
-        sendError(message);
-        sendMsg(event, text);
+        sendMsg(message.getTextChannel(), text);
     }
 
     /**
@@ -133,24 +116,11 @@ public class MessageUtils {
      * This method uses the sendSuccess and sendMsg methods
      *
      * @param message the {@link Message} for the sendSuccess method
-     * @param channel the {@link TextChannel} for the sendMsg method
      * @param text the {@link String} for the sendMsg method
      */
-    public static void sendSuccessWithMessage(Message message, TextChannel channel, String text) {
+    public static void sendSuccessWithMessage(Message message, String text) {
         sendSuccess(message);
-        sendMsg(channel, text);
-    }
-
-    /**
-     * This method uses the sendSuccess and sendMsg methods
-     *
-     * @param message the {@link Message} for the sendSuccess method
-     * @param event the {@link GuildMessageReceivedEvent} for the sendMsg method
-     * @param text the {@link String} for the sendMsg method
-     */
-    public static void sendSuccessWithMessage(Message message, GuildMessageReceivedEvent event, String text) {
-        sendSuccess(message);
-        sendMsg(event, text);
+        sendMsg(message.getTextChannel(), text);
     }
 
     /**

@@ -245,7 +245,7 @@ public class SettingsCommand extends Command {
             case "toggleautodehoist":
                 boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoDeHoist(shouldAutoDeHoist) );
-                sendMsg(event, "Filtering discord invites has been **"
+                sendMsg(event, "Auto de-hoisting has been **"
                         + ( shouldAutoDeHoist ? "enabled" : "disabled" ) + "**" );
                 break;
         }
