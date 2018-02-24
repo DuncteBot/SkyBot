@@ -147,6 +147,16 @@ public class BotListener extends ListenerAdapter {
 
         String rw = event.getMessage().getContentRaw();
 
+        /*
+        * If the message that the user send contains "cars" and the message contains "hentai"
+        *                   and the id of the guild is "247067856443801602"
+        *
+        * React with the ⭐ (star) emoji
+        */
+        if(rw.toLowerCase().contains("cars") &&  rw.toLowerCase().contains("hentai") &&
+                event.getGuild().getId().equals("247067856443801602"))
+            event.getMessage().addReaction("⭐").queue();
+
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
                     && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
