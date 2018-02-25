@@ -27,9 +27,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class CarsAndHentaiCommand : WeebCommandBase() {
 
-    private val url = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-            "&hl=en&searchType=image&key=${AirUtils.CONFIG.getString("apis.googl")}&safe=off"
-
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if(!event.channel.isNSFW) {
@@ -39,7 +36,7 @@ class CarsAndHentaiCommand : WeebCommandBase() {
             return
         }
 
-        val jsonRaw = Ason(WebUtils.getText(String.format(url, "Cars and hentai")))
+        val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")))
         val jsonArray = jsonRaw.getJsonArray<Ason>("items")
         val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
         MessageUtils.sendEmbed(event,

@@ -55,6 +55,8 @@ public class AirUtils {
     public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
+    public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
+            "&hl=en&searchType=image&key="+CONFIG.getString("apis.googl")+"&safe=off";
 
     /**
      * This converts the online status of a user to a fancy emote
