@@ -6,6 +6,10 @@ jobs:
     steps:
       - checkout
       - run: ./gradlew build
+  dependencies:
+    override:
+      - chmod +x gradlew
+      - ./gradlew dependencies
   test:
     docker:
       - image: circleci/openjdk:9.0.1-11-jdk-node-browsers
@@ -16,5 +20,6 @@ workflows:
   version: 2
   build_and_test:
     jobs:
+      - dependencies
       - build
       - test
