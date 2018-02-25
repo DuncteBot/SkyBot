@@ -88,8 +88,8 @@ public class AudioUtils {
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-            youtubeAudioSourceManager.configureRequests(config ->
-                    RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());
+           /* youtubeAudioSourceManager.configureRequests(config ->
+                    RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());*/
 
             SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 

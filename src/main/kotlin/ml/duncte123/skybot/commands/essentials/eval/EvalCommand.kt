@@ -52,6 +52,7 @@ class EvalCommand : Command() {
     private val engine: ScriptEngine
     private val packageImports: List<String>
     private val classImports: List<String>
+    private val staticImports: List<String>
     private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
@@ -94,6 +95,11 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.objects.FakeInterface",
                 "Java.lang.VRCubeException"
         )
+
+        staticImports = listOf(
+                "ml.duncte123.skybot.objects.EvalFunctions.*",
+                "ml.duncte123.skybot.utils.MessageUtils.*"
+        )
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
@@ -105,8 +111,9 @@ class EvalCommand : Command() {
         if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
-                classImports.joinToString(separator = "\n", postfix = "\n") + "\n" +
-                "import static ml.duncte123.skybot.objects.EvalFunctions.*\n"
+                classImports.joinToString(separator = "\nimport ", postfix = "\n") +
+                staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
+        println(importString)
 
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
