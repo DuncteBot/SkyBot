@@ -43,47 +43,15 @@ import java.util.regex.Pattern;
 @SuppressWarnings("ReturnInsideFinallyBlock")
 public class AirUtils {
 
-    /**
-     * This is our config file
-     */
+
     public static final Config CONFIG = new ConfigUtils().loadConfig();
-
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     * This has to be loadded before the commands are loaded
-     */
     public static final WAEngine ALPHA_ENGINE = getWolframEngine();
-
-    /**
-     * This will hold the command setup and the registered commands
-     */
     public static final CommandManager COMMAND_MANAGER = new CommandManager();
-
-    /**
-     * We are using slf4j to log things to the console
-     */
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
-
-    /**
-     * This holds the value if we should use a non-SQLite database
-     */
     public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
-
-    /**
-     * This will store the settings for every guild that we are in
-     */
     static Map<String, GuildSettings> guildSettings = new HashMap<>();
-
-    /**
-     * This helps us to make the coinflip command and the footer quotes work
-     */
     public static final Random RAND = new Random();
-
-    /**
-     * This is our database manager, it is a util for the connection
-     */
     public static final DBManager DB = new DBManager();
-
     public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
