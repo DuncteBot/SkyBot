@@ -24,7 +24,7 @@ package ml.duncte123.skybot.unstable.utils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
-import ml.duncte123.skybot.utils.hastebin
+import ml.duncte123.skybot.utils.leeks
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
@@ -107,7 +107,7 @@ class ComparatingUtils {
 
             val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "\n\n\n\n================================\n\n\n\n", prefix = "\n\n\n\n")
 
-            val haste = hastebin(hastedata)
+            val haste = leeks(hastedata)
 
             data.keys.forEachIndexed { index, exceptionType ->
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))

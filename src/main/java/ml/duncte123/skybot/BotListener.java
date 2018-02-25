@@ -305,10 +305,7 @@ public class BotListener extends ListenerAdapter {
                 && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if(r != null && !event.getGuild().getPublicRole().equals(r))
-                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
-                    MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),"Error while trying to add a role to a user: " + it.toString() + "\n" +
-                            "Make sure that the role " + r.getAsMention() + " is below my role");
-                });
+                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue(null, it -> {});
         }
     }
 
@@ -336,6 +333,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildJoin(GuildJoinEvent event) {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
+        long[] counts = GuildUtils.getBotAndUserCount(event.getGuild());
         if (botToUserRatio[1] >= 60) {
             MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
@@ -347,7 +345,10 @@ public class BotListener extends ListenerAdapter {
                     message -> message.getGuild().leave().queue(),
                     er -> event.getGuild().leave().queue()
             );
-            logger.info(TextColor.RED + "Joining guild: " + event.getGuild().getName() + ", and leaving it after. BOT ALERT" + TextColor.RESET);
+            logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
+                    event.getGuild().getName(),
+                    counts[0],
+                    counts[1]) + TextColor.RESET);
             return;
         }
         Guild g = event.getGuild();

@@ -25,6 +25,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import org.apache.commons.lang3.tuple.Triple;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -100,6 +101,23 @@ public class GuildUtils {
     }
 
     /**
+     * Returns an array with the member counts of the guild
+     *  0 = the total users
+     *  1 = the total bots
+     *  3 = the total members
+     * @param g The {@link Guild Guild} to count the users in
+     * @return an array with the member counts of the guild
+     */
+    public static long[] getBotAndUserCount(Guild g) {
+        MemberCacheView memberCache = g.getMemberCache();
+        long totalCount = memberCache.size();
+        long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
+        long userCount = totalCount - botCount;
+
+        return new long[] {userCount, botCount, totalCount};
+    }
+
+    /**
      * This will calculate the bot to user ratio
      *
      * @param g the {@link Guild} that we want to check
@@ -107,10 +125,10 @@ public class GuildUtils {
      */
     public static double[] getBotRatio(Guild g) {
 
-        MemberCacheView memberCache = g.getMemberCache();
-        double totalCount = memberCache.size();
-        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
-        double userCount = totalCount - botCount;
+        long[] counts = getBotAndUserCount(g);
+        double totalCount  = counts[2];
+        double userCount  = counts[0];
+        double botCount  = counts[1];
 
         //percent in users
         double userCountP = (userCount / totalCount) * 100;

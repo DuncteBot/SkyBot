@@ -299,7 +299,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (AirUtils.RAND.nextInt(4)){
+        switch (RAND.nextInt(4)){
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:

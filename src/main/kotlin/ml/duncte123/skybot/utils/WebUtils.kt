@@ -285,6 +285,18 @@ class WebUtils {
             LOGGER.info("${TextColor.PURPLE}Generated wastebin link: $returnValue${TextColor.RESET}")
             return returnValue
         }
+        /**
+         * Posts [String]s to haste.leeks.life
+         * @param s the [String]
+         * @returns the url of the created post as kotlin file
+         *
+         * @see WebUtils.postRawToService([Service], [String])
+         */
+        fun leeks(s: String): String {
+            val returnValue = "wastebin.party/" + postRawToService(Service.LEEKS, s).getString("key") + ".kt"
+            LOGGER.info("${TextColor.PURPLE}Generated paste by leeks link: $returnValue${TextColor.RESET}")
+            return returnValue
+        }
     }
     /**
      * This holds some variables that we will accept
@@ -299,7 +311,8 @@ class WebUtils {
 
     enum class Service(val url: String) {
         HASTEBIN("https://hastebin.com/documents"),
-        WASTEBIN("https://wastebin.party/documents")
+        WASTEBIN("https://wastebin.party/documents"),
+        LEEKS("https://haste.leeks.life/documents")
     }
 }
 
@@ -314,3 +327,7 @@ fun hastebin(s: String): String = WebUtils.hastebin(s)
  * @see WebUtils.wastebin([String])
  */
 fun wastebin(s: String): String = WebUtils.wastebin(s)
+/**
+ * @see WebUtils.leeks([String])
+ */
+fun leeks(s: String): String = WebUtils.wastebin(s)
