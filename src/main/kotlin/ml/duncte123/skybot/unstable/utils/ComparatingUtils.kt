@@ -24,7 +24,7 @@ package ml.duncte123.skybot.unstable.utils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
-import ml.duncte123.skybot.utils.leeks
+import ml.duncte123.skybot.utils.WebUtils.Companion.leeks
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils

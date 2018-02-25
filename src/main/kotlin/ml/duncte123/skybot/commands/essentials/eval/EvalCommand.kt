@@ -120,7 +120,7 @@ class EvalCommand : Command() {
         if (isRanByBotOwner) {
             timeout = 60000L
 
-            engine.put("commandManger", AirUtils.COMMAND_MANAGER)
+            engine.put("commandManager", AirUtils.COMMAND_MANAGER)
 
             engine.put("message", event.message)
             engine.put("channel", event.message.textChannel)

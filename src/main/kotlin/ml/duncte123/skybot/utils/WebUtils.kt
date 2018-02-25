@@ -30,12 +30,14 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class WebUtils {
 
     companion object {
         const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)"
-        private val client = OkHttpClient()
+        private val client = OkHttpClient.Builder().readTimeout(10L, TimeUnit.SECONDS)
+                .connectTimeout(10L, TimeUnit.SECONDS).build()
         private val LOGGER = LoggerFactory.getLogger(WebUtils::class.java)
 
         /**
@@ -268,6 +270,7 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
+        @JvmStatic
         fun hastebin(s: String): String {
             val returnValue = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
             LOGGER.info("${TextColor.PURPLE}Generated hastebin link: $returnValue${TextColor.RESET}")
@@ -280,6 +283,7 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
+        @JvmStatic
         fun wastebin(s: String): String {
             val returnValue = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
             LOGGER.info("${TextColor.PURPLE}Generated wastebin link: $returnValue${TextColor.RESET}")
@@ -292,8 +296,9 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
+        @JvmStatic
         fun leeks(s: String): String {
-            val returnValue = "wastebin.party/" + postRawToService(Service.LEEKS, s).getString("key") + ".kt"
+            val returnValue = "haste.leeks.life/" + postRawToService(Service.LEEKS, s).getString("key") + ".kt"
             LOGGER.info("${TextColor.PURPLE}Generated paste by leeks link: $returnValue${TextColor.RESET}")
             return returnValue
         }
@@ -315,19 +320,3 @@ class WebUtils {
         LEEKS("https://haste.leeks.life/documents")
     }
 }
-
-/*
- * Global wrapping fun for every class
- */
-/**
- * @see WebUtils.hastebin([String])
- */
-fun hastebin(s: String): String = WebUtils.hastebin(s)
-/**
- * @see WebUtils.wastebin([String])
- */
-fun wastebin(s: String): String = WebUtils.wastebin(s)
-/**
- * @see WebUtils.leeks([String])
- */
-fun leeks(s: String): String = WebUtils.wastebin(s)

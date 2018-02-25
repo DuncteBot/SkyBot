@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -46,7 +47,7 @@ public class GuildUtils {
      * @param newGuildCount the new guild count
      * @return the response from the server
      */
-    public static String updateGuildCount(JDA jda, long newGuildCount) {
+    private static String updateGuildCount(JDA jda, long newGuildCount) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
@@ -56,7 +57,8 @@ public class GuildUtils {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return e.toString();
+            ComparatingUtils.execCheck(e);
+            return new JSONObject().put("status", "failure").put("message", e.toString()).toString();
         }
     }
 
