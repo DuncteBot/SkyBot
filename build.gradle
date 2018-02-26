@@ -53,11 +53,6 @@ repositories {
     mavenLocal()
     mavenCentral()
 
-    //Just to make CircleCI shut up
-    maven {
-        url  "https://dl.bintray.com/duncte123/weeb.java"
-    }
-
     // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
     maven {
         name 'jitpack'
