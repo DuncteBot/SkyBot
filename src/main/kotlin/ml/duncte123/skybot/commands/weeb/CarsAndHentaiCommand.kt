@@ -36,19 +36,17 @@ class CarsAndHentaiCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if(!event.channel.isNSFW) {
-            MessageUtils.sendMsg(event, """WHoops, this channel is not marked as NSFW.
+				MessageUtils.sendMsg(event, """WHoops, this channel is not marked as NSFW.
                 |Please mark this channel as NSFW to use this command
                 """.trimMargin())
             return
         }
 
-        val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")))
-        val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-        val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
-        MessageUtils.sendEmbed(event,
-                EmbedUtils.defaultEmbed()
-                        .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
-                        .setImage(randomItem.getString("link")).build()
+            MessageUtils.sendMsg(event, """This meme is officially dead
+                |Please stop.
+                """.trimMargin())
+			
+            return
         )
 
     }
