@@ -28,5 +28,6 @@ public enum CommandCategory {
     NERD_STUFF,
     PATRON,
     WEEB,
+    NSFW,
     UNLISTED
 }

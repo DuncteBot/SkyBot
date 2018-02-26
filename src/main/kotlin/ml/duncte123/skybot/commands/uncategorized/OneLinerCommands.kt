@@ -110,6 +110,7 @@ class OneLinerCommands : Command() {
                     sendMsg(event, warningMsg)
                 }
             }
+            //db!eval "```${"screenfetch".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             else -> println("Invoke was invalid: $invoke")
         }
     }
