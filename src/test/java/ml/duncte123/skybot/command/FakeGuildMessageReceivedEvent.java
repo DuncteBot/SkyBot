@@ -843,6 +843,16 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                         return null;
                     }
 
+                    @Override
+                    public PermissionOverrideAction putPermissionOverride(Member member) {
+                        return null;
+                    }
+
+                    @Override
+                    public PermissionOverrideAction putPermissionOverride(Role role) {
+                        return null;
+                    }
+
                     @Nonnull
                     @Override
                     public InviteAction createInvite() {
