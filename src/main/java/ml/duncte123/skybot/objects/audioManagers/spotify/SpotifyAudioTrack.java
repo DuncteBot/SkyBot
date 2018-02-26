@@ -23,9 +23,9 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-public class SpotifyAudioTrackYT extends YoutubeAudioTrack {
+public class SpotifyAudioTrack extends YoutubeAudioTrack {
 
-    public SpotifyAudioTrackYT(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+    public SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
         super(trackInfo, sourceManager);
     }
 }
