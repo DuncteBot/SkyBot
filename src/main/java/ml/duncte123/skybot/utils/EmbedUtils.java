@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -74,17 +75,17 @@ public class EmbedUtils {
     public static EmbedBuilder defaultEmbed() {
         EmbedBuilder eb = new EmbedBuilder()
                                   .setColor(Settings.defaultColour);
-        if (AirUtils.nonsqlite) {
+        if (AirUtils.NONE_SQLITE) {
             //Get a random index from the quotes
-            int randomIndex = AirUtils.rand.nextInt(footerQuotes.size());
+            int randomIndex = AirUtils.RAND.nextInt(footerQuotes.size());
             //Get the quote as a string
             String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
             String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
             String finalQuote = StringUtils.abbreviate(quote, 100) + " - " + user;
             //Set the quote in the footer
-            eb.setFooter(finalQuote, Settings.defaultIcon);
+            eb.setFooter(finalQuote, Settings.DEFAULT_ICON);
         } else {
-            eb.setFooter(Settings.defaultName, Settings.defaultIcon)
+            eb.setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
                     .setTimestamp(Instant.now());
         }
         return eb;
@@ -98,8 +99,8 @@ public class EmbedUtils {
      */
     public static String playerEmbed(GuildMusicManager mng) {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
-                       generateProgressBar((double) mng.player.getPlayingTrack().getPosition() / mng.player.getPlayingTrack().getDuration())
-                       + " `[" + formatTime(mng.player.getPlayingTrack().getPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
+                       generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
+                       + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
                        + getVolumeIcon(mng.player.getVolume());
     }
 
@@ -171,7 +172,10 @@ public class EmbedUtils {
             msg.append("***").append(embed.getAuthor().getName()).append("***\n\n");
         }
         if (embed.getDescription() != null) {
-            msg.append("_").append(embed.getDescription()).append("_\n\n");
+            msg.append("_").append(embed.getDescription()
+                    // Reformat
+                    .replaceAll("\\[(.+)\\]\\((.+)\\)", "$1 (Link: $2)")
+            ).append("_\n\n");
         }
         for (MessageEmbed.Field f : embed.getFields()) {
             msg.append("__").append(f.getName()).append("__\n").append(f.getValue()).append("\n\n");

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -71,7 +71,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
     }
     
     
-    private synchronized void createFromDOM(Element thisElement) throws WAException {
+    private synchronized void createFromDOM(Element thisElement) {
         
         // Two types:
         //
@@ -100,7 +100,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
             // although we have no intention of making such a change in the API output.
             NodeList states = thisElement.getChildNodes();
             int numStates = states.getLength();
-            List<Node> stateElements = new ArrayList<Node>(numStates);
+            List<Node> stateElements = new ArrayList<>(numStates);
             for (int i = 0; i < numStates; i++) {
                 Node stateNode = states.item(i);
                 if ("state".equals(stateNode.getNodeName()))

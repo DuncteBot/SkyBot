@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
-import org.slf4j.event.Level;
+import org.slf4j.LoggerFactory;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -30,8 +30,8 @@ import java.util.Map;
 
 public class BadWordFilter {
     
-    private static int largestWordLength = 0;
-    private static Map<String, String[]> words = new HashMap<>();
+    private int largestWordLength = 0;
+    private Map<String, String[]> words = new HashMap<>();
     
     public BadWordFilter() {
         try {
@@ -66,7 +66,7 @@ public class BadWordFilter {
                 }
                 
             }
-            AirUtils.log(Level.INFO, "Loaded " + counter + " words to filter out");
+            LoggerFactory.getLogger(BadWordFilter.class).info("Loaded " + counter + " words to filter out");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -78,17 +78,15 @@ public class BadWordFilter {
      * @param input The sentence to check
      * @return every word as a item in array
      */
-    public static ArrayList<String> badWordsFound(String input) {
+    public ArrayList<String> badWordsFound(String input) {
         if (input == null) {
             return new ArrayList<>();
         }
         
         // remove leetspeak
-        input = input.replaceAll("1", "i");
-        input = input.replaceAll("!", "i");
+        input = input.replaceAll("[1!]", "i");
         input = input.replaceAll("3", "e");
-        input = input.replaceAll("4", "a");
-        input = input.replaceAll("@", "a");
+        input = input.replaceAll("[4@]", "a");
         input = input.replaceAll("5", "s");
         input = input.replaceAll("7", "t");
         input = input.replaceAll("0", "o");
@@ -107,8 +105,8 @@ public class BadWordFilter {
                     // for example, if you want to say the word bass, that should be possible.
                     String[] ignoreCheck = words.get(wordToCheck);
                     boolean ignore = false;
-                    for (int s = 0; s < ignoreCheck.length; s++)
-                        if (input.contains(ignoreCheck[s])) {
+                    for (String anIgnoreCheck : ignoreCheck)
+                        if (input.contains(anIgnoreCheck)) {
                             ignore = true;
                             break;
                         }

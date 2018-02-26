@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -34,8 +35,8 @@ class FlipCommand : Command() {
         var output = ""
 
         if (event.message.mentionedUsers.size > 0) {
-            uname = event.guild.getMember(event.message.mentionedUsers[0]).effectiveName
-        } else if(args.size > 0) {
+            uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
+        } else if(args.isNotEmpty()) {
             uname = StringUtils.join(args, " ")
         }
 
@@ -57,7 +58,7 @@ class FlipCommand : Command() {
             output += if (a != -1) split[a] else letter
         }
 
-        sendMsg(event, "(╯°□°）╯︵ $output")
+        MessageUtils.sendMsg(event, "(╯°□°）╯︵ $output")
     }
 
     override fun help() = "Flips a user.\n" +

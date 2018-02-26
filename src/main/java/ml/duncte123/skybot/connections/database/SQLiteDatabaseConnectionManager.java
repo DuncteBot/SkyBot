@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.Settings;
 import org.sqlite.JDBC;
 
 import java.io.File;
@@ -33,6 +33,7 @@ import java.util.regex.Pattern;
  *
  * @author ramidzkh
  */
+@SuppressWarnings("SqlDialectInspection")
 class SQLiteDatabaseConnectionManager
 implements DBConnectionManager {
 
@@ -127,32 +128,45 @@ implements DBConnectionManager {
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
         try {
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS guildSettings " +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "guildId TEXT NOT NULL," +
-                                                         "guildName TEXT NOT NULL," +
-                                                         "logChannelId TEXT NULL," +
-                                                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
-                                                         "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "customWelcomeMessage TEXT NOT NULL);");
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS guildSettings " +
+                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                         "guildId TEXT NOT NULL," +
+                         "guildName TEXT NOT NULL," +
+                         "logChannelId TEXT NULL," +
+                         "welcomeLeaveChannel TEXT NULL," +
+                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
+                         "autoRole VARCHAR(255) NULL," +
+                         "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                         "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                         "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
+                         "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
+                         "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
+                         "customWelcomeMessage TEXT NOT NULL," +
+                         "serverDesc TEXT NULL," +
+                         "customLeaveMessage TEXT NOT NULL);"
+            );
             
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "author VARCHAR(255) NOT NULL," +
-                                                         "authorId VARCHAR(255) NOT NULL," +
-                                                         "tagName VARCHAR(10) NOT NULL," +
-                                                         "tagText TEXT NOT NULL);");
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS `tags`" +
+                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                         "author VARCHAR(255) NOT NULL," +
+                         "authorId VARCHAR(255) NOT NULL," +
+                         "tagName VARCHAR(10) NOT NULL," +
+                         "tagText TEXT NOT NULL);"
+            );
             
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans" +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "modUserId VARCHAR(255) NOT NULL," +
-                                                         "userId VARCHAR(255) NOT NULL," +
-                                                         "Username VARCHAR(255) NOT NULL," +
-                                                         "discriminator VARCHAR(4) NOT NULL," +
-                                                         "ban_date DATETIME NOT NULL," +
-                                                         "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                                                         "guildId VARCHAR(255) NOT NULL);");
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS bans" +
+                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                         "modUserId VARCHAR(255) NOT NULL," +
+                         "userId VARCHAR(255) NOT NULL," +
+                         "Username VARCHAR(255) NOT NULL," +
+                         "discriminator VARCHAR(4) NOT NULL," +
+                         "ban_date DATETIME NOT NULL," +
+                         "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                         "guildId VARCHAR(255) NOT NULL);"
+            );
         } catch (SQLException e) {
             e.printStackTrace();
         }

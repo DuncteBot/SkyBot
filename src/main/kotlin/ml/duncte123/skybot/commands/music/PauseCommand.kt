@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -31,15 +32,17 @@ class PauseCommand : MusicCommand() {
         if (!channelChecks(event))
             return
 
-        val player = getMusicManager(event.guild).player
+        val mng = getMusicManager(event.guild)
+        val player = mng.player
+        mng.latestChannel = event.channel
 
         if (player.playingTrack == null) {
-            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
+            MessageUtils.sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
         player.isPaused = !player.isPaused
-        sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        MessageUtils.sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
     override fun help(): String = "Pauses the current song"

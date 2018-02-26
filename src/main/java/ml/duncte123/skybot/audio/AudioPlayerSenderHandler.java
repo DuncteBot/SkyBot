@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,8 +18,9 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
+import lavalink.client.player.IPlayer;
+import lavalink.client.player.LavaplayerPlayerWrapper;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
 public class AudioPlayerSenderHandler implements AudioSendHandler {
@@ -27,14 +28,14 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
     /**
      * This is our audio player
      */
-    private final AudioPlayer audioPlayer;
+    private final IPlayer audioPlayer;
 
     /**
      * I don't know what this does but it seems important
      */
     private AudioFrame lastFrame;
 
-    public AudioPlayerSenderHandler(AudioPlayer audioPlayer) {
+    AudioPlayerSenderHandler(IPlayer audioPlayer) {
         this.audioPlayer = audioPlayer;
     }
 
@@ -45,8 +46,9 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean canProvide() {
+        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
         if (lastFrame == null) {
-            lastFrame = audioPlayer.provide();
+            lastFrame = lavaplayerPlayer.provide();
         }
         return lastFrame != null;
     }
@@ -58,8 +60,9 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public byte[] provide20MsAudio() {
+        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
         if (lastFrame == null) {
-            lastFrame = audioPlayer.provide();
+            lastFrame = lavaplayerPlayer.provide();
         }
 
         byte[] data = lastFrame != null ? lastFrame.data : null;

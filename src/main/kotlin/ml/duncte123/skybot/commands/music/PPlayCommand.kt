@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.music
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -34,24 +35,27 @@ class PPlayCommand : MusicCommand() {
             return
 
         val guild = event.guild
-        val musicManager = getMusicManager(guild)
+        val mng = getMusicManager(guild)
+        mng.latestChannel = event.channel
 
         if (args.isEmpty()) {
-            sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
+            MessageUtils.sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
             return
         }
 
         var toPlay = StringUtils.join(args, " ")
         if (!AirUtils.isURL(toPlay)) {
-            toPlay = "ytsearch: " + toPlay
+            toPlay = "ytsearch:" + toPlay
         }
         if(toPlay.length > 1024) {
-            sendError(event.message)
-            sendMsg(event, "Input cannot be longer than 1024 characters.")
+            MessageUtils.sendError(event.message)
+            MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
         }
 
-        getAu().loadAndPlay(musicManager, event.channel, toPlay, true)
+        MessageUtils.sendMsg(event, "Loading playlist.......\n" +
+                "This may take a while depending on the size.")
+        audioUtils.loadAndPlay(mng, event.channel, toPlay, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

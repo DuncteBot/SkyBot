@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -61,13 +61,13 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
             int width = Integer.parseInt(thisElement.getAttribute("width"));
             int height = Integer.parseInt(thisElement.getAttribute("height"));
             dimensions = new int[]{width, height};
-        } catch (NumberFormatException e) {
+        } catch (NumberFormatException ignored) {
         }
     }
 
     
     // This ctor for use when not being created from an <img> element, like for the thumbnail images in WARelatedExample.
-    WAImageImpl(String url, HttpProvider http, File tempDir) throws WAException {
+    WAImageImpl(String url, HttpProvider http, File tempDir) {
         
         this.http = http;
         this.tempDir = tempDir;
@@ -141,12 +141,17 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
         if (!imageAcquired && http != null) {
             try {
                 String suffix;
-                if (format == WAImage.FORMAT_GIF)
-                    suffix = ".gif";
-                else if (format == WAImage.FORMAT_PNG)
-                    suffix = ".png";
-                else
-                    suffix = ".tmp";
+                switch (format) {
+                    case WAImage.FORMAT_GIF:
+                        suffix = ".gif";
+                        break;
+                    case WAImage.FORMAT_PNG:
+                        suffix = ".png";
+                        break;
+                    default:
+                        suffix = ".tmp";
+                        break;
+                }
                 String outFile = File.createTempFile("WAImage", suffix, tempDir).getAbsolutePath();
                 URLFetcher fetcher = new URLFetcher(new URL(url), outFile, http, null);
                 fetcher.fetch();

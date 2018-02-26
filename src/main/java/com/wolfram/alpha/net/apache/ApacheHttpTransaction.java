@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -35,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
 public class ApacheHttpTransaction implements HttpTransaction {
 
     private HttpClient httpClient;
@@ -63,7 +64,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
      * content using getResponseAsString() or getResponseAsStream(). If it throws, then
      * you do not have to read. You must always call release().
      *
-     * @throws HttpHandlerException
+     * @throws WAHttpException which can be any other exception lol
      */
     public void execute() throws WAHttpException {
 
@@ -100,7 +101,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
     }
 
 
-    public String[][] getResponseHeaders() throws IOException {
+    public String[][] getResponseHeaders() {
 
         Header[] hdrs = response.getAllHeaders();
         String[][] result = new String[hdrs.length][];
@@ -113,11 +114,10 @@ public class ApacheHttpTransaction implements HttpTransaction {
     /**
      * Only works for simple headers (ones that do not contain mltiple elements).
      *
-     * @param headerName
-     * @return
-     * @throws IOException
+     * @param headerName the key name of the header
+     * @return the response header as a {@link String}
      */
-    public String getResponseHeader(String headerName) throws IOException {
+    public String getResponseHeader(String headerName) {
 
         Header hdr = response.getFirstHeader(headerName);
         return hdr == null ? null : hdr.getValue();
@@ -128,7 +128,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         return entity == null ? -1 : entity.getContentLength();
     }
 
-    public String getCharSet() throws IOException {
+    public String getCharSet() {
         return EntityUtils.getContentCharSet(entity);
     }
     

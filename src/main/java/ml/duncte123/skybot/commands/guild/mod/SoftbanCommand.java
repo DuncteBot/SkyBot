@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,11 +20,12 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 
 import java.util.Arrays;
@@ -44,12 +45,12 @@ public class SoftbanCommand extends Command {
         };
 
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <@user> [Reason]");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 
@@ -57,20 +58,20 @@ public class SoftbanCommand extends Command {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
                         !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
-                sendMsg(event, "You are not permitted to perform this action.");
+                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     nothing -> {
-                        AirUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
-                        sendSuccess(event.getMessage());
+                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
+                        MessageUtils.sendSuccess(event.getMessage());
                     }
             );
             event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
-        } catch (Exception e) {
-            e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+        } catch (HierarchyException e) {
+            //e.printStackTrace();
+            MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }
 

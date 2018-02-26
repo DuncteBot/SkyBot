@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import java.sql.ResultSet
@@ -36,8 +37,8 @@ class KpopCommand: Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        val dbName = AirUtils.db.name
-        val database = AirUtils.db.connManager.connection
+        val dbName = AirUtils.DB.name
+        val database = AirUtils.DB.connManager.connection
 
         var id = ""
         var name = ""
@@ -48,19 +49,19 @@ class KpopCommand: Command() {
 
         try {
 
-            if (args.size > 0) {
+            res = if (args.isNotEmpty()) {
 
-                val statement = database.prepareStatement("SELECT * FROM ${dbName}.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
+                val statement = database.prepareStatement("SELECT * FROM $dbName.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
                 statement.setString(1, "%" + StringUtils.join(args, " ") + "%")
                 statement.setString(2, StringUtils.join(args, " "))
 
-                res = statement.executeQuery()
+                statement.executeQuery()
 
             } else {
 
                 val statement = database.createStatement()
 
-                res = statement.executeQuery("SELECT * FROM ${dbName}.kpop ORDER BY RAND() LIMIT 1")
+                statement.executeQuery("SELECT * FROM $dbName.kpop ORDER BY RAND() LIMIT 1")
             }
 
             while (res.next()) {
@@ -74,10 +75,10 @@ class KpopCommand: Command() {
                     .setDescription("Here is a kpop member from the group $group")
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
-                    .setFooter("Query id: $id", Settings.defaultIcon)
-            sendEmbed(event, eb.build())
+                    .setFooter("Query id: $id", Settings.DEFAULT_ICON)
+            MessageUtils.sendEmbed(event, eb.build())
         } catch (e: Exception) {
-            sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
+            MessageUtils.sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
             e.printStackTrace()
         } finally {
             try {

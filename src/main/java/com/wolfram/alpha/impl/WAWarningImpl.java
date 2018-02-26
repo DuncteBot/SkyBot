@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAWarning;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
@@ -46,11 +45,11 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
     private String[][] attributes = NO_ATTRIBUTES;
     
     
-    WAWarningImpl(Element thisElement) throws WAException {
+    WAWarningImpl(Element thisElement) {
         
         type = thisElement.getNodeName();
         text = thisElement.getAttribute("text");
-        ArrayList<String[]> attrPairs = new ArrayList<String[]>();
+        ArrayList<String[]> attrPairs = new ArrayList<>();
         NamedNodeMap attrs = thisElement.getAttributes();
         int numAttrs = attrs.getLength();
         for (int i = 0; i < numAttrs; i++) {

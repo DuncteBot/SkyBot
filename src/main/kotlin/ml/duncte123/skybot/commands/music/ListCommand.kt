@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -25,29 +25,36 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val scheduler = getMusicManager(event.guild).scheduler
+        val mng = getMusicManager(event.guild)
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
 
         val queue: Queue<AudioTrack> = scheduler.queue
                 synchronized (queue) {
                     if (queue.isEmpty()) {
-                        sendEmbed(event, EmbedUtils.embedField(au.embedTitle, "The queue is currently empty!"))
+                        MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
                     } else {
                         var queueLength: Long = 0
+                        val maxTracks = 10
                         val sb = StringBuilder()
                         sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
-                        for (track in queue) {
+                        for ((index, track) in queue.withIndex()) {
+                            if(index == maxTracks) {
+                                break
+                            }
                             queueLength += track.duration
                             sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
                             sb.append(track.info.title).append("\n")
                         }
                         sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                        sendEmbed(event, EmbedUtils.embedField(au.embedTitle, sb.toString()))
+                        MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
                     }
                 }
     }

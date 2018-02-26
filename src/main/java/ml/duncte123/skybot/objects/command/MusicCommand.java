@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,27 +18,56 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import fredboat.audio.player.LavalinkManager;
+import gnu.trove.map.TLongLongMap;
+import gnu.trove.map.hash.TLongLongHashMap;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.managers.AudioManager;
+
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public abstract class MusicCommand extends Command {
+
+    @SinceSkybot(version = "3.54.2")
+    public static TLongLongMap cooldowns = new TLongLongHashMap();
+    @SinceSkybot(version = "3.54.2")
+    private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "MusicCooldown - Thread"));
 
     public MusicCommand() {
         this.category = CommandCategory.MUSIC;
     }
+
+    static {
+        service.scheduleWithFixedDelay(() ->
+                        cooldowns.forEachEntry((a, b) -> {
+                            if (b > 0) {
+                                cooldowns.put(a, (b - 200));
+                                return true;
+                            } else if (b == 0) {
+                                cooldowns.remove(a);
+                            }
+                            return true;
+                        })
+                , 0, 200, TimeUnit.MILLISECONDS);
+    }
+
+    private static AudioUtils audioUtils = AudioUtils.ins;
 
     /**
      * Returns the autio utils
      *
      * @return the audio utils
      */
-    protected AudioUtils getAu() {
-        return AirUtils.audioUtils;
+    protected AudioUtils getAudioUtils() {
+        return audioUtils;
     }
 
     /**
@@ -47,18 +76,18 @@ public abstract class MusicCommand extends Command {
      * @param guild the guild to get the music manager for
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
+    //@Deprecated(message = "Use #getLavalinkManager(guild)")
     protected GuildMusicManager getMusicManager(Guild guild) {
-        return AirUtils.audioUtils.getMusicManager(guild);
+        return getAudioUtils().getMusicManager(guild);
     }
 
     /**
-     * This is a shortcut for getting the audio manager
+     * This is a shortcut for getting the the link
      *
-     * @param guild the guild to get the audio manager for
-     * @return the {@link net.dv8tion.jda.core.managers.AudioManager AudioManager} from the guild
+     * @return the {@link LavalinkManager LavalinkManager}
      */
-    protected AudioManager getAudioManager(Guild guild) {
-        return guild.getAudioManager();
+    protected static LavalinkManager getLavalinkManager() {
+        return LavalinkManager.ins;
     }
 
     /**
@@ -68,17 +97,36 @@ public abstract class MusicCommand extends Command {
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        AudioManager audioManager = getAudioManager(event.getGuild());
-
-        if (!audioManager.isConnected()) {
-            sendMsg(event, "I'm not in a voice channel, use `" + Settings.prefix + "join` to make me join a channel");
+        LavalinkManager lavalinkManager = getLavalinkManager();
+        if (!lavalinkManager.isConnected(event.getGuild())) {
+            MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
             return false;
         }
 
-        if (!audioManager.getConnectedChannel().equals(event.getMember().getVoiceState().getChannel())) {
-            sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+        if (lavalinkManager.getConnectedChannel(event.getGuild()) != null && !lavalinkManager.getConnectedChannel(event.getGuild())
+                .getMembers().contains(event.getMember())) {
+            MessageUtils.sendMsg(event,
+                    "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
         return true;
+    }
+
+    /**
+     * @param guildId the {@link Guild} id that should receive the cooldown.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void addCooldown(long guildId) {
+        cooldowns.put(guildId, 12600);
+    }
+
+    /**
+     * This method shuts down the service that cares for the dynamic cooldown decreasing.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void shutdown() {
+        service.shutdown();
     }
 }

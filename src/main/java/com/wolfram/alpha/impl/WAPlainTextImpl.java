@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAPlainText;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
@@ -38,7 +37,7 @@ public class WAPlainTextImpl implements WAPlainText, Visitable, Serializable {
     private String text;
     
     
-    WAPlainTextImpl(Element thisElement) throws WAException {
+    WAPlainTextImpl(Element thisElement) {
         NodeList children = thisElement.getChildNodes();
         text = children.getLength() > 0 ? children.item(0).getNodeValue() : "";
     }

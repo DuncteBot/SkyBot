@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -28,8 +28,6 @@ import com.wolfram.alpha.net.impl.HttpTransaction;
 import org.apache.http.HttpVersion;
 import org.apache.http.client.HttpClient;
 import org.apache.http.conn.params.ConnManagerParams;
-import org.apache.http.conn.params.ConnPerRoute;
-import org.apache.http.conn.routing.HttpRoute;
 import org.apache.http.conn.scheme.PlainSocketFactory;
 import org.apache.http.conn.scheme.Scheme;
 import org.apache.http.conn.scheme.SchemeRegistry;
@@ -43,6 +41,7 @@ import org.apache.http.params.HttpProtocolParams;
 
 import java.net.URL;
 
+@SuppressWarnings("deprecation")
 public class ApacheHttpProvider implements HttpProvider {
 
     
@@ -66,11 +65,7 @@ public class ApacheHttpProvider implements HttpProvider {
         schemeRegistry.register(new Scheme("http", PlainSocketFactory.getSocketFactory(), 80));
         schemeRegistry.register(new Scheme("https", SSLSocketFactory.getSocketFactory(), 443));
         params = new BasicHttpParams();
-        ConnManagerParams.setMaxConnectionsPerRoute(params, new ConnPerRoute() {
-            public int getMaxForRoute(HttpRoute route) {
-                return MAX_CONNECTIONS_PER_ROUTE;
-            }
-        });
+        ConnManagerParams.setMaxConnectionsPerRoute(params, route -> MAX_CONNECTIONS_PER_ROUTE);
         HttpProtocolParams.setVersion(params, HttpVersion.HTTP_1_1);
         HttpProtocolParams.setUserAgent(params, DEFAULT_USER_AGENT);
         HttpConnectionParams.setConnectionTimeout(params, CONNECTION_TIMEOUT_MILLIS);

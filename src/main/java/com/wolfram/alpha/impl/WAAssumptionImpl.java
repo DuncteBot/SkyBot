@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,7 +23,6 @@
 package com.wolfram.alpha.impl;
 
 import com.wolfram.alpha.WAAssumption;
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Element;
@@ -48,7 +47,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
     private boolean[] valids;
     
     
-    WAAssumptionImpl(Element thisElement) throws WAException {
+    WAAssumptionImpl(Element thisElement) {
         
         type = thisElement.getAttribute("type");
         word = thisElement.getAttribute("word");

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import fredboat.audio.player.LavalinkManager;
+import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
@@ -34,7 +36,8 @@ implements IEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
-    private BotListener botListener = new BotListener();
+    private final BotListener botListener = new BotListener();
+    private final DeHoistListener deHoistListener = new DeHoistListener();
     
     @Override
     public void register(Object listener) {
@@ -49,14 +52,20 @@ implements IEventManager {
     @Override
     public void handle(Event event) {
         try {
+            if(LavalinkManager.ins.isEnabled())
+                LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
+            deHoistListener.onEvent(event);
         } catch (Throwable thr) {
-            logger.warn("Error while handling event " + event + "; " + thr.getLocalizedMessage(), thr);
+            logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
     
     @Override
     public List<Object> getRegisteredListeners() {
-        return Arrays.asList(botListener);
+        if(LavalinkManager.ins.isEnabled())
+            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener);
+        else
+            return Arrays.asList(botListener, deHoistListener);
     }
 }

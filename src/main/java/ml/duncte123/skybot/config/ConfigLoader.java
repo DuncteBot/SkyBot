@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.config;
 
+import com.afollestad.ason.Ason;
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
 import org.apache.commons.text.translate.UnicodeUnescaper;
-import org.json.JSONObject;
-import org.json.JSONTokener;
 
 import java.io.*;
 
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class ConfigLoader {
 
     /**
@@ -48,7 +50,7 @@ public class ConfigLoader {
         private final File configFile;
 
         MainConfig(final File file) throws Exception {
-            super(null, new JSONObject(new JSONTokener(new FileReader(file))));
+            super(null, new Ason( Files.asCharSource(file, Charsets.UTF_8).read() ));
             this.configFile = file;
         }
 
@@ -59,14 +61,15 @@ public class ConfigLoader {
 
         @Override
         public void save() throws Exception {
-            final String json = this.config.toString(4);
             try {
                 final BufferedWriter writer = new BufferedWriter(
                         new OutputStreamWriter(new FileOutputStream(this.configFile), "UTF-8"));
-                new UnicodeUnescaper().translate(json, writer);
+                new UnicodeUnescaper().translate(
+                        this.config.toString(4), writer);
                 writer.close();
             } catch (final IOException e) {
                 e.printStackTrace();
+                throw e;
             }
         }
     }

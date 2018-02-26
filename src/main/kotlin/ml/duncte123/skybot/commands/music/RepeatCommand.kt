@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -31,10 +32,16 @@ class RepeatCommand : MusicCommand() {
         if (!channelChecks(event))
             return
 
-        val scheduler = getMusicManager(event.guild).scheduler
+        val mng = getMusicManager(event.guild)
+        val scheduler = mng.scheduler
+        mng.latestChannel = event.channel
+
+        if (args.size == 1 && args[0] == "playlist") {
+            scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
+        }
 
         scheduler.isRepeating = !scheduler.isRepeating
-        sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not"} repeat**")
+        MessageUtils.sendMsg(event, "Player was set to: **${if (scheduler.isRepeating) "" else "not "} repeating**")
     }
 
     override fun help(): String = "Makes the player repeat the currently playing song"

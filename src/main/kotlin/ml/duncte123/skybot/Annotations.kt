@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -34,7 +34,7 @@ import kotlin.annotation.AnnotationTarget.*
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
+annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
 
 /**
  * Specifies any part in any kind of files.
@@ -45,7 +45,7 @@ public annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public annotation class DocumentationNeeded(vararg val specificPart: String = ["everything", "class"])
+annotation class DocumentationNeeded(vararg val specificPart: String = ["everything", "class"])
 
 /**
  * Specifies any part in any kind of files.
@@ -57,4 +57,4 @@ public annotation class DocumentationNeeded(vararg val specificPart: String = ["
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
+annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")

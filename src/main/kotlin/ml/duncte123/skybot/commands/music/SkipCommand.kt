@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -31,16 +32,32 @@ class SkipCommand : MusicCommand() {
         if (!channelChecks(event))
             return
 
-        val manager = getMusicManager(event.guild)
-        val scheduler = manager.scheduler
+        val mng = getMusicManager(event.guild)
+        val scheduler = mng.scheduler
+        mng.latestChannel = null
 
-        if (manager.player.playingTrack == null) {
-            sendMsg(event, "The player is not playing.")
+        if (mng.player.playingTrack == null) {
+            MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
+        val count = if (args.isNotEmpty()) {
+            if (!args[0].matches("\\d{1,10}".toRegex())) {
+                1
+            } else {
+                args[0].toInt().coerceIn(1, scheduler.queue.size.coerceAtLeast(1))
+            }
+        } else {
+            1
+        }
 
-        scheduler.nextTrack()
-        sendMsg(event, "The current track was skipped.")
+        repeat(count) {
+            scheduler.nextTrack()
+        }
+        MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
+                if(mng.player.playingTrack != null){
+                    "\nNow playing: ${mng.player.playingTrack.info.title}"
+                } else "")
+        mng.latestChannel = event.channel
     }
 
     override fun help(): String = "Skips the current track."

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,9 @@ package ml.duncte123.skybot.commands.animals;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -34,17 +36,18 @@ public class DogCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         String base = "https://random.dog/";
         try {
-            String jsonString = WebUtils.getText(base + "woof");
-            String finalS = base + jsonString;
+            String it = WebUtils.getText(base + "woof");
+            String finalS = base + it;
 
             if (finalS.contains(".mp4")) {
-                sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
+                MessageUtils.sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
             } else {
-                sendEmbed(event, EmbedUtils.embedImage(finalS));
+                MessageUtils.sendEmbed(event, EmbedUtils.embedImage(finalS));
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte"));
+            //e.printStackTrace();
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
+            ComparatingUtils.execCheck(e);
         }
 
     }

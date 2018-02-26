@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,10 +20,12 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
+import me.duncte123.weebJava.models.WeebApi;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
@@ -40,6 +42,12 @@ public class BotinfoCommand extends Command {
     
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+
+        if("support".equals(invoke)) {
+            MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
+            return;
+        }
+
         User u = event.getJDA().getSelfUser();
         
         String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
@@ -57,27 +65,29 @@ public class BotinfoCommand extends Command {
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("General info", "**Creator:** duncte123#1245\n" +
-                        "**Contributors:** ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)\n" +
-                        "**Invite:** [You can invite me by clicking here](https://bots.discord.pw/bots/210363111729790977)\n" +
-                        "**Support guild:** [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                        "**Github:** [https://github.com/duncte123/SkyBot](https://github.com/duncte123/SkyBot)\n" +
-                        "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
-                        "**Bot version:** " + Settings.version, true)
-                .addField("System info", "**Operating System:** " + OS + "\n" +
+                .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
+                        "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
+                        "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
+                        "\nIf you need any support you can join the support guild [here](https://discord.gg/NKM9Xtk)", true)
+                .addField("Other info",  "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+                        "**Bot version:** " + Settings.VERSION + "\n"
+                        + "**Operating System:** " + OS + "\n" +
                          "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
                 .addField("Lang & lib info", "**Coded in:** Java and Kotlin\n\n" +
-                                                     "**JDA version:** " + JDAInfo.VERSION + "\n**LavaPlayer version:** " + PlayerLibrary.VERSION, false)
-                .addField("Donate", "If you want to help me out and support the bot please consider to [donate](https://paypal.me/duncte123) any amount.", false)
+                                                     "**JDA version:** " + JDAInfo.VERSION + "" +
+                        "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
+                        "**Weeb.java version:** " + WeebApi.VERSION, false)
+                .addField("Donate", "If you want to help me out and support the bot please consider to " +
+                        "[donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
-        sendEmbed(event, eb);
+        MessageUtils.sendEmbed(event, eb);
     }
     
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `" + this.PREFIX + getName() + "`";
+        return "Gets some info about the bot\nUsage: `" + PREFIX + getName() + "`";
     }
     
     @Override
@@ -87,7 +97,7 @@ public class BotinfoCommand extends Command {
     
     @Override
     public String[] getAliases() {
-        return new String[]{"about", "info"};
+        return new String[]{"about", "info", "support"};
     }
     
 }

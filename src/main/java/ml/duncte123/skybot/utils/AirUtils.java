@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -19,78 +19,44 @@
 package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
+import me.duncte123.weebJava.TokenType;
+import me.duncte123.weebJava.WeebApiBuilder;
+import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.KotlinCommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
-import ml.duncte123.skybot.objects.ConsoleUser;
-import ml.duncte123.skybot.objects.FakeUser;
-import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.event.Level;
 
-import java.sql.*;
-import java.util.*;
+import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
+@SuppressWarnings("ReturnInsideFinallyBlock")
 public class AirUtils {
 
-    /**
-     * This is our config file
-     */
-    public static Config config = new ConfigUtils().loadConfig();
 
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     * This has to be loadded before the commands are loaded
-     */
-    public static final WAEngine alphaEngine = getWolframEngine();
-
-    /**
-     * This will hold the command setup and the registered commands
-     */
-    public static CommandManager commandManager = new KotlinCommandManager();
-
-    /**
-     * We are using slf4j to log things to the console
-     */
-    public static Logger logger = LoggerFactory.getLogger(Settings.defaultName);
-
-    /**
-     * This holds the value if we should use a non-SQLite database
-     */
-    public static boolean nonsqlite = config.getBoolean("use_database", false);
-
-    /**
-     * This will store the settings for every guild that we are in
-     */
-    public static Map<String, GuildSettings> guildSettings = new HashMap<>();
-
-    /**
-     * This stores all the tags
-     */
-    public static Map<String, Tag> tagsList = new TreeMap<>();
-
-    /**
-     * This is our audio handler
-     */
-    public static AudioUtils audioUtils = new AudioUtils();
-
-    /**
-     * This helps us to make the coinflip command and the footer quotes work
-     */
-    public static Random rand = new Random();
-
-    /**
-     * This is our database manager, it is a util for the connection
-     */
-    public static DBManager db = new DBManager();
+    public static final Config CONFIG = new ConfigUtils().loadConfig();
+    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
+    public static final CommandManager COMMAND_MANAGER = new CommandManager();
+    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
+    public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
+    static Map<String, GuildSettings> guildSettings = new HashMap<>();
+    public static final Random RAND = new Random();
+    public static final DBManager DB = new DBManager();
+    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
+            .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
+            .build();
+    public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
+            "&hl=en&searchType=image&key="+CONFIG.getString("apis.googl")+"&safe=off";
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -113,168 +79,23 @@ public class AirUtils {
     }
 
     /**
-     * This will send a message to a channel called modlog
-     *
-     * @param mod          The mod that performed the punishment
-     * @param punishedUser The user that got punished
-     * @param punishment   The type of punishment
-     * @param reason       The reason of the punishment
-     * @param time         How long it takes for the punishment to get removed
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
-        TextChannel logChannel = getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        if(logChannel==null || !logChannel.canTalk()) return;
-        String length = "";
-        if (time != null && !time.isEmpty()) {
-            length = " lasting " + time + "";
-        }
-        
-        String punishedUserMention = "<@" + punishedUser.getId() + ">";
-
-        logChannel.sendMessage(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason))).queue(
-                        msg -> msg.getTextChannel().sendMessage("_Relevant user: " + punishedUserMention + "_").queue()
-        );
-    }
-
-    /**
-     * A version of {@link AirUtils#modLog(User, User, String, String, String, Guild)} but without the time
-     *
-     * @param mod          The mod that performed the punishment
-     * @param punishedUser The user that got punished
-     * @param punishment   The type of punishment
-     * @param reason       The reason of the punishment
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
-        modLog(mod, punishedUser, punishment, reason, "", g);
-    }
-
-    /**
-     * To log a unban or a unmute
-     *
-     * @param mod          The mod that permed the executeCommand
-     * @param unbannedUser The user that the executeCommand is for
-     * @param punishment   The type of punishment that got removed
-     * @param g            A instance of the {@link Guild}
-     */
-    public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
-        modLog(mod, unbannedUser, punishment, "", g);
-    }
-
-    /**
-     * Add the banned user to the database
-     *
-     * @param modID             The user id from the mod
-     * @param userName          The username from the banned user
-     * @param userDiscriminator the discriminator from the user
-     * @param userId            the id from the banned users
-     * @param unbanDate         When we need to unban the user
-     * @param guildId           What guild the user got banned in
-     */
-    public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-        Map<String, Object> postFields = new TreeMap<>();
-        postFields.put("modId", modID);
-        postFields.put("username", userName);
-        postFields.put("discriminator", userDiscriminator);
-        postFields.put("userId", userId);
-        postFields.put("unbanDate", unbanDate);
-        postFields.put("guildId", guildId);
-        
-        try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/", postFields).close();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
-    }
-
-    /**
-     * This will check if there are users that can be unbanned
-     *
-     * @param jda the current shard manager for this bot
-     */
-    public static void checkUnbans(ShardManager jda) {
-        log("Unban checker", Level.DEBUG, "Checking for users to unban");
-        int usersUnbanned = 0;
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            
-            Statement smt = database.createStatement();
-            
-            ResultSet res = smt.executeQuery("SELECT * FROM " + db.getName() + ".bans");
-            
-            while (res.next()) {
-                java.util.Date unbanDate = res.getTimestamp("unban_date");
-                java.util.Date currDate = new java.util.Date();
-                
-                if (currDate.after(unbanDate)) {
-                    usersUnbanned++;
-                    log(Level.INFO, "Unbanning " + res.getString("Username"));
-                    jda.getGuildCache().getElementById(res.getString("guildId")).getController()
-                            .unban(res.getString("userId")).reason("Ban expired").queue();
-                    modLog(new ConsoleUser(),
-                            new FakeUser(res.getString("Username"),
-                                                res.getString("userId"),
-                                                res.getString("discriminator")),
-                            "unbanned",
-                            jda.getGuildById(res.getString("guildId")));
-                    smt.execute("DELETE FROM " + db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
-                }
-            }
-            log("Unban checker", Level.DEBUG, "Checking done, unbanned " + usersUnbanned + " users.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-    }
-
-    public static final Pattern URL_REGEX = Pattern.compile("[-a-zA-Z0-9@:%._\\+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_\\+.~#?&\\/\\/=]*)");
-
-    /**
      * This will validate a link
      *
      * @param url The thing to check
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        return URL_REGEX.matcher(url).find();
+        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)").matcher(url).find();
     }
 
     /**
      * This will check if the number that we are trying to parse is an int
      *
-     * @param isint the int to check
+     * @param integer the int to check
      * @return true if it is an int
      */
-    public static boolean isInt(String isint) {
-        return isint.matches("^\\d+$");
-    }
-
-    /**
-     * This will convert the VerificationLevel from the guild to how it is displayed in the settings
-     *
-     * @param lvl The level to convert
-     * @return The converted verification level
-     */
-    // Null safety
-    public static String verificationLvlToName(Guild.VerificationLevel lvl) {
-        if (Guild.VerificationLevel.LOW.equals(lvl)) {
-            return "Low";
-        } else if (Guild.VerificationLevel.MEDIUM.equals(lvl)) {
-            return "Medium";
-        } else if (Guild.VerificationLevel.HIGH.equals(lvl)) {
-            return "(╯°□°）╯︵ ┻━┻";
-        } else if (Guild.VerificationLevel.VERY_HIGH.equals(lvl)) {
-            return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-        }
-        return "None";
+    public static boolean isInt(String integer) {
+        return integer.matches("^\\d{1,11}$");
     }
 
     /**
@@ -301,97 +122,6 @@ public class AirUtils {
         
         String gameName = g.getName();
         return gameType + " " + gameName;
-    }
-
-    /**
-     * Logs a message to the console
-     *
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(Level lvl, String message) {
-        log(Settings.defaultName, lvl, message);
-    }
-
-    /**
-     * Logs a message to the console
-     *
-     * @param name    The name of the class that is calling it
-     * @param lvl     The {@link Level} to log the message at
-     * @param message The message to log
-     */
-    public static void log(String name, Level lvl, Object message) {
-        logger = LoggerFactory.getLogger(name);
-        
-        String msg = String.valueOf(message);
-        
-        switch (lvl) {
-            case ERROR:
-                logger.error(msg);
-                break;
-            case WARN:
-                logger.warn(msg);
-                break;
-            case INFO:
-                logger.info(msg);
-                break;
-            case DEBUG:
-                logger.debug(msg);
-                break;
-            case TRACE:
-                logger.trace(msg);
-                break;
-        }
-        logger = LoggerFactory.getLogger(Settings.defaultName);
-    }
-
-    /**
-     * This will calculate the bot to user ratio
-     *
-     * @param g the {@link Guild} that we want to check
-     * @return the percentage of users and the percentage of bots in a nice compact array
-     */
-    public static double[] getBotRatio(Guild g) {
-        
-        double totalCount = g.getMemberCache().size();
-        double botCount = 0;
-        double userCount = 0;
-        
-        for (Member m : g.getMembers()) {
-            if (m.getUser().isBot()) {
-                botCount++;
-            } else {
-                userCount++;
-            }
-        }
-        
-        //percent in users
-        double userCountP = (userCount / totalCount) * 100;
-        
-        //percent in bots
-        double botCountP = (botCount / totalCount) * 100;
-        
-        log(Level.DEBUG,
-                "In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
-        
-        return new double[]{Math.round(userCountP), Math.round(botCountP)};
-    }
-
-    /**
-     * This will get the first channel of a guild that we can write in/should be able to write in
-     *
-     * @param guild The guild that we want to get the main channel from
-     * @return the Text channel that we can send our messages in.
-     */
-    public static TextChannel getPublicChannel(Guild guild) {
-        
-        TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
-        
-        if (pubChann == null || !pubChann.canTalk()) {
-            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
-        }
-        
-        return pubChann;
     }
 
     /**
@@ -437,7 +167,7 @@ public class AirUtils {
             uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
         }
         
-        return uptimeString.replaceFirst(",", "");
+        return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
     }
 
     /**
@@ -447,20 +177,19 @@ public class AirUtils {
      * token
      */
     private static WAEngine getWolframEngine() {
-        WAEngine engine = new WAEngine();
+        String appId = CONFIG.getString("apis.wolframalpha", "");
         
-        String appId;
-        
-        appId = config.getString("apis.wolframalpha", "");
-        
-        if (appId == null || "".equals(appId)) {
+        if (appId == null || appId.isEmpty()) {
             IllegalStateException e
                     = new IllegalStateException("Wolfram Alpha App ID not specified."
                                                 + " Please generate one at "
                                                 + "https://developer.wolframalpha.com/portal/myapps/");
-            logger.error(e.getMessage(), e);
+            //The logger can be null during tests
+            if(logger != null)
+                logger.error(e.getMessage(), e);
             return null;
         }
+        WAEngine engine = new WAEngine();
         
         engine.setAppID(appId);
         
@@ -473,136 +202,20 @@ public class AirUtils {
     }
 
     /**
-     * Attempts to load all the tags from the database
-     */
-    public static void loadAllTags() {
-        AirUtils.log(Level.DEBUG, "Loading tags.");
-        
-        Connection database = db.getConnManager().getConnection();
-        try {
-            Statement smt = database.createStatement();
-            
-            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + db.getName() + ".tags");
-            
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tagName");
-                
-                tagsList.put(tagName, new Tag(
-                                                     resultSet.getInt("id"),
-                                                     resultSet.getString("author"),
-                                                     resultSet.getString("authorId"),
-                                                     tagName,
-                                                     resultSet.getString("tagText")
-                ));
-            }
-            
-            AirUtils.log(Level.DEBUG, "Loaded " + tagsList.keySet().size() + " tags.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-    }
-
-    /**
-     * Attempts to register a new tag
-     *
-     * @param author The user that created the tag
-     * @param tag    the {@link Tag} to add
-     * @return True if the tag is added
-     */
-    public static boolean registerNewTag(User author, Tag tag) {
-        if (tagsList.containsKey(tag.getName())) //Return false if the tag is already here
-            return false;
-        
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            PreparedStatement statement = database.prepareStatement("INSERT INTO " + db.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
-                                                                            "VALUES(? , ? , ? , ?)");
-            statement.setString(1, String.format("%#s", author));
-            statement.setString(2, author.getId());
-            statement.setString(3, tag.getName());
-            statement.setString(4, tag.getText());
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return false;
-        } finally {
-            try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-        
-        tagsList.put(tag.getName(), tag);
-        return true;
-    }
-
-    /**
-     * Attempts to delete a tag
-     *
-     * @param tag the {@link Tag} to delete
-     * @return true if the tag is deleted
-     */
-    public static boolean deleteTag(Tag tag) {
-        
-        Connection database = db.getConnManager().getConnection();
-        
-        try {
-            PreparedStatement statement = database.prepareStatement("DELETE FROM " + db.getName() + ".tags WHERE tagName= ? ");
-            statement.setString(1, tag.getName());
-            statement.execute();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                tagsList.remove(tag.getName());
-                database.close();
-                return true;
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
-        return false;
-    }
-
-    /**
-     * This sends a post request to the bot lists with the new guild count
-     *
-     * @param jda           the jda instance for the token
-     * @param newGuildCount the new guild count
-     * @return the response from the server
-     */
-    public static String updateGuildCount(JDA jda, long newGuildCount) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", newGuildCount);
-        postFields.put("auth", jda.getToken());
-        try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/", postFields).body().source().readUtf8();
-        }
-        catch (Exception e) {
-            e.printStackTrace();
-            return e.toString();
-        }
-    }
-
-    /**
      * Stops everything
      */
     public static void stop() {
         try {
-            db.getConnManager().getConnection().close();
+            DB.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        
-        audioUtils.musicManagers.forEach((a, b) -> b.player.stopTrack());
+        try {
+                AudioUtils.ins.musicManagers.forEach((a, b) ->  {
+                    if (b.player.getPlayingTrack() != null)
+                        b.player.stopTrack();
+                });
+        } catch (java.util.ConcurrentModificationException ignored) {}
     }
 
     /**
@@ -612,7 +225,7 @@ public class AirUtils {
      * @return the channel
      */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
-        if(channelId == null || channelId.isEmpty()) return getPublicChannel(guild);
+        if(channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
         TextChannel tc;
         try{
@@ -637,7 +250,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (rand.nextFloat() * chars.length());
+            int index = (int) (RAND.nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -649,5 +262,24 @@ public class AirUtils {
      */
     public static String generateRandomString() {
         return generateRandomString(10);
+    }
+
+    /**
+     * Returns a flipped table
+     * @return a flipped table
+     */
+    public static String flipTable() {
+        switch (RAND.nextInt(4)){
+            case 0:
+                return "(╯°□°)╯︵┻━┻";
+            case 1:
+                return "(ノ゜Д゜)ノ︵┻━┻";
+            case 2:
+                return "(ノಥ益ಥ)ノ︵┻━┻";
+            case 3:
+               return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+           default:
+               return "I CAN'T FLIP THIS TABLE";
+        }
     }
 }

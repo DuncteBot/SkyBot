@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,7 +29,7 @@ import static org.junit.Assert.*;
 
 public class SkybotCommandTest {
 
-    private CommandManager manager = new CommandManager();
+    private final CommandManager manager = new CommandManager();
 
     @Test
     public void testCommandGetterForName() {
@@ -62,5 +62,15 @@ public class SkybotCommandTest {
 
         assertNotNull("The dummy command is not registered", manager.getCommand("dummy"));
         assertTrue("Could not remove the dummy command", manager.removeCommand("dummy"));
+    }
+
+    @Test
+    public void testCommandRun() {
+        DummyCommand cmd = new DummyCommand();
+        manager.addCommand(cmd);
+        //We are not using the args so they can be null
+        manager.runCommand(new FakeGuildMessageReceivedEvent(cmd));
+
+        assertTrue("Command did not run", cmd.hasRun);
     }
 }

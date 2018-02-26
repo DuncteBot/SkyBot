@@ -12,6 +12,7 @@
   },
   // If you set this to false the bot will attempt to use SQLite
   "use_database": false,
+  "launch_unstable": false,
   "sql": {
     "host": "",
     "port": 3306,
@@ -23,6 +24,18 @@
     "googl": "",
     "thecatapi": "",
     "wolframalpha": "",
-    "discordbots_userToken": ""
+    "discordbots_userToken": "",
+    "weeb.sh": {
+      "wolketoken": "INSERT_WEEB_WOLKETOKEN"
+    }
+  },
+  "lavalink": {
+    "nodes": [
+      {
+        "wsurl": "ws://localhost",
+        "pass": "youshallnotpass"
+      }
+    ],
+    "enable": true
   }
 }

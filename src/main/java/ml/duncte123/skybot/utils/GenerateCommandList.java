@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import org.apache.commons.lang3.StringUtils;
@@ -35,6 +36,7 @@ import java.util.List;
  *
  * @author duncte123
  */
+@SuppressWarnings("ResultOfMethodCallIgnored")
 public class GenerateCommandList {
 
     public static void inPHP() throws Exception{
@@ -57,11 +59,11 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.commandManager.getCommands().parallelStream().forEach(c-> names.add(c.getName()));
+        AirUtils.COMMAND_MANAGER.getCommands().forEach(c-> names.add(c.getName()));
         Collections.sort(names);
 
         for (String n: names) {
-            Command cmd = AirUtils.commandManager.getCommand(n);
+            Command cmd = AirUtils.COMMAND_MANAGER.getCommand(n);
             if(!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
                 writer.append("\t")
                         .append('"')
@@ -79,7 +81,8 @@ public class GenerateCommandList {
                 if (cmd.getAliases().length > 0) {
                     writer.append("<br />")
                             .append("Aliases: ")
-                            .append(StringUtils.join(cmd.getAliases(), ", "));
+                            .append(Settings.PREFIX)
+                            .append(StringUtils.join(cmd.getAliases(), ", " + Settings.PREFIX));
                 }
                 writer.append("\",");
                 writer.newLine();

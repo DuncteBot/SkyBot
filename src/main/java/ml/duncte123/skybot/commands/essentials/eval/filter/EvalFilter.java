@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import Java.lang.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
+import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
@@ -30,10 +31,7 @@ import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -74,9 +72,11 @@ public class EvalFilter extends GroovyValueFilter {
             double.class,
             
             Arrays.class,
-            
+
+            Collection.class,
             List.class,
             ArrayList.class,
+            CollectionsKt.class,
             
             BigDecimal.class,
             BigInteger.class,
@@ -155,11 +155,11 @@ public class EvalFilter extends GroovyValueFilter {
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-        throw new VRCubeException("Class not allowed: " + o.getClass().getName());
+        throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1] );
     }
     
     @Override
-    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) throws Throwable {
+    public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) {
         throw new VRCubeException(
                                          String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
                                                  receiver.toString(),

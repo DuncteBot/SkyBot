@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -43,98 +44,100 @@ public class WolframAlphaCommand extends Command {
      * @param result The result generated
      * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
      */
-    public static MessageEmbed generateEmbed(
-                                            GuildMessageReceivedEvent event,
-                                            WAQueryResult result) {
+    private MessageEmbed generateEmbed(
+            GuildMessageReceivedEvent event,
+            WAQueryResult result) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
 
-        eb.setTitle("**Input:** " + result.getQuery().getInput(),
-                result.getQuery().toWebsiteURL());
+        eb.setTitle("**Input:** " + a(result.getQuery().getInput()),
+                a(result.getQuery().toWebsiteURL()));
 
         for (WAPod pod : result.getPods()) {
-            String name = pod.getTitle();
-
+            String name = a(pod.getTitle());
             StringBuilder embeds = new StringBuilder();
-
+            //Loop over the subpods
             for (WASubpod sp : pod.getSubpods()) {
+                //yet another stringbuilder
                 StringBuilder e = new StringBuilder();
-
-                e.append(sp.getTitle());
-
+                //append the title
+                e.append(a(sp.getTitle()));
+                //loop over the contents
                 for (Visitable v : sp.getContents()) {
                     String d = "";
-
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + i.getAlt() + "]("
-                                + WebUtils.shortenUrl(i.getURL()) + ")";
+                        d += "[" + a(i.getTitle()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
-
-                        d += i.getText();
-
+                        d += a(i.getText());
+                        //Ramid when?
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-
-                        d += "[" + l.getText() + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
+                        d += "[" + a(l.getText()) + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
-
-                        d += pt.getText();
+                        d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
                         d += WebUtils.shortenUrl(sound.getURL());
                     }
-                    
+
                     e.append(d).append("\n\n");
                 }
-                
-                embeds.append(e.toString().trim()).append("\n\n");
+
+                embeds.append(a(e.toString().trim())).append("\n\n");
             }
-            
-            eb.addField(name, embeds.toString().trim(), false);
+
+            eb.addField(name, a(embeds.toString().trim()), false);
         }
-        
+
         return eb.build();
     }
 
+    private static String a(String s) {
+        if(s == null) return "null";
+
+        if(s.length() <= 2000 - 6) return s;
+
+        return s.substring(2000 - 6 - 1) + '\u2026';
+    }
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        sendMsg(event, "This command is being worked on.");
-        WAEngine engine = AirUtils.alphaEngine;
-        
-        if (engine == null) {
-            sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
-            return;
-        }
-        
+        if(!isPatron(event.getAuthor(), event.getChannel())) return;
+
         if (args.length == 0) {
-            sendMsg(event, ":x: Must give a question!!!");
+            MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
-        
-        String queryString
-                = event.getMessage().getRawContent()
-                      .substring(event.getMessage().getRawContent()
-                             .split(" ")[0].length());
 
-        WAQuery query = engine.createQuery(queryString);
-
-        WAQueryResult result;
-
-        try {
-            result = engine.performQuery(query);
-        } catch (WAException e) {
-            event.getChannel().sendMessage(":x: Error: "
-                               + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
-            e.printStackTrace();
+        WAEngine engine = AirUtils.ALPHA_ENGINE;
+        if (engine == null) {
+            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
-        
-        sendEmbed(event, generateEmbed(event, result));
+
+        MessageUtils.sendMsg(event, "Calculating.....", message -> {
+            String queryString
+                    = event.getMessage().getContentRaw()
+                    .substring(event.getMessage().getContentRaw()
+                            .split(" ")[0].length());
+
+            WAQuery query = engine.createQuery(queryString);
+            WAQueryResult result;
+            try {
+                result = engine.performQuery(query);
+            } catch (WAException e) {
+                message.editMessage(":x: Error: "
+                        + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+                e.printStackTrace();
+                return;
+            }
+            message.editMessage("Result:")
+                    .embed(generateEmbed(event, result)).queue();
+        });
     }
 
     @Override

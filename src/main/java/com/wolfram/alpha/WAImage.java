@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,9 +29,9 @@ import java.io.File;
 
 public interface WAImage extends Visitable {
     
-    public static final int FORMAT_UNKNOWN = 0;
-    public static final int FORMAT_GIF = 1;
-    public static final int FORMAT_PNG = 2;
+    int FORMAT_UNKNOWN = 0;
+    int FORMAT_GIF = 1;
+    int FORMAT_PNG = 2;
     
     String getURL();
     

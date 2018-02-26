@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.essentials
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.Settings
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class UpdateCommand: Command() {
@@ -32,21 +33,22 @@ class UpdateCommand: Command() {
     }
     
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        @Suppress("DEPRECATION")
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
-                && Settings.ownerId != event.author.id) {
-            event.channel.sendMessage(":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***").queue()
-            sendError(event.message)
+                && Settings.OWNER_ID != event.author.id) {
+            MessageUtils.sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
+            MessageUtils.sendError(event.message)
             return
         }
 
         if(!Settings.enableUpdaterCommand) {
             val message = "The updater is not enabled. " +
                     "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
-            sendEmbed(event, EmbedUtils.embedMessage(message))
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
             return
         }
-        
-        sendMsg(event, "✅ Updating")
+
+        MessageUtils.sendMsg(event, "✅ Updating")
         
         // This will also shutdown eval
         event.jda.asBot().shardManager.shutdown()

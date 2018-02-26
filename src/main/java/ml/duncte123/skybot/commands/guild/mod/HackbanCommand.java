@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -39,28 +39,32 @@ public class HackbanCommand extends Command {
         };
 
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "You don't have permission to run this command");
+            MessageUtils.sendMsg(event, "You don't have permission to run this command");
             return;
         }
 
         if (args.length < 1) {
-            sendMsg(event, "Usage is " + Settings.prefix + getName() + " <userId>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <userId>");
             return;
         }
 
+        if (args[0].matches("<@\\d{17,20}>"))
+            args[0] = args[0].substring(2, args[0].length() - 1);
+        else if (args[0].matches(".{2,32}#\\d{4}")) {
+            event.getJDA().getUsersByName(args[0].substring(0, args[0].length() - 5), false).stream().findFirst().ifPresent(user -> args[0] = user.getId());
+        }
+
         try {
-            event.getGuild().getController().ban(args[0], 0).queue((v) -> {
-                sendMsg(event, "User has been banned!");
-            });
+            event.getGuild().getController().ban(args[0], 0).queue((v) -> MessageUtils.sendMsg(event, "User has been banned!"));
         } catch (Exception e) {
             e.printStackTrace();
-            sendMsg(event, "ERROR: " + e.getMessage());
+            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
         }
     }
 
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Settings.prefix + getName() + " <userId>";
+        return "Ban a user before he/she can join your guild.\nUsage: " + PREFIX + getName() + " <userId>";
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -40,11 +40,9 @@ public class FakeTest {
      * Test basic
      * Mock primitives and String
      *
-     * @throws Throwable Should never happen
      */
     @Test
-    public void basic()
-            throws Throwable {
+    public void basic() {
         User user = new FakeInterface<>(User.class).create();
 
         assertEquals(user.getName(), "");
@@ -54,11 +52,9 @@ public class FakeTest {
      * Test medium
      * Mock Lists, don't share objects
      *
-     * @throws Throwable Should never happen
      */
     @Test
-    public void medium()
-            throws Throwable {
+    public void medium() {
         Member member = new FakeInterface<>(Member.class).create();
         JDA jda = member.getJDA();
         

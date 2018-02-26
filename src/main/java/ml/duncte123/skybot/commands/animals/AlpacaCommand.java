@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,12 +21,11 @@ package ml.duncte123.skybot.commands.animals;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-
-import java.net.URL;
 
 public class AlpacaCommand extends Command {
 
@@ -40,16 +39,16 @@ public class AlpacaCommand extends Command {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
             
             Element img = doc.select("img").first();
-            sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
+            MessageUtils.sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         } catch (Exception e) {
-            e.printStackTrace();
-            sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
+            //e.printStackTrace();
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
         }
     }
 
     @Override
     public String help() {
-        return "Here is a alpaca";
+        return "Here is an alpaca";
     }
 
     @Override

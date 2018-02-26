@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,8 +21,9 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.Settings;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -43,51 +44,63 @@ public class AnnounceCommand extends Command {
         };
         
         if (!event.getMember().hasPermission(perms)) {
-            sendMsg(event, "I'm sorry but you don't have permission to run this command.");
+            MessageUtils.sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
         
         if (event.getMessage().getMentionedChannels().size() < 1) {
-            sendMsg(event, "Correct usage is `" + Settings.prefix + getName() + " [#Channel] [Message]`");
+            MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + getName() + " [#Channel] [Message]`");
             return;
         }
 
         try {
-            TextChannel chann = event.getMessage().getMentionedChannels().get(0);
+            TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
-            if (!chann.canTalk()) {
-                sendError(event.getMessage());
+            if (!targetChannel.getGuild().getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+                MessageUtils.sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
+                MessageUtils.sendError(event.getMessage());
                 return;
             }
 
-            String msg = event.getMessage().getRawContent().split("\\s+", 3)[2];
+            String msg = event.getMessage().getContentRaw().split("\\s+", 3)[2];
             @SinceSkybot(version = "3.52.3")
-            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg);
+            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
             if (!event.getMessage().getAttachments().isEmpty()) {
-                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> embed.setImage(attachment.getUrl()));
+                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
+                    if (invoke.endsWith("2"))
+                        embed.setThumbnail(attachment.getUrl());
+                    else
+                        embed.setImage(attachment.getUrl());
+                });
             }
+
+            MessageUtils.sendEmbed(targetChannel, embed.build());
+            MessageUtils.sendSuccess(event.getMessage());
             
-            if (!event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_EMBED_LINKS)) {
-                chann.sendMessage(EmbedUtils.embedToMessage(embed.build())).queue();
-            } else {
-                chann.sendMessage(embed.build()).queue();
-            }
-            sendSuccess(event.getMessage());
-            
-        } catch (Exception e) {
-            sendMsg(event, "WHOOPS: " + e.getMessage());
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            MessageUtils.sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
+            ComparatingUtils.execCheck(ex);
+        }
+        catch (Exception e) {
+            MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }
     }
     
     @Override
     public String help() {
-        return "Announces a message.";
+        return "Announces a message.\n" +
+                "Usage `" + PREFIX + getName() + " <message>`";
     }
     
     @Override
     public String getName() {
         return "announce";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"announce2"};
     }
 }

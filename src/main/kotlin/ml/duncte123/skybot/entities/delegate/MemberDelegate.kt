@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,7 +21,6 @@
 package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
@@ -29,8 +28,10 @@ import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Member
+ */
 class MemberDelegate(private val xH4z9a_Qe: Member) : Member by xH4z9a_Qe {
     private val jda: JDA     = JDADelegate(xH4z9a_Qe.jda)
     private val guild: Guild = GuildDelegate(xH4z9a_Qe.guild)

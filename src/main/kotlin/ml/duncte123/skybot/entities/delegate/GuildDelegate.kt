@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,12 +17,12 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Suppress("USELESS_CAST")
 
 package ml.duncte123.skybot.entities.delegate
 
 import Java.lang.VRCubeException
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.DocumentationNeeded
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
@@ -35,8 +35,10 @@ import net.dv8tion.jda.core.managers.GuildManagerUpdatable
 import net.dv8tion.jda.core.requests.RestAction
 
 @SinceSkybot("3.51.5")
-@DocumentationNeeded
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
+/**
+ * @see Guild
+ */
 class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     private val jda: JDA = JDADelegate(z88Am1Alk.jda)
     private val manager: GuildManager? = null
@@ -45,21 +47,21 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     override fun getManager(): GuildManager                                                 = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManagerUpdatable(): GuildManagerUpdatable                               = throw VRCubeException("**\uD83D\uDD25 lit**")
 
-    override fun getMember(user: User): Member                                              = MemberDelegate(z88Am1Alk.getMember(user))
+    override fun getMember(user: User): Member                                              = MemberDelegate(z88Am1Alk.getMember(user)!!)
     override fun getSelfMember(): Member                                                    = MemberDelegate(z88Am1Alk.selfMember)
-    override fun getRoleById(id: Long): Role                                                = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getRoleById(id: String): Role                                              = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getMemberById(userId: Long): Member                                        = MemberDelegate(z88Am1Alk.getMemberById(userId))
-    override fun getMemberById(userId: String): Member                                      = MemberDelegate(z88Am1Alk.getMemberById(userId))
+    override fun getRoleById(id: Long): Role                                                = RoleDelegate(z88Am1Alk.getRoleById(id)!!)
+    override fun getRoleById(id: String): Role                                              = RoleDelegate(z88Am1Alk.getRoleById(id)!!)
+    override fun getMemberById(userId: Long): Member                                        = MemberDelegate(z88Am1Alk.getMemberById(userId)!!)
+    override fun getMemberById(userId: String): Member                                      = MemberDelegate(z88Am1Alk.getMemberById(userId)!!)
 
-    override fun getMembers(): List<Member>                                                 = z88Am1Alk.members.map { MemberDelegate(it) }
-    override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersByName(name: String, ignoreCase: Boolean): List<Member>          = z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersByNickname(nickname: String, ignoreCase: Boolean): List<Member>  = z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersWithRoles(vararg roles: Role): List<Member>                      = z88Am1Alk.getMembersWithRoles(*roles).map { MemberDelegate(it) }
-    override fun getMembersWithRoles(roles: Collection<Role>): List<Member>                 = z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
-    override fun getRoles(): List<Role>                                                     = z88Am1Alk.roles.map { RoleDelegate(it) }
-    override fun getRolesByName(name: String, ignoreCase: Boolean): List<Role>              = z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
+    override fun getMembers(): List<Member>                                                 = z88Am1Alk.members.map { MemberDelegate(it) } as List<Member>
+    override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) } as List<Member>
+    override fun getMembersByName(name: String, ignoreCase: Boolean): List<Member>          = z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) } as List<Member>
+    override fun getMembersByNickname(nickname: String, ignoreCase: Boolean): List<Member>  = z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) } as List<Member>
+    override fun getMembersWithRoles(vararg roles: Role): List<Member>                      = z88Am1Alk.getMembersWithRoles(*roles).map { MemberDelegate(it) } as List<Member>
+    override fun getMembersWithRoles(roles: Collection<Role>): List<Member>                 = z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) } as List<Member>
+    override fun getRoles(): List<Role>                                                     = z88Am1Alk.roles.map { RoleDelegate(it) } as List<Role>
+    override fun getRolesByName(name: String, ignoreCase: Boolean): List<Role>              = z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) } as List<Role>
 
     override fun getController(): GuildController                                           = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun leave(): RestAction<Void>                                                  = throw VRCubeException("**\uD83D\uDD25 lit**")

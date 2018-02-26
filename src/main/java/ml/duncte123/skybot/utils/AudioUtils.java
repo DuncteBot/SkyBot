@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -22,18 +22,24 @@ import com.sedmelluq.discord.lavaplayer.player.AudioLoadResultHandler;
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManagers;
+import com.sedmelluq.discord.lavaplayer.source.bandcamp.BandcampAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.beam.BeamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.soundcloud.SoundCloudAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.twitch.TwitchStreamAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.vimeo.VimeoAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.objects.command.Command;
-import net.dv8tion.jda.core.Permission;
+import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.MessageChannel;
-import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.http.client.config.CookieSpecs;
+import org.apache.http.client.config.RequestConfig;
 
 import java.util.HashMap;
 import java.util.List;
@@ -45,8 +51,9 @@ public class AudioUtils {
 
     /**
      * This is the default volume that the player will play at
+     * I've set it to 100 to save some resources
      */
-    private static final int DEFAULT_VOLUME = 35; //(0-150, where 100 is the default max volume)
+    private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
 
     /**
      * This is the title that you see in the embeds from the player
@@ -55,24 +62,57 @@ public class AudioUtils {
     /**
      * This will hold the manager for the audio player
      */
-    private final AudioPlayerManager playerManager;
+    private static AudioPlayerManager playerManager;
 
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
     final Map<String, GuildMusicManager> musicManagers;
 
+    public static final AudioUtils ins = new AudioUtils();
+
     /**
      * This will set everything up and get the player ready
      */
-    public AudioUtils() {
+    private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-        
-        this.playerManager = new DefaultAudioPlayerManager();
-        
-        AudioSourceManagers.registerRemoteSources(playerManager);
+
+        initPlayerManager();
         
         musicManagers = new HashMap<>();
+    }
+
+    private void initPlayerManager() {
+        if(playerManager == null) {
+            playerManager = new DefaultAudioPlayerManager();
+
+            //Disable cookies for youtube
+            YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+           /* youtubeAudioSourceManager.configureRequests(config ->
+                    RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());*/
+
+            SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
+
+            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+            playerManager.registerSourceManager(new ClypitAudioSourceManager());
+
+
+            playerManager.registerSourceManager(youtubeAudioSourceManager);
+            playerManager.registerSourceManager(soundcloud);
+            playerManager.registerSourceManager(new BandcampAudioSourceManager());
+            playerManager.registerSourceManager(new VimeoAudioSourceManager());
+            playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
+            playerManager.registerSourceManager(new BeamAudioSourceManager());
+            playerManager.registerSourceManager(new HttpAudioSourceManager());
+
+
+            AudioSourceManagers.registerLocalSource(playerManager);
+        }
+    }
+
+    public AudioPlayerManager getPlayerManager() {
+        initPlayerManager();
+        return playerManager;
     }
 
     /**
@@ -101,7 +141,7 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final MessageChannel channel, final String trackUrlRaw, final boolean addPlayList) {
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
         final String trackUrl;
         
         //Strip <>'s that prevent discord from embedding link resources
@@ -110,39 +150,35 @@ public class AudioUtils {
         } else {
             trackUrl = trackUrlRaw;
         }
-        
+
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
-            
-            /**
-             * fires when a track is loaded
-             * @param track The current {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack track} that has been loaded
-             */
+
+
             @Override
             public void trackLoaded(AudioTrack track) {
                 String msg = "Adding to queue: " + track.getInfo().title;
                 if (mng.player.getPlayingTrack() == null) {
                     msg += "\nand the Player has started playing;";
                 }
-                
+
                 mng.scheduler.queue(track);
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
-                
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
-            
-            /**
-             * Fires when a playlist is loaded
-             * @param playlist The {@link com.sedmelluq.discord.lavaplayer.track.AudioPlaylist playlist} that has been loaded
-             */
+
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
                 List<AudioTrack> tracks = playlist.getTracks();
-                
-                if (firstTrack == null) {
+
+                if (tracks.size() == 0) {
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
+                    return;
+
+                } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                String msg = "";
-                
+                String msg;
+
                 if (addPlayList) {
                     msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
                     if (mng.player.getPlayingTrack() == null) {
@@ -156,24 +192,19 @@ public class AudioUtils {
                     }
                     mng.scheduler.queue(firstTrack);
                 }
-                sendEmbed(EmbedUtils.embedField(embedTitle, msg), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
-            
-            /**
-             * When noting is found for the search
-             */
+
+
             @Override
             public void noMatches() {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
-            
-            /**
-             * When something broke and you need to scream at <em>duncte123#1245</em>
-             * @param exception A {@link com.sedmelluq.discord.lavaplayer.tools.FriendlyException FriendlyException}
-             */
+
             @Override
             public void loadFailed(FriendlyException exception) {
-                sendEmbed(EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage() + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"), channel);
+                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }
@@ -184,40 +215,24 @@ public class AudioUtils {
      * @param guild The guild that we need the manager for
      * @return The music manager for that guild
      */
-    public synchronized GuildMusicManager getMusicManager(Guild guild) {
+    public GuildMusicManager getMusicManager(Guild guild) {
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
                 if (mng == null) {
-                    mng = new GuildMusicManager(playerManager);
+                    mng = new GuildMusicManager(guild);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }
             }
         }
-        
         guild.getAudioManager().setSendingHandler(mng.getSendHandler());
-        
         return mng;
     }
 
-    /**
-     * {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     *
-     * @param embed   {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     * @param channel {@link Command#sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
-     */
-    private void sendEmbed(MessageEmbed embed, MessageChannel channel) {
-        TextChannel tc = (TextChannel) channel;
-        if(tc.canTalk()) {
-            if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_EMBED_LINKS)) {
-                channel.sendMessage(EmbedUtils.embedToMessage(embed)).queue();
-                return;
-            }
-            channel.sendMessage(embed).queue();
-        }
+    public Map<String, GuildMusicManager> getMusicManagers() {
+        return musicManagers;
     }
-    
 }

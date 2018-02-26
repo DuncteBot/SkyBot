@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.0'
+    ext.kotlin_version = '1.2.21'
 
     repositories {
         mavenCentral()
@@ -30,20 +30,21 @@ buildscript {
 plugins {
     id 'java'
     id 'idea'
+    id 'maven'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '2.0.1'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.0'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
 group = 'ml.duncte123.skybot'
 
-version '3.53.0'
+version "3.61.15_${getGitHash()}"
 
-sourceCompatibility = 1.8
+sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.3.1'
+    gradleVersion = '4.4.1'
 }
 
 repositories {
@@ -63,6 +64,7 @@ buildConfig {
     appName = project.name
     version = project.version
     buildConfigField("String", "ownerId", "191231307290771456")
+    buildConfigField("boolean", "UNSTABLE", "false")
     packageName = project.group
     charset = 'UTF-8'
 
@@ -70,10 +72,18 @@ buildConfig {
 }
 
 dependencies {
+    //Weeb api
+    compile group: 'me.duncte123', name: 'weebJava', version: '0.1.1'
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8124169' //Beta build with ShardManager
-    //Lavaplayer
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.45'
+    //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_341'
+    //Lavaplayer/Lavalink
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.53'
+    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'ab75962') {
+        exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
+        exclude group: 'net.dv8tion', module: 'JDA'
+        exclude group: "com.sedmelluq", module: "lavaplayer"
+    }
     //jda-nas
     compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.6'
     //Commons text, because UnicodeUnescaper
@@ -85,26 +95,36 @@ dependencies {
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.12' // to also compile it
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.13'
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension
     compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
-    // Logback core
-    compile group: 'ch.qos.logback', name: 'logback-core', version: '1.2.3'
     // Logback classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // Reflection stuffz
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    //Spotify API
+    compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
+    // Youtube api
+    compile 'com.google.apis:google-api-services-youtube:v3-rev192-1.23.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.0'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.0'
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.18'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.21.2'
+
+    //Bot?
+    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
 }
 
 javadoc {
+    failOnError = false
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author()
     options.encoding = 'UTF-8'
     options.addStringOption('-html5')
     exclude('ml/duncte123/skybot/commands')
@@ -132,4 +152,18 @@ compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
 }

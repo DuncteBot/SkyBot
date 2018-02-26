@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,28 +18,35 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.core.MessageBuilder;
-import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("SameParameterValue")
 public abstract class Command {
-    
+
+    protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
     /**
      * A list of users that have upvoted the bot
      */
@@ -47,11 +54,11 @@ public abstract class Command {
         @Override
         public boolean contains(Object o) {
             if(o.getClass() != String.class) return false;
-            
+
             if(super.contains(o)) return true;
-            
+
             reloadUpvoted();
-            
+
             return super.contains(o);
         }
     };
@@ -59,72 +66,120 @@ public abstract class Command {
     private static boolean cooldown = false;
 
     public Command() {
-        if (!Settings.useCooldown)
-            return;
-        ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-        executorService.scheduleWithFixedDelay(() -> {
-            if (cooldown)
-                cooldown = false;
-        }, 0, 20, TimeUnit.SECONDS);
+        if (Settings.useCooldown) {
+            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
+            executorService.scheduleWithFixedDelay(() -> {
+                if (cooldown)
+                    cooldown = false;
+            }, 0, 20, TimeUnit.SECONDS);
+        }
     }
 
     static {
         reloadUpvoted();
     }
-    
+
     /**
      * This holds the prefix for us
      */
-    protected final String PREFIX = Settings.prefix;
+    protected static final String PREFIX = Settings.PREFIX;
     /**
      * This holds the category
      */
     protected CommandCategory category = CommandCategory.MAIN;
-    
+
+    /**
+     * This tells the bot to display the aliases of the command in the help command
+     */
+    protected boolean displayAliasesInHelp = false;
+
+    /**
+     * Returns if the bot should take up the aliases in the help command
+     * @return if the bot should take up the aliases in the help command
+     */
+    public boolean isDisplayAliasesInHelp() {
+        return displayAliasesInHelp;
+    }
+
+    /**
+     * This checks if the user is a patrons if ours
+     * It checks if the user has the patreon role on our support guild
+     * @param u The user to check
+     * @param tc the channel to send the message to, if the text channel is null it wont send a message
+     * @return true if the user is a patron
+     */
+    protected boolean isPatron(User u, TextChannel tc) {
+        //noinspection deprecation
+        if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+            return true;
+        }
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
+        if (supportGuild == null) {
+            return false;
+        }
+        Member m = supportGuild.getMember(u);
+        if (m == null) {
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
+                    "not one of our patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
+                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
+            return false;
+        } else {
+            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
+                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
+                        "not one of our patrons.\n" +
+                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
+                return false;
+            }
+            return true;
+        }
+    }
+
     /**
      * Reloads the list of people who have upvoted this bot
      */
     protected static void reloadUpvoted() {
         if (cooldown && Settings.useCooldown) return;
         try {
-            String token = AirUtils.config.getString("apis.discordbots_userToken", "");
-            
+            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
+
             if (token == null || token.isEmpty()) {
-                AirUtils.logger.warn("Discord Bots token not found");
+                logger.warn("Discord Bots token not found");
                 return;
             }
-            
-            Response response = new OkHttpClient()
-                                        .newCall(
-                                            new Request.Builder()
-                                                .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                                                .get()
-                                                .addHeader("Authorization", token)
-                                                .build())
-                                        .execute();
-            JSONArray json = new JSONArray(response.body().source().readUtf8());
-            
+
+            Response it = WebUtilsJava.executeRequest(new Request.Builder()
+                            .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                            .get()
+                            .addHeader("Authorization", token)
+                            .build());
+            JSONArray json = null;
+            try {
+                json = new JSONArray(it.body().string());
+            }
+            catch (IOException e1) {
+                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+            }
+
             upvotedIds.clear();
 
             for (int i = 0; i < json.length(); i++) {
                 upvotedIds.add(json.getString(i));
             }
+
         } catch (JSONException e) {
             //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
             /* ignored */
         }
-        catch (IOException e1) {
-            AirUtils.logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-        }
         if (Settings.useCooldown)
             cooldown = true;
     }
-    
+
     /**
      * Has this user upvoted the bot
      */
-    protected static boolean hasUpvoted(User user) {
-        return upvotedIds.contains(user.getId());
+    protected boolean hasUpvoted(User user) {
+        return isPatron(user, null) || upvotedIds.contains(user.getId());
     }
 
     /**
@@ -135,7 +190,7 @@ public abstract class Command {
     public CommandCategory getCategory() {
         return this.category;
     }
-    
+
     /**
      * This is the action of the command, this will hold what the commands needs to to
      *
@@ -143,22 +198,36 @@ public abstract class Command {
      * @param args   The command agruments
      * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      */
+    @SuppressWarnings("NullableProblems")
     public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
-    
+
     /**
      * The usage instructions of the command
      *
-     * @return a String
+     * @return the help instructions of the command
+     * @see #help(String)
      */
     public abstract String help();
-    
+
+    /**
+     * The usage instructions of the command
+     * @param invoke the command that you want the help info for
+     *               Some commands are packed together and they will return specific info depending on what you put into
+     *               the command
+     * @return the help instructions of the command
+     * @see #help()
+     */
+    public String help(String invoke) {
+        return help();
+    }
+
     /**
      * This will hold the command name aka what the user puts after the prefix
      *
      * @return The command name
      */
     public abstract String getName();
-    
+
     /**
      * This wil hold any aliases that this command might have
      *
@@ -167,7 +236,7 @@ public abstract class Command {
     public String[] getAliases() {
         return new String[0];
     }
-    
+
     /**
      * This returns the settings for the given guild
      *
@@ -177,114 +246,12 @@ public abstract class Command {
     protected GuildSettings getSettings(Guild guild) {
         return GuildSettingsUtils.getGuild(guild);
     }
-    
-    /**
-     * This will react with a ❌ if the user doesn't have permission to run the command
-     *
-     * @param message the message to add the reaction to
-     */
-    protected void sendError(Message message) {
-        if (message.getChannelType() == ChannelType.TEXT) {
-            TextChannel channel = message.getTextChannel();
-            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
-                return;
-            }
-        }
-        message.addReaction("❌").queue();
-    }
 
-    /**
-     * This will react with a ❌ if the user doesn't have permission to run the command or any other error while execution
-     *
-     * @param message the message to add the reaction to
-     * @param error the cause
-     */
-    protected void sendErrorJSON(Message message, Throwable error, final boolean print) {
-        if (print)
-            AirUtils.logger.error(error.getLocalizedMessage(), error);
-
-        //Makes no difference if we use sendError or check here both perm types
-        if (message.getChannelType() == ChannelType.TEXT) {
-            TextChannel channel = message.getTextChannel();
-            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
-                return;
-            }
-        }
-
-        message.addReaction("❌").queue();
-
-        message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
-                new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
-                        error.getClass().getSimpleName())).build()).build()
-        ).queue();
-    }
-    
-    /**
-     * This will react with a ✅ if the user doesn't have permission to run the command
-     *
-     * @param message the message to add the reaction to
-     */
-    protected void sendSuccess(Message message) {
-        if (message.getChannelType() == ChannelType.TEXT) {
-            TextChannel channel = message.getTextChannel();
-            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
-                return;
-            }
-        }
-        message.addReaction("✅").queue();
-    }
-    
-    /**
-     * This will chcek if we can send a embed and convert it to a message if we can't send embeds
-     *
-     * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @param embed The embed to send
-     */
-    protected void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        if (!event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_EMBED_LINKS)) {
-            sendMsg(event, EmbedUtils.embedToMessage(embed));
-            return;
-        }
-        sendMsg(event, embed);
-    }
-    
-    /**
-     * This is a shortcut for sending messages to a channel
-     *
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @param msg   the message to send
-     */
-    protected void sendMsg(GuildMessageReceivedEvent event, String msg) {
-        sendMsg(event, (new MessageBuilder()).append(msg).build());
-    }
-    
-    /**
-     * This is a shortcut for sending messages to a channel
-     *
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @param msg   the message to send
-     */
-    protected void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
-        sendMsg(event, (new MessageBuilder()).setEmbed(msg).build());
-    }
-    
-    /**
-     * This is a shortcut for sending messages to a channel
-     *
-     * @param event a instance of {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @param msg   the message to send
-     */
-    protected void sendMsg(GuildMessageReceivedEvent event, Message msg) {
-        //Only send a message if we can talk
-        if(event.getChannel().canTalk())
-            event.getChannel().sendMessage(msg).queue();
-    }
-    
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
     }
-    
+
     @Override
     public boolean equals(Object obj) {
         if (obj == null) {
@@ -293,9 +260,9 @@ public abstract class Command {
         if (obj.getClass() != this.getClass() || !(obj instanceof Command)) {
             return false;
         }
-        
+
         Command command = (Command) obj;
-        
+
         return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }
 }
