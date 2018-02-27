@@ -45,12 +45,17 @@ class WeebCommands : WeebCommandBase() {
                 if(args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
                             .append("Here is a list of all the valid categories")
-                            .appendCodeBlock(StringUtils.join(AirUtils.WEEB_API.types, ", "), "LDIF")
+                            .appendCodeBlock(StringUtils.join(AirUtils.WEEB_API.typesCached, ", "), "LDIF")
                             .build())
                     return
                 }
-                val img =  AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, " "))
-                sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
+                val type = StringUtils.join(args, " ")
+                if(AirUtils.WEEB_API.typesCached.contains(type)) {
+                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, " "))
+                    sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
+                } else {
+                    sendMsg(event, "That category could not be found, Use `${PREFIX}weeb_image categories` for all categories")
+                }
             }
         }
     }
