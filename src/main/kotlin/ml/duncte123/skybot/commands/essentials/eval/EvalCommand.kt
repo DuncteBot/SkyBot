@@ -113,7 +113,6 @@ class EvalCommand : Command() {
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\nimport ", postfix = "\n") +
                 staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
-        println(importString)
 
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
