@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
+import kotlin.Deprecated;
+import kotlin.DeprecationLevel;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -33,6 +35,7 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+@SuppressWarnings({"unused", "WeakerAccess"})
 public class MessageUtils {
 
     private static Logger logger = LoggerFactory.getLogger(MessageUtils.class);
@@ -145,7 +148,26 @@ public class MessageUtils {
                 sendMsg(channel, EmbedUtils.embedToMessage(embed));
                 return;
             }
+            //noinspection deprecation
             sendMsg(channel, embed);
+        }
+    }
+
+    public static void editMsg(Message message, Message newContent) {
+        if(message == null || newContent == null) return;
+        if(newContent.getEmbeds().size() > 0) {
+            if (!message.getGuild().getSelfMember().hasPermission(message.getTextChannel(),
+                    Permission.MESSAGE_EMBED_LINKS)) {
+                MessageBuilder mb = new MessageBuilder()
+                        .append(newContent.getContentRaw())
+                        .append('\n');
+                newContent.getEmbeds().forEach(
+                        messageEmbed -> mb.append(EmbedUtils.embedToMessage(messageEmbed))
+                );
+                message.editMessage(mb.build()).queue();
+                return;
+            }
+            message.editMessage(newContent).queue();
         }
     }
 
@@ -295,7 +317,10 @@ public class MessageUtils {
      *
      * @param event a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @param msg   the message to send
+     *
+     * @deprecated Use {@link #sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
+    @Deprecated(message = "use #sendEmbed")
     public static void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event.getChannel(), (new MessageBuilder()).setEmbed(msg).build(), null, CUSTOM_QUEUE_ERROR);
     }
@@ -305,7 +330,10 @@ public class MessageUtils {
      *
      * @param channel he {@link TextChannel TextChannel} that we want to send our message to
      * @param msg   the message to send
+     *
+     * @deprecated Use {@link #sendEmbed(TextChannel, MessageEmbed)}
      */
+    @Deprecated(message = "use #sendEmbed")
     public static void sendMsg(TextChannel channel, MessageEmbed msg) {
         sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build(), null, CUSTOM_QUEUE_ERROR);
     }
@@ -375,7 +403,8 @@ public class MessageUtils {
     public static void sendMsg(TextChannel channel, Message msg, Consumer<Message> success, Consumer<Throwable> failure) {
         //Only send a message if we can talk
         if(channel != null && channel.getGuild().getSelfMember().hasPermission(channel,
-                Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+                Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             channel.sendMessage(msg).queue(success, failure);
+        }
     }
 }

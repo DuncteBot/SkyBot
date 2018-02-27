@@ -46,15 +46,8 @@ public class CommandManager {
      */
     public CommandManager() {
         //Get reflections for this project
-        Reflections reflections = new Reflections("ml.duncte123.skybot.commands");
-        //Loop over them commands
-        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
-            try {
-                //Add the command
-                this.addCommand(cmd.getDeclaredConstructor().newInstance());
-            } catch (Exception ignored) {
-            }
-        }
+        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
+        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
     }
     
     /**
@@ -147,6 +140,16 @@ public class CommandManager {
                     ComparatingUtils.execCheck(ex);
                 }
             }
+        }
+    }
+
+    private void registerCommandsFromReflection(Reflections reflections) {
+        //Loop over them commands
+        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
+            try {
+                //Add the command
+                this.addCommand(cmd.getDeclaredConstructor().newInstance());
+            } catch (Exception ignored) {}
         }
     }
 }

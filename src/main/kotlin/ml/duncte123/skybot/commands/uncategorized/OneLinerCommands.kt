@@ -42,9 +42,9 @@ class OneLinerCommands : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
-                val time = System.currentTimeMillis()
                 val avg = if (!getAverage().isNaN()) "\nAverage music ping: ${getAverage()}ms" else ""
 
+                val time = System.currentTimeMillis()
                 MessageUtils.sendMsg(event, "PONG!") {
                     it.editMessage("PONG!\n" +
                             "Message ping is: ${System.currentTimeMillis() - time}ms\n" +
@@ -110,7 +110,7 @@ class OneLinerCommands : Command() {
                     sendMsg(event, warningMsg)
                 }
             }
-            //db!eval "```${"screenfetch".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+            //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             else -> println("Invoke was invalid: $invoke")
         }
     }

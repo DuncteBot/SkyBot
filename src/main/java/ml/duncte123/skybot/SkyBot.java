@@ -56,10 +56,8 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
-        RestAction.DEFAULT_FAILURE = throwable -> {
-            throwable.printStackTrace();
-            ComparatingUtils.execCheck(throwable);
-        };
+        //throwable.printStackTrace();
+        RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(true);
 
         if (AirUtils.CONFIG.hasKey("launch_unstable") && AirUtils.CONFIG.getBoolean("launch_unstable", false)) {

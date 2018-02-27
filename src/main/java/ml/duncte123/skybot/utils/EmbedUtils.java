@@ -174,11 +174,15 @@ public class EmbedUtils {
         if (embed.getDescription() != null) {
             msg.append("_").append(embed.getDescription()
                     // Reformat
-                    .replaceAll("\\[(.+)\\]\\((.+)\\)", "$1 (Link: $2)")
+                    .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
             ).append("_\n\n");
         }
         for (MessageEmbed.Field f : embed.getFields()) {
-            msg.append("__").append(f.getName()).append("__\n").append(f.getValue()).append("\n\n");
+            msg.append("__").append(f.getName()).append("__\n").append(
+                    f.getValue()
+                        // Reformat
+                        .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
+            ).append("\n\n");
         }
         if (embed.getImage() != null) {
             msg.append(embed.getImage().getUrl()).append("\n");

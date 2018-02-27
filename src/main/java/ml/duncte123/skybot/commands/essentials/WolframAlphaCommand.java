@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -135,8 +136,8 @@ public class WolframAlphaCommand extends Command {
                 e.printStackTrace();
                 return;
             }
-            message.editMessage("Result:")
-                    .embed(generateEmbed(event, result)).queue();
+            MessageUtils.editMsg(message, new MessageBuilder().append("Result:")
+                    .setEmbed(generateEmbed(event, result)).build());
         });
     }
 
