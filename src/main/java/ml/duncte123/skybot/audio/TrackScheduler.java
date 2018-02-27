@@ -35,36 +35,13 @@ import java.util.Queue;
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
-
-    /**
-     * This stores our queue
-     */
     public final Queue<AudioTrack> queue;
-
-    /**
-     * Hey look at that, it's our player
-     */
     private final IPlayer player;
-
-    /**
-     * This is the last playing track
-     */
     private AudioTrack lastTrack;
-
     private final GuildMusicManager guildMusicManager;
-
-    /**
-     * Are we repeating the track
-     */
     private boolean repeating = false;
-
-
-    /**
-     * Are we repeating playlists
-     */
     private boolean repeatPlayList = false;
 
-    //private LavaplayerPlayerWrapper lavaplayerPlayer;
 
     /**
      * This instantiates our player
