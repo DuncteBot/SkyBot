@@ -377,10 +377,13 @@ public class BotListener extends ListenerAdapter {
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         if(LavalinkManager.ins.isConnected(event.getGuild())) {
             if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                if (!event.getChannelLeft().getId().equals( LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId() )) {
-                    return;
+                VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
+                if(vc != null) {
+                    if (!event.getChannelLeft().getId().equals(vc.getId())) {
+                        return;
+                    }
+                    channelCheckThing(event.getGuild(), event.getChannelLeft());
                 }
-                channelCheckThing(event.getGuild(), event.getChannelLeft());
             }
         }
     }
