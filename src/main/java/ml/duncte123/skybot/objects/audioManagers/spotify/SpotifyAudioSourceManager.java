@@ -58,16 +58,17 @@ import java.util.regex.Pattern;
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
-    private static final String PROTOCOL_REGEX = "?:spotify:(track:)|http://|https://[a-z]+\\.";
+    private static final String PROTOCOL_REGEX = "?:spotify:(track:)|(http://|https://)[a-z]+\\.";
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/";
     private static final String ALBUM_REGEX = "album/";
     private static final String PLAYLIST_REGEX = "user/(.*)/playlist/";
     private static final String REST_REGEX = "(.*)";
+    private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
 
-    private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + PROTOCOL_REGEX + DOMAIN_REGEX + TRACK_REGEX + ")" + REST_REGEX +"$");
-    private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + PROTOCOL_REGEX + DOMAIN_REGEX + ALBUM_REGEX + ")" + REST_REGEX +"$");
-    private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + PROTOCOL_REGEX + DOMAIN_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX +"$");
+    private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX +"$");
+    private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ALBUM_REGEX + ")" + REST_REGEX +"$");
+    private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX +"$");
 
     private final Api api;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;

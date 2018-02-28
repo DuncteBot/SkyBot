@@ -78,7 +78,7 @@ dependencies {
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_342'
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.54'
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.55'
     compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'cfc13ae') {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
         exclude group: 'net.dv8tion', module: 'JDA'

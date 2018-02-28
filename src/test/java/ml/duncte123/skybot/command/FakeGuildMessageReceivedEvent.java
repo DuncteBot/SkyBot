@@ -25,6 +25,7 @@ import net.dv8tion.jda.client.entities.Group;
 import net.dv8tion.jda.client.requests.restaction.pagination.MentionPaginationAction;
 import net.dv8tion.jda.core.AccountType;
 import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.Region;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.hooks.IEventManager;
@@ -40,14 +41,12 @@ import org.jetbrains.annotations.NotNull;
 import javax.annotation.Nonnull;
 import javax.annotation.Nullable;
 import java.time.OffsetDateTime;
-import java.util.Collection;
-import java.util.Formatter;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
-public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
+@SuppressWarnings("ConstantConditions")
+class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
-    public FakeGuildMessageReceivedEvent(DummyCommand cmd) {
+    FakeGuildMessageReceivedEvent(DummyCommand cmd) {
         super(new JDA() {
             @Nonnull
             @Override
@@ -481,6 +480,11 @@ public class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                     @Override
                     public Guild getGuild() {
                         return new Guild() {
+                            @Override
+                            public RestAction<EnumSet<Region>> retrieveRegions() {
+                                return null;
+                            }
+
                             @Nonnull
                             @Override
                             public String getName() {
