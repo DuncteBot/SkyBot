@@ -19,7 +19,6 @@
 package fredboat.audio.player;
 
 import com.afollestad.ason.Ason;
-import com.afollestad.ason.AsonArray;
 import lavalink.client.io.Lavalink;
 import lavalink.client.io.Link;
 import lavalink.client.player.IPlayer;
@@ -30,7 +29,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import net.sf.json.JSONArray;
 import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
@@ -38,6 +36,7 @@ import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 
 /**
@@ -72,7 +71,7 @@ public class LavalinkManager {
         nodes.forEach(it -> nodeList.add( Ason.deserialize(it, LavalinkNode.class) ));
 
         nodeList.forEach(it ->
-                lavalink.addNode(toURI(it.wsurl), it.pass)
+                lavalink.addNode(Objects.requireNonNull(toURI(it.wsurl)), it.pass)
         );
     }
 
@@ -94,18 +93,18 @@ public class LavalinkManager {
         }
     }
 
-    public boolean isConnected(Guild g) {
-        return isEnabled() ?
-                lavalink.getLink(g).getState() == Link.State.CONNECTED :
-                g.getAudioManager().isConnected();
-    }
-
     public void closeConnection(Guild guild) {
         if (isEnabled()) {
             lavalink.getLink(guild).disconnect();
         } else {
             guild.getAudioManager().closeAudioConnection();
         }
+    }
+
+    public boolean isConnected(Guild g) {
+        return isEnabled() ?
+                lavalink.getLink(g).getState() == Link.State.CONNECTED :
+                g.getAudioManager().isConnected();
     }
 
     public VoiceChannel getConnectedChannel(@NotNull Guild guild) {
