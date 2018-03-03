@@ -446,8 +446,14 @@ public class BotListener extends ListenerAdapter {
                 .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left" );
     }
 
+    @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
-        return name.matches("(?i)ANIMALS|MAIN|FUN|MUSIC|MOD_ADMIN|NERD_STUFF|UNLISTED");
+        try {
+            return CommandCategory.valueOf(name.toUpperCase()) != null;
+        }
+        catch (IllegalArgumentException ignored) {
+            return false;
+        }
     }
 
     private void killAllShards(ShardManager manager) {
