@@ -38,8 +38,6 @@ import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.apache.http.client.config.CookieSpecs;
-import org.apache.http.client.config.RequestConfig;
 
 import java.util.HashMap;
 import java.util.List;

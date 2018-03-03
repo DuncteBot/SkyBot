@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import kotlin.Deprecated;
-import kotlin.DeprecationLevel;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;

@@ -37,7 +37,7 @@ class WeebCommands : WeebCommandBase() {
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
             "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
-            "weeb_image" -> {
+            "weeb" -> {
                 if(args.isEmpty()) {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb_image categories` for all categories")
                     return
@@ -68,7 +68,7 @@ class WeebCommands : WeebCommandBase() {
         |`${PREFIX}shrug` => ¯\_(ツ)_/¯
         |`${PREFIX}lick` => Lick a user
         |`${PREFIX}owo` => OwO what's this
-        |`${PREFIX}weeb_image <category>` => Gives you a random image from weeb.sh with that type
+        |`${PREFIX}weeb <category>` => Gives you a random image from weeb.sh with that type
     """.trimMargin()
 
     override fun help(invoke: String?): String {
@@ -108,7 +108,7 @@ class WeebCommands : WeebCommandBase() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
              }
-             "weeb_image" -> {
+             "weeb" -> {
                  """Gives you a random image from weeb.sh with that type
                     |Usage: `$PREFIX$invoke <category>`
                 """.trimMargin()
@@ -128,6 +128,6 @@ class WeebCommands : WeebCommandBase() {
             "shrug",
             "lick",
             "owo",
-            "weeb_image"
+            "weeb"
     )
 }
