@@ -76,7 +76,7 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '0.2.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_342'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_343g'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.56'
     compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'cfc13ae') {
