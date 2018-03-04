@@ -31,6 +31,7 @@ class NSFWCommands : Command() {
 
     init {
         this.category = CommandCategory.NSFW
+        this.displayAliasesInHelp = true;
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
