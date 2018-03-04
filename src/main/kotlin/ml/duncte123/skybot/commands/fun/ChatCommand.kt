@@ -78,9 +78,9 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        launch {
+        async {
             logger.debug("Message: \"$message\"")
-            var response = handleChat(message)
+            var response = oldBot.think(message)
 
             //Reset the ai if it dies
             if(response == "You have been banned from talking to me.") {
@@ -101,10 +101,6 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
-
-    private suspend fun handleChat(message: String): String {
-        return async { oldBot.think(message) }.await()
-    }
 
     private fun resetAi() {
         oldBot = builder.createSession()
