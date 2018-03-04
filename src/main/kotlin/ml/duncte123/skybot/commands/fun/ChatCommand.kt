@@ -16,14 +16,14 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MemberVisibilityCanPrivate")
-
 package ml.duncte123.skybot.commands.`fun`
 
 import com.google.code.chatterbotapi.ChatterBot
 import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
+import kotlinx.coroutines.experimental.async
+import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -70,9 +70,6 @@ class ChatCommand : Command() {
             return
         }
 
-//        sendMsg(event, "The chat feature has temporally been disabled due to lag issues with the music.\n" +
-//                "We don't know if we ever will bring it back, thank you for understanding.")
-
         //We don't need this because we are using contentDisplay instead of contentRaw
         //We need it since contentDisplay leaves # and @
         event.message.mentionedChannels.forEach { message = message.replace(it.asMention, it.name) }
@@ -81,20 +78,23 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        logger.debug("Message: \"$message\"")
-        var response = oldBot.think(message)
+        launch {
+            logger.debug("Message: \"$message\"")
+            var response = handleChat(message)
 
-        //Reset the ai if it dies
-        if(response == "You have been banned from talking to me.") {
-            this.resetAi()
-            response = oldBot.think(message)
+            //Reset the ai if it dies
+            if(response == "You have been banned from talking to me.") {
+                resetAi()
+                response = oldBot.think(message)
+            }
+
+            for (element in Jsoup.parse(response).getElementsByTag("a")) {
+                response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
+            }
+            MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+            logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 
-        for (element in Jsoup.parse(response).getElementsByTag("a")) {
-            response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
-        }
-        MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
-        logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
@@ -102,7 +102,11 @@ class ChatCommand : Command() {
 
     override fun getName() = "chat"
 
-    fun resetAi() {
+    private suspend fun handleChat(message: String): String {
+        return async { oldBot.think(message) }.await()
+    }
+
+    private fun resetAi() {
         oldBot = builder.createSession()
     }
 }

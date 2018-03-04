@@ -219,11 +219,10 @@ public class BotListener extends ListenerAdapter {
         }
         if (rw.startsWith(event.getGuild().getSelfMember().getAsMention()) ) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-            final String[] args = Arrays.copyOfRange(split, 1, split.length);
             //Handle the chat command
             Command cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
-                cmd.executeCommand("chat", args, event);
+                cmd.executeCommand("chat", Arrays.copyOfRange(split, 1, split.length), event);
             return;
         }
         //Handle the command
