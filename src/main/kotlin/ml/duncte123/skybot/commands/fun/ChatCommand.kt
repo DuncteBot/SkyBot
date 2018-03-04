@@ -82,7 +82,7 @@ class ChatCommand : Command() {
             var response = oldBot.think(message)
 
             //Reset the ai if it dies
-            if(response == "You have been banned from talking to me.") {
+            if(response == "" || response == "You have been banned from talking to me.") {
                 resetAi()
                 response = oldBot.think(message)
             }
