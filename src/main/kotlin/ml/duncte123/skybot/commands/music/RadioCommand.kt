@@ -94,7 +94,6 @@ class RadioCommand : MusicCommand() {
         val guild = event.guild
         val mng = getMusicManager(guild)
         val scheduler = mng.scheduler
-        mng.latestChannel = event.channel
 
         when (args.size) {
             0 -> {

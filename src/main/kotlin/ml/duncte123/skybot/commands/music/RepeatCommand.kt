@@ -34,7 +34,6 @@ class RepeatCommand : MusicCommand() {
 
         val mng = getMusicManager(event.guild)
         val scheduler = mng.scheduler
-        mng.latestChannel = event.channel
 
         if (args.size == 1 && args[0] == "playlist") {
             scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists

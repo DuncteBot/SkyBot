@@ -36,7 +36,6 @@ class PlayRawCommand : PlayCommand() {
         val mng = getMusicManager(guild)
         val player = mng.player
         val scheduler = mng.scheduler
-        mng.latestChannel = event.channel
 
         if (args.isEmpty()) {
             when {

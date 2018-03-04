@@ -109,6 +109,7 @@ public abstract class MusicCommand extends Command {
                     "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
+        getMusicManager(event.getGuild()).latestChannel = event.getChannel();
         return true;
     }
 

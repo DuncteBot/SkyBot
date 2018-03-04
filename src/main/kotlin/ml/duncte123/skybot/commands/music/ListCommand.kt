@@ -34,7 +34,6 @@ class ListCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val mng = getMusicManager(event.guild)
         val scheduler = mng.scheduler
-        mng.latestChannel = event.channel
 
         val queue: Queue<AudioTrack> = scheduler.queue
                 synchronized (queue) {

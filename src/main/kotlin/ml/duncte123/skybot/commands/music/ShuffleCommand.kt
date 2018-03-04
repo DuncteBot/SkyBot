@@ -34,7 +34,6 @@ class ShuffleCommand : MusicCommand() {
 
         val mng = getMusicManager(event.guild)
         val scheduler = mng.scheduler
-        mng.latestChannel = event.channel
         if (scheduler.queue.isEmpty()) {
             MessageUtils.sendMsg(event, "There are no songs to shuffle")
             return

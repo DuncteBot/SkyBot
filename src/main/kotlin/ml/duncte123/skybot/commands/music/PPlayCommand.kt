@@ -36,7 +36,6 @@ class PPlayCommand : MusicCommand() {
 
         val guild = event.guild
         val mng = getMusicManager(guild)
-        mng.latestChannel = event.channel
 
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
