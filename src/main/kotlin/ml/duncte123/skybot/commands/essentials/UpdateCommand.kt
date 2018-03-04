@@ -48,16 +48,16 @@ class UpdateCommand: Command() {
             return
         }
 
-        MessageUtils.sendMsg(event, "✅ Updating")
-        
-        // This will also shutdown eval
-        event.jda.asBot().shardManager.shutdown()
-        
-        // Stop everything that my be using resources
-        AirUtils.stop()
-        
-        // Magic code. Tell the updater to update
-        System.exit(0x54)
+        MessageUtils.sendMsg(event, "✅ Updating", {
+            // This will also shutdown eval
+            event.jda.asBot().shardManager.shutdown()
+
+            // Stop everything that my be using resources
+            AirUtils.stop()
+
+            // Magic code. Tell the updater to update
+            System.exit(0x54)
+        })
     }
 
     override fun help()= "Update the bot and restart"
