@@ -23,7 +23,6 @@ import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
 import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
