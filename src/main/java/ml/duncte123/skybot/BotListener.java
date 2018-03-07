@@ -54,7 +54,7 @@ import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(?:https?://)(?:www\\.)?discord(?:app)?\\.(?:com|gg)+/(?:invite/)*([A-Za-z_0-9]+)");
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(?:https?://)(?:www\\.)?discord(?:app)?\\.(?:com|gg)+/(?:invite/)*(\\S*)");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -141,22 +141,6 @@ public class BotListener extends ListenerAdapter {
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
                 && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
-
-            if (settings.isEnableSwearFilter()) {
-                Message messageToCheck = event.getMessage();
-                if (filter.filterText(rw)) {
-                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
-                            .queue(null, CUSTOM_QUEUE_ERROR);
-
-                    MessageUtils.sendMsg(event,
-                            String.format("Hello there, %s please do not use cursive language within this Discord.",
-                                    event.getAuthor().getAsMention()
-                            ),
-                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
-                    return;
-                }
-            }
-
             if (settings.isFilterInvites()) {
                 Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
                 if (matcher.find()) {
@@ -172,6 +156,21 @@ public class BotListener extends ListenerAdapter {
                             );
                         }
                     });
+                }
+            }
+
+            if (settings.isEnableSwearFilter()) {
+                Message messageToCheck = event.getMessage();
+                if (filter.filterText(rw)) {
+                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+                            .queue(null, CUSTOM_QUEUE_ERROR);
+
+                    MessageUtils.sendMsg(event,
+                            String.format("Hello there, %s please do not use cursive language within this Discord.",
+                                    event.getAuthor().getAsMention()
+                            ),
+                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
+                    return;
                 }
             }
         }
