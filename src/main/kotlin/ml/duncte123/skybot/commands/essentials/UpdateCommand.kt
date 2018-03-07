@@ -26,12 +26,12 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class UpdateCommand: Command() {
+class UpdateCommand : Command() {
 
     init {
         this.category = CommandCategory.UNLISTED
     }
-    
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
@@ -41,7 +41,7 @@ class UpdateCommand: Command() {
             return
         }
 
-        if(!Settings.enableUpdaterCommand) {
+        if (!Settings.enableUpdaterCommand) {
             val message = "The updater is not enabled. " +
                     "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
@@ -60,7 +60,7 @@ class UpdateCommand: Command() {
         })
     }
 
-    override fun help()= "Update the bot and restart"
-    
-    override fun getName()= "update"
+    override fun help() = "Update the bot and restart"
+
+    override fun getName() = "update"
 }

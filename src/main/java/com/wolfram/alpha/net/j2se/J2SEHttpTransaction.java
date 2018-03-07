@@ -36,22 +36,22 @@ import java.net.URL;
 
 
 public class J2SEHttpTransaction implements HttpTransaction {
-    
+
     private HttpURLConnection conn;
     private URL url;
     private String userAgent;
     private ProxySettings proxySettings;
-    
-    
+
+
     J2SEHttpTransaction(URL url, ProxySettings proxySettings, String userAgent) {
         this.url = url;
         this.userAgent = userAgent;
         this.proxySettings = proxySettings != null ? proxySettings : ProxySettings.getInstance();
     }
-    
+
 
     public void abort() {
-        
+
     }
 
 
@@ -65,16 +65,16 @@ public class J2SEHttpTransaction implements HttpTransaction {
                 conn = (HttpURLConnection) url.openConnection();
             }
             conn.setRequestMethod("GET");
-            
+
             // TODO: This value
             conn.setReadTimeout(15 * 1000);
             conn.connect();
-            
+
             int statusCode = conn.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {
                 throw new WAHttpException(statusCode);
             }
-            
+
         } catch (IOException e) {
             throw new WAHttpException(e);
         }
@@ -105,11 +105,11 @@ public class J2SEHttpTransaction implements HttpTransaction {
 
 
     public String getResponseString() throws IOException {
-        
+
         InputStream strm = conn.getInputStream();
         if (strm == null)
             return null;
-        
+
         // Because we cast to int, will fail for huge downloads (>2Gb), but those wouldn't fit into
         // memory anyway (will double in size as a string).
         int contentLength = (int) getContentLength();
@@ -146,7 +146,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
         // TODO Auto-generated method stub
 
     }
-    
+
     public String getUserAgent() {
         return userAgent;
     }

@@ -74,7 +74,7 @@ public class EmbedUtils {
      */
     public static EmbedBuilder defaultEmbed() {
         EmbedBuilder eb = new EmbedBuilder()
-                                  .setColor(Settings.defaultColour);
+                .setColor(Settings.defaultColour);
         if (AirUtils.NONE_SQLITE) {
             //Get a random index from the quotes
             int randomIndex = AirUtils.RAND.nextInt(footerQuotes.size());
@@ -99,9 +99,9 @@ public class EmbedUtils {
      */
     public static String playerEmbed(GuildMusicManager mng) {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
-                       generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
-                       + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
-                       + getVolumeIcon(mng.player.getVolume());
+                generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
+                + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
+                + getVolumeIcon(mng.player.getVolume());
     }
 
     /**
@@ -167,7 +167,7 @@ public class EmbedUtils {
      */
     public static String embedToMessage(MessageEmbed embed) {
         StringBuilder msg = new StringBuilder();
-        
+
         if (embed.getAuthor() != null) {
             msg.append("***").append(embed.getAuthor().getName()).append("***\n\n");
         }
@@ -180,8 +180,8 @@ public class EmbedUtils {
         for (MessageEmbed.Field f : embed.getFields()) {
             msg.append("__").append(f.getName()).append("__\n").append(
                     f.getValue()
-                        // Reformat
-                        .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
+                            // Reformat
+                            .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
             ).append("\n\n");
         }
         if (embed.getImage() != null) {
@@ -193,7 +193,7 @@ public class EmbedUtils {
         if (embed.getTimestamp() != null) {
             msg.append(" | ").append(embed.getTimestamp());
         }
-        
+
         return msg.toString();
     }
 }

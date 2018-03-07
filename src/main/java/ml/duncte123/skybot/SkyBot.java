@@ -40,12 +40,11 @@ import javax.security.auth.login.LoginException;
 public class SkyBot {
 
     public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
-
+    private static final SkyBot instance = new SkyBot();
     private static ShardManager shardManager = null;
 
-    private static final SkyBot instance = new SkyBot();
-
-    private SkyBot() {}
+    private SkyBot() {
+    }
 
     /**
      * This is our main method
@@ -62,7 +61,7 @@ public class SkyBot {
 
         if (AirUtils.CONFIG.hasKey("launch_unstable") && AirUtils.CONFIG.getBoolean("launch_unstable", false)) {
             RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
-            logger.info(TextColor.RED_BACKGROUND+TextColor.YELLOW+"USING UNSTABLE BUILD!"+TextColor.RESET);
+            logger.info(TextColor.RED_BACKGROUND + TextColor.YELLOW + "USING UNSTABLE BUILD!" + TextColor.RESET);
         }
 
         //Set the logger to only info by default
@@ -108,7 +107,7 @@ public class SkyBot {
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
-        if(type.equals(Game.GameType.STREAMING)) {
+        if (type.equals(Game.GameType.STREAMING)) {
             url[0] = AirUtils.CONFIG.getString("discord.game.streamUrl", url[0]);
         }
 
@@ -135,11 +134,11 @@ public class SkyBot {
         HelpEmbeds.init();
     }
 
-    public ShardManager getShardManager() {
-        return shardManager;
-    }
-
     public static SkyBot getInstance() {
         return instance;
+    }
+
+    public ShardManager getShardManager() {
+        return shardManager;
     }
 }

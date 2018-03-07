@@ -64,9 +64,10 @@ public class GuildUtils {
 
     /**
      * This method updates the guild count and checks it on startup and every time we join or leave a guild.
-     * @throws UnsupportedOperationException if the request failed.
-     * @param jda the jda
+     *
+     * @param jda           the jda
      * @param newGuildCount the new guild count
+     * @throws UnsupportedOperationException if the request failed.
      */
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
@@ -103,9 +104,10 @@ public class GuildUtils {
 
     /**
      * Returns an array with the member counts of the guild
-     *  0 = the total users
-     *  1 = the total bots
-     *  3 = the total members
+     * 0 = the total users
+     * 1 = the total bots
+     * 3 = the total members
+     *
      * @param g The {@link Guild Guild} to count the users in
      * @return an array with the member counts of the guild
      */
@@ -115,7 +117,7 @@ public class GuildUtils {
         long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
         long userCount = totalCount - botCount;
 
-        return new long[] {userCount, botCount, totalCount};
+        return new long[]{userCount, botCount, totalCount};
     }
 
     /**
@@ -127,9 +129,9 @@ public class GuildUtils {
     public static double[] getBotRatio(Guild g) {
 
         long[] counts = getBotAndUserCount(g);
-        double totalCount  = counts[2];
-        double userCount  = counts[0];
-        double botCount  = counts[1];
+        double totalCount = counts[2];
+        double userCount = counts[0];
+        double botCount = counts[1];
 
         //percent in users
         double userCountP = (userCount / totalCount) * 100;
@@ -144,6 +146,7 @@ public class GuildUtils {
 
     /**
      * This counts the users in a guild that have an animated avatar
+     *
      * @param g the guild to count it in
      * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
      */
@@ -151,8 +154,8 @@ public class GuildUtils {
 
         return new AtomicLong(g.getMemberCache().stream()
                 .map(Member::getUser)
-                .filter(it -> it.getAvatarId() != null )
-	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
+                .filter(it -> it.getAvatarId() != null)
+                .filter(it -> it.getAvatarId().startsWith("a_")).count()
         );
     }
 

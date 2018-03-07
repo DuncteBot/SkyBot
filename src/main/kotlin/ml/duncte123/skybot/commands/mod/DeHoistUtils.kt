@@ -32,21 +32,21 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
 import java.util.regex.Pattern
 
-class DeHoistCommand : Command()  {
+class DeHoistCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(event.message.mentionedMembers.size == 0) {
+        if (event.message.mentionedMembers.size == 0) {
             sendMsg(event, """"Incorrect usage
                 |Correct usage: `$PREFIX$name <@user>`
             """.trimMargin())
             return
         }
         val toDehoist = event.message.mentionedMembers[0]
-        if(!event.guild.selfMember.canInteract(toDehoist)
-                || !event.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) ) {
+        if (!event.guild.selfMember.canInteract(toDehoist)
+                || !event.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)) {
             sendMsg(event, "I do not have the permission to change that members's nickname")
             return
         }
-        if(!event.member.canInteract(toDehoist) || !event.member.hasPermission(Permission.NICKNAME_MANAGE)) {
+        if (!event.member.canInteract(toDehoist) || !event.member.hasPermission(Permission.NICKNAME_MANAGE)) {
             sendMsg(event, "You do not have enough permission to execute this command")
             return
         }
@@ -69,7 +69,7 @@ class DeHoistListener : ListenerAdapter() {
     private val regex = Pattern.compile(badNameChars)
 
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
-        if(shouldChangeName(event.member)) {
+        if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.controller.setNickname(event.member, "\uD82F\uDCA2" + event.member.effectiveName)
                     .reason("auto de-hoist").queue()
@@ -77,7 +77,7 @@ class DeHoistListener : ListenerAdapter() {
     }
 
     override fun onGuildMemberNickChange(event: GuildMemberNickChangeEvent) {
-        if(shouldChangeName(event.member)) {
+        if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.controller.setNickname(event.member, "\uD82F\uDCA2" + event.member.effectiveName)
                     .reason("auto de-hoist").queue()
@@ -88,9 +88,9 @@ class DeHoistListener : ListenerAdapter() {
      * This checks if we should change the nickname of a member to de-hoist it
      * @return [Boolean] true if we should change the nickname
      */
-    private fun shouldChangeName(member: Member) : Boolean {
+    private fun shouldChangeName(member: Member): Boolean {
         val memberName = member.effectiveName
-        return ( !memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
+        return (!memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
                 member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
                 GuildSettingsUtils.getGuild(member.guild).isAutoDeHoist)
     }

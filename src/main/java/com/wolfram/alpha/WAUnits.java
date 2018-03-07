@@ -26,10 +26,10 @@ import com.wolfram.alpha.visitor.Visitable;
 
 
 public interface WAUnits extends Visitable {
-    
+
     String[] getLongNames();
-    
+
     String[] getShortNames();
-    
+
     WAImage getImage();
 }

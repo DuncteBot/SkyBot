@@ -32,27 +32,27 @@ import java.util.List;
  * A single event listener container
  */
 public class EventManager
-implements IEventManager {
+        implements IEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
     private final BotListener botListener = new BotListener();
     private final DeHoistListener deHoistListener = new DeHoistListener();
-    
+
     @Override
     public void register(Object listener) {
         throw new IllegalArgumentException();
     }
-    
+
     @Override
     public void unregister(Object listener) {
         throw new IllegalArgumentException();
     }
-    
+
     @Override
     public void handle(Event event) {
         try {
-            if(LavalinkManager.ins.isEnabled())
+            if (LavalinkManager.ins.isEnabled())
                 LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
             deHoistListener.onEvent(event);
@@ -60,10 +60,10 @@ implements IEventManager {
             logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
-    
+
     @Override
     public List<Object> getRegisteredListeners() {
-        if(LavalinkManager.ins.isEnabled())
+        if (LavalinkManager.ins.isEnabled())
             return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener);
         else
             return Arrays.asList(botListener, deHoistListener);

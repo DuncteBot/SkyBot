@@ -47,5 +47,5 @@ class BirbCommand : Command() {
 
     override fun help() = "Here is a birb"
 
-    override fun getAliases()= arrayOf("bird")
+    override fun getAliases() = arrayOf("bird")
 }

@@ -74,18 +74,15 @@ public class Settings {
      * The colour of the bar that your embed has
      */
     public static final Color defaultColour = Color.decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
-
-    public static boolean useCooldown = false;
-
-    /**
-     * this tells the bot if we should send json errors
-     */
-    public static boolean useJSON = false;
-
     /**
      * This holds if we can use the updater
      */
     public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
+    public static boolean useCooldown = false;
+    /**
+     * this tells the bot if we should send json errors
+     */
+    public static boolean useJSON = false;
 
     // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
     public static void setCooldown(final boolean cooldown) {

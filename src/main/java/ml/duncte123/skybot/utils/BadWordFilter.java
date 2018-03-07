@@ -29,17 +29,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class BadWordFilter {
-    
+
     private int largestWordLength = 0;
     private Map<String, String[]> words = new HashMap<>();
-    
+
     public BadWordFilter() {
         try {
             BufferedReader reader = new BufferedReader(
-                                          new InputStreamReader(
-                                               new URL("https://docs.google.com/spreadsheets/d/"
-                                                   + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
-                                                   + "export?format=csv").openConnection().getInputStream()));
+                    new InputStreamReader(
+                            new URL("https://docs.google.com/spreadsheets/d/"
+                                    + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
+                                    + "export?format=csv").openConnection().getInputStream()));
             String line;
             int counter = 0;
             while ((line = reader.readLine()) != null) {
@@ -55,23 +55,23 @@ public class BadWordFilter {
                     if (content.length > 1) {
                         ignore_in_combination_with_words = content[1].split("_");
                     }
-                    
+
                     if (word.length() > largestWordLength) {
                         largestWordLength = word.length();
                     }
                     words.put(word.replaceAll(" ", ""), ignore_in_combination_with_words);
-                    
+
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
-                
+
             }
             LoggerFactory.getLogger(BadWordFilter.class).info("Loaded " + counter + " words to filter out");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
-    
+
     /**
      * Iterates over a String input and checks whether a cuss word was found in a list, then checks if the word should be ignored (e.g. bass contains the word *ss).
      *
@@ -82,7 +82,7 @@ public class BadWordFilter {
         if (input == null) {
             return new ArrayList<>();
         }
-        
+
         // remove leetspeak
         input = input.replaceAll("[1!]", "i");
         input = input.replaceAll("3", "e");
@@ -91,15 +91,15 @@ public class BadWordFilter {
         input = input.replaceAll("7", "t");
         input = input.replaceAll("0", "o");
         input = input.replaceAll("9", "g");
-        
+
         ArrayList<String> badWords = new ArrayList<>();
         input = input.toLowerCase().replaceAll("[^a-zA-Z ]", "");
-        
+
         // iterate over each letter in the word
         for (int start = 0; start < input.length(); start++)
             // from each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
             for (int offset = 1; offset < (input.length() + 1 - start)
-                                         && offset < largestWordLength; offset++) {
+                    && offset < largestWordLength; offset++) {
                 String wordToCheck = input.substring(start, start + offset);
                 if (words.containsKey(wordToCheck)) {
                     // for example, if you want to say the word bass, that should be possible.
@@ -114,10 +114,10 @@ public class BadWordFilter {
                         badWords.add(wordToCheck);
                 }
             }
-        
+
         return badWords;
     }
-    
+
     /**
      * Checks if the sentence contains a bad word
      *

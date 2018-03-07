@@ -86,7 +86,7 @@ public class GuildInfoCommand extends Command {
         double[] ratio = GuildUtils.getBotRatio(g);
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         GuildSettings settings = GuildSettingsUtils.getGuild(g);
-        if(settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
+        if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }
         eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")

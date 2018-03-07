@@ -81,7 +81,7 @@ class RadioCommand : MusicCommand() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!hasUpvoted(event.author)) {
+        if (!hasUpvoted(event.author)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
                     "You cannot use the shorten command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
@@ -140,7 +140,7 @@ class RadioCommand : MusicCommand() {
 
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
-        val string = streams.filter { if(!full) it.public else true }
+        val string = streams.filter { if (!full) it.public else true }
                 .joinToString(separator = "\n") { it.toEmbedString() }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())

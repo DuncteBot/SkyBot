@@ -47,27 +47,24 @@ import java.util.logging.Level;
 @SinceSkybot(version = "3.5.1")
 public class AudioUtils {
 
+    public static final AudioUtils ins = new AudioUtils();
     /**
      * This is the default volume that the player will play at
      * I've set it to 100 to save some resources
      */
     private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
-
+    /**
+     * This will hold the manager for the audio player
+     */
+    private static AudioPlayerManager playerManager;
     /**
      * This is the title that you see in the embeds from the player
      */
     public final String embedTitle = "AirPlayer";
     /**
-     * This will hold the manager for the audio player
-     */
-    private static AudioPlayerManager playerManager;
-
-    /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
     final Map<String, GuildMusicManager> musicManagers;
-
-    public static final AudioUtils ins = new AudioUtils();
 
     /**
      * This will set everything up and get the player ready
@@ -76,12 +73,30 @@ public class AudioUtils {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
 
         initPlayerManager();
-        
+
         musicManagers = new HashMap<>();
     }
 
+    /**
+     * This will return the formatted timestamp for the current playing track
+     *
+     * @param milliseconds the milliseconds that the track is at
+     * @return a formatted time
+     */
+    public static String getTimestamp(long milliseconds) {
+        int seconds = (int) (milliseconds / 1000) % 60;
+        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
+    }
+
     private void initPlayerManager() {
-        if(playerManager == null) {
+        if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
 
             //Disable cookies for youtube
@@ -114,24 +129,6 @@ public class AudioUtils {
     }
 
     /**
-     * This will return the formatted timestamp for the current playing track
-     *
-     * @param milliseconds the milliseconds that the track is at
-     * @return a formatted time
-     */
-    public static String getTimestamp(long milliseconds) {
-        int seconds = (int) (milliseconds / 1000) % 60;
-        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
-        
-        if (hours > 0) {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
-    }
-
-    /**
      * Loads a track and plays it if the bot isn't playing
      *
      * @param mng         The {@link GuildMusicManager MusicManager} for the guild
@@ -141,7 +138,7 @@ public class AudioUtils {
      */
     public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
         final String trackUrl;
-        
+
         //Strip <>'s that prevent discord from embedding link resources
         if (trackUrlRaw.startsWith("<") && trackUrlRaw.endsWith(">")) {
             trackUrl = trackUrlRaw.substring(1, trackUrlRaw.length() - 1);

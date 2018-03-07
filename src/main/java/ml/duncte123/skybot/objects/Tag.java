@@ -36,11 +36,11 @@ public class Tag {
     /**
      * The tag constructor
      *
-     * @param tagId the id of the taf
-     * @param author Who made the tag? Username#discrim
+     * @param tagId    the id of the taf
+     * @param author   Who made the tag? Username#discrim
      * @param authorId the id of the user
-     * @param name   What is the tag called
-     * @param text   What to put into the tag
+     * @param name     What is the tag called
+     * @param text     What to put into the tag
      */
     public Tag(int tagId, String author, String authorId, String name, String text) {
         this.tagId = tagId;

@@ -26,7 +26,7 @@ import com.wolfram.alpha.*;
 
 
 public interface Visitor {
-    
+
     void visit(WAQueryResult obj);
 
     void visit(WAPod obj);
@@ -56,7 +56,7 @@ public interface Visitor {
     void visit(WAReinterpretWarning obj);
 
     void visit(WAUnits obj);
-    
+
     // Content types
     void visit(WAPlainText obj);
 

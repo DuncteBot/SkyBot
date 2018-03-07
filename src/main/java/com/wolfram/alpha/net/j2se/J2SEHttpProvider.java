@@ -31,10 +31,10 @@ import java.net.URL;
 
 public class J2SEHttpProvider implements HttpProvider {
 
-    
+
     private String userAgent = "Wolfram|Alpha Java Binding 1.1";
 
-    
+
     public HttpTransaction createHttpTransaction(URL url, ProxySettings proxySettings) {
         return new J2SEHttpTransaction(url, proxySettings, userAgent);
     }

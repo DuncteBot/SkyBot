@@ -67,17 +67,17 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     private WASoundImpl[] sounds = WASoundImpl.EMPTY_ARRAY;
     private transient Object userData;
 
-    
+
     WAPodImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         this.http = http;
         this.tempDir = tempDir;
         createFromDOM(thisElement);
     }
-    
-    
+
+
     private synchronized void createFromDOM(Element thisElement) throws WAException {
-        
+
         // Get attribute values of <pod> element
         error = thisElement.getAttribute("error").equals("true");
         // The only time error=true is for a pod obtained from an async URL. Normal pods are simply
@@ -100,7 +100,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             subpods = new WASubpodImpl[numSubpods];
             for (int i = 0; i < numSubpods; i++)
                 subpods[i] = new WASubpodImpl((Element) subpodElements.item(i), http, tempDir);
-            
+
             // states
             NodeList podstatesElements = thisElement.getElementsByTagName("states");
             // Should be 0 or 1; this is the number of <states> elements, not the number
@@ -124,7 +124,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 for (int i = 0; i < numStates; i++)
                     podstates[i] = new WAPodStateImpl((Element) stateAndStatelistNodes.get(i));
             }
-            
+
             // infos
             NodeList infosElements = thisElement.getElementsByTagName("infos");
             // Should be 0 or 1; this is the number of <infos> elements, not the number
@@ -173,46 +173,46 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
         }
 
     }
-    
-    
+
+
     //////////////////////////  WAPod interface  ///////////////////////////
-    
+
     public synchronized String getTitle() {
         return title;
     }
-    
+
     public synchronized boolean isError() {
         return error;
     }
-    
+
     public synchronized int getNumSubpods() {
         return subpods.length;
     }
-    
+
     public synchronized String getScanner() {
         return scanner;
     }
-    
+
     public synchronized int getPosition() {
         return position;
     }
-    
+
     public synchronized String getID() {
         return id;
     }
-    
+
     public synchronized String getAsyncURL() {
         return asyncURL;
     }
-    
+
     public synchronized WASubpod[] getSubpods() {
         return subpods;
     }
-    
+
     public synchronized WAPodState[] getPodStates() {
         return podstates;
     }
-    
+
     public synchronized WAInfo[] getInfos() {
         return infos;
     }
@@ -220,15 +220,15 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     public synchronized WASound[] getSounds() {
         return sounds;
     }
-    
-    
+
+
     public synchronized WAException getAsyncException() {
         return asyncException;
     }
-    
-    
+
+
     public void acquireImages() {
-        
+
         WASubpodImpl[] sps;
         synchronized (this) {
             sps = subpods;
@@ -237,16 +237,16 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             sub.acquireImage();
         }
     }
-    
+
     public void finishAsync() throws WAException {
-        
+
         // This is structured so that it holds the synchronization lock for the shortest possible period
         // of time--only when reading or setting instance state. Do not want to hold the lock during download
         // of async pods. Note that two different threads could call finishAsync() at close to the same time
         // and trigger two separate downloads. This is not really a problem. The synchronization issue we care
         // about is making sure that changes made by a thread calling finishAsync() are immediately seen by 
         // other threads reading instance state.
-        
+
         String url;
         WAException newAsyncException = null;
         synchronized (this) {
@@ -284,22 +284,22 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
         }
     }
 
-    
+
     // It is not essential that access to userData be synchronized here. Users could synchronize on their.
     // But the Android app is the main client for this feature, and the Android app needs synchronization, so
     // I'll put it in here.
-    
+
     public synchronized Object getUserData() {
         return userData;
     }
-    
+
     public synchronized void setUserData(Object obj) {
         userData = obj;
     }
 
-    
+
     ////////////////////////  hashCode()  /////////////////////////
-    
+
     // We use hashCode() as a "content code" to tell us quickly whether the object's content
     // has changed since some point in the past. Note that we do not override equals() as well, 
     // but it is not necessary to override equals() when overriding hashCode() (although it _is_
@@ -308,10 +308,10 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     // blocks), as these values are changed on a background thread.
     // This is not a particularly good hash function, but it doesn't need to be. The only property
     // that really matters is that its value changes when the content of this object changes.
-    
+
     @Override
     public synchronized int hashCode() {
-        
+
         int result = 17;
         result = 37 * result + title.hashCode();
         // The only content that can change in this class is the error state and asyncException (these from
@@ -332,10 +332,10 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             result = 37 * result + sound.hashCode();
         return result;
     }
-    
-    
+
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
         for (WASubpod subpod : subpods)

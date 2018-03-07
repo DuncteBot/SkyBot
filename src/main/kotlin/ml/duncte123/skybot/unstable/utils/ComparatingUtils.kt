@@ -80,7 +80,7 @@ class ComparatingUtils {
                 row.add(lowerMap.values.map { it.size.toDouble() }.average().toString())
                 table.add(row)
             }
-            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
             else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
@@ -96,7 +96,7 @@ class ComparatingUtils {
                     row = ArrayList()
                 }
             }
-            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
             else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 
@@ -113,7 +113,7 @@ class ComparatingUtils {
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
             }
 
-            if(channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
+            if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
             else channel.sendMessage(makeAsciiTable(headers, table)).queue()
         }
 

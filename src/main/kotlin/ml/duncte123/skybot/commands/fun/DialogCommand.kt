@@ -40,7 +40,7 @@ class DialogCommand : Command() {
 
         val lines = WordUtils.wrap(
                 StringUtils.join(args, " ").replace("`", "")
-        , 25, null, true).split("\n")
+                , 25, null, true).split("\n")
 
         val sb = StringBuilder()
                 .append("```")
@@ -50,7 +50,7 @@ class DialogCommand : Command() {
 
         lines.stream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
 
-              sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
+        sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
                 .append("║  │   Yes   │  │   No   │  ║\n")
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")

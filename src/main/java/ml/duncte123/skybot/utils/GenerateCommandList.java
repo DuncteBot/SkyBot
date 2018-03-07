@@ -39,10 +39,10 @@ import java.util.List;
 @SuppressWarnings("ResultOfMethodCallIgnored")
 public class GenerateCommandList {
 
-    public static void inPHP() throws Exception{
+    public static void inPHP() throws Exception {
         File phpFile = new File("commandList.php");
 
-        if(!phpFile.exists()) {
+        if (!phpFile.exists()) {
             phpFile.createNewFile();
             Thread.sleep(500);
         } else {
@@ -59,12 +59,12 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.COMMAND_MANAGER.getCommands().forEach(c-> names.add(c.getName()));
+        AirUtils.COMMAND_MANAGER.getCommands().forEach(c -> names.add(c.getName()));
         Collections.sort(names);
 
-        for (String n: names) {
+        for (String n : names) {
             Command cmd = AirUtils.COMMAND_MANAGER.getCommand(n);
-            if(!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
+            if (!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
                 writer.append("\t")
                         .append('"')
                         .append(cmd.getName())

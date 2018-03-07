@@ -39,20 +39,20 @@ import java.text.DecimalFormat;
  * Created by Duncan on 11-7-2017.
  */
 public class BotinfoCommand extends Command {
-    
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        if("support".equals(invoke)) {
+        if ("support".equals(invoke)) {
             MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
             return;
         }
 
         User u = event.getJDA().getSelfUser();
-        
+
         String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
-                            " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
-                            " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
+                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
+                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
         String cpu0 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getProcessCpuLoad());
         String cpu2 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad());
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
@@ -60,8 +60,8 @@ public class BotinfoCommand extends Command {
         long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
         long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
         Time uptimeTime = new Time(uptimeLong - 3600000);
-        
-        
+
+
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
@@ -69,14 +69,14 @@ public class BotinfoCommand extends Command {
                         "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                         "\nIf you need any support you can join the support guild [here](https://discord.gg/NKM9Xtk)", true)
-                .addField("Other info",  "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+                .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.VERSION + "\n"
                         + "**Operating System:** " + OS + "\n" +
-                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
+                        "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
                 .addField("Lang & lib info", "**Coded in:** Java and Kotlin\n\n" +
-                                                     "**JDA version:** " + JDAInfo.VERSION + "" +
+                        "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION, false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to " +
@@ -84,20 +84,20 @@ public class BotinfoCommand extends Command {
                 .build();
         MessageUtils.sendEmbed(event, eb);
     }
-    
+
     @Override
     public String help() {
         return "Gets some info about the bot\nUsage: `" + PREFIX + getName() + "`";
     }
-    
+
     @Override
     public String getName() {
         return "botinfo";
     }
-    
+
     @Override
     public String[] getAliases() {
         return new String[]{"about", "info", "support"};
     }
-    
+
 }

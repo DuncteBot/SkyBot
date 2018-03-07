@@ -33,7 +33,7 @@ class RestartCommand : Command() {
     init {
         this.category = CommandCategory.UNLISTED
     }
-    
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
@@ -54,6 +54,7 @@ class RestartCommand : Command() {
             }
         }
     }
+
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
     override fun getName() = "restart"

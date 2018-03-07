@@ -29,7 +29,7 @@ import java.lang.reflect.Proxy;
  */
 @FunctionalInterface
 public interface InvocationFunction {
-    
+
     /**
      * Handles a function
      *

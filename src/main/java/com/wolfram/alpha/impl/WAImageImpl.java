@@ -50,11 +50,11 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
     private transient HttpProvider http;
     private transient File tempDir;
 
-    
+
     WAImageImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         this(thisElement.getAttribute("src"), http, tempDir);
-        
+
         alt = thisElement.getAttribute("alt");
         title = thisElement.getAttribute("title");
         try {
@@ -65,14 +65,14 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
         }
     }
 
-    
+
     // This ctor for use when not being created from an <img> element, like for the thumbnail images in WARelatedExample.
     WAImageImpl(String url, HttpProvider http, File tempDir) {
-        
+
         this.http = http;
         this.tempDir = tempDir;
         this.url = url;
-        
+
         format = FORMAT_UNKNOWN;
         // Relying on image URLs having MSPStoreType=image/xxxx
         int index = url.lastIndexOf("MSPStoreType=image/");
@@ -88,43 +88,43 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
             format = FORMAT_PNG;
         }
     }
-    
-    
+
+
     ////////////////////  WAImage interface  //////////////////////////////
-    
+
     public String getURL() {
         return url;
     }
-    
+
     public String getAlt() {
         return alt;
     }
-    
+
     public String getTitle() {
         return title;
     }
-    
+
     public int getFormat() {
         return format;
     }
-    
+
     public int[] getDimensions() {
         return dimensions;
     }
-    
+
     public synchronized File getFile() {
         return file;
     }
-    
+
     // Download is done higher up, then we just stuff the file in.
     synchronized void setFile(File file) {
         this.file = file;
         cachedHashCode = 0;  // Force recompute of hash now that content has changed.
     }
-    
-    
+
+
     ////////////////////////  hashCode()  /////////////////////////
-    
+
     // We use hashCode() as a "content code" to tell us quickly whether the object's content
     // has changed since some point in the past. Note that we do not override equals() as well, 
     // but it is not necessary to override equals() when overriding hashCode() (although it _is_
@@ -133,7 +133,7 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
     // blocks), as these values are changed on a background thread.
     // This is not a particularly good hash function, but it doesn't need to be. The only property
     // that really matters is that its value changes when the content of this object changes.
-    
+
     public void acquireImage() {
 
         // If this is a deserialized instance, http will  be null. Such instances are "dead"; they can
@@ -162,10 +162,10 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
             imageAcquired = true;
         }
     }
-    
-    
+
+
     /////////////////////////////////////////////
-    
+
     public synchronized int hashCode() {
 
         if (cachedHashCode != 0)
@@ -178,9 +178,9 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
         cachedHashCode = result;
         return result;
     }
-    
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

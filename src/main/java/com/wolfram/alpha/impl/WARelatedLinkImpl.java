@@ -36,7 +36,7 @@ import java.io.Serializable;
 // This is called sidebarlinks in the XML.
 
 public class WARelatedLinkImpl implements WARelatedLink, Serializable {
-    
+
     static final WARelatedLinkImpl[] EMPTY_ARRAY = new WARelatedLinkImpl[0];
     private static final long serialVersionUID = -4694106442074004620L;
     private String url;
@@ -44,10 +44,10 @@ public class WARelatedLinkImpl implements WARelatedLink, Serializable {
     private String source;
     private String excerpt;
     private WAImage image;
-    
-    
+
+
     WARelatedLinkImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         text = thisElement.getAttribute("text");
         url = thisElement.getAttribute("url");
         source = thisElement.getAttribute("source");
@@ -71,35 +71,35 @@ public class WARelatedLinkImpl implements WARelatedLink, Serializable {
             image = new WAImageImpl(imgElement, http, tempDir);
         }
     }
-    
-    
+
+
     public String getSource() {
         return source;
     }
-    
-    
+
+
     public String getText() {
         return text;
     }
-    
-    
+
+
     public String getURL() {
         return url;
     }
-    
-    
+
+
     public String getExcerpt() {
         return excerpt;
     }
-    
-    
+
+
     public WAImage getImage() {
         return image;
     }
-    
-    
+
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
+
 }

@@ -38,7 +38,7 @@ class OneLinerCommands : Command() {
     init {
         this.displayAliasesInHelp = true
     }
-    
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
@@ -66,7 +66,7 @@ class OneLinerCommands : Command() {
             }
 
 
-            // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
+        // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
             "invite" -> MessageUtils.sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
 
             "uptime" -> MessageUtils.sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
@@ -86,11 +86,11 @@ class OneLinerCommands : Command() {
                         |By running `${PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
                         |DuncteBot and any of it's developers are not responsible for your own kick by running this command
                     """.trimMargin()
-                if(args.isEmpty() || args[0] != "YESIMSURE") {
+                if (args.isEmpty() || args[0] != "YESIMSURE") {
                     sendMsg(event, warningMsg)
-                } else if(!args.isEmpty() && args[0] == "YESIMSURE") {
+                } else if (!args.isEmpty() && args[0] == "YESIMSURE") {
                     //Check for perms
-                    if(event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
+                    if (event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
                         MessageUtils.sendSuccess(event.message)
                         //Kick the user
                         sendMsg(event, "Your kick will commerce in 20 seconds") {
@@ -110,14 +110,14 @@ class OneLinerCommands : Command() {
                     sendMsg(event, warningMsg)
                 }
             }
-            //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+        //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             else -> println("Invoke was invalid: $invoke")
         }
     }
 
     override fun help(invoke: String?): String {
 
-        return when(invoke) {
+        return when (invoke) {
             "cookie" -> {
                 """blobnomcookie
                     |Usage: `$PREFIX$invoke`
@@ -182,7 +182,7 @@ class OneLinerCommands : Command() {
     """.trimMargin()
 
     override fun getName() = "ping"
-    
+
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme")
 
     private fun getAverage(): Double = pingHistory.filter { it != -1L }.map { it.toDouble() }.average()

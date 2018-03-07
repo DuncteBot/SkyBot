@@ -46,6 +46,7 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * I'm sorry!
      */
     override fun getHistory(): MessageHistory = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun getIterableHistory(): MessagePaginationAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getPinnedMessages(): RestAction<MutableList<Message>> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getMessageById(messageId: String): RestAction<Message> = throw VRCubeException("**\uD83D\uDD25 lit**")
@@ -63,17 +64,20 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
 //    override fun sendFile(data: InputStream, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: $fileName, ${message.contentRaw}**")
 //    override fun sendFile(file: File, fileName: String, message: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit file and message: ${file.name}/$fileName, ${message.contentRaw}**")
     override fun sendTyping(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun sendMessage(embed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun sendMessage(msg: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${msg.contentRaw}**")
-//    override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
+    //    override fun sendMessage(text: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: $text**")
     override fun sendMessageFormat(format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit message: ${format.format(args)}**")
 
     /*
      * Editing RestActions
      */
     override fun editMessageById(messageId: String, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-//    override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    //    override fun editMessageById(messageId: String, newContent: String): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: String, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun editMessageById(messageId: Long, newEmbed: MessageEmbed): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageById(messageId: Long, newContent: Message): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun editMessageFormatById(messageId: String, format: String, vararg args: Any): MessageAction = throw VRCubeException("**\uD83D\uDD25 lit**")
@@ -83,12 +87,14 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * Deleting RestActions
      */
     override fun deleteMessageById(messageId: String): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun deleteMessageById(messageId: Long): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     /*
      + Pinning Restactions
      */
     override fun pinMessageById(messageId: String): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun pinMessageById(messageId: Long): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun unpinMessageById(messageId: String): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun unpinMessageById(messageId: Long): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
@@ -97,18 +103,19 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
      * History Restactions
      */
     override fun getHistoryBefore(messageId: String, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+
     override fun getHistoryBefore(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryBefore(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAround(messageId: String, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getHistoryAround(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction  = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getHistoryAround(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAround(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(messageId: String, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     override fun toString(): String = "TC:$name($id)"
-    override fun getPermissionOverride(role: Role): PermissionOverride              = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
-    override fun getPermissionOverride(member: Member): PermissionOverride          = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
-    override fun createPermissionOverride(role: Role): PermissionOverrideAction     = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 }

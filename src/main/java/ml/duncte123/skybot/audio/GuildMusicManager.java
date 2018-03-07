@@ -28,26 +28,22 @@ import net.dv8tion.jda.core.entities.TextChannel;
 public class GuildMusicManager {
 
     /**
-     * This is the text channel were we will announce our songs
-     */
-    public TextChannel latestChannel = null;
-
-    final GuildSettings guildSettings;
-
-    /**
      * This is our player
      */
     public final IPlayer player;
-
     /**
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
-
+    final GuildSettings guildSettings;
     /**
      * This is what actually sends the audio
      */
     private final AudioPlayerSenderHandler sendHandler;
+    /**
+     * This is the text channel were we will announce our songs
+     */
+    public TextChannel latestChannel = null;
 
     /**
      * Constructor

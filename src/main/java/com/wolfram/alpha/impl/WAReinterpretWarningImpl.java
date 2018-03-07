@@ -31,14 +31,14 @@ import java.io.Serializable;
 
 
 public class WAReinterpretWarningImpl extends WAWarningImpl implements WAReinterpretWarning, Serializable {
-    
+
     private static final long serialVersionUID = 7006649850656408617L;
     private String newInterpretation;
     private String[] alternatives;
-    
-    
+
+
     WAReinterpretWarningImpl(Element thisElement) throws WAException {
-        
+
         super(thisElement);
         newInterpretation = thisElement.getAttribute("new");
         NodeList alternativeNodes = thisElement.getElementsByTagName("alternative");
@@ -47,15 +47,15 @@ public class WAReinterpretWarningImpl extends WAWarningImpl implements WAReinter
         for (int i = 0; i < numAlternatives; i++)
             alternatives[i] = alternativeNodes.item(i).getFirstChild().getNodeValue();
     }
-    
-    
+
+
     public String[] getAlternatives() {
         return alternatives;
     }
-    
-    
+
+
     public String getNew() {
         return newInterpretation;
     }
-    
+
 }

@@ -54,7 +54,7 @@ class SkipCommand : MusicCommand() {
             scheduler.nextTrack()
         }
         MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
-                if(mng.player.playingTrack != null){
+                if (mng.player.playingTrack != null) {
                     "\nNow playing: ${mng.player.playingTrack.info.title}"
                 } else "")
         mng.latestChannel = event.channel

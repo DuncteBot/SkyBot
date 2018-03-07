@@ -31,7 +31,7 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.regex.Pattern;
 
 public class HelpCommand extends Command {
-    
+
     @SuppressWarnings("NullableProblems")
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
@@ -39,8 +39,8 @@ public class HelpCommand extends Command {
             String toSearch = StringUtils.join(args, " ").toLowerCase()
                     .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                            Pattern.quote( getSettings(event.getGuild()).getCustomPrefix() ) + ")", "");
-            
+                            Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
+
             for (Command cmd : AirUtils.COMMAND_MANAGER.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
                     MessageUtils.sendMsg(event, "Command help for `" +
@@ -55,38 +55,38 @@ public class HelpCommand extends Command {
                                     + StringUtils.join(cmd.getAliases(), ", ") : ""));
                             return;
                         }
-                        
+
                     }
-                    
+
                 }
             }
-            
+
             MessageUtils.sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
             return;
         }
-        
+
         event.getAuthor().openPrivateChannel().queue(
                 pc -> pc.sendMessage(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).queue(
                         msg -> MessageUtils.sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                         //When sending fails, send to the channel
                         err -> MessageUtils.sendMsg(event, (new MessageBuilder())
-                                                                      .append("Message could not be delivered to dm's and has been send in this channel.")
-                                                                      .setEmbed(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).build())
+                                .append("Message could not be delivered to dm's and has been send in this channel.")
+                                .setEmbed(HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix())).build())
                 ),
                 err -> MessageUtils.sendMsg(event, "ERROR: " + err.getMessage())
         );
     }
-    
+
     @Override
     public String help() {
         return "Shows a list of all the commands.\nUsage: `" + PREFIX + "help [command]`";
     }
-    
+
     @Override
     public String getName() {
         return "help";
     }
-    
+
     @Override
     public String[] getAliases() {
         return new String[]{"commands"};

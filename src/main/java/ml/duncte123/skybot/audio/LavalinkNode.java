@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.audio;
 
-public class LavalinkNode  {
+public class LavalinkNode {
 
     public final String wsurl;
     public final String pass;

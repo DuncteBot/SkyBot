@@ -47,8 +47,8 @@ public class UnbanCommand extends Command {
 
         try {
             event.getGuild().getBanList().queue(list -> {
-                for(Guild.Ban ban : list) {
-                    if(ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
+                for (Guild.Ban ban : list) {
+                    if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
                         event.getGuild().getController().unban(ban.getUser())
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
                         MessageUtils.sendMsg(event, "User " + ban.getUser().getName() + " unbanned.");

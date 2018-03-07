@@ -24,15 +24,15 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 
-class VolumeCommand: MusicCommand() {
+class VolumeCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!isPatron(event.author, event.channel))
+        if (!isPatron(event.author, event.channel))
             return
 
         val mng = getMusicManager(event.guild)
         val player = mng.player
 
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
         } else {
             val joined = StringUtils.join(args, "")
@@ -41,8 +41,7 @@ class VolumeCommand: MusicCommand() {
                 val oldVolume = player.volume
                 player.volume = newVolume
                 MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
-            }
-            catch (e: NumberFormatException) {
+            } catch (e: NumberFormatException) {
                 MessageUtils.sendMsg(event, "**$joined** is not a valid integer. (10 - 100)")
             }
         }

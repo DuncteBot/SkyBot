@@ -56,7 +56,7 @@ open class PlayCommand : MusicCommand() {
                 toPlay = "scsearch:" + toPlay
             }
 
-            if(toPlay.length > 1024) {
+            if (toPlay.length > 1024) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return

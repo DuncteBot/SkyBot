@@ -44,7 +44,7 @@ import java.net.URL;
 @SuppressWarnings("deprecation")
 public class ApacheHttpProvider implements HttpProvider {
 
-    
+
     // HttpClient configuration settings.
     private static final String DEFAULT_USER_AGENT = "Wolfram|Alpha Java Binding 1.1";
     private static final int CONNECTION_TIMEOUT_MILLIS = 8000;
@@ -73,7 +73,7 @@ public class ApacheHttpProvider implements HttpProvider {
         ThreadSafeClientConnManager cm = new ThreadSafeClientConnManager(params, schemeRegistry);
         httpClient = new DefaultHttpClient(cm, params);
         // Retry handler? See http://hc.apache.org/httpcomponents-client/tutorial/html/fundamentals.html#d4e37
-        
+
         // Credentials ??
         //httpClient.getParams().setParameter(CredentialsProvider.PROVIDER, ProxySettings.getInstance());
     }
@@ -88,9 +88,9 @@ public class ApacheHttpProvider implements HttpProvider {
         return new ApacheHttpTransaction(httpClient, url, proxySettings, MAX_RETRY_COUNT, socketTimeoutMillis);
     }
 
-    
+
     ///////////////  Whither these ????  ////////////////////////
-    
+
     public HttpClient getHttpClient() {
         return httpClient;
     }

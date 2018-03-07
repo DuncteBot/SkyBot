@@ -32,7 +32,7 @@ import java.io.Serializable;
 
 
 public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
-    
+
     static final WAAssumptionImpl[] EMPTY_ARRAY = new WAAssumptionImpl[0];
     private static final long serialVersionUID = -7699189119552569080L;
     private String type;
@@ -45,10 +45,10 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
     private String[] descriptions;
     private String[] words;
     private boolean[] valids;
-    
-    
+
+
     WAAssumptionImpl(Element thisElement) {
-        
+
         type = thisElement.getAttribute("type");
         word = thisElement.getAttribute("word");
         if (word.equals("")) word = null;
@@ -64,7 +64,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
             current = Integer.parseInt(thisElement.getAttribute("current"));
         } catch (NumberFormatException ignored) {
         }
-        
+
         NodeList valueElements = thisElement.getElementsByTagName("value");
         int numValueElements = valueElements.getLength();
         names = new String[numValueElements];
@@ -81,54 +81,54 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
             valids[i] = !value.getAttribute("valid").equals("false");
         }
     }
-    
-    
+
+
     public String getType() {
         return type;
     }
-    
+
     public int getCount() {
         return count;
     }
-    
+
     public String getWord() {
         return word;
     }
-    
+
     public String getDescription() {
         return description;
     }
-    
+
     public int getCurrent() {
         return current;
     }
-    
-    
+
+
     public String[] getNames() {
         return names;
     }
-    
+
     public String[] getDescriptions() {
         return descriptions;
     }
-    
+
     public String[] getInputs() {
         return inputs;
     }
-    
+
     public String[] getWords() {
         return words;
     }
-    
+
     public boolean[] getValidities() {
         return valids;
     }
-    
-    
+
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
+
 }

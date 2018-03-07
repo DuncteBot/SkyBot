@@ -47,11 +47,10 @@ import java.util.Objects;
 public class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
+    private Lavalink lavalink = null;
 
     private LavalinkManager() {
     }
-
-    private Lavalink lavalink = null;
 
     public void start() {
         if (!isEnabled()) return;
@@ -64,11 +63,11 @@ public class LavalinkManager {
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
-        defaultNodes.add(new LavalinkNode("ws://localhost","youshallnotpass"));
-        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes );
+        defaultNodes.add(new LavalinkNode("ws://localhost", "youshallnotpass"));
+        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes);
         List<LavalinkNode> nodeList = new ArrayList<>();
 
-        nodes.forEach(it -> nodeList.add( Ason.deserialize(it, LavalinkNode.class) ));
+        nodes.forEach(it -> nodeList.add(Ason.deserialize(it, LavalinkNode.class)));
 
         nodeList.forEach(it ->
                 lavalink.addNode(Objects.requireNonNull(toURI(it.wsurl)), it.pass)
@@ -121,6 +120,7 @@ public class LavalinkManager {
 
     /**
      * This is a simple util function that extracts the bot id from the token
+     *
      * @param token the token of your bot
      * @return the client id of the bot
      */

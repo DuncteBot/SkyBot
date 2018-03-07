@@ -35,12 +35,12 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CommandManager {
-    
+
     /**
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-    
+
     /**
      * This makes sure that all the commands are added
      */
@@ -49,7 +49,7 @@ public class CommandManager {
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
     }
-    
+
     /**
      * This is method to get the commands on request
      *
@@ -58,7 +58,7 @@ public class CommandManager {
     public Set<Command> getCommands() {
         return commands;
     }
-    
+
     /**
      * This tries to get a command with the provided name/alias
      *
@@ -80,7 +80,7 @@ public class CommandManager {
     public List<Command> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
-    
+
     /**
      * This removes a command from the commands
      *
@@ -90,7 +90,7 @@ public class CommandManager {
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
     }
-    
+
     /**
      * This handles adding the command
      *
@@ -114,10 +114,10 @@ public class CommandManager {
             return false;
         }
         this.commands.add(command);
-        
+
         return true;
     }
-    
+
     /**
      * This will run the command when we need them
      *
@@ -132,7 +132,7 @@ public class CommandManager {
 
         Command cmd = getCommand(invoke);
 
-        if(cmd != null) {
+        if (cmd != null) {
             try {
                 cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
             } catch (Throwable ex) {
@@ -149,7 +149,8 @@ public class CommandManager {
             try {
                 //Add the command
                 this.addCommand(cmd.getDeclaredConstructor().newInstance());
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
     }
 }

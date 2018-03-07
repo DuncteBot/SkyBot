@@ -45,7 +45,7 @@ import java.util.List;
  * @author tgayley
  */
 public class ProxySettings {
-    
+
     public static final int PROXY_NONE = 0;
     public static final int PROXY_AUTOMATIC = 1;
     public static final int PROXY_MANUAL = 2;
@@ -55,57 +55,57 @@ public class ProxySettings {
     private int httpProxyPort;
     private String proxyUsername;
     private String proxyPassword;
-    
-    
+
+
     private ProxySettings() {
         // Try to grab system-specific proxy settings (e.g., from Internet Explorer on Windows).
         // Actual acquisition of these values is done in setupProxy().
         System.setProperty("java.net.useSystemProxies", "true");
         ProxySelector.setDefault(MyProxySelector.getInstance());
     }
-    
-    
+
+
     public static synchronized ProxySettings getInstance() {
         if (instance == null)
             instance = new ProxySettings();
         return instance;
     }
-    
-    
+
+
     public synchronized void setProxyInfo(int useProxy, String httpProxyHost, int httpProxyPort) {
-        
+
         this.useProxy = useProxy;
         this.httpProxyHost = httpProxyHost;
         this.httpProxyPort = httpProxyPort;
     }
-    
-    
+
+
     synchronized int getUseProxy() {
         return useProxy;
     }
-    
-    
+
+
     //////////////////////////////  Authentication  /////////////////////////////////
-    
+
     synchronized String getProxyUsername() {
         return proxyUsername;
     }
-    
+
     public synchronized void setProxyUsername(String username) {
         proxyUsername = username;
     }
-    
+
     synchronized String getProxyPassword() {
         return proxyPassword;
     }
-    
+
     public synchronized void setProxyPassword(String password) {
         proxyPassword = password;
     }
-    
-    
+
+
     ///////////////////////////////  Proxy config  ////////////////////////////////////
-    
+
     // Decide what proxy, if any, to use for a request. Manual settings take precedence,
     // then we fall back to using system settings (e.g., Internet Explorer settings on Windows)
     // as handled by the ProxySelector class introduced in Java 1.5.
@@ -113,10 +113,10 @@ public class ProxySettings {
     // Public so that it can be called from Mathematica.
     //
     public synchronized String[] getProxyHostAndPort(String url) {
-        
+
         int port = 0;
         String host = null;
-        
+
         if (useProxy == PROXY_AUTOMATIC) {
             ProxySelector ps = ProxySelector.getDefault(); // Will get MyProxySelector.
             try {
@@ -149,67 +149,67 @@ public class ProxySettings {
             }
             // Don't handle directly Socks calls.
         }
-        
+
         return new String[]{host, String.valueOf(port)};
     }
-    
-    
+
+
     public synchronized HttpHost getProxyForHttpClient(String url) {
-        
+
         String[] hostAndPort = getProxyHostAndPort(url);
         String host = hostAndPort[0];
         int port = Integer.parseInt(hostAndPort[1]);
-        
+
         if (port != 0 && host != null) {
             return new HttpHost(host, port, "http");
         } else {
             return null;
         }
     }
-    
-    
+
+
     public synchronized Proxy getProxyForJavaNet(String url) {
-        
+
         String[] hostAndPort = getProxyHostAndPort(url);
         String host = hostAndPort[0];
         int port = Integer.parseInt(hostAndPort[1]);
-        
+
         // If we got settings for both host and port, use them; otherwise no proxy.
         if (port != 0 && host != null)
             return new Proxy(Proxy.Type.HTTP, new InetSocketAddress(host, port));
         else
             return null; // Don't return Proxy.NO_PROXY, as that seems not to be a usable value--just a sentinel.
     }
-    
-    
+
+
     // This class is plugged in as the default system-wide ProxySelector.
     // It's a slightly weird setup, since ProxySettings calls this class for Automatic
     // proxy configuration, and this class calls back to ProxySettings for Manual and
     // Direct proxy settings. Things would be a little cleaner if we didn't have to worry
     // about Java 1.4 compatibility (this class inherits from a 1.5-only class).
-    
+
     static class MyProxySelector extends ProxySelector {
-        
+
         static MyProxySelector instance = null;
         // The list we return when we want to indicate to the caller that no proxy should be used.
         // In older versions of Java you could return an empty list, but in newer ones there is a bug
         // where the java.net code will throw a NullPointerException if you return an empty list.
         private final List<Proxy> NO_PROXY_LIST = new ArrayList<>(1);
         ProxySelector origSelector;
-        
+
         private MyProxySelector() {
             origSelector = ProxySelector.getDefault();
             NO_PROXY_LIST.add(Proxy.NO_PROXY);
         }
-        
+
         static synchronized ProxySelector getInstance() {
             if (instance == null)
                 instance = new MyProxySelector();
             return instance;
         }
-        
+
         public List<Proxy> select(URI uri) {
-            
+
             int useProxy = ProxySettings.getInstance().getUseProxy();
             switch (useProxy) {
                 case PROXY_AUTOMATIC:
@@ -227,11 +227,11 @@ public class ProxySettings {
                     return NO_PROXY_LIST;
             }
         }
-        
+
         public void connectFailed(URI uri, SocketAddress sa, IOException ioe) {
             origSelector.connectFailed(uri, sa, ioe);
         }
-        
+
     }
-    
+
 }

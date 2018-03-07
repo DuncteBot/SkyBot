@@ -50,7 +50,7 @@ class TagCommand : Command() {
 
             if (args[0] == "help" || args[0] == "?") {
                 MessageUtils.sendMsg(event, helpMessage)
-            } else if (args[0] =="list") {
+            } else if (args[0] == "list") {
                 MessageUtils.sendMsg(event, "Here is a list of all the tags: `${StringUtils.join(TagUtils.tagsList.keys, "`, `")}`")
             } else {
                 if (!TagUtils.tagsList.containsKey(args[0])) {
@@ -121,8 +121,8 @@ class TagCommand : Command() {
 
     override fun getAliases() = arrayOf("pasta", "tags", "t")
 
-    private fun getLang():String {
-        when(AirUtils.RAND.nextInt(4)) {
+    private fun getLang(): String {
+        when (AirUtils.RAND.nextInt(4)) {
             0 -> return "YAML"
             1 -> return "ldif"
             2 -> return "PHP"

@@ -37,7 +37,7 @@ public class AlpacaCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
             Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
-            
+
             Element img = doc.select("img").first();
             MessageUtils.sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         } catch (Exception e) {

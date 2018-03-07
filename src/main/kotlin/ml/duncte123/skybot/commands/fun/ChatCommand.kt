@@ -22,7 +22,6 @@ import com.google.code.chatterbotapi.ChatterBot
 import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
-import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -36,10 +35,10 @@ class ChatCommand : Command() {
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession
     private val responses = arrayOf(
-        "My PREFIX in this guild is *`{PREFIX}`*",
-        "Thanks for asking, my PREFIX here is *`{PREFIX}`*",
-        "That should be *`{PREFIX}`*",
-        "It was *`{PREFIX}`* if I'm not mistaken"
+            "My PREFIX in this guild is *`{PREFIX}`*",
+            "Thanks for asking, my PREFIX here is *`{PREFIX}`*",
+            "That should be *`{PREFIX}`*",
+            "It was *`{PREFIX}`* if I'm not mistaken"
     )
 
     init {
@@ -56,15 +55,15 @@ class ChatCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if(args.isEmpty()){
+        if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
         val time = System.currentTimeMillis()
-        var message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
+        var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
         event.channel.sendTyping().queue()
 
-        if(event.message.contentRaw.contains("prefix")) {
+        if (event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
@@ -83,7 +82,7 @@ class ChatCommand : Command() {
             var response = oldBot.think(message)
 
             //Reset the ai if it dies
-            if(response == "" || response == "You have been banned from talking to me." ||
+            if (response == "" || response == "You have been banned from talking to me." ||
                     response == "I am not talking to you any more.") {
                 resetAi()
                 response = oldBot.think(message)

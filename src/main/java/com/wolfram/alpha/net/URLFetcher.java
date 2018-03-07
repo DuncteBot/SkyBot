@@ -52,7 +52,7 @@ public class URLFetcher {
     private volatile String charSet = null;
     // WAHttpException, HttpException, IOException
     private volatile Exception exception = null;
-    
+
 
     // TODO: outFile = null means get data as string. Improve getResponseString() to be safer for large responses.
     public URLFetcher(URL url, String outFile, HttpProvider http, ProxySettings proxySettings) {
@@ -71,11 +71,11 @@ public class URLFetcher {
         if (trans != null)
             trans.setNoRetry();
     }
-    
+
     public boolean wasCancelled() {
         return wasCancelled;
     }
-    
+
     /**
      * Doesn't mean that it finished successfully; could have been cancelled.
      *
@@ -84,34 +84,34 @@ public class URLFetcher {
     public boolean isFinished() {
         return isFinished;
     }
-    
-    
+
+
     public String getFilename() {
         return outFile;
     }
-    
+
     public File getFile() {
         return wasCancelled ? null : downloadedFile;
     }
-    
+
     public byte[] getBytes() {
         return wasCancelled ? null : bytes;
     }
-    
+
     /**
      * @return -1 if not known
      */
     public int getTotalBytes() {
         return totalBytes;
     }
-    
+
     public int getTotalBytesDownloaded() {
         return totalBytesDownloaded;
     }
-    
+
     // returns -1.0 if not known.
     public double getProgress() {
-        
+
         if (isFinished())
             return 1.0;
         int totalBytes = getTotalBytes();
@@ -119,7 +119,7 @@ public class URLFetcher {
             return -1.0;
         return ((double) getTotalBytesDownloaded()) / totalBytes;
     }
-    
+
     // Useful if you want to convert to a String.
     public String getCharSet() {
         return charSet;
@@ -128,29 +128,29 @@ public class URLFetcher {
     public Exception getException() {
         return exception;
     }
-    
+
     public void fetch() {
-        
+
         try {
             if (wasCancelled)
                 return;
-            
+
             //long start = System.currentTimeMillis();
-            
+
             // TODO: Output?
             // logger.info("Downloading url " + url);
-            
+
             InputStream responseStream = null;
             OutputStream outStream = null;
             boolean useFile = outFile != null;
-            
+
             try {
                 trans = http.createHttpTransaction(url, proxySettings);
                 trans.execute();
                 long contentLength = trans.getContentLength();
                 charSet = trans.getCharSet();
                 responseStream = trans.getResponseStream();
-                
+
                 // Create the output stream we will write into. Will be either a buf[] or a file.
                 if (useFile) {
                     if (outFile.length() > 0) {

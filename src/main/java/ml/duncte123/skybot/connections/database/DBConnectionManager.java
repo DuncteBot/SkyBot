@@ -28,7 +28,7 @@ import java.sql.Connection;
  * @author ramidzkh
  */
 public interface DBConnectionManager
-extends Closeable {
+        extends Closeable {
 
     /**
      * @return The connection to use

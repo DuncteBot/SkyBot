@@ -57,7 +57,7 @@ public class SoftbanCommand extends Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                        !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
+                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }

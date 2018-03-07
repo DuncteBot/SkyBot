@@ -81,7 +81,7 @@ public class HelpEmbeds {
                     break;
             }
 
-            if(c.isDisplayAliasesInHelp())
+            if (c.isDisplayAliasesInHelp())
                 for (String alias : c.getAliases()) {
                     switch (c.getCategory()) {
                         case MAIN:
@@ -115,6 +115,7 @@ public class HelpEmbeds {
                 }
         }
     }
+
     /**
      * This will return a embed containing all the commands
      *
@@ -137,7 +138,7 @@ public class HelpEmbeds {
                 .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
                 .addField("Other suff",
                         "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                        "Support development of this bot: [https://www.patreon.com/duncte123](https://www.patreon.com/duncte123)", false)
+                                "Support development of this bot: [https://www.patreon.com/duncte123](https://www.patreon.com/duncte123)", false)
                 .build();
     }
 

@@ -71,7 +71,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         httpGet = new HttpGet(url.toString());
         HttpHost proxy = proxySettings.getProxyForHttpClient(url.toString());
         httpClient.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
-        
+
         try {
             response = httpClient.execute(httpGet);
             int statusCode = response.getStatusLine().getStatusCode();
@@ -122,7 +122,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         Header hdr = response.getFirstHeader(headerName);
         return hdr == null ? null : hdr.getValue();
     }
-    
+
     // Negative number if not known.
     public long getContentLength() {
         return entity == null ? -1 : entity.getContentLength();
@@ -131,8 +131,8 @@ public class ApacheHttpTransaction implements HttpTransaction {
     public String getCharSet() {
         return EntityUtils.getContentCharSet(entity);
     }
-    
-    
+
+
     public InputStream getResponseStream() throws IOException {
         return entity.getContent();
     }
@@ -152,7 +152,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         httpGet.abort();
     }
 
-    
+
     /***
 
      ///////////////////////////  HttpMethodRetryHandler Class  /////////////////////////////
@@ -205,7 +205,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
      }
      }
      ***/
-    
+
     public int getMaxRetryCount() {
         return maxRetryCount;
     }

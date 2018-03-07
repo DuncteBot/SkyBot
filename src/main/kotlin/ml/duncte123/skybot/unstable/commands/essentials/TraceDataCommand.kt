@@ -43,7 +43,9 @@ class TraceDataCommand : Command() {
         val args = when (invoke) {
             "exact" -> arrayOf("exact")
             "atomic" -> if (args.size == 1) arrayOf("atomic", args[0]) else return
-            else -> { args }
+            else -> {
+                args
+            }
         }
 
         when {

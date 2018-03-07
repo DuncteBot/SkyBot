@@ -40,10 +40,7 @@ public abstract class MusicCommand extends Command {
     @SinceSkybot(version = "3.54.2")
     private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "MusicCooldown - Thread"));
-
-    public MusicCommand() {
-        this.category = CommandCategory.MUSIC;
-    }
+    private static AudioUtils audioUtils = AudioUtils.ins;
 
     static {
         service.scheduleWithFixedDelay(() ->
@@ -59,7 +56,36 @@ public abstract class MusicCommand extends Command {
                 , 0, 200, TimeUnit.MILLISECONDS);
     }
 
-    private static AudioUtils audioUtils = AudioUtils.ins;
+    public MusicCommand() {
+        this.category = CommandCategory.MUSIC;
+    }
+
+    /**
+     * This is a shortcut for getting the the link
+     *
+     * @return the {@link LavalinkManager LavalinkManager}
+     */
+    protected static LavalinkManager getLavalinkManager() {
+        return LavalinkManager.ins;
+    }
+
+    /**
+     * @param guildId the {@link Guild} id that should receive the cooldown.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void addCooldown(long guildId) {
+        cooldowns.put(guildId, 12600);
+    }
+
+    /**
+     * This method shuts down the service that cares for the dynamic cooldown decreasing.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void shutdown() {
+        service.shutdown();
+    }
 
     /**
      * Returns the autio utils
@@ -79,15 +105,6 @@ public abstract class MusicCommand extends Command {
     //@Deprecated(message = "Use #getLavalinkManager(guild)")
     protected GuildMusicManager getMusicManager(Guild guild) {
         return getAudioUtils().getMusicManager(guild);
-    }
-
-    /**
-     * This is a shortcut for getting the the link
-     *
-     * @return the {@link LavalinkManager LavalinkManager}
-     */
-    protected static LavalinkManager getLavalinkManager() {
-        return LavalinkManager.ins;
     }
 
     /**
@@ -111,23 +128,5 @@ public abstract class MusicCommand extends Command {
         }
         getMusicManager(event.getGuild()).latestChannel = event.getChannel();
         return true;
-    }
-
-    /**
-     * @param guildId the {@link Guild} id that should receive the cooldown.
-     */
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void addCooldown(long guildId) {
-        cooldowns.put(guildId, 12600);
-    }
-
-    /**
-     * This method shuts down the service that cares for the dynamic cooldown decreasing.
-     */
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void shutdown() {
-        service.shutdown();
     }
 }

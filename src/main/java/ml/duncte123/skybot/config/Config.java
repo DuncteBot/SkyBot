@@ -160,7 +160,7 @@ public class Config {
     /**
      * This method gets the array from the key and converts it into a list for better handling
      *
-     * @param key the key of the array
+     * @param key          the key of the array
      * @param defaultValue The default value that the array needs to have
      * @return the array as {@link List}
      */
@@ -168,7 +168,7 @@ public class Config {
     public <T> List<T> getArray(String key, List defaultValue) {
         if (!hasKey(key)) {
             List<T> toPut = Collections.emptyList();
-            if(defaultValue != null) {
+            if (defaultValue != null) {
                 toPut = defaultValue;
             }
             put(key, new JSONArray(toPut));
@@ -203,8 +203,7 @@ public class Config {
         config.put(key, value);
         try {
             this.save();
-        }
-        catch (Exception e1) {
+        } catch (Exception e1) {
             e1.printStackTrace();
         }
     }

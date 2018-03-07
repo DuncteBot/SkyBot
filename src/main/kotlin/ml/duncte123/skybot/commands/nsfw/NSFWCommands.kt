@@ -35,13 +35,13 @@ class NSFWCommands : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!event.channel.isNSFW) {
+        if (!event.channel.isNSFW) {
             MessageUtils.sendMsg(event, """Woops, this channel is not marked as NSFW.
                 |Please mark this channel as NSFW to use this command
                 """.trimMargin())
             return
         }
-        when(invoke) {
+        when (invoke) {
             "carsandhentai" -> {
                 val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")))
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
@@ -64,7 +64,7 @@ class NSFWCommands : Command() {
     """.trimMargin()
 
     override fun help(invoke: String?): String {
-        return when(invoke) {
+        return when (invoke) {
             "lewdneko" -> {
                 """Gives a very lewd neko
                     |Usage `$PREFIX$invoke`

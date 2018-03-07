@@ -52,7 +52,7 @@ public class ModerationUtils {
      * @param time         How long it takes for the punishment to get removed
      * @param g            A instance of the {@link Guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
         TextChannel logChannel = AirUtils.getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
         String length = "";
         if (time != null && !time.isEmpty()) {
@@ -122,11 +122,12 @@ public class ModerationUtils {
 
     /**
      * Returns the current amount of warnings that a user has
+     *
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
     public static int getWarningCountForUser(User u, Guild g) {
-        if(u == null)
+        if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
             return WebUtils.getJSONObject(String.format(
@@ -134,8 +135,7 @@ public class ModerationUtils {
                     Settings.API_BASE,
                     u.getId(),
                     g.getId())).getJSONArray("warnings").length();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return 0;
         }
@@ -143,24 +143,24 @@ public class ModerationUtils {
 
     /**
      * This attempts to register a warning in the database
+     *
      * @param moderator The mod that executed the warning
-     * @param target The user to warn
-     * @param reason the reason for the warn
-     * @param jda a jda instance because we need the token for auth
+     * @param target    The user to warn
+     * @param reason    the reason for the warn
+     * @param jda       a jda instance because we need the token for auth
      */
     public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("mod_id", moderator.getId());
         postFields.put("user_id", target.getId());
         postFields.put("guild_id", guild.getId());
-        postFields.put("reason", reason.isEmpty()? "No Reason provided" : " for " + reason);
+        postFields.put("reason", reason.isEmpty() ? "No Reason provided" : " for " + reason);
         postFields.put("token", jda.getToken());
 
         try {
             WebUtils.postRequest(
                     Settings.API_BASE + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED).close();
-        }
-        catch (NullPointerException e) {
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -197,7 +197,8 @@ public class ModerationUtils {
                                         res.getString("discriminator")),
                                 "unbanned",
                                 shardManager.getGuildById(res.getString("guildId")));
-                    } catch (NullPointerException ignored) { }
+                    } catch (NullPointerException ignored) {
+                    }
                     database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }

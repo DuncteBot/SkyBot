@@ -36,26 +36,26 @@ class ListCommand : MusicCommand() {
         val scheduler = mng.scheduler
 
         val queue: Queue<AudioTrack> = scheduler.queue
-                synchronized (queue) {
-                    if (queue.isEmpty()) {
-                        MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
-                    } else {
-                        var queueLength: Long = 0
-                        val maxTracks = 10
-                        val sb = StringBuilder()
-                        sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
-                        for ((index, track) in queue.withIndex()) {
-                            if(index == maxTracks) {
-                                break
-                            }
-                            queueLength += track.duration
-                            sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
-                            sb.append(track.info.title).append("\n")
-                        }
-                        sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                        MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
+        synchronized(queue) {
+            if (queue.isEmpty()) {
+                MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
+            } else {
+                var queueLength: Long = 0
+                val maxTracks = 10
+                val sb = StringBuilder()
+                sb.append("Current Queue: Entries: ").append(queue.size).append("\n")
+                for ((index, track) in queue.withIndex()) {
+                    if (index == maxTracks) {
+                        break
                     }
+                    queueLength += track.duration
+                    sb.append("`[").append(AudioUtils.getTimestamp(track.duration)).append("]` ")
+                    sb.append(track.info.title).append("\n")
                 }
+                sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
+                MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
+            }
+        }
     }
 
     override fun help(): String = "shows the current queue"

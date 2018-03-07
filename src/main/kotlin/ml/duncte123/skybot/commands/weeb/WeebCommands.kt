@@ -38,11 +38,11 @@ class WeebCommands : WeebCommandBase() {
             "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
             "weeb" -> {
-                if(args.isEmpty()) {
+                if (args.isEmpty()) {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb_image categories` for all categories")
                     return
                 }
-                if(args[0] == "categories") {
+                if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
                             .append("Here is a list of all the valid categories")
                             .appendCodeBlock(StringUtils.join(AirUtils.WEEB_API.typesCached, ", "), "LDIF")
@@ -50,7 +50,7 @@ class WeebCommands : WeebCommandBase() {
                     return
                 }
                 val type = StringUtils.join(args, " ")
-                if(AirUtils.WEEB_API.typesCached.contains(type)) {
+                if (AirUtils.WEEB_API.typesCached.contains(type)) {
                     val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, " "))
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
@@ -72,7 +72,7 @@ class WeebCommands : WeebCommandBase() {
     """.trimMargin()
 
     override fun help(invoke: String?): String {
-         return when(invoke) {
+        return when (invoke) {
             "hug" -> {
                 """Hug a user.
                     |Usage: `$PREFIX$invoke [username/@user]`
@@ -103,18 +103,18 @@ class WeebCommands : WeebCommandBase() {
                     |Usage: `$PREFIX$invoke [username/@user]`
                 """.trimMargin()
             }
-             "owo" -> {
-                 """OwO what's this
+            "owo" -> {
+                """OwO what's this
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
-             }
-             "weeb" -> {
-                 """Gives you a random image from weeb.sh with that type
+            }
+            "weeb" -> {
+                """Gives you a random image from weeb.sh with that type
                     |Usage: `$PREFIX$invoke <category>`
                 """.trimMargin()
-             }
+            }
             else -> {
-             "wrong invoke"
+                "wrong invoke"
             }
         }
     }

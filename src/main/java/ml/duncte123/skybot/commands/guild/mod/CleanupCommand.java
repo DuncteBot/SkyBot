@@ -56,7 +56,7 @@ public class CleanupCommand extends Command {
             if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
                 keepPinned.set(true);
             else {
-                if(args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
+                if (args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
                     keepPinned.set(true);
                 try {
                     total = Integer.parseInt(args[0]);
@@ -74,7 +74,7 @@ public class CleanupCommand extends Command {
 
         try {
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
-                if(keepPinned.get())
+                if (keepPinned.get())
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
                 List<Message> failed = msgLst.stream()

@@ -29,7 +29,7 @@ import org.apache.commons.lang3.StringUtils
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class KpopCommand: Command() {
+class KpopCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN

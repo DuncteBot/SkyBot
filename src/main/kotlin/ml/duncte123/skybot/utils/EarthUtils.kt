@@ -17,6 +17,7 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+
 //@file:Suppress("UNCHECKED_CAST")
 
 package ml.duncte123.skybot.utils
@@ -140,6 +141,7 @@ class EarthUtils {
                 }
             }
         }
+
         /**
          *
          * This function generates a debug JSON that can help us to improve audio and memory issues.
@@ -189,8 +191,9 @@ class EarthUtils {
          */
         @JvmStatic
         private fun playerToJSON(player: IPlayer): JSONObject =
-                JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused",player.isPaused)
+                JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused", player.isPaused)
                         .put("volume", player.volume)
+
         /**
          * This smaller function converts a [TrackScheduler] into a [JSONObject]
          *
@@ -222,7 +225,7 @@ class EarthUtils {
         @JvmStatic
         private fun trackToJSON(track: AudioTrack): JSONObject =
                 JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
-                        .put("stream",track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
+                        .put("stream", track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
                         .put("title", track.info.title)
     }
 }

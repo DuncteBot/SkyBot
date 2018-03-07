@@ -34,7 +34,7 @@ root(INFO, ["STDOUT"])
 //root(DEBUG, ["STDOUT"])
 
 
-if(logToFile) {
+if (logToFile) {
     def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
     appender("FILE", FileAppender) {

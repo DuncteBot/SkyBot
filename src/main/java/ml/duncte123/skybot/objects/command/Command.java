@@ -46,16 +46,20 @@ import java.util.concurrent.TimeUnit;
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
-
+    /**
+     * This holds the prefix for us
+     */
+    protected static final String PREFIX = Settings.PREFIX;
+    private static boolean cooldown = false;
     /**
      * A list of users that have upvoted the bot
      */
     protected static final Set<String> upvotedIds = new HashSet<String>() {
         @Override
         public boolean contains(Object o) {
-            if(o.getClass() != String.class) return false;
+            if (o.getClass() != String.class) return false;
 
-            if(super.contains(o)) return true;
+            if (super.contains(o)) return true;
 
             reloadUpvoted();
 
@@ -63,7 +67,18 @@ public abstract class Command {
         }
     };
 
-    private static boolean cooldown = false;
+    static {
+        reloadUpvoted();
+    }
+
+    /**
+     * This holds the category
+     */
+    protected CommandCategory category = CommandCategory.MAIN;
+    /**
+     * This tells the bot to display the aliases of the command in the help command
+     */
+    protected boolean displayAliasesInHelp = false;
 
     public Command() {
         if (Settings.useCooldown) {
@@ -75,26 +90,48 @@ public abstract class Command {
         }
     }
 
-    static {
-        reloadUpvoted();
+    /**
+     * Reloads the list of people who have upvoted this bot
+     */
+    protected static void reloadUpvoted() {
+        if (cooldown && Settings.useCooldown) return;
+        try {
+            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
+
+            if (token == null || token.isEmpty()) {
+                logger.warn("Discord Bots token not found");
+                return;
+            }
+
+            Response it = WebUtilsJava.executeRequest(new Request.Builder()
+                    .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                    .get()
+                    .addHeader("Authorization", token)
+                    .build());
+            JSONArray json = null;
+            try {
+                json = new JSONArray(it.body().string());
+            } catch (IOException e1) {
+                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
+            }
+
+            upvotedIds.clear();
+
+            for (int i = 0; i < json.length(); i++) {
+                upvotedIds.add(json.getString(i));
+            }
+
+        } catch (JSONException e) {
+            //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
+            /* ignored */
+        }
+        if (Settings.useCooldown)
+            cooldown = true;
     }
 
     /**
-     * This holds the prefix for us
-     */
-    protected static final String PREFIX = Settings.PREFIX;
-    /**
-     * This holds the category
-     */
-    protected CommandCategory category = CommandCategory.MAIN;
-
-    /**
-     * This tells the bot to display the aliases of the command in the help command
-     */
-    protected boolean displayAliasesInHelp = false;
-
-    /**
      * Returns if the bot should take up the aliases in the help command
+     *
      * @return if the bot should take up the aliases in the help command
      */
     public boolean isDisplayAliasesInHelp() {
@@ -104,13 +141,14 @@ public abstract class Command {
     /**
      * This checks if the user is a patrons if ours
      * It checks if the user has the patreon role on our support guild
-     * @param u The user to check
+     *
+     * @param u  The user to check
      * @param tc the channel to send the message to, if the text channel is null it wont send a message
      * @return true if the user is a patron
      */
     protected boolean isPatron(User u, TextChannel tc) {
         //noinspection deprecation
-        if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+        if (Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
             return true;
         }
         Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
@@ -133,46 +171,6 @@ public abstract class Command {
             }
             return true;
         }
-    }
-
-    /**
-     * Reloads the list of people who have upvoted this bot
-     */
-    protected static void reloadUpvoted() {
-        if (cooldown && Settings.useCooldown) return;
-        try {
-            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
-
-            if (token == null || token.isEmpty()) {
-                logger.warn("Discord Bots token not found");
-                return;
-            }
-
-            Response it = WebUtilsJava.executeRequest(new Request.Builder()
-                            .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                            .get()
-                            .addHeader("Authorization", token)
-                            .build());
-            JSONArray json = null;
-            try {
-                json = new JSONArray(it.body().string());
-            }
-            catch (IOException e1) {
-                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-            }
-
-            upvotedIds.clear();
-
-            for (int i = 0; i < json.length(); i++) {
-                upvotedIds.add(json.getString(i));
-            }
-
-        } catch (JSONException e) {
-            //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
-            /* ignored */
-        }
-        if (Settings.useCooldown)
-            cooldown = true;
     }
 
     /**
@@ -211,6 +209,7 @@ public abstract class Command {
 
     /**
      * The usage instructions of the command
+     *
      * @param invoke the command that you want the help info for
      *               Some commands are packed together and they will return specific info depending on what you put into
      *               the command

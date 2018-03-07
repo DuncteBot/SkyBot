@@ -32,28 +32,28 @@ import java.io.Serializable;
 
 
 public class WAPlainTextImpl implements WAPlainText, Visitable, Serializable {
-    
+
     private static final long serialVersionUID = 7613237059547988592L;
     private String text;
-    
-    
+
+
     WAPlainTextImpl(Element thisElement) {
         NodeList children = thisElement.getChildNodes();
         text = children.getLength() > 0 ? children.item(0).getNodeValue() : "";
     }
-    
-    
+
+
     ////////////////////  WAPlainText interface  //////////////////////////////
-    
+
     public String getText() {
         return text;
     }
-    
-    
+
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
+
 }

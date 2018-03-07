@@ -276,6 +276,7 @@ class WebUtils {
             LOGGER.info("${TextColor.PURPLE}Generated hastebin link: $returnValue${TextColor.RESET}")
             return returnValue
         }
+
         /**
          * Posts [String]s to wastebin.party
          * @param s the [String]
@@ -289,6 +290,7 @@ class WebUtils {
             LOGGER.info("${TextColor.PURPLE}Generated wastebin link: $returnValue${TextColor.RESET}")
             return returnValue
         }
+
         /**
          * Posts [String]s to haste.leeks.life
          * @param s the [String]
@@ -303,6 +305,7 @@ class WebUtils {
             return returnValue
         }
     }
+
     /**
      * This holds some variables that we will accept
      */

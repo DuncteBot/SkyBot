@@ -38,6 +38,14 @@ public class WolframAlphaCommand extends Command {
         this.category = CommandCategory.NERD_STUFF;
     }
 
+    private static String a(String s) {
+        if (s == null) return "null";
+
+        if (s.length() <= 2000 - 6) return s;
+
+        return s.substring(2000 - 6 - 1) + '\u2026';
+    }
+
     /**
      * Generates an embed for the {@link WAQueryResult result of a computation}
      *
@@ -98,16 +106,9 @@ public class WolframAlphaCommand extends Command {
         return eb.build();
     }
 
-    private static String a(String s) {
-        if(s == null) return "null";
-
-        if(s.length() <= 2000 - 6) return s;
-
-        return s.substring(2000 - 6 - 1) + '\u2026';
-    }
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!isPatron(event.getAuthor(), event.getChannel())) return;
+        if (!isPatron(event.getAuthor(), event.getChannel())) return;
 
         if (args.length == 0) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");

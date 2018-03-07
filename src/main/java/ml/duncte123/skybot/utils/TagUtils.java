@@ -28,12 +28,11 @@ import java.util.Map;
 import java.util.TreeMap;
 
 public class TagUtils {
-    private static Logger logger = LoggerFactory.getLogger(TagUtils.class);
-
     /**
      * This stores all the tags
      */
     public static Map<String, Tag> tagsList = new TreeMap<>();
+    private static Logger logger = LoggerFactory.getLogger(TagUtils.class);
 
     /**
      * Attempts to load all the tags from the database
@@ -51,11 +50,11 @@ public class TagUtils {
                 String tagName = resultSet.getString("tagName");
 
                 tagsList.put(tagName, new Tag(
-                                                     resultSet.getInt("id"),
-                                                     resultSet.getString("author"),
-                                                     resultSet.getString("authorId"),
-                                                     tagName,
-                                                     resultSet.getString("tagText")
+                        resultSet.getInt("id"),
+                        resultSet.getString("author"),
+                        resultSet.getString("authorId"),
+                        tagName,
+                        resultSet.getString("tagText")
                 ));
             }
 
@@ -86,7 +85,7 @@ public class TagUtils {
 
         try {
             PreparedStatement statement = database.prepareStatement("INSERT INTO " + AirUtils.DB.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
-                                                                            "VALUES(? , ? , ? , ?)");
+                    "VALUES(? , ? , ? , ?)");
             statement.setString(1, String.format("%#s", author));
             statement.setString(2, author.getId());
             statement.setString(3, tag.getName());

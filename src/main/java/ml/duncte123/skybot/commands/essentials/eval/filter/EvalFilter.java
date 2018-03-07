@@ -36,7 +36,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class EvalFilter extends GroovyValueFilter {
-    
+
     /**
      * This contains a list of all the allowed classes
      */
@@ -46,38 +46,38 @@ public class EvalFilter extends GroovyValueFilter {
             String.class,
             StringBuilder.class,
             StringBuffer.class,
-            
+
             Boolean.class,
             boolean.class,
-            
+
             Byte.class,
             byte.class,
-            
+
             Character.class,
             char.class,
-            
+
             Short.class,
             short.class,
-            
+
             Integer.class,
             int.class,
-            
+
             Float.class,
             float.class,
-            
+
             Long.class,
             long.class,
-            
+
             Double.class,
             double.class,
-            
+
             Arrays.class,
 
             Collection.class,
             List.class,
             ArrayList.class,
             CollectionsKt.class,
-            
+
             BigDecimal.class,
             BigInteger.class,
 
@@ -106,17 +106,17 @@ public class EvalFilter extends GroovyValueFilter {
             Pattern.compile(
                     // Case insensitive
                     "(?i)"
-                    // Decimals and Octals
-                    + "((\\[(\\s*[0-9]+\\s*)])"
-                    // Binary
-                    + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
-                    // Hexadecimal
-                    + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
+                            // Decimals and Octals
+                            + "((\\[(\\s*[0-9]+\\s*)])"
+                            // Binary
+                            + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
+                            // Hexadecimal
+                            + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
     /**
      * Filter mentions
      */
-            MENTION_FILTER = 
-                Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here");
+    MENTION_FILTER =
+            Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here");
 
     /**
      * This filters the script
@@ -126,7 +126,7 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
-        if (o==null || ALLOWED_TYPES.contains(o.getClass()) )
+        if (o == null || ALLOWED_TYPES.contains(o.getClass()))
             return o;
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
@@ -140,7 +140,7 @@ public class EvalFilter extends GroovyValueFilter {
             return new ChannelDelegate((Channel) o);
         if (o instanceof Guild)
             return new GuildDelegate((Guild) o);
-        if(o instanceof JDA)
+        if (o instanceof JDA)
             return new JDADelegate((JDA) o);
         if (o instanceof Member)
             return new MemberDelegate((Member) o);
@@ -151,23 +151,23 @@ public class EvalFilter extends GroovyValueFilter {
         if (o instanceof User)
             return new UserDelegate((User) o);
         ////////////////////////////////////////////
-        if(o instanceof Script)
+        if (o instanceof Script)
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-        throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1] );
+        throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1]);
     }
-    
+
     @Override
     public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) {
         throw new VRCubeException(
-                                         String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
-                                                 receiver.toString(),
-                                                 receiver.getClass().getComponentType().getName(),
-                                                 index.toString(),
-                                                 value.toString()));
+                String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
+                        receiver.toString(),
+                        receiver.getClass().getComponentType().getName(),
+                        index.toString(),
+                        value.toString()));
     }
-    
+
     /**
      * This checks if the script contains any loop
      *
@@ -185,7 +185,7 @@ public class EvalFilter extends GroovyValueFilter {
                 //match and find
         ).matcher(toFilter).find();
     }
-    
+
     /**
      * This checks if the script contains an array
      *
@@ -200,5 +200,5 @@ public class EvalFilter extends GroovyValueFilter {
     public boolean containsMentions(String string) {
         return MENTION_FILTER.matcher(string).find();
     }
-    
+
 }

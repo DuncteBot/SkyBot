@@ -72,8 +72,8 @@ class UserinfoCommand : Command() {
 
         u = m.user
 
-        if(invoke == "avatar") {
-            MessageUtils.sendMsg(event, "**${String.format("%#s",u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+        if (invoke == "avatar") {
+            MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
             return
         }
 
@@ -112,7 +112,7 @@ class UserinfoCommand : Command() {
                     |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
                     |**Join Order:** $joinOrder
                     |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
-                    |**Bot Account?** ${if (u.isBot)  "Yes" else "No"}
+                    |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                     |
                     |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                 """.trimMargin()).build())

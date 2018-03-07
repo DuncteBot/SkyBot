@@ -198,7 +198,7 @@ class EvalCommand : Command() {
                 engine.put("scope", this)
                 coroutine = this
                 try {
-                    if(isRanByBotOwner) engine.eval(script)
+                    if (isRanByBotOwner) engine.eval(script)
                     else {
                         filter.register()
                         protectedShell.evaluate(script)
@@ -241,7 +241,7 @@ class EvalCommand : Command() {
                     }
                 }
                 else -> {
-                    if(out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
+                    if (out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
                         MessageUtils.sendSuccess(event.message)
                         return
                     }

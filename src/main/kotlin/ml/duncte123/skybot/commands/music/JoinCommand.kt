@@ -63,7 +63,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             return
         }
         try {
-            if(guild.audioManager.connectionListener == null)
+            if (guild.audioManager.connectionListener == null)
                 guild.audioManager.connectionListener = this
             getLavalinkManager().openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
@@ -74,8 +74,7 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             } else {
                 MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
-        }
-        catch (e1: Exception) {
+        } catch (e1: Exception) {
             e1.printStackTrace()
         }
 
@@ -88,9 +87,12 @@ class JoinCommand : MusicCommand(), ConnectionListener {
     override fun getAliases(): Array<String> = arrayOf("summon", "connect")
 
     //Audio stuff
-    override fun onStatusChange(p0: ConnectionStatus?) { /* Unused */ }
+    override fun onStatusChange(p0: ConnectionStatus?) { /* Unused */
+    }
 
-    override fun onUserSpeaking(p0: User?, p1: Boolean) { /* Unused */ }
+    override fun onUserSpeaking(p0: User?, p1: Boolean) { /* Unused */
+    }
+
     //Listen for ping
     override fun onPing(ping: Long) {
         OneLinerCommands.pingHistory.add(ping, true)

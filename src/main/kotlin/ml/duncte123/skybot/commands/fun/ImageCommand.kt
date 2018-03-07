@@ -37,15 +37,15 @@ class ImageCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         //This command is hidden and needs patreon :P
-       /* if(!hasUpvoted(event.author)) {
-            sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                            "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
-            return
-        }*/
-        if(isPatron(event.author, event.channel)) {
+        /* if(!hasUpvoted(event.author)) {
+             sendEmbed(event,
+                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
+                             "Please consider to give this bot an upvote over at " +
+                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
+                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
+             return
+         }*/
+        if (isPatron(event.author, event.channel)) {
             if (args.isEmpty()) {
                 MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return

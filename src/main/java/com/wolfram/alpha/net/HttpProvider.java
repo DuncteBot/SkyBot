@@ -33,7 +33,7 @@ import java.net.URL;
 public interface HttpProvider {
 
     HttpTransaction createHttpTransaction(URL url, ProxySettings proxySettings);
-    
+
     // TODO: Don't like this. If style is to create one provider and use it always, then having a setter
     // can change state of all uses of this provider in other threads. Better to have a factory that
     // creates providers with certain params (like useragent), and these are not singletons. Thus if you

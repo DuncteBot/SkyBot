@@ -57,14 +57,13 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
-        if(m.matches()) {
+        if (m.matches()) {
             try {
                 String clypitId = m.group(m.groupCount());
                 JSONObject json = WebUtils.getJSONObject("https://api.clyp.it/" + clypitId);
                 AudioReference httpReference = getAsHttpReference(new AudioReference(json.getString("Mp3Url"), json.getString("Title")));
                 return handleLoadResult(detectContainer(httpReference));
-            }
-            catch (IOException e) {
+            } catch (IOException e) {
                 return null;
             }
         }
@@ -92,6 +91,7 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager implements 
 
         return result;
     }
+
     private MediaContainerDetectionResult detectContainerWithClient(HttpInterface httpInterface, AudioReference reference) throws IOException {
         try (PersistentHttpStream inputStream = new PersistentHttpStream(httpInterface, new URI(reference.identifier), Long.MAX_VALUE)) {
             int statusCode = inputStream.checkStatusCode();

@@ -39,7 +39,7 @@ public class KittyCommand extends Command {
         try {
             String apiKey = AirUtils.CONFIG.getString("apis.thecatapi", "");
             Document raw = Jsoup.connect("http://thecatapi.com/api/images/get?" +
-                                                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();
+                    (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").get();
             Document doc = Jsoup.parse(raw.getAllElements().html(), "", Parser.xmlParser());
 
             String fullUrl = doc.select("url").first().text();

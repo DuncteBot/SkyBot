@@ -47,13 +47,13 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
     private transient HttpProvider http;
     private Visitable[] contentElements;
 
-    
+
     WASubpodImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         this.http = http;
 
         title = thisElement.getAttribute("title");
-        
+
         NodeList subElements = thisElement.getChildNodes();
         int numSubElements = subElements.getLength();
         List<Visitable> contentList = new ArrayList<>(numSubElements);
@@ -68,28 +68,28 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
         }
         contentElements = contentList.toArray(new Visitable[contentList.size()]);
     }
-    
-    
+
+
     ////////////////////  WASubpod interface  //////////////////////////////
-    
+
     public String getTitle() {
         return title;
     }
-    
+
     public Visitable[] getContents() {
         return contentElements;
     }
-    
+
     public synchronized Object getUserData() {
         return userData;
     }
-    
+
     public synchronized void setUserData(Object obj) {
         userData = obj;
     }
 
     ////////////////////////  hashCode()  /////////////////////////
-    
+
     // We use hashCode() as a "content code" to tell us quickly whether the object's content
     // has changed since some point in the past. Note that we do not override equals() as well, 
     // but it is not necessary to override equals() when overriding hashCode() (although it _is_
@@ -98,9 +98,9 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
     // blocks), as these values are changed on a background thread.
     // This is not a particularly good hash function, but it doesn't need to be. The only property
     // that really matters is that its value changes when the content of this object changes.
-    
+
     public synchronized int hashCode() {
-        
+
         int result = 17;
         result = 37 * result + title.hashCode();
         for (Object obj : contentElements) {
@@ -113,12 +113,12 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
             result = 37 * result + userData.hashCode();
         return result;
     }
-    
-    
+
+
     /////////////////////////////////////////////
-    
+
     public void acquireImage() {
-        
+
         // If this is a deserialized instance, http will be null. Such instances are "dead"; they can
         // never retrieve new content from the web.
         // The only synchronization needed here is that imageAcquired is volatile.
@@ -133,10 +133,10 @@ public class WASubpodImpl implements WASubpod, Visitable, Serializable {
             imageAcquired = true;
         }
     }
-    
+
 
     ///////////////////////////  Visitable interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

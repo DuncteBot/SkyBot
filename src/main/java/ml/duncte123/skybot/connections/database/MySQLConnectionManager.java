@@ -31,15 +31,14 @@ import java.sql.SQLException;
  */
 @SuppressWarnings("SqlDialectInspection")
 class MySQLConnectionManager
-implements DBConnectionManager {
-
-    private Connection connection;
+        implements DBConnectionManager {
 
     private final String dbHost;
     private final int port;
     private final String user;
     private final String pass;
     private final String dbName;
+    private Connection connection;
 
     MySQLConnectionManager() {
         this.dbHost = AirUtils.CONFIG.getString("sql.host", "sql.example.com");
@@ -164,7 +163,7 @@ implements DBConnectionManager {
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
             while (res.next()) {
-                if(res.getInt("items") == 0) {
+                if (res.getInt("items") == 0) {
                     connection.createStatement().execute("INSERT INTO footerQuotes " +
                             "VALUES (DEFAULT, 'duncte123', 'FIRST')");
                 }

@@ -24,14 +24,6 @@ import java.util.Map;
 
 public class Primitives {
 
-    public static Class<?> unwrap(Class<?> type) {
-        return (wrapperToPrimitives.get(type) == null) ? type : wrapperToPrimitives.get(type);
-    }
-
-    public static Class<?> wrap(Class<?> type) {
-        return (primitivesToWrapper.get(type) == null) ? type : primitivesToWrapper.get(type);
-    }
-
     private static final Map<Class<?>, Class<?>> primitivesToWrapper;
     private static final Map<Class<?>, Class<?>> wrapperToPrimitives;
 
@@ -51,6 +43,14 @@ public class Primitives {
 
         primitivesToWrapper = Collections.unmodifiableMap(p);
         wrapperToPrimitives = Collections.unmodifiableMap(w);
+    }
+
+    public static Class<?> unwrap(Class<?> type) {
+        return (wrapperToPrimitives.get(type) == null) ? type : wrapperToPrimitives.get(type);
+    }
+
+    public static Class<?> wrap(Class<?> type) {
+        return (primitivesToWrapper.get(type) == null) ? type : primitivesToWrapper.get(type);
     }
 
     private static void put(Map<Class<?>, Class<?>> first, Map<Class<?>, Class<?>> second, Class<?> primitive, Class<?> wrapper) {
