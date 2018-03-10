@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.30'
 
     repositories {
         mavenCentral()
@@ -33,7 +33,7 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.30'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
@@ -110,8 +110,8 @@ dependencies {
     compile 'com.google.apis:google-api-services-youtube:v3-rev192-1.23.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.30'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.30'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.21.2'
 
     //Bot?

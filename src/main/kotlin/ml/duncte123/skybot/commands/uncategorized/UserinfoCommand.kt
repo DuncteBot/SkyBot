@@ -18,10 +18,15 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import kotlinx.coroutines.experimental.launch
+import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.core.OnlineStatus
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -99,8 +104,7 @@ class UserinfoCommand : Command() {
                 usrName = "[$usrName](https://bot.duncte123.me/)"
             joinOrder.append(" > ").append(usrName)
         }
-
-        MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
+        val embed = EmbedUtils.defaultEmbed()
                 .setColor(m.color)
                 .setDescription("User info for " + m.asMention + "\n\n")
                 .setThumbnail(u.effectiveAvatarUrl)
@@ -115,7 +119,20 @@ class UserinfoCommand : Command() {
                     |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                     |
                     |_Use `${PREFIX}avatar [user]` to get a user's avatar_
-                """.trimMargin()).build())
+                """.trimMargin())
+
+        launch {
+            if(event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)) {
+                AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m.onlineStatus), u.effectiveAvatarUrl) {
+                    event.channel.sendMessage(embed.setThumbnail("attachment://${u.name}.png").build())
+                            .addFile(it, "${u.name}.png").queue({}, {
+                                MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+                            })
+                }
+            } else {
+                MessageUtils.sendEmbed(event, embed.build())
+            }
+        }
     }
 
     override fun help() = "Get information from yourself or from another user.\nUsage: `$PREFIX$name [username]`"
@@ -123,5 +140,16 @@ class UserinfoCommand : Command() {
     override fun getName() = "userinfo"
 
     override fun getAliases() = arrayOf("user", "i", "avatar")
+
+    private fun toWeebshStatus(status: OnlineStatus): StatusType {
+        return when(status) {
+            OnlineStatus.ONLINE -> StatusType.ONLINE
+            OnlineStatus.OFFLINE -> StatusType.OFFLINE
+            OnlineStatus.DO_NOT_DISTURB -> StatusType.DND
+            OnlineStatus.IDLE -> StatusType.IDLE
+            OnlineStatus.INVISIBLE -> StatusType.OFFLINE
+            else -> StatusType.ONLINE
+        }
+    }
 
 }
