@@ -182,7 +182,7 @@ infix fun Throwable.compare(other: Throwable): Boolean {
     val classesMatch = this::class.java == other::class.java
     val messageMatch = this.localizedMessage == other.localizedMessage
     val stacktraceMatch = other.stackTrace.map { this.stackTrace.contains(it) }.filter { false }.count() < 4
-    return (classesMatch && stacktraceMatch && messageMatch) || (classesMatch && stacktraceMatch || messageMatch && stacktraceMatch)
+    return (classesMatch && stacktraceMatch && messageMatch) || (messageMatch && stacktraceMatch || classesMatch && messageMatch)
 }
 
 infix fun Throwable.printStackTrace(input: String): String {
