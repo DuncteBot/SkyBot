@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package Java.lang;
+package ml.duncte123.skybot.exceptions;
 
 import ml.duncte123.skybot.utils.AirUtils;
 
@@ -26,8 +26,6 @@ import ml.duncte123.skybot.utils.AirUtils;
  * @author Duncan "duncte123" Sterken
  */
 public class VRCubeException extends SecurityException {
-
-    private static final long serialVersionUID = -1411788219603361967L;
 
     public VRCubeException() {
         super();

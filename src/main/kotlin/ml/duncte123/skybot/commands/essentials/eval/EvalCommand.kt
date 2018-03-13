@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
 import ml.duncte123.skybot.Settings
@@ -93,7 +93,7 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
-                "Java.lang.VRCubeException"
+                "ml.duncte123.skybot.exceptions.VRCubeException"
         )
 
         staticImports = listOf(

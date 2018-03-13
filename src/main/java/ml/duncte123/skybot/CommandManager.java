@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot;
 
-import Java.lang.VRCubeException;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;

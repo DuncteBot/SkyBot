@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import Java.lang.VRCubeException;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
