@@ -21,7 +21,7 @@
 
 package ml.duncte123.skybot.entities.delegate
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
