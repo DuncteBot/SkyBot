@@ -159,6 +159,9 @@ kotlin {
 
 build {
     dependsOn clean
+    dependsOn jar
+
+    jar.mustRunAfter clean
 }
 
 def getGitHash() {
