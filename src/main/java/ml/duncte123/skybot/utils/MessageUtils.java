@@ -401,10 +401,11 @@ public class MessageUtils {
      * @param failure the failure consumer
      */
     public static void sendMsg(TextChannel channel, Message msg, Consumer<Message> success, Consumer<Throwable> failure) {
-        //Only send a message if we can talk
-        if (channel != null && channel.getGuild().getSelfMember().hasPermission(channel,
-                Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            channel.sendMessage(msg).queue(success, failure);
+        //Check if the channel exists
+        if (channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) {
+            //Only send a message if we can talk
+            if(channel.getGuild().getSelfMember().hasPermission(channel,Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
+                channel.sendMessage(msg).queue(success, failure);
         }
     }
 }
