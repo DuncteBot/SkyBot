@@ -29,14 +29,27 @@ import org.json.JSONObject
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class IssueCommand : Command() {
+
+    val regex = "\\s+".toRegex()
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        val arg = event.message.contentRaw.split(regex, 2)
         when (args.size) {
             0 -> {
                 MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
                     |You can generate it by using our dashboard. Link: <https://bot.duncte123.me>""".trimMargin())
             }
-            1 -> {
-                val data = JSONObject(args[0])
+            else -> {
+                val data = JSONObject(arg[1])
+                val cmds = data.getJSONArray("lastCommands").toList().map {
+                    if ((it as String).contains(regex)) {
+                        val split = it.split(regex)
+                        return@map split[0] + " " + split.takeLastWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = {"<$it>"})
+                    }
+                    else {
+                        return@map it
+                    }
+                }.joinToString(", ")
                 val embed = EmbedUtils.defaultEmbed()
 
                 embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
@@ -44,16 +57,7 @@ class IssueCommand : Command() {
                         .setDescription("""
                             |Description: ${data.getString("description")}
                             |Detailed report: ${data.getString("detailedReport")}
-                            |List of recent run commands: ${data.getJSONArray("lastCommands").toList().map {
-                                    val regex = "\\s+".toRegex()
-                                    if ((it as String).contains(regex)) {
-                                        val split = it.split(regex)
-                                        return@map split[0] + " " + split.takeWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = {"<$it>"})
-                                    }
-                                    else {
-                                        it
-                                    }
-                                }.joinToString(", ")}
+                            |List of recent run commands: $cmds
                             """.trimMargin())
                         .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
