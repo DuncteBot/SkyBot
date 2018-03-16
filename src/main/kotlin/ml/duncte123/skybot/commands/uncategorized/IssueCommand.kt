@@ -22,8 +22,10 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.json.JSONObject
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class IssueCommand : Command() {
@@ -32,6 +34,30 @@ class IssueCommand : Command() {
             0 -> {
                 MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
                     |You can generate it by using our dashboard. Link: <https://bot.duncte123.me>""".trimMargin())
+            }
+            1 -> {
+                val data = JSONObject(args[0])
+                val embed = EmbedUtils.defaultEmbed()
+
+                embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
+                        .setFooter(null, null)
+                        .setDescription("""
+                            |Description: ${data.getString("description")}
+                            |Detailed report: ${data.getString("detailedReport")}
+                            |List of recent run commands: ${data.getJSONArray("lastCommands").toList().map {
+                                    val regex = "\\s+".toRegex()
+                                    if ((it as String).contains(regex)) {
+                                        val split = it.split(regex)
+                                        return@map split[0] + " " + split.takeWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = {"<$it>"})
+                                    }
+                                    else {
+                                        it
+                                    }
+                                }.joinToString(", ")}
+                            """.trimMargin())
+                        .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
+
+                MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
             }
         }
     }
