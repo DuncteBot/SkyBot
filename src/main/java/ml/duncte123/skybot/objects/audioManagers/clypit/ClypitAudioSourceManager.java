@@ -22,11 +22,9 @@ import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerHints;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
@@ -45,7 +43,7 @@ import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
 import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeaderValue;
 
-public class ClypitAudioSourceManager extends HttpAudioSourceManager implements AudioSourceManager, HttpConfigurable {
+public class ClypitAudioSourceManager extends HttpAudioSourceManager {
 
     private static final Pattern CLYPIT_REGEX = Pattern.compile("(http://|https://(www\\.)?)?clyp\\.it/(.*)");
 

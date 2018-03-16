@@ -114,7 +114,7 @@ public class ModerationUtils {
 
         try {
             WebUtils.postRequest(
-                    Settings.API_BASE + "/ban/json", postFields, WebUtils.AcceptType.URLENCODED).close();
+                    Settings.API_BASE + "/ban/json", postFields, WebUtils.EncodingType.URLENCODED).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -159,7 +159,7 @@ public class ModerationUtils {
 
         try {
             WebUtils.postRequest(
-                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED).close();
+                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.EncodingType.URLENCODED).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

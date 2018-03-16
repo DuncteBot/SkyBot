@@ -51,7 +51,7 @@ public class GuildUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json", postFields, WebUtils.AcceptType.TEXT_JSON).body().string();
+            return WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json", postFields, WebUtils.EncodingType.TEXT_JSON).body().string();
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {

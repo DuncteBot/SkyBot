@@ -98,11 +98,10 @@ public class AudioUtils {
     private void initPlayerManager() {
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
+            playerManager.enableGcMonitoring();
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-           /* youtubeAudioSourceManager.configureRequests(config ->
-                    RequestConfig.copy(config).setCookieSpec(CookieSpecs.IGNORE_COOKIES).build());*/
 
             SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 

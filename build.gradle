@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.21'
+    ext.kotlin_version = '1.2.30'
 
     repositories {
         mavenCentral()
@@ -33,13 +33,13 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.21'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.30'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
 
 group = 'ml.duncte123.skybot'
 
-version "3.61.18_${getGitHash()}"
+version "3.61.19_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -76,16 +76,14 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '1.0.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_345'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_348'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.56'
-    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'cfc13ae') {
+    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'd648861') {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
         exclude group: 'net.dv8tion', module: 'JDA'
         exclude group: "com.sedmelluq", module: "lavaplayer"
     }
-    //jda-nas
-    compile group: 'com.sedmelluq', name: 'jda-nas', version: '1.0.6'
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
     // jsoup HTML parser library @ https://jsoup.org/
@@ -110,8 +108,8 @@ dependencies {
     compile 'com.google.apis:google-api-services-youtube:v3-rev192-1.23.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.21'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.21'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.30'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.30'
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.22.5'
 
     //Bot?
@@ -157,6 +155,13 @@ kotlin {
     experimental {
         coroutines "enable"
     }
+}
+
+build {
+    dependsOn clean
+    dependsOn jar
+
+    jar.mustRunAfter clean
 }
 
 def getGitHash() {

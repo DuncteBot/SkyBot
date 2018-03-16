@@ -119,18 +119,18 @@ class WebUtils {
          * This makes a get request to the specified website
          *
          * @param url    The website to post to
-         * @param accept What we will accept, [AcceptType]
+         * @param encoding What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML): Response {
+        fun getRequest(url: String, encoding: EncodingType = EncodingType.TEXT_HTML): Response {
             return runBlocking {
                 executeRequest(
                         Request.Builder()
                                 .url(url)
                                 .get()
                                 .addHeader("User-Agent", USER_AGENT)
-                                .addHeader("Accept", accept.type)
+                                .addHeader("Accept", encoding.type)
                                 .addHeader("cache-control", "no-cache")
                                 .build())
             }
@@ -141,11 +141,11 @@ class WebUtils {
          *
          * @param url        The website to post to
          * @param postFields the params for the post (param name, param value)
-         * @param accept     What we will accept, [AcceptType]
+         * @param encoding     What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.TEXT_PLAIN): Response {
+        fun postRequest(url: String, postFields: Map<String, Any?>, encoding: EncodingType = EncodingType.TEXT_PLAIN): Response {
             val postParams = StringBuilder()
 
             for ((key, value) in postFields) {
@@ -155,9 +155,9 @@ class WebUtils {
                 executeRequest(
                         Request.Builder()
                                 .url(url)
-                                .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.type), Config.replaceLast(postParams.toString(), "\\&", "")))
+                                .post(RequestBody.create(MediaType.parse(EncodingType.URLENCODED.type), Config.replaceLast(postParams.toString(), "\\&", "")))
                                 .addHeader("User-Agent", USER_AGENT)
-                                .addHeader("Accept", accept.type)
+                                .addHeader("Accept", encoding.type)
                                 .addHeader("cache-control", "no-cache")
                                 .build())
             }
@@ -167,12 +167,12 @@ class WebUtils {
          * This makes a post request to the specified website
          *
          * @param url    The website to post to
-         * @param accept What we will accept, [AcceptType]
+         * @param encoding What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON): Response {
-            return postRequest(url, HashMap(), accept)
+        fun postRequest(url: String, encoding: EncodingType = EncodingType.TEXT_JSON): Response {
+            return postRequest(url, HashMap(), encoding)
         }
 
         /**
@@ -309,7 +309,7 @@ class WebUtils {
     /**
      * This holds some variables that we will accept
      */
-    enum class AcceptType(val type: String) {
+    enum class EncodingType(val type: String) {
         TEXT_PLAIN("text/plain"),
         TEXT_JSON("application/json"),
         TEXT_HTML("text/html"),

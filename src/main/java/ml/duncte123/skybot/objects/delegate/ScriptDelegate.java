@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.objects.delegate;
 
-import Java.lang.VRCubeException;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import groovy.lang.Binding;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;

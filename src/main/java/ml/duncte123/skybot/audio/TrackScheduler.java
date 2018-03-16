@@ -78,7 +78,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 announceNextTrack(nextTrack);
             }
         } else if (player.getPlayingTrack() != null)
-            player.seekTo(player.getPlayingTrack().getDuration());
+            player.stopTrack();
     }
 
     /**

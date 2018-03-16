@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
 import ml.duncte123.skybot.Settings
@@ -93,7 +93,7 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
-                "Java.lang.VRCubeException"
+                "ml.duncte123.skybot.exceptions.VRCubeException"
         )
 
         staticImports = listOf(
@@ -132,7 +132,7 @@ class EvalCommand : Command() {
             engine.put("channel", event.message.textChannel)
             engine.put("guild", event.guild)
             engine.put("member", event.member)
-            engine.put("user", event.author)
+            engine.put("author", event.author)
             engine.put("jda", event.jda)
             engine.put("shardManager", event.jda.asBot().shardManager)
             engine.put("event", event)
@@ -145,7 +145,7 @@ class EvalCommand : Command() {
                 return@async eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
-            protectedShell.setVariable("user", UserDelegate(event.author))
+            protectedShell.setVariable("author", UserDelegate(event.author))
             protectedShell.setVariable("guild", GuildDelegate(event.guild))
             protectedShell.setVariable("jda", JDADelegate(event.jda))
             protectedShell.setVariable("member", MemberDelegate(event.member))

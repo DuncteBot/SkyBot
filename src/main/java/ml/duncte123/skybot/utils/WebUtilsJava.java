@@ -93,7 +93,7 @@ public class WebUtilsJava {
      * This makes a get request to the specified website
      *
      * @param url    The website to post to
-     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @param accept What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
@@ -125,7 +125,7 @@ public class WebUtilsJava {
      *
      * @param url        The website to post to
      * @param postFields the params for the post (param name, param value)
-     * @param accept     What we will accept, {@link AcceptType AcceptType}
+     * @param accept     What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
@@ -163,7 +163,7 @@ public class WebUtilsJava {
      * This makes a post request to the specified website
      *
      * @param url    The website to post to
-     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @param accept What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)

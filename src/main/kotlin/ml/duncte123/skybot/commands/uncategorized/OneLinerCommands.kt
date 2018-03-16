@@ -30,11 +30,6 @@ import java.util.concurrent.TimeUnit
 
 class OneLinerCommands : Command() {
 
-    companion object {
-        @JvmStatic
-        val pingHistory: SizedList<Long> = SizedList(25)
-    }
-
     init {
         this.displayAliasesInHelp = true
     }
@@ -42,14 +37,13 @@ class OneLinerCommands : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
-                val avg = if (!getAverage().isNaN()) "\nAverage music ping: ${getAverage()}ms" else ""
 
                 val time = System.currentTimeMillis()
                 MessageUtils.sendMsg(event, "PONG!") {
                     it.editMessage("PONG!\n" +
-                            "Message ping is: ${System.currentTimeMillis() - time}ms\n" +
+                            "Rest ping: ${System.currentTimeMillis() - time}ms\n" +
                             "Websocket ping: ${event.jda.ping}ms\n" +
-                            "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms$avg").queue()
+                            "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
                 }
             }
 
@@ -184,6 +178,4 @@ class OneLinerCommands : Command() {
     override fun getName() = "ping"
 
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme")
-
-    private fun getAverage(): Double = pingHistory.filter { it != -1L }.map { it.toDouble() }.average()
 }
