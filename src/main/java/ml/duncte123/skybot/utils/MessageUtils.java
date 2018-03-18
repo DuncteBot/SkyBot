@@ -110,11 +110,10 @@ public class MessageUtils {
     public static void sendSuccess(Message message) {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
-            if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
-                return;
+            if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
+                message.addReaction("✅").queue(null, ignored -> {});
             }
         }
-        message.addReaction("✅").queue(null, CUSTOM_QUEUE_ERROR);
     }
 
     /**

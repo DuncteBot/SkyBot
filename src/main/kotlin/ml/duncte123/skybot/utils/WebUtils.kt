@@ -35,10 +35,12 @@ import java.util.concurrent.TimeUnit
 class WebUtils {
 
     companion object {
-        const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)"
+        private const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)"
         private val client = OkHttpClient.Builder().readTimeout(10L, TimeUnit.SECONDS)
                 .connectTimeout(10L, TimeUnit.SECONDS).build()
         private val LOGGER = LoggerFactory.getLogger(WebUtils::class.java)
+        /*ExecutorService executor = Executors.newCachedExecutorService();
+        executor.submit(Runnable r)*/
 
         /**
          * Reads contents from a website and returns it to a string
