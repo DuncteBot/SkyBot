@@ -284,8 +284,8 @@ public class BotListener extends ListenerAdapter {
                 && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if (r != null && !event.getGuild().getPublicRole().equals(r))
-                event.getGuild().getController().addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
-                });
+                event.getGuild().getController()
+                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> { });
         }
     }
 
