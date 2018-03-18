@@ -376,19 +376,14 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         if (LavalinkManager.ins.isConnected(event.getGuild())) {
-            //if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-            if (!event.getChannelLeft().getId().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId())) {
+            if (event.getChannelJoined().getId().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId())) {
+                return;
+            }
+            if (event.getChannelLeft().getId().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId())) {
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
                 //return;
             }
-            //channelCheckThing(event.getGuild(), event.getChannelLeft());
-
-            if (!event.getChannelJoined().getId().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()).getId())) {
-                return;
-                //System.out.println("Self (this might be buggy)");
-            }
-            channelCheckThing(event.getGuild(), event.getChannelJoined());
-            //}
+            //channelCheckThing(event.getGuild(), event.getChannelJoined()); is already done.
         }
     }
 
