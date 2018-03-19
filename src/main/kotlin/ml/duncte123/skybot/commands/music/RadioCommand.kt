@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -46,26 +47,26 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
-        radioStreams += RadioStream("iloveradio", "http://stream01.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/iloveradio.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilove2dance", "http://stream01.iloveradio.de/iloveradio2.mp3"/*"http://www.iloveradio.de/ilove2dance.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100charts", "http://stream01.iloveradio.de/iloveradio9.mp3"/*"http://www.iloveradio.de/ilovetop100charts.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovethebattle", "http://stream01.iloveradio.de/iloveradio3.mp3" /*"http://www.iloveradio.de/ilovethebattle.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovedreist", "http://stream01.iloveradio.de/iloveradio6.mp3" /*"http://www.iloveradio.de/ilovedreist.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovehiphop", "http://stream01.iloveradio.de/iloveradio13.mp3" /*"http://www.iloveradio.de/ilovehiphopturnup.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovemashup", "http://stream01.iloveradio.de/iloveradio5.mp3" /*"http://www.iloveradio.de/ilovemashup.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovebass", "http://stream01.iloveradio.de/iloveradio4.mp3" /*"http://www.iloveradio.de/ilovebass.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovehistory", "http://stream01.iloveradio.de/iloveradio12.mp3" /*"http://www.iloveradio.de/ilovehitshistory.m3u" */, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovepopstars", "http://stream01.iloveradio.de/iloveradio11.mp3" /*"http://www.iloveradio.de/ilovepopstars.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveandchill", "http://stream01.iloveradio.de/iloveradio10.mp3" /*"http://www.iloveradio.de/iloveandchill.m3u" */, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveberlin", "http://stream01.iloveradio.de/iloveradio7.mp3" /*"http://www.iloveradio.de/iloveaboutberlin.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovexmas", "http://stream01.iloveradio.de/iloveradio8.mp3" /*"http://www.iloveradio.de/ilovexmas.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100pop", "http://stream01.iloveradio.de/iloveradio105.mp3" /*"http://www.iloveradio.de/ilovetop100pop.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100hiphop", "http://stream01.iloveradio.de/iloveradio108.mp3" /*"http://www.iloveradio.de/ilovetop100hiphop.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovetop100dance&dj", "http://stream01.iloveradio.de/iloveradio103.mp3" /*"http://www.iloveradio.de/ilovetop100dancedjs.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("iloveurban", "http://streams.bigfm.de/urbanilr-128-mp3" /*"http://www.iloveradio.de/ilovebigfmurbanclubbeats.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovegroovenight", "http://streams.bigfm.de/grooveilr-128-mp3" /*"http://www.iloveradio.de/ilovebigfmgroovenight.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovenitroxedm", "http://streams.bigfm.de/nitroxedmilr-128-mp3" /*"http://www.iloveradio.de/ilovebigfmnitroxedm.m3u"*/, "http://www.iloveradio.de/streams/", false)
-        radioStreams += RadioStream("ilovenitroxdeep", "http://streams.bigfm.de/nitroxdeepilr-128-mp3" /*"http://www.iloveradio.de/ilovebigfmnitroxdeep.m3u"*/, "http://www.iloveradio.de/streams/", false)
+        radioStreams += ILoveStream(stationName = "iloveradio",          channel = 1)
+        radioStreams += ILoveStream(stationName = "ilove2dance",         channel = 2)
+        radioStreams += ILoveStream(stationName = "ilovetop100charts",   channel = 9)
+        radioStreams += ILoveStream(stationName = "ilovethebattle",      channel = 3,   public = false)
+        radioStreams += ILoveStream(stationName = "ilovebass",           channel = 4,   public = false)
+        radioStreams += ILoveStream(stationName = "ilovemashup",         channel = 5,   public = false)
+        radioStreams += ILoveStream(stationName = "ilovedreist",         channel = 6,   public = false)
+        radioStreams += ILoveStream(stationName = "iloveberlin",         channel = 7,   public = false)
+        radioStreams += ILoveStream(stationName = "ilovexmas",           channel = 8,   public = false)
+        radioStreams += ILoveStream(stationName = "iloveandchill",       channel = 10,  public = false)
+        radioStreams += ILoveStream(stationName = "ilovetop100dance&dj", channel = 103, public = false)
+        radioStreams += ILoveStream(stationName = "ilovetop100pop",      channel = 105, public = false)
+        radioStreams += ILoveStream(stationName = "ilovetop100hiphop",   channel = 108, public = false)
+        radioStreams += ILoveStream(stationName = "ilovepopstars",       channel = 11, npChannel = 16, public = false)
+        radioStreams += ILoveStream(stationName = "ilovehistory",        channel = 12, npChannel = 15, public = false)
+        radioStreams += ILoveStream(stationName = "ilovehiphop",         channel = 13, npChannel = 17, public = false)
+        radioStreams += ILoveStream(stationName = "iloveurban",          channel = -1, npChannel = 12, internal = false, public = false)
+        radioStreams += ILoveStream(stationName = "ilovegroove",         channel = -1, npChannel = 13, internal = false, public = false)
+        radioStreams += ILoveStream(stationName = "ilovenitroxedm",      channel = -1, npChannel = 11, internal = false, public = false)
+        radioStreams += ILoveStream(stationName = "ilovenitroxdeep",     channel = -1, npChannel = 24, internal = false, public = false)
 
         //nl_NL radio stations
         radioStreams += RadioStream("slam", "http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/")

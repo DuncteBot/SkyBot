@@ -21,10 +21,14 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
@@ -33,12 +37,23 @@ class NowPlayingCommand : MusicCommand() {
             return
         val mng = getMusicManager(event.guild)
         val player = mng.player
-        val msg = if (player.playingTrack != null) {
-            "**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng)
-        } else {
-            "The player is not currently playing anything!"
+        val msg = when {
+            player.playingTrack != null && !player.playingTrack.info.isStream ->
+                EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng))
+            player.playingTrack != null && player.playingTrack.info.isStream -> {
+                val json = WebUtils.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php")
+                val stream = (AirUtils.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri}
+                if (stream is ILoveStream) {
+                    val channeldata = json.getJSONObject("channel-${stream.npChannel}")
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url})**")
+                            .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
+                } else {
+                    EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
+                }
+            }
+            else -> EmbedUtils.embedMessage("The player is not currently playing anything!")
         }
-        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(msg))
+        MessageUtils.sendEmbed(event, msg)
     }
 
     override fun help(): String = "Prints information about the currently playing song (title, current time)"
