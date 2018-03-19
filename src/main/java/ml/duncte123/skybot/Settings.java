@@ -49,7 +49,7 @@ public class Settings {
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String PREFIX = AirUtils.CONFIG.getString("discord.prefix", "DB!");
+    public static final String PREFIX = AirUtils.CONFIG.getString("discord.prefix", "db!");
     /**
      * This is another prefix because I can
      */
