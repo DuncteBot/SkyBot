@@ -46,10 +46,10 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
-        radioStreams += RadioStream("iloveradio", "http://stream02.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/iloveradio.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilove2dance", "http://stream01.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/ilove2dance.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovetop100charts", "http://stream01.iloveradio.de/iloveradio2.mp3"/*"http://www.iloveradio.de/ilovetop100charts.m3u"*/, "http://www.iloveradio.de/streams/")
-        radioStreams += RadioStream("ilovethebattle", "http://stream01.iloveradio.de/iloveradio9.mp3" /*"http://www.iloveradio.de/ilovethebattle.m3u"*/, "http://www.iloveradio.de/streams/", false)
+        radioStreams += RadioStream("iloveradio", "http://stream01.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/iloveradio.m3u"*/, "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilove2dance", "http://stream01.iloveradio.de/iloveradio2.mp3"/*"http://www.iloveradio.de/ilove2dance.m3u"*/, "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovetop100charts", "http://stream01.iloveradio.de/iloveradio9.mp3"/*"http://www.iloveradio.de/ilovetop100charts.m3u"*/, "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("ilovethebattle", "http://stream01.iloveradio.de/iloveradio3.mp3" /*"http://www.iloveradio.de/ilovethebattle.m3u"*/, "http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovedreist", "http://stream01.iloveradio.de/iloveradio6.mp3" /*"http://www.iloveradio.de/ilovedreist.m3u"*/, "http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovehiphop", "http://stream01.iloveradio.de/iloveradio13.mp3" /*"http://www.iloveradio.de/ilovehiphopturnup.m3u"*/, "http://www.iloveradio.de/streams/", false)
         radioStreams += RadioStream("ilovemashup", "http://stream01.iloveradio.de/iloveradio5.mp3" /*"http://www.iloveradio.de/ilovemashup.m3u"*/, "http://www.iloveradio.de/streams/", false)
