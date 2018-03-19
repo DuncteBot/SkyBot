@@ -19,9 +19,9 @@
 package ml.duncte123.skybot.utils;
 
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.weebJava.TokenType;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
+import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -43,55 +43,20 @@ import java.util.regex.Pattern;
 @SuppressWarnings("ReturnInsideFinallyBlock")
 public class AirUtils {
 
-    /**
-     * This is our config file
-     */
-    public static Config config = new ConfigUtils().loadConfig();
 
-    /**
-     * The {@link WAEngine engine} to query Wolfram|Alpha
-     * This has to be loadded before the commands are loaded
-     */
-    public static final WAEngine alphaEngine = getWolframEngine();
-
-    /**
-     * This will hold the command setup and the registered commands
-     */
-    public static CommandManager commandManager = new CommandManager();
-
-    /**
-     * We are using slf4j to log things to the console
-     */
-    private static Logger logger = LoggerFactory.getLogger(AirUtils.class);
-
-    /**
-     * This holds the value if we should use a non-SQLite database
-     */
-    public static boolean nonsqlite = config.getBoolean("use_database", false);
-
-    /**
-     * This will store the settings for every guild that we are in
-     */
-    public static Map<String, GuildSettings> guildSettings = new HashMap<>();
-
-    /**
-     * This is our audio handler
-     */
-    public static AudioUtils audioUtils = new AudioUtils();
-
-    /**
-     * This helps us to make the coinflip command and the footer quotes work
-     */
-    public static Random rand = new Random();
-
-    /**
-     * This is our database manager, it is a util for the connection
-     */
-    public static DBManager db = new DBManager();
-
+    public static final Config CONFIG = new ConfigUtils().loadConfig();
+    public static final CommandManager COMMAND_MANAGER = new CommandManager();
+    public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
+    public static final Random RAND = new Random();
+    public static final DBManager DB = new DBManager();
     public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
-            .setToken(config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
+            .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
+    public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
+            "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
+    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
+    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
+    static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -107,7 +72,7 @@ public class AirUtils {
                 return "<:away:313956277220802560>";
             case DO_NOT_DISTURB:
                 return "<:dnd:313956276893646850>";
-            
+
             default:
                 return "<:offline:313956277237710868>";
         }
@@ -141,9 +106,9 @@ public class AirUtils {
      */
     public static String gameToString(Game g) {
         if (g == null) return "no game";
-        
+
         String gameType = "Playing";
-        
+
         switch (g.getType().getKey()) {
             case 1:
                 gameType = "Streaming";
@@ -154,7 +119,7 @@ public class AirUtils {
             case 3:
                 gameType = "Watching";
         }
-        
+
         String gameName = g.getName();
         return gameType + " " + gameName;
     }
@@ -184,24 +149,24 @@ public class AirUtils {
         long years = time / 31104000000L;
         long months = time / 2592000000L % 12;
         long days = time / 86400000L % 30;
-        
+
         //Get the years, months and days
         String uptimeString = "";
         uptimeString += years == 0 ? "" : years + " Year" + (years > 1 ? "s" : "") + ", ";
         uptimeString += months == 0 ? "" : months + " Month" + (months > 1 ? "s" : "") + ", ";
         uptimeString += days == 0 ? "" : days + " Day" + (days > 1 ? "s" : "");
-        
+
         //If we want the time added we pass in true
         if (withTime) {
             long hours = time / 3600000L % 24;
             long minutes = time / 60000L % 60;
             long seconds = time / 1000L % 60;
-            
+
             uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", ");
             uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
             uptimeString += seconds == 0 ? "" : seconds + " Second" + (seconds > 1 ? "s" : "") + " ";
         }
-        
+
         return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
     }
 
@@ -212,27 +177,27 @@ public class AirUtils {
      * token
      */
     private static WAEngine getWolframEngine() {
-        String appId = config.getString("apis.wolframalpha", "");
-        
+        String appId = CONFIG.getString("apis.wolframalpha", "");
+
         if (appId == null || appId.isEmpty()) {
             IllegalStateException e
                     = new IllegalStateException("Wolfram Alpha App ID not specified."
-                                                + " Please generate one at "
-                                                + "https://developer.wolframalpha.com/portal/myapps/");
+                    + " Please generate one at "
+                    + "https://developer.wolframalpha.com/portal/myapps/");
             //The logger can be null during tests
-            if(logger != null)
+            if (logger != null)
                 logger.error(e.getMessage(), e);
             return null;
         }
         WAEngine engine = new WAEngine();
-        
+
         engine.setAppID(appId);
-        
+
         engine.setIP("0.0.0.0");
         engine.setLocation("San Francisco");
         engine.setMetric(true);
         engine.setCountryCode("USA");
-        
+
         return engine;
     }
 
@@ -241,35 +206,35 @@ public class AirUtils {
      */
     public static void stop() {
         try {
-            db.getConnManager().getConnection().close();
+            DB.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        //That just breaks the bot
-	try {
-            audioUtils.musicManagers.forEach((a, b) ->  {
+        try {
+            AudioUtils.ins.musicManagers.forEach((a, b) -> {
                 if (b.player.getPlayingTrack() != null)
                     b.player.stopTrack();
             });
-	} catch (java.util.ConcurrentModificationException ignored) {}
+        } catch (java.util.ConcurrentModificationException ignored) {
+        }
     }
 
     /**
      * This gets the channel from a name or id
+     *
      * @param channelId the channel name or id
-     * @param guild the guild to search in
+     * @param guild     the guild to search in
      * @return the channel
      */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
-        if(channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
+        if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
         TextChannel tc;
-        try{
+        try {
             tc = guild.getTextChannelById(channelId);
-        }
-        catch (NumberFormatException e) {
+        } catch (NumberFormatException e) {
             List<TextChannel> tcl = guild.getTextChannelsByName(channelId, true);
-            if(tcl.size() > 0) {
+            if (tcl.size() > 0) {
                 tc = tcl.get(0);
             } else return null;
         }
@@ -279,6 +244,7 @@ public class AirUtils {
 
     /**
      * This generates a random string withe the specified length
+     *
      * @param length the length that the string should be
      * @return the generated string
      */
@@ -286,7 +252,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (rand.nextFloat() * chars.length());
+            int index = (int) (RAND.nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -294,6 +260,7 @@ public class AirUtils {
 
     /**
      * Returns a random string that has 10 chars
+     *
      * @return a random string that has 10 chars
      */
     public static String generateRandomString() {
@@ -302,10 +269,11 @@ public class AirUtils {
 
     /**
      * Returns a flipped table
+     *
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (AirUtils.rand.nextInt(4)){
+        switch (RAND.nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -313,9 +281,9 @@ public class AirUtils {
             case 2:
                 return "(ノಥ益ಥ)ノ︵┻━┻";
             case 3:
-               return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
-           default:
-               return "I CAN'T FLIP THIS TABLE";
+                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+            default:
+                return "I CAN'T FLIP THIS TABLE";
         }
     }
 }

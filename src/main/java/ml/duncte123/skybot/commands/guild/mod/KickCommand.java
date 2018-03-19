@@ -58,7 +58,7 @@ public class KickCommand extends Command {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) &&
-                        !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
+                    !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }

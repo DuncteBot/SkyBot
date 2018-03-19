@@ -33,23 +33,23 @@ import org.apache.http.HttpStatus;
  * @author tgayley
  */
 public class WAHttpException extends Exception {
-    
+
     private static final long serialVersionUID = 59955069668288618L;
     public int httpStatusCode = HttpStatus.SC_OK;
-    
-    
+
+
     // Do not add other constructors without reviewing uses of HttpHandlerException,
     // especially in Mathematica PacletManager code. Code depends on the assumption that all these
     // exceptions either have httpStatusCode != SC_OK, or they wrap another exception.
-    
+
     public WAHttpException(int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
-    
+
     public WAHttpException(Throwable arg0) {
         super(arg0);
     }
-    
+
     private static String statusCodeToMessageString(int httpStatusCode) {
         switch (httpStatusCode) {
             case 404:
@@ -60,7 +60,7 @@ public class WAHttpException extends Exception {
                 return "HTTP Error " + String.valueOf(httpStatusCode);
         }
     }
-    
+
     public String getMessage() {
         if (httpStatusCode != HttpStatus.SC_OK) {
             return statusCodeToMessageString(httpStatusCode);

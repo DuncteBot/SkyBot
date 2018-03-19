@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -45,26 +46,28 @@ public class GuildUtils {
      * @param newGuildCount the new guild count
      * @return the response from the server
      */
-    public static String updateGuildCount(JDA jda, long newGuildCount) {
+    private static String updateGuildCount(JDA jda, long newGuildCount) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.apiBase + "/postGuildCount/json", postFields, WebUtils.AcceptType.URLENCODED).body().string();
+            return WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json", postFields, WebUtils.EncodingType.TEXT_JSON).body().string();
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {
             e.printStackTrace();
-            return e.toString();
+            ComparatingUtils.execCheck(e);
+            return new JSONObject().put("status", "failure").put("message", e.toString()).toString();
         }
     }
 
 
     /**
      * This method updates the guild count and checks it on startup and every time we join or leave a guild.
-     * @throws UnsupportedOperationException if the request failed.
-     * @param jda the jda
+     *
+     * @param jda           the jda
      * @param newGuildCount the new guild count
+     * @throws UnsupportedOperationException if the request failed.
      */
     public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
         JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
@@ -90,13 +93,31 @@ public class GuildUtils {
                 String x = returnValue.getString("message");
                 if (x.equals("ignored exception"))
                     return;
-                throw new UnsupportedOperationException(String.format(exceptionMessage, x), ex);
+                logger.error(String.format(exceptionMessage, x), ex);
             }
             String x = returnValue.getString("message");
             if (x.equals("ignored exception"))
                 return;
-            throw new UnsupportedOperationException(String.format(exceptionMessage, returnValue.getString("message")));
+            logger.error(String.format(exceptionMessage, returnValue.getString("message")));
         }
+    }
+
+    /**
+     * Returns an array with the member counts of the guild
+     * 0 = the total users
+     * 1 = the total bots
+     * 3 = the total members
+     *
+     * @param g The {@link Guild Guild} to count the users in
+     * @return an array with the member counts of the guild
+     */
+    public static long[] getBotAndUserCount(Guild g) {
+        MemberCacheView memberCache = g.getMemberCache();
+        long totalCount = memberCache.size();
+        long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
+        long userCount = totalCount - botCount;
+
+        return new long[]{userCount, botCount, totalCount};
     }
 
     /**
@@ -107,10 +128,10 @@ public class GuildUtils {
      */
     public static double[] getBotRatio(Guild g) {
 
-        MemberCacheView memberCache = g.getMemberCache();
-        double totalCount = memberCache.size();
-        double botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
-        double userCount = totalCount - botCount;
+        long[] counts = getBotAndUserCount(g);
+        double totalCount = counts[2];
+        double userCount = counts[0];
+        double botCount = counts[1];
 
         //percent in users
         double userCountP = (userCount / totalCount) * 100;
@@ -125,6 +146,7 @@ public class GuildUtils {
 
     /**
      * This counts the users in a guild that have an animated avatar
+     *
      * @param g the guild to count it in
      * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
      */
@@ -132,8 +154,8 @@ public class GuildUtils {
 
         return new AtomicLong(g.getMemberCache().stream()
                 .map(Member::getUser)
-                .filter(it -> it.getAvatarId() != null )
-	            .filter(it -> it.getAvatarId().startsWith("a_") ).count()
+                .filter(it -> it.getAvatarId() != null)
+                .filter(it -> it.getAvatarId().startsWith("a_")).count()
         );
     }
 

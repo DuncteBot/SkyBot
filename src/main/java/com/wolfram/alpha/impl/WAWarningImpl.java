@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAWarning;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
@@ -37,17 +36,17 @@ import java.util.ArrayList;
 // available as an array of string pairs: {{"word", "Foo"}, {"suggestion", "Bar"}}.
 
 public class WAWarningImpl implements WAWarning, Visitable, Serializable {
-    
+
     static final WAWarningImpl[] EMPTY_ARRAY = new WAWarningImpl[0];
     private static final String[][] NO_ATTRIBUTES = new String[0][2];
     private static final long serialVersionUID = 2599384508960192266L;
     private String type;
     private String text;
     private String[][] attributes = NO_ATTRIBUTES;
-    
-    
+
+
     WAWarningImpl(Element thisElement) {
-        
+
         type = thisElement.getNodeName();
         text = thisElement.getAttribute("text");
         ArrayList<String[]> attrPairs = new ArrayList<>();
@@ -64,28 +63,28 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
         if (attrPairs.size() > 0)
             attributes = attrPairs.toArray(new String[attrPairs.size()][2]);
     }
-    
-    
+
+
     public String[][] getAttributes() {
         return attributes;
     }
-    
-    
+
+
     public String getText() {
         return text;
     }
-    
-    
+
+
     public String getType() {
         return type;
     }
-    
-    
+
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
-    
+
+
 }

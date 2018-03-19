@@ -16,14 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MemberVisibilityCanPrivate")
-
 package ml.duncte123.skybot.commands.`fun`
 
 import com.google.code.chatterbotapi.ChatterBot
 import com.google.code.chatterbotapi.ChatterBotFactory
 import com.google.code.chatterbotapi.ChatterBotSession
 import com.google.code.chatterbotapi.ChatterBotType
+import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -36,10 +35,10 @@ class ChatCommand : Command() {
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession
     private val responses = arrayOf(
-        "My prefix in this guild is *`{PREFIX}`*",
-        "Thanks for asking, my prefix here is *`{PREFIX}`*",
-        "That should be *`{PREFIX}`*",
-        "It was *`{PREFIX}`* if I'm not mistaken"
+            "My PREFIX in this guild is *`{PREFIX}`*",
+            "Thanks for asking, my PREFIX here is *`{PREFIX}`*",
+            "That should be *`{PREFIX}`*",
+            "It was *`{PREFIX}`* if I'm not mistaken"
     )
 
     init {
@@ -56,22 +55,19 @@ class ChatCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if(args.isEmpty()){
+        if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
         val time = System.currentTimeMillis()
-        var message = event.message.contentRaw.split( "\\s+".toRegex(),2)[1]
+        var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
         event.channel.sendTyping().queue()
 
-        if(event.message.contentRaw.contains("prefix")) {
-            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.rand.nextInt(responses.size)]
+        if (event.message.contentRaw.contains("prefix")) {
+            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
         }
-
-//        sendMsg(event, "The chat feature has temporally been disabled due to lag issues with the music.\n" +
-//                "We don't know if we ever will bring it back, thank you for understanding.")
 
         //We don't need this because we are using contentDisplay instead of contentRaw
         //We need it since contentDisplay leaves # and @
@@ -81,20 +77,24 @@ class ChatCommand : Command() {
         event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        logger.debug("Message: \"$message\"")
-        var response = oldBot.think(message)
+        launch {
+            logger.debug("Message: \"$message\"")
+            var response = oldBot.think(message)
 
-        //Reset the ai if it dies
-        if(response == "You have been banned from talking to me.") {
-            this.resetAi()
-            response = oldBot.think(message)
+            //Reset the ai if it dies
+            if (response == "" || response == "You have been banned from talking to me." ||
+                    response == "I am not talking to you any more.") {
+                resetAi()
+                response = oldBot.think(message)
+            }
+
+            for (element in Jsoup.parse(response).getElementsByTag("a")) {
+                response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
+            }
+            MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+            logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 
-        for (element in Jsoup.parse(response).getElementsByTag("a")) {
-            response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
-        }
-        MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
-        logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
@@ -102,7 +102,7 @@ class ChatCommand : Command() {
 
     override fun getName() = "chat"
 
-    fun resetAi() {
+    private fun resetAi() {
         oldBot = builder.createSession()
     }
 }

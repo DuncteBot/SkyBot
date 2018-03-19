@@ -35,7 +35,7 @@ class PPlayCommand : MusicCommand() {
             return
 
         val guild = event.guild
-        val musicManager = getMusicManager(guild)
+        val mng = getMusicManager(guild)
 
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
@@ -46,7 +46,7 @@ class PPlayCommand : MusicCommand() {
         if (!AirUtils.isURL(toPlay)) {
             toPlay = "ytsearch:" + toPlay
         }
-        if(toPlay.length > 1024) {
+        if (toPlay.length > 1024) {
             MessageUtils.sendError(event.message)
             MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
@@ -54,7 +54,7 @@ class PPlayCommand : MusicCommand() {
 
         MessageUtils.sendMsg(event, "Loading playlist.......\n" +
                 "This may take a while depending on the size.")
-        au.loadAndPlay(musicManager, event.channel, toPlay, true)
+        audioUtils.loadAndPlay(mng, event.channel, toPlay, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

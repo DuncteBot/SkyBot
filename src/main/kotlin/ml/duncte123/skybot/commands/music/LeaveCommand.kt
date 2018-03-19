@@ -32,21 +32,22 @@ class LeaveCommand : MusicCommand() {
         if (!channelChecks(event))
             return
         val guild = event.guild
-        val cooldowns = MusicCommand.cooldowns
         @Suppress("DEPRECATION")
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)
             return
         }
-        val manager = getAudioManager(guild)
+        val manager = getMusicManager(guild)
 
-        if (manager.isConnected) {
-            getMusicManager(event.guild).player.stopTrack()
-            manager.sendingHandler = null
-            manager.closeAudioConnection()
+        if (getLavalinkManager().isConnected(guild)) {
+            manager.player.stopTrack()
+            getLavalinkManager().closeConnection(guild)
+            guild.audioManager.sendingHandler = null
             MusicCommand.addCooldown(guild.idLong)
+            if (guild.audioManager.connectionListener != null)
+                guild.audioManager.connectionListener = null
             MessageUtils.sendMsg(event, "Leaving your channel")
         } else {
             MessageUtils.sendMsg(event, "I'm not connected to any channels.")

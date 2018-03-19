@@ -28,13 +28,13 @@ import java.io.File;
 
 
 public interface WASound extends Visitable {
-    
+
     String getURL();
-    
+
     String getFormat();
-    
+
     File getFile();
-    
+
     void acquireSound();
-    
+
 }

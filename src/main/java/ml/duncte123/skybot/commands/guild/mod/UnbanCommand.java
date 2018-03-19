@@ -24,10 +24,8 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-
-import java.util.List;
+import org.apache.commons.lang3.StringUtils;
 
 public class UnbanCommand extends Command {
 
@@ -48,18 +46,19 @@ public class UnbanCommand extends Command {
         }
 
         try {
-            Guild guild = event.getGuild();
-            List<Guild.Ban> bannedUsers = guild.getBanList().complete();
-            for (Guild.Ban ban : bannedUsers) {
-                User bannedUser = ban.getUser();
-                if (bannedUser.getName().equalsIgnoreCase(args[0])) {
-                    guild.getController().unban(bannedUser).reason("Unbanned by " + event.getAuthor().getName()).queue();
-                    MessageUtils.sendMsg(event, "User " + bannedUser.getName() + " unbanned.");
-                    ModerationUtils.modLog(event.getAuthor(), bannedUser, "unbanned", event.getGuild());
-                    return;
+            event.getGuild().getBanList().queue(list -> {
+                for (Guild.Ban ban : list) {
+                    if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
+                        event.getGuild().getController().unban(ban.getUser())
+                                .reason("Unbanned by " + event.getAuthor().getName()).queue();
+                        MessageUtils.sendMsg(event, "User " + ban.getUser().getName() + " unbanned.");
+                        ModerationUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", event.getGuild());
+                        return;
+                    }
                 }
-            }
-            MessageUtils.sendMsg(event, "This user is not banned");
+                MessageUtils.sendMsg(event, "This user is not banned");
+            });
+
         } catch (Exception e) {
             e.printStackTrace();
             MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());

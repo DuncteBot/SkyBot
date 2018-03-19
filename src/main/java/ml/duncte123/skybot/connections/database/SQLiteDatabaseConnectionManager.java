@@ -33,8 +33,9 @@ import java.util.regex.Pattern;
  *
  * @author ramidzkh
  */
+@SuppressWarnings("SqlDialectInspection")
 class SQLiteDatabaseConnectionManager
-implements DBConnectionManager {
+        implements DBConnectionManager {
 
     /**
      * The URL of this database
@@ -55,7 +56,7 @@ implements DBConnectionManager {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
             con = JDBC.createConnection(url, new Properties());
-            
+
             // Create it
             con.getMetaData().getURL();
             //Try to construct the database if not there
@@ -127,35 +128,45 @@ implements DBConnectionManager {
     private void innitDB(Connection connection) {
         //Not to self: SQLite doesn't have multi line queries
         try {
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS guildSettings " +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "guildId TEXT NOT NULL," +
-                                                         "guildName TEXT NOT NULL," +
-                                                         "logChannelId TEXT NULL," +
-                                                         "welcomeLeaveChannel TEXT NULL," +
-                                                         "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.prefix + "'," +
-                                                         "autoRole VARCHAR(255) NULL," +
-                                                         "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                                                         "customWelcomeMessage TEXT NOT NULL," +
-                                                         "customLeaveMessage TEXT NOT NULL);");
-            
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags`" +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "author VARCHAR(255) NOT NULL," +
-                                                         "authorId VARCHAR(255) NOT NULL," +
-                                                         "tagName VARCHAR(10) NOT NULL," +
-                                                         "tagText TEXT NOT NULL);");
-            
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS bans" +
-                                                         "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                                                         "modUserId VARCHAR(255) NOT NULL," +
-                                                         "userId VARCHAR(255) NOT NULL," +
-                                                         "Username VARCHAR(255) NOT NULL," +
-                                                         "discriminator VARCHAR(4) NOT NULL," +
-                                                         "ban_date DATETIME NOT NULL," +
-                                                         "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                                                         "guildId VARCHAR(255) NOT NULL);");
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS guildSettings " +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "guildId TEXT NOT NULL," +
+                            "guildName TEXT NOT NULL," +
+                            "logChannelId TEXT NULL," +
+                            "welcomeLeaveChannel TEXT NULL," +
+                            "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
+                            "autoRole VARCHAR(255) NULL," +
+                            "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                            "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                            "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
+                            "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
+                            "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
+                            "customWelcomeMessage TEXT NOT NULL," +
+                            "serverDesc TEXT NULL," +
+                            "customLeaveMessage TEXT NOT NULL);"
+            );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS `tags`" +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "author VARCHAR(255) NOT NULL," +
+                            "authorId VARCHAR(255) NOT NULL," +
+                            "tagName VARCHAR(10) NOT NULL," +
+                            "tagText TEXT NOT NULL);"
+            );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS bans" +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "modUserId VARCHAR(255) NOT NULL," +
+                            "userId VARCHAR(255) NOT NULL," +
+                            "Username VARCHAR(255) NOT NULL," +
+                            "discriminator VARCHAR(4) NOT NULL," +
+                            "ban_date DATETIME NOT NULL," +
+                            "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                            "guildId VARCHAR(255) NOT NULL);"
+            );
         } catch (SQLException e) {
             e.printStackTrace();
         }

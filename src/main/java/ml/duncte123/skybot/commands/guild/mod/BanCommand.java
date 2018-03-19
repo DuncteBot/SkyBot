@@ -44,7 +44,7 @@ public class BanCommand extends Command {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand( String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
         Permission[] perms = {
                 Permission.KICK_MEMBERS,
@@ -64,7 +64,7 @@ public class BanCommand extends Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                        !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+                    !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
@@ -88,18 +88,16 @@ public class BanCommand extends Command {
                 int banTime; // initial value is always 0
                 try {
                     banTime = Integer.parseInt(timeParts[0]);
-                }
-                catch (NumberFormatException e) {
-                    MessageUtils.sendMsg(event, e.getMessage()+" is not a valid number");
+                } catch (NumberFormatException e) {
+                    MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
                     return;
-                }
-                catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */)  {
-                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
+                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
                     return;
                 }
                 if (banTime > 0) {
-                    if(timeParts.length != 2) {
-                        MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX+"help " + getName()+ "` for more info.");
+                    if (timeParts.length != 2) {
+                        MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
                         return;
                     }
                     //TODO make ban timed
@@ -152,6 +150,7 @@ public class BanCommand extends Command {
                             }
                         }
                 );
+                MessageUtils.sendSuccess(event.getMessage());
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
                         (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
@@ -166,7 +165,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                       "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
+                "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
     }
 
     @Override

@@ -18,14 +18,12 @@
 
 package ml.duncte123.skybot.objects.delegate;
 
-import Java.lang.VRCubeException;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import groovy.lang.Binding;
-import groovy.lang.MetaClass;
 import groovy.lang.Script;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.io.File;
-import java.io.IOException;
 
 public class ScriptDelegate extends Script {
 
@@ -90,7 +88,8 @@ public class ScriptDelegate extends Script {
     }
 
     @Override
-    public void setProperty(String property, Object newValue) {}
+    public void setProperty(String property, Object newValue) {
+    }
 
     public Object dump() {
         return "\uD83D\uDEAE";
@@ -101,7 +100,7 @@ public class ScriptDelegate extends Script {
     }
 
     public int quick_mafs(int x) {
-        int the_thing = x + 2 -1;
+        int the_thing = x + 2 - 1;
         return the_thing;
     }
 

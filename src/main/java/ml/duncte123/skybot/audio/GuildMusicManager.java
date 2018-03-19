@@ -18,36 +18,44 @@
 
 package ml.duncte123.skybot.audio;
 
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager;
+import fredboat.audio.player.LavalinkManager;
+import lavalink.client.player.IPlayer;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 public class GuildMusicManager {
 
     /**
      * This is our player
      */
-    public final AudioPlayer player;
-
+    public final IPlayer player;
     /**
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
-
+    final GuildSettings guildSettings;
     /**
      * This is what actually sends the audio
      */
-    public final AudioPlayerSenderHandler sendHandler;
+    private final AudioPlayerSenderHandler sendHandler;
+    /**
+     * This is the text channel were we will announce our songs
+     */
+    public TextChannel latestChannel = null;
 
     /**
      * Constructor
      *
-     * @param manager The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayerManager AudioPlayerManager} for the corresponding guild
+     * @param g The guild that we wannt the manager for
      */
-    public GuildMusicManager(AudioPlayerManager manager) {
-        player = manager.createPlayer();
+    public GuildMusicManager(Guild g) {
+        player = LavalinkManager.ins.createPlayer(g.getId());
         scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
+        this.guildSettings = GuildSettingsUtils.getGuild(g);
     }
 
     /**

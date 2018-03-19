@@ -21,7 +21,7 @@
 
 package ml.duncte123.skybot.entities.delegate
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
@@ -40,17 +40,17 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     /**
      * @returns a always null parent [Category]
      */
-    override fun getParent(): Category?                 = null
+    override fun getParent(): Category? = null
 
     /**
      * @returns a never null [JDA] ([JDADelegate])
      */
-    override fun getJDA(): JDA                          = JDADelegate(this.jda)
+    override fun getJDA(): JDA = JDADelegate(this.jda)
 
     /**
      * @returns a never null [Guild] ([GuildDelegate])
      */
-    override fun getGuild(): Guild                      = GuildDelegate(this.guild)
+    override fun getGuild(): Guild = GuildDelegate(this.guild)
 
     /**
      * The cast is required for the ScriptEngine
@@ -62,7 +62,7 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
      * The cast is required for the ScriptEngine
      * @returns a immutable [List]<[TextChannel]> ([List]<[TextChannelDelegate]>)
      */
-    override fun getTextChannels(): List<TextChannel>   = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } as List<TextChannel>
+    override fun getTextChannels(): List<TextChannel> = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } as List<TextChannel>
 
     /**
      * This documentation is for the following four functions.
@@ -70,6 +70,7 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
      * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
      */
     override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+
     override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")

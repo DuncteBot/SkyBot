@@ -30,13 +30,17 @@ import org.slf4j.LoggerFactory
 import java.io.IOException
 import java.io.InputStream
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 class WebUtils {
 
     companion object {
-        const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)"
-        private val client = OkHttpClient()
+        private const val USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)"
+        private val client = OkHttpClient.Builder().readTimeout(10L, TimeUnit.SECONDS)
+                .connectTimeout(10L, TimeUnit.SECONDS).build()
         private val LOGGER = LoggerFactory.getLogger(WebUtils::class.java)
+        /*ExecutorService executor = Executors.newCachedExecutorService();
+        executor.submit(Runnable r)*/
 
         /**
          * Reads contents from a website and returns it to a string
@@ -89,22 +93,46 @@ class WebUtils {
             return getRequest(url).body()?.byteStream()!!
         }
 
+        /*@JvmStatic
+        fun getUserIdFromToken(token: String): String {
+            try {
+                val response = runBlocking {
+                    executeRequest(
+                            Request.Builder()
+                                    .url("${Requester.DISCORD_API_PREFIX}/users/@me")
+                                    .get()
+                                    .addHeader("User-Agent", USER_AGENT)
+                                    .addHeader("Authorization", "Bot $token")
+                                    .addHeader("cache-control", "no-cache")
+                                    .build())
+                }
+
+                val json = JSONObject(response.body()!!.string())
+
+                return json.getString("id")
+            }
+            catch (e: IOException) {
+                e.printStackTrace()
+                return ""
+            }
+        }*/
+
         /**
          * This makes a get request to the specified website
          *
          * @param url    The website to post to
-         * @param accept What we will accept, [AcceptType]
+         * @param encoding What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun getRequest(url: String, accept: AcceptType = AcceptType.TEXT_HTML): Response {
+        fun getRequest(url: String, encoding: EncodingType = EncodingType.TEXT_HTML): Response {
             return runBlocking {
                 executeRequest(
                         Request.Builder()
                                 .url(url)
                                 .get()
                                 .addHeader("User-Agent", USER_AGENT)
-                                .addHeader("Accept", accept.type)
+                                .addHeader("Accept", encoding.type)
                                 .addHeader("cache-control", "no-cache")
                                 .build())
             }
@@ -115,11 +143,11 @@ class WebUtils {
          *
          * @param url        The website to post to
          * @param postFields the params for the post (param name, param value)
-         * @param accept     What we will accept, [AcceptType]
+         * @param encoding     What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, postFields: Map<String, Any?>, accept: AcceptType = AcceptType.URLENCODED): Response {
+        fun postRequest(url: String, postFields: Map<String, Any?>, encoding: EncodingType = EncodingType.TEXT_PLAIN): Response {
             val postParams = StringBuilder()
 
             for ((key, value) in postFields) {
@@ -129,9 +157,9 @@ class WebUtils {
                 executeRequest(
                         Request.Builder()
                                 .url(url)
-                                .post(RequestBody.create(MediaType.parse(AcceptType.URLENCODED.type), Config.replaceLast(postParams.toString(), "\\&", "")))
+                                .post(RequestBody.create(MediaType.parse(EncodingType.URLENCODED.type), Config.replaceLast(postParams.toString(), "\\&", "")))
                                 .addHeader("User-Agent", USER_AGENT)
-                                .addHeader("Accept", accept.type)
+                                .addHeader("Accept", encoding.type)
                                 .addHeader("cache-control", "no-cache")
                                 .build())
             }
@@ -141,12 +169,12 @@ class WebUtils {
          * This makes a post request to the specified website
          *
          * @param url    The website to post to
-         * @param accept What we will accept, [AcceptType]
+         * @param encoding What we will encoding, [EncodingType]
          * @return The [Response] from the webserver
          */
         @JvmStatic
-        fun postRequest(url: String, accept: AcceptType = AcceptType.TEXT_JSON): Response {
-            return postRequest(url, HashMap(), accept)
+        fun postRequest(url: String, encoding: EncodingType = EncodingType.TEXT_JSON): Response {
+            return postRequest(url, HashMap(), encoding)
         }
 
         /**
@@ -180,7 +208,7 @@ class WebUtils {
 
                 jo.put("longUrl", url)
 
-                val response = postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.config.getString("apis.googl", "Google api key"), jo)
+                val response = postJSON("https://www.googleapis.com/urlshortener/v1/url?key=" + AirUtils.CONFIG.getString("apis.googl", "Google api key"), jo)
                 return JSONObject(response.body()?.string()).get("id").toString()
             } catch (e: NullPointerException) {
                 ComparatingUtils.checkEx(e)
@@ -244,11 +272,13 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
+        @JvmStatic
         fun hastebin(s: String): String {
             val returnValue = "hastebin.com/" + postRawToService(Service.HASTEBIN, s).getString("key") + ".kt"
             LOGGER.info("${TextColor.PURPLE}Generated hastebin link: $returnValue${TextColor.RESET}")
             return returnValue
         }
+
         /**
          * Posts [String]s to wastebin.party
          * @param s the [String]
@@ -256,16 +286,32 @@ class WebUtils {
          *
          * @see WebUtils.postRawToService([Service], [String])
          */
+        @JvmStatic
         fun wastebin(s: String): String {
             val returnValue = "wastebin.party/" + postRawToService(Service.WASTEBIN, s).getString("key") + ".kt"
             LOGGER.info("${TextColor.PURPLE}Generated wastebin link: $returnValue${TextColor.RESET}")
             return returnValue
         }
+
+        /**
+         * Posts [String]s to haste.leeks.life
+         * @param s the [String]
+         * @returns the url of the created post as kotlin file
+         *
+         * @see WebUtils.postRawToService([Service], [String])
+         */
+        @JvmStatic
+        fun leeks(s: String): String {
+            val returnValue = "haste.leeks.life/" + postRawToService(Service.LEEKS, s).getString("key") + ".kt"
+            LOGGER.info("${TextColor.PURPLE}Generated paste by leeks link: $returnValue${TextColor.RESET}")
+            return returnValue
+        }
     }
+
     /**
      * This holds some variables that we will accept
      */
-    enum class AcceptType(val type: String) {
+    enum class EncodingType(val type: String) {
         TEXT_PLAIN("text/plain"),
         TEXT_JSON("application/json"),
         TEXT_HTML("text/html"),
@@ -275,18 +321,7 @@ class WebUtils {
 
     enum class Service(val url: String) {
         HASTEBIN("https://hastebin.com/documents"),
-        WASTEBIN("https://wastebin.party/documents")
+        WASTEBIN("https://wastebin.party/documents"),
+        LEEKS("https://haste.leeks.life/documents")
     }
 }
-
-/*
- * Global wrapping fun for every class
- */
-/**
- * @see WebUtils.hastebin([String])
- */
-fun hastebin(s: String): String = WebUtils.hastebin(s)
-/**
- * @see WebUtils.wastebin([String])
- */
-fun wastebin(s: String): String = WebUtils.wastebin(s)

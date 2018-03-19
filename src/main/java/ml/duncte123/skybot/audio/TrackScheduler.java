@@ -19,51 +19,36 @@
 package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.player.event.AudioEventAdapter;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import lavalink.client.player.IPlayer;
+import lavalink.client.player.event.AudioEventAdapterWrapped;
+import ml.duncte123.skybot.utils.MessageUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-public class TrackScheduler extends AudioEventAdapter {
+public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    /**
-     * This stores our queue
-     */
+    private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     public final Queue<AudioTrack> queue;
-
-    /**
-     * Hey look at that, it's our player
-     */
-    final AudioPlayer player;
-
-    /**
-     * This is the last playing track
-     */
-    AudioTrack lastTrack;
-
-    final GuildMusicManager guildMusicManager;
-
-    /**
-     * Are we repeating the track
-     */
+    private final IPlayer player;
+    private final GuildMusicManager guildMusicManager;
+    private AudioTrack lastTrack;
     private boolean repeating = false;
-
-
-    /**
-     * Are we repeating playlists
-     */
     private boolean repeatPlayList = false;
+
 
     /**
      * This instantiates our player
      *
      * @param player Our audio player
      */
-    public TrackScheduler(AudioPlayer player, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
@@ -72,11 +57,13 @@ public class TrackScheduler extends AudioEventAdapter {
     /**
      * Queue a track
      *
-     * @param track The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} to queue
+     * @param track The {@link AudioTrack AudioTrack} to queue
      */
     public void queue(AudioTrack track) {
-        if (!player.startTrack(track, true)) {
+        if (player.getPlayingTrack() != null) {
             queue.offer(track);
+        } else {
+            player.playTrack(track);
         }
     }
 
@@ -84,28 +71,42 @@ public class TrackScheduler extends AudioEventAdapter {
      * Starts the next track
      */
     public void nextTrack() {
-        player.startTrack(queue.poll(), false);
+        if (queue.peek() != null) {
+            AudioTrack nextTrack = queue.poll();
+            if (nextTrack != null) {
+                player.playTrack(nextTrack);
+                announceNextTrack(nextTrack);
+            }
+        } else if (player.getPlayingTrack() != null)
+            player.stopTrack();
     }
 
     /**
      * Gets run when a track ends
      *
-     * @param player    The {@link com.sedmelluq.discord.lavaplayer.player.AudioPlayer AudioTrack} for that guild
-     * @param track     The {@link com.sedmelluq.discord.lavaplayer.track.AudioTrack AudioTrack} that ended
+     * @param player    The {@link AudioPlayer AudioTrack} for that guild
+     * @param track     The {@link AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
         this.lastTrack = track;
-
+        logger.debug("track ended");
         if (endReason.mayStartNext) {
+            logger.debug("can start");
             if (repeating) {
+                logger.debug("repeating");
                 if (!repeatPlayList) {
-                    player.playTrack(lastTrack.makeClone());
+                    this.player.playTrack(lastTrack.makeClone());
+                    announceNextTrack(lastTrack);
                 } else {
-                    this.queue(lastTrack.makeClone());
+                    logger.debug("a playlist.....");
+                    nextTrack();
+                    //Offer it to the queue to prevent the player from playing it
+                    queue.offer(lastTrack.makeClone());
                 }
             } else {
+                logger.debug("starting next track");
                 nextTrack();
             }
         }
@@ -121,21 +122,21 @@ public class TrackScheduler extends AudioEventAdapter {
     }
 
     /**
-     * This will tell you if the player is repeating playlists
-     *
-     * @return true if the player is set to repeat playlists
-     */
-    public boolean isRepeatingPlaylists() {
-        return repeatPlayList;
-    }
-
-    /**
      * tell the player if needs to repeat
      *
      * @param repeating if the player needs to repeat
      */
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
+    }
+
+    /**
+     * This will tell you if the player is repeating playlists
+     *
+     * @return true if the player is set to repeat playlists
+     */
+    public boolean isRepeatingPlaylists() {
+        return repeatPlayList;
     }
 
     /**
@@ -152,6 +153,11 @@ public class TrackScheduler extends AudioEventAdapter {
      */
     public void shuffle() {
         Collections.shuffle((List<?>) queue);
+    }
+
+    private void announceNextTrack(AudioTrack track) {
+        if (guildMusicManager.guildSettings.isAnnounceTracks())
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + track.getInfo().title);
     }
 
 }

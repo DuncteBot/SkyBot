@@ -26,15 +26,15 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class BlobCommand : Command() {
-    
+
     init {
         this.category = CommandCategory.FUN
     }
-    
+
     override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-        
+
         var blob = "blobnomcookie"
-        
+
         if (args.isNotEmpty()) {
             blob = StringUtils.join(*args)
         }
@@ -47,13 +47,11 @@ class BlobCommand : Command() {
 
         event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue()
 
-        
-
 
     }
-    
+
     override fun help() = "Gives you a blob.\n" +
             "Usage: `$PREFIX$name [blob name]`"
-    
+
     override fun getName() = "blob"
 }

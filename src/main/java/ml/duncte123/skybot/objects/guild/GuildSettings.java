@@ -25,47 +25,19 @@ import ml.duncte123.skybot.Settings;
  */
 public class GuildSettings {
 
-    /**
-     * the id of the guild that the settings are for
-     */
-    private String guildId;
-
-    /**
-     * if we should enable the join messages
-     */
+    private final String guildId;
     private boolean enableJoinMessage = false;
-
-    /**
-     * if we should enable the swear filter
-     */
     private boolean enableSwearFilter = false;
-
-    /**
-     * This will hold the custom join message
-     */
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
-
-    /**
-     * This will hold the custom leave message
-     */
     private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
-
-    /**
-     * This will hold the custom prefix if the guild has set one
-     */
-    private String customPrefix = Settings.prefix;
-
-    /**
-     * This stores the channel that we log the bans in
-     */
+    private String customPrefix = Settings.PREFIX;
     private String logChannel = null;
-
-    /**
-     * This stores the channel in where the welcome or leave messages should display
-     */
     private String welcomeLeaveChannel = null;
-
-    private String autoroleRole = "";
+    private String autoroleRole = null;
+    private String serverDesc = null;
+    private boolean announceTracks = false;
+    private boolean autoDeHoist = false;
+    private boolean filterInvites = false;
 
     /**
      * This will init everything
@@ -117,68 +89,6 @@ public class GuildSettings {
     }
 
     /**
-     * This will set the custom join for the corresponding guild
-     * @param customJoinMessage The new join message
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomJoinMessage(String customJoinMessage) {
-        this.customJoinMessage = customJoinMessage;
-        return this;
-    }
-
-    /**
-     * This will set the custom leave message for the corresponding guild
-     * @param customLeaveMessage The new leave message
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
-        this.customLeaveMessage = customLeaveMessage;
-        return this;
-    }
-
-    /**
-     * This will set the channel that we log all the mod stuff in
-     * @param tc the channel to log
-     * @return the current {@link GuildSettings}
-     */
-    public GuildSettings setLogChannel(String tc) {
-        this.logChannel = tc;
-        return this;
-    }
-
-    /**
-     * This sets the channel in where the welcome or leave messages should display
-     * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
-     * @return the current {@link GuildSettings}
-     */
-    public GuildSettings setWelcomeLeaveChannel(String welcomeLeaveChannel) {
-        this.welcomeLeaveChannel = welcomeLeaveChannel;
-        return this;
-    }
-
-    /**
-     * This will set the custom prefix for the corresponding guild
-     *
-     * @param customPrefix The new prefix
-     * @return The current {@link GuildSettings}
-     */
-    public GuildSettings setCustomPrefix(String customPrefix) {
-        this.customPrefix = customPrefix;
-        return this;
-    }
-
-    /**
-     * This sets the role id for the autorole
-     *
-     * @param autoroleRole the role to set the autorole to
-     * @return the current {@link GuildSettings}
-     */
-    public GuildSettings setAutoroleRole(String autoroleRole) {
-        this.autoroleRole = autoroleRole;
-        return this;
-    }
-
-    /**
      * This will return the guild id that these options are for
      *
      * @return The id of that guild as a String
@@ -197,11 +107,34 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom join for the corresponding guild
+     *
+     * @param customJoinMessage The new join message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomJoinMessage(String customJoinMessage) {
+        this.customJoinMessage = customJoinMessage;
+        return this;
+    }
+
+    /**
      * Returns the custom leave message
+     *
      * @return the custom leave message
      */
     public String getCustomLeaveMessage() {
         return customLeaveMessage;
+    }
+
+    /**
+     * This will set the custom leave message for the corresponding guild
+     *
+     * @param customLeaveMessage The new leave message
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
+        this.customLeaveMessage = customLeaveMessage;
+        return this;
     }
 
     /**
@@ -214,7 +147,19 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the custom prefix for the corresponding guild
+     *
+     * @param customPrefix The new prefix
+     * @return The current {@link GuildSettings}
+     */
+    public GuildSettings setCustomPrefix(String customPrefix) {
+        this.customPrefix = customPrefix;
+        return this;
+    }
+
+    /**
      * Returns the channel to log in
+     *
      * @return the channel to log in
      */
     public String getLogChannel() {
@@ -222,7 +167,19 @@ public class GuildSettings {
     }
 
     /**
+     * This will set the channel that we log all the mod stuff in
+     *
+     * @param tc the channel to log
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setLogChannel(String tc) {
+        this.logChannel = tc;
+        return this;
+    }
+
+    /**
      * Returns the role id for the autorole feature
+     *
      * @return the role id for the autorole feature
      */
     public String getAutoroleRole() {
@@ -230,11 +187,112 @@ public class GuildSettings {
     }
 
     /**
+     * This sets the role id for the autorole
+     *
+     * @param autoroleRole the role to set the autorole to
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAutoroleRole(String autoroleRole) {
+        this.autoroleRole = autoroleRole;
+        return this;
+    }
+
+    /**
      * Returns the channel in where the welcome or leave messages should display
+     *
      * @return the channel in where the welcome or leave messages should display
      */
     public String getWelcomeLeaveChannel() {
         return welcomeLeaveChannel;
+    }
+
+    /**
+     * This sets the channel in where the welcome or leave messages should display
+     *
+     * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setWelcomeLeaveChannel(String welcomeLeaveChannel) {
+        this.welcomeLeaveChannel = welcomeLeaveChannel;
+        return this;
+    }
+
+    /**
+     * Returns the custom server description
+     *
+     * @return the custom server description
+     */
+    public String getServerDesc() {
+        return serverDesc;
+    }
+
+    /**
+     * Sets the current sever description to show up in DB!guildinfo
+     *
+     * @param serverDesc the custom server description
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setServerDesc(String serverDesc) {
+        this.serverDesc = serverDesc;
+        return this;
+    }
+
+    /**
+     * Returns if we should announce the next track
+     *
+     * @return if we should announce the next track
+     */
+    public boolean isAnnounceTracks() {
+        return announceTracks;
+    }
+
+    /**
+     * Sets if the audio player should announce the tracks
+     *
+     * @param announceTracks true to announce tracks
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAnnounceTracks(boolean announceTracks) {
+        this.announceTracks = announceTracks;
+        return this;
+    }
+
+    /**
+     * Returns if we should auto de-hoist people (soon™)
+     *
+     * @return if we should auto de-hoist people (soon™)
+     */
+    public boolean isAutoDeHoist() {
+        return autoDeHoist;
+    }
+
+    /**
+     * This sets if we should auto de-hoist people
+     *
+     * @param autoDeHoist if we should auto de-hoist people
+     * @return the current {@link GuildSettings}
+     */
+    public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
+        this.autoDeHoist = autoDeHoist;
+        return this;
+    }
+
+    /**
+     * Returns if we should filter discord invites
+     *
+     * @return if we should filter discord invites
+     */
+    public boolean isFilterInvites() {
+        return filterInvites;
+    }
+
+    /**
+     * @param filterInvites Sets if we should filter out invites in messages
+     * @return
+     */
+    public GuildSettings setFilterInvites(boolean filterInvites) {
+        this.filterInvites = filterInvites;
+        return this;
     }
 
     /**

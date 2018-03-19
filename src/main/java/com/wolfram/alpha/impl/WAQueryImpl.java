@@ -31,25 +31,25 @@ import java.util.List;
 
 public class WAQueryImpl extends WAQueryParametersImpl implements WAQuery, Serializable {
 
-    
+
     private static final long serialVersionUID = -1282976731786573517L;
 
 
     public WAQueryImpl(WAQueryParameters params) {
         super(params);
     }
-    
-    
+
+
     public WAQuery copy() {
         return new WAQueryImpl(this);
     }
 
-    
+
     // Creates the URL representation of this query, not including server, path, and appid param. Result starts with &.
     public String toString() {
-        
+
         StringBuilder s = new StringBuilder(600);
-        
+
         List<String[]> params = getParameters();
         for (String[] param : params) {
             s.append("&");
@@ -57,12 +57,12 @@ public class WAQueryImpl extends WAQueryParametersImpl implements WAQuery, Seria
             s.append("=");
             s.append(param[1]);
         }
-        
+
         if (signature != null) {
             s.append("&sig=");
             s.append(signature);
         }
-        
+
         return s.toString();
     }
 

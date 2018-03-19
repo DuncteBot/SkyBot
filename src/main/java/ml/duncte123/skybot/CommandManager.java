@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot;
 
-import Java.lang.VRCubeException;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
@@ -35,31 +35,21 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class CommandManager {
-    
+
     /**
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-    
+
     /**
      * This makes sure that all the commands are added
      */
     public CommandManager() {
         //Get reflections for this project
-        Reflections reflections = new Reflections("ml.duncte123.skybot");
-        //Only check for things that are commands
-        Set<Class<? extends Command>> cmds = reflections.getSubTypesOf(Command.class);
-        //Loop over them
-        for (Class<? extends Command> cmd : cmds) {
-            try {
-                //Add the command
-                this.addCommand(cmd.newInstance());
-            }
-            catch (Exception ignored) {
-            }
-        }
+        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
+        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
     }
-    
+
     /**
      * This is method to get the commands on request
      *
@@ -68,7 +58,7 @@ public class CommandManager {
     public Set<Command> getCommands() {
         return commands;
     }
-    
+
     /**
      * This tries to get a command with the provided name/alias
      *
@@ -90,7 +80,7 @@ public class CommandManager {
     public List<Command> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
-    
+
     /**
      * This removes a command from the commands
      *
@@ -100,7 +90,7 @@ public class CommandManager {
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
     }
-    
+
     /**
      * This handles adding the command
      *
@@ -124,10 +114,10 @@ public class CommandManager {
             return false;
         }
         this.commands.add(command);
-        
+
         return true;
     }
-    
+
     /**
      * This will run the command when we need them
      *
@@ -135,20 +125,31 @@ public class CommandManager {
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-                "(?i)" + Pattern.quote(Settings.prefix) + "|" + Pattern.quote(Settings.otherPrefix) + "|" +
+                "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                         Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
                 "").split("\\s+");
         final String invoke = split[0].toLowerCase();
 
         Command cmd = getCommand(invoke);
 
-        if(cmd != null) {
+        if (cmd != null) {
             try {
                 cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
             } catch (Throwable ex) {
                 if (Settings.isUnstable) {
                     ComparatingUtils.execCheck(ex);
                 }
+            }
+        }
+    }
+
+    private void registerCommandsFromReflection(Reflections reflections) {
+        //Loop over them commands
+        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
+            try {
+                //Add the command
+                this.addCommand(cmd.getDeclaredConstructor().newInstance());
+            } catch (Exception ignored) {
             }
         }
     }

@@ -51,7 +51,7 @@ public class ShardInfoCommand extends Command {
         Collections.reverse(shards);
         for (JDA jda : shards) {
             List<String> row = new ArrayList<>();
-            row.add( (jda.getShardInfo().getShardId() + 1 ) +
+            row.add((jda.getShardInfo().getShardId() + 1) +
                     (event.getJDA().getShardInfo().getShardId() == jda.getShardInfo().getShardId() ? " (current)" : ""));
             row.add(WordUtils.capitalizeFully(jda.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(jda.getPing()));
@@ -81,7 +81,7 @@ public class ShardInfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"shards"};
+        return new String[]{"shards"};
     }
 
     /*

@@ -20,7 +20,7 @@
 
 package ml.duncte123.skybot.entities.delegate
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import net.dv8tion.jda.core.JDA
@@ -39,18 +39,19 @@ class PresenceDelegate(private val presence: Presence) : Presence by presence {
     /**
      * @returns a never null [JDA] ([JDADelegate])
      */
-    override fun getJDA(): JDA                                                = JDADelegate(presence.jda)
+    override fun getJDA(): JDA = JDADelegate(presence.jda)
 
     /**
      * This documentation is for the following seven functions.
      *
      * @throws VRCubeException always a [VRCubeException] with the message "**🔥lit type: type.name**"
      */
-    override fun setGame(game: Game)                                          = throw VRCubeException("Can not set the game")
-    override fun setIdle(idle: Boolean)                                       = throw VRCubeException("Can not set the idle state")
-    override fun setStatus(status: OnlineStatus)                              = throw VRCubeException("Can not set the online status")
-    override fun setPresence(game: Game, idle: Boolean)                       = throw VRCubeException("Can not set the game and idle state")
-    override fun setPresence(status: OnlineStatus, game: Game)                = throw VRCubeException("Can not set the game and online status")
-    override fun setPresence(status: OnlineStatus, idle: Boolean)             = throw VRCubeException("Can not set the online status and idle state")
+    override fun setGame(game: Game) = throw VRCubeException("Can not set the game")
+
+    override fun setIdle(idle: Boolean) = throw VRCubeException("Can not set the idle state")
+    override fun setStatus(status: OnlineStatus) = throw VRCubeException("Can not set the online status")
+    override fun setPresence(game: Game, idle: Boolean) = throw VRCubeException("Can not set the game and idle state")
+    override fun setPresence(status: OnlineStatus, game: Game) = throw VRCubeException("Can not set the game and online status")
+    override fun setPresence(status: OnlineStatus, idle: Boolean) = throw VRCubeException("Can not set the online status and idle state")
     override fun setPresence(status: OnlineStatus, game: Game, idle: Boolean) = throw VRCubeException("Can not set the online status, game and idle state")
 }

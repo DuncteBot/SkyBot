@@ -34,7 +34,7 @@ import java.io.Serializable;
 
 
 public class WARelatedExampleImpl implements WARelatedExample, Serializable {
-    
+
     static final WARelatedExampleImpl[] EMPTY_ARRAY = new WARelatedExampleImpl[0];
     private static final long serialVersionUID = -1235014424251757805L;
     private String input;
@@ -42,10 +42,10 @@ public class WARelatedExampleImpl implements WARelatedExample, Serializable {
     private String category;
     private WAImage categoryThumb;
     private String categoryPage;
-    
-    
+
+
     WARelatedExampleImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         input = thisElement.getAttribute("input");
         desc = thisElement.getAttribute("desc");
         category = thisElement.getAttribute("category");
@@ -56,33 +56,33 @@ public class WARelatedExampleImpl implements WARelatedExample, Serializable {
         if (category.equals("")) category = null;
         if (categoryPage.equals("")) categoryPage = null;
     }
-    
-    
+
+
     public String getInput() {
         return input;
     }
-    
+
     public String getDescription() {
         return desc;
     }
-    
+
     public String getCategory() {
         return category;
     }
-    
+
     public String getCategoryPage() {
         return categoryPage;
     }
-    
+
     public WAImage getCategoryThumb() {
         return categoryThumb;
     }
-    
-    
+
+
     ///////////////////////////  Visitable interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
+
 }

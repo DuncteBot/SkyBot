@@ -23,7 +23,6 @@
 package com.wolfram.alpha.impl;
 
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASound;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.net.URLFetcher;
@@ -55,9 +54,9 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
     private transient HttpProvider http;
     private transient File tempDir;
 
-    
+
     WASoundImpl(Element thisElement, HttpProvider http, File tempDir) {
-        
+
         url = thisElement.getAttribute("url");
         format = thisElement.getAttribute("type");
         if (format.equals("audio/x-wav"))
@@ -68,29 +67,29 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
         this.tempDir = tempDir;
     }
 
-    
+
     ////////////////////  WASound interface  //////////////////////////////
-    
+
     public String getURL() {
         return url;
     }
-    
+
     public String getFormat() {
         return format;
     }
-    
+
     public synchronized File getFile() {
         return file;
     }
-    
+
     private synchronized void setFile(File file) {
         this.file = file;
         cachedHashCode = 0;  // Force recompute of hash now that content has changed.
     }
 
-    
+
     ////////////////////////  hashCode()  /////////////////////////
-    
+
     // We use hashCode() as a "content code" to tell us quickly whether the object's content
     // has changed since some point in the past. Note that we do not override equals() as well, 
     // but it is not necessary to override equals() when overriding hashCode() (although it _is_
@@ -99,7 +98,7 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
     // blocks), as these values are changed on a background thread.
     // This is not a particularly good hash function, but it doesn't need to be. The only property
     // that really matters is that its value changes when the content of this object changes.
-    
+
     public void acquireSound() {
 
         // If this is a deserialized instance, http will  be null. Such instances are "dead"; they can
@@ -132,10 +131,10 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
             soundAcquired = true;
         }
     }
-    
-    
+
+
     ////////////////////////////////////////////
-    
+
     public synchronized int hashCode() {
 
         if (cachedHashCode != 0)
@@ -148,9 +147,9 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
         cachedHashCode = result;
         return result;
     }
-    
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

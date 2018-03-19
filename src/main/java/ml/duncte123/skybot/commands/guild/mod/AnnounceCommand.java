@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -30,23 +31,23 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 public class AnnounceCommand extends Command {
-    
+
     public AnnounceCommand() {
         this.category = CommandCategory.MOD_ADMIN;
     }
-    
+
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        
+
         Permission[] perms = {
                 Permission.ADMINISTRATOR
         };
-        
+
         if (!event.getMember().hasPermission(perms)) {
             MessageUtils.sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
-        
+
         if (event.getMessage().getMentionedChannels().size() < 1) {
             MessageUtils.sendMsg(event, "Correct usage is `" + PREFIX + getName() + " [#Channel] [Message]`");
             return;
@@ -76,19 +77,22 @@ public class AnnounceCommand extends Command {
 
             MessageUtils.sendEmbed(targetChannel, embed.build());
             MessageUtils.sendSuccess(event.getMessage());
-            
+
+        } catch (ArrayIndexOutOfBoundsException ex) {
+            MessageUtils.sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
+            ComparatingUtils.execCheck(ex);
         } catch (Exception e) {
             MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
             e.printStackTrace();
         }
     }
-    
+
     @Override
     public String help() {
         return "Announces a message.\n" +
                 "Usage `" + PREFIX + getName() + " <message>`";
     }
-    
+
     @Override
     public String getName() {
         return "announce";

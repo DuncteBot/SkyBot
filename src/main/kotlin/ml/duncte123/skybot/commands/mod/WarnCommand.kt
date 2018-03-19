@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import java.util.*
 
-class WarnCommand: Command() {
+class WarnCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
@@ -35,32 +35,32 @@ class WarnCommand: Command() {
             return
         }
 
-        if(args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
+        if (args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
             MessageUtils.sendMsg(event, "Must mention a member")
             MessageUtils.sendError(event.message)
             return
         }
         val target = event.message.mentionedMembers[0]
         if (target.user == event.jda.selfUser) {
-            MessageUtils.sendErrorWithMessage(event.message, event, "You can not warn me")
+            MessageUtils.sendErrorWithMessage(event.message, "You can not warn me")
             return
         }
-        if(!event.member.canInteract(target)) {
+        if (!event.member.canInteract(target)) {
             MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher position then you")
             MessageUtils.sendError(event.message)
             return
         }
-        if(ModerationUtils.getWarningCountForUser(target.user, event.guild) >= 3) {
+        if (ModerationUtils.getWarningCountForUser(target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
             ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", event.guild)
             return
         }
         var reason = ""
-        if(args.size > 1)
+        if (args.size > 1)
             reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.size), " ")
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
-            |Reason: ${if(reason.isEmpty()) "No reason given" else "`$reason`"}
+            |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
         ModerationUtils.addWarningToDb(event.author, target.user, reason, event.guild, event.jda)

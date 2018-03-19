@@ -18,18 +18,18 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import java.sql.ResultSet
 import java.sql.SQLException
 
-class KpopCommand: Command() {
+class KpopCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
@@ -37,8 +37,8 @@ class KpopCommand: Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        val dbName = AirUtils.db.name
-        val database = AirUtils.db.connManager.connection
+        val dbName = AirUtils.DB.name
+        val database = AirUtils.DB.connManager.connection
 
         var id = ""
         var name = ""
@@ -75,7 +75,7 @@ class KpopCommand: Command() {
                     .setDescription("Here is a kpop member from the group $group")
                     .addField("Name of the member", name, false)
                     .setImage(imgUrl)
-                    .setFooter("Query id: $id", Settings.defaultIcon)
+                    .setFooter("Query id: $id", Settings.DEFAULT_ICON)
             MessageUtils.sendEmbed(event, eb.build())
         } catch (e: Exception) {
             MessageUtils.sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")

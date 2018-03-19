@@ -44,11 +44,11 @@ public class WAInfoImpl implements WAInfo, Serializable {
     private String text;
     private Visitable[] contentElements;
 
-    
+
     WAInfoImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         text = thisElement.getAttribute("text");
-        
+
         NodeList subElements = thisElement.getChildNodes();
         int numSubElements = subElements.getLength();
         List<Visitable> contentList = new ArrayList<>(numSubElements);
@@ -69,8 +69,8 @@ public class WAInfoImpl implements WAInfo, Serializable {
         }
         contentElements = contentList.toArray(new Visitable[contentList.size()]);
     }
-    
-    
+
+
     public Visitable[] getContents() {
         return contentElements;
     }
@@ -79,9 +79,9 @@ public class WAInfoImpl implements WAInfo, Serializable {
         return text;
     }
 
-    
+
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

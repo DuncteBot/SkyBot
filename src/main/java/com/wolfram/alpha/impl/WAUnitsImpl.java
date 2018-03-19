@@ -36,15 +36,15 @@ import java.io.Serializable;
 
 
 public class WAUnitsImpl implements WAUnits, Serializable {
-    
+
     private static final long serialVersionUID = -1635250906549142822L;
     private String[] shortNames;
     private String[] longNames;
     private WAImage image;
 
-    
+
     WAUnitsImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
-        
+
         int numUnits = Integer.parseInt(thisElement.getAttribute("count"));
         shortNames = new String[numUnits];
         longNames = new String[numUnits];
@@ -64,10 +64,10 @@ public class WAUnitsImpl implements WAUnits, Serializable {
             }
         }
     }
-    
-    
+
+
     ////////////////////  WAUnits interface  //////////////////////////////
-    
+
     public WAImage getImage() {
         return image;
     }
@@ -82,7 +82,7 @@ public class WAUnitsImpl implements WAUnits, Serializable {
 
 
     ////////////////////  Visitable interface  //////////////////////////////
-    
+
     public void accept(Visitor v) {
         // TODO Auto-generated method stub
     }

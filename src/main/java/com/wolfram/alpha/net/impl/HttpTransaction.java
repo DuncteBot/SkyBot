@@ -31,17 +31,17 @@ import java.io.InputStream;
 public interface HttpTransaction {
 
     void execute() throws WAHttpException;
-    
+
     void release();
-    
+
     long getContentLength();
 
     String getCharSet() throws IOException;
 
     String[][] getResponseHeaders() throws IOException;
-    
+
     InputStream getResponseStream() throws IOException;
-    
+
     String getResponseString() throws IOException;
 
     // IS this needed?

@@ -39,7 +39,7 @@ public class CatCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         try {
-            String newJSON = WebUtils.getJSONObject("http://random.cat/meow.php").getString("file");
+            String newJSON = WebUtils.getJSONObject("http://aws.random.cat/meow").getString("file");
             event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
         } catch (Exception e) {
             //e.printStackTrace();

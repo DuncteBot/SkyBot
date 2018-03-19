@@ -31,34 +31,30 @@ import org.apache.commons.lang3.StringUtils
 
 class ImageCommand : Command() {
 
-    private val url = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-            "&hl=en&searchType=image&key=${AirUtils.config.getString("apis.googl")}"
-
-
     init {
         this.category = CommandCategory.PATRON
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         //This command is hidden and needs patreon :P
-       /* if(!hasUpvoted(event.author)) {
-            sendEmbed(event,
-                    EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                            "Please consider to give this bot an upvote over at " +
-                            "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                            "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
-            return
-        }*/
-        if(isPatron(event.author, event.channel)) {
+        /* if(!hasUpvoted(event.author)) {
+             sendEmbed(event,
+                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
+                             "Please consider to give this bot an upvote over at " +
+                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
+                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
+             return
+         }*/
+        if (isPatron(event.author, event.channel)) {
             if (args.isEmpty()) {
                 MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
             }
             val keyword = StringUtils.join(args, "+")
 
-            val jsonRaw = Ason(WebUtils.getText(String.format(url, keyword)))
+            val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, keyword)))
             val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-            val randomItem = jsonArray.getJsonObject(AirUtils.rand.nextInt(jsonArray.size()))
+            val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
             sendEmbed(event,
                     EmbedUtils.defaultEmbed()
                             .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))

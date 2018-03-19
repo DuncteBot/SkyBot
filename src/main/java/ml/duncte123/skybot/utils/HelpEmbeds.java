@@ -31,7 +31,7 @@ public class HelpEmbeds {
     /**
      * This tells the fields to be inline or not
      */
-    private static final boolean INLINE = false;
+    private static final boolean INLINE = true;
 
     /**
      * These lists hold the commands for each category
@@ -44,12 +44,13 @@ public class HelpEmbeds {
     private static List<String> modAdminCommands = new ArrayList<>();
     private static List<String> patronCommands = new ArrayList<>();
     private static List<String> weebCommands = new ArrayList<>();
+    private static List<String> NSFWCommands = new ArrayList<>();
 
     /**
      * This loads all the commands in the lists
      */
     public static void init() {
-        for (Command c : AirUtils.commandManager.getCommands()) {
+        for (Command c : AirUtils.COMMAND_MANAGER.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());
@@ -75,42 +76,46 @@ public class HelpEmbeds {
                 case WEEB:
                     weebCommands.add(c.getName());
                     break;
-                default:
+                case NSFW:
+                    NSFWCommands.add(c.getName());
                     break;
             }
-            
-            for (String alias : c.getAliases()) {
-                switch (c.getCategory()) {
-                    case MAIN:
-                        mainCommands.add(alias);
-                        break;
-                    case FUN:
-                        funCommands.add(alias);
-                        break;
-                    case ANIMALS:
-                        animalCommands.add(alias);
-                        break;
-                    case MUSIC:
-                        musicCommands.add(alias);
-                        break;
-                    case MOD_ADMIN:
-                        modAdminCommands.add(alias);
-                        break;
-                    case NERD_STUFF:
-                        nerdCommands.add(alias);
-                        break;
-                    case PATRON:
-                        patronCommands.add(alias);
-                        break;
-                    case WEEB:
-                        weebCommands.add(alias);
-                        break;
-                    default:
-                        break;
+
+            if (c.isDisplayAliasesInHelp())
+                for (String alias : c.getAliases()) {
+                    switch (c.getCategory()) {
+                        case MAIN:
+                            mainCommands.add(alias);
+                            break;
+                        case FUN:
+                            funCommands.add(alias);
+                            break;
+                        case ANIMALS:
+                            animalCommands.add(alias);
+                            break;
+                        case MUSIC:
+                            musicCommands.add(alias);
+                            break;
+                        case MOD_ADMIN:
+                            modAdminCommands.add(alias);
+                            break;
+                        case NERD_STUFF:
+                            nerdCommands.add(alias);
+                            break;
+                        case PATRON:
+                            patronCommands.add(alias);
+                            break;
+                        case WEEB:
+                            weebCommands.add(alias);
+                            break;
+                        case NSFW:
+                            NSFWCommands.add(alias);
+                            break;
+                    }
                 }
-            }
         }
     }
+
     /**
      * This will return a embed containing all the commands
      *
@@ -119,18 +124,22 @@ public class HelpEmbeds {
      */
     public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return EmbedUtils.defaultEmbed()
-                .setThumbnail(Settings.defaultIcon)
-                       .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-                       .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
-                       .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
-                       .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
-                       .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
-                       .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
-                       .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
-                       .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
-                       .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
-                       .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
-                       .build();
+                .setThumbnail(Settings.DEFAULT_ICON)
+                .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
+                .setDescription("Use `" + prefix + "help [command]` to get more info about a command")
+                .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
+                .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
+                .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
+                .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
+                .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
+                .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
+                .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
+                .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
+                .addField("Other suff",
+                        "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+                                "Support development of this bot: [https://www.patreon.com/duncte123](https://www.patreon.com/duncte123)", false)
+                .build();
     }
 
     /**

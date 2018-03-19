@@ -21,7 +21,10 @@ package ml.duncte123.skybot.objects.command;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -43,16 +46,20 @@ import java.util.concurrent.TimeUnit;
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
-
+    /**
+     * This holds the prefix for us
+     */
+    protected static final String PREFIX = Settings.PREFIX;
+    private static boolean cooldown = false;
     /**
      * A list of users that have upvoted the bot
      */
     protected static final Set<String> upvotedIds = new HashSet<String>() {
         @Override
         public boolean contains(Object o) {
-            if(o.getClass() != String.class) return false;
+            if (o.getClass() != String.class) return false;
 
-            if(super.contains(o)) return true;
+            if (super.contains(o)) return true;
 
             reloadUpvoted();
 
@@ -60,7 +67,18 @@ public abstract class Command {
         }
     };
 
-    private static boolean cooldown = false;
+    static {
+        reloadUpvoted();
+    }
+
+    /**
+     * This holds the category
+     */
+    protected CommandCategory category = CommandCategory.MAIN;
+    /**
+     * This tells the bot to display the aliases of the command in the help command
+     */
+    protected boolean displayAliasesInHelp = false;
 
     public Command() {
         if (Settings.useCooldown) {
@@ -72,60 +90,13 @@ public abstract class Command {
         }
     }
 
-    static {
-        reloadUpvoted();
-    }
-
-    /**
-     * This holds the prefix for us
-     */
-    protected static final String PREFIX = Settings.prefix;
-    /**
-     * This holds the category
-     */
-    protected CommandCategory category = CommandCategory.MAIN;
-
-    /**
-     * This checks if the user is a patrons if ours
-     * It checks if the user has the patreon role on our support guild
-     * @param u The user to check
-     * @param tc the channel to send the message to, if the text channel is null it wont send a message
-     * @return true if the user is a patron
-     */
-    protected boolean isPatron(User u, TextChannel tc) {
-        //noinspection deprecation
-        if(Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
-            return true;
-        }
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
-        if (supportGuild == null) {
-            return false;
-        }
-        Member m = supportGuild.getMember(u);
-        if (m == null) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                    "not one of out patrons.\n" +
-                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
-                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
-            return false;
-        } else {
-            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                        "not one of out patrons.\n" +
-                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
-                return false;
-            }
-            return true;
-        }
-    }
-
     /**
      * Reloads the list of people who have upvoted this bot
      */
     protected static void reloadUpvoted() {
         if (cooldown && Settings.useCooldown) return;
         try {
-            String token = AirUtils.config.getString("apis.discordbots_userToken", "");
+            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
 
             if (token == null || token.isEmpty()) {
                 logger.warn("Discord Bots token not found");
@@ -133,15 +104,14 @@ public abstract class Command {
             }
 
             Response it = WebUtilsJava.executeRequest(new Request.Builder()
-                            .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                            .get()
-                            .addHeader("Authorization", token)
-                            .build());
+                    .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
+                    .get()
+                    .addHeader("Authorization", token)
+                    .build());
             JSONArray json = null;
             try {
                 json = new JSONArray(it.body().string());
-            }
-            catch (IOException e1) {
+            } catch (IOException e1) {
                 logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
             }
 
@@ -157,6 +127,50 @@ public abstract class Command {
         }
         if (Settings.useCooldown)
             cooldown = true;
+    }
+
+    /**
+     * Returns if the bot should take up the aliases in the help command
+     *
+     * @return if the bot should take up the aliases in the help command
+     */
+    public boolean isDisplayAliasesInHelp() {
+        return displayAliasesInHelp;
+    }
+
+    /**
+     * This checks if the user is a patrons if ours
+     * It checks if the user has the patreon role on our support guild
+     *
+     * @param u  The user to check
+     * @param tc the channel to send the message to, if the text channel is null it wont send a message
+     * @return true if the user is a patron
+     */
+    protected boolean isPatron(User u, TextChannel tc) {
+        //noinspection deprecation
+        if (Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+            return true;
+        }
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
+        if (supportGuild == null) {
+            return false;
+        }
+        Member m = supportGuild.getMember(u);
+        if (m == null) {
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
+                    "not one of our patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123).\n" +
+                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
+            return false;
+        } else {
+            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
+                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
+                        "not one of our patrons.\n" +
+                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/duncte123)."));
+                return false;
+            }
+            return true;
+        }
     }
 
     /**
@@ -188,9 +202,23 @@ public abstract class Command {
     /**
      * The usage instructions of the command
      *
-     * @return a String
+     * @return the help instructions of the command
+     * @see #help(String)
      */
     public abstract String help();
+
+    /**
+     * The usage instructions of the command
+     *
+     * @param invoke the command that you want the help info for
+     *               Some commands are packed together and they will return specific info depending on what you put into
+     *               the command
+     * @return the help instructions of the command
+     * @see #help()
+     */
+    public String help(String invoke) {
+        return help();
+    }
 
     /**
      * This will hold the command name aka what the user puts after the prefix

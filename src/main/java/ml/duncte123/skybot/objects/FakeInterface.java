@@ -56,10 +56,10 @@ public class FakeInterface<T> {
     }
 
     public void populateHandlers(T object) {
-        for(Method m : type.getMethods()) {
+        for (Method m : type.getMethods()) {
             handlers.putIfAbsent(m, (i, method, a) -> {
                 method.setAccessible(true);
-                
+
                 return method.invoke(object, a);
             });
         }
@@ -78,70 +78,70 @@ public class FakeInterface<T> {
      */
     protected static class IH implements InvocationHandler {
         protected final Map<Method, InvocationFunction> handlers;
-        
+
         protected IH(Map<Method, InvocationFunction> handlers) {
             this.handlers = handlers;
         }
-        
+
         @Override
         public Object invoke(Object proxy, Method method, Object[] args) throws Throwable {
             for (Method m : handlers.keySet())
                 if (m.equals(method))
                     return handlers.get(m).handle(proxy, method, args);
-            
-            if(method.getDeclaringClass() == Object.class)
+
+            if (method.getDeclaringClass() == Object.class)
                 return method.invoke(this, args);
-            
+
             // The return type
             Class<?> r = Primitives.unwrap(method.getReturnType());
-            
+
             // Primitives
             if (r.isPrimitive()) {
                 return Primitives.wrap(r);
             }
-            
+
             // String
             if (r == String.class | r == CharSequence.class)
                 return "";
-            
+
             // Arrays
             if (r.isArray())
                 return Array.newInstance(r.getComponentType(), 0);
-            
+
             // List | ArrayList
             if (r == List.class | r == ArrayList.class) //ArrayList extends List so we might use Collection for List, ArrayList, Set and HashSet.
                 return new ArrayList<>();
-            
+
             // Set | HashSet
             if (r == Set.class | r == HashSet.class)
                 return new HashSet<>();
-            
+
             // Map | HashMap
             if (r == Map.class | r == HashMap.class)
                 return new HashMap<>();
-            
+
             // Entry | SimpleEntry
-            if(r == Map.Entry.class
-                | r == AbstractMap.SimpleEntry.class)
+            if (r == Map.Entry.class
+                    | r == AbstractMap.SimpleEntry.class)
                 return new AbstractMap.SimpleEntry<>(null, null);
-            
+
             // Create a fake for that interface
             if (r.isInterface() && !r.isAnnotation())
                 return new FakeInterface<>(r).create();
-            
+
             // Constructors
             Stream<Constructor<?>> constructors;
-            
+
             // Try to create an instance
             if ((constructors = Arrays.stream(r.getConstructors())
-                                    // public
-                                    .filter(Constructor::isAccessible)
-                                    // No parameters
-                                    .filter(c -> c.getParameterTypes().length == 0)
-                                    // No exceptions
-                                    .filter(c -> c.getExceptionTypes().length == 0))
-                        // If any
-                        .count() > 0)
+                    // public
+                    .filter(Constructor::isAccessible)
+                    // No parameters
+                    .filter(c -> c.getParameterTypes().length == 0)
+                    // No exceptions
+                    .filter(c -> c.getExceptionTypes().length == 0))
+                    // If any
+                    .count() > 0)
                 // For each constructor
                 for (Constructor<?> c : constructors.collect(Collectors.toList()))
                     try {
@@ -150,7 +150,7 @@ public class FakeInterface<T> {
                     } catch (Error | RuntimeException ignored) {
                         // If we get an Error or RuntimeException, continue
                     }
-            
+
             // Null if we couldn't find
             return null;
         }

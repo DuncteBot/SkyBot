@@ -32,24 +32,25 @@ import net.dv8tion.jda.core.managers.Presence
  * @see JDA
  */
 class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
-    private val token: String      = "Bot MyUltraOPTokenJustForProsAndNotForNoobs\u2122"
+    private val token: String = "Bot MyUltraOPTokenJustForProsAndNotForNoobs\u2122"
     private val presence: Presence = PresenceDelegate(x0sAlsm7sW.presence)
-    
-    override fun getToken(): String      = this.token
+
+    override fun getToken(): String = this.token
     override fun getPresence(): Presence = this.presence
-    override fun shutdown()              = throw TFException("Can not shutdown")
-    override fun shutdownNow()           = this.shutdown()
-    
+    override fun shutdown() = throw TFException("Can not shutdown")
+    override fun shutdownNow() = this.shutdown()
+
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
-        
+
         if (other is JDADelegate)
             return other.x0sAlsm7sW == x0sAlsm7sW
         else if (other is JDA)
             return other == x0sAlsm7sW
-        
+
         return false
     }
+
     override fun hashCode(): Int {
         var result = x0sAlsm7sW.hashCode()
         result = 32 * result + token.hashCode()

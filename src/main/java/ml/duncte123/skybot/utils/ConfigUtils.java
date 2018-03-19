@@ -27,8 +27,8 @@ import java.io.File;
 
 public class ConfigUtils {
 
-    private Config config;
     private final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
+    private Config config;
 
     /**
      * This will try to load the bot config and kill the program if it fails

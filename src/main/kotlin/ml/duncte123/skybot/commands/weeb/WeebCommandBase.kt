@@ -32,6 +32,7 @@ import org.apache.commons.lang3.StringUtils
 abstract class WeebCommandBase : Command() {
     init {
         this.category = CommandCategory.WEEB
+        this.displayAliasesInHelp = true
     }
 
     fun getDefaultWeebEmbed(): EmbedBuilder {
@@ -51,11 +52,11 @@ abstract class WeebCommandBase : Command() {
     fun thatStuffThatINeedToDoALotOfTimes(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val imageUrl = AirUtils.WEEB_API.getRandomImage(type, "${event.channel.isNSFW}").url
 
-        if(args.isEmpty()) {
+        if (args.isEmpty()) {
             MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${Settings.defaultName} $thing ${event.member.effectiveName}", imageUrl))
+                    "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
         } else {
-            if(!event.message.mentionedMembers.isEmpty()) {
+            if (!event.message.mentionedMembers.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
                         "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
                         , imageUrl))

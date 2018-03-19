@@ -37,7 +37,7 @@ import java.util.concurrent.TimeUnit;
 
 public class WebUtilsJava {
 
-    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.version + ", https://bot.duncte123.me/)";
+    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)";
     private static final OkHttpClient client = new OkHttpClient();
     private static final ScheduledExecutorService service
             = Executors.newScheduledThreadPool(2, r -> new Thread(r, "Web-Thread"));
@@ -80,6 +80,7 @@ public class WebUtilsJava {
 
     /**
      * Reads the contents of a url into an InputStream
+     *
      * @param url the url to read
      * @return the InputStream of the url
      */
@@ -92,7 +93,7 @@ public class WebUtilsJava {
      * This makes a get request to the specified website
      *
      * @param url    The website to post to
-     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @param accept What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
@@ -124,7 +125,7 @@ public class WebUtilsJava {
      *
      * @param url        The website to post to
      * @param postFields the params for the post (param name, param value)
-     * @param accept     What we will accept, {@link AcceptType AcceptType}
+     * @param accept     What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
@@ -162,7 +163,7 @@ public class WebUtilsJava {
      * This makes a post request to the specified website
      *
      * @param url    The website to post to
-     * @param accept What we will accept, {@link AcceptType AcceptType}
+     * @param accept What we will accept, {@link AcceptType EncodingType}
      * @return The {@link Response} from the webserver
      */
     @Deprecated(message = "Well deprecated class", level = DeprecationLevel.ERROR)
@@ -183,7 +184,8 @@ public class WebUtilsJava {
 
     /**
      * This allows for JSON post requests to a website
-     * @param url the website to post the json to
+     *
+     * @param url  the website to post the json to
      * @param data the JSON data to post
      * @return The {@link Response} from the webserver
      */
@@ -200,9 +202,10 @@ public class WebUtilsJava {
 
     /**
      * This translates a string into a different language
+     *
      * @param sourceLang the source language (example: "nl")
      * @param targetLang the target language (example: "en")
-     * @param input the user inpur (example: "Dit is een test")
+     * @param input      the user inpur (example: "Dit is een test")
      * @return the output of the api
      * THe examples above will output the following <code>["This is a test","Dit is een test",null,null,1]</code>
      */
@@ -212,8 +215,7 @@ public class WebUtilsJava {
             return getJSONArray(
                     "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input
             ).getJSONArray(0).getJSONArray(0);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             return new JSONArray()
                     .put(input)
                     .put("null")
@@ -225,6 +227,7 @@ public class WebUtilsJava {
 
     /**
      * Executes a web request
+     *
      * @param request the {@link Request Request} to execute
      * @return the {@link Response Response} from the web server
      */

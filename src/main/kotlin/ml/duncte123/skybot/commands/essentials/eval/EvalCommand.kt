@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
-import Java.lang.VRCubeException
+import ml.duncte123.skybot.exceptions.VRCubeException
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
-import ml.duncte123.skybot.objects.EvalFunctions
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -53,6 +52,7 @@ class EvalCommand : Command() {
     private val engine: ScriptEngine
     private val packageImports: List<String>
     private val classImports: List<String>
+    private val staticImports: List<String>
     private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
@@ -62,7 +62,7 @@ class EvalCommand : Command() {
      * This initialises the engine
      */
     init {
-        this.category = CommandCategory.UNLISTED
+        this.category = CommandCategory.PATRON
         // The GroovyShell is for the public eval
         protectedShell = object : GroovyShell(
                 CompilerConfiguration()
@@ -93,21 +93,26 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
-                "Java.lang.VRCubeException"
+                "ml.duncte123.skybot.exceptions.VRCubeException"
+        )
+
+        staticImports = listOf(
+                "ml.duncte123.skybot.objects.EvalFunctions.*",
+                "ml.duncte123.skybot.utils.MessageUtils.*"
         )
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId
-
+        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
         if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
-                classImports.joinToString(separator = "\n", postfix = "\n")
+                classImports.joinToString(separator = "\nimport ", postfix = "\n") +
+                staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
 
         val script = try {
             importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
@@ -121,13 +126,13 @@ class EvalCommand : Command() {
         if (isRanByBotOwner) {
             timeout = 60000L
 
-            engine.put("commandManager", AirUtils.commandManager)
+            engine.put("commandManager", AirUtils.COMMAND_MANAGER)
 
             engine.put("message", event.message)
             engine.put("channel", event.message.textChannel)
             engine.put("guild", event.guild)
             engine.put("member", event.member)
-            engine.put("user", event.author)
+            engine.put("author", event.author)
             engine.put("jda", event.jda)
             engine.put("shardManager", event.jda.asBot().shardManager)
             engine.put("event", event)
@@ -135,14 +140,12 @@ class EvalCommand : Command() {
             engine.put("skraa", script)
             engine.put("args", args)
 
-            engine.put("funs", EvalFunctions())
-
             @SinceSkybot("3.58.0")
             async(start = CoroutineStart.ATOMIC) {
                 return@async eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
-            protectedShell.setVariable("user", UserDelegate(event.author))
+            protectedShell.setVariable("author", UserDelegate(event.author))
             protectedShell.setVariable("guild", GuildDelegate(event.guild))
             protectedShell.setVariable("jda", JDADelegate(event.jda))
             protectedShell.setVariable("member", MemberDelegate(event.member))
@@ -165,13 +168,11 @@ class EvalCommand : Command() {
         services.clear()
     }
 
-    override fun help(): String {
-        return "A simple eval command"
-    }
+    override fun help() = """Evaluate java code on the bot
+        |Usage: `$PREFIX$name <java/groovy code>`
+    """.trimMargin()
 
-    override fun getName(): String {
-        return "eval"
-    }
+    override fun getName() = "eval"
 
     override fun getAliases(): Array<String> {
         return arrayOf("eval™", "evaluate", "evan", "eva;")
@@ -197,8 +198,11 @@ class EvalCommand : Command() {
                 engine.put("scope", this)
                 coroutine = this
                 try {
-                    if(isRanByBotOwner) engine.eval(script)
-                    else protectedShell.evaluate(script)
+                    if (isRanByBotOwner) engine.eval(script)
+                    else {
+                        filter.register()
+                        protectedShell.evaluate(script)
+                    }
                 } catch (ex: Throwable) {
 
                     ComparatingUtils.checkEx(ex)
@@ -215,18 +219,18 @@ class EvalCommand : Command() {
                 }
                 is ExecutionException, is ScriptException -> {
                     out as Exception
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.cause.toString())
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     out as Exception
                     coroutine.coroutineContext.cancel()
                     if (coroutine.isActive)
                         coroutine.coroutineContext.cancel()
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out.toString())
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is VRCubeException -> {
                     out as RuntimeException
-                    MessageUtils.sendErrorWithMessage(event.message, event, "ERROR: " + out::class.java.name + ": " + out.localizedMessage)
+                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is Throwable -> {
                     if (Settings.useJSON)
@@ -237,6 +241,10 @@ class EvalCommand : Command() {
                     }
                 }
                 else -> {
+                    if (out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
+                        MessageUtils.sendSuccess(event.message)
+                        return
+                    }
                     if (isRanByBotOwner) {
                         MessageBuilder()
                                 .append(out.toString())
@@ -244,7 +252,7 @@ class EvalCommand : Command() {
                                 .forEach { it -> MessageUtils.sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
-                            MessageUtils.sendErrorWithMessage(event.message, event, "**ERROR:** Mentioning people!")
+                            MessageUtils.sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
                         } else {
                             MessageUtils.sendMsg(event, "**" + event.author.name
                                     + ":** " + out.toString()

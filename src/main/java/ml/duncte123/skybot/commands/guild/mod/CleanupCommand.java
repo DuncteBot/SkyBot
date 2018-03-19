@@ -49,15 +49,15 @@ public class CleanupCommand extends Command {
 
         int total = 5;
         //Little hack for lambda
-        AtomicBoolean keepPinned = new AtomicBoolean(false);
+        boolean[] keepPinned = {false};
 
         if (args.length > 0) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
-                keepPinned.set(true);
+                keepPinned[0] = true;
             else {
-                if(args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
-                    keepPinned.set(true);
+                if (args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
+                    keepPinned[0] = true;
                 try {
                     total = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
@@ -74,7 +74,7 @@ public class CleanupCommand extends Command {
 
         try {
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
-                if(keepPinned.get())
+                if (keepPinned[0])
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
                 List<Message> failed = msgLst.stream()
@@ -87,11 +87,13 @@ public class CleanupCommand extends Command {
                     failed.addAll(msgLst);
                     msgLst.clear();
                 } else {
-                    event.getChannel().deleteMessages(msgLst).queue();
+                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {});
                 }
 
-                MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
-                logger.debug(msgLst.size() + " messages removed in channel " + event.getChannel().getName() + " on guild " + event.getGuild().getName());
+                MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
+                        "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
+                logger.debug(msgLst.size() + " messages removed in channel " +
+                        event.getChannel().getName() + " on guild " + event.getGuild().getName());
             }, error -> MessageUtils.sendMsg(event, "ERROR: " + error.getMessage()));
         } catch (Exception e) {
             MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());

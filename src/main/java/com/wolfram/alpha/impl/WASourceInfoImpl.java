@@ -22,7 +22,6 @@
  */
 package com.wolfram.alpha.impl;
 
-import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASourceInfo;
 import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Element;
@@ -33,16 +32,16 @@ import java.io.Serializable;
 
 
 public class WASourceInfoImpl implements WASourceInfo, Serializable {
-    
+
     static final WASourceInfoImpl[] EMPTY_ARRAY = new WASourceInfoImpl[0];
     private static final long serialVersionUID = -6541107289959358774L;
     private String url;
     private String formattedUrl;
     private String text;
-    
-    
+
+
     WASourceInfoImpl(Element thisElement) {
-        
+
         text = thisElement.getAttribute("text");
         url = thisElement.getAttribute("url");
         // Transform:
@@ -56,23 +55,23 @@ public class WASourceInfoImpl implements WASourceInfo, Serializable {
             formattedUrl = url;
         }
     }
-    
-    
+
+
     public String getText() {
         return text;
     }
-    
+
     public String getURL() {
         return url;
     }
-    
+
     public String getFormattedURL() {
         return formattedUrl;
     }
-    
-    
+
+
     public void accept(Visitor v) {
         v.visit(this);
     }
-    
+
 }

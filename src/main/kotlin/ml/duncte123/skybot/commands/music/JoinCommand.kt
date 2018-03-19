@@ -22,20 +22,16 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.commands.uncategorized.OneLinerCommands
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.audio.hooks.ConnectionListener
-import net.dv8tion.jda.core.audio.hooks.ConnectionStatus
-import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 
-class JoinCommand : MusicCommand(), ConnectionListener {
+class JoinCommand : MusicCommand(){
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
@@ -43,35 +39,28 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             MessageUtils.sendMsg(event, "Please join a voice channel first.")
             return
         }
+
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val mng = getMusicManager(guild)
-        val audioManager = getAudioManager(guild)
-        val cooldowns = MusicCommand.cooldowns
+        mng.latestChannel = event.channel
+
         @Suppress("DEPRECATION")
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.ownerId)) {
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)
             return
         }
         cooldowns.remove(guild.idLong)
-        if (audioManager.isConnected && mng.player.playingTrack != null) {
+
+        if (getLavalinkManager().isConnected(event.guild) && mng.player.playingTrack != null) {
             MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
-
         try {
-            if (audioManager.isConnected)
-                audioManager.closeAudioConnection()
-
-            audioManager.openAudioConnection(vc)
+            getLavalinkManager().openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
-
-            //Set the listener if it's not set yet
-            if (audioManager.connectionListener == null)
-                audioManager.connectionListener = this
-
             MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {
             if (e.permission == Permission.VOICE_CONNECT) {
@@ -79,6 +68,8 @@ class JoinCommand : MusicCommand(), ConnectionListener {
             } else {
                 MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
+        } catch (e1: Exception) {
+            e1.printStackTrace()
         }
 
     }
@@ -88,13 +79,4 @@ class JoinCommand : MusicCommand(), ConnectionListener {
     override fun getName(): String = "join"
 
     override fun getAliases(): Array<String> = arrayOf("summon", "connect")
-
-    //Audio stuff
-    override fun onStatusChange(p0: ConnectionStatus?) { /* Unused */ }
-
-    override fun onUserSpeaking(p0: User?, p1: Boolean) { /* Unused */ }
-    //Listen for ping
-    override fun onPing(ping: Long) {
-        OneLinerCommands.pingHistory.add(ping, true)
-    }
 }

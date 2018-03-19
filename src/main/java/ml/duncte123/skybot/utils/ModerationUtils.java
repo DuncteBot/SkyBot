@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -53,19 +52,20 @@ public class ModerationUtils {
      * @param time         How long it takes for the punishment to get removed
      * @param g            A instance of the {@link Guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g){
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
         TextChannel logChannel = AirUtils.getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
         String length = "";
         if (time != null && !time.isEmpty()) {
             length = " lasting " + time + "";
         }
-        MessageBuilder message = new MessageBuilder()
-                .append("_Relevant user: ")
-                .append(String.format("%#s", punishedUser))
-                .append("_")
-                .setEmbed(EmbedUtils.embedField(punishedUser.getName() + " " + punishment, punishment
-                        + " by " + mod.getName() + length + (reason.isEmpty()?"":" for " + reason)));
-        MessageUtils.sendMsg(logChannel, message.build());
+
+        MessageUtils.sendMsg(logChannel, String.format("User **%s** got **%s** by **%s**%s%s",
+                String.format("%#s", punishedUser),
+                punishment,
+                String.format("%#s", mod),
+                length,
+                reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+        ));
     }
 
     /**
@@ -113,7 +113,8 @@ public class ModerationUtils {
         postFields.put("guildId", guildId);
 
         try {
-            WebUtils.postRequest(Settings.apiBase + "/ban/json", postFields, WebUtils.AcceptType.URLENCODED);
+            WebUtils.postRequest(
+                    Settings.API_BASE + "/ban/json", postFields, WebUtils.EncodingType.URLENCODED).close();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -121,20 +122,20 @@ public class ModerationUtils {
 
     /**
      * Returns the current amount of warnings that a user has
+     *
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
     public static int getWarningCountForUser(User u, Guild g) {
-        if(u == null)
+        if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
             return WebUtils.getJSONObject(String.format(
                     "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
-                    Settings.apiBase,
+                    Settings.API_BASE,
                     u.getId(),
                     g.getId())).getJSONArray("warnings").length();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             return 0;
         }
@@ -142,23 +143,24 @@ public class ModerationUtils {
 
     /**
      * This attempts to register a warning in the database
+     *
      * @param moderator The mod that executed the warning
-     * @param target The user to warn
-     * @param reason the reason for the warn
-     * @param jda a jda instance because we need the token for auth
+     * @param target    The user to warn
+     * @param reason    the reason for the warn
+     * @param jda       a jda instance because we need the token for auth
      */
     public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
         Map<String, Object> postFields = new HashMap<>();
         postFields.put("mod_id", moderator.getId());
         postFields.put("user_id", target.getId());
         postFields.put("guild_id", guild.getId());
-        postFields.put("reason", reason.isEmpty()? "No Reason provided" : " for " + reason);
+        postFields.put("reason", reason.isEmpty() ? "No Reason provided" : " for " + reason);
         postFields.put("token", jda.getToken());
 
         try {
-            WebUtils.postRequest(Settings.apiBase + "/addWarning/json", postFields, WebUtils.AcceptType.URLENCODED);
-        }
-        catch (NullPointerException e) {
+            WebUtils.postRequest(
+                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.EncodingType.URLENCODED).close();
+        } catch (NullPointerException e) {
             e.printStackTrace();
         }
     }
@@ -171,13 +173,13 @@ public class ModerationUtils {
     public static void checkUnbans(ShardManager shardManager) {
         logger.debug("Checking for users to unban");
         int usersUnbanned = 0;
-        Connection database = AirUtils.db.getConnManager().getConnection();
+        Connection database = AirUtils.DB.getConnManager().getConnection();
 
         try {
 
             Statement smt = database.createStatement();
 
-            ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.db.getName() + ".bans");
+            ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
 
             while (res.next()) {
                 java.util.Date unbanDate = res.getTimestamp("unban_date");
@@ -195,8 +197,9 @@ public class ModerationUtils {
                                         res.getString("discriminator")),
                                 "unbanned",
                                 shardManager.getGuildById(res.getString("guildId")));
-                    } catch (NullPointerException ignored) { }
-                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.db.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    } catch (NullPointerException ignored) {
+                    }
+                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                 }
             }
             logger.debug("Checking done, unbanned " + usersUnbanned + " users.");

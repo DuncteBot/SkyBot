@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -35,6 +36,14 @@ public class WolframAlphaCommand extends Command {
 
     public WolframAlphaCommand() {
         this.category = CommandCategory.NERD_STUFF;
+    }
+
+    private static String a(String s) {
+        if (s == null) return "null";
+
+        if (s.length() <= 2000 - 6) return s;
+
+        return s.substring(2000 - 6 - 1) + '\u2026';
     }
 
     /**
@@ -56,34 +65,29 @@ public class WolframAlphaCommand extends Command {
 
         for (WAPod pod : result.getPods()) {
             String name = a(pod.getTitle());
-
             StringBuilder embeds = new StringBuilder();
-
+            //Loop over the subpods
             for (WASubpod sp : pod.getSubpods()) {
+                //yet another stringbuilder
                 StringBuilder e = new StringBuilder();
-
+                //append the title
                 e.append(a(sp.getTitle()));
-
+                //loop over the contents
                 for (Visitable v : sp.getContents()) {
                     String d = "";
-
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getAlt()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
+                        d += "[" + a(i.getTitle()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
-
                         d += a(i.getText());
-
+                        //Ramid when?
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-
-
                         d += "[" + a(l.getText()) + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
-
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
@@ -102,48 +106,40 @@ public class WolframAlphaCommand extends Command {
         return eb.build();
     }
 
-    private static String a(String s) {
-        if(s == null) return "null";
-
-        if(s.length() <= 2000 - 6) return s;
-
-        return s.substring(2000 - 6 - 1) + '\u2026';
-    }
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if(!isPatron(event.getAuthor(), event.getChannel())) return;
-        MessageUtils.sendMsg(event, "This command is being worked on.");
-        WAEngine engine = AirUtils.alphaEngine;
-
-        if (engine == null) {
-            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
-            return;
-        }
+        if (!isPatron(event.getAuthor(), event.getChannel())) return;
 
         if (args.length == 0) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
 
-        String queryString
-                = event.getMessage().getContentRaw()
-                .substring(event.getMessage().getContentRaw()
-                        .split(" ")[0].length());
-
-        WAQuery query = engine.createQuery(queryString);
-
-        WAQueryResult result;
-
-        try {
-            result = engine.performQuery(query);
-        } catch (WAException e) {
-            MessageUtils.sendMsg(event, ":x: Error: "
-                    + e.getClass().getSimpleName() + ": " + e.getMessage());
-            e.printStackTrace();
+        WAEngine engine = AirUtils.ALPHA_ENGINE;
+        if (engine == null) {
+            MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
-        MessageUtils.sendEmbed(event, generateEmbed(event, result));
+        MessageUtils.sendMsg(event, "Calculating.....", message -> {
+            String queryString
+                    = event.getMessage().getContentRaw()
+                    .substring(event.getMessage().getContentRaw()
+                            .split(" ")[0].length());
+
+            WAQuery query = engine.createQuery(queryString);
+            WAQueryResult result;
+            try {
+                result = engine.performQuery(query);
+            } catch (WAException e) {
+                message.editMessage(":x: Error: "
+                        + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+                e.printStackTrace();
+                return;
+            }
+            MessageUtils.editMsg(message, new MessageBuilder().append("Result:")
+                    .setEmbed(generateEmbed(event, result)).build());
+        });
     }
 
     @Override

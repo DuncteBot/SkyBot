@@ -47,21 +47,22 @@ open class PlayCommand : MusicCommand() {
                 }
                 player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example `db!play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
+                        "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
             var toPlay = StringUtils.join(args, " ")
             if (!AirUtils.isURL(toPlay)) {
-                toPlay = "ytsearch:" + toPlay
+//                toPlay = "ytsearch:" + toPlay
+                toPlay = "scsearch:" + toPlay
             }
 
-            if(toPlay.length > 1024) {
+            if (toPlay.length > 1024) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
 
-            au.loadAndPlay(mng, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, toPlay, false)
         }
     }
 

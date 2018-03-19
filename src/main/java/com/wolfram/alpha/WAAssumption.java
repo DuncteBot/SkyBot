@@ -24,7 +24,7 @@ package com.wolfram.alpha;
 
 
 public interface WAAssumption {
-    
+
     String TYPE_CLASH = "Clash";
     String TYPE_MULTICLASH = "MultiClash";
     String TYPE_UNIT = "Unit";
@@ -43,32 +43,32 @@ public interface WAAssumption {
     String TYPE_MORTALITYYEARDOB = "MortalityYearDOB";
     String TYPE_DNAORSTRING = "DNAOrString";
     String TYPE_TIDESTATION = "TideStation";
-    
+
     String TYPE_FORMULASELECT = "FormulaSelect";
     String TYPE_FORMULASOLVE = "FormulaSolve";
     String TYPE_FORMULAVARIABLE = "FormulaVariable";
     String TYPE_FORMULAVARIABLEOPTION = "FormulaVariableOption";
     String TYPE_FORMULAVARIABLEINCLUDE = "FormulaVariableInclude";
-    
-    
+
+
     String getType();
-    
+
     int getCount();
-    
+
     String getWord();
-    
+
     String getDescription();
-    
+
     int getCurrent();
-    
+
     String[] getNames();
-    
+
     String[] getDescriptions();
-    
+
     String[] getInputs();
-    
+
     String[] getWords();
-    
+
     boolean[] getValidities();
-    
+
 }

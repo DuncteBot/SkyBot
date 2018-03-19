@@ -40,6 +40,14 @@ class TraceDataCommand : Command() {
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id))
             return
 
+        val args = when (invoke) {
+            "exact" -> arrayOf("exact")
+            "atomic" -> if (args.size == 1) arrayOf("atomic", args[0]) else return
+            else -> {
+                args
+            }
+        }
+
         when {
             args.isEmpty() -> ComparatingUtils.provideData(event.channel)
             args.size == 1 && args[0] == "exact" -> ComparatingUtils.provideExactData(event.channel)
@@ -52,5 +60,5 @@ class TraceDataCommand : Command() {
 
     override fun getName(): String = "tracedata"
 
-    override fun getAliases(): Array<String> = arrayOf("traces", "debugdata", "stacks")
+    override fun getAliases(): Array<String> = arrayOf("traces", "debugdata", "stacks", "exact", "atomic")
 }
