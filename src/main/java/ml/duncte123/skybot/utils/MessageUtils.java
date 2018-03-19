@@ -321,6 +321,7 @@ public class MessageUtils {
      * @deprecated Use {@link #sendEmbed(GuildMessageReceivedEvent, MessageEmbed)}
      */
     @Deprecated(message = "use #sendEmbed")
+    @java.lang.Deprecated
     public static void sendMsg(GuildMessageReceivedEvent event, MessageEmbed msg) {
         sendMsg(event.getChannel(), (new MessageBuilder()).setEmbed(msg).build(), null, CUSTOM_QUEUE_ERROR);
     }
@@ -333,6 +334,7 @@ public class MessageUtils {
      * @deprecated Use {@link #sendEmbed(TextChannel, MessageEmbed)}
      */
     @Deprecated(message = "use #sendEmbed")
+    @java.lang.Deprecated
     public static void sendMsg(TextChannel channel, MessageEmbed msg) {
         sendMsg(channel, (new MessageBuilder()).setEmbed(msg).build(), null, CUSTOM_QUEUE_ERROR);
     }

@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
+import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeUnit
 
 class OneLinerCommands : Command() {
@@ -37,11 +38,9 @@ class OneLinerCommands : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "ping" -> {
-
-                val time = System.currentTimeMillis()
                 MessageUtils.sendMsg(event, "PONG!") {
                     it.editMessage("PONG!\n" +
-                            "Rest ping: ${System.currentTimeMillis() - time}ms\n" +
+                            "Rest ping: ${event.message.creationTime.until(it.creationTime, ChronoUnit.MILLIS)}ms\n" +
                             "Websocket ping: ${event.jda.ping}ms\n" +
                             "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
                 }
