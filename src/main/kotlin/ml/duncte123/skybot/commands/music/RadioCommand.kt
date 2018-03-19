@@ -70,7 +70,7 @@ class RadioCommand : MusicCommand() {
         //nl_NL radio stations
         radioStreams += RadioStream("slam", "http://playerservices.streamtheworld.com/api/livestream-redirect/SLAM_MP3_SC", "https://live.slam.nl/slam-live/")
         radioStreams += RadioStream("radio538", "http://playerservices.streamtheworld.com/api/livestream-redirect/RADIO538.mp3", "https://www.538.nl/")
-        radioStreams += RadioStream("3fm", "http://icecast.omroep.nl/3fm-sb-mp3", "https://www.npo3fm.nl/")
+        radioStreams += RadioStream("3fm", "http://icecast.omroep.nl/3fm-sb-mp3", "https://www.npo3fm.nl/", false)
         radioStreams += RadioStream("skyradio", "http://playerservices.streamtheworld.com/api/livestream-redirect/SKYRADIO_SC", "http://www.skyradio.nl/", false)
         radioStreams += RadioStream("qmusic", "http://icecast-qmusicnl-cdp.triple-it.nl/Qmusic_nl_live_96.mp3", "http://qmusic.nl/", false)
 
