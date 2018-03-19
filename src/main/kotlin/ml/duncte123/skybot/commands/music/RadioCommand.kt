@@ -46,7 +46,7 @@ class RadioCommand : MusicCommand() {
         //Sorting via locales https://lh.2xlibre.net/locales/
 
         //de_DE radio stations
-        radioStreams += RadioStream("iloveradio", "http://www.iloveradio.de/iloveradio.m3u", "http://www.iloveradio.de/streams/")
+        radioStreams += RadioStream("iloveradio", "http://stream02.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/iloveradio.m3u"*/, "http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilove2dance", "http://stream01.iloveradio.de/iloveradio1.mp3"/*"http://www.iloveradio.de/ilove2dance.m3u"*/, "http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovetop100charts", "http://stream01.iloveradio.de/iloveradio2.mp3"/*"http://www.iloveradio.de/ilovetop100charts.m3u"*/, "http://www.iloveradio.de/streams/")
         radioStreams += RadioStream("ilovethebattle", "http://stream01.iloveradio.de/iloveradio9.mp3" /*"http://www.iloveradio.de/ilovethebattle.m3u"*/, "http://www.iloveradio.de/streams/", false)
