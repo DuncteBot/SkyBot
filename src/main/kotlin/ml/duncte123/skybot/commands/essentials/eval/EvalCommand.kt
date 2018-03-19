@@ -33,6 +33,7 @@ import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.core.requests.RestAction
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.kohsuke.groovy.sandbox.SandboxTransformer
@@ -239,6 +240,10 @@ class EvalCommand : Command() {
                         MessageUtils.sendMsg(event, "ERROR: " + out.toString())
                         // out.printStackTrace()
                     }
+                }
+                is RestAction<*> -> {
+                    out.queue()
+                    MessageUtils.sendSuccess(event.message)
                 }
                 else -> {
                     if (out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
