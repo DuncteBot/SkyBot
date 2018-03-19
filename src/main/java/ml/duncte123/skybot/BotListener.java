@@ -375,17 +375,19 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        if (LavalinkManager.ins.isConnected(event.getGuild())) {
-            if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild())) && !event.getMember().equals(event.getGuild().getSelfMember())) {
-                return;
-            } else {
-                channelCheckThing(event.getGuild(), LavalinkManager.ins.getConnectedChannel(event.getGuild()));
+        try {
+            if (LavalinkManager.ins.isConnected(event.getGuild())) {
+                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild())) && !event.getMember().equals(event.getGuild().getSelfMember())) {
+                    return;
+                } else {
+                    channelCheckThing(event.getGuild(), LavalinkManager.ins.getConnectedChannel(event.getGuild()));
+                }
+                if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))) {
+                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+                    //return;
+                }
             }
-            if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))) {
-                channelCheckThing(event.getGuild(), event.getChannelLeft());
-                //return;
-            }
-        }
+        } catch (NullPointerException ignored) {}
     }
 
     /**
