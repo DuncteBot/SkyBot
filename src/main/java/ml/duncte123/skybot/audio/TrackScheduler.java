@@ -23,14 +23,14 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
@@ -156,8 +156,16 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track) {
-        if (guildMusicManager.guildSettings.isAnnounceTracks())
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + track.getInfo().title);
+        if (guildMusicManager.guildSettings.isAnnounceTracks()) {
+            String title = track.getInfo().title;
+            if (track.getInfo().isStream) {
+                Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                        .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                if (stream.isPresent())
+                    title = stream.get().getName();
+            }
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + title);
+        }
     }
 
 }

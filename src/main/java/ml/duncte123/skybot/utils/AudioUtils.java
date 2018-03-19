@@ -34,6 +34,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
@@ -42,6 +44,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
@@ -150,7 +153,14 @@ public class AudioUtils {
 
             @Override
             public void trackLoaded(AudioTrack track) {
-                String msg = "Adding to queue: " + track.getInfo().title;
+                String title = track.getInfo().title;
+                if (track.getInfo().isStream) {
+                    Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                            .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                    if (stream.isPresent())
+                        title = stream.get().getName();
+                }
+                String msg = "Adding to queue: " + title;
                 if (mng.player.getPlayingTrack() == null) {
                     msg += "\nand the Player has started playing;";
                 }
