@@ -146,7 +146,10 @@ public class MessageUtils {
     public static void sendEmbed(TextChannel channel, MessageEmbed embed) {
         if (channel != null) {
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
-                sendMsg(channel, EmbedUtils.embedToMessage(embed));
+                (new MessageBuilder()).append(EmbedUtils.embedToMessage(embed))
+                        .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
+                        .forEach(it -> sendMsg(channel, it));
+//                sendMsg(channel, EmbedUtils.embedToMessage(embed));
                 return;
             }
             //noinspection deprecation
