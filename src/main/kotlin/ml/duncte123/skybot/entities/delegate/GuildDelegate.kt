@@ -34,6 +34,7 @@ import net.dv8tion.jda.core.managers.GuildManager
 import net.dv8tion.jda.core.managers.GuildManagerUpdatable
 import net.dv8tion.jda.core.requests.RestAction
 
+@Suppress("unused")
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 /**
@@ -45,7 +46,6 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
 
     override fun getJDA(): JDA = JDADelegate(this.jda)
     override fun getManager(): GuildManager = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getManagerUpdatable(): GuildManagerUpdatable = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     override fun getMember(user: User): Member = MemberDelegate(z88Am1Alk.getMember(user)!!)
     override fun getSelfMember(): Member = MemberDelegate(z88Am1Alk.selfMember)
