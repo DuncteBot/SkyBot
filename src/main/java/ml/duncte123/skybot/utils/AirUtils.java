@@ -40,7 +40,7 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("ReturnInsideFinallyBlock")
+@SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
 
 
@@ -56,7 +56,7 @@ public class AirUtils {
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     public static final WAEngine ALPHA_ENGINE = getWolframEngine();
-    static Map<String, GuildSettings> guildSettings = new HashMap<>();
+    protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This converts the online status of a user to a fancy emote

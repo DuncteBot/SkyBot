@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audioManagers.spotify;
+package ml.duncte123.skybot.objects.audiomanagers.spotify;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -69,7 +70,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ALBUM_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
-    private static YouTube youtube;
+    private final YouTube youtube;
     private final Api api;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
@@ -95,24 +96,24 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
             service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
 
-            try {
-                youtube = getYouTubeService();
-            } catch (Exception e) {
-                youtube = null;
-                e.printStackTrace();
-            }
+            youtube = getYouTubeService();
         }
     }
 
-    private static YouTube getYouTubeService() throws Exception {
-        return new YouTube.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
-        })
-                .setApplicationName("SkyBot-youtube-search")
-                .build();
+    private YouTube getYouTubeService() {
+        try {
+            return new YouTube.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
+            })
+                    .setApplicationName("SkyBot-youtube-search")
+                    .build();
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private static List<SearchResult> searchYoutube(String query) throws IOException {
+    private List<SearchResult> searchYoutube(String query) throws IOException {
         return youtube.search().list("id,snippet")
                 .setKey(AirUtils.CONFIG.getString("apis.googl"))
                 .setQ(query)
@@ -123,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                 .getItems();
     }
 
-    private static Video getVideoById(String videoID) throws Exception {
+    private Video getVideoById(String videoID) throws Exception {
         return youtube.videos().list("snippet,statistics,contentDetails")
                 .setId(videoID)
                 .setKey(AirUtils.CONFIG.getString("apis.googl"))
@@ -281,11 +282,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         return null;
     }
 
+
     @Override
     public boolean isTrackEncodable(AudioTrack track) {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) {
 

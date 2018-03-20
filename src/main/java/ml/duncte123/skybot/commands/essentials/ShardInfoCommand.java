@@ -88,7 +88,7 @@ public class ShardInfoCommand extends Command {
      * These 2 functions have been inspired from FlareBot
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
      */
-    private String makeAsciiTable(java.util.List<String> headers, java.util.List<java.util.List<String>> table) {
+    private String makeAsciiTable(List<String> headers, List<java.util.List<String>> table) {
         StringBuilder sb = new StringBuilder();
         int padding = 1;
         int[] widths = new int[headers.size()];

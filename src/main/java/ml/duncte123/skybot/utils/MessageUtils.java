@@ -406,10 +406,10 @@ public class MessageUtils {
      */
     public static void sendMsg(TextChannel channel, Message msg, Consumer<Message> success, Consumer<Throwable> failure) {
         //Check if the channel exists
-        if (channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) {
+        if ((channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) &&
+                channel.getGuild().getSelfMember().hasPermission(channel,Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             //Only send a message if we can talk
-            if(channel.getGuild().getSelfMember().hasPermission(channel,Permission.MESSAGE_WRITE, Permission.MESSAGE_READ))
-                channel.sendMessage(msg).queue(success, failure);
+            channel.sendMessage(msg).queue(success, failure);
         }
     }
 }

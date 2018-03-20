@@ -28,7 +28,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class CleanupCommand extends Command {

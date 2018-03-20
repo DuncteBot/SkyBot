@@ -33,6 +33,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicLong;
 
 public class GuildUtils {
@@ -51,7 +52,9 @@ public class GuildUtils {
         postFields.put("server_count", newGuildCount);
         postFields.put("auth", jda.getToken());
         try {
-            return WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json", postFields, WebUtils.EncodingType.TEXT_JSON).body().string();
+            return Objects.requireNonNull(
+                    WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json",
+                            postFields, WebUtils.EncodingType.TEXT_JSON).body()).string();
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {
@@ -91,12 +94,12 @@ public class GuildUtils {
                 }
             } catch (JSONException ex) {
                 String x = returnValue.getString("message");
-                if (x.equals("ignored exception"))
+                if ("ignored exception".equals(x))
                     return;
                 logger.error(String.format(exceptionMessage, x), ex);
             }
             String x = returnValue.getString("message");
-            if (x.equals("ignored exception"))
+            if ("ignored exception".equals(x))
                 return;
             logger.error(String.format(exceptionMessage, returnValue.getString("message")));
         }

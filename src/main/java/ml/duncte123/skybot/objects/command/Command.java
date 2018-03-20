@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -54,7 +55,7 @@ public abstract class Command {
     /**
      * A list of users that have upvoted the bot
      */
-    protected static final Set<String> upvotedIds = new HashSet<String>() {
+    private static final Set<String> upvotedIds = new HashSet<>() {
         @Override
         public boolean contains(Object o) {
             if (o.getClass() != String.class) return false;
@@ -93,7 +94,7 @@ public abstract class Command {
     /**
      * Reloads the list of people who have upvoted this bot
      */
-    protected static void reloadUpvoted() {
+    private static void reloadUpvoted() {
         if (cooldown && Settings.useCooldown) return;
         try {
             String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
@@ -110,13 +111,15 @@ public abstract class Command {
                     .build());
             JSONArray json = null;
             try {
-                json = new JSONArray(it.body().string());
+                assert it != null;
+                json = new JSONArray(Objects.requireNonNull(it.body()).string());
             } catch (IOException e1) {
                 logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
             }
 
             upvotedIds.clear();
 
+            assert json != null;
             for (int i = 0; i < json.length(); i++) {
                 upvotedIds.add(json.getString(i));
             }
