@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
-import ml.duncte123.skybot.exceptions.VRCubeException
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
+import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
@@ -142,8 +142,9 @@ class EvalCommand : Command() {
             engine.put("args", args)
 
             @SinceSkybot("3.58.0")
-            async(start = CoroutineStart.ATOMIC) {
-                return@async eval(event, isRanByBotOwner, script, timeout)
+            launch(start = CoroutineStart.ATOMIC) {
+//            async(start = CoroutineStart.ATOMIC) {
+                return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
@@ -155,8 +156,9 @@ class EvalCommand : Command() {
                 protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
 
             @SinceSkybot("3.58.0")
-            async {
-                return@async eval(event, isRanByBotOwner, script, timeout)
+            launch {
+//            async {
+                return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         }
 
