@@ -16,26 +16,16 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import sun.misc.Unsafe;
+package ml.duncte123.skybot.objects.audiomanagers.spotify;
 
-import java.lang.reflect.Constructor;
-import java.lang.reflect.Field;
 
-public class StringInInt {
-    private static Integer integer;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
+import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 
-    public static void main(String[] args) throws Throwable {
-        Constructor<Unsafe> c = Unsafe.class.getDeclaredConstructor();
-        c.setAccessible(true);
-        Unsafe u = c.newInstance();
+public class SpotifyAudioTrack extends YoutubeAudioTrack {
 
-        Field field = StringInInt.class.getDeclaredField("integer");
-        Object b = u.staticFieldBase(field);
-        long o = u.staticFieldOffset(field);
-
-        u.putObject(b, o, "this is a string");
-
-        //String s = (String)(Object)integer;
-        System.out.println(integer);
+    public SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+        super(trackInfo, sourceManager);
     }
 }

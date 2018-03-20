@@ -103,7 +103,17 @@ class OneLinerCommands : Command() {
                     sendMsg(event, warningMsg)
                 }
             }
-        //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​`").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+        //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+            "donate" -> {
+                val amount = if(args.isNotEmpty()) "/" + args.joinToString( separator = "") else ""
+                sendMsg(event, """Hey there thank you for your interest in supporting the bot.
+                    |You can use one of the following methods to donate:
+                    |**PayPal:** <https://paypal.me/duncte123$amount>
+                    |**Patreon:** <https://patreon.com/duncte123>
+                    |
+                    |All donations are going directly into development of the bot ❤
+                """.trimMargin())
+            }
             else -> println("Invoke was invalid: $invoke")
         }
     }
@@ -156,6 +166,11 @@ class OneLinerCommands : Command() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
+            "donate" -> {
+                """Gives you a link to donate for the bot
+                    |Usage: `$PREFIX$invoke [amount]`
+                """.trimMargin()
+            }
             else -> {
                 "invalid invoke"
             }
@@ -172,9 +187,10 @@ class OneLinerCommands : Command() {
             |`${PREFIX}quote` => Shows an inspiring quote
             |`${PREFIX}yesno` => Chooses between yes or no
             |`${PREFIX}kickme` => Kicks you off the server
+            |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
     """.trimMargin()
 
     override fun getName() = "ping"
 
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme")
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme", "donate")
 }

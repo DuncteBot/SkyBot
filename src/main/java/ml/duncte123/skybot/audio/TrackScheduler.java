@@ -38,7 +38,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public final Queue<AudioTrack> queue;
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
-    private AudioTrack lastTrack;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -90,7 +89,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        this.lastTrack = track;
+        @SuppressWarnings("UnnecessaryLocalVariable") AudioTrack lastTrack = track;
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");

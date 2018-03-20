@@ -36,8 +36,8 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
-import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
-import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 
@@ -67,7 +67,7 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    final Map<String, GuildMusicManager> musicManagers;
+    protected final Map<String, GuildMusicManager> musicManagers;
 
     /**
      * This will set everything up and get the player ready

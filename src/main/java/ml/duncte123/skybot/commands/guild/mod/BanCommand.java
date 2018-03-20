@@ -100,7 +100,6 @@ public class BanCommand extends Command {
                         MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
                         return;
                     }
-                    //TODO make ban timed
 
                     DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                     Date dt = new Date(System.currentTimeMillis());

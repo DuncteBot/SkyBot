@@ -36,7 +36,7 @@ class BlobCommand : Command() {
         var blob = "blobnomcookie"
 
         if (args.isNotEmpty()) {
-            blob = StringUtils.join(*args)
+            blob = StringUtils.join(args)
         }
 
         val responseBody = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png").body()
