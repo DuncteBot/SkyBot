@@ -34,6 +34,9 @@ import java.util.List;
 public class EventManager
         implements IEventManager {
 
+    public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
+    public static boolean shouldFakeBlock;
+
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
 
     private final BotListener botListener = new BotListener();
@@ -52,6 +55,10 @@ public class EventManager
     @Override
     public void handle(Event event) {
         try {
+            if (shouldFakeBlock) {
+                if (restartingShard == -1 || restartingShard == event.getJDA().getShardInfo().getShardId())
+                    return;
+            }
             if (LavalinkManager.ins.isEnabled())
                 LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);

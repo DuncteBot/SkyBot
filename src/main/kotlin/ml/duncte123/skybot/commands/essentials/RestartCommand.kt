@@ -18,13 +18,20 @@
 
 package ml.duncte123.skybot.commands.essentials
 
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.SinceSkybot
+import fredboat.audio.player.LavalinkManager
+import kotlinx.coroutines.experimental.cancel
+import kotlinx.coroutines.experimental.cancelChildren
+import kotlinx.coroutines.experimental.delay
+import kotlinx.coroutines.experimental.launch
+import ml.duncte123.skybot.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils
+import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.util.concurrent.TimeUnit
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -41,15 +48,44 @@ class RestartCommand : Command() {
 
         try {
             when (args.size) {
-                0 -> shardManager.restart()
-                1 -> shardManager.restart(args[0].toInt())
+                0 -> {
+                    EventManager.shouldFakeBlock = true
+                    EventManager.restartingShard = -1
+                    terminate(-1, event.jda.asBot().shardManager)
+                    launch {
+                        delay(15, TimeUnit.SECONDS)
+                        shardManager.restart()
+
+                        EventManager.restartingShard = -32
+                        EventManager.shouldFakeBlock = false
+                        val end = EndReached()
+                        this.coroutineContext.cancelChildren(end)
+                        this.coroutineContext.cancel(end)
+                    }
+                }
+                1 -> {
+                    val id = args[0].toInt()
+                    EventManager.shouldFakeBlock = true
+                    EventManager.restartingShard = id
+                    terminate(id, event.jda.asBot().shardManager)
+                    launch {
+                        delay(15, TimeUnit.SECONDS)
+                        shardManager.restart(id)
+
+                        EventManager.restartingShard = -32
+                        EventManager.shouldFakeBlock = false
+                        val end = EndReached()
+                        this.coroutineContext.cancelChildren(end)
+                        this.coroutineContext.cancel(end)
+                    }
+                }
                 else -> MessageUtils.sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON)
                 MessageUtils.sendErrorJSON(event.message, ex, false)
             else {
-                logger.error(ex.localizedMessage, ex)
+                ComparatingUtils.checkEx(ex)
                 MessageUtils.sendError(event.message)
             }
         }
@@ -58,4 +94,22 @@ class RestartCommand : Command() {
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
     override fun getName() = "restart"
+
+    fun terminate(shard: Int, shardManager: ShardManager) {
+        for (jda in shardManager.shardCache) {
+            if (jda.shardInfo.shardId != shard && shard != -1)
+                continue
+            for (guild in jda.guildCache) {
+                GuildUtils.getPublicChannel(guild).sendMessage("test").queue()
+
+                if (LavalinkManager.ins.isConnected(guild)) {
+                    LavalinkManager.ins.closeConnection(guild)
+                }
+            }
+//          for (link in LavalinkManager.ins.lavalink.links) {
+//              if (link.jda.shardInfo.shardId == shard || shard == -1)
+//                  link.disconnect(); link.resetPlayer(); link.destroy();
+//          }
+        }
+    }
 }
