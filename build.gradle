@@ -1,0 +1,174 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+buildscript {
+    ext.kotlin_version = '1.2.30'
+
+    repositories {
+        mavenCentral()
+    }
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+plugins {
+    id 'java'
+    id 'idea'
+    id 'maven'
+    id 'application'
+    id 'com.github.johnrengelman.shadow' version '2.0.2'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.30'
+    id 'de.fuerstenau.buildconfig' version '1.1.8'
+}
+
+group = 'ml.duncte123.skybot'
+
+version "3.63.0_${getGitHash()}"
+
+sourceCompatibility = 1.9
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.5.1'
+}
+
+repositories {
+    jcenter()
+
+    mavenLocal()
+    mavenCentral()
+
+    // Use JitPack if jcenter doesn't find, not download everything from JitPack ;)
+    maven {
+        name 'jitpack'
+        url 'https://jitpack.io'
+    }
+}
+
+buildConfig {
+    appName = project.name
+    version = project.version
+    buildConfigField("String", "ownerId", "191231307290771456")
+    buildConfigField("boolean", "UNSTABLE", "false")
+    packageName = project.group
+    charset = 'UTF-8'
+
+    clsName = 'BuildConfig'
+}
+
+dependencies {
+    //Weeb api
+    compile group: 'me.duncte123', name: 'weebJava', version: '1.0.0'
+    //JDA (java discord api)
+    //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_348'
+    //Lavaplayer/Lavalink
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.56'
+    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: '1bfb227') {
+        exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
+        exclude group: 'net.dv8tion', module: 'JDA'
+        exclude group: "com.sedmelluq", module: "lavaplayer"
+    }
+    //Commons text, because UnicodeUnescaper
+    compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
+    // jsoup HTML parser library @ https://jsoup.org/
+    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
+    // MySQL
+    compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
+    // SQLite
+    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
+    //groovy
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.13'
+    //groovy sandbox
+    compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
+    //JSON Extension
+    compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
+    // Logback classic
+    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    // Reflection stuffz
+    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    //Spotify API
+    compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
+    // Youtube api
+    compile 'com.google.apis:google-api-services-youtube:v3-rev192-1.23.0'
+
+    //Add kotlin
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.30'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.30'
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.22.5'
+
+    //Bot?
+    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
+
+    //test stufzz
+    testCompile group: 'junit', name: 'junit', version: '4.12'
+}
+
+javadoc {
+    failOnError = false
+    options.memberLevel = JavadocMemberLevel.PUBLIC
+    options.author()
+    options.encoding = 'UTF-8'
+    options.addStringOption('-html5')
+    exclude('ml/duncte123/skybot/commands')
+    //Exclude Wolfram|Alpha
+    exclude('com/wolfram/alpha',
+            'com/wolfram/alpha/net',
+            'com/wolfram/alpha/impl',
+            'com/wolfram/alpha/visitor')
+}
+
+shadowJar {
+    mainClassName = "ml.duncte123.skybot.SkyBot"
+    classifier = null
+    libsDirName = "../"
+}
+
+compileJava.options.encoding = 'UTF-8'
+
+compileKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+compileTestKotlin {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
+kotlin {
+    experimental {
+        coroutines "enable"
+    }
+}
+
+build {
+    dependsOn clean
+    dependsOn jar
+
+    jar.mustRunAfter clean
+}
+
+def getGitHash() {
+    def stdout = new ByteArrayOutputStream()
+    exec {
+        commandLine 'git', 'rev-parse', '--short', 'HEAD'
+        standardOutput = stdout
+    }
+    return stdout.toString().trim()
+}

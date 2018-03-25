@@ -1,0 +1,41 @@
+{
+  "discord": {
+    "token": "",
+    "prefix": "/",
+    "game": {
+      // 0: Playing, 1: Streaming, 2: Listening, 3: Watching
+      "type": 3,
+      // #{shardId} is the shard ID starting from 1
+      "name": "Danny Phantom on shard #{shardId}"
+    },
+    "totalShards": 1
+  },
+  // If you set this to false the bot will attempt to use SQLite
+  "use_database": false,
+  "launch_unstable": false,
+  "sql": {
+    "host": "",
+    "port": 3306,
+    "username": "",
+    "password": "",
+    "database": ""
+  },
+  "apis": {
+    "googl": "",
+    "thecatapi": "",
+    "wolframalpha": "",
+    "discordbots_userToken": "",
+    "weeb.sh": {
+      "wolketoken": "INSERT_WEEB_WOLKETOKEN"
+    }
+  },
+  "lavalink": {
+    "nodes": [
+      {
+        "wsurl": "ws://localhost",
+        "pass": "youshallnotpass"
+      }
+    ],
+    "enable": true
+  }
+}
