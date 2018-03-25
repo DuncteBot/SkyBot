@@ -30,6 +30,7 @@ import okhttp3.RequestBody;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,19 +45,19 @@ public final class WebUtils extends Reliqua {
         super(null, new OkHttpClient(), true);
     }
 
-    public PendingRequest<String> getText(String url) {
+    public PendingRequest<String> getText(String url) throws NullPointerException {
         return prepareGet(url, r -> r.string());
     }
 
-    public PendingRequest<JSONObject> getJSONObject(String url)  {
+    public PendingRequest<JSONObject> getJSONObject(String url) throws NullPointerException {
         return prepareGet(url, EncodingType.TEXT_JSON, r -> new JSONObject(r.string()));
     }
 
-    public PendingRequest<JSONArray> getJSONArray(String url) {
+    public PendingRequest<JSONArray> getJSONArray(String url) throws NullPointerException {
         return prepareGet(url, EncodingType.TEXT_JSON, (r) -> new JSONArray(r.string()));
     }
 
-    public PendingRequest<InputStream> getInputStream(String url) {
+    public PendingRequest<InputStream> getInputStream(String url) throws NullPointerException {
         return prepareGet(url, (r) -> r.byteStream());
     }
 
@@ -122,13 +123,13 @@ public final class WebUtils extends Reliqua {
         );
     }
 
-    public JSONArray translate(String sourceLang, String targetLang, String input) {
+    public JSONArray translate(String sourceLang, String targetLang, String input) throws NullPointerException {
         return getJSONArray(
                     "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input
             ).execute().getJSONArray(0).getJSONArray(0);
     }
 
-    public PendingRequest<String> shortenUrl(String url) {
+    public PendingRequest<String> shortenUrl(String url) throws NullPointerException {
         return postJSON(
                 "https://www.googleapis.com/urlshortener/v1/url?key=" +
                 AirUtils.CONFIG.getString("apis.googl", "Google api key"),
@@ -151,19 +152,19 @@ public final class WebUtils extends Reliqua {
         );
     }
 
-    public PendingRequest<String> leeks(String data) {
+    public PendingRequest<String> leeks(String data) throws NullPointerException {
         Service leeks = Service.LEEKS;
         return postRawToService(leeks, data,
                 (r) -> leeks.url + new JSONObject(r.string()).getString("key") + ".kt");
     }
 
-    public PendingRequest<String> hastebin(String data) {
+    public PendingRequest<String> hastebin(String data) throws NullPointerException {
         Service hastebin = Service.HASTEBIN;
         return postRawToService(hastebin, data,
                 (r) -> hastebin.url + new JSONObject(r.string()).getString("key") + ".kt");
     }
 
-    public PendingRequest<String> wastebin(String data) {
+    public PendingRequest<String> wastebin(String data) throws NullPointerException {
         Service wastebin = Service.WASTEBIN;
         return postRawToService(wastebin, data,
                 (r) -> wastebin.url + new JSONObject(r.string()).getString("key") + ".kt");
