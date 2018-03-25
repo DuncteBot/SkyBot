@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.*
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
+import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -73,36 +74,6 @@ class OneLinerCommands : Command() {
                         .setImage(json.getString("image"))
                         .build())
             }
-            "kickme" -> {
-                val warningMsg = """**WARNING** this command will kick you from this server
-                        |If you are sure that you want to kick yourself off this server use `${PREFIX}kickme YESIMSURE`
-                        |By running `${PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
-                        |DuncteBot and any of it's developers are not responsible for your own kick by running this command
-                    """.trimMargin()
-                if (args.isEmpty() || args[0] != "YESIMSURE") {
-                    sendMsg(event, warningMsg)
-                } else if (!args.isEmpty() && args[0] == "YESIMSURE") {
-                    //Check for perms
-                    if (event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
-                        MessageUtils.sendSuccess(event.message)
-                        //Kick the user
-                        sendMsg(event, "Your kick will commerce in 20 seconds") {
-                            it.guild.controller.kick(event.member)
-                                    .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
-                                    .queueAfter(20L, TimeUnit.SECONDS) {
-                                        ModerationUtils.modLog(event.jda.selfUser,
-                                                event.author, "kicked", "Used the kickme command", event.guild)
-                                    }
-                        }
-                    } else {
-                        sendMsg(event, """I'm missing the permission to kick you.
-                            |You got lucky this time ${event.member.asMention}.
-                        """.trimMargin())
-                    }
-                } else {
-                    sendMsg(event, warningMsg)
-                }
-            }
         //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             "donate" -> {
                 val amount = if(args.isNotEmpty()) "/" + args.joinToString( separator = "") else ""
@@ -113,6 +84,24 @@ class OneLinerCommands : Command() {
                     |
                     |All donations are going directly into development of the bot ❤
                 """.trimMargin())
+            }
+            /*"screenfetch" -> {
+                //
+            }*/
+            "insta" -> {
+                val username = if(args.isNotEmpty()) args.joinToString( separator = "") else "duncte123"
+                val data = WebUtils.getJSONObject("https://dshelmondgames.ml/api/insta/$username")
+                if(data.getJSONArray("images").length() < 1) {
+                    sendMsg(event, "No data found for this user")
+                    return
+                }
+                val img = data.getJSONArray("images").getJSONObject(0)
+                sendEmbed(event, EmbedUtils.defaultEmbed()
+                        .setAuthor(data.getJSONObject("user").getString("username"), null
+                                , data.getJSONObject("user").getString("profile_pic_url"))
+                        .setTitle("Latest picture of $username", "https://instagram.com/$username/")
+                        .setDescription(img.getString("caption"))
+                        .setImage(img.getString("url")).build())
             }
             else -> println("Invoke was invalid: $invoke")
         }
@@ -161,19 +150,17 @@ class OneLinerCommands : Command() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
-            "kickme" -> {
-                """Kickes you off the server
-                    |Usage: `$PREFIX$invoke`
-                """.trimMargin()
-            }
             "donate" -> {
                 """Gives you a link to donate for the bot
                     |Usage: `$PREFIX$invoke [amount]`
                 """.trimMargin()
             }
-            else -> {
-                "invalid invoke"
+            "insta" -> {
+                """Get the latest picture of someones profile
+                    |Usage: `$PREFIX$invoke [username]`
+                """.trimMargin()
             }
+            else -> "invalid invoke"
         }
     }
 
@@ -186,11 +173,12 @@ class OneLinerCommands : Command() {
             |`${PREFIX}uptime` => Shows the bot uptime
             |`${PREFIX}quote` => Shows an inspiring quote
             |`${PREFIX}yesno` => Chooses between yes or no
-            |`${PREFIX}kickme` => Kicks you off the server
             |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
+            |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
     """.trimMargin()
 
     override fun getName() = "ping"
 
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno", "kickme", "donate")
+    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno",
+            "insta", "donate", "insta")
 }
