@@ -1,0 +1,13 @@
+{
+  "name": "skybot-4.0",
+  "version": "0.0.1",
+  "main": "skybot.js",
+  "license": "ISC",
+  "repository": "https://github.com/duncte123/skybot-4.0",
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.2",
+    "discord.js": "^11.2.1",
+    "fancy-log": "^1.3.2",
+    "xmlhttprequest": "^1.8.0"
+  }
+}
