@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.sendEmbed
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -61,7 +62,7 @@ class IssueCommand : Command() {
                             """.trimMargin())
                         .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
-                MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
+                event.jda.getTextChannelById(424146177626210305L).sendEmbed { return@sendEmbed embed.build() }.queue()
             }
         }
     }

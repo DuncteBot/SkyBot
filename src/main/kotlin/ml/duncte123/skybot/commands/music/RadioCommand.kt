@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.sendEmbed
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
 import net.dv8tion.jda.core.MessageBuilder
@@ -144,7 +145,7 @@ class RadioCommand : MusicCommand() {
         val string = streams.filter { if (!full) it.public else true }
                 .joinToString(separator = "\n") { it.toEmbedString() }
         MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
+            event.channel.sendEmbed(true) { return@sendEmbed EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build() }.queue()
         }
     }
 }

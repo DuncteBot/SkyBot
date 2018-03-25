@@ -18,7 +18,17 @@
 
 package ml.duncte123.skybot
 
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
+import net.dv8tion.jda.client.entities.Group
+import net.dv8tion.jda.core.EmbedBuilder
+import net.dv8tion.jda.core.MessageBuilder
+import net.dv8tion.jda.core.Permission
+import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.exceptions.InsufficientPermissionException
+import net.dv8tion.jda.core.requests.RestAction
 import java.util.*
+import javax.annotation.CheckReturnValue
 
 /**
  * This function gets an random object of the [Array] based on the [Array.size] using [Random.nextInt]
@@ -39,7 +49,7 @@ inline fun <reified T> Array<out T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> Array<out T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -62,7 +72,7 @@ inline fun <reified T> List<T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> List<T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -85,7 +95,7 @@ inline fun <reified T> Set<T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> Set<T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -108,6 +118,32 @@ inline fun <reified K, reified V> Map<K, V>.random(): V {
 @SinceSkybot("3.57.8")
 inline infix fun <reified K, reified V> Map<K, V>.random(action: V.() -> Unit): V {
     val v = this.random()
-    action.invoke(v)
+    action(v)
     return v
+}
+
+
+@CheckReturnValue
+@SinceSkybot("6.20.0")
+inline fun MessageChannel.sendEmbed(forceSend: Boolean = false, lazyBuilder: EmbedBuilder.() -> MessageEmbed): RestAction<Message> {
+    val embed = lazyBuilder(EmbedBuilder())
+    return when (this) {
+        is TextChannel -> {
+            if (!this.guild.selfMember.hasPermission(this, Permission.MESSAGE_EMBED_LINKS)) {
+                if (forceSend) {
+                    MessageBuilder().append(EmbedUtils.embedToMessage(embed))
+                            .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
+                            .forEach { it -> sendMsg(this, it) }
+                }
+                throw InsufficientPermissionException(Permission.MESSAGE_EMBED_LINKS)
+            }
+            this.sendMessage(embed)
+        }
+        is PrivateChannel, is Group -> {
+            this.sendMessage(embed)
+        }
+        else -> {
+            throw IllegalStateException("The provided channel is no Group, PrivateChannel or TextChannel!")
+        }
+    }
 }
