@@ -45,7 +45,9 @@ class ShortenCommand : Command() {
             return
         }
 
-        sendMsg(event, "Here is your shortened url: <${WebUtils.shortenUrl(args[0])}>")
+        WebUtils.ins.shortenUrl(args[0]).async {
+            sendMsg(event, "Here is your shortened url: <$it>")
+        }
     }
 
     override fun help(): String = """Shortens a url

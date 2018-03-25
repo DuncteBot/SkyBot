@@ -29,7 +29,6 @@ import net.dv8tion.jda.core.entities.User;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -113,8 +112,8 @@ public class ModerationUtils {
         postFields.put("guildId", guildId);
 
         try {
-            WebUtils.postRequest(
-                    Settings.API_BASE + "/ban/json", postFields, WebUtils.EncodingType.URLENCODED).close();
+            WebUtils.ins.preparePost(
+                    Settings.API_BASE + "/ban/json", postFields, WebUtils.EncodingType.URLENCODED, r -> r).async();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }
@@ -130,12 +129,12 @@ public class ModerationUtils {
         if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
         try {
-            return WebUtils.getJSONObject(String.format(
+            return WebUtils.ins.getJSONObject(String.format(
                     "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
                     Settings.API_BASE,
                     u.getId(),
-                    g.getId())).getJSONArray("warnings").length();
-        } catch (IOException e) {
+                    g.getId())).execute().getJSONArray("warnings").length();
+        } catch (Exception e) {
             e.printStackTrace();
             return 0;
         }
@@ -158,8 +157,8 @@ public class ModerationUtils {
         postFields.put("token", jda.getToken());
 
         try {
-            WebUtils.postRequest(
-                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.EncodingType.URLENCODED).close();
+            WebUtils.ins.preparePost(
+                    Settings.API_BASE + "/addWarning/json", postFields, WebUtils.EncodingType.URLENCODED, r -> r).async();
         } catch (NullPointerException e) {
             e.printStackTrace();
         }

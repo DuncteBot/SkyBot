@@ -26,6 +26,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import okhttp3.ResponseBody;
 import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -53,8 +54,8 @@ public class GuildUtils {
         postFields.put("auth", jda.getToken());
         try {
             return Objects.requireNonNull(
-                    WebUtils.postRequest(Settings.API_BASE + "/postGuildCount/json",
-                            postFields, WebUtils.EncodingType.TEXT_JSON).body()).string();
+                    WebUtils.ins.preparePost(Settings.API_BASE + "/postGuildCount/json",
+                            postFields, WebUtils.EncodingType.TEXT_JSON, ResponseBody::string).execute());
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {
