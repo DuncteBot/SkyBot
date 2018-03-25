@@ -39,7 +39,7 @@ inline fun <reified T> Array<out T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> Array<out T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -62,7 +62,7 @@ inline fun <reified T> List<T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> List<T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -85,7 +85,7 @@ inline fun <reified T> Set<T>.random(): T {
 @SinceSkybot("3.57.8")
 inline infix fun <reified T> Set<T>.random(action: T.() -> Unit): T {
     val t = this.random()
-    action.invoke(t)
+    action(t)
     return t
 }
 
@@ -108,6 +108,6 @@ inline fun <reified K, reified V> Map<K, V>.random(): V {
 @SinceSkybot("3.57.8")
 inline infix fun <reified K, reified V> Map<K, V>.random(action: V.() -> Unit): V {
     val v = this.random()
-    action.invoke(v)
+    action(v)
     return v
 }
