@@ -36,8 +36,8 @@ class BirbCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         try {
-            WebUtils.ins.getText("https://proximyst.com:4500/random/path/text").async {
-                sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/$it/image"))
+            WebUtils.ins.getJSONObject("https://birdsare.cool/bird.json").async {
+                sendEmbed(event, EmbedUtils.embedImage(it.getString("url")) )
             }
 
         } catch (e: IOException) {
