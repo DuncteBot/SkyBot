@@ -74,9 +74,8 @@ public class BotListener extends ListenerAdapter {
      * A custom consumer that cancels the stupid unknown message error
      */
     private final Consumer<Throwable> CUSTOM_QUEUE_ERROR = it -> {
-        if (it instanceof ErrorResponseException) {
-            if (((ErrorResponseException) it).getErrorCode() != 10008)
-                logger.error("RestAction queue returned failure", it);
+        if (it instanceof ErrorResponseException && ((ErrorResponseException) it).getErrorCode() != 10008) {
+            logger.error("RestAction queue returned failure", it);
         }
     };
     /**
@@ -204,7 +203,7 @@ public class BotListener extends ListenerAdapter {
                             return;
                         }
                     } else {
-                        if (s.toLowerCase().equals(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                        if (s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
                                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))
                             return;
                     }
@@ -216,7 +215,7 @@ public class BotListener extends ListenerAdapter {
                             return;
                         }
                     } else {
-                        if (s.toLowerCase().equals(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                        if (s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
                                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))
                             return;
                     }
@@ -275,6 +274,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        if(event.getMember().equals(event.getGuild().getSelfMember())) return;
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -306,6 +306,7 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+        if(event.getMember().equals(event.getGuild().getSelfMember())) return;
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
@@ -370,15 +371,14 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if (LavalinkManager.ins.isConnected(event.getGuild())) {
-            if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
-                if (vc != null) {
-                    if (!event.getChannelLeft().getId().equals(vc.getId())) {
-                        return;
-                    }
-                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+        if (LavalinkManager.ins.isConnected(event.getGuild())
+                && !event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) ) {
+            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
+            if (vc != null) {
+                if (!event.getChannelLeft().getId().equals(vc.getId())) {
+                    return;
                 }
+                channelCheckThing(event.getGuild(), event.getChannelLeft());
             }
         }
     }
