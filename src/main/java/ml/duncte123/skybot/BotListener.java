@@ -372,10 +372,10 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         if (LavalinkManager.ins.isConnected(event.getGuild())
-                && !event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId()) ) {
+                && !event.getVoiceState().getMember().equals(event.getGuild().getSelfMember()) ) {
             VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
             if (vc != null) {
-                if (!event.getChannelLeft().getId().equals(vc.getId())) {
+                if (!event.getChannelLeft().equals(vc)) {
                     return;
                 }
                 channelCheckThing(event.getGuild(), event.getChannelLeft());
@@ -392,7 +392,8 @@ public class BotListener extends ListenerAdapter {
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         try {
             if (LavalinkManager.ins.isConnected(event.getGuild())) {
-                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild())) && !event.getMember().equals(event.getGuild().getSelfMember())) {
+                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))
+                        && !event.getMember().equals(event.getGuild().getSelfMember())) {
                     return;
                 } else {
                     channelCheckThing(event.getGuild(), LavalinkManager.ins.getConnectedChannel(event.getGuild()));
