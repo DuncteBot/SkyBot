@@ -42,7 +42,7 @@ public final class WebUtils extends Reliqua {
     }
 
     public PendingRequest<String> getText(String url) throws NullPointerException {
-        return prepareGet(url, r -> r.string());
+        return prepareGet(url, ResponseBody::string);
     }
 
     public PendingRequest<JSONObject> getJSONObject(String url) throws NullPointerException {
@@ -54,7 +54,7 @@ public final class WebUtils extends Reliqua {
     }
 
     public PendingRequest<InputStream> getInputStream(String url) throws NullPointerException {
-        return prepareGet(url, (r) -> r.byteStream());
+        return prepareGet(url, ResponseBody::byteStream);
     }
 
     public <T> PendingRequest<T> prepareGet(String url, EncodingType accept, RequestMapper<T> mapper) {
