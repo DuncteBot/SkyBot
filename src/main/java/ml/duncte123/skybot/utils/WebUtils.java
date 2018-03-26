@@ -23,10 +23,7 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import com.github.natanbc.reliqua.util.RequestMapper;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.config.Config;
-import okhttp3.MediaType;
-import okhttp3.OkHttpClient;
-import okhttp3.Request;
-import okhttp3.RequestBody;
+import okhttp3.*;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -49,11 +46,11 @@ public final class WebUtils extends Reliqua {
     }
 
     public PendingRequest<JSONObject> getJSONObject(String url) throws NullPointerException {
-        return prepareGet(url, EncodingType.TEXT_JSON, r -> new JSONObject(r.string()));
+        return prepareGet(url, EncodingType.APPLICATION_JSON, r -> new JSONObject(r.string()));
     }
 
     public PendingRequest<JSONArray> getJSONArray(String url) throws NullPointerException {
-        return prepareGet(url, EncodingType.TEXT_JSON, (r) -> new JSONArray(r.string()));
+        return prepareGet(url, EncodingType.APPLICATION_JSON, (r) -> new JSONArray(r.string()));
     }
 
     public PendingRequest<InputStream> getInputStream(String url) throws NullPointerException {
@@ -77,6 +74,22 @@ public final class WebUtils extends Reliqua {
         return prepareGet(url, EncodingType.TEXT_HTML, mapper);
     }
 
+    public PendingRequest<String> preparePost(String url, Map<String, Object> postFields) {
+        return preparePost(url, postFields, EncodingType.APPLICATION_URLENCODED, ResponseBody::string);
+    }
+
+    public PendingRequest<String> preparePost(String url, Map<String, Object> postFields, EncodingType type) {
+        return preparePost(url, postFields, type, ResponseBody::string);
+    }
+
+    public PendingRequest<String> preparePost(String url, EncodingType accept) {
+        return preparePost(url, new HashMap<>(), accept, ResponseBody::string);
+    }
+
+    public PendingRequest<String> preparePost(String url) {
+        return preparePost(url ,new HashMap<>(), EncodingType.APPLICATION_URLENCODED, ResponseBody::string);
+    }
+
     public <T> PendingRequest<T> preparePost(String url, Map<String, Object> postFields, EncodingType accept, RequestMapper<T> mapper) {
         StringBuilder postParams = new StringBuilder();
 
@@ -88,7 +101,7 @@ public final class WebUtils extends Reliqua {
                 url,
                 new Request.Builder()
                         .url(url)
-                        .post(RequestBody.create(MediaType.parse(EncodingType.URLENCODED.getType()),
+                        .post(RequestBody.create(MediaType.parse(EncodingType.APPLICATION_URLENCODED.getType()),
                                 Config.replaceLast(postParams.toString(), "\\&", "")))
                         .addHeader("User-Agent", USER_AGENT)
                         .addHeader("Accept", accept.getType())
@@ -98,16 +111,8 @@ public final class WebUtils extends Reliqua {
         );
     }
 
-    public <T> PendingRequest<T> preparePost(String url, Map<String, Object> postFields, RequestMapper<T> mapper) {
-        return preparePost(url, postFields, EncodingType.URLENCODED, mapper);
-    }
-
-    public <T> PendingRequest<T> preparePost(String url, EncodingType accept, RequestMapper<T> mapper) {
-        return preparePost(url, new HashMap<>(), accept, mapper);
-    }
-
-    public <T> PendingRequest<T> preparePost(String url, RequestMapper<T> mapper) {
-        return preparePost(url, EncodingType.URLENCODED, mapper);
+    public PendingRequest<String> postJSON(String url, JSONObject data) {
+        return postJSON(url, data, ResponseBody::string);
     }
 
     public <T> PendingRequest<T> postJSON(String url, JSONObject data, RequestMapper<T> mapper) {
@@ -115,7 +120,7 @@ public final class WebUtils extends Reliqua {
                 url,
                 new Request.Builder()
                         .url(url)
-                        .post(RequestBody.create(MediaType.parse("application/json"), data.toString()))
+                        .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), data.toString()))
                         .addHeader("User-Agent", USER_AGENT),
                 200,
                 mapper
@@ -137,7 +142,7 @@ public final class WebUtils extends Reliqua {
     }
 
     public <T> PendingRequest<T> prepareRaw(Request request, RequestMapper<T> mapper) {
-        return createRequest("/raw", request, 200, mapper);
+        return createRequest(request.url().toString(), request, 200, mapper);
     }
 
     private <T> PendingRequest<T> postRawToService(Service s, String raw, RequestMapper<T> mapper) {
@@ -171,10 +176,10 @@ public final class WebUtils extends Reliqua {
 
     public enum EncodingType {
         TEXT_PLAIN("text/plain"),
-        TEXT_JSON("application/json"),
+        APPLICATION_JSON("application/json"),
         TEXT_HTML("text/html"),
-        TEXT_XML("application/xml"),
-        URLENCODED("application/x-www-form-urlencoded");
+        APPLICATION_XML("application/xml"),
+        APPLICATION_URLENCODED("application/x-www-form-urlencoded");
 
         private String type;
 
