@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.essentials.eval.filter;
 
-import ml.duncte123.skybot.exceptions.VRCubeException;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.entities.delegate.*;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;

@@ -19,16 +19,16 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.utils.*
+import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import net.dv8tion.jda.core.EmbedBuilder
+import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
 import java.time.temporal.ChronoUnit
-import java.util.concurrent.TimeUnit
 
 class OneLinerCommands : Command() {
 
@@ -65,14 +65,17 @@ class OneLinerCommands : Command() {
 
             "uptime" -> MessageUtils.sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
-            "quote" -> sendEmbed(event, EmbedUtils.embedImage(WebUtils.getText("http://inspirobot.me/api?generate=true")))
-
+            "quote" -> WebUtils.ins.getText("http://inspirobot.me/api?generate=true").async {
+                sendEmbed(event, EmbedUtils.embedImage( it ) )
+            }
             "yesno" -> {
-                val json = WebUtils.getJSONObject("https://yesno.wtf/api")
-                sendEmbed(event, EmbedUtils.defaultEmbed()
-                        .setTitle(json.getString("answer"))
-                        .setImage(json.getString("image"))
-                        .build())
+                WebUtils.ins.getJSONObject("https://yesno.wtf/api").async {
+                    sendEmbed(event, EmbedUtils.defaultEmbed()
+                            .setTitle(it.getString("answer"))
+                            .setImage(it.getString("image"))
+                            .build())
+                }
+
             }
         //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             "donate" -> {
@@ -90,18 +93,19 @@ class OneLinerCommands : Command() {
             }*/
             "insta" -> {
                 val username = if(args.isNotEmpty()) args.joinToString( separator = "") else "duncte123"
-                val data = WebUtils.getJSONObject("https://dshelmondgames.ml/api/insta/$username")
-                if(data.getJSONArray("images").length() < 1) {
-                    sendMsg(event, "No data found for this user")
-                    return
+                WebUtils.ins.getJSONObject("https://dshelmondgames.ml/api/insta/$username").async {
+                    if(it.getJSONArray("images").length() < 1) {
+                        sendMsg(event, "No data found for this user")
+                    } else {
+                        val img = it.getJSONArray("images").getJSONObject(0)
+                        sendEmbed(event, EmbedUtils.defaultEmbed()
+                                .setAuthor(it.getJSONObject("user").getString("username"), null
+                                        , it.getJSONObject("user").getString("profile_pic_url"))
+                                .setTitle("Latest picture of $username", "https://instagram.com/$username/")
+                                .setDescription(img.getString("caption"))
+                                .setImage(img.getString("url")).build())
+                    }
                 }
-                val img = data.getJSONArray("images").getJSONObject(0)
-                sendEmbed(event, EmbedUtils.defaultEmbed()
-                        .setAuthor(data.getJSONObject("user").getString("username"), null
-                                , data.getJSONObject("user").getString("profile_pic_url"))
-                        .setTitle("Latest picture of $username", "https://instagram.com/$username/")
-                        .setDescription(img.getString("caption"))
-                        .setImage(img.getString("url")).build())
             }
             else -> println("Invoke was invalid: $invoke")
         }

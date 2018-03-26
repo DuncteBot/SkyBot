@@ -58,10 +58,10 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
         if (m.matches()) {
             try {
                 String clypitId = m.group(m.groupCount());
-                JSONObject json = WebUtils.getJSONObject("https://api.clyp.it/" + clypitId);
+                JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
                 AudioReference httpReference = getAsHttpReference(new AudioReference(json.getString("Mp3Url"), json.getString("Title")));
                 return handleLoadResult(detectContainer(httpReference));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null;
             }
         }

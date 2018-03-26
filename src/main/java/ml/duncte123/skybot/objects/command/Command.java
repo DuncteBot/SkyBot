@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import com.github.natanbc.reliqua.request.PendingRequest;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -27,7 +28,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
-import okhttp3.Response;
+import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -104,15 +105,14 @@ public abstract class Command {
                 return;
             }
 
-            Response it = WebUtilsJava.executeRequest(new Request.Builder()
+            PendingRequest<ResponseBody> it = WebUtils.ins.prepareRaw(new Request.Builder()
                     .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                     .get()
                     .addHeader("Authorization", token)
-                    .build());
+                    .build(),(r) -> r);
             JSONArray json = null;
             try {
-                assert it != null;
-                json = new JSONArray(Objects.requireNonNull(it.body()).string());
+                json = new JSONArray(Objects.requireNonNull(it.execute()).string());
             } catch (IOException e1) {
                 logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
             }

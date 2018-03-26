@@ -25,7 +25,9 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.io.FilenameUtils;
 
+import java.io.IOException;
 import java.net.URL;
 
 public class CatCommand extends Command {
@@ -38,14 +40,17 @@ public class CatCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        try {
-            String newJSON = WebUtils.getJSONObject("http://aws.random.cat/meow").getString("file");
-            event.getChannel().sendFile(new URL(newJSON).openStream(), "cat_" + System.currentTimeMillis() + ".png", null).queue();
-        } catch (Exception e) {
-            //e.printStackTrace();
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
-            ComparatingUtils.execCheck(e);
-        }
+        WebUtils.ins.getJSONObject("http://aws.random.cat/meow").async( (json) -> {
+            String file =  json.getString("file"),
+                    ext = FilenameUtils.getExtension(file);
+            try {
+                event.getChannel().sendFile(new URL(file).openStream(),
+                        "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
+            } catch (IOException e) {
+                MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+                ComparatingUtils.execCheck(e);
+            }
+        });
     }
 
     @Override

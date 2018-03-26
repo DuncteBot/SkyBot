@@ -77,7 +77,7 @@ public class WolframAlphaCommand extends Command {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getTitle()) + "](" + WebUtils.shortenUrl(i.getURL()) + ")";
+                        d += "[" + a(i.getTitle()) + "](" + WebUtils.ins.shortenUrl(i.getURL()).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
                         d += a(i.getText());
@@ -85,13 +85,13 @@ public class WolframAlphaCommand extends Command {
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-                        d += "[" + a(l.getText()) + "](" + WebUtils.shortenUrl(l.getURL()) + ")";
+                        d += "[" + a(l.getText()) + "](" + WebUtils.ins.shortenUrl(l.getURL()).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += WebUtils.shortenUrl(sound.getURL());
+                        d += WebUtils.ins.shortenUrl(sound.getURL()).execute();
                     }
 
                     e.append(d).append("\n\n");
