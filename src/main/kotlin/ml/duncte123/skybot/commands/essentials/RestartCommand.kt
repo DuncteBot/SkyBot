@@ -100,7 +100,6 @@ class RestartCommand : Command() {
             if (jda.shardInfo.shardId != shard && shard != -1)
                 continue
             for (guild in jda.guildCache) {
-                GuildUtils.getPublicChannel(guild).sendMessage("test").queue()
 
                 if (LavalinkManager.ins.isConnected(guild)) {
                     LavalinkManager.ins.closeConnection(guild)
