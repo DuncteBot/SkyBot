@@ -101,7 +101,7 @@ public final class WebUtils extends Reliqua {
                 url,
                 new Request.Builder()
                         .url(url)
-                        .post(RequestBody.create(MediaType.parse(EncodingType.APPLICATION_URLENCODED.getType()),
+                        .post(RequestBody.create(EncodingType.APPLICATION_URLENCODED.toMediaType(),
                                 Config.replaceLast(postParams.toString(), "\\&", "")))
                         .addHeader("User-Agent", USER_AGENT)
                         .addHeader("Accept", accept.getType())
