@@ -21,4 +21,4 @@
 package ml.duncte123.skybot
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class EndReached() : Throwable()
+class EndReached : Throwable()

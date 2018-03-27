@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.slf4j.LoggerFactory
 import java.lang.management.ManagementFactory
 import java.time.temporal.ChronoUnit
 
@@ -88,10 +89,11 @@ class OneLinerCommands : Command() {
                     |All donations are going directly into development of the bot ❤
                 """.trimMargin())
             }
-            /*"screenfetch" -> {
-                //
-            }*/
+            //"screenfetch" -> {
+            //
+            //}
             "insta" -> {
+                LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!")
                 val username = if(args.isNotEmpty()) args.joinToString( separator = "") else "duncte123"
                 WebUtils.ins.getJSONObject("https://dshelmondgames.ml/api/insta/$username").async {
                     if(it.getJSONArray("images").length() < 1) {

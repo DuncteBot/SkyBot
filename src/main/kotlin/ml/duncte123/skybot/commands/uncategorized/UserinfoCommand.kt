@@ -42,7 +42,7 @@ class UserinfoCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
         var u: User
-        var m: Member?
+        var m: Member? //this can be lateinit var m: Member
 
         if (args.isEmpty()) {
             u = event.author
@@ -63,9 +63,7 @@ class UserinfoCommand : Command() {
                     try {
                         val memberId = MiscUtil.parseSnowflake(name)
                         m = event.guild.getMemberById(memberId)
-                    } catch (e: NumberFormatException) { /* ignored */
-                    }
-
+                    } catch (ignored: NumberFormatException) { /* ignored */ }
                 }
             }
         }

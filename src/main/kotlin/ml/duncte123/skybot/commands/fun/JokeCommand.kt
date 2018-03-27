@@ -30,7 +30,7 @@ import java.util.*
 
 class JokeCommand : Command() {
 
-    /**
+    /*
      * This keeps track of where we are in the jokes
      */
     private val jokeIndex: MutableMap<String, Int>
@@ -43,12 +43,12 @@ class JokeCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
         val posts = WebUtils.ins.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400")
-                .execute()!!.getJSONObject("data").getJSONArray("children").filter({
+                .execute()!!.getJSONObject("data").getJSONArray("children").filter {
                     it as JSONObject
                     (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
                             it.getJSONObject("data").getString("selftext").length <= 550
                             && it.getJSONObject("data").getString("title").length <= 256)
-                })
+                }
 
         if (posts.isEmpty()) {
             sendError(event.message)

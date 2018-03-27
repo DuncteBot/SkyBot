@@ -73,7 +73,7 @@ class ComparatingUtils {
         fun provideData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Types", "StackTrace length")
             val table: ArrayList<List<String>> = ArrayList()
-            exceptionMap.forEach { cls, lowerMap ->
+            for ((cls, lowerMap) in exceptionMap) {
                 val row = ArrayList<String>()
                 row.add(cls.name)
                 row.add(lowerMap.keys.size.toString())
@@ -88,12 +88,13 @@ class ComparatingUtils {
         fun provideExactData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Count", "Message", "Trace length")
             val table: ArrayList<List<String>> = ArrayList()
-            exceptionMap.forEach { cls, lowerMap ->
-                var row = ArrayList<String>()
-                lowerMap.forEach { type, trace ->
-                    row.add(cls.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
+
+            for (lowerMap in exceptionMap.values) {
+                val row = ArrayList<String>()
+                for ((type, trace) in lowerMap) {
+                    row.add(type.ex::class.java.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
                     table.add(row)
-                    row = ArrayList()
+                    row.clear()
                 }
             }
             if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
@@ -110,7 +111,7 @@ class ComparatingUtils {
             val haste = WebUtils.ins.leeks(hastedata).execute()
 
             data.keys.forEachIndexed { index, exceptionType ->
-                table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste) as List<String>)
+                table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste as String))
             }
 
             if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))

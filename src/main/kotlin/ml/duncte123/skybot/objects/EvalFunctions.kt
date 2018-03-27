@@ -26,6 +26,7 @@ class EvalFunctions {
             return number % 2 == 0
         }
 
+        @Suppress("UnnecessaryVariable", "LocalVariableName")
         @JvmStatic
         fun quick_mafs(x: Int): Int {
             val the_thing = x + 2 - 1

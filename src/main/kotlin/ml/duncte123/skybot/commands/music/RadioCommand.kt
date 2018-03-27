@@ -143,7 +143,7 @@ class RadioCommand : MusicCommand() {
         val streams = radioStreams
         val string = streams.filter { if (!full) it.public else true }
                 .joinToString(separator = "\n") { it.toEmbedString() }
-        MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach {
+        for (it in MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }
     }

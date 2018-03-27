@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
@@ -26,6 +27,11 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class WeebCommands : WeebCommandBase() {
+
+    init {
+        this.category = CommandCategory.WEEB
+    }
+
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
             "hug" -> thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)

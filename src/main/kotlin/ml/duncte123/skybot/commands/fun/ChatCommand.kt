@@ -71,10 +71,18 @@ class ChatCommand : Command() {
 
         //We don't need this because we are using contentDisplay instead of contentRaw
         //We need it since contentDisplay leaves # and @
-        event.message.mentionedChannels.forEach { message = message.replace(it.asMention, it.name) }
-        event.message.mentionedRoles.forEach { message = message.replace(it.asMention, it.name) }
-        event.message.mentionedUsers.forEach { message = message.replace(it.asMention, it.name) }
-        event.message.emotes.forEach { message = message.replace(it.asMention, it.name) }
+        for (it in event.message.mentionedChannels) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.mentionedRoles) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.mentionedUsers) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.emotes) {
+            message = message.replace(it.asMention, it.name)
+        }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
         launch {

@@ -248,7 +248,7 @@ class EvalCommand : Command() {
                     MessageUtils.sendSuccess(event.message)
                 }
                 else -> {
-                    if (out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
+                    if (out.toString().isEmpty() || out.toString().isBlank()) {
                         MessageUtils.sendSuccess(event.message)
                         return
                     }
