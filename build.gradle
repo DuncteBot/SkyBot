@@ -41,7 +41,7 @@ group = 'ml.duncte123.skybot'
 
 version "3.64.0_${getGitHash()}"
 
-sourceCompatibility = 1.9
+sourceCompatibility = 1.10
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.5.1'
@@ -76,13 +76,11 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '1.0.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_348'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_353'
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.56'
-    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: '1bfb227') {
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.58'
+    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'cd20026') {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
-        exclude group: 'net.dv8tion', module: 'JDA'
-        exclude group: "com.sedmelluq", module: "lavaplayer"
     }
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'

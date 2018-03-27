@@ -75,7 +75,7 @@ public class BotinfoCommand extends Command {
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
-                .addField("Lang & lib info", "**Coded in:** Java and Kotlin\n\n" +
+                .addField("Lang & lib info", "**Coded in:** Java (version "+System.getProperty("java.version")+") and Kotlin\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION, false)
