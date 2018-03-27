@@ -41,7 +41,7 @@ group = 'ml.duncte123.skybot'
 
 version "3.64.0_${getGitHash()}"
 
-sourceCompatibility = 1.10
+sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.6'

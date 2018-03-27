@@ -222,6 +222,10 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Incorrect usage\n" +
                             "Correct usage : `" + PREFIX + invoke + " <description>`");
                     return;
+                } else if ("null".equals(args[0])) {
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setServerDesc(null));
+                    sendMsg(event, "Description has been reset.");
+                    return;
                 }
                 String description = event.getMessage().getContentRaw().split("\\s+", 2)[1].replaceAll("\n", "\\\\n");
                 GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setServerDesc(description));
