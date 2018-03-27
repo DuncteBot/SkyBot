@@ -93,15 +93,15 @@ public class SkyBot {
         TagUtils.loadAllTags();
 
         //Set the token to a string
-        var token = AirUtils.CONFIG.getString("discord.token", "Your Bot Token");
+        String token = AirUtils.CONFIG.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
-        var TOTAL_SHARDS = AirUtils.CONFIG.getInt("discord.totalShards", 1);
+        int TOTAL_SHARDS = AirUtils.CONFIG.getInt("discord.totalShards", 1);
 
         //Set the game from the config
-        var gameId = AirUtils.CONFIG.getInt("discord.game.type", 3);
-        var name = AirUtils.CONFIG.getString("discord.game.name", "over shard #{shardId}");
-        var url = "https://www.twitch.tv/duncte123";
+        int gameId = AirUtils.CONFIG.getInt("discord.game.type", 3);
+        String name = AirUtils.CONFIG.getString("discord.game.name", "over shard #{shardId}");
+        String url = "https://www.twitch.tv/duncte123";
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
@@ -111,7 +111,7 @@ public class SkyBot {
 
         logger.info(AirUtils.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
         LavalinkManager.ins.start();
-        final var finalUrl = url;
+        final String finalUrl = url;
         try {
             //Set up sharding for the bot
             shardManager = new DefaultShardManagerBuilder()

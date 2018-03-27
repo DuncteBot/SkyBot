@@ -44,7 +44,7 @@ version "3.64.0_${getGitHash()}"
 sourceCompatibility = 1.10
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+    gradleVersion = '4.6'
 }
 
 repositories {
