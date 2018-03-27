@@ -48,15 +48,15 @@ public class CleanupCommand extends Command {
 
         int total = 5;
         //Little hack for lambda
-        boolean[] keepPinned = {false};
+        boolean keepPinned = false;
 
         if (args.length > 0) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
-                keepPinned[0] = true;
+                keepPinned = true;
             else {
                 if (args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
-                    keepPinned[0] = true;
+                    keepPinned = true;
                 try {
                     total = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
@@ -72,8 +72,9 @@ public class CleanupCommand extends Command {
         }
 
         try {
+            final Boolean keepPinnedFinal = keepPinned;
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
-                if (keepPinned[0])
+                if (keepPinnedFinal)
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
                 List<Message> failed = msgLst.stream()

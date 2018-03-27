@@ -71,12 +71,13 @@ public class BanCommand extends Command {
             //noinspection ConstantConditions
             if (args.length >= 2) {
                 String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+//                String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+                String[] timeParts = args[1].split("(\\d+)(\\D)"); //Split the string into ints and letters
 
                 if (!AirUtils.isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                            (__) -> {
+                            (m) -> {
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                                 MessageUtils.sendSuccess(event.getMessage());
                             }
