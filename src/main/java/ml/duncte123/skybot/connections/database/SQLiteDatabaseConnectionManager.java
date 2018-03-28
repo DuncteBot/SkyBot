@@ -167,7 +167,8 @@ class SQLiteDatabaseConnectionManager
                             "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                             "guildId VARCHAR(255) NOT NULL);"
             );
-        } catch (SQLException e) {
+            close();
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

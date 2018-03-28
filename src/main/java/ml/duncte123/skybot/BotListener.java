@@ -30,6 +30,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
@@ -86,6 +87,21 @@ public class BotListener extends ListenerAdapter {
      */
     private boolean settingsUpdateTimerRunning = false;
 
+    @Override
+    public void onShutdown(ShutdownEvent event) {
+        MusicCommand.shutdown();
+
+        //Kill other things
+        ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
+        if (unbanTimerRunning)
+            this.unbanService.shutdown();
+
+        if (settingsUpdateTimerRunning)
+            this.settingsUpdateService.shutdown();
+
+        AirUtils.stop();
+    }
+
     /**
      * Listen for messages send to the bot
      *
@@ -96,44 +112,20 @@ public class BotListener extends ListenerAdapter {
         //We only want to respond to members/users
         if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null)
             return;
-
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
-
         //noinspection deprecation
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
                 && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             logger.info("Initialising shutdown!!!");
-
-            MusicCommand.shutdown();
 
             event.getMessage().addReaction("✅").queue(
                     success -> killAllShards(event.getJDA().asBot().getShardManager()),
                     failure -> killAllShards(event.getJDA().asBot().getShardManager())
             );
 
-            if (LavalinkManager.ins.isEnabled()) {
-                LavalinkManager.ins.getLavalink().shutdown();
-            }
-
-            //Kill other things
-            ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
-            if (unbanTimerRunning)
-                this.unbanService.shutdown();
-
-            if (settingsUpdateTimerRunning)
-                this.settingsUpdateService.shutdown();
-
-            AirUtils.stop();
-
-            try {
-                Thread.sleep(3 * 1000);
-                System.exit(0);
-            } catch (InterruptedException ignored) {
-            }
-
             return;
         }
 
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         String rw = event.getMessage().getContentRaw();
 
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
@@ -455,10 +447,11 @@ public class BotListener extends ListenerAdapter {
     }
 
     private void killAllShards(ShardManager manager) {
-        manager.getShards().forEach(jda -> {
+        manager.shutdown();
+        /*manager.getShards().forEach(jda -> {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             jda.shutdown();
-        });
+        });*/
     }
 
 }

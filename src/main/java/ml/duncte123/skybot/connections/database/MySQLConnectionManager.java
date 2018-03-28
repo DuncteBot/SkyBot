@@ -34,10 +34,10 @@ class MySQLConnectionManager
         implements DBConnectionManager {
 
     private final String dbHost;
-    private final int port;
     private final String user;
-    private final String pass;
+    private final int port;
     private final String dbName;
+    private final String pass;
     private Connection connection;
 
     MySQLConnectionManager() {
@@ -46,6 +46,14 @@ class MySQLConnectionManager
         this.user = AirUtils.CONFIG.getString("sql.username", "exampleUser");
         this.pass = AirUtils.CONFIG.getString("sql.password", "Ex@mplePAss");
         this.dbName = AirUtils.CONFIG.getString("sql.database", "Example_database");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            this.connection = DriverManager.getConnection(
+                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                    user, pass);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         innitDB(getConnection());
     }
@@ -56,16 +64,18 @@ class MySQLConnectionManager
      * @return The connection to the database
      */
     public Connection getConnection() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            this.connection = DriverManager.getConnection(
-                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
-                    user, pass);
-            return connection;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+        if (!isConnected()) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                this.connection = DriverManager.getConnection(
+                        String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                        user, pass);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
+        return connection;
     }
 
     /**
@@ -90,7 +100,7 @@ class MySQLConnectionManager
     @Override
     public boolean isConnected() {
         try {
-            return getConnection() != null && !connection.isClosed();
+            return connection != null && !connection.isClosed();
         } catch (SQLException e) {
             return false;
         }
@@ -168,7 +178,8 @@ class MySQLConnectionManager
                             "VALUES (DEFAULT, 'duncte123', 'FIRST')");
                 }
             }
-        } catch (SQLException e) {
+            close();
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

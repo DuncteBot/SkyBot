@@ -27,7 +27,6 @@ import ml.duncte123.skybot.exceptions.VRCubeException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.ChannelManager
-import net.dv8tion.jda.core.managers.ChannelManagerUpdatable
 import net.dv8tion.jda.core.requests.RestAction
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction
 import net.dv8tion.jda.core.requests.restaction.ChannelAction
@@ -54,7 +53,6 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun createCopy(): ChannelAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getInvites(): RestAction<List<Invite>> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getManager(): ChannelManager = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getManagerUpdatable(): ChannelManagerUpdatable = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun delete(): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun createCopy(guild: Guild): ChannelAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun createInvite(): InviteAction = throw VRCubeException("**\uD83D\uDD25 lit**")
