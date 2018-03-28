@@ -39,7 +39,7 @@ class ILoveStream(
         public: Boolean = true
 ) : RadioStream(
         name = stationName,
-        url = if (internal) "http://stream01.iloveradio.de/iloveradio$channel.mp3" else "http://streams.bigfm.de/${stationName.replace("ilove","")}ilr-128-mp3",
+        url = if (internal) "http://stream01.iloveradio.de/iloveradio$channel.mp3" else "http://streams.bigfm.de/${stationName.replace("ilove", "")}ilr-128-mp3",
         website = "http://www.iloveradio.de/streams/",
         public = public
 )

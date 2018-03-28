@@ -34,8 +34,8 @@ import java.util.Map;
 @SuppressWarnings({"WeakerAccess", "unused"})
 public final class WebUtils extends Reliqua {
 
-    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)";
     public static final WebUtils ins = new WebUtils();
+    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)";
 
     private WebUtils() {
         super(null, new OkHttpClient(), true);
@@ -66,7 +66,7 @@ public final class WebUtils extends Reliqua {
                         .addHeader("User-Agent", USER_AGENT)
                         .addHeader("Accept", accept.getType()),
                 200,
-                 mapper
+                mapper
         );
     }
 
@@ -87,7 +87,7 @@ public final class WebUtils extends Reliqua {
     }
 
     public PendingRequest<String> preparePost(String url) {
-        return preparePost(url ,new HashMap<>(), EncodingType.APPLICATION_URLENCODED, ResponseBody::string);
+        return preparePost(url, new HashMap<>(), EncodingType.APPLICATION_URLENCODED, ResponseBody::string);
     }
 
     public <T> PendingRequest<T> preparePost(String url, Map<String, Object> postFields, EncodingType accept, RequestMapper<T> mapper) {
@@ -129,15 +129,15 @@ public final class WebUtils extends Reliqua {
 
     public JSONArray translate(String sourceLang, String targetLang, String input) throws NullPointerException {
         return getJSONArray(
-                    "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input
-            ).execute().getJSONArray(0).getJSONArray(0);
+                "https://translate.googleapis.com/translate_a/single?client=gtx&sl=" + sourceLang + "&tl=" + targetLang + "&dt=t&q=" + input
+        ).execute().getJSONArray(0).getJSONArray(0);
     }
 
     public PendingRequest<String> shortenUrl(String url) throws NullPointerException {
         return postJSON(
                 "https://www.googleapis.com/urlshortener/v1/url?key=" +
-                AirUtils.CONFIG.getString("apis.googl", "Google api key"),
-                new JSONObject().put("longUrl", url) ,
+                        AirUtils.CONFIG.getString("apis.googl", "Google api key"),
+                new JSONObject().put("longUrl", url),
                 (r) -> new JSONObject(r.string()).getString("id"));
     }
 
@@ -149,8 +149,8 @@ public final class WebUtils extends Reliqua {
         return createRequest(
                 s.url,
                 new Request.Builder()
-                .post(RequestBody.create(EncodingType.TEXT_PLAIN.toMediaType(), raw))
-                .url(s.url + "documents"),
+                        .post(RequestBody.create(EncodingType.TEXT_PLAIN.toMediaType(), raw))
+                        .url(s.url + "documents"),
                 200,
                 mapper
         );
@@ -202,6 +202,7 @@ public final class WebUtils extends Reliqua {
         LEEKS("https://haste.leeks.life/");
 
         private final String url;
+
         Service(String u) {
             this.url = u;
         }

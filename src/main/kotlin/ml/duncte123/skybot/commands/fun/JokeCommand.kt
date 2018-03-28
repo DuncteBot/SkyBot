@@ -44,11 +44,11 @@ class JokeCommand : Command() {
 
         val posts = WebUtils.ins.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400")
                 .execute()!!.getJSONObject("data").getJSONArray("children").filter {
-                    it as JSONObject
-                    (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
-                            it.getJSONObject("data").getString("selftext").length <= 550
-                            && it.getJSONObject("data").getString("title").length <= 256)
-                }
+            it as JSONObject
+            (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
+                    it.getJSONObject("data").getString("selftext").length <= 550
+                    && it.getJSONObject("data").getString("title").length <= 256)
+        }
 
         if (posts.isEmpty()) {
             sendError(event.message)

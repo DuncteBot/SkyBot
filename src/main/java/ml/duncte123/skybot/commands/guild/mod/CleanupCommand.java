@@ -87,7 +87,8 @@ public class CleanupCommand extends Command {
                     failed.addAll(msgLst);
                     msgLst.clear();
                 } else {
-                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {});
+                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {
+                    });
                 }
 
                 MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,

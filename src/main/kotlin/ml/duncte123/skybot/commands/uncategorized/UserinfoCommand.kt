@@ -63,7 +63,8 @@ class UserinfoCommand : Command() {
                     try {
                         val memberId = MiscUtil.parseSnowflake(name)
                         m = event.guild.getMemberById(memberId)
-                    } catch (ignored: NumberFormatException) { /* ignored */ }
+                    } catch (ignored: NumberFormatException) { /* ignored */
+                    }
                 }
             }
         }
@@ -120,7 +121,7 @@ class UserinfoCommand : Command() {
                 """.trimMargin())
 
         launch {
-            if(event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)) {
+            if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)) {
                 AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m), u.effectiveAvatarUrl) {
                     event.channel.sendMessage(embed.setThumbnail("attachment://user_profile.png").build())
                             .addFile(it, "user_profile.png").queue({}, {
@@ -140,9 +141,9 @@ class UserinfoCommand : Command() {
     override fun getAliases() = arrayOf("user", "i", "avatar")
 
     private fun toWeebshStatus(member: Member): StatusType {
-        if(member.game != null && member.game.type == Game.GameType.STREAMING)
+        if (member.game != null && member.game.type == Game.GameType.STREAMING)
             return StatusType.STREAMING
-        return when(member.onlineStatus) {
+        return when (member.onlineStatus) {
             OnlineStatus.ONLINE -> StatusType.ONLINE
             OnlineStatus.OFFLINE -> StatusType.OFFLINE
             OnlineStatus.DO_NOT_DISTURB -> StatusType.DND

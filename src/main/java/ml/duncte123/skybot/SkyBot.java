@@ -59,11 +59,6 @@ public class SkyBot {
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(true);
 
-        if (AirUtils.CONFIG.hasKey("launch_unstable") && AirUtils.CONFIG.getBoolean("launch_unstable", false)) {
-            RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
-            logger.info(TextColor.RED_BACKGROUND + TextColor.YELLOW + "USING UNSTABLE BUILD!" + TextColor.RESET);
-        }
-
         //Set the logger to only info by default
 //        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 //        l.setLevel(INFO);

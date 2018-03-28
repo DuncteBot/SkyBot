@@ -40,8 +40,8 @@ public class CatCommand extends Command {
 
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONObject("http://aws.random.cat/meow").async( (json) -> {
-            String file =  json.getString("file"),
+        WebUtils.ins.getJSONObject("http://aws.random.cat/meow").async((json) -> {
+            String file = json.getString("file"),
                     ext = FilenameUtils.getExtension(file);
             try {
                 event.getChannel().sendFile(new URL(file).openStream(),

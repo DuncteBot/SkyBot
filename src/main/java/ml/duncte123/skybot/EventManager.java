@@ -34,11 +34,9 @@ import java.util.List;
 public class EventManager
         implements IEventManager {
 
+    private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
-
-    private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
-
     private final BotListener botListener = new BotListener();
     private final DeHoistListener deHoistListener = new DeHoistListener();
 

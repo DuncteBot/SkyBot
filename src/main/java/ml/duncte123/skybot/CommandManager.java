@@ -97,6 +97,7 @@ public class CommandManager {
      * @param command The command to add
      * @return true if the command is added
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean addCommand(Command command) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
@@ -136,9 +137,7 @@ public class CommandManager {
             try {
                 cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
             } catch (Throwable ex) {
-                if (Settings.isUnstable) {
-                    ComparatingUtils.execCheck(ex);
-                }
+                ComparatingUtils.execCheck(ex);
             }
         }
     }

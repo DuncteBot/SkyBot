@@ -56,7 +56,7 @@ class NSFWCommands : Command() {
 
             }
             "lewdneko" -> {
-                 WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
+                WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
                     MessageUtils.sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
                 }
 

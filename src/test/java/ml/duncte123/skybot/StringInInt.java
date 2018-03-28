@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot;import sun.misc.Unsafe;
+package ml.duncte123.skybot;
+
+import sun.misc.Unsafe;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;

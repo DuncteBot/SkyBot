@@ -40,6 +40,7 @@ class TraceDataCommand : Command() {
         if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id))
             return
 
+        @Suppress("NAME_SHADOWING")
         val args = when (invoke) {
             "exact" -> arrayOf("exact")
             "atomic" -> if (args.size == 1) arrayOf("atomic", args[0]) else return

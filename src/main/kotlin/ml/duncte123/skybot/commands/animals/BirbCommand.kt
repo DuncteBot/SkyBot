@@ -37,7 +37,7 @@ class BirbCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         try {
             WebUtils.ins.getJSONObject("https://birdsare.cool/bird.json").async {
-                sendEmbed(event, EmbedUtils.embedImage(it.getString("url")) )
+                sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
             }
 
         } catch (e: IOException) {

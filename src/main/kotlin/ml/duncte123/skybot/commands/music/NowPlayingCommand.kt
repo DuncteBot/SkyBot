@@ -42,7 +42,7 @@ class NowPlayingCommand : MusicCommand() {
                 EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng))
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                val stream = (AirUtils.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri}
+                val stream = (AirUtils.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
                     EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url})**")

@@ -67,7 +67,7 @@ class OneLinerCommands : Command() {
             "uptime" -> MessageUtils.sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
             "quote" -> WebUtils.ins.getText("http://inspirobot.me/api?generate=true").async {
-                sendEmbed(event, EmbedUtils.embedImage( it ) )
+                sendEmbed(event, EmbedUtils.embedImage(it))
             }
             "yesno" -> {
                 WebUtils.ins.getJSONObject("https://yesno.wtf/api").async {
@@ -80,7 +80,7 @@ class OneLinerCommands : Command() {
             }
         //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
             "donate" -> {
-                val amount = if(args.isNotEmpty()) "/" + args.joinToString( separator = "") else ""
+                val amount = if (args.isNotEmpty()) "/" + args.joinToString(separator = "") else ""
                 sendMsg(event, """Hey there thank you for your interest in supporting the bot.
                     |You can use one of the following methods to donate:
                     |**PayPal:** <https://paypal.me/duncte123$amount>
@@ -89,14 +89,14 @@ class OneLinerCommands : Command() {
                     |All donations are going directly into development of the bot ❤
                 """.trimMargin())
             }
-            //"screenfetch" -> {
-            //
-            //}
+        //"screenfetch" -> {
+        //
+        //}
             "insta" -> {
                 LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!")
-                val username = if(args.isNotEmpty()) args.joinToString( separator = "") else "duncte123"
+                val username = if (args.isNotEmpty()) args.joinToString(separator = "") else "duncte123"
                 WebUtils.ins.getJSONObject("https://dshelmondgames.ml/api/insta/$username").async {
-                    if(it.getJSONArray("images").length() < 1) {
+                    if (it.getJSONArray("images").length() < 1) {
                         sendMsg(event, "No data found for this user")
                     } else {
                         val img = it.getJSONArray("images").getJSONObject(0)

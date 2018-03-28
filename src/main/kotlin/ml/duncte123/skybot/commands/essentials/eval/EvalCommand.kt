@@ -143,7 +143,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             launch(start = CoroutineStart.ATOMIC) {
-//            async(start = CoroutineStart.ATOMIC) {
+                //            async(start = CoroutineStart.ATOMIC) {
                 return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
@@ -157,7 +157,7 @@ class EvalCommand : Command() {
 
             @SinceSkybot("3.58.0")
             launch {
-//            async {
+                //            async {
                 return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         }

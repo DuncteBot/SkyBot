@@ -111,7 +111,8 @@ public class MessageUtils {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ADD_REACTION)) {
-                message.addReaction("✅").queue(null, ignored -> {});
+                message.addReaction("✅").queue(null, ignored -> {
+                });
             }
         }
     }
@@ -407,7 +408,7 @@ public class MessageUtils {
     public static void sendMsg(TextChannel channel, Message msg, Consumer<Message> success, Consumer<Throwable> failure) {
         //Check if the channel exists
         if ((channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) &&
-                channel.getGuild().getSelfMember().hasPermission(channel,Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+                channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             //Only send a message if we can talk
             channel.sendMessage(msg).queue(success, failure);
         }

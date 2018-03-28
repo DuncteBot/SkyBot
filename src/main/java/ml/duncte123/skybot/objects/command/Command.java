@@ -109,7 +109,7 @@ public abstract class Command {
                     .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
                     .get()
                     .addHeader("Authorization", token)
-                    .build(),(r) -> r);
+                    .build(), (r) -> r);
             JSONArray json = null;
             try {
                 json = new JSONArray(Objects.requireNonNull(it.execute()).string());

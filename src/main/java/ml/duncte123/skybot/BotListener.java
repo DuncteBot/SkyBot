@@ -44,7 +44,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -194,7 +193,7 @@ public class BotListener extends ListenerAdapter {
             if (event.getChannel().getTopic().contains("-commands"))
                 return;
             for (String s : blocked) {
-                if(s.startsWith("!")) {
+                if (s.startsWith("!")) {
                     s = s.split("!")[1];
                     if (isCategory(s.toUpperCase())) {
                         if (!AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
@@ -243,11 +242,6 @@ public class BotListener extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
 
-        SelfUser selfUser = event.getJDA().getSelfUser();
-        for (Guild guild : event.getJDA().getGuilds()) {
-            unstableCheckThingy(selfUser, guild);
-        }
-
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
@@ -274,7 +268,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        if(event.getMember().equals(event.getGuild().getSelfMember())) return;
+        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -300,13 +294,14 @@ public class BotListener extends ListenerAdapter {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if (r != null && !event.getGuild().getPublicRole().equals(r))
                 event.getGuild().getController()
-                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> { });
+                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
+                });
         }
     }
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-        if(event.getMember().equals(event.getGuild().getSelfMember())) return;
+        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
@@ -348,9 +343,6 @@ public class BotListener extends ListenerAdapter {
             return;
         }
         Guild g = event.getGuild();
-        if (unstableCheckThingy(event.getJDA().getSelfUser(), g)) {
-            return;
-        }
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
@@ -372,7 +364,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         if (LavalinkManager.ins.isConnected(event.getGuild())
-                && !event.getVoiceState().getMember().equals(event.getGuild().getSelfMember()) ) {
+                && !event.getVoiceState().getMember().equals(event.getGuild().getSelfMember())) {
             VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
             if (vc != null) {
                 if (!event.getChannelLeft().equals(vc)) {
@@ -403,7 +395,8 @@ public class BotListener extends ListenerAdapter {
                     //return;
                 }
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     /**
@@ -466,19 +459,6 @@ public class BotListener extends ListenerAdapter {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             jda.shutdown();
         });
-    }
-
-    private boolean unstableCheckThingy(SelfUser selfUser, Guild g) {
-        if (Settings.isUnstable && selfUser.getIdLong() != 210363111729790977L) {
-            //noinspection unchecked
-            List<Long> ids = AirUtils.CONFIG.getArray("access_ids");
-            if (!ids.contains(g.getIdLong())) {
-                g.leave().queue();
-                logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);
-                return true;
-            }
-        }
-        return false;
     }
 
 }
