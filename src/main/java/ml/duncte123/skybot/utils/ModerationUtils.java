@@ -52,19 +52,22 @@ public class ModerationUtils {
      * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
-        TextChannel logChannel = AirUtils.getLogChannel(GuildSettingsUtils.getGuild(g).getLogChannel(), g);
-        String length = "";
-        if (time != null && !time.isEmpty()) {
-            length = " lasting " + time + "";
-        }
+        String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
+        if(chan != null && !chan.isEmpty()) {
+            TextChannel logChannel = AirUtils.getLogChannel(chan, g);
+            String length = "";
+            if (time != null && !time.isEmpty()) {
+                length = " lasting " + time + "";
+            }
 
-        MessageUtils.sendMsg(logChannel, String.format("User **%s** got **%s** by **%s**%s%s",
-                String.format("%#s", punishedUser),
-                punishment,
-                String.format("%#s", mod),
-                length,
-                reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
-        ));
+            MessageUtils.sendMsg(logChannel, String.format("User **%s** got **%s** by **%s**%s%s",
+                    String.format("%#s", punishedUser),
+                    punishment,
+                    String.format("%#s", mod),
+                    length,
+                    reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+            ));
+        }
     }
 
     /**
@@ -186,16 +189,20 @@ public class ModerationUtils {
 
                 if (currDate.after(unbanDate)) {
                     usersUnbanned++;
-                    logger.debug("Unbanning " + res.getString("Username"));
+                    String username = res.getString("Username");
+                    logger.debug("Unbanning " + username);
                     try {
-                        shardManager.getGuildCache().getElementById(res.getString("guildId")).getController()
-                                .unban(res.getString("userId")).reason("Ban expired").queue();
+                        String guildid = res.getString("guildId");
+                        String userID = res.getString("userId");
+                        shardManager.getGuildCache().getElementById(guildid).getController()
+                                .unban(userID).reason("Ban expired").queue();
                         modLog(new ConsoleUser(),
-                                new FakeUser(res.getString("Username"),
-                                        res.getString("userId"),
+                                new FakeUser(username,
+                                        userID,
                                         res.getString("discriminator")),
                                 "unbanned",
-                                shardManager.getGuildById(res.getString("guildId")));
+                                shardManager.getGuildById(guildid)
+                        );
                     } catch (NullPointerException ignored) {
                     }
                     database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");

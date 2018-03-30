@@ -44,12 +44,11 @@ public class GuildUtils {
      * This sends a post request to the bot lists with the new guild count
      *
      * @param jda           the jda instance for the token
-     * @param newGuildCount the new guild count
      * @return the response from the server
      */
-    private static String updateGuildCount(JDA jda, long newGuildCount) {
+    private static String updateGuildCount(JDA jda) {
         Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", newGuildCount);
+        postFields.put("server_count", jda.asBot().getShardManager().getGuildCache().size());
         postFields.put("auth", jda.getToken());
         try {
             return Objects.requireNonNull(
@@ -69,11 +68,10 @@ public class GuildUtils {
      * This method updates the guild count and checks it on startup and every time we join or leave a guild.
      *
      * @param jda           the jda
-     * @param newGuildCount the new guild count
      * @throws UnsupportedOperationException if the request failed.
      */
-    public static void updateGuildCountAndCheck(JDA jda, long newGuildCount) {
-        JSONObject returnValue = new JSONObject(updateGuildCount(jda, newGuildCount));
+    public static void updateGuildCountAndCheck(JDA jda) {
+        JSONObject returnValue = new JSONObject(updateGuildCount(jda));
         if (returnValue.getString("status").equalsIgnoreCase("failure")) {
             String exceptionMessage = "%s";
             try {

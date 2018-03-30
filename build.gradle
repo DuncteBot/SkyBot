@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version "3.64.0_${getGitHash()}"
+version "3.64.1_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -76,10 +76,10 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '1.0.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_353'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_354'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.58'
-    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'cd20026') {
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: 'cd20026' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
     //Commons text, because UnicodeUnescaper

@@ -45,6 +45,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -86,6 +87,10 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+    /**
+     * This is used to check if we should trigger a update for the guild count when we leave a guild
+     */
+    private final HashMap<String, String> badGuilds = new HashMap<>();
 
     @Override
     public void onShutdown(ShutdownEvent event) {
@@ -100,6 +105,7 @@ public class BotListener extends ListenerAdapter {
             this.settingsUpdateService.shutdown();
 
         AirUtils.stop();
+        System.exit(0);
     }
 
     /**
@@ -188,26 +194,20 @@ public class BotListener extends ListenerAdapter {
                 if (s.startsWith("!")) {
                     s = s.split("!")[1];
                     if (isCategory(s.toUpperCase())) {
-                        if (!AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                                .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))) {
+                        if (!shouldBlockCommand(rw, s)) {
                             return;
                         }
                     } else {
-                        if (s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))
+                        if (isaBoolean(settings, rw, s))
                             return;
                     }
                 } else {
                     if (isCategory(s.toUpperCase())) {
-                        if (AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                                .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))) {
+                        if (shouldBlockCommand(rw, s)) {
                             return;
                         }
                     } else {
-                        if (s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))
+                        if (isaBoolean(settings, rw, s))
                             return;
                     }
                 }
@@ -225,6 +225,21 @@ public class BotListener extends ListenerAdapter {
         AirUtils.COMMAND_MANAGER.runCommand(event);
     }
 
+    /*
+     * Needs a better name
+     */
+    private boolean isaBoolean(GuildSettings settings, String rw, String s) {
+        return s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+    }
+
+    private boolean shouldBlockCommand(String rw, String s) {
+        return AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
+    }
+
     /**
      * When the bot is ready to go
      *
@@ -238,7 +253,8 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            unbanService.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 10, 10, TimeUnit.MINUTES);
+            unbanService.scheduleAtFixedRate(() ->
+                    ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
@@ -250,7 +266,7 @@ public class BotListener extends ListenerAdapter {
         }
 
         //Update guild count from then the bot was offline (should never die tho)
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     /**
@@ -332,20 +348,25 @@ public class BotListener extends ListenerAdapter {
                     event.getGuild().getName(),
                     counts[0],
                     counts[1]) + TextColor.RESET);
+            badGuilds.put(event.getGuild().getId(), "BAD BOI");
             return;
         }
         Guild g = event.getGuild();
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
-        GuildSettingsUtils.deleteGuild(event.getGuild());
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        if(!badGuilds.containsKey(event.getGuild().getId())) {
+            logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
+            GuildSettingsUtils.deleteGuild(event.getGuild());
+            GuildUtils.updateGuildCountAndCheck(event.getJDA());
+        } else {
+            badGuilds.remove(event.getGuild().getId());
+        }
     }
 
     /**
