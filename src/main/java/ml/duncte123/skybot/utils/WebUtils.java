@@ -35,7 +35,7 @@ import java.util.Map;
 public final class WebUtils extends Reliqua {
 
     public static final WebUtils ins = new WebUtils();
-    private static final String USER_AGENT = "Mozilla/5.0 dunctebot (SkyBot v" + Settings.VERSION + ", https://bot.duncte123.me/)";
+    private static final String USER_AGENT = "Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)";
 
     private WebUtils() {
         super(null, new OkHttpClient(), true);
