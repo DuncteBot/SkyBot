@@ -88,7 +88,7 @@ public class ShardInfoCommand extends Command {
      * These 2 functions have been inspired from FlareBot
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
      */
-    private String makeAsciiTable(List<String> headers, List<java.util.List<String>> table) {
+    private String makeAsciiTable(List<String> headers, List<List<String>> table) {
         StringBuilder sb = new StringBuilder();
         int padding = 1;
         int[] widths = new int[headers.size()];
@@ -100,7 +100,7 @@ public class ShardInfoCommand extends Command {
                 widths[i] = headers.get(i).length();
             }
         }
-        for (java.util.List<String> row : table) {
+        for (List<String> row : table) {
             for (int i = 0; i < row.size(); i++) {
                 String cell = row.get(i);
                 if (cell.length() > widths[i]) {
@@ -117,7 +117,7 @@ public class ShardInfoCommand extends Command {
         sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
         sb.append(String.format(formatLine.toString(), headers.toArray()));
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
-        for (java.util.List<String> row : table) {
+        for (List<String> row : table) {
             sb.append(String.format(formatLine.toString(), row.toArray()));
         }
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
