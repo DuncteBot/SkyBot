@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class DogCommand extends Command {
 
@@ -33,7 +34,7 @@ public class DogCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         String base = "https://random.dog/";
         try {
             WebUtils.ins.getText(base + "woof").async(it -> {

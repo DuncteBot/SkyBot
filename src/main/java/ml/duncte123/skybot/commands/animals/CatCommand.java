@@ -26,6 +26,7 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.FilenameUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
@@ -39,8 +40,8 @@ public class CatCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONObject("http://aws.random.cat/meow").async((json) -> {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+        WebUtils.ins.getJSONObject("http://aws.random.cat/meow.php").async((json) -> {
             String file = json.getString("file"),
                     ext = FilenameUtils.getExtension(file);
             try {

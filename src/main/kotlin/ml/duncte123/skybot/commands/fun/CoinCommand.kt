@@ -30,7 +30,7 @@ import java.util.concurrent.TimeUnit
 
 class CoinCommand : Command() {
 
-    val imagesArr = arrayOf("heads.png", "tails.png")
+    private val imagesArr = arrayOf("heads.png", "tails.png")
 
     init {
         this.category = CommandCategory.FUN

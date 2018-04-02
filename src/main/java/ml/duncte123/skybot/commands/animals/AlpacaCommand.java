@@ -22,7 +22,9 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
@@ -34,16 +36,13 @@ public class AlpacaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        try {
-            Document doc = Jsoup.connect("http://www.randomalpaca.com/").get();
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
+        WebUtils.ins.getText("http://www.randomalpaca.com/").async((xml) -> {
+            Document doc = Jsoup.parse(xml);
             Element img = doc.select("img").first();
             MessageUtils.sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
-        } catch (Exception e) {
-            //e.printStackTrace();
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("ERROR: " + e.getMessage()));
-        }
+        });
     }
 
     @Override
