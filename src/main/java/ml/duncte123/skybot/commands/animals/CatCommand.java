@@ -42,7 +42,7 @@ public class CatCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONObject("https://aws.random.cat/meow.php").async((json) -> {
+        WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
             String file = json.getString("file"),
                     ext = FilenameUtils.getExtension(file);
             try {
