@@ -101,7 +101,8 @@ class MySQLConnectionManager
     public boolean isConnected() {
         try {
             return connection != null && !connection.isClosed();
-        } catch (SQLException e) {
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -178,8 +179,8 @@ class MySQLConnectionManager
                             "VALUES (DEFAULT, 'duncte123', 'FIRST')");
                 }
             }
-            close();
-        } catch (SQLException | IOException e) {
+            //close();
+        } catch (SQLException e) {
             e.printStackTrace();
         }
     }
