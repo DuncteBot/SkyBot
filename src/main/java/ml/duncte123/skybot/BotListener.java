@@ -333,7 +333,7 @@ public class BotListener extends ListenerAdapter {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
         long[] counts = GuildUtils.getBotAndUserCount(event.getGuild());
-        if (botToUserRatio[1] >= 60) {
+        if (botToUserRatio[1] >= 70) {
             MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
                             event.getGuild().getOwner().getAsMention(),
