@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import com.google.protobuf.Message;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
@@ -41,7 +42,7 @@ public class CatCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONObject("http://aws.random.cat/meow.php").async((json) -> {
+        WebUtils.ins.getJSONObject("https://aws.random.cat/meow.php").async((json) -> {
             String file = json.getString("file"),
                     ext = FilenameUtils.getExtension(file);
             try {
@@ -51,7 +52,12 @@ public class CatCommand extends Command {
                 MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
                 ComparatingUtils.execCheck(e);
             }
-        });
+        },
+            (error) -> {
+                MessageUtils.sendMsg(event, "This command broke again *sigh*\nuse `" + PREFIX + "kitty` because it is more stable");
+                ComparatingUtils.execCheck(error);
+            }
+        );
     }
 
     @Override
