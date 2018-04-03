@@ -38,10 +38,10 @@ class ShortenCommand : Command() {
         }
 
         if (!hasUpvoted(event.author)) {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+            sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the shorten command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
+                            ") or become a patreon [here](https://patreon.com/duncte123)"))
             return
         }
 

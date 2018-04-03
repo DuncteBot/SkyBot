@@ -26,6 +26,7 @@ import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
@@ -54,6 +55,14 @@ class ChatCommand : Command() {
 
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+
+        if (!hasUpvoted(event.author)) {
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
+                    "I'm sorry but you can't use the chat feature because you haven't up-voted the bot." +
+                            " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
+                            ") or become a patreon [here](https://patreon.com/duncte123)"))
+            return
+        }
 
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
