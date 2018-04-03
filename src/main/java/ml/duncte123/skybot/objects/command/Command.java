@@ -32,6 +32,7 @@ import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONArray;
 import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,22 +57,7 @@ public abstract class Command {
     /**
      * A list of users that have upvoted the bot
      */
-    private static final Set<String> upvotedIds = new HashSet<>() {
-        @Override
-        public boolean contains(Object o) {
-            if (o.getClass() != String.class) return false;
-
-            if (super.contains(o)) return true;
-
-            reloadUpvoted();
-
-            return super.contains(o);
-        }
-    };
-
-    static {
-        reloadUpvoted();
-    }
+    private static final Set<String> upvotedIds = new HashSet<>();
 
     /**
      * This holds the category
@@ -92,44 +78,24 @@ public abstract class Command {
         }
     }
 
-    /**
-     * Reloads the list of people who have upvoted this bot
-     */
-    private static void reloadUpvoted() {
-        if (cooldown && Settings.useCooldown) return;
-        try {
-            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
 
-            if (token == null || token.isEmpty()) {
-                logger.warn("Discord Bots token not found");
-                return;
-            }
+    private boolean checkVoteOnDBL(String userid) {
+        String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
 
-            PendingRequest<ResponseBody> it = WebUtils.ins.prepareRaw(new Request.Builder()
-                    .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                    .get()
-                    .addHeader("Authorization", token)
-                    .build(), (r) -> r);
-            JSONArray json = null;
-            try {
-                json = new JSONArray(Objects.requireNonNull(it.execute()).string());
-            } catch (IOException e1) {
-                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-            }
-
-            upvotedIds.clear();
-
-            assert json != null;
-            for (int i = 0; i < json.length(); i++) {
-                upvotedIds.add(json.getString(i));
-            }
-
-        } catch (JSONException e) {
-            //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
-            /* ignored */
+        if (token == null || token.isEmpty()) {
+            logger.warn("Discord Bots token not found");
+            return false;
         }
-        if (Settings.useCooldown)
-            cooldown = true;
+        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(new Request.Builder()
+                .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
+                .get()
+                .addHeader("Authorization", token)
+                .build(), (r) -> {
+            assert r != null;
+            return new JSONObject(r.string());
+        });
+
+        return 1 == Objects.requireNonNull(json.execute()).optInt("voted", 0);
     }
 
     /**
@@ -180,7 +146,16 @@ public abstract class Command {
      * Has this user upvoted the bot
      */
     protected boolean hasUpvoted(User user) {
-        return isPatron(user, null) || upvotedIds.contains(user.getId());
+        boolean upvoteCheck = upvotedIds.contains(user.getId());
+        if(!upvoteCheck) {
+            boolean dblCheck = checkVoteOnDBL(user.getId());
+            if(dblCheck) {
+                upvoteCheck = true;
+                upvotedIds.add(user.getId());
+            }
+        }
+
+        return isPatron(user, null) || upvoteCheck;
     }
 
     /**
