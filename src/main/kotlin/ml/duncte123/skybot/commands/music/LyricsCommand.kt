@@ -75,9 +75,7 @@ class LyricsCommand : MusicCommand() {
         }
     }
 
-    override fun help(): String {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
-    }
+    override fun help() = "Shows the lyrics to the current song"
 
     override fun getName() = "lyrics"
 
