@@ -93,9 +93,9 @@ class OneLinerCommands : Command() {
         //
         //}
             "insta" -> {
-                LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!")
+                //LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!") // neither are some of the other commands in here
                 val username = if (args.isNotEmpty()) args.joinToString(separator = "") else "duncte123"
-                WebUtils.ins.getJSONObject("https://dshelmondgames.ml/api/insta/$username").async {
+                WebUtils.ins.getJSONObject("https://apis.duncte123.me/insta/$username").async {
                     if (it.getJSONArray("images").length() < 1) {
                         sendMsg(event, "No data found for this user")
                     } else {
