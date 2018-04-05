@@ -43,7 +43,7 @@ class LyricsCommand : MusicCommand() {
                     "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
                             " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
                             ") or become a patreon [here](https://patreon.com/duncte123)"))
-        } else if(channelChecks(event)) {
+        } else if (channelChecks(event)) {
             val mng = getMusicManager(event.guild)
             val player = mng.player
             val search: String? = when {
@@ -51,7 +51,7 @@ class LyricsCommand : MusicCommand() {
                     player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
                 else -> null
             }
-            if(search.isNullOrBlank()) {
+            if (search.isNullOrBlank()) {
                 MessageUtils.sendMsg(event, "The player is not currently playing anything!")
                 return
             }
@@ -80,7 +80,7 @@ class LyricsCommand : MusicCommand() {
     override fun getName() = "lyrics"
 
     fun getAuthToken(): String {
-        if(authToken.isBlank()) {
+        if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
             formData["client_id"] = AirUtils.CONFIG.getString("genius.client_id", "CLIENT_ID")
             formData["client_secret"] = AirUtils.CONFIG.getString("genius.client_secret", "CLIENT_SECRET")
@@ -97,10 +97,10 @@ class LyricsCommand : MusicCommand() {
                         .get()
                         .header("Authorization", getAuthToken())
                         .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                {it -> JSONObject(it!!.string())}
+                { it -> JSONObject(it!!.string()) }
         ).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
-            if(hits.length() < 1) {
+            if (hits.length() < 1) {
                 callback.accept(null)
             } else {
                 callback.accept(

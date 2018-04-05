@@ -120,8 +120,7 @@ public class AirUtils {
                 gameType = "Watching";
         }
 
-        String gameName = g.getName();
-        return gameType + " " + gameName;
+        return gameType + " " + g.getName();
     }
 
     /**

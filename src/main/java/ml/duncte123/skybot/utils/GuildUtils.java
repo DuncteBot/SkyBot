@@ -34,7 +34,6 @@ import org.slf4j.LoggerFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicLong;
 
 public class GuildUtils {
 
@@ -43,7 +42,7 @@ public class GuildUtils {
     /**
      * This sends a post request to the bot lists with the new guild count
      *
-     * @param jda           the jda instance for the token
+     * @param jda the jda instance for the token
      * @return the response from the server
      */
     private static String updateGuildCount(JDA jda) {
@@ -67,7 +66,7 @@ public class GuildUtils {
     /**
      * This method updates the guild count and checks it on startup and every time we join or leave a guild.
      *
-     * @param jda           the jda
+     * @param jda the jda
      * @throws UnsupportedOperationException if the request failed.
      */
     public static void updateGuildCountAndCheck(JDA jda) {
@@ -149,15 +148,14 @@ public class GuildUtils {
      * This counts the users in a guild that have an animated avatar
      *
      * @param g the guild to count it in
-     * @return the amount users that have a animated avatar in a {@link java.util.concurrent.atomic.AtomicLong AtomicLong} (because why not)
+     * @return the amount users that have a animated avatar
      */
-    public static AtomicLong countAnimatedAvatars(Guild g) {
+    public static long countAnimatedAvatars(Guild g) {
 
-        return new AtomicLong(g.getMemberCache().stream()
+        return g.getMemberCache().stream()
                 .map(Member::getUser)
                 .filter(it -> it.getAvatarId() != null)
-                .filter(it -> it.getAvatarId().startsWith("a_")).count()
-        );
+                .filter(it -> it.getAvatarId().startsWith("a_")).count();
     }
 
     /**
