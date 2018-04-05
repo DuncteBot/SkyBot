@@ -55,6 +55,11 @@ class ChatCommand : Command() {
 
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        if (event.message.contentRaw.contains("prefix")) {
+            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
+                    .replace("{PREFIX}", getSettings(event.guild).customPrefix))
+            return
+        }
 
         if (!hasUpvoted(event.author)) {
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
@@ -71,12 +76,6 @@ class ChatCommand : Command() {
         val time = System.currentTimeMillis()
         var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
         event.channel.sendTyping().queue()
-
-        if (event.message.contentRaw.contains("prefix")) {
-            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
-                    .replace("{PREFIX}", getSettings(event.guild).customPrefix))
-            return
-        }
 
         //We don't need this because we are using contentDisplay instead of contentRaw
         //We need it since contentDisplay leaves # and @
