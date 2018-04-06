@@ -210,6 +210,8 @@ class EvalCommand : Command() {
 
                     ComparatingUtils.checkEx(ex)
                     ex
+                } finally {
+                    filter.unregister()
                 }
             }
             when (out) {
