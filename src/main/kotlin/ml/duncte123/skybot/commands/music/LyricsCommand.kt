@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -58,7 +59,9 @@ class LyricsCommand : MusicCommand() {
             }
             searchForSong(search, Consumer {
                 if (it.isNullOrBlank()) {
-                    MessageUtils.sendMsg(event, "There where no lyrics found for this song")
+                    MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
+                            "Alternatively you can try `$PREFIX$name song name` to search for the lriccs on this soing.\n" +
+                            "(sometimes the song names in the player are wrong)")
                 } else {
                     val url = "https://genius.com$it"
                     WebUtils.ins.getText(url).async {
