@@ -36,10 +36,11 @@ class ChatCommand : Command() {
     private val builder: ChatterBot
     private var oldBot: ChatterBotSession
     private val responses = arrayOf(
-            "My PREFIX in this guild is *`{PREFIX}`*",
-            "Thanks for asking, my PREFIX here is *`{PREFIX}`*",
+            "My prefix in this guild is *`{PREFIX}`*",
+            "Thanks for asking, my prefix here is *`{PREFIX}`*",
             "That should be *`{PREFIX}`*",
-            "It was *`{PREFIX}`* if I'm not mistaken"
+            "It was *`{PREFIX}`* if I'm not mistaken",
+            "In this server my prefix is *`{PREFIX}`*"
     )
 
     init {
