@@ -69,6 +69,10 @@ class SpamFilter : HashMap<Long, SpamCache>() {
                     }.count {it} < 1
                 }
             }
+            rawContent.matches("^.(?![wola])(?!(\\d|x|D|k|h|\\.{1,2}))".toRegex()) -> {
+                true
+            }
+
             else -> {
                 LoggerFactory.getLogger(SpamFilter::class.java).debug("${TextColor.CYAN_BACKGROUND}Message with Activity!!${TextColor.RESET}")
                 false

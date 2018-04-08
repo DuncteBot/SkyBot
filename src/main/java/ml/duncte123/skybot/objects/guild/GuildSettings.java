@@ -316,6 +316,14 @@ public class GuildSettings {
         return this;
     }
 
+    public long[] getRatelimits() {
+        return ratelimits;
+    }
+
+    public void setRatelimits(long[] ratelimits) {
+        this.ratelimits = ratelimits;
+    }
+
     /**
      * {@inheritDoc}
      */

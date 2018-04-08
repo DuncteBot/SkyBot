@@ -25,6 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
+import java.util.Arrays;
 
 @SuppressWarnings("SqlDialectInspection")
 public class GuildSettingsUtils {
@@ -161,7 +162,10 @@ public class GuildSettingsUtils {
                     "serverDesc = ? ," +
                     "announceNextTrack = ? ," +
                     "autoDeHoist = ? ," +
-                    "filterInvites = ? " +
+                    "filterInvites = ? ," +
+                    "spamFilterState = ? ," +
+                    "muteRoleId = ? ," +
+                    "ratelimits = ? " +
                     "WHERE guildId='" + settings.getGuildId() + "'");
             smt.setBoolean(1, settings.isEnableJoinMessage());
             smt.setBoolean(2, settings.isEnableSwearFilter());
@@ -175,6 +179,9 @@ public class GuildSettingsUtils {
             smt.setBoolean(10, settings.isAnnounceTracks());
             smt.setBoolean(11, settings.isAutoDeHoist());
             smt.setBoolean(12, settings.isFilterInvites());
+            smt.setBoolean(13, settings.getSpamFilterState());
+            smt.setString(14, settings.getMuteRoleId());
+            smt.setArray(15, database.createArrayOf("ratelimits", convert(settings.getRatelimits())));
             smt.executeUpdate();
 
         } catch (SQLException e1) {
@@ -273,5 +280,9 @@ public class GuildSettingsUtils {
         if (entery == null || entery.isEmpty())
             return null;
         return entery.replaceAll("\\P{Print}", "");
+    }
+
+    private static Object[] convert(long[] in) {
+        return Arrays.stream(in).boxed().toArray(Object[]::new);
     }
 }
