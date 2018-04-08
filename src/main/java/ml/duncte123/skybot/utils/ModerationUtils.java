@@ -23,9 +23,8 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,6 +35,7 @@ import java.sql.Statement;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.TimeUnit;
 
 public class ModerationUtils {
 
@@ -60,10 +60,10 @@ public class ModerationUtils {
                 length = " lasting " + time + "";
             }
 
-            MessageUtils.sendMsg(logChannel, String.format("User **%s** got **%s** by **%s**%s%s",
-                    String.format("%#s", punishedUser),
+            MessageUtils.sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
+                    punishedUser,
                     punishment,
-                    String.format("%#s", mod),
+                    mod,
                     length,
                     reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
             ));
@@ -218,5 +218,40 @@ public class ModerationUtils {
                 e2.printStackTrace();
             }
         }
+    }
+
+    public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+        Member self = guild.getSelfMember();
+        Role muteRole = guild.getRoleById(GuildSettingsUtils.getGuild(guild).getMuteRoleId());
+
+        if (muteRole == null) {
+            MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
+            return;
+        }
+
+        if (!self.hasPermission(Permission.MANAGE_ROLES)) {
+            MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+            return;
+        }
+
+        if (!self.canInteract(member) || !self.canInteract(muteRole)) {
+            MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
+            return;
+        }
+        String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
+        guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
+        (success) -> {
+            guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute").queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
+        },
+        (failure) -> {
+            String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
+            if(chan != null && !chan.isEmpty()) {
+                TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+
+                String message = String.format("%#s bypassed the mute.", member.getUser());
+
+                MessageUtils.sendEmbed(logChannel, EmbedUtils.defaultEmbed().setDescription(message).build());
+            }
+        });
     }
 }

@@ -36,7 +36,7 @@ import java.io.IOException
 open class PlayCommand : MusicCommand() {
 
     private val youtube: YouTube = YouTube.Builder(
-            GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance()) { unused -> }
+            GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance()) { _ -> }
             .setApplicationName("SkyBot-youtube-search")
             .build()
 

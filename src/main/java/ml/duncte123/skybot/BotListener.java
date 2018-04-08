@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import kotlin.Pair;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
@@ -60,7 +61,11 @@ public class BotListener extends ListenerAdapter {
     /**
      * This filter helps us to fiter out swearing
      */
-    private final BadWordFilter filter = new BadWordFilter();
+    private final BadWordFilter wordFilter = new BadWordFilter();
+    /**
+     * This filter helps us to fiter out spam
+     */
+    private final SpamFilter spamFilter = new SpamFilter();
     /**
      * This timer is for checking unbans
      */
@@ -157,7 +162,7 @@ public class BotListener extends ListenerAdapter {
 
             if (settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(rw)) {
+                if (wordFilter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                             .queue(null, CUSTOM_QUEUE_ERROR);
 
@@ -167,6 +172,15 @@ public class BotListener extends ListenerAdapter {
                             ),
                             m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return;
+                }
+            }
+
+            if (settings.getSpamFilterState()) {
+                Message messageToCheck = event.getMessage();
+                long[] rates = new long[]{20, 45, 60, 120, 240, 2400}; //settings.get
+                spamFilter.applyRates(rates);
+                if (spamFilter.check(new Pair<>(event.getMember(), event.getMessage()))) {
+                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(), "muted", "spam", event.getGuild());
                 }
             }
         }
