@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.weebJava.types.NSFWType
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -50,7 +51,8 @@ abstract class WeebCommandBase : Command() {
     }
 
     fun thatStuffThatINeedToDoALotOfTimes(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val imageUrl = AirUtils.WEEB_API.getRandomImage(type, "${event.channel.isNSFW}").url
+        val nsfw = if(event.channel.isNSFW) NSFWType.TRUE else NSFWType.FALSE
+        val imageUrl = AirUtils.WEEB_API.getRandomImage(type, nsfw).url
 
         if (args.isEmpty()) {
             MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(

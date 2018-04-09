@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
@@ -28,6 +29,8 @@ import org.apache.commons.lang3.StringUtils
 
 class WeebCommands : WeebCommandBase() {
 
+    val weebTags = java.util.ArrayList<String>()
+
     init {
         this.category = CommandCategory.WEEB
     }
@@ -36,28 +39,32 @@ class WeebCommands : WeebCommandBase() {
         when (invoke) {
             "hug" -> thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
             "lewd" -> sendEmbed(event,
-                    getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd", "${event.channel.isNSFW}").url))
+                    getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").url))
             "pat" -> thatStuffThatINeedToDoALotOfTimes("pat", "pats", args, event)
             "punch" -> thatStuffThatINeedToDoALotOfTimes("punch", "punches", args, event)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
             "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
+            "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
             "weeb" -> {
                 if (args.isEmpty()) {
-                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb_image categories` for all categories")
+                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
                     return
+                }
+                if(weebTags.isEmpty()) {
+                    weebTags.addAll(AirUtils.WEEB_API.getTypes(HiddenMode.DEFAULT).types)
                 }
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
                             .append("Here is a list of all the valid categories")
-                            .appendCodeBlock(StringUtils.join(AirUtils.WEEB_API.typesCached, ", "), "LDIF")
+                            .appendCodeBlock(StringUtils.join(weebTags, ", "), "LDIF")
                             .build())
                     return
                 }
-                val type = StringUtils.join(args, " ")
-                if (AirUtils.WEEB_API.typesCached.contains(type)) {
-                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, " "))
+                val type = StringUtils.join(args, "")
+                if (weebTags.contains(type)) {
+                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, ""))
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
                     sendMsg(event, "That category could not be found, Use `${PREFIX}weeb_image categories` for all categories")
@@ -134,6 +141,7 @@ class WeebCommands : WeebCommandBase() {
             "shrug",
             "lick",
             "owo",
-            "weeb"
+            "weeb",
+            "b1nzy"
     )
 }
