@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Arrays;
 
-@SuppressWarnings("SqlDialectInspection")
+@SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
@@ -103,6 +103,10 @@ public class GuildSettingsUtils {
                         .setAnnounceTracks(res.getBoolean("announceNextTrack"))
                         .setAutoDeHoist(res.getBoolean("autoDeHoist"))
                         .setFilterInvites(res.getBoolean("filterInvites"))
+                        .setSpamFilterState(res.getBoolean("spamFilterState"))
+                        .setMuteRoleId(res.getString("muteRoleId"))
+                        .setRatelimits(convertS2J(res.getArray("ratelimits")))
+                        .setKickState(res.getBoolean("kickInsteadState"))
                 );
             }
 
@@ -165,7 +169,8 @@ public class GuildSettingsUtils {
                     "filterInvites = ? ," +
                     "spamFilterState = ? ," +
                     "muteRoleId = ? ," +
-                    "ratelimits = ? " +
+                    "ratelimits = ? ," +
+                    "kickInsteadState = ? " +
                     "WHERE guildId='" + settings.getGuildId() + "'");
             smt.setBoolean(1, settings.isEnableJoinMessage());
             smt.setBoolean(2, settings.isEnableSwearFilter());
@@ -181,7 +186,8 @@ public class GuildSettingsUtils {
             smt.setBoolean(12, settings.isFilterInvites());
             smt.setBoolean(13, settings.getSpamFilterState());
             smt.setString(14, settings.getMuteRoleId());
-            smt.setArray(15, database.createArrayOf("ratelimits", convert(settings.getRatelimits())));
+            smt.setArray(15, database.createArrayOf("varchar", convertJ2S(settings.getRatelimits())));
+            smt.setBoolean(16, settings.getKickState());
             smt.executeUpdate();
 
         } catch (SQLException e1) {
@@ -282,7 +288,15 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\P{Print}", "");
     }
 
-    private static Object[] convert(long[] in) {
-        return Arrays.stream(in).boxed().toArray(Object[]::new);
+    private static Object[] convertJ2S(long[] in) {
+        return Arrays.stream(in).mapToObj(String::valueOf).toArray(String[]::new);
+    }
+
+    private static long[] convertS2J(Array in) {
+        try {
+            return Arrays.stream((String[]) in.getArray()).mapToLong(Long::valueOf).toArray();
+        } catch (SQLException e) {
+            return new long[]{20, 45, 60, 120, 240, 2400};
+        }
     }
 }

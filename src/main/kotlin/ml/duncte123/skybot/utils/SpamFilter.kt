@@ -23,19 +23,23 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             null -> {
                 this
             }
+            is Triple<*, *, *> -> {
+                if (any.first is Member && any.second is Message && any.third is Boolean) {
+                    return check(any as Triple<Member, Message, Boolean>)
+                }
+                this
+            }
             is Pair<*, *> -> {
                 if (any.first is Member && any.second is Message) {
-                    return check(any as Pair<Member, Message>)
+                    return check(Triple(any.first as Member, any.second as Message, false))
                 }
                 this
             }
             is LongArray -> {
-                rates = any
-                this
+                applyRates(any)
             }
             is List<*> -> {
-                rates = any.filter { it is Long }.map { it as Long }.toLongArray()
-                this
+                applyRates(any.filter { it is Long }.map { it as Long })
             }
             else -> {
                 this
@@ -46,7 +50,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
     /**
      * @return {@code true} when the message is spam.
      */
-    public infix fun check(data: Pair<Member, Message>): Boolean {
+    public infix fun check(data: Triple<Member, Message, Boolean>): Boolean {
         val author = data.first
         val guild = author.guild
         val user = author.user
@@ -84,7 +88,11 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
             val ratelimit = rates[warnings.coerceIn(0, 5)]
             ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild, jda)
-            ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
+            if (data.third) {
+                ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
+            } else {
+                ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
+            }
         }
 
         return returnValue
