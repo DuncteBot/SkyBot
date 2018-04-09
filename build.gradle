@@ -76,10 +76,10 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '1.2.0'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_354'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_355'
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.58'
-    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: 'cd20026' ) {
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.62'
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '36f2bf8' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
     //Commons text, because UnicodeUnescaper
@@ -173,3 +173,4 @@ def getGitHash() {
     }
     return stdout.toString().trim()
 }
+
