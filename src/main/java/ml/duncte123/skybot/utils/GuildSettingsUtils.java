@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class GuildSettingsUtils {
@@ -105,7 +106,7 @@ public class GuildSettingsUtils {
                         .setFilterInvites(res.getBoolean("filterInvites"))
                         .setSpamFilterState(res.getBoolean("spamFilterState"))
                         .setMuteRoleId(res.getString("muteRoleId"))
-                        .setRatelimits(convertS2J(res.getArray("ratelimits")))
+                        .setRatelimits(convertS2J(res.getString("ratelimits").replaceAll("\\P{Print}", "")))
                         .setKickState(res.getBoolean("kickInsteadState"))
                 );
             }
@@ -186,7 +187,7 @@ public class GuildSettingsUtils {
             smt.setBoolean(12, settings.isFilterInvites());
             smt.setBoolean(13, settings.getSpamFilterState());
             smt.setString(14, settings.getMuteRoleId());
-            smt.setArray(15, database.createArrayOf("varchar", convertJ2S(settings.getRatelimits())));
+            smt.setString(15, convertJ2S(settings.getRatelimits()));
             smt.setBoolean(16, settings.getKickState());
             smt.executeUpdate();
 
@@ -228,12 +229,13 @@ public class GuildSettingsUtils {
 
             if (rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
-                        "customWelcomeMessage, prefix, customLeaveMessage) " +
-                        "VALUES('" + g.getId() + "',  ? , ? , ? , ?)");
+                        "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
+                        "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, newGuildSettings.getCustomJoinMessage());
                 smt.setString(3, Settings.PREFIX);
                 smt.setString(4, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
+                smt.setString(5, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
                 smt.execute();
             }
         } catch (Exception e) {
@@ -288,15 +290,11 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\P{Print}", "");
     }
 
-    private static Object[] convertJ2S(long[] in) {
-        return Arrays.stream(in).mapToObj(String::valueOf).toArray(String[]::new);
+    private static String convertJ2S(long[] in) {
+        return Arrays.stream(in).mapToObj(String::valueOf).collect(Collectors.joining("|", "", ""));
     }
 
-    private static long[] convertS2J(Array in) {
-        try {
-            return Arrays.stream((String[]) in.getArray()).mapToLong(Long::valueOf).toArray();
-        } catch (SQLException e) {
-            return new long[]{20, 45, 60, 120, 240, 2400};
-        }
+    private static long[] convertS2J(String in) {
+        return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 }
