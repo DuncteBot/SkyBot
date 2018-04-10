@@ -19,7 +19,7 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
-import kotlin.Pair;
+import kotlin.Triple;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.objects.command.Command;
@@ -177,10 +177,11 @@ public class BotListener extends ListenerAdapter {
 
             if (settings.getSpamFilterState()) {
                 Message messageToCheck = event.getMessage();
-                long[] rates = new long[]{20, 45, 60, 120, 240, 2400}; //settings.get
+                long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
-                if (spamFilter.check(new Pair<>(event.getMember(), event.getMessage()))) {
-                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(), "muted", "spam", event.getGuild());
+                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
+                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
+                            settings.getKickState() ? "kicked" : "muted", "spam", event.getGuild());
                 }
             }
         }

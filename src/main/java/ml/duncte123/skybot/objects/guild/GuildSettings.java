@@ -41,6 +41,7 @@ public class GuildSettings {
     private boolean spamFilterState = false;
     private String muteRoleId = null;
     private long[] ratelimits = new long[]{};
+    private boolean kickInstead = false;
 
     /**
      * This will init everything
@@ -320,8 +321,18 @@ public class GuildSettings {
         return ratelimits;
     }
 
-    public void setRatelimits(long[] ratelimits) {
+    public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
+        return this;
+    }
+
+    public boolean getKickState() {
+        return kickInstead;
+    }
+
+    public GuildSettings setKickState(boolean newState) {
+        kickInstead = newState;
+        return this;
     }
 
     /**

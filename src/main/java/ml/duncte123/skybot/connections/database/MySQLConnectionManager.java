@@ -170,6 +170,10 @@ class MySQLConnectionManager
                     "  `serverDesc` text DEFAULT NULL,\n" +
                     "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
                     "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
+                    "  `spamFilterState` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `kickInsteadState` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `muteRoleId` varchar(255) DEFAULT NULL,\n" +
+                    "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");

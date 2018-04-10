@@ -26,8 +26,9 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.stream.Collectors;
 
-@SuppressWarnings("SqlDialectInspection")
+@SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
@@ -103,6 +104,10 @@ public class GuildSettingsUtils {
                         .setAnnounceTracks(res.getBoolean("announceNextTrack"))
                         .setAutoDeHoist(res.getBoolean("autoDeHoist"))
                         .setFilterInvites(res.getBoolean("filterInvites"))
+                        .setSpamFilterState(res.getBoolean("spamFilterState"))
+                        .setMuteRoleId(res.getString("muteRoleId"))
+                        .setRatelimits(convertS2J(res.getString("ratelimits").replaceAll("\\P{Print}", "")))
+                        .setKickState(res.getBoolean("kickInsteadState"))
                 );
             }
 
@@ -165,7 +170,8 @@ public class GuildSettingsUtils {
                     "filterInvites = ? ," +
                     "spamFilterState = ? ," +
                     "muteRoleId = ? ," +
-                    "ratelimits = ? " +
+                    "ratelimits = ? ," +
+                    "kickInsteadState = ? " +
                     "WHERE guildId='" + settings.getGuildId() + "'");
             smt.setBoolean(1, settings.isEnableJoinMessage());
             smt.setBoolean(2, settings.isEnableSwearFilter());
@@ -181,7 +187,8 @@ public class GuildSettingsUtils {
             smt.setBoolean(12, settings.isFilterInvites());
             smt.setBoolean(13, settings.getSpamFilterState());
             smt.setString(14, settings.getMuteRoleId());
-            smt.setArray(15, database.createArrayOf("ratelimits", convert(settings.getRatelimits())));
+            smt.setString(15, convertJ2S(settings.getRatelimits()));
+            smt.setBoolean(16, settings.getKickState());
             smt.executeUpdate();
 
         } catch (SQLException e1) {
@@ -222,12 +229,13 @@ public class GuildSettingsUtils {
 
             if (rows == 0) {
                 PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
-                        "customWelcomeMessage, prefix, customLeaveMessage) " +
-                        "VALUES('" + g.getId() + "',  ? , ? , ? , ?)");
+                        "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
+                        "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?)");
                 smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
                 smt.setString(2, newGuildSettings.getCustomJoinMessage());
                 smt.setString(3, Settings.PREFIX);
                 smt.setString(4, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
+                smt.setString(5, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
                 smt.execute();
             }
         } catch (Exception e) {
@@ -282,7 +290,11 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\P{Print}", "");
     }
 
-    private static Object[] convert(long[] in) {
-        return Arrays.stream(in).boxed().toArray(Object[]::new);
+    private static String convertJ2S(long[] in) {
+        return Arrays.stream(in).mapToObj(String::valueOf).collect(Collectors.joining("|", "", ""));
+    }
+
+    private static long[] convertS2J(String in) {
+        return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 }

@@ -254,4 +254,20 @@ public class ModerationUtils {
             }
         });
     }
+
+    public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {
+        Member self = guild.getSelfMember();
+
+        if (!self.hasPermission(Permission.KICK_MEMBERS)) {
+            MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+            return;
+        }
+
+        if (!self.canInteract(member)) {
+            MessageUtils.sendMsg(channel, "I can not access the member.");
+            return;
+        }
+        String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
+        guild.getController().kick(member).reason(reason).queue();
+    }
 }

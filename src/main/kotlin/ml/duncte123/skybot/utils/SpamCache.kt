@@ -3,7 +3,7 @@ package ml.duncte123.skybot.utils
 class SpamCache : HashMap<Long, List<Long>>() {
 
     @Throws(IllegalArgumentException::class)
-    public fun update(longs: LongArray, updateMode: Int = 0) {
+    public fun update(longs: LongArray, updateMode: Int = 0): SpamCache {
         when {
             updateMode == -1 && longs.size == 1 -> {
                 this - longs[0]
@@ -16,16 +16,16 @@ class SpamCache : HashMap<Long, List<Long>>() {
                             this[longs[0]] as ArrayList
 
                 if (updateMode == 0) {
-                    this + (longs[0] to msgIds.plus(longs[1]))
-                }
-                else if (updateMode == 1) {
-                    this + (longs[0] to msgIds.minus(longs[1]))
+                    this[longs[0]] = msgIds.plus(longs[1])
+                } else if (updateMode == 1) {
+                    this[longs[0]] = msgIds.minus(longs[1])
                 }
             }
             else -> {
                 throw IllegalArgumentException("Arguments don't match.")
             }
         }
+        return this
     }
 
 }
