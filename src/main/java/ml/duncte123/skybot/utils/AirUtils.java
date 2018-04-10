@@ -29,21 +29,18 @@ import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.requests.Requester;
-import net.dv8tion.jda.core.requests.RestAction;
-import net.dv8tion.jda.core.requests.Route;
-import okhttp3.Request;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Random;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})

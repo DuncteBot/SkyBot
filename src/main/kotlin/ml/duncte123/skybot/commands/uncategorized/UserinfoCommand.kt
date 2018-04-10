@@ -21,9 +21,11 @@ package ml.duncte123.skybot.commands.uncategorized
 import kotlinx.coroutines.experimental.launch
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Game
@@ -123,11 +125,15 @@ class UserinfoCommand : Command() {
         launch {
             if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
                     AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-                AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m), u.effectiveAvatarUrl) {
-                    event.channel.sendMessage(embed.setThumbnail("attachment://user_profile.png").build())
-                            .addFile(it, "user_profile.png").queue({}, {
-                                MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
-                            })
+                AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
+                        u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
+
+                    event.channel.sendFile(it, "stat.png",
+                            MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+                    ).queue({}, {
+                        ComparatingUtils.execCheck(it)
+                        MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+                    })
                 }
             } else {
                 MessageUtils.sendEmbed(event, embed.build())
