@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
@@ -26,19 +27,23 @@ import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.discord.user.Profile;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.requests.Requester;
+import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.requests.Route;
+import okhttp3.Request;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
@@ -285,5 +290,39 @@ public class AirUtils {
             default:
                 return "I CAN'T FLIP THIS TABLE";
         }
+    }
+
+    public static PendingRequest<Profile> getUserProfile(String uid) {
+        /*
+        * badges:
+        *
+        *   Discord dev: 1
+        *   Partner: 2
+        *   Nitro: (none, check for premium_since != null)
+        *   Hypesquad: 4
+        *   Bug Hunter: 8
+        */
+       /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
+        return WebUtils.ins.prepareRaw(
+                new Request.Builder()
+                        .get()
+                        .header("authorization", "")
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36 OPR/52.0.2871.40")
+                        .url(url)
+                        .build()
+                , b -> {
+                    JSONObject json = new JSONObject(Objects.requireNonNull(b).string());
+                    JSONObject userObj = json.optJSONObject("user");
+                    return new Profile(
+                            json.optString("premium_since", null),
+                            userObj.optInt("flags"),
+                            userObj.optString("id"),
+                            userObj.optString("avatar"),
+                            userObj.optString("username"),
+                            userObj.optString("discriminator")
+                    );
+                }
+        );*/
+       return null;
     }
 }

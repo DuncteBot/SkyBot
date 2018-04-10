@@ -121,7 +121,8 @@ class UserinfoCommand : Command() {
                 """.trimMargin())
 
         launch {
-            if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)) {
+            if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
+                    AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
                 AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m), u.effectiveAvatarUrl) {
                     event.channel.sendMessage(embed.setThumbnail("attachment://user_profile.png").build())
                             .addFile(it, "user_profile.png").queue({}, {
