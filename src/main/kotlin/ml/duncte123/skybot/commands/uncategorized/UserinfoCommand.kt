@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import kotlinx.coroutines.experimental.launch
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.discord.user.Profile
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -44,7 +44,7 @@ class UserinfoCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
         var u: User
-        var m: Member? //this can be lateinit var m: Member
+        var m: Member? //this can be lateinit var m: Member //Nope, check line 61
 
         if (args.isEmpty()) {
             u = event.author
@@ -82,7 +82,23 @@ class UserinfoCommand : Command() {
             MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
             return
         }
+        //A feature that will be implemented soon
+        /*AirUtils.getUserProfile(u.id).async ({
+            renderEmbed(event, m, it)
+        },{
+            renderEmbed(event, m, null)
+        })*/
+        renderEmbed(event, m, null)
+    }
 
+    private fun renderEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?) {
+        var badgesString = ""
+        if (p != null) {
+            badgesString = "**Badges:** " + p.badges.joinToString()
+        }
+
+        val u = m.user
+        println(u.toString())
         val joinOrder = StringBuilder()
         val joins = event.guild.memberCache.stream().sorted(
                 Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
@@ -105,39 +121,40 @@ class UserinfoCommand : Command() {
                 usrName = "[$usrName](https://bot.duncte123.me/)"
             joinOrder.append(" > ").append(usrName)
         }
+
         val embed = EmbedUtils.defaultEmbed()
                 .setColor(m.color)
-                .setDescription("User info for " + m.asMention + "\n\n")
                 .setThumbnail(u.effectiveAvatarUrl)
-                .appendDescription("""**Username + Discriminator:** ${String.format("%#s", u)}
-                    |**User Id:** ${u.id}
-                    |**Status:** ${AirUtils.gameToString(m.game)}
-                    |**Display Name:** ${m.effectiveName}
-                    |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
-                    |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
-                    |**Join Order:** $joinOrder
-                    |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
-                    |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
-                    |
-                    |_Use `${PREFIX}avatar [user]` to get a user's avatar_
-                """.trimMargin())
+                .setDescription("""User info for ${m.asMention}
+                        |
+                        |**Username + Discriminator:** ${String.format("%#s", u)}
+                        |**User Id:** ${u.id}
+                        |**Status:** ${AirUtils.gameToString(m.game)}
+                        |**Display Name:** ${m.effectiveName}
+                        |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Join Order:** $joinOrder
+                        |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
+                        |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
+                        |$badgesString
+                        |
+                        |_Use `${PREFIX}avatar [user]` to get a user's avatar_
+                    """.trimMargin())
 
-        launch {
-            if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                    AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-                AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
-                        u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
+        if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
+                AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
+                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
 
-                    event.channel.sendFile(it, "stat.png",
-                            MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                    ).queue({}, {
-                        ComparatingUtils.execCheck(it)
-                        MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
-                    })
-                }
-            } else {
-                MessageUtils.sendEmbed(event, embed.build())
+                event.channel.sendFile(it, "stat.png",
+                        MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+                ).queue({}, {
+                    ComparatingUtils.execCheck(it)
+                    MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+                })
             }
+        } else {
+            MessageUtils.sendEmbed(event, embed.build())
         }
     }
 
