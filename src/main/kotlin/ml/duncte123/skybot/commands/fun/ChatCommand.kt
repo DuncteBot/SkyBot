@@ -107,7 +107,7 @@ class ChatCommand : Command() {
                 response = oldBot.think(message)
             }
 
-            val `with"Ads"` = Random().nextInt(500) in 211 until 268
+            val `with"Ads"` = Random().nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
                 response = response.replace(oldValue = element.toString(),
