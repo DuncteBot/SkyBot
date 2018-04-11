@@ -28,8 +28,10 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
+import java.util.*
 
 class ChatCommand : Command() {
 
@@ -62,13 +64,13 @@ class ChatCommand : Command() {
             return
         }
 
-        if (!hasUpvoted(event.author)) {
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
-                    "I'm sorry but you can't use the chat feature because you haven't up-voted the bot." +
-                            " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)"))
-            return
-        }
+//        if (!hasUpvoted(event.author)) {
+//            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
+//                    "I'm sorry but you can't use the chat feature because you haven't up-voted the bot." +
+//                            " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
+//                            ") or become a patreon [here](https://patreon.com/duncte123)"))
+//            return
+//        }
 
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
@@ -105,10 +107,19 @@ class ChatCommand : Command() {
                 response = oldBot.think(message)
             }
 
+            val `with"Ads"` = Random().nextInt(500) in 211 until 268
+
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response.replace(oldValue = element.toString(), newValue = "<${element.attr("href")}>")
+                response = response.replace(oldValue = element.toString(),
+                        newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else "<${element.attr("href")}>")
             }
-            MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+            if (`with"Ads"`) {
+                response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
+                        "or becoming a patron [here](https://patreon.com/duncte123)."
+                MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
+            } else {
+                MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+            }
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 

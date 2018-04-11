@@ -77,6 +77,11 @@ public class BotListener extends ListenerAdapter {
     private final ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Settings-Thread"));
     /**
+     * This timer is for checking new quotes
+     */
+    private final ScheduledExecutorService spamUpdateService = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "Spam-Thread"));
+    /**
      * A custom consumer that cancels the stupid unknown message error
      */
     private final Consumer<Throwable> CUSTOM_QUEUE_ERROR = it -> {
