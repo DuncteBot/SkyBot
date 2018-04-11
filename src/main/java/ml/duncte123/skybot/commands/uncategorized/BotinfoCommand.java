@@ -68,17 +68,19 @@ public class BotinfoCommand extends Command {
                 .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
                         "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                        "\nIf you need any support you can join the support guild [here](https://discord.gg/NKM9Xtk)", true)
+                        "\n[**Support server**](https://discord.gg/NKM9Xtk) \u2022 [**Website**](https://bot.duncte123.me) \u2022 " +
+                        "[**Invite me**](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)" +
+                        "\n\u200B", true)
                 .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.VERSION + "\n"
                         + "**Operating System:** " + OS + "\n" +
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
-                        "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)", false)
+                        "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
                 .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") + ") and Kotlin\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
-                        "**Weeb.java version:** " + WeebApi.VERSION, false)
+                        "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to " +
                         "[donate](https://paypal.me/duncte123) any amount.", false)
                 .build();

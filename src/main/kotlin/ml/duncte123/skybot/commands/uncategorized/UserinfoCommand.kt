@@ -36,7 +36,8 @@ import net.dv8tion.jda.core.utils.MiscUtil
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.File
-import java.io.InputStream
+import java.nio.file.Files
+import java.nio.file.StandardCopyOption
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -162,7 +163,8 @@ class UserinfoCommand : Command() {
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
 
                 val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
-                targetFile.copyInputStreamToFile(it)
+
+                Files.copy(it, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
 
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
@@ -192,14 +194,6 @@ class UserinfoCommand : Command() {
             OnlineStatus.IDLE -> StatusType.IDLE
             OnlineStatus.INVISIBLE -> StatusType.OFFLINE
             else -> StatusType.ONLINE
-        }
-    }
-
-    private fun File.copyInputStreamToFile(inputStream: InputStream) {
-        inputStream.use { input ->
-            this.outputStream().use { fileOut ->
-                input.copyTo(fileOut)
-            }
         }
     }
 
