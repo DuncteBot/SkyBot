@@ -30,6 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.sql.Connection;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -68,9 +69,13 @@ public class SkyBot {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
+            Connection conn = AirUtils.DB.getConnManager().getConnection();
             if (!AirUtils.DB.isConnected()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
+            } else {
+                logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
+                conn.close();
             }
         } else {
             int startIn = 5;

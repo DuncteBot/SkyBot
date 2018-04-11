@@ -31,18 +31,11 @@ public class DBManager {
      * This is the database name
      */
     private final String name;
-
-    /**
-     * This is true if we are connected to the database
-     */
-    private final boolean isConnected;
-
     /**
      * This will set our stuff up
      */
     public DBManager() {
         this.connManager = createDBManager();
-        this.isConnected = connManager.isConnected();
         this.name = connManager.getName();
     }
 
@@ -57,7 +50,7 @@ public class DBManager {
      * @return true if we are connected
      */
     public boolean isConnected() {
-        return this.isConnected;
+        return connManager.isConnected();
     }
 
     /**

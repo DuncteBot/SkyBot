@@ -106,7 +106,7 @@ public class GuildSettingsUtils {
                         .setFilterInvites(res.getBoolean("filterInvites"))
                         .setSpamFilterState(res.getBoolean("spamFilterState"))
                         .setMuteRoleId(res.getString("muteRoleId"))
-                        .setRatelimits(convertS2J(res.getString("ratelimits").replaceAll("\\P{Print}", "")))
+                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                         .setKickState(res.getBoolean("kickInsteadState"))
                 );
             }
@@ -296,5 +296,12 @@ public class GuildSettingsUtils {
 
     private static long[] convertS2J(String in) {
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
+    }
+
+    private static long[] ratelimmitChecks(String fromDb) {
+        if(fromDb == null)
+            return new long[] {20, 45, 60, 120, 240, 2400};
+
+        return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
     }
 }

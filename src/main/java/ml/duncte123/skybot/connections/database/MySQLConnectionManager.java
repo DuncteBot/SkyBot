@@ -183,8 +183,8 @@ class MySQLConnectionManager
                             "VALUES (DEFAULT, 'duncte123', 'FIRST')");
                 }
             }
-            //close();
-        } catch (SQLException e) {
+            close();
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

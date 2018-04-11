@@ -33,13 +33,14 @@ public class ChangeLogCommand extends Command {
         WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
             String date1 = json.getJSONObject(1).getString("published_at");
             String date2 = json.getJSONObject(0).getString("published_at");
-            WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1 +
-                    "&until=" + date2).async(commits -> {
+            WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1
+            + "&until=" + date2).async(commits -> {
                 EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                        .setTitle("Changelog for DuncetBot", "https://github.com/duncte123/DuncteBot");
+                        .setTitle("Changelog for DuncetBot", "https://github.com/duncte123/SkyBot");
                 commits.forEach(c -> {
                     JSONObject j = (JSONObject) c;
-                    eb.appendDescription(j.getJSONObject("commit").getString("message") + " - " +
+                    eb.appendDescription("**" +
+                            j.getJSONObject("commit").getString("message") + "** - " +
                                     j.getJSONObject("committer").getString("login") + "\n");
                 });
                 MessageUtils.sendEmbed(event, eb.build());

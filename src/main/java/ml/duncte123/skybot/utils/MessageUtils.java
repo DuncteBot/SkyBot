@@ -72,7 +72,9 @@ public class MessageUtils {
      */
     public static void sendErrorWithMessage(Message message, String text) {
         sendError(message);
-        sendMsg(message.getTextChannel(), text);
+        new MessageBuilder().append(text).buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach(message1 ->
+                sendMsg(message.getTextChannel(), message1)
+        );
     }
 
     /**

@@ -27,7 +27,7 @@ import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.slf4j.LoggerFactory
+import org.jsoup.Jsoup
 import java.lang.management.ManagementFactory
 import java.time.temporal.ChronoUnit
 
@@ -109,6 +109,11 @@ class OneLinerCommands : Command() {
                     }
                 }
             }
+            "xkcd" -> {
+                WebUtils.ins.getText("https://c.xkcd.com/random/comic/").async {
+                    MessageUtils.sendMsg(event, "https:" + Jsoup.parse(it).select("#comic img").attr("src"))
+                }
+            }
             else -> println("Invoke was invalid: $invoke")
         }
     }
@@ -166,6 +171,9 @@ class OneLinerCommands : Command() {
                     |Usage: `$PREFIX$invoke [username]`
                 """.trimMargin()
             }
+            "xkcd" -> """Get a random comic from xkcd.com
+                |Usage: `$PREFIX$invoke`
+            """.trimMargin()
             else -> "invalid invoke"
         }
     }
@@ -181,10 +189,11 @@ class OneLinerCommands : Command() {
             |`${PREFIX}yesno` => Chooses between yes or no
             |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
             |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
+            |'${PREFIX}xkcd' => Get a random comic from xkcd.com
     """.trimMargin()
 
     override fun getName() = "ping"
 
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-            "insta", "donate", "insta")
+            "insta", "donate", "insta", "xkcd")
 }

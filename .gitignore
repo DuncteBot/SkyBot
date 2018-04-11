@@ -136,3 +136,5 @@ skybot-updater/updater\.json
 config_old\.json
 
 !gradle/wrapper/*
+
+/user_avatars/*
