@@ -300,7 +300,7 @@ public class GuildSettingsUtils {
 
     private static long[] ratelimmitChecks(String fromDb) {
         if(fromDb == null)
-            return new long[0];
+            return new long[] {20, 45, 60, 120, 240, 2400};
 
         return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
     }
