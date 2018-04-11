@@ -22,6 +22,7 @@ import fredboat.audio.player.LavalinkManager;
 import kotlin.Triple;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
+import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -42,9 +43,12 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.concurrent.Executors;
@@ -109,7 +113,16 @@ public class BotListener extends ListenerAdapter {
         if (settingsUpdateTimerRunning)
             this.settingsUpdateService.shutdown();
 
+        //clear the userinfo folder on shutdown as well
+        String imgDir = ((UserinfoCommand) AirUtils.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
+        try {
+            FileUtils.cleanDirectory(new File(imgDir));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         AirUtils.stop();
+
         System.exit(0);
     }
 

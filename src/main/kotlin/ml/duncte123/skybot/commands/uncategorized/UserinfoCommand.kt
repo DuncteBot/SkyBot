@@ -33,13 +33,29 @@ import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.utils.MiscUtil
+import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
+import java.io.File
+import java.io.InputStream
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.stream.Collectors
 
 class UserinfoCommand : Command() {
+
+    val folderName = "user_avatars"
+
+    init {
+        val imgDir = File(folderName)
+
+        //create the dir
+        if(!imgDir.exists())
+            imgDir.mkdir()
+
+        //clean the folder
+        FileUtils.cleanDirectory(imgDir)
+    }
 
 
     override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
@@ -98,7 +114,6 @@ class UserinfoCommand : Command() {
         }
 
         val u = m.user
-        println(u.toString())
         val joinOrder = StringBuilder()
         val joins = event.guild.memberCache.stream().sorted(
                 Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
@@ -146,7 +161,10 @@ class UserinfoCommand : Command() {
             AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
 
-                event.channel.sendFile(it, "stat.png",
+                val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
+                targetFile.copyInputStreamToFile(it)
+
+                event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue({}, {
                     ComparatingUtils.execCheck(it)
@@ -174,6 +192,14 @@ class UserinfoCommand : Command() {
             OnlineStatus.IDLE -> StatusType.IDLE
             OnlineStatus.INVISIBLE -> StatusType.OFFLINE
             else -> StatusType.ONLINE
+        }
+    }
+
+    private fun File.copyInputStreamToFile(inputStream: InputStream) {
+        inputStream.use { input ->
+            this.outputStream().use { fileOut ->
+                input.copyTo(fileOut)
+            }
         }
     }
 

@@ -144,11 +144,11 @@ class SQLiteDatabaseConnectionManager
                             "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
                             "customWelcomeMessage TEXT NOT NULL," +
                             "serverDesc TEXT NULL," +
-                            "customLeaveMessage TEXT NOT NULL" +
+                            "customLeaveMessage TEXT NOT NULL," +
                             "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
                             "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
                             "muteRoleId varchar(255) DEFAULT NULL," +
-                            "ratelimits text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,);"
+                            "ratelimits TEXT DEFAULT NULL);"
             );
 
             connection.createStatement().execute(
