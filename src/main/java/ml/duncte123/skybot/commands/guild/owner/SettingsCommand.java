@@ -252,6 +252,51 @@ public class SettingsCommand extends Command {
                 sendMsg(event, "Auto de-hoisting has been **"
                         + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
                 break;
+
+            case "togglespamfilter":
+                boolean spamState = !settings.getSpamFilterState();
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setSpamFilterState(spamState));
+                sendMsg(event, "Spamfilter **" + (spamState ? "activated" : "disabled") + "**!");
+                break;
+
+            case "spamrole":
+
+                if (!event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+                    sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
+                    return;
+                }
+
+                if (args.length == 0) {
+                    sendMsg(event, "Incorrect usage: `" + PREFIX + "spamrole <role name/disable>`");
+                    return;
+                }
+
+                if ("disable".equals(args[0])) {
+                    sendMsg(event, "SpamRole feature & SpamFilter has been disabled");
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setMuteRoleId(""));
+                    GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setSpamFilterState(false));
+                    return;
+                }
+
+                List<Role> foundRoles = event.getGuild().getRolesByName(StringUtils.join(args, " "), true);
+
+                if (foundRoles.size() == 0) {
+                    if (event.getMessage().getMentionedRoles().size() > 0) {
+                        foundRoles.add(event.getMessage().getMentionedRoles().get(0));
+                    } else {
+                        sendMsg(event, "I could not find any roles with that name");
+                        return;
+                    }
+                }
+                if (foundRoles.get(0).getPosition() >= event.getGuild().getSelfMember().getRoles().get(0).getPosition()) {
+                    sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
+                    return;
+                }
+
+                GuildSettingsUtils.updateGuildSettings(event.getGuild(), settings.setAutoroleRole(foundRoles.get(0).getId()));
+                sendMsg(event, "AutoRole has been set to " + foundRoles.get(0).getAsMention());
+
+                break;
         }
     }
 
@@ -304,6 +349,16 @@ public class SettingsCommand extends Command {
             case "toggleautodehoist":
                 return "Toggles if if the bot should auto de-hoist users\n" +
                         "Usage: `" + PREFIX + invoke + "`";
+            case "togglespamfilter":
+                return "Toggles whether we should handle your incomming spam.\n" +
+                        "Usage `" + PREFIX + invoke + "`";
+            case "spamrole":
+                return "Gives members a role when they spam.\n" +
+                        "Usage: `" + PREFIX + invoke + " <role>`";
+            case "setratelimits":
+                return "Sets our cooldown for un-muting your spammer of choice.\n" +
+                        "Usage: `" + PREFIX + invoke + " <1|2|3|4|5>`\n" +
+                        "Example: " + PREFIX + invoke + "20|45|60|120|240|2400";
 
             default:
                 return "invalid invoke";
@@ -313,19 +368,22 @@ public class SettingsCommand extends Command {
     @Override
     public String help() {
         return "Modify the settings on the bot.\n" +
-                "`" + PREFIX + "settings` => Shows the current settings\n" +
-                "`" + PREFIX + "setPrefix <prefix>` => Sets the new prefix\n" +
-                "`" + PREFIX + "setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins\n" +
-                "`" + PREFIX + "setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves\n" +
-                "`" + PREFIX + "toggleJoinMessage` => Turns the join message on or off\n" +
-                "`" + PREFIX + "toggleSwearFilter` => Turns the swearword filter on or off\n" +
-                "`" + PREFIX + "setLogChannel <text channel>` => Sets the channel to log messages in\n" +
-                "`" + PREFIX + "setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages\n" +
-                "`" + PREFIX + "autorole <role>` => Gives members a role when they join\n" +
-                "`" + PREFIX + "setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo\n" +
-                "`" + PREFIX + "toggleannouncetracks` => Toggles if the player should announce the next playing track\n" +
-                "`" + PREFIX + "togglefilterinvites` => Toggles if the bot should delete messages that contain invites\n" +
-                "`" + PREFIX + "toggleautodehoist` => Toggles if if the bot should auto de-hoist users\n"
+                "`" + PREFIX + "settings` => Shows the current settings.\n" +
+                "`" + PREFIX + "setPrefix <prefix>` => Sets the new prefix.\n" +
+                "`" + PREFIX + "setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins.\n" +
+                "`" + PREFIX + "setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves.\n" +
+                "`" + PREFIX + "toggleJoinMessage` => Turns the join message on or off.\n" +
+                "`" + PREFIX + "toggleSwearFilter` => Turns the swearword filter on or off.\n" +
+                "`" + PREFIX + "setLogChannel <text channel>` => Sets the channel to log messages in.\n" +
+                "`" + PREFIX + "setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages.\n" +
+                "`" + PREFIX + "autorole <role>` => Gives members a role when they join.\n" +
+                "`" + PREFIX + "setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo.\n" +
+                "`" + PREFIX + "toggleannouncetracks` => Toggles if the player should announce the next playing track.\n" +
+                "`" + PREFIX + "togglefilterinvites` => Toggles if the bot should delete messages that contain invites.\n" +
+                "`" + PREFIX + "toggleautodehoist` => Toggles if if the bot should auto de-hoist users.\n" +
+                "`" + PREFIX + "togglespamfilter` => Toggles whether we should handle your incomming spam.\n" +
+                "`" + PREFIX + "spamrole <role>` => Gives members a role when they spam.\n" +
+                "`" + PREFIX + "setratelimits <1|2|3|4|5>` => Sets our cooldown for un-muting your spammer of choice.\n"
                 ;
     }
 
@@ -354,7 +412,10 @@ public class SettingsCommand extends Command {
                 "setdescription",
                 "toggleannouncetracks",
                 "togglefilterinvites",
-                "toggleautodehoist"
+                "toggleautodehoist",
+                "togglespamfilter",
+                "spamrole",
+                "setratelimits"
         };
     }
 
