@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -34,12 +35,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@SuppressWarnings("WeakerAccess")
 public class CommandManager {
 
     /**
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
+    public final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     /**
      * This makes sure that all the commands are added
@@ -79,6 +82,15 @@ public class CommandManager {
 
     public List<Command> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
+    }
+
+    public CustomCommand getCustomCommand(String invoke, String guildId) {
+        Optional<CustomCommand> cmd = customCommands.stream().filter(
+                c -> c.getName().equals(invoke) && c.getGuildId().equals(guildId)
+        ).findFirst();
+
+        return cmd.orElse(null);
+
     }
 
     /**
@@ -131,11 +143,21 @@ public class CommandManager {
                 "").split("\\s+");
         final String invoke = split[0].toLowerCase();
 
-        Command cmd = getCommand(invoke);
+        dispatchCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
+    }
 
+    public void dispatchCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+        Command cmd = getCommand(invoke);
+        if (cmd == null) {
+            cmd = (Command) getCustomCommand(invoke, event.getGuild().getId());
+        }
+        dispatchCommand(cmd, invoke, args, event);
+    }
+
+    public void dispatchCommand(Command cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (cmd != null) {
             try {
-                cmd.executeCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
+                cmd.executeCommand(invoke, args, event);
             } catch (Throwable ex) {
                 ComparatingUtils.execCheck(ex);
             }

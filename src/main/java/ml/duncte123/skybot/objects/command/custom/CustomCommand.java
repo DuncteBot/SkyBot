@@ -18,10 +18,15 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+
 public interface CustomCommand {
 
-    String getInvoke();
+    String getName();
     String getMessage();
     String getGuildId();
+
+    void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
 
 }

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.command.custom;
 
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -33,11 +34,8 @@ public class CustomCommandImpl extends Command implements CustomCommand {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
-    }
 
-    @Override
-    public String getInvoke() {
-        return invoke;
+        this.category = CommandCategory.UNLISTED;
     }
 
     @Override
