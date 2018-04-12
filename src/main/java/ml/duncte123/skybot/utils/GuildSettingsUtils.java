@@ -298,7 +298,7 @@ public class GuildSettingsUtils {
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 
-    private static long[] ratelimmitChecks(String fromDb) {
+    public static long[] ratelimmitChecks(String fromDb) {
         if(fromDb == null)
             return new long[] {20, 45, 60, 120, 240, 2400};
 
