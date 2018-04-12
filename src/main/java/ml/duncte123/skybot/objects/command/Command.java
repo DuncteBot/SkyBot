@@ -49,6 +49,9 @@ import java.util.concurrent.TimeUnit;
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
+    protected final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(2,
+            r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
      */

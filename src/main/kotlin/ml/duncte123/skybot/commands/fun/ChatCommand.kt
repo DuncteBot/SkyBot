@@ -32,11 +32,16 @@ import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
 import java.util.*
+import java.util.concurrent.TimeUnit
+import java.util.concurrent.TimeUnit.MILLISECONDS
+import java.util.concurrent.TimeUnit.MINUTES
+
 
 class ChatCommand : Command() {
 
     private val builder: ChatterBot
-    private var oldBot: ChatterBotSession
+    //private var oldBot: ChatterBotSession
+    private val sessions = TreeMap<String, ChatSession>()
     private val responses = arrayOf(
             "My prefix in this guild is *`{PREFIX}`*",
             "Thanks for asking, my prefix here is *`{PREFIX}`*",
@@ -51,9 +56,24 @@ class ChatCommand : Command() {
         //New chat Bot :D
         builder = ChatterBotFactory()
                 .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-        oldBot = builder.createSession()
+        //oldBot = builder.createSession()
 
         logger.info("AI has been loaded.")
+
+        commandService.scheduleAtFixedRate({
+            val temp = TreeMap<String, ChatSession>(sessions)
+            val now = Date()
+            val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
+            var cleared = 0
+            temp.forEach {
+                val duration = now.time - it.value.time.time
+                if (duration >= MAX_DURATION) {
+                    sessions.remove(it.key)
+                    cleared++
+                }
+            }
+            logger.info("Removed $cleared chat sessions that have been inactive for 20 minutes.")
+        }, 30L, 30L, TimeUnit.MINUTES)
     }
 
 
@@ -96,23 +116,32 @@ class ChatCommand : Command() {
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
+        if(!sessions.containsKey(event.author.id)) {
+            sessions[event.author.id] = ChatSession(builder.createSession())
+            //sessions[event.author.id]?.session =
+        }
+
         async {
             logger.debug("Message: \"$message\"")
-            var response = oldBot.think(message)
+            //Set the current date in the object
+            sessions[event.author.id]?.time = Date()
+
+            var response = sessions[event.author.id]?.session?.think(message)
 
             //Reset the ai if it dies
             if (response == "" || response == "You have been banned from talking to me." ||
                     response == "I am not talking to you any more.") {
-                resetAi()
-                response = oldBot.think(message)
+                sessions[event.author.id]?.session = builder.createSession()
+                response = sessions[event.author.id]?.session?.think(message)
             }
 
             val `with"Ads"` = Random().nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response.replace(oldValue = element.toString(),
+                response = response?.replace(oldValue = element.toString(),
                         newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else "<${element.attr("href")}>")
             }
+            response = response?.replace("Chomsky", "DuncteBot")
             if (`with"Ads"`) {
                 response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
                         "or becoming a patron [here](https://patreon.com/duncte123)."
@@ -129,8 +158,12 @@ class ChatCommand : Command() {
             "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
+}
 
-    private fun resetAi() {
-        oldBot = builder.createSession()
-    }
+/**
+ * Little wrapper class to help us keep track of inactive sessions
+ */
+class ChatSession(session_a: ChatterBotSession) {
+    var time = Date()
+    var session = session_a
 }
