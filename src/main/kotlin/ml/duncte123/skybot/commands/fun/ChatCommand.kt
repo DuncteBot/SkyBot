@@ -129,13 +129,14 @@ class ChatCommand : Command() {
             var response = sessions[event.author.id]?.session?.think(message)
 
             //Reset the ai if it dies
-            if (response == "" || response == "You have been banned from talking to me." ||
+            //But not for now to see how user separated sessions go
+            /*if (response == "" || response == "You have been banned from talking to me." ||
                     response == "I am not talking to you any more.") {
                 sessions[event.author.id]?.session = builder.createSession()
                 response = sessions[event.author.id]?.session?.think(message)
-            }
+            }*/
 
-            val `with"Ads"` = Random().nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
+            val `with"Ads"` = AirUtils.RAND.nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
                 response = response?.replace(oldValue = element.toString(),
