@@ -98,8 +98,8 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size < 8)
-                        return false
+                    if (msgs.size > 8)
+                        return true
                 }
             }
 
