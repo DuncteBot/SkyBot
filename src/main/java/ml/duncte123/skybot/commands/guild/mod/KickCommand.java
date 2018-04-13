@@ -39,13 +39,8 @@ public class KickCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command");
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
+            MessageUtils.sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.");
             return;
         }
 
@@ -57,7 +52,7 @@ public class KickCommand extends Command {
         try {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
-            if (toKick.equals(event.getAuthor()) &&
+            if (toKick.equals(event.getAuthor()) ||
                     !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
