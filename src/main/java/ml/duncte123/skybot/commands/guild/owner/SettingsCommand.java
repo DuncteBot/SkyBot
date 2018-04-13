@@ -304,7 +304,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setAutoroleRole(rolesFound.get(0).getId()));
+                GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(rolesFound.get(0).getId()));
                 sendMsg(event, "SpamRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
