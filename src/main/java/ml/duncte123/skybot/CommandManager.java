@@ -84,6 +84,7 @@ public class CommandManager {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
+
     public CustomCommand getCustomCommand(String invoke, String guildId) {
         Optional<CustomCommand> cmd = customCommands.stream().filter(
                 c -> c.getName().equals(invoke) && c.getGuildId().equals(guildId)
@@ -91,6 +92,22 @@ public class CommandManager {
 
         return cmd.orElse(null);
 
+    }
+
+    public boolean addCustomCommand(CustomCommand command) {
+        if (command.getName().contains(" ")) {
+            throw new VRCubeException("Name can't have spaces!");
+        }
+
+        if (this.customCommands.stream().anyMatch(
+                (cmd) -> cmd.getName().equalsIgnoreCase(command.getName())
+                && cmd.getGuildId().equals(command.getGuildId())
+                )) {
+            return false;
+        }
+        this.customCommands.add(command);
+
+        return true;
     }
 
     /**
@@ -115,7 +132,6 @@ public class CommandManager {
             throw new VRCubeException("Name can't have spaces!");
         }
 
-        //ParallelStream for less execution time
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
             List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());

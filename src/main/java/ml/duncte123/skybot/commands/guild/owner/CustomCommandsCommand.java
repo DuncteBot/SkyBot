@@ -21,12 +21,16 @@ package ml.duncte123.skybot.commands.guild.owner;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+
+import java.util.Arrays;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
@@ -39,18 +43,24 @@ public class CustomCommandsCommand extends Command {
             return;
         }
 
-        if (args.length < 1) {
+        if(args.length < 1) {
             sendMsg(event, "Insufficient arguments");
             return;
         }
+
         GuildSettings gs = getSettings(event.getGuild());
         switch (args.length) {
             case 1:
                 argsLength1(gs, args[0], event);
                 break;
 
+            case 2:
+                argsLength2(gs, args, event);
+                //sendMsg(event, "Insufficient arguments");
+                break;
+
             default:
-                sendMsg(event, "Insufficient arguments");
+                argsLengthOther(gs, args, event);
                 break;
         }
     }
@@ -64,13 +74,48 @@ public class CustomCommandsCommand extends Command {
                             .append(cmd.getName())
                             .append("\n")
             );
-            sendMsg(event, new MessageBuilder().appendCodeBlock(sb.toString(), "ldif").build());
+            sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
+                    .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
             CustomCommand cmd = AirUtils.COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
             //Run the custom command?
             AirUtils.COMMAND_MANAGER.dispatchCommand(((Command) cmd), arg, new String[0], event);
         }
+    }
+
+    private void argsLength2(GuildSettings s, String[] args, GuildMessageReceivedEvent event) {
+        //CHeck for deleting
+    }
+
+    private void argsLengthOther(GuildSettings s, String[] args, GuildMessageReceivedEvent event) {
+        if(args.length >= 3) {
+
+            if("new".equals(args[0])) {
+                //new command
+                String commandName = args[1];
+                String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+                String guildId = event.getGuild().getId();
+                if(!commandAlreadyExists(commandName, guildId)) {
+                    if(registerCustomCommand(commandName, commandAction, guildId)) {
+                        sendMsg(event, "Command added");
+                    } else {
+                        sendMsg(event, "Could not add this command");
+                    }
+                } else {
+                    sendMsg(event, "A command already exists for this server.");
+                }
+            }
+
+        }
+    }
+
+    private boolean commandAlreadyExists(String name, String guild) {
+        return AirUtils.COMMAND_MANAGER.getCustomCommand(name, guild) != null;
+    }
+
+    private boolean registerCustomCommand(String name, String action, String guildId) {
+        return AirUtils.COMMAND_MANAGER.addCustomCommand(new CustomCommandImpl( name, action, guildId ));
     }
 
     @Override
