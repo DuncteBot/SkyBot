@@ -135,10 +135,14 @@ public final class WebUtils extends Reliqua {
 
     public PendingRequest<String> shortenUrl(String url) throws NullPointerException {
         return postJSON(
-                "https://www.googleapis.com/urlshortener/v1/url?key=" +
+                "https://firebasedynamiclinks.googleapis.com/v1/shortLinks?key=" +
                         AirUtils.CONFIG.getString("apis.googl", "Google api key"),
-                new JSONObject().put("longUrl", url),
-                (r) -> new JSONObject(r.string()).getString("id"));
+                new JSONObject()
+                        .put("dynamicLinkInfo", new JSONObject()
+                                .put("dynamicLinkDomain", "g57v2.app.goo.gl").put("link", url))
+                        .put("suffix", new JSONObject("{\"option\": \"UNGUESSABLE\"}"))
+                ,
+                (r) -> new JSONObject(r.string()).getString("shortLink"));
     }
 
     public <T> PendingRequest<T> prepareRaw(Request request, RequestMapper<T> mapper) {

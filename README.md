@@ -6,15 +6,13 @@ SkyBot is a discord bot with music and mod commands
 If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 
-# How to setup?
-[Click here](https://github.com/duncte123/SkyBot/wiki/How-to-run-the-bot) to learn how to set the bot up
-
 # How to invite the bot to a server?
 
-Go to `https://discordapp.com/oauth2/authorize?&client_id=<CLIENT_ID>&scope=bot&permissions=0` and replace `<CLIENT_ID>` with the client id of the bot on the top of the page. Then you will be asked, on which server the bot should join.
+Go to `https://discordapp.com/oauth2/authorize?&client_id=210363111729790977scope=bot&permissions=-1` and follow the steps on the website
 
-# Updater
-The update command requires an external application to work, to get the updater working please use [this application](https://github.com/ramidzkh/SkyBot-Updater/releases) to run SkyBot: [https://github.com/ramidzkh/SkyBot-Updater/releases](https://github.com/ramidzkh/SkyBot-Updater/releases)
+
+# How to setup? / Self hosting
+We don't support self hosting of the bot. If you try to host this bot yourself and it fails please do not come to us for support.
 
 # Libs
 The following libraries are used:
