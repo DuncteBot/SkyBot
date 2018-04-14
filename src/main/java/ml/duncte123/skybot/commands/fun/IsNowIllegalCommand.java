@@ -32,9 +32,6 @@ import java.util.concurrent.TimeUnit;
 
 public class IsNowIllegalCommand extends Command {
 
-    private final ScheduledExecutorService illegalService = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "illegalService"));
-
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         String input = StringUtils.join(args, " ")
@@ -48,7 +45,7 @@ public class IsNowIllegalCommand extends Command {
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
         MessageUtils.sendMsg(event, "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
                 WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData).async(txt ->
-                        illegalService.schedule(() -> {
+                        commandService.schedule(() -> {
 
                             String rawJson = getFileJSON(jsonData.getString("word"));
 

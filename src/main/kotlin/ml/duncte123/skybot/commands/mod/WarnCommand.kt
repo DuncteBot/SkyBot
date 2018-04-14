@@ -29,7 +29,7 @@ import java.util.*
 class WarnCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if (!event.member.hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
+        if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command")
             MessageUtils.sendError(event.message)
             return
@@ -46,7 +46,7 @@ class WarnCommand : Command() {
             return
         }
         if (!event.member.canInteract(target)) {
-            MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher position then you")
+            MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher or equal position than you")
             MessageUtils.sendError(event.message)
             return
         }

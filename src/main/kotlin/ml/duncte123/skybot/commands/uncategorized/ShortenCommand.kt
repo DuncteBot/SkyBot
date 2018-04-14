@@ -45,9 +45,16 @@ class ShortenCommand : Command() {
             return
         }
 
-        WebUtils.ins.shortenUrl(args[0]).async {
-            sendMsg(event, "Here is your shortened url: <$it>")
+        if(!args[0].startsWith("http://") && !args[0].startsWith("https://") ) {
+            sendMsg(event, "That does not look like a valid url")
+            return
         }
+
+        WebUtils.ins.shortenUrl(args[0]).async ({
+            sendMsg(event, "Here is your shortened url: <$it>")
+        }, {
+            sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")
+        })
     }
 
     override fun help(): String = """Shortens a url

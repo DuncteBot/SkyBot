@@ -49,11 +49,13 @@ import java.util.concurrent.TimeUnit;
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
+    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(2,
+            r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
      */
     protected static final String PREFIX = Settings.PREFIX;
-    private static boolean cooldown = false;
     /**
      * A list of users that have upvoted the bot
      */
@@ -67,16 +69,6 @@ public abstract class Command {
      * This tells the bot to display the aliases of the command in the help command
      */
     protected boolean displayAliasesInHelp = false;
-
-    public Command() {
-        if (Settings.useCooldown) {
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.scheduleWithFixedDelay(() -> {
-                if (cooldown)
-                    cooldown = false;
-            }, 0, 20, TimeUnit.SECONDS);
-        }
-    }
 
 
     private boolean checkVoteOnDBL(String userid) {
@@ -103,7 +95,7 @@ public abstract class Command {
      *
      * @return if the bot should take up the aliases in the help command
      */
-    public boolean isDisplayAliasesInHelp() {
+    public boolean shouldDisplayAliasesInHelp() {
         return displayAliasesInHelp;
     }
 

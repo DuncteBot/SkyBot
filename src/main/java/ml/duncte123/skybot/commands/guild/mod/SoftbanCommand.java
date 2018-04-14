@@ -39,13 +39,8 @@ public class SoftbanCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command");
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
+            MessageUtils.sendMsg(event, "You need the kick members permission for this command, please contact your server administrator about this");
             return;
         }
 
@@ -66,9 +61,9 @@ public class SoftbanCommand extends Command {
                     nothing -> {
                         ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
                         MessageUtils.sendSuccess(event.getMessage());
+                        event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
                     }
             );
-            event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
         } catch (HierarchyException e) {
             //e.printStackTrace();
             MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");

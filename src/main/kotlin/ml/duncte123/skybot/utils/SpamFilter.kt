@@ -18,6 +18,14 @@ class SpamFilter : HashMap<Long, SpamCache>() {
         }
     }
 
+    public fun clearMessages() {
+        for (guildsSpamCache in this.values) {
+            for (memberId in guildsSpamCache.keys) {
+                guildsSpamCache[memberId] = ArrayList()
+            }
+        }
+    }
+
     @Suppress("UNCHECKED_CAST")
     operator fun plus(any: Any?): Any {
         return when (any) {
@@ -90,8 +98,8 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size < 8)
-                        return false
+                    if (msgs.size > 8)
+                        return true
                 }
             }
 
@@ -104,7 +112,9 @@ class SpamFilter : HashMap<Long, SpamCache>() {
                 ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
             }
             val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
-            msg.textChannel.deleteMessages(clearable).queue()
+            msg.textChannel.deleteMessages(clearable).queue{
+                this[guild.idLong]?.get(author.user.idLong)?.filter { !clearable.map { it.idLong }.contains(it) }
+            }
         }
 
         return returnValue

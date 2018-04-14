@@ -18,6 +18,12 @@
 
 package ml.duncte123.skybot.objects
 
+import ml.duncte123.skybot.utils.EmbedUtils
+import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.requests.RestAction
+
 class EvalFunctions {
 
     companion object {
@@ -32,5 +38,16 @@ class EvalFunctions {
             val the_thing = x + 2 - 1
             return the_thing
         }
+
+        @JvmStatic
+        fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
+            val embed = EmbedUtils.defaultEmbed()
+                    .addField("Guilds", shardManager.guildCache.size().toString(), true)
+                    .addField("Users", shardManager.userCache.size().toString(), true)
+                    .addField("Channels", (shardManager.textChannelCache.size()+shardManager.privateChannelCache.size()).toString(), true)
+                    .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
+            return channel.sendMessage(embed)
+        }
+
     }
 }

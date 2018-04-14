@@ -81,7 +81,7 @@ public class HelpEmbeds {
                     break;
             }
 
-            if (c.isDisplayAliasesInHelp())
+            if (c.shouldDisplayAliasesInHelp())
                 for (String alias : c.getAliases()) {
                     switch (c.getCategory()) {
                         case MAIN:

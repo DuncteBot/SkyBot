@@ -38,12 +38,12 @@ public abstract class MusicCommand extends Command {
     @SinceSkybot(version = "3.54.2")
     public static TLongLongMap cooldowns = new TLongLongHashMap();
     @SinceSkybot(version = "3.54.2")
-    private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "MusicCooldown - Thread"));
+    /*private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "MusicCooldown - Thread"));*/
     private static AudioUtils audioUtils = AudioUtils.ins;
 
     static {
-        service.scheduleWithFixedDelay(() ->
+        commandService.scheduleWithFixedDelay(() ->
                         cooldowns.forEachEntry((a, b) -> {
                             if (b > 0) {
                                 cooldowns.put(a, (b - 200));
@@ -84,7 +84,7 @@ public abstract class MusicCommand extends Command {
     @SinceSkybot(version = "3.54.2")
     @Author(nickname = "Sanduhr32", author = "Maurice R S")
     public static void shutdown() {
-        service.shutdown();
+        commandService.shutdown();
     }
 
     /**

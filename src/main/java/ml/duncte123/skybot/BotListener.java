@@ -81,7 +81,7 @@ public class BotListener extends ListenerAdapter {
     private final ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Settings-Thread"));
     /**
-     * This timer is for checking new quotes
+     * This timer is for clearing our caches
      */
     private final ScheduledExecutorService spamUpdateService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Spam-Thread"));
@@ -101,6 +101,10 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+    /**
+     * Tells us whether {@link #spamUpdateService} clears cache of our {@link #spamFilter}.
+     */
+    private boolean isCacheCleanerActive = false;
     /**
      * This is used to check if we should trigger a update for the guild count when we leave a guild
      */
@@ -296,6 +300,12 @@ public class BotListener extends ListenerAdapter {
             //This handles the updating from the setting and quotes
             settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
             settingsUpdateTimerRunning = true;
+        }
+
+        if (!isCacheCleanerActive) {
+            logger.info("Starting spam-cache-cleaner!");
+            spamUpdateService.scheduleAtFixedRate(spamFilter::clearMessages, 20, 11, TimeUnit.SECONDS);
+            isCacheCleanerActive = true;
         }
 
         //Update guild count from then the bot was offline (should never die tho)
