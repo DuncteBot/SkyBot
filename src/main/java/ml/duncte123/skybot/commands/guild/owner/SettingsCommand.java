@@ -70,6 +70,8 @@ public class SettingsCommand extends Command {
                         "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
                         "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
                         "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
+                        "**Spamfilter:** " + boolToEmoji(settings.getSpamFilterState()) + "\n" +
+                        "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
                         "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("")
