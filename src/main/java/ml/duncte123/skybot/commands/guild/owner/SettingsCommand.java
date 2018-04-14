@@ -203,14 +203,7 @@ public class SettingsCommand extends Command {
 
                 List<Role> rolesFound = guild.getRolesByName(StringUtils.join(args, " "), true);
 
-                if (rolesFound.size() == 0) {
-                    if (event.getMessage().getMentionedRoles().size() > 0) {
-                        rolesFound.add(event.getMessage().getMentionedRoles().get(0));
-                    } else {
-                        sendMsg(event, "I could not find any roles with that name");
-                        return;
-                    }
-                }
+                if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {
                     sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
                     return;
@@ -291,14 +284,7 @@ public class SettingsCommand extends Command {
 
                 List<Role> rolesFound = guild.getRolesByName(StringUtils.join(args, " "), true);
 
-                if (rolesFound.size() == 0) {
-                    if (event.getMessage().getMentionedRoles().size() > 0) {
-                        rolesFound.add(event.getMessage().getMentionedRoles().get(0));
-                    } else {
-                        sendMsg(event, "I could not find any roles with that name");
-                        return;
-                    }
-                }
+                if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {
                     sendMsg(event, "I'm sorry but I can't give that role to people, move my role above the role and try again.");
                     return;
@@ -334,6 +320,18 @@ public class SettingsCommand extends Command {
                 sendMsg(event, "The new rates are " + steps);
                 break;
         }
+    }
+
+    private boolean roleCheck(GuildMessageReceivedEvent event, List<Role> rolesFound) {
+        if (rolesFound.size() == 0) {
+            if (event.getMessage().getMentionedRoles().size() > 0) {
+                rolesFound.add(event.getMessage().getMentionedRoles().get(0));
+            } else {
+                sendMsg(event, "I could not find any roles with that name");
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override
@@ -386,7 +384,7 @@ public class SettingsCommand extends Command {
                 return "Toggles if if the bot should auto de-hoist users\n" +
                         "Usage: `" + PREFIX + invoke + "`";
             case "togglespamfilter":
-                return "Toggles whether we should handle your incomming spam.\n" +
+                return "Toggles whether we should handle your incoming spam.\n" +
                         "Usage: `" + PREFIX + invoke + "`";
             case "spamrole":
                 return "Gives members a role when they spam.\n" +
@@ -420,7 +418,7 @@ public class SettingsCommand extends Command {
                 "`" + PREFIX + "toggleannouncetracks` => Toggles if the player should announce the next playing track.\n" +
                 "`" + PREFIX + "togglefilterinvites` => Toggles if the bot should delete messages that contain invites.\n" +
                 "`" + PREFIX + "toggleautodehoist` => Toggles if if the bot should auto de-hoist users.\n" +
-                "`" + PREFIX + "togglespamfilter` => Toggles whether we should handle your incomming spam.\n" +
+                "`" + PREFIX + "togglespamfilter` => Toggles whether we should handle your incoming spam.\n" +
                 "`" + PREFIX + "spamrole <role>` => Gives members a role when they spam.\n" +
                 "`" + PREFIX + "setratelimits <1|2|3|4|5|6>` => Sets our cooldown for un-muting your spammer of choice.\n" +
                 "`" + PREFIX + "togglekickmode` => Toggles whether we should kick or assign a role for spammers.\n"
