@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
+import ml.duncte123.skybot.utils.WebUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
@@ -47,6 +48,17 @@ class WeebCommands : WeebCommandBase() {
             "lick" -> requestAndSend("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
             "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
+            "megumin" -> {
+                WebUtils.ins.getJSONObject("https://megumin.torque.ink/api/explosion").async({
+                    val chant = it.optString("chant")
+                    val img = it.optString("img")
+                    sendEmbed(event, getWeebEmbedImageAndDesc(chant, img))
+                }, {
+                    //When the site is down or dies
+                    val img = AirUtils.WEEB_API.getRandomImage("megumin")
+                    sendEmbed(event, getWeebEmbedImage(img.url))
+                })
+            }
             "weeb" -> {
                 if (args.isEmpty()) {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
@@ -121,13 +133,18 @@ class WeebCommands : WeebCommandBase() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
+            "megumin" -> {
+                """EXPLISION!!!!!
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
             "weeb" -> {
                 """Gives you a random image from weeb.sh with that type
                     |Usage: `$PREFIX$invoke <category>`
                 """.trimMargin()
             }
             else -> {
-                "wrong invoke"
+                "Invoke `$invoke` not reconsigned"
             }
         }
     }
@@ -142,6 +159,7 @@ class WeebCommands : WeebCommandBase() {
             "lick",
             "owo",
             "weeb",
-            "b1nzy"
+            "b1nzy",
+            "megumin"
     )
 }
