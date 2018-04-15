@@ -37,14 +37,14 @@ class WeebCommands : WeebCommandBase() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
-            "hug" -> thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
+            "hug" -> requestAndSend("hug", "hugs", args, event)
             "lewd" -> sendEmbed(event,
                     getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").url))
-            "pat" -> thatStuffThatINeedToDoALotOfTimes("pat", "pats", args, event)
-            "punch" -> thatStuffThatINeedToDoALotOfTimes("punch", "punches", args, event)
+            "pat" -> requestAndSend("pat", "pats", args, event)
+            "punch" -> requestAndSend("punch", "punches", args, event)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
-            "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
+            "lick" -> requestAndSend("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
             "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
             "weeb" -> {

@@ -45,7 +45,7 @@ class ShortenCommand : Command() {
             return
         }
 
-        if(!args[0].startsWith("http://") && !args[0].startsWith("https://") ) {
+        if(!args[0].matches(Regex("http(s?):\\/\\/")) && !args[0].startsWith("https://") ) {
             sendMsg(event, "That does not look like a valid url")
             return
         }

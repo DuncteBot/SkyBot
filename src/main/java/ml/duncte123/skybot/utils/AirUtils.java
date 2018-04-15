@@ -117,7 +117,7 @@ public class AirUtils {
     public static String gameToString(Game g) {
         if (g == null) return "no game";
 
-        String gameType = "Playing";
+        String gameType;
 
         switch (g.getType().getKey()) {
             case 1:
@@ -128,6 +128,8 @@ public class AirUtils {
                 break;
             case 3:
                 gameType = "Watching";
+            default:
+                gameType = "Playing";
         }
 
         return gameType + " " + g.getName();
