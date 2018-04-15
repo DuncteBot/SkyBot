@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils

@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.animals;
 
-import com.google.protobuf.Message;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
