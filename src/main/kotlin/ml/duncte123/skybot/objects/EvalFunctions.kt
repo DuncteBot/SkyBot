@@ -24,30 +24,26 @@ import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.requests.RestAction
 
-class EvalFunctions {
+object EvalFunctions {
+    @JvmStatic
+    fun isEven(number: Int): Boolean {
+        return number % 2 == 0
+    }
 
-    companion object {
-        @JvmStatic
-        fun isEven(number: Int): Boolean {
-            return number % 2 == 0
-        }
+    @Suppress("UnnecessaryVariable", "LocalVariableName")
+    @JvmStatic
+    fun quick_mafs(x: Int): Int {
+        val the_thing = x + 2 - 1
+        return the_thing
+    }
 
-        @Suppress("UnnecessaryVariable", "LocalVariableName")
-        @JvmStatic
-        fun quick_mafs(x: Int): Int {
-            val the_thing = x + 2 - 1
-            return the_thing
-        }
-
-        @JvmStatic
-        fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
-            val embed = EmbedUtils.defaultEmbed()
-                    .addField("Guilds", shardManager.guildCache.size().toString(), true)
-                    .addField("Users", shardManager.userCache.size().toString(), true)
-                    .addField("Channels", (shardManager.textChannelCache.size()+shardManager.privateChannelCache.size()).toString(), true)
-                    .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
-            return channel.sendMessage(embed)
-        }
-
+    @JvmStatic
+    fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
+        val embed = EmbedUtils.defaultEmbed()
+                .addField("Guilds", shardManager.guildCache.size().toString(), true)
+                .addField("Users", shardManager.userCache.size().toString(), true)
+                .addField("Channels", (shardManager.textChannelCache.size()+shardManager.privateChannelCache.size()).toString(), true)
+                .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
+        return channel.sendMessage(embed)
     }
 }
