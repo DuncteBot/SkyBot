@@ -97,12 +97,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
                     this.player.playTrack(lastTrack.makeClone());
-                    announceNextTrack(lastTrack);
+                    announceNextTrack(lastTrack, true);
                 } else {
                     logger.debug("a playlist.....");
                     nextTrack();
                     //Offer it to the queue to prevent the player from playing it
                     queue.offer(lastTrack.makeClone());
+
+                    MessageUtils.sendMsg(guildMusicManager.latestChannel, "Repeating the playlist");
                 }
             } else {
                 logger.debug("starting next track");
@@ -155,6 +157,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track) {
+        announceNextTrack(track, false);
+    }
+
+    private void announceNextTrack(AudioTrack track, boolean repeated) {
         if (guildMusicManager.guildSettings.isAnnounceTracks()) {
             String title = track.getInfo().title;
             if (track.getInfo().isStream) {
@@ -163,7 +169,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + title);
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + title + (repeated ? " (repeated)" : ""));
         }
     }
 
