@@ -34,7 +34,7 @@ import java.util.concurrent.TimeUnit
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class RestartCommand : Command() {
+class RestartShardCommand : Command() {
 
     init {
         this.category = CommandCategory.UNLISTED
@@ -92,7 +92,7 @@ class RestartCommand : Command() {
 
     override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
 
-    override fun getName() = "restart"
+    override fun getName() = "restartshard"
 
     fun terminate(shard: Int, shardManager: ShardManager) {
         for (jda in shardManager.shardCache) {
