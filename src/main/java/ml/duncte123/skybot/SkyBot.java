@@ -20,8 +20,12 @@ package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.HelpEmbeds;
+import ml.duncte123.skybot.utils.TagUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -31,6 +35,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
 import java.sql.Connection;
 
 /**
@@ -57,6 +63,15 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+
+        Field f = WebUtils.class.getDeclaredField("USER_AGENT");
+        f.setAccessible(true);
+        Field modifiersField = Field.class.getDeclaredField("modifiers");
+        modifiersField.setAccessible(true);
+        modifiersField.setInt(f, f.getModifiers() & ~Modifier.FINAL);
+
+        f.set(null, "Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
+
         //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(true);
