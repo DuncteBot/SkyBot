@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;

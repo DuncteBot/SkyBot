@@ -29,7 +29,7 @@ import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
-import ml.duncte123.skybot.utils.WebUtils;
+import me.duncte123.botCommons.web.WebUtils;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 

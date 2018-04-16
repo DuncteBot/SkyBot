@@ -72,6 +72,8 @@ buildConfig {
 }
 
 dependencies {
+    //My little utils
+    compile 'com.github.duncte123:botCommons:08384f89b4'
     //Weeb api
     compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
     //JDA (java discord api)

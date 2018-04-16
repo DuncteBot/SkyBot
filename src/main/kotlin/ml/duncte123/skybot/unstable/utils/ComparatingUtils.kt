@@ -21,10 +21,10 @@
 
 package ml.duncte123.skybot.unstable.utils
 
+import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.TextColor
-import ml.duncte123.skybot.utils.WebUtils
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.JDA;
