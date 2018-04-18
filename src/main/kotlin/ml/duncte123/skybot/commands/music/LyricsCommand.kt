@@ -100,7 +100,7 @@ class LyricsCommand : MusicCommand() {
                         .get()
                         .header("Authorization", getAuthToken())
                         .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                { it -> JSONObject(it!!.string()) }
+                { it -> JSONObject(it.body()!!.string()) }
         ).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {

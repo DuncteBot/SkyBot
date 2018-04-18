@@ -79,8 +79,8 @@ public abstract class Command {
                 .get()
                 .addHeader("Authorization", token)
                 .build(), (r) -> {
-            assert r != null;
-            return new JSONObject(r.string());
+            assert r.body() != null;
+            return new JSONObject(r.body().string());
         });
 
         return 1 == Objects.requireNonNull(json.execute()).optInt("voted", 0);

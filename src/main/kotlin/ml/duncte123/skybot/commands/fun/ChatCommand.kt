@@ -18,9 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import com.google.code.chatterbotapi.ChatterBotSession
-import com.google.code.chatterbotapi.ChatterBotThought
-import kotlinx.coroutines.experimental.async
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -29,15 +27,13 @@ import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
-import java.io.*
-import java.net.HttpCookie
-import java.net.HttpURLConnection
-import java.net.URL
+import java.io.ByteArrayInputStream
 import java.net.URLEncoder
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
+import java.util.function.Consumer
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -46,7 +42,6 @@ import javax.xml.xpath.XPathFactory
 class ChatCommand : Command() {
 
     private val botid = "b0dafd24ee35a477"
-    //private var oldBot: ChatterBotSession
     private val sessions = TreeMap<String, ChatSession>()
     private val responses = arrayOf(
             "My prefix in this guild is *`{PREFIX}`*",
@@ -115,17 +110,16 @@ class ChatCommand : Command() {
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        if(!sessions.containsKey(event.author.id)) {
+        if (!sessions.containsKey(event.author.id)) {
             sessions[event.author.id] = ChatSession(botid, event.author.id)
             //sessions[event.author.id]?.session =
         }
+        logger.debug("Message: \"$message\"")
+        //Set the current date in the object
+        sessions[event.author.id]?.time = Date()
 
-        async {
-            logger.debug("Message: \"$message\"")
-            //Set the current date in the object
-            sessions[event.author.id]?.time = Date()
-
-            var response = sessions[event.author.id]?.think(message)
+        sessions[event.author.id]?.think(message, Consumer {
+            var response = it
 
             //Reset the ai if it dies
             //But not for now to see how user separated sessions go
@@ -138,10 +132,9 @@ class ChatCommand : Command() {
             val `with"Ads"` = AirUtils.RAND.nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response?.replace(oldValue = element.toString(),
+                response = response.replace(oldValue = element.toString(),
                         newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else "<${element.attr("href")}>")
             }
-            response = response?.replace("Chomsky", "DuncteBot")
             if (`with"Ads"`) {
                 response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
                         "or becoming a patron [here](https://patreon.com/duncte123)."
@@ -150,7 +143,7 @@ class ChatCommand : Command() {
                 MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
             }
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
-        }
+        })
 
     }
 
@@ -163,9 +156,8 @@ class ChatCommand : Command() {
 /**
  * Little wrapper class to help us keep track of inactive sessions
  */
-class ChatSession(botid: String, userId: String) : ChatterBotSession {
-
-    private val vars: MutableMap<String, String>
+class ChatSession(botid: String, userId: String) {
+    private val vars: MutableMap<String, Any>
 
     init {
         vars = LinkedHashMap()
@@ -175,110 +167,14 @@ class ChatSession(botid: String, userId: String) : ChatterBotSession {
 
     var time = Date()
 
-    override fun think(thought: ChatterBotThought?): ChatterBotThought {
-        vars["input"] = thought!!.text
-
-        val response = ChatterBotUtils.request("https://www.pandorabots.com/pandora/talk-xml", null, null, vars)
-
-        val responseThought = ChatterBotThought()
-
-        responseThought.text = ChatterBotUtils.xPathSearch(response, "//result/that/text()")
-
-        return responseThought
+    fun think(text: String, response: Consumer<String>) {
+        vars["input"] = URLEncoder.encode(text, "UTF-8")
+        WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
+            response.accept(xPathSearch(it, "//result/that/text()"))
+        }
     }
 
-    override fun think(text: String?): String {
-        val thought = ChatterBotThought()
-        thought.text = text
-        return think(thought).text
-    }
-}
-
-/*
-    chatter-bot-api
-    Copyright (C) 2011 pierredavidbelanger@gmail.com
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU Lesser General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU Lesser General Public License for more details.
-
-    You should have received a copy of the GNU Lesser General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
-*/
-internal object ChatterBotUtils {
-
-    @Throws(Exception::class)
-    private fun parametersToWWWFormURLEncoded(parameters: Map<String, String>): String {
-        val s = StringBuilder()
-        for ((key, value) in parameters) {
-            if (s.isNotEmpty()) {
-                s.append("&")
-            }
-            s.append(URLEncoder.encode(key, "UTF-8"))
-            s.append("=")
-            s.append(URLEncoder.encode(value, "UTF-8"))
-        }
-        return s.toString()
-    }
-
-    @Throws(Exception::class)
-    fun request(url: String, headers: Map<String, String>?, cookies: MutableMap<String, String>?, parameters: Map<String, String>?): String {
-        val connection = URL(url).openConnection() as HttpURLConnection
-        connection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/28.0.1500.95 Safari/537.36")
-        if (headers != null) {
-            for ((key, value) in headers) {
-                connection.setRequestProperty(key, value)
-            }
-        }
-        if (cookies != null && !cookies.isEmpty()) {
-            val cookieHeader = StringBuilder()
-            for (cookie in cookies.values) {
-                if (cookieHeader.isNotEmpty()) {
-                    cookieHeader.append(";")
-                }
-                cookieHeader.append(cookie)
-            }
-            connection.setRequestProperty("Cookie", cookieHeader.toString())
-        }
-        connection.doInput = true
-        if (parameters != null && !parameters.isEmpty()) {
-            connection.doOutput = true
-            val osw = OutputStreamWriter(connection.outputStream)
-            osw.write(parametersToWWWFormURLEncoded(parameters))
-            osw.flush()
-            osw.close()
-        }
-        if (cookies != null) {
-            for (headerEntry in connection.headerFields.entries) {
-                if (headerEntry.key != null && headerEntry.key.equals("Set-Cookie", ignoreCase = true)) {
-                    for (header in headerEntry.value) {
-                        for (httpCookie in HttpCookie.parse(header)) {
-                            cookies[httpCookie.name] = httpCookie.toString()
-                        }
-                    }
-                }
-            }
-        }
-        val r = BufferedReader(InputStreamReader(connection.inputStream))
-        val w = StringWriter()
-        val buffer = CharArray(1024)
-        var n = 0
-        while (n != -1) {
-            w.write(buffer, 0, n)
-            n = r.read(buffer)
-        }
-        r.close()
-        return w.toString()
-    }
-
-    @Throws(Exception::class)
-    fun xPathSearch(input: String, expression: String): String {
+    private fun xPathSearch(input: String, expression: String): String {
         val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
@@ -286,4 +182,5 @@ internal object ChatterBotUtils {
         val output = xPathExpression.evaluate(document, XPathConstants.STRING) as String
         return output.trim { it <= ' ' }
     }
+
 }

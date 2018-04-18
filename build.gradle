@@ -39,7 +39,7 @@ plugins {
 
 group = 'ml.duncte123.skybot'
 
-version "3.67.0_${getGitHash()}"
+version "3.68.0_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -72,10 +72,11 @@ buildConfig {
 }
 
 dependencies {
-    //My little utils
-    compile 'com.github.duncte123:botCommons:08384f89b4'
     //Weeb api
-    compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
+    compile 'com.github.duncte123:weeb.java:9d3b70da4f'
+    //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
+    //My little utils
+    compile 'com.github.duncte123:botCommons:ab0e6267e1'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_355'
@@ -111,9 +112,6 @@ dependencies {
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlin_version
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.22.5'
-
-    //Bot?
-    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'

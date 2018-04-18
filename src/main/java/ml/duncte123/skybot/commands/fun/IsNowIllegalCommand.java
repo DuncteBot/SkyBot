@@ -26,6 +26,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 public class IsNowIllegalCommand extends Command {
@@ -42,7 +43,8 @@ public class IsNowIllegalCommand extends Command {
             input = input.substring(0, 9);
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
         MessageUtils.sendMsg(event, "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
-                WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData).async(txt ->
+                WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData,
+                        r -> Objects.requireNonNull(r.body()).string()).async(txt ->
                         commandService.schedule(() -> {
 
                             String rawJson = getFileJSON(jsonData.getString("word"));
