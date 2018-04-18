@@ -26,7 +26,7 @@ import java.util.List;
 
 public class Profile {
 
-    private final String premium_since;
+    private final String premiumSince;
 
     private final int flags;
     private final String id;
@@ -35,7 +35,7 @@ public class Profile {
     private final String discriminator;
 
     public Profile(String premium_since, int flags, String id, String avatar, String username, String discriminator) {
-        this.premium_since = premium_since;
+        this.premiumSince = premium_since;
 
         this.flags = flags;
         this.id = id;
@@ -60,15 +60,15 @@ public class Profile {
         return id;
     }
 
-    public String getPremium_since() {
-        return premium_since;
+    public String getPremiumSince() {
+        return premiumSince;
     }
 
     public String getUsername() {
         return username;
     }
     public boolean isNitro() {
-        return premium_since != null;
+        return premiumSince != null;
     }
     public List<Badge> getBadges() {
         return Badge.getBadges(flags, isNitro());

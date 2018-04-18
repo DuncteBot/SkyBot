@@ -50,7 +50,7 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    fun thatStuffThatINeedToDoALotOfTimes(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    fun requestAndSend(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val nsfw = if(event.channel.isNSFW) NSFWType.TRUE else NSFWType.FALSE
         val imageUrl = AirUtils.WEEB_API.getRandomImage(type, nsfw).url
 

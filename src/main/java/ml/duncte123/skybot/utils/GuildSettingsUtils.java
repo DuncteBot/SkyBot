@@ -314,11 +314,13 @@ public class GuildSettingsUtils {
     }
 
     private static long[] convertS2J(String in) {
+        if(in.isEmpty())
+            return new long[] {20, 45, 60, 120, 240, 2400};
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 
     public static long[] ratelimmitChecks(String fromDb) {
-        if(fromDb == null)
+        if(fromDb == null || fromDb.isEmpty())
             return new long[] {20, 45, 60, 120, 240, 2400};
 
         return convertS2J(fromDb.replaceAll("\\P{Print}", ""));

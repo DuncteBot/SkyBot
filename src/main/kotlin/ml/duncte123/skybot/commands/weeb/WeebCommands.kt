@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -37,16 +38,27 @@ class WeebCommands : WeebCommandBase() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         when (invoke) {
-            "hug" -> thatStuffThatINeedToDoALotOfTimes("hug", "hugs", args, event)
+            "hug" -> requestAndSend("hug", "hugs", args, event)
             "lewd" -> sendEmbed(event,
                     getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").url))
-            "pat" -> thatStuffThatINeedToDoALotOfTimes("pat", "pats", args, event)
-            "punch" -> thatStuffThatINeedToDoALotOfTimes("punch", "punches", args, event)
+            "pat" -> requestAndSend("pat", "pats", args, event)
+            "punch" -> requestAndSend("punch", "punches", args, event)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
                     AirUtils.WEEB_API.getRandomImage("shrug").url))
-            "lick" -> thatStuffThatINeedToDoALotOfTimes("lick", "licks", args, event)
+            "lick" -> requestAndSend("lick", "licks", args, event)
             "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
             "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
+            "megumin" -> {
+                WebUtils.ins.getJSONObject("https://megumin.torque.ink/api/explosion").async({
+                    val chant = it.optString("chant")
+                    val img = it.optString("img")
+                    sendEmbed(event, getWeebEmbedImageAndDesc(chant, img))
+                }, {
+                    //When the site is down or dies
+                    val img = AirUtils.WEEB_API.getRandomImage("megumin")
+                    sendEmbed(event, getWeebEmbedImage(img.url))
+                })
+            }
             "weeb" -> {
                 if (args.isEmpty()) {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
@@ -121,13 +133,18 @@ class WeebCommands : WeebCommandBase() {
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
+            "megumin" -> {
+                """EXPLISION!!!!!
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
             "weeb" -> {
                 """Gives you a random image from weeb.sh with that type
                     |Usage: `$PREFIX$invoke <category>`
                 """.trimMargin()
             }
             else -> {
-                "wrong invoke"
+                "Invoke `$invoke` not reconsigned"
             }
         }
     }
@@ -142,6 +159,7 @@ class WeebCommands : WeebCommandBase() {
             "lick",
             "owo",
             "weeb",
-            "b1nzy"
+            "b1nzy",
+            "megumin"
     )
 }

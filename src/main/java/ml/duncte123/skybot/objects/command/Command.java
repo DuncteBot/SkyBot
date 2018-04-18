@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -28,22 +29,17 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
-import okhttp3.ResponseBody;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class Command {
@@ -83,8 +79,8 @@ public abstract class Command {
                 .get()
                 .addHeader("Authorization", token)
                 .build(), (r) -> {
-            assert r != null;
-            return new JSONObject(r.string());
+            assert r.body() != null;
+            return new JSONObject(r.body().string());
         });
 
         return 1 == Objects.requireNonNull(json.execute()).optInt("voted", 0);

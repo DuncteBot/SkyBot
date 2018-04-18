@@ -40,7 +40,7 @@ public class FakeTest {
      * Test basic
      * Mock primitives and String
      */
-    @Test
+    // @Test
     public void basic() {
         User user = new FakeInterface<>(User.class).create();
 
@@ -51,7 +51,7 @@ public class FakeTest {
      * Test medium
      * Mock Lists, don't share objects
      */
-    @Test
+    // @Test
     public void medium() {
         Member member = new FakeInterface<>(Member.class).create();
         JDA jda = member.getJDA();
@@ -62,7 +62,7 @@ public class FakeTest {
         assertEquals(jda.getGuilds(), new ArrayList<>());
     }
 
-    @Test
+    // @Test
     public void advanced()
             throws Throwable {
         Map<Method, InvocationFunction> custom = new HashMap<>();
@@ -78,7 +78,7 @@ public class FakeTest {
         assertEquals(m.getName(), "ramidzkh");
     }
 
-    @Test
+    // @Test
     public void delegate()
             throws Throwable {
         Map<Method, InvocationFunction> handlers = new HashMap<>();

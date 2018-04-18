@@ -19,8 +19,13 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.HelpEmbeds;
+import ml.duncte123.skybot.utils.TagUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -56,6 +61,8 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
+
         //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(true);

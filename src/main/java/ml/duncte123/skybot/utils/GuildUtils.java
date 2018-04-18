@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.JDA;
@@ -51,8 +52,7 @@ public class GuildUtils {
         postFields.put("auth", jda.getToken());
         try {
             return Objects.requireNonNull(
-                    WebUtils.ins.preparePost(Settings.API_BASE + "/postGuildCount/json",
-                            postFields, WebUtils.EncodingType.APPLICATION_JSON).execute());
+                    WebUtils.ins.preparePost(Settings.API_BASE + "/postGuildCount/json", postFields).execute());
         } catch (NullPointerException ignored) {
             return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
         } catch (Exception e) {

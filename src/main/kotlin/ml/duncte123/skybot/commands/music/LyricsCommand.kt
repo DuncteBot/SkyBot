@@ -19,12 +19,11 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.WebUtils
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import okhttp3.Request
 import org.apache.commons.lang.StringUtils
@@ -101,7 +100,7 @@ class LyricsCommand : MusicCommand() {
                         .get()
                         .header("Authorization", getAuthToken())
                         .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                { it -> JSONObject(it!!.string()) }
+                { it -> JSONObject(it.body()!!.string()) }
         ).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {

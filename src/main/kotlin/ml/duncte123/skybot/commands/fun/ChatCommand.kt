@@ -18,11 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import com.google.code.chatterbotapi.ChatterBot
-import com.google.code.chatterbotapi.ChatterBotFactory
-import com.google.code.chatterbotapi.ChatterBotSession
-import com.google.code.chatterbotapi.ChatterBotType
-import kotlinx.coroutines.experimental.async
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
@@ -31,16 +27,21 @@ import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
+import java.io.ByteArrayInputStream
+import java.net.URLEncoder
 import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
+import java.util.function.Consumer
+import javax.xml.parsers.DocumentBuilderFactory
+import javax.xml.xpath.XPathConstants
+import javax.xml.xpath.XPathFactory
 
 
 class ChatCommand : Command() {
 
-    private val builder: ChatterBot
-    //private var oldBot: ChatterBotSession
+    private val botid = "b0dafd24ee35a477"
     private val sessions = TreeMap<String, ChatSession>()
     private val responses = arrayOf(
             "My prefix in this guild is *`{PREFIX}`*",
@@ -52,13 +53,6 @@ class ChatCommand : Command() {
 
     init {
         this.category = CommandCategory.FUN
-        logger.info("Starting AI")
-        //New chat Bot :D
-        builder = ChatterBotFactory()
-                .create(ChatterBotType.PANDORABOTS, "b0dafd24ee35a477")
-        //oldBot = builder.createSession()
-
-        logger.info("AI has been loaded.")
 
         commandService.scheduleAtFixedRate({
             val temp = TreeMap<String, ChatSession>(sessions)
@@ -116,17 +110,16 @@ class ChatCommand : Command() {
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
 
-        if(!sessions.containsKey(event.author.id)) {
-            sessions[event.author.id] = ChatSession(builder.createSession())
+        if (!sessions.containsKey(event.author.id)) {
+            sessions[event.author.id] = ChatSession(botid, event.author.id)
             //sessions[event.author.id]?.session =
         }
+        logger.debug("Message: \"$message\"")
+        //Set the current date in the object
+        sessions[event.author.id]?.time = Date()
 
-        async {
-            logger.debug("Message: \"$message\"")
-            //Set the current date in the object
-            sessions[event.author.id]?.time = Date()
-
-            var response = sessions[event.author.id]?.session?.think(message)
+        sessions[event.author.id]?.think(message, Consumer {
+            var response = it
 
             //Reset the ai if it dies
             //But not for now to see how user separated sessions go
@@ -139,10 +132,9 @@ class ChatCommand : Command() {
             val `with"Ads"` = AirUtils.RAND.nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response?.replace(oldValue = element.toString(),
+                response = response.replace(oldValue = element.toString(),
                         newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else "<${element.attr("href")}>")
             }
-            response = response?.replace("Chomsky", "DuncteBot")
             if (`with"Ads"`) {
                 response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
                         "or becoming a patron [here](https://patreon.com/duncte123)."
@@ -151,7 +143,7 @@ class ChatCommand : Command() {
                 MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
             }
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
-        }
+        })
 
     }
 
@@ -164,7 +156,31 @@ class ChatCommand : Command() {
 /**
  * Little wrapper class to help us keep track of inactive sessions
  */
-class ChatSession(session_a: ChatterBotSession) {
+class ChatSession(botid: String, userId: String) {
+    private val vars: MutableMap<String, Any>
+
+    init {
+        vars = LinkedHashMap()
+        vars["botid"] = botid
+        vars["custid"] = userId
+    }
+
     var time = Date()
-    var session = session_a
+
+    fun think(text: String, response: Consumer<String>) {
+        vars["input"] = URLEncoder.encode(text, "UTF-8")
+        WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
+            response.accept(xPathSearch(it, "//result/that/text()"))
+        }
+    }
+
+    private fun xPathSearch(input: String, expression: String): String {
+        val documentBuilder = DocumentBuilderFactory.newInstance().newDocumentBuilder()
+        val xPath = XPathFactory.newInstance().newXPath()
+        val xPathExpression = xPath.compile(expression)
+        val document = documentBuilder.parse(ByteArrayInputStream(input.toByteArray(charset("UTF-8"))))
+        val output = xPathExpression.evaluate(document, XPathConstants.STRING) as String
+        return output.trim { it <= ' ' }
+    }
+
 }

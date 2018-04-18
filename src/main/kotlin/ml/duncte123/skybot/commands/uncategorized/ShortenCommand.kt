@@ -25,7 +25,8 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import ml.duncte123.skybot.utils.WebUtils
+import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -45,12 +46,12 @@ class ShortenCommand : Command() {
             return
         }
 
-        if(!args[0].startsWith("http://") && !args[0].startsWith("https://") ) {
+        if(!AirUtils.isURL(args[0])) {
             sendMsg(event, "That does not look like a valid url")
             return
         }
 
-        WebUtils.ins.shortenUrl(args[0]).async ({
+        AirUtils.shortenUrl(args[0]).async ({
             sendMsg(event, "Here is your shortened url: <$it>")
         }, {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
+import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.ApiUrl;
@@ -117,7 +118,7 @@ public class AirUtils {
     public static String gameToString(Game g) {
         if (g == null) return "no game";
 
-        String gameType = "Playing";
+        String gameType;
 
         switch (g.getType().getKey()) {
             case 1:
@@ -128,6 +129,8 @@ public class AirUtils {
                 break;
             case 3:
                 gameType = "Watching";
+            default:
+                gameType = "Playing";
         }
 
         return gameType + " " + g.getName();
@@ -328,5 +331,9 @@ public class AirUtils {
                 }
         );*/
        return null;
+    }
+
+    public static PendingRequest<String> shortenUrl(String url) {
+        return WebUtils.ins.shortenUrl(url, AirUtils.CONFIG.getString("apis.googl", "Google api key"));
     }
 }
