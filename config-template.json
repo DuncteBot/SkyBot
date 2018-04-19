@@ -40,5 +40,10 @@
     ],
     // If you set this to false the bot will use Lavaplayer instead of Lavalink.
     "enable": true
+  },
+  // Messages for your bot to use
+  "messages": {
+    // The suggest command
+    "suggest": "Suggest to the bot here!"
   }
 }
