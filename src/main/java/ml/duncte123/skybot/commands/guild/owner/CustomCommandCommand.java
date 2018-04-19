@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -34,39 +34,34 @@ import java.util.Arrays;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
-public class CustomCommandsCommand extends Command {
+public class CustomCommandCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        //noinspection deprecation
-        if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
-            sendMsg(event, "You don't have permission to run this command");
-            return;
-        }
 
         if(args.length < 1) {
             sendMsg(event, "Insufficient arguments");
             return;
         }
 
-        GuildSettings gs = getSettings(event.getGuild());
         switch (args.length) {
             case 1:
-                argsLength1(gs, args[0], event);
+                argsLength1(args[0], event);
                 break;
 
             case 2:
-                argsLength2(gs, args, event);
+                argsLength2(args, event);
                 //sendMsg(event, "Insufficient arguments");
                 break;
 
             default:
-                argsLengthOther(gs, args, event);
+                argsLengthOther(args, event);
                 break;
         }
     }
 
-    private void argsLength1(GuildSettings s, String arg, GuildMessageReceivedEvent event) {
+    private void argsLength1(String arg, GuildMessageReceivedEvent event) {
         if ("list".equals(arg)) {
+            GuildSettings s = getSettings(event.getGuild());
             StringBuilder sb = new StringBuilder();
             AirUtils.COMMAND_MANAGER.customCommands.stream()
                     .filter(c -> c.getGuildId().equals(event.getGuild().getId())).forEach(cmd ->
@@ -84,16 +79,23 @@ public class CustomCommandsCommand extends Command {
         }
     }
 
-    private void argsLength2(GuildSettings s, String[] args, GuildMessageReceivedEvent event) {
+    private void argsLength2(String[] args, GuildMessageReceivedEvent event) {
         //CHeck for deleting
+        //TODO: Stop being to damn lazy and get your ass to work on removing the commands
     }
 
-    private void argsLengthOther(GuildSettings s, String[] args, GuildMessageReceivedEvent event) {
+    private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
         if(args.length >= 3) {
 
-            if("new".equals(args[0])) {
+            if( ( "new".equals(args[0]) || "add".equals(args[0])) && isAdmin(event)) {
                 //new command
                 String commandName = args[1];
+
+                if(commandName.length() > 10) {
+                    MessageUtils.sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
+                    return;
+                }
+
                 String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String guildId = event.getGuild().getId();
                 if(!commandAlreadyExists(commandName, guildId)) {
@@ -105,8 +107,9 @@ public class CustomCommandsCommand extends Command {
                 } else {
                     sendMsg(event, "A command already exists for this server.");
                 }
+            } else {
+                sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
             }
-
         }
     }
 
@@ -131,5 +134,9 @@ public class CustomCommandsCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"cc", "customcommands"};
+    }
+
+    private boolean isAdmin(GuildMessageReceivedEvent event) {
+        return event.getMember().hasPermission(Permission.MANAGE_SERVER);
     }
 }

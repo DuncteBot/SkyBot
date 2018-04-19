@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
+import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
@@ -28,7 +29,6 @@ import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.TempWeebManager;
-import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -51,10 +51,10 @@ public class AirUtils {
 
 
     public static final Config CONFIG = new ConfigUtils().loadConfig();
-    public static final CommandManager COMMAND_MANAGER = new CommandManager();
     public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
     public static final Random RAND = new Random();
     public static final DBManager DB = new DBManager();
+    public static final CommandManager COMMAND_MANAGER = new CommandManager();
     public static final WeebApi WEEB_API_old = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();

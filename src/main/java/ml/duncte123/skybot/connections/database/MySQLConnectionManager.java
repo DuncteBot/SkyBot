@@ -176,6 +176,16 @@ class MySQLConnectionManager
                     "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS customCommands" +
+                            "(id int(11) Y AUTO_INCREMENT," +
+                            "guildId VARCHAR(255) NOT NULL," +
+                            "invoke VARCHAR(10) NOT NULL," +
+                            "message TEXT NOT NULL)" +
+                            "PRIMARY KEY (`id`);"
+            );
+
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
             while (res.next()) {
                 if (res.getInt("items") == 0) {

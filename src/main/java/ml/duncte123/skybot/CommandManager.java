@@ -22,11 +22,17 @@ import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
+import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -51,6 +57,8 @@ public class CommandManager {
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
+
+        loadCustomCommands();
     }
 
     /**
@@ -94,16 +102,42 @@ public class CommandManager {
 
     }
 
-    public boolean addCustomCommand(CustomCommand command) {
+    public boolean addCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true);
+    }
+
+    public boolean addCustomCommand(CustomCommand command, boolean insertInDb) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
 
         if (this.customCommands.stream().anyMatch(
                 (cmd) -> cmd.getName().equalsIgnoreCase(command.getName())
-                && cmd.getGuildId().equals(command.getGuildId())
-                )) {
+                        && cmd.getGuildId().equals(command.getGuildId())
+        )) {
             return false;
+        }
+
+        if (insertInDb) {
+            Connection conn = AirUtils.DB.getConnManager().getConnection();
+
+            try {
+                PreparedStatement stm = conn.prepareStatement("INSERT INTO customCommands(guildId, invoke, message) " +
+                        "VALUES (? , ? , ?)");
+                stm.setString(1, command.getGuildId());
+                stm.setString(2, command.getName());
+                stm.setString(3, command.getMessage());
+                stm.execute();
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            } finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
         this.customCommands.add(command);
 
@@ -187,6 +221,29 @@ public class CommandManager {
                 //Add the command
                 this.addCommand(cmd.getDeclaredConstructor().newInstance());
             } catch (Exception ignored) {
+            }
+        }
+    }
+
+    private void loadCustomCommands() {
+
+        Connection con = AirUtils.DB.getConnManager().getConnection();
+        try {
+            ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
+            while (res.next()) {
+                addCustomCommand(new CustomCommandImpl(
+                        res.getString("invoke"),
+                        res.getString("message"),
+                        res.getString("guildId")
+                ), false);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
             }
         }
     }
