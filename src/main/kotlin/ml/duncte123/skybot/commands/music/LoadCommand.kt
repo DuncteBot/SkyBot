@@ -1,14 +1,17 @@
 package ml.duncte123.skybot.commands.music
 
 import com.fasterxml.jackson.core.JsonParseException
+import kotlinx.coroutines.experimental.NonCancellable
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONTokener
 import java.util.*
+import kotlin.collections.ArrayList
 
 class LoadCommand: MusicCommand() {
 
@@ -44,7 +47,11 @@ class LoadCommand: MusicCommand() {
                          AudioUtils.ins.loadAndPlay(getMusicManager(event.guild),
                                  event.channel,
                                  it.toString(),
+                                 false,
                                  false) }
+
+                MessageUtils.sendEmbed(event, EmbedUtils.embedField(AudioUtils.ins.embedTitle,
+                        "Added ${array.length()} requested tracks."))
             } catch (exception: JSONException) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Invalid JSON file!")
