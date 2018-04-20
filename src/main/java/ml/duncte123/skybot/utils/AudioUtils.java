@@ -45,6 +45,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
@@ -139,6 +140,12 @@ public class AudioUtils {
      * @param addPlayList If the url is a playlist
      */
     public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
+        loadAndPlay(mng, channel, trackUrlRaw, addPlayList, true);
+    }
+
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw,
+                            final boolean addPlayList,
+                            final boolean announce) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -149,8 +156,6 @@ public class AudioUtils {
         }
 
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
-
-
             @Override
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
@@ -160,13 +165,17 @@ public class AudioUtils {
                     if (stream.isPresent())
                         title = stream.get().getName();
                 }
-                String msg = "Adding to queue: " + title;
-                if (mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
-                }
 
                 mng.scheduler.queue(track);
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+
+                if(announce) {
+                    String msg = "Adding to queue: " + title;
+                    if (mng.player.getPlayingTrack() == null) {
+                        msg += "\nand the Player has started playing;";
+                    }
+
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                }
             }
 
             @Override
@@ -181,33 +190,41 @@ public class AudioUtils {
                 } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                String msg;
 
-                if (addPlayList) {
-                    msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-                    if (mng.player.getPlayingTrack() == null) {
-                        msg += "\nand the Player has started playing;";
-                    }
+                if(addPlayList)
                     tracks.forEach(mng.scheduler::queue);
-                } else {
-                    msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
-                    if (mng.player.getPlayingTrack() == null) {
-                        msg += "\nand the Player has started playing;";
-                    }
+                else
                     mng.scheduler.queue(firstTrack);
+
+                if(announce) {
+                    String msg;
+
+                    if (addPlayList) {
+                        msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
+                        if (mng.player.getPlayingTrack() == null) {
+                            msg += "\nand the Player has started playing;";
+                        }
+                    } else {
+                        msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                        if (mng.player.getPlayingTrack() == null) {
+                            msg += "\nand the Player has started playing;";
+                        }
+                    }
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
                 }
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
 
 
             @Override
             public void noMatches() {
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
+                if(announce)
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                if(announce)
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
                         + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
