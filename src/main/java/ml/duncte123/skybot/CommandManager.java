@@ -98,12 +98,8 @@ public class CommandManager {
 
 
     public CustomCommand getCustomCommand(String invoke, String guildId) {
-        Optional<CustomCommand> cmd = customCommands.stream().filter(
-                c -> c.getName().equals(invoke) && c.getGuildId().equals(guildId)
-        ).findFirst();
-
-        return cmd.orElse(null);
-
+        return customCommands.stream().filter(c -> c.getGuildId().equals(guildId))
+                .filter(c -> c.getName().equals(invoke)).findFirst().orElse(null);
     }
 
     public boolean addCustomCommand(CustomCommand c) {

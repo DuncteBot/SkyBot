@@ -27,7 +27,6 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.sf.json.regexp.Perl5RegexpMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
