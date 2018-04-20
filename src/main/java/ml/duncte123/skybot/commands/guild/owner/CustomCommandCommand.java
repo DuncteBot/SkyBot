@@ -27,12 +27,14 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.sf.json.regexp.Perl5RegexpMatcher;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.MessageUtils.sendSuccess;
 
 public class CustomCommandCommand extends Command {
     @Override
@@ -63,7 +65,7 @@ public class CustomCommandCommand extends Command {
         if ("list".equals(arg)) {
             GuildSettings s = getSettings(event.getGuild());
             StringBuilder sb = new StringBuilder();
-            AirUtils.COMMAND_MANAGER.customCommands.stream()
+            AirUtils.COMMAND_MANAGER.getCustomCommands().stream()
                     .filter(c -> c.getGuildId().equals(event.getGuild().getId())).forEach(cmd ->
                     sb.append(s.getCustomPrefix())
                             .append(cmd.getName())
@@ -80,8 +82,20 @@ public class CustomCommandCommand extends Command {
     }
 
     private void argsLength2(String[] args, GuildMessageReceivedEvent event) {
-        //CHeck for deleting
-        //TODO: Stop being to damn lazy and get your ass to work on removing the commands
+        //Check for deleting
+        if("delete".equals(args[0]) && isAdmin(event) ) {
+            String commandName = args[1];
+            String guildid = event.getGuild().getId();
+            if(commandExists(commandName, guildid)) {
+                AirUtils.COMMAND_MANAGER.removeCustomCommand(commandName, guildid);
+                sendSuccess(event.getMessage());
+            } else {
+                sendMsg(event, "No command was found for this name");
+            }
+
+        } else {
+            sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
+        }
     }
 
     private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
@@ -98,7 +112,7 @@ public class CustomCommandCommand extends Command {
 
                 String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
                 String guildId = event.getGuild().getId();
-                if(!commandAlreadyExists(commandName, guildId)) {
+                if(!commandExists(commandName, guildId)) {
                     if(registerCustomCommand(commandName, commandAction, guildId)) {
                         sendMsg(event, "Command added");
                     } else {
@@ -113,7 +127,7 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private boolean commandAlreadyExists(String name, String guild) {
+    private boolean commandExists(String name, String guild) {
         return AirUtils.COMMAND_MANAGER.getCustomCommand(name, guild) != null;
     }
 
@@ -123,7 +137,10 @@ public class CustomCommandCommand extends Command {
 
     @Override
     public String help() {
-        return null;
+        return "Create, run and delete custom commands\n" +
+                "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
+                "`" + PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
+                "`" + PREFIX + getName() + " delete <name>` => deletes a custom command";
     }
 
     @Override

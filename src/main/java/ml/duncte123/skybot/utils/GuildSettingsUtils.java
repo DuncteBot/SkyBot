@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.slf4j.Logger;
@@ -40,24 +39,6 @@ public class GuildSettingsUtils {
     public static void loadAllSettings() {
         loadGuildSettings();
         loadFooterQuotes();
-
-        AirUtils.COMMAND_MANAGER.customCommands.add(new CustomCommandImpl(
-                "testcommand",
-                "Hello there, this is a test command only in DuncteBot",
-                "191245668617158656" //DuncteBot guild
-        ));
-
-        AirUtils.COMMAND_MANAGER.customCommands.add(new CustomCommandImpl(
-                "ping",
-                "Custom ping command that should not override our command",
-                "191245668617158656" //DuncteBot guild
-        ));
-
-        AirUtils.COMMAND_MANAGER.customCommands.add(new CustomCommandImpl(
-                "testcommand2",
-                "Hello there, this is a test command only in DSHelmondGames",
-                "329962158471512075" //DSHelmondGames guild
-        ));
     }
 
     /**

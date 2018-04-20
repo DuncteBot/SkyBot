@@ -50,7 +50,7 @@ public class SettingsCommand extends Command {
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         //noinspection deprecation
         if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
-            sendMsg(event, "You don't have permission to run this command");
+            sendMsg(event, "You need the \"Manage Server\" permission to use this command");
             return;
         }
 

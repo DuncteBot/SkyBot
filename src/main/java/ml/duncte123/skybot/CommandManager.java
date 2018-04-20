@@ -48,7 +48,7 @@ public class CommandManager {
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-    public final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
+    private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     /**
      * This makes sure that all the commands are added
@@ -68,6 +68,10 @@ public class CommandManager {
      */
     public Set<Command> getCommands() {
         return commands;
+    }
+
+    public Set<CustomCommand> getCustomCommands() {
+        return customCommands;
     }
 
     /**
@@ -152,6 +156,34 @@ public class CommandManager {
      */
     public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
+    }
+
+    public boolean removeCustomCommand(String name, String guildId) {
+        CustomCommand cmd = getCustomCommand(name, guildId);
+        if(cmd == null)
+            return false;
+
+        Connection con = AirUtils.DB.getConnManager().getConnection();
+
+        try {
+            PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
+            stm.setString(1, name);
+            stm.setString(2, guildId);
+            stm.execute();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        } finally {
+            try {
+                con.close();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        }
+
+        this.customCommands.remove(cmd);
+
+        return true;
     }
 
     /**

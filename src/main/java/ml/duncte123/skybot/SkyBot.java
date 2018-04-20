@@ -117,7 +117,7 @@ public class SkyBot {
         }
 
         logger.info(AirUtils.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
-        logger.info(AirUtils.COMMAND_MANAGER.customCommands.size() + " custom commands loaded.");
+        logger.info(AirUtils.COMMAND_MANAGER.getCustomCommands().size() + " custom commands loaded.");
         LavalinkManager.ins.start();
         final String finalUrl = url;
         try {
