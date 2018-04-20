@@ -23,11 +23,9 @@ import com.wolfram.alpha.WAEngine;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
-import me.duncte123.weebJava.types.ApiUrl;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.TempWeebManager;
 import ml.duncte123.skybot.config.Config;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
@@ -55,14 +53,9 @@ public class AirUtils {
     public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
     public static final Random RAND = new Random();
     public static final DBManager DB = new DBManager();
-    public static final WeebApi WEEB_API_old = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
+    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
-    public static final WeebApi WEEB_API = new TempWeebManager(
-            TokenType.WOLKETOKENS,
-            CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"),
-            ApiUrl.PRODUCTION,
-            "DuncteBot(SkyBot)/" + Settings.VERSION);
     public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
