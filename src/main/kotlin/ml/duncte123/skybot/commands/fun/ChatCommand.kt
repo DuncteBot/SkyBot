@@ -33,7 +33,6 @@ import java.util.*
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.TimeUnit.MILLISECONDS
 import java.util.concurrent.TimeUnit.MINUTES
-import java.util.function.Consumer
 import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
@@ -118,7 +117,7 @@ class ChatCommand : Command() {
         //Set the current date in the object
         sessions[event.author.id]?.time = Date()
 
-        sessions[event.author.id]?.think(message, Consumer {
+        sessions[event.author.id]?.think(message) {
             var response = it
 
             //Reset the ai if it dies
@@ -143,7 +142,7 @@ class ChatCommand : Command() {
                 MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
             }
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
-        })
+        }
 
     }
 
@@ -167,10 +166,10 @@ class ChatSession(botid: String, userId: String) {
 
     var time = Date()
 
-    fun think(text: String, response: Consumer<String>) {
+    fun think(text: String, response: (String) -> Unit) {
         vars["input"] = URLEncoder.encode(text, "UTF-8")
         WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
-            response.accept(xPathSearch(it, "//result/that/text()"))
+            response.invoke(xPathSearch(it, "//result/that/text()"))
         }
     }
 
