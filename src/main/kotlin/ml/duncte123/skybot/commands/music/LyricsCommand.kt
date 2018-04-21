@@ -56,7 +56,7 @@ class LyricsCommand : MusicCommand() {
                 MessageUtils.sendMsg(event, "The player is not currently playing anything!")
                 return
             }
-            searchForSong(search, Consumer {
+            searchForSong(search) {
                 if (it.isNullOrBlank()) {
                     MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
                             "Alternatively you can try `$PREFIX$name song name` to search for the lriccs on this soing.\n" +
@@ -74,7 +74,7 @@ class LyricsCommand : MusicCommand() {
                                 .build())
                     }
                 }
-            })
+            }
         }
     }
 
@@ -94,7 +94,7 @@ class LyricsCommand : MusicCommand() {
         return "Bearer $authToken"
     }
 
-    fun searchForSong(t: String?, callback: Consumer<String?>) {
+    fun searchForSong(t: String?, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(
                 Request.Builder()
                         .get()
@@ -104,9 +104,9 @@ class LyricsCommand : MusicCommand() {
         ).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
-                callback.accept(null)
+                callback.invoke(null)
             } else {
-                callback.accept(
+                callback.invoke(
                         hits.getJSONObject(0).getJSONObject("result").getString("path")
                 )
             }
