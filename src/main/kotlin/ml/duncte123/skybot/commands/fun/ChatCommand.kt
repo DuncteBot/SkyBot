@@ -65,7 +65,7 @@ class ChatCommand : Command() {
                     cleared++
                 }
             }
-            logger.info("Removed $cleared chat sessions that have been inactive for 20 minutes.")
+            logger.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
         }, 30L, 30L, TimeUnit.MINUTES)
     }
 

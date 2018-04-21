@@ -325,10 +325,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private void updateAccessToken() {
         Futures.addCallback(api.clientCredentialsGrant().build().getAsync(), new FutureCallback<>() {
             @Override
-            public void onSuccess(ClientCredentials clientCredentials) {
+            public void onSuccess(@NotNull ClientCredentials clientCredentials) {
                 /* The tokens were retrieved successfully! */
-                logger.info("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
-                logger.info("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
+                logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
+                logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
                 api.setAccessToken(clientCredentials.getAccessToken());
             }
 
