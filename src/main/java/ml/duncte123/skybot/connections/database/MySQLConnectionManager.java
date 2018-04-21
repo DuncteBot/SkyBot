@@ -178,12 +178,12 @@ class MySQLConnectionManager
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS customCommands" +
-                            "(id int(11) Y AUTO_INCREMENT," +
-                            "guildId VARCHAR(255) NOT NULL," +
-                            "invoke VARCHAR(10) NOT NULL," +
-                            "message TEXT NOT NULL)" +
-                            "PRIMARY KEY (`id`);"
+                    "CREATE TABLE IF NOT EXISTS customCommands\n" +
+                            "(id int(11) AUTO_INCREMENT,\n" +
+                            "guildId VARCHAR(255) NOT NULL,\n" +
+                            "invoke VARCHAR(10) NOT NULL,\n" +
+                            "message TEXT NOT NULL,\n" +
+                            "PRIMARY KEY (`id`));"
             );
 
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
