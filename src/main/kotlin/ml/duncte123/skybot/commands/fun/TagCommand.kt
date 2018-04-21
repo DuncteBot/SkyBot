@@ -58,7 +58,13 @@ class TagCommand : Command() {
                     return
                 }
 
-                MessageUtils.sendMsg(event, TagUtils.tagsList[args[0]]!!.text)
+                MessageUtils.sendMsg(event, """${TagUtils.tagsList[args[0]]!!.text}
+                    |
+                    |
+                    |**WARNING!!!**
+                    |This feature will be removed soon, to prevent your tags from being lost we suggest that you create custom commands for them
+                    |You can find more info about using the custom commands by using `${PREFIX}customcommands help`
+                """.trimMargin())
             }
 
         } else if (args.size == 2) {
@@ -89,7 +95,7 @@ class TagCommand : Command() {
 
             }
         } else if (args.size >= 3 && (args[0] == "create" || args[0] == "new")) {
-            if (TagUtils.tagsList.containsKey(args[1])) {
+            /*if (TagUtils.tagsList.containsKey(args[1])) {
                 MessageUtils.sendMsg(event, "The tag `${args[1]}` already exist.")
                 return
             } else if (args[1].length > 10) {
@@ -110,7 +116,9 @@ class TagCommand : Command() {
 
             } else {
                 MessageUtils.sendMsg(event, "Failed to add tag.")
-            }
+            }*/
+            MessageUtils.sendMsg(event, "Creating new tags has been disabled due to the custom command system replacing it.\n" +
+                    "Make sure to convert your tags to the new custom commands before {DATE SOON}")
         }
     }
 

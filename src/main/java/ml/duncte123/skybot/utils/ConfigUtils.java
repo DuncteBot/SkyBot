@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.config.Config;
-import ml.duncte123.skybot.config.ConfigLoader;
+import me.duncte123.botCommons.config.Config;
+import me.duncte123.botCommons.config.ConfigLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

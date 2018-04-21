@@ -171,6 +171,14 @@ class SQLiteDatabaseConnectionManager
                             "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                             "guildId VARCHAR(255) NOT NULL);"
             );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS customCommands" +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "guildId VARCHAR(255) NOT NULL," +
+                            "invoke VARCHAR(10) NOT NULL," +
+                            "message TEXT NOT NULL);"
+            );
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();
