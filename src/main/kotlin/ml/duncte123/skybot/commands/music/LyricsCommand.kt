@@ -63,8 +63,7 @@ class LyricsCommand : MusicCommand() {
                             "(sometimes the song names in the player are wrong)")
                 } else {
                     val url = "https://genius.com$it"
-                    WebUtils.ins.getText(url).async {
-                        val doc = Jsoup.parse(it)
+                    WebUtils.ins.scrapeWebPage(url).async { doc ->
                         val text = doc.select("div.lyrics").first().child(0).html().replace("<br>", "\n")
                         MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
                                 .setTitle("Lyrics for $search", url)

@@ -38,8 +38,7 @@ public class AlpacaCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        WebUtils.ins.getText("http://www.randomalpaca.com/").async((xml) -> {
-            Document doc = Jsoup.parse(xml);
+        WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async((doc) -> {
             Element img = doc.select("img").first();
             MessageUtils.sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
         });

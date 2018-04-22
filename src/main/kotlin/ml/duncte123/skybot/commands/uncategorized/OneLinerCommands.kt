@@ -110,8 +110,8 @@ class OneLinerCommands : Command() {
                 }
             }
             "xkcd" -> {
-                WebUtils.ins.getText("https://c.xkcd.com/random/comic/").async {
-                    MessageUtils.sendMsg(event, "https:" + Jsoup.parse(it).select("#comic img").attr("src"))
+                WebUtils.ins.scrapeWebPage("https://c.xkcd.com/random/comic/").async {
+                    MessageUtils.sendMsg(event, "https:" + it.select("#comic img").attr("src"))
                 }
             }
             else -> println("Invoke was invalid: $invoke")

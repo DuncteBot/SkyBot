@@ -76,7 +76,7 @@ dependencies {
     compile 'com.github.duncte123:weeb.java:9d3b70da4f'
     //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
     //My little utils
-    compile 'com.github.duncte123:botCommons:ab0e6267e1'
+    compile 'com.github.duncte123:botCommons:a857bf6ffc'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_358'
@@ -87,8 +87,6 @@ dependencies {
     }
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
-    // jsoup HTML parser library @ https://jsoup.org/
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
     // MySQL
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     // SQLite
