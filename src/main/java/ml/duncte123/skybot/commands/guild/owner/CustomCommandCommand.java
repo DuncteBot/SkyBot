@@ -100,7 +100,7 @@ public class CustomCommandCommand extends Command {
     private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
         if(args.length >= 3) {
 
-            if( ( "new".equals(args[0]) || "add".equals(args[0])) && isAdmin(event)) {
+            if( ( "new".equals(args[0]) || "add".equals(args[0]) )  && isAdmin(event)) {
                 //new command
                 String commandName = args[1];
 
@@ -153,6 +153,6 @@ public class CustomCommandCommand extends Command {
     }
 
     private boolean isAdmin(GuildMessageReceivedEvent event) {
-        return event.getMember().hasPermission(Permission.MANAGE_SERVER);
+        return event.getMember().hasPermission(event.getChannel(), Permission.MANAGE_SERVER);
     }
 }
