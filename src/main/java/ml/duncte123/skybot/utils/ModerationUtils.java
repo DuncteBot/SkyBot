@@ -22,6 +22,7 @@ import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
@@ -221,7 +222,17 @@ public class ModerationUtils {
 
     public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
         Member self = guild.getSelfMember();
-        Role muteRole = guild.getRoleById(GuildSettingsUtils.getGuild(guild).getMuteRoleId());
+        GuildSettings guildSettings = GuildSettingsUtils.getGuild(guild);
+        String muteRoleId = guildSettings.getMuteRoleId();
+
+        if (muteRoleId == null || muteRoleId.isEmpty()) {
+            MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
+                "We disabled your spam filter until you have set up a role.");
+            guildSettings.setSpamFilterState(false);
+            return;
+        }
+
+        Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
             MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
