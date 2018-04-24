@@ -22,6 +22,7 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
 
 class EvalFunctions {
@@ -49,5 +50,13 @@ class EvalFunctions {
             return channel.sendMessage(embed)
         }
 
+        @JvmStatic
+        fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
+            val shardManager = event.jda.asBot().shardManager
+            val user = event.member
+            return shardManager.guildCache.filter { it.memberCache.contains(user) }.joinToString {
+                "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
+            }
+        }
     }
 }
