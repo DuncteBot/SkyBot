@@ -40,7 +40,7 @@ public class CustomCommandCommand extends Command {
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
         if(args.length < 1) {
-            sendMsg(event, "Insufficient arguments");
+            sendMsg(event, "Insufficient arguments use `db!customcommand help`");
             return;
         }
 
@@ -82,25 +82,29 @@ public class CustomCommandCommand extends Command {
 
     private void argsLength2(String[] args, GuildMessageReceivedEvent event) {
         //Check for deleting
-        if("delete".equals(args[0]) && isAdmin(event) ) {
-            String commandName = args[1];
-            String guildid = event.getGuild().getId();
-            if(commandExists(commandName, guildid)) {
-                AirUtils.COMMAND_MANAGER.removeCustomCommand(commandName, guildid);
-                sendSuccess(event.getMessage());
-            } else {
-                sendMsg(event, "No command was found for this name");
-            }
+        if("delete".equals(args[0])) {
+            if (isAdmin(event)) {
+                String commandName = args[1];
+                String guildid = event.getGuild().getId();
+                if (commandExists(commandName, guildid)) {
+                    AirUtils.COMMAND_MANAGER.removeCustomCommand(commandName, guildid);
+                    sendSuccess(event.getMessage());
+                } else {
+                    sendMsg(event, "No command was found for this name");
+                }
 
+            } else {
+                sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
+            }
         } else {
-            sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
+            sendMsg(event, "Invalid arguments use `db!customcommand help`");
         }
     }
 
     private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
-        if(args.length >= 3) {
+        if(args.length >= 3 && ( "new".equals(args[0]) || "add".equals(args[0]) )) {
 
-            if( ( "new".equals(args[0]) || "add".equals(args[0]) )  && isAdmin(event)) {
+            if( isAdmin(event)) {
                 //new command
                 String commandName = args[1];
 
@@ -123,6 +127,8 @@ public class CustomCommandCommand extends Command {
             } else {
                 sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
             }
+        } else {
+            sendMsg(event, "Invalid arguments use `db!customcommand help`");
         }
     }
 
