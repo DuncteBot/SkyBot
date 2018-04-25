@@ -28,6 +28,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -48,12 +49,12 @@ class UpdateCommand : Command() {
             return
         }
 
-//        if (!Settings.enableUpdaterCommand) {
-//            val message = "The updater is not enabled. " +
-//                    "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
-//            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
-//            return
-//        }
+        if (!Settings.enableUpdaterCommand) {
+            val message = "The updater is not enabled. " +
+                    "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
+            return
+        }
 
         when (args.size) {
             0 -> {
@@ -106,7 +107,6 @@ class UpdateCommand : Command() {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]_.{8}".toRegex())) {
                     if (process.isAlive) process.destroy()
-                    version = s
                     return@async true
                 }
             }
@@ -140,7 +140,7 @@ class UpdateCommand : Command() {
         return if (System.getProperty("os.name").contains("Windows", false))
             "cmd /C $cmd"
         else
-            "./$cmd"
+            "skybotsrc/./$cmd"
     }
 
     fun runProcess(process: Process): String {
