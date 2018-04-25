@@ -164,16 +164,17 @@ task printVersion {
     println version
 }
 
-task updateBot {
-    shadowJar
-    printVersion
-}
-
-def getGitHash() {
+task pull {
+    def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'pull'
-        standardOutput = new ByteArrayOutputStream()
+        standardOutput = stdout
     }
+    return stdout.toString().trim()
+}
+
+
+def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'

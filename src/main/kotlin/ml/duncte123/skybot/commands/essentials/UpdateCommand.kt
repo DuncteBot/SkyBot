@@ -22,6 +22,7 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.newSingleThreadContext
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
@@ -85,18 +86,24 @@ class UpdateCommand : Command() {
 
     suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String) {
         lateinit var version: String
+        lateinit var links: String
 
         val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
-            val cmd =
-                    if (System.getProperty("os.name").contains("Windows", false))
-                        "cmd /C gradlew build --refresh-dependencies"
-                    else
-                        "./gradlew build --refresh-dependencies"
-            val process = Runtime.getRuntime().exec(cmd)
+            val pull = getCommand("gradlew pull")
+            val build = getCommand("gradlew build --refresh-dependencies")
+            val versioncmd = getCommand("gradlew printVersion")
+
+            links = buildString {
+                appendln(runProcess(Runtime.getRuntime().exec(pull)))
+                appendln(runProcess(Runtime.getRuntime().exec(build)))
+            }
+
+
+            val process = Runtime.getRuntime().exec(versioncmd)
+
             val scanner = Scanner(process.inputStream)
             while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
-                println(s)
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]_.{8}".toRegex())) {
                     if (process.isAlive) process.destroy()
                     version = s
@@ -107,12 +114,6 @@ class UpdateCommand : Command() {
         }
 
         val progress = updateprogress.await()
-        val msg =
-                if (progress) "✅ Update built"
-                else "❌ Update failed building."
-        MessageUtils.sendMsg(event, msg, {
-            event.channel.deleteMessageById(id).queue()
-        })
 
         if (progress) {
             MessageUtils.sendMsg(event, "✅ Update built. Shutting running version down.", {
@@ -128,6 +129,27 @@ class UpdateCommand : Command() {
                     System.exit(0x54)
                 }
             })
+        } else {
+            MessageUtils.sendMsg(event, "❌ Update failed building. $links", {
+                event.channel.deleteMessageById(id).queue()
+            })
         }
+    }
+
+    fun getCommand(cmd: String): String {
+        return if (System.getProperty("os.name").contains("Windows", false))
+            "cmd /C $cmd"
+        else
+            "./$cmd"
+    }
+
+    fun runProcess(process: Process): String {
+        val scanner = Scanner(process.inputStream)
+        val out = buildString {
+            while (scanner.hasNextLine()) {
+                appendln(scanner.nextLine())
+            }
+        }
+        return WebUtils.ins.leeks(out).execute()
     }
 }
