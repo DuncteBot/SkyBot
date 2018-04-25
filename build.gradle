@@ -160,7 +160,20 @@ build {
     jar.mustRunAfter clean
 }
 
+task printVersion {
+    println version
+}
+
+task updateBot {
+    shadowJar
+    printVersion
+}
+
 def getGitHash() {
+    exec {
+        commandLine 'git', 'pull'
+        standardOutput = new ByteArrayOutputStream()
+    }
     def stdout = new ByteArrayOutputStream()
     exec {
         commandLine 'git', 'rev-parse', '--short', 'HEAD'
