@@ -126,7 +126,7 @@ class UpdateCommand : Command() {
                     AirUtils.stop()
 
                     // Magic code. Tell the updater to update
-                    System.exit(0x54)
+                    System.exit(0x64)
                 }
             })
         } else {
