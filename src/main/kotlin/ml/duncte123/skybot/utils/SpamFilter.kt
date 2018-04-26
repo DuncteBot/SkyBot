@@ -83,7 +83,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
                     }.count {it} < 1
                 }
             }
-            displayContent.matches("^.(?![wola])(?!(\\d|x|D|k|h|\\.{1,2}))".toRegex()) -> {
+            displayContent.matches("^.(?<![?!.])(?![wola])(?!(\\d|x|D|k|h|\\.{1,2}))".toRegex()) -> {
                 true
             }
             else -> {
@@ -95,30 +95,35 @@ class SpamFilter : HashMap<Long, SpamCache>() {
         if (returnValue) {
             this.update(longArrayOf(guild.idLong, user.idLong, msg.idLong), 0)
             val cache = this[guild.idLong]
+            var shouldModerate = false
 
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size > 8)
-                        return true
+                    if (msgs.size > 10)
+                        shouldModerate = true
                 }
             }
 
-            val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
-            val ratelimit = rates[warnings.coerceIn(0, 5)]
-            ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild, jda)
-            if (data.third) {
-                ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
-            } else {
-                ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
-            }
-            val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
-            msg.textChannel.deleteMessages(clearable).queue{
-                this[guild.idLong]?.get(author.user.idLong)?.filter { !clearable.map { it.idLong }.contains(it) }
+            if (shouldModerate) {
+                val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
+                val ratelimit = rates[warnings.coerceIn(0, 5)]
+                ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild, jda)
+                if (data.third) {
+                    ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
+                } else {
+                    ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
+                }
+                val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
+                msg.textChannel.deleteMessages(clearable).queue {
+                    this[guild.idLong]?.get(author.user.idLong)?.filter { !clearable.map { it.idLong }.contains(it) }
+                }
+
+                return returnValue
             }
         }
 
-        return returnValue
+        return false
     }
 
     public fun applyRates(newRates: LongArray): SpamFilter {
