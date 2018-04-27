@@ -119,7 +119,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
                     this[guild.idLong]?.get(author.user.idLong)?.filter { !clearable.map { it.idLong }.contains(it) }
                 }
 
-                return returnValue
+                return true
             }
         }
 
