@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 
@@ -99,7 +100,15 @@ public class CommandManager {
 
     public CustomCommand getCustomCommand(String invoke, String guildId) {
         return customCommands.stream().filter(c -> c.getGuildId().equals(guildId))
-                .filter(c -> c.getName().equals(invoke)).findFirst().orElse(null);
+                .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+    }
+
+    public List<CustomCommand> getCustomCommandsForGuild(Guild g) {
+        return getCustomCommandsForGuild(g.getId());
+    }
+
+    public List<CustomCommand> getCustomCommandsForGuild(String guildId) {
+        return customCommands.stream().filter(c -> c.getGuildId().equals(guildId)).collect(Collectors.toList());
     }
 
     public boolean addCustomCommand(CustomCommand c) {

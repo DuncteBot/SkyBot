@@ -40,7 +40,7 @@ public class CustomCommandCommand extends Command {
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
         if(args.length < 1) {
-            sendMsg(event, "Insufficient arguments use `db!customcommand help`");
+            sendMsg(event, "Insufficient arguments use `db!help customcommand`");
             return;
         }
 
@@ -70,8 +70,9 @@ public class CustomCommandCommand extends Command {
                             .append(cmd.getName())
                             .append("\n")
             );
-            sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
-                    .appendCodeBlock(sb.toString(), "ldif").build());
+            new MessageBuilder().append("Custom Commands for this server").append('\n')
+                    .appendCodeBlock(sb.toString(), "ldif")
+                    .buildAll(MessageBuilder.SplitPolicy.NEWLINE).forEach(msg -> sendMsg(event, msg));
         } else {
             //fetch a custom command
             CustomCommand cmd = AirUtils.COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
@@ -82,7 +83,7 @@ public class CustomCommandCommand extends Command {
 
     private void argsLength2(String[] args, GuildMessageReceivedEvent event) {
         //Check for deleting
-        if("delete".equals(args[0])) {
+        if(args[0].equals("delete")) {
             if (isAdmin(event)) {
                 String commandName = args[1];
                 String guildid = event.getGuild().getId();
@@ -97,12 +98,17 @@ public class CustomCommandCommand extends Command {
                 sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
             }
         } else {
-            sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            sendMsg(event, "Invalid arguments use `db!help customcommand`");
         }
     }
 
     private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
         if(args.length >= 3 && ( "new".equals(args[0]) || "add".equals(args[0]) )) {
+
+            if(AirUtils.COMMAND_MANAGER.getCustomCommandsForGuild(event.getGuild()).size() >= 50) {
+                sendMsg(event, "You can't add more commands for this server because it has reached the limit of 50 custom commands");
+                return;
+            }
 
             if( isAdmin(event)) {
                 //new command
@@ -128,7 +134,7 @@ public class CustomCommandCommand extends Command {
                 sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
             }
         } else {
-            sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            sendMsg(event, "Invalid arguments use `db!help customcommand`");
         }
     }
 
