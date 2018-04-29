@@ -85,11 +85,9 @@ public class CommandManager {
     public Command getCommand(String name) {
         Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
-        if (cmd.isPresent()) {
-            return cmd.get();
+        if (!cmd.isPresent()) {
+            cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         }
-
-        cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
 
         return cmd.orElse(null);
     }
