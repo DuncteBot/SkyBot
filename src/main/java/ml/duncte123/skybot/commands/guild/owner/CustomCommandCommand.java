@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import kotlin.Triple;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
@@ -145,11 +146,20 @@ public class CustomCommandCommand extends Command {
             }
             return;
         }
-
-        if (registerCustomCommand(commandName, commandAction, guildId)) {
+        Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId);
+        if (result.getFirst()) {
             sendMsg(event, "Command added.");
         } else {
-            sendMsg(event, "Could not add this command.");
+            String error = "Failed to add custom command. \n Reason(s): %s";
+            String reason = "";
+            if (result.getSecond()) {
+                reason += "The command was already found.\n";
+            } else if (result.getThird()) {
+                reason += "You already reached the limit.\n";
+            } else if (!result.getSecond() && !result.getThird()) {
+                reason += "We have an database issue.";
+            }
+            sendMsg(event, String.format(error, reason));
         }
     }
 
@@ -157,7 +167,7 @@ public class CustomCommandCommand extends Command {
         return AirUtils.COMMAND_MANAGER.getCustomCommand(name, guild) != null;
     }
 
-    private boolean registerCustomCommand(String name, String action, String guildId) {
+    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, String guildId) {
         return AirUtils.COMMAND_MANAGER.addCustomCommand(new CustomCommandImpl(name, action, guildId));
     }
 

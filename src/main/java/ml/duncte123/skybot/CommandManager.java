@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -103,14 +104,14 @@ public class CommandManager {
     }
 
     public boolean editCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true, true);
+        return addCustomCommand(c, true, true).getFirst();
     }
 
-    public boolean addCustomCommand(CustomCommand c) {
+    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand c) {
         return addCustomCommand(c, true, false);
     }
 
-    public boolean addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
@@ -120,7 +121,7 @@ public class CommandManager {
         boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId().equals(command.getGuildId())).count() >= 50 && !isEdit;
 
         if (commandFound || limitReached) {
-            return false;
+            return new Triple<>(false, commandFound, limitReached);
         }
 
         if (insertInDb) {
@@ -138,7 +139,7 @@ public class CommandManager {
                 stm.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
+                return new Triple<>(false, false, false);
             } finally {
                 try {
                     conn.close();
@@ -152,7 +153,7 @@ public class CommandManager {
         }
         this.customCommands.add(command);
 
-        return true;
+        return new Triple<>(true, false, false);
     }
 
     /**
