@@ -126,12 +126,15 @@ public class CommandManager {
         if (insertInDb) {
             Connection conn = AirUtils.DB.getConnManager().getConnection();
 
+            String sqlQuerry = (isEdit) ?
+                    "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
+                    "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
+
             try {
-                PreparedStatement stm = conn.prepareStatement("INSERT INTO customCommands(guildId, invoke, message) " +
-                        "VALUES (? , ? , ?)");
-                stm.setString(1, command.getGuildId());
-                stm.setString(2, command.getName());
-                stm.setString(3, command.getMessage());
+                PreparedStatement stm = conn.prepareStatement(sqlQuerry);
+                stm.setString((isEdit) ? 2 : 1, command.getGuildId());
+                stm.setString((isEdit) ? 3 : 2, command.getName());
+                stm.setString((isEdit) ? 1 : 3, command.getMessage());
                 stm.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -143,6 +146,9 @@ public class CommandManager {
                     e.printStackTrace();
                 }
             }
+        }
+        if (isEdit) {
+            this.customCommands.remove(getCustomCommand(command.getName(), command.getGuildId()));
         }
         this.customCommands.add(command);
 
