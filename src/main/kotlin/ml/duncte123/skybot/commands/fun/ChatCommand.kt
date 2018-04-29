@@ -66,7 +66,7 @@ class ChatCommand : Command() {
                 }
             }
             logger.debug("Removed $cleared chat sessions that have been inactive for 20 minutes.")
-        }, 30L, 30L, TimeUnit.MINUTES)
+        }, 1L, 1L, TimeUnit.HOURS)
     }
 
 
@@ -132,7 +132,9 @@ class ChatCommand : Command() {
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
                 response = response.replace(oldValue = element.toString(),
-                        newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else "<${element.attr("href")}>")
+                        newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else
+                            //It's usefull to show the text
+                            "${element.text()}(<${element.attr("href")}>)")
             }
             if (`with"Ads"`) {
                 response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
