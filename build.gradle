@@ -164,16 +164,6 @@ task printVersion {
     println version
 }
 
-task pull {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'pull'
-        standardOutput = stdout
-    }
-    return stdout.toString().trim()
-}
-
-
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {

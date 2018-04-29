@@ -85,12 +85,12 @@ class UpdateCommand : Command() {
 
     override fun getName() = "update"
 
-    suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String) {
+    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String) {
         lateinit var version: String
         lateinit var links: String
 
         val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
-            val pull = getCommand("gradlew pull")
+            val pull = getCommand("git pull")
             val build = getCommand("gradlew build --refresh-dependencies")
             val versioncmd = getCommand("gradlew printVersion")
 
@@ -136,14 +136,14 @@ class UpdateCommand : Command() {
         }
     }
 
-    fun getCommand(cmd: String): String {
+    private fun getCommand(cmd: String): String {
         return if (System.getProperty("os.name").contains("Windows", false))
             "cmd /C $cmd"
         else
-            "skybotsrc/./$cmd"
+            if (cmd.startsWith("gradle", false)) "./$cmd" else cmd
     }
 
-    fun runProcess(process: Process): String {
+    private fun runProcess(process: Process): String {
         val scanner = Scanner(process.inputStream)
         val out = buildString {
             while (scanner.hasNextLine()) {
