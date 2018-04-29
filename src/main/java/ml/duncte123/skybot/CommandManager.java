@@ -99,22 +99,27 @@ public class CommandManager {
 
     public CustomCommand getCustomCommand(String invoke, String guildId) {
         return customCommands.stream().filter(c -> c.getGuildId().equals(guildId))
-                .filter(c -> c.getName().equals(invoke)).findFirst().orElse(null);
+                .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+    }
+
+    public boolean editCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true, true);
     }
 
     public boolean addCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true);
+        return addCustomCommand(c, true, false);
     }
 
-    public boolean addCustomCommand(CustomCommand command, boolean insertInDb) {
+    public boolean addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
 
-        if (this.customCommands.stream().anyMatch(
-                (cmd) -> cmd.getName().equalsIgnoreCase(command.getName())
-                        && cmd.getGuildId().equals(command.getGuildId())
-        )) {
+        boolean commandFound = this.customCommands.stream()
+                .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId().equals(command.getGuildId())) && !isEdit;
+        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId().equals(command.getGuildId())).count() >= 50 && !isEdit;
+
+        if (commandFound || limitReached) {
             return false;
         }
 
@@ -263,7 +268,7 @@ public class CommandManager {
                         res.getString("invoke"),
                         res.getString("message"),
                         res.getString("guildId")
-                ), false);
+                ), false, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();

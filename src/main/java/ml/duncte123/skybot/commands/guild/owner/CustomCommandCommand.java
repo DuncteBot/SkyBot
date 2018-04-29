@@ -26,16 +26,20 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.utils.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.MessageUtils.*;
 
 public class CustomCommandCommand extends Command {
+
+    private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete");
+
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
@@ -46,89 +50,101 @@ public class CustomCommandCommand extends Command {
 
         switch (args.length) {
             case 1:
-                argsLength1(args[0], event);
+                invokeCustomCommand(args[0], event);
                 break;
 
             case 2:
-                argsLength2(args, event);
+                deleteCustomCommand(args, event);
                 //sendMsg(event, "Insufficient arguments");
                 break;
 
             default:
-                argsLengthOther(args, event);
+                addOrEditCustomCommand(args, event);
                 break;
         }
     }
 
-    private void argsLength1(String arg, GuildMessageReceivedEvent event) {
-        if ("list".equals(arg)) {
+    private void invokeCustomCommand(String arg, GuildMessageReceivedEvent event) {
+        if (arg.equalsIgnoreCase("list")) {
             GuildSettings s = getSettings(event.getGuild());
             StringBuilder sb = new StringBuilder();
             AirUtils.COMMAND_MANAGER.getCustomCommands().stream()
-                    .filter(c -> c.getGuildId().equals(event.getGuild().getId())).forEach(cmd ->
-                    sb.append(s.getCustomPrefix())
+                    .filter(c -> c.getGuildId().equals(event.getGuild().getId()))
+                    .forEach(cmd -> {
+                        sb.append(s.getCustomPrefix())
                             .append(cmd.getName())
-                            .append("\n")
+                            .append("\n");
+                    }
             );
+
             sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
                     .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
             CustomCommand cmd = AirUtils.COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
             //Run the custom command?
-            AirUtils.COMMAND_MANAGER.dispatchCommand(((Command) cmd), arg, new String[0], event);
+            AirUtils.COMMAND_MANAGER.dispatchCommand((Command) cmd, arg, new String[0], event);
         }
     }
 
-    private void argsLength2(String[] args, GuildMessageReceivedEvent event) {
+    private void deleteCustomCommand(String[] args, GuildMessageReceivedEvent event) {
         //Check for deleting
-        if("delete".equals(args[0])) {
-            if (isAdmin(event)) {
-                String commandName = args[1];
-                String guildid = event.getGuild().getId();
-                if (commandExists(commandName, guildid)) {
-                    AirUtils.COMMAND_MANAGER.removeCustomCommand(commandName, guildid);
-                    sendSuccess(event.getMessage());
-                } else {
-                    sendMsg(event, "No command was found for this name");
-                }
-
-            } else {
-                sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
-            }
-        } else {
+        if (!args[0].equalsIgnoreCase("delete")) {
             sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            return;
         }
+
+        if (!isAdmin(event)) {
+            sendMsg(event, "You need the \"Administrator\" permission to add or remove commands");
+            return;
+        }
+
+        final String commandName = args[1];
+        final String guildid = event.getGuild().getId();
+
+        if (!commandExists(commandName, guildid)) {
+            sendMsg(event, "No command was found for this name");
+            return;
+        }
+
+        boolean success = AirUtils.COMMAND_MANAGER.removeCustomCommand(commandName, guildid);
+        Message msg = event.getMessage();
+        if (!success) {
+            sendErrorWithMessage(msg, "Failed to delete custom command.");
+            return;
+        }
+        sendSuccess(msg);
     }
 
-    private void argsLengthOther(String[] args, GuildMessageReceivedEvent event) {
-        if(args.length >= 3 && ( "new".equals(args[0]) || "add".equals(args[0]) )) {
-
-            if( isAdmin(event)) {
-                //new command
-                String commandName = args[1];
-
-                if(commandName.length() > 10) {
-                    MessageUtils.sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
-                    return;
-                }
-
-                String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                String guildId = event.getGuild().getId();
-                if(!commandExists(commandName, guildId)) {
-                    if(registerCustomCommand(commandName, commandAction, guildId)) {
-                        sendMsg(event, "Command added");
-                    } else {
-                        sendMsg(event, "Could not add this command");
-                    }
-                } else {
-                    sendMsg(event, "A command already exists for this server.");
-                }
-            } else {
-                sendMsg(event, "You need the \"Manage Server\" permission to add or remove commands");
-            }
-        } else {
+    private void addOrEditCustomCommand(String[] args, GuildMessageReceivedEvent event) {
+        if (args.length < 3 && !systemInvokes.contains(args[0])) {
             sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            return;
+        }
+
+        if (!isAdmin(event)) {
+            sendMsg(event, "You need the \"Administrator\" permission to add or remove commands");
+            return;
+        }
+        //new command
+        String commandName = args[1];
+
+        if (commandName.length() > 10) {
+            MessageUtils.sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
+            return;
+        }
+
+        String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+        String guildId = event.getGuild().getId();
+        if (commandExists(commandName, guildId)) {
+            sendMsg(event, "A command already exists for this server.");
+            return;
+        }
+
+        if (registerCustomCommand(commandName, commandAction, guildId)) {
+            sendMsg(event, "Command added.");
+        } else {
+            sendMsg(event, "Could not add this command.");
         }
     }
 
@@ -137,7 +153,12 @@ public class CustomCommandCommand extends Command {
     }
 
     private boolean registerCustomCommand(String name, String action, String guildId) {
-        return AirUtils.COMMAND_MANAGER.addCustomCommand(new CustomCommandImpl( name, action, guildId ));
+        return AirUtils.COMMAND_MANAGER.addCustomCommand(new CustomCommandImpl(name, action, guildId));
+    }
+
+    private boolean editCustomCommand(CustomCommand customCommand, String newMessage ) {
+        CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
+        return AirUtils.COMMAND_MANAGER.editCustomCommand(cmd);
     }
 
     @Override
@@ -158,7 +179,8 @@ public class CustomCommandCommand extends Command {
         return new String[]{"cc", "customcommands"};
     }
 
+    @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isAdmin(GuildMessageReceivedEvent event) {
-        return event.getMember().hasPermission(event.getChannel(), Permission.MANAGE_SERVER);
+        return event.getMember().hasPermission(event.getChannel(), Permission.ADMINISTRATOR);
     }
 }
