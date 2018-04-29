@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -103,43 +104,43 @@ public class CommandManager {
                 .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
-    public List<CustomCommand> getCustomCommandsForGuild(Guild g) {
-        return getCustomCommandsForGuild(g.getId());
+    public boolean editCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true, true).getFirst();
     }
 
-    public List<CustomCommand> getCustomCommandsForGuild(String guildId) {
-        return customCommands.stream().filter(c -> c.getGuildId().equals(guildId)).collect(Collectors.toList());
+    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand c) {
+        return addCustomCommand(c, true, false);
     }
 
-    public boolean addCustomCommand(CustomCommand c) {
-        return addCustomCommand(c, true);
-    }
-
-    public boolean addCustomCommand(CustomCommand command, boolean insertInDb) {
+    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
 
-        if (this.customCommands.stream().anyMatch(
-                (cmd) -> cmd.getName().equalsIgnoreCase(command.getName())
-                        && cmd.getGuildId().equals(command.getGuildId())
-        )) {
-            return false;
+        boolean commandFound = this.customCommands.stream()
+                .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId().equals(command.getGuildId())) && !isEdit;
+        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId().equals(command.getGuildId())).count() >= 50 && !isEdit;
+
+        if (commandFound || limitReached) {
+            return new Triple<>(false, commandFound, limitReached);
         }
 
         if (insertInDb) {
             Connection conn = AirUtils.DB.getConnManager().getConnection();
 
+            String sqlQuerry = (isEdit) ?
+                    "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
+                    "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
+
             try {
-                PreparedStatement stm = conn.prepareStatement("INSERT INTO customCommands(guildId, invoke, message) " +
-                        "VALUES (? , ? , ?)");
-                stm.setString(1, command.getGuildId());
-                stm.setString(2, command.getName());
-                stm.setString(3, command.getMessage());
+                PreparedStatement stm = conn.prepareStatement(sqlQuerry);
+                stm.setString((isEdit) ? 2 : 1, command.getGuildId());
+                stm.setString((isEdit) ? 3 : 2, command.getName());
+                stm.setString((isEdit) ? 1 : 3, command.getMessage());
                 stm.execute();
             } catch (SQLException e) {
                 e.printStackTrace();
-                return false;
+                return new Triple<>(false, false, false);
             } finally {
                 try {
                     conn.close();
@@ -148,9 +149,12 @@ public class CommandManager {
                 }
             }
         }
+        if (isEdit) {
+            this.customCommands.remove(getCustomCommand(command.getName(), command.getGuildId()));
+        }
         this.customCommands.add(command);
 
-        return true;
+        return new Triple<>(true, false, false);
     }
 
     /**
@@ -272,7 +276,7 @@ public class CommandManager {
                         res.getString("invoke"),
                         res.getString("message"),
                         res.getString("guildId")
-                ), false);
+                ), false, false);
             }
         } catch (SQLException e) {
             e.printStackTrace();
