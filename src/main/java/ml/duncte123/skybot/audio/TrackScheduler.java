@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import lavalink.client.player.IPlayer;
@@ -114,11 +113,11 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    @Override
+    /*@Override
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
                 "Details: " + exception);
-    }
+    }*/
 
     /**
      * This will tell you if the player is repeating
