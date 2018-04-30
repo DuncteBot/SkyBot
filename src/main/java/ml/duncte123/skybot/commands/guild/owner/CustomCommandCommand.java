@@ -138,7 +138,7 @@ public class CustomCommandCommand extends Command {
         String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
         String guildId = event.getGuild().getId();
         if (commandExists(commandName, guildId)) {
-            if (!args[0].equalsIgnoreCase("edit") || !args[0].equalsIgnoreCase("change")) {
+            if (!args[0].equalsIgnoreCase("edit") && !args[0].equalsIgnoreCase("change")) {
                     sendMsg(event, "A command already exists for this server.");
             } else {
                 if (editCustomCommand(AirUtils.COMMAND_MANAGER.getCustomCommand(commandName, guildId), commandAction))
@@ -155,7 +155,7 @@ public class CustomCommandCommand extends Command {
             if (result.getSecond()) {
                 reason += "The command was already found.\n";
             } else if (result.getThird()) {
-                reason += "You already reached the limit.\n";
+                reason += "You reached the limit of 50 custom commands on this server.\n";
             } else if (!result.getSecond() && !result.getThird()) {
                 reason += "We have an database issue.";
             }
