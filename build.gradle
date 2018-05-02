@@ -36,6 +36,7 @@ plugins {
     id 'org.jetbrains.kotlin.jvm' version '1.2.41'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
+apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
@@ -113,6 +114,7 @@ dependencies {
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 javadoc {
