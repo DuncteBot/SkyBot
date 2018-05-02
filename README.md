@@ -30,7 +30,6 @@ The following libraries are used:
 - [_groovy-sandbox_](https://github.com/jenkinsci/groovy-sandbox)
 - [_spotify-web-api-java_](https://github.com/thelinmichael/spotify-web-api-java)
 - [_logback-classic_](https://logback.qos.ch/)
-- [_chatter-bot-api_](https://github.com/pierredavidbelanger/chatter-bot-api)
 
 # ToDo list
 - [x] ~~SQLite as a fail over database~~
