@@ -25,24 +25,32 @@ public interface WAAssumption {
     static final String TYPE_MORTALITYYEARDOB = "MortalityYearDOB";
     static final String TYPE_DNAORSTRING = "DNAOrString";
     static final String TYPE_TIDESTATION = "TideStation";
-    
+
     static final String TYPE_FORMULASELECT = "FormulaSelect";
     static final String TYPE_FORMULASOLVE = "FormulaSolve";
     static final String TYPE_FORMULAVARIABLE = "FormulaVariable";
     static final String TYPE_FORMULAVARIABLEOPTION = "FormulaVariableOption";
     static final String TYPE_FORMULAVARIABLEINCLUDE = "FormulaVariableInclude";
-    
-    
+
+
     String getType();
+
     int getCount();
+
     String getWord();
+
     String getDescription();
+
     int getCurrent();
-    
+
     String[] getNames();
+
     String[] getDescriptions();
+
     String[] getInputs();
+
     String[] getWords();
+
     boolean[] getValidities();
-    
+
 }

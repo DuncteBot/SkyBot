@@ -4,26 +4,23 @@
  */
 package com.wolfram.alpha.net;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.util.logging.Logger;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.net.impl.HttpTransaction;
+
+import java.io.*;
+import java.net.URL;
+import java.util.logging.Logger;
 
 
 public class URLFetcher {
 
+    // Largest result that will be allowed to be returned as a byte[] instead of in a file.
+    private static final int MAX_BUFFER_SIZE = 1000000;
+    private static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
     HttpProvider http;
     private URL url;
     private String outFile;
     private ProxySettings proxySettings;
-    
     // These are volatile because this class is typically run on one thread and
     // queried on another.
     private volatile HttpTransaction trans;
@@ -36,12 +33,7 @@ public class URLFetcher {
     private volatile String charSet = null;
     // WAHttpException, HttpException, IOException
     private volatile Exception exception = null;
-    
-    private static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
-    
-    // Largest result that will be allowed to be returned as a byte[] instead of in a file.
-    private static final int MAX_BUFFER_SIZE = 1000000;
-    
+
 
     // TODO: outFile = null means get data as string. Improve getResponseString() to be safer for large responses.
     public URLFetcher(URL url, String outFile, HttpProvider http, ProxySettings proxySettings) {
@@ -60,55 +52,55 @@ public class URLFetcher {
         if (trans != null)
             trans.setNoRetry();
     }
-    
+
     public boolean wasCancelled() {
         return wasCancelled;
     }
-    
+
     /**
      * Doesn't mean that it finished successfully; could have been cancelled.
-     * 
+     *
      * @return
      */
     public boolean isFinished() {
         return isFinished;
     }
-    
-    
+
+
     public String getFilename() {
         return outFile;
     }
-    
+
     public File getFile() {
         return wasCancelled ? null : downloadedFile;
     }
-    
+
     public byte[] getBytes() {
         return wasCancelled ? null : bytes;
     }
-    
+
     /**
      * @return -1 if not known
      */
     public int getTotalBytes() {
         return totalBytes;
     }
-    
+
     public int getTotalBytesDownloaded() {
         return totalBytesDownloaded;
     }
-    
+
     // returns -1.0 if not known.
     public double getProgress() {
-        
+
         if (isFinished())
             return 1.0;
         int totalBytes = getTotalBytes();
         if (totalBytes == -1)
             return -1.0;
-        return ((double) getTotalBytesDownloaded())/totalBytes;
+        return ((double) getTotalBytesDownloaded()) / totalBytes;
     }
-    
+
     // Useful if you want to convert to a String.
     public String getCharSet() {
         return charSet;
@@ -117,27 +109,27 @@ public class URLFetcher {
     public Exception getException() {
         return exception;
     }
-    
+
     public void fetch() {
-        
+
         try {
             if (wasCancelled)
                 return;
-            
+
             long start = System.currentTimeMillis();
             logger.info("Downloading url " + url);
-            
+
             InputStream responseStream = null;
-            OutputStream outStream = null; 
+            OutputStream outStream = null;
             boolean useFile = outFile != null;
-            
+
             try {
                 trans = http.createHttpTransaction(url, proxySettings);
-                trans.execute();                   
+                trans.execute();
                 long contentLength = trans.getContentLength();
                 charSet = trans.getCharSet();
                 responseStream = trans.getResponseStream();
-                
+
                 // Create the output stream we will write into. Will be either a buf[] or a file.
                 if (useFile) {
                     if (outFile.length() > 0) {
@@ -166,7 +158,7 @@ public class URLFetcher {
                     if (totalBytesDownloaded <= maxBytesToDownload)
                         outStream.write(buf, 0, numRead);
                 }
-            // Might be useful someday to handle all the checked exceptions differently...
+                // Might be useful someday to handle all the checked exceptions differently...
             } catch (WAHttpException e) {
                 exception = e;
             } catch (IOException e) {
@@ -175,33 +167,39 @@ public class URLFetcher {
                 exception = e;
             } finally {
                 if (responseStream != null)
-                    try { responseStream.close(); } catch (Exception e) {}
+                    try {
+                        responseStream.close();
+                    } catch (Exception e) {
+                    }
                 if (trans != null)
                     trans.release();
                 if (outStream != null) {
                     if (!wasCancelled && !useFile)
                         bytes = ((ByteArrayOutputStream) outStream).toByteArray();
-                    try { outStream.close(); } catch (Exception e) {}
+                    try {
+                        outStream.close();
+                    } catch (Exception e) {
+                    }
                 }
                 if (wasCancelled && downloadedFile != null) {
                     downloadedFile.delete();
                     downloadedFile = null;
                 }
             }
-                        
+
             if (exception != null) {
                 logger.warning("Exception downloading URL " + url + ". " + exception);
             }
-            
+
             if (wasCancelled)
-                logger.info("Download of URL " + url + " was cancelled by user. Elapsed millis: " + 
-                                (System.currentTimeMillis() - start));
+                logger.info("Download of URL " + url + " was cancelled by user. Elapsed millis: " +
+                        (System.currentTimeMillis() - start));
             else
                 logger.info("Finished downloading URL " + url +
                         ". Elapsed millis: " + (System.currentTimeMillis() - start));
         } finally {
             isFinished = true;
         }
-    }    
+    }
 
 }

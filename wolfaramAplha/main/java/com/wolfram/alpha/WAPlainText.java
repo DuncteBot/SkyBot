@@ -8,5 +8,5 @@ package com.wolfram.alpha;
 public interface WAPlainText {
 
     String getText();
-    
+
 }

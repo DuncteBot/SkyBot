@@ -12,9 +12,9 @@ public class WAException extends Exception {
     public WAException(Throwable t) {
         super(t);
     }
-    
+
     public WAException(String s) {
         super(s);
     }
-    
+
 }

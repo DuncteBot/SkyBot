@@ -4,31 +4,29 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.File;
-import java.io.Serializable;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAImage;
 import com.wolfram.alpha.WAUnits;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+
+import java.io.File;
+import java.io.Serializable;
 
 
 public class WAUnitsImpl implements WAUnits, Serializable {
-    
+
+    private static final long serialVersionUID = -1635250906549142822L;
     private String[] shortNames;
     private String[] longNames;
     private WAImage image;
 
-    private static final long serialVersionUID = -1635250906549142822L;
 
-    
-    WAUnitsImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {    
-        
+    WAUnitsImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
+
         int numUnits = Integer.parseInt(thisElement.getAttribute("count"));
         shortNames = new String[numUnits];
         longNames = new String[numUnits];
@@ -48,10 +46,10 @@ public class WAUnitsImpl implements WAUnits, Serializable {
             }
         }
     }
-    
-    
+
+
     ////////////////////  WAUnits interface  //////////////////////////////
-    
+
     public WAImage getImage() {
         return image;
     }
@@ -66,7 +64,7 @@ public class WAUnitsImpl implements WAUnits, Serializable {
 
 
     ////////////////////  Visitable interface  //////////////////////////////
-    
+
     public void accept(Visitor v) {
         // TODO Auto-generated method stub
     }

@@ -8,6 +8,8 @@ package com.wolfram.alpha;
 public interface WAWarning {
 
     String getType();
+
     String getText();
+
     String[][] getAttributes();
 }

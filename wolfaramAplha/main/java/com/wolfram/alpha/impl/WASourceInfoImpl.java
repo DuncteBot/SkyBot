@@ -4,30 +4,27 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-
-import org.w3c.dom.Element;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASourceInfo;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+
+import java.io.Serializable;
 
 // This is called sidebarlinks in the XML.
 
 
 public class WASourceInfoImpl implements WASourceInfo, Serializable {
 
+    static final WASourceInfoImpl[] EMPTY_ARRAY = new WASourceInfoImpl[0];
+    private static final long serialVersionUID = -6541107289959358774L;
     private String url;
     private String formattedUrl;
-    private String text;    
-    
-    static final WASourceInfoImpl[] EMPTY_ARRAY = new WASourceInfoImpl[0];
+    private String text;
 
-    private static final long serialVersionUID = -6541107289959358774L;
 
-    
     WASourceInfoImpl(Element thisElement) throws WAException {
-        
+
         text = thisElement.getAttribute("text");
         url = thisElement.getAttribute("url");
         // Transform:
@@ -55,7 +52,7 @@ public class WASourceInfoImpl implements WASourceInfo, Serializable {
         return formattedUrl;
     }
 
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

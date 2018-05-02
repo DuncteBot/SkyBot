@@ -4,16 +4,12 @@
  */
 package com.wolfram.alpha.net;
 
+import org.apache.http.HttpHost;
+
 import java.io.IOException;
-import java.net.InetSocketAddress;
-import java.net.Proxy;
-import java.net.ProxySelector;
-import java.net.SocketAddress;
-import java.net.URI;
+import java.net.*;
 import java.util.ArrayList;
 import java.util.List;
-
-import org.apache.http.HttpHost;
 
 
 /**
@@ -21,30 +17,26 @@ import org.apache.http.HttpHost;
  * host and port (if any), deciding what proxy, if any, to use for a given request
  * (determined by manual or system settings), and serving up username/password credentials if required
  * for an authenticating proxy.
- *
+ * <p>
  * The one thing this class does not do is handle prompting the user for username and password
  * if necessary. That is handled in Mathematica code triggered by a 407 HTTP status.
- *
+ * <p>
  * The HttpHandler instance holds one instance of this class and uses it when necessary or passes
  * it to other classes that need to use it.
  *
  * @author tgayley
- *
  */
 public class ProxySettings {
-
-    private static ProxySettings instance = null;  // Singleton
-
-    private int useProxy;  // 0 = false, 1 = automatic, 2 = true
-    private String httpProxyHost;   // For these values, null or 0 means ignore.
-    private int httpProxyPort;
-
-    private String proxyUsername;
-    private String proxyPassword;
 
     public static final int PROXY_NONE = 0;
     public static final int PROXY_AUTOMATIC = 1;
     public static final int PROXY_MANUAL = 2;
+    private static ProxySettings instance = null;  // Singleton
+    private int useProxy;  // 0 = false, 1 = automatic, 2 = true
+    private String httpProxyHost;   // For these values, null or 0 means ignore.
+    private int httpProxyPort;
+    private String proxyUsername;
+    private String proxyPassword;
 
 
     private ProxySettings() {
@@ -94,7 +86,6 @@ public class ProxySettings {
     }
 
 
-
     ///////////////////////////////  Proxy config  ////////////////////////////////////
 
     // Decide what proxy, if any, to use for a request. Manual settings take precedence,
@@ -115,7 +106,7 @@ public class ProxySettings {
                 List<Proxy> proxyList = ps.select(uri);
                 int len = proxyList.size();
                 for (int i = 0; i < len; i++) {
-                    Proxy p = (Proxy) proxyList.get (i);
+                    Proxy p = (Proxy) proxyList.get(i);
                     InetSocketAddress addr = (InetSocketAddress) p.address();
                     if (addr != null) {
                         host = addr.getHostName();
@@ -183,12 +174,11 @@ public class ProxySettings {
     static class MyProxySelector extends ProxySelector {
 
         static MyProxySelector instance = null;
-        ProxySelector origSelector = null;
-
         // The list we return when we want to indicate to the caller that no proxy should be used.
         // In older versions of Java you could return an empty list, but in newer ones there is a bug
         // where the java.net code will throw a NullPointerException if you return an empty list.
         private final List<Proxy> NO_PROXY_LIST = new ArrayList<Proxy>(1);
+        ProxySelector origSelector = null;
 
         private MyProxySelector() {
             origSelector = ProxySelector.getDefault();

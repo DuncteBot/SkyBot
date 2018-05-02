@@ -10,6 +10,8 @@ import com.wolfram.alpha.visitor.Visitable;
 public interface WALink extends Visitable {
 
     String getURL();
+
     String getText();
+
     String getTitle();
 }

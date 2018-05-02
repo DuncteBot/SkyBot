@@ -4,23 +4,21 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-
+import com.wolfram.alpha.WAException;
+import com.wolfram.alpha.WAReinterpretWarning;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
 
-import com.wolfram.alpha.WAException;
-import com.wolfram.alpha.WAReinterpretWarning;
+import java.io.Serializable;
 
 
 public class WAReinterpretWarningImpl extends WAWarningImpl implements WAReinterpretWarning, Serializable {
 
+    private static final long serialVersionUID = 7006649850656408617L;
     private String newInterpretation;
     private String[] alternatives;
 
-    private static final long serialVersionUID = 7006649850656408617L;
 
-    
     WAReinterpretWarningImpl(Element thisElement) throws WAException {
 
         super(thisElement);

@@ -4,36 +4,32 @@
  */
 package com.wolfram.alpha.impl;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-
-import org.w3c.dom.Element;
-import org.w3c.dom.NamedNodeMap;
-import org.w3c.dom.Node;
-
 import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WAWarning;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
+import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.Node;
+
+import java.io.Serializable;
+import java.util.ArrayList;
 
 // Warnings are not well defined in structure, bit they all have a text attribute. The other attributes are made
 // available as an array of string pairs: {{"word", "Foo"}, {"suggestion", "Bar"}}.
 
 public class WAWarningImpl implements WAWarning, Visitable, Serializable {
 
+    static final WAWarningImpl[] EMPTY_ARRAY = new WAWarningImpl[0];
+    private static final String[][] NO_ATTRIBUTES = new String[0][2];
+    private static final long serialVersionUID = 2599384508960192266L;
     private String type;
     private String text;
     private String[][] attributes = NO_ATTRIBUTES;
-    
-    static final WAWarningImpl[] EMPTY_ARRAY = new WAWarningImpl[0];
 
-    private static final String[][] NO_ATTRIBUTES = new String[0][2];
-    
-    private static final long serialVersionUID = 2599384508960192266L;
 
-    
     WAWarningImpl(Element thisElement) throws WAException {
-        
+
         type = thisElement.getNodeName();
         text = thisElement.getAttribute("text");
         ArrayList<String[]> attrPairs = new ArrayList<String[]>();
@@ -50,8 +46,8 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
         if (attrPairs.size() > 0)
             attributes = attrPairs.toArray(new String[attrPairs.size()][2]);
     }
-    
-    
+
+
     public String[][] getAttributes() {
         return attributes;
     }
@@ -65,10 +61,10 @@ public class WAWarningImpl implements WAWarning, Visitable, Serializable {
     public String getType() {
         return type;
     }
-    
+
 
     ///////////////////////////  Visitor interface  ////////////////////////////
-    
+
     public void accept(Visitor v) {
         v.visit(this);
     }

@@ -8,5 +8,5 @@ package com.wolfram.alpha;
 public interface WAQuery extends WAQueryParameters {
 
     WAQuery copy();
-    
+
 }

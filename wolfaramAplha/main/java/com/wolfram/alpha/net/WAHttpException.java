@@ -11,21 +11,19 @@ import org.apache.http.HttpStatus;
 /**
  * Either has httpStatusCode member set to a value other than HttpStatus.SC_OK or wraps another
  * exception such as IOException or HttpException.
- * 
- * @author tgayley
  *
+ * @author tgayley
  */
 public class WAHttpException extends Exception {
 
-    public int httpStatusCode = HttpStatus.SC_OK;
-    
     private static final long serialVersionUID = 59955069668288618L;
+    public int httpStatusCode = HttpStatus.SC_OK;
 
-    
+
     // Do not add other constructors without reviewing uses of HttpHandlerException,
     // especially in Mathematica PacletManager code. Code depends on the assumption that all these
     // exceptions either have httpStatusCode != SC_OK, or they wrap another exception.
-    
+
     public WAHttpException(int httpStatusCode) {
         this.httpStatusCode = httpStatusCode;
     }
@@ -34,16 +32,6 @@ public class WAHttpException extends Exception {
         super(arg0);
     }
 
-    
-    public String getMessage() {
-        if (httpStatusCode != HttpStatus.SC_OK) {
-            return statusCodeToMessageString(httpStatusCode);
-        } else {
-            return super.getMessage();
-        }
-    }
-    
-    
     private static String statusCodeToMessageString(int httpStatusCode) {
         switch (httpStatusCode) {
             case 404:
@@ -52,6 +40,14 @@ public class WAHttpException extends Exception {
                 return "HTTP Error 503: Service unavailable";
             default:
                 return "HTTP Error " + String.valueOf(httpStatusCode);
+        }
+    }
+
+    public String getMessage() {
+        if (httpStatusCode != HttpStatus.SC_OK) {
+            return statusCodeToMessageString(httpStatusCode);
+        } else {
+            return super.getMessage();
         }
     }
 }
