@@ -128,7 +128,7 @@ class ChatCommand : Command() {
                 response = sessions[event.author.id]?.session?.think(message)
             }*/
 
-            val `with"Ads"` = AirUtils.RAND.nextInt(500) in 211 until 268 && !hasUpvoted(event.author)
+            val `with"Ads"` = AirUtils.RAND.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
 
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
                 response = response.replace(oldValue = element.toString(),
