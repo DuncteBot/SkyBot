@@ -1,6 +1,8 @@
 package ml.duncte123.skybot.commands.essentials;
 
+import com.github.natanbc.reliqua.request.RequestException;
 import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.command.Command;
@@ -15,16 +17,17 @@ import java.util.Arrays;
 import java.util.Collections;
 
 public class GithubReleaseCommand
-extends Command {
+        extends Command {
 
     private static final String CREATE_RELEASE = "https://api.github.com/repos/DuncteBot/SkyBot/releases?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
     private static final String UPLOAD_ASSET = "https://%s/repos/DuncteBot/SkyBot/releases/%s/assets?name=&s?access_token="
             + AirUtils.CONFIG.getString("apis.github");
+
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if(!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())
+        if (!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())
                 && !Settings.OWNER_ID.equals(event.getAuthor().getId())) {
             MessageUtils.sendError(event.getMessage());
             MessageUtils.sendMsg(event, "You must be the bot owner to run this command!");
@@ -33,8 +36,11 @@ extends Command {
         }
 
         // The running JAR file
-        File running = new File(SkyBot.class.getProtectionDomain().getCodeSource().getLocation().getFile());
-        String name = "v" + running.getName().split("_")[0];
+        /*File running = new File(SkyBot.class.getProtectionDomain().getCodeSource().getLocation().getFile());
+        String name = "v" + running.getName().split("_")[0];*/
+        String fullJarName = System.getProperty("java.class.path");
+        String firstPart = fullJarName.split("-")[1];
+        String name = "v" + firstPart.split("_")[0];
 
         // The message from after the {prefix}{invoke} syntax
         String message = event.getMessage().getContentDisplay();
@@ -55,28 +61,27 @@ extends Command {
         JSONObject releaseOut = new JSONObject()
                 .put("tag_name", name)
                 .put("name", name)
-                .put("target_commitish", "master")
+                .put("target_commitish", "dev")
                 .put("body", message)
-                .put("draft", false)
+                //Set it as draft until the asset is uploaded
+                .put("draft", true)
                 .put("prerelease", false);
 
-        JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
-                Collections.singletonMap("User-Agent", "SkyBot-Release-Uploader"),
-                WebUtils.EncodingType.APPLICATION_JSON)
-                .build(success -> new JSONObject(success.body().source()), error -> {
-                    Exception exception = new Exception();
-                    exception.setStackTrace(error.getCallStack());
+        try {
+            JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
+                    Collections.singletonMap("User-Agent", "SkyBot-Release-Uploader"),
+                    WebUtils.EncodingType.APPLICATION_JSON)
+                    .build(success -> new JSONObject(success.body().source()), WebUtilsErrorUtils::handleError).execute();
 
-                    exception.printStackTrace();
+            if (releaseIn == null)
+                return;
 
-                    MessageUtils.sendError(event.getMessage());
-                    MessageUtils.sendMsg(event, "An error occurred creating a release, it has been logged in the console");
-                }).execute();
-
-        if(releaseIn == null)
-            return;
-
-        // Now upload the asset
+            // Now upload the asset
+        }
+        catch (RequestException e) {
+            MessageUtils.sendError(event.getMessage());
+            MessageUtils.sendMsg(event, "An error occurred creating a release, it has been logged in the console");
+        }
     }
 
     @Override

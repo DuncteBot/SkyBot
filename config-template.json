@@ -29,7 +29,7 @@
     "discordbots_userToken": "",
     "weeb.sh": {
       "wolketoken": "INSERT_WEEB_WOLKETOKEN"
-    }
+    },
     "github": "GitHub OAUTH2 token"
   },
   "lavalink": {
