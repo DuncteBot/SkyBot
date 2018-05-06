@@ -9,16 +9,13 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.utils.MiscUtil;
 import okhttp3.MediaType;
-import okhttp3.MultipartBody;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.InputStream;
 
 public class GithubReleaseCommand extends Command {
 
@@ -53,7 +50,7 @@ public class GithubReleaseCommand extends Command {
 
         // The message from after the {prefix}{invoke} syntax
         String message = event.getMessage().getContentDisplay();
-        message = message.substring(message.indexOf(invoke) + invoke.length() + 1);
+        message = message.substring(message.indexOf(invoke) + invoke.length());
 
         /*
          * Format is:
@@ -96,10 +93,8 @@ public class GithubReleaseCommand extends Command {
             // Now upload the asset
 
             FileInputStream jarStream = new FileInputStream(fullJarName);
-            //MultipartBody.Builder builder = new MultipartBody.Builder().setType(MultipartBody.FORM);
             MediaType type = MediaType.parse("application/zip");
             RequestBody body = MiscUtil.createRequestBody(type, jarStream);
-            //builder.addFormDataPart("file", fullJarName, body);
 
             Request request = new Request.Builder()
                     .post(body)
@@ -111,10 +106,7 @@ public class GithubReleaseCommand extends Command {
                 for (int i = 0; i < 10; i++)
                     System.out.println();
                 System.out.println(asset.toString(4));
-            });
-
-
-
+            }, Throwable::printStackTrace);
         }
         catch (RequestException | FileNotFoundException e) {
             MessageUtils.sendError(event.getMessage());
