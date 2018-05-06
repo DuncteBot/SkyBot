@@ -67,10 +67,15 @@ public class GithubReleaseCommand extends Command {
                 .put("prerelease", false);
 
         try {
-            JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
+            //You meant to post the json ramid?
+            JSONObject releaseIn = WebUtils.ins.postJSON(CREATE_RELEASE, releaseOut,
+                    mapper -> new JSONObject(mapper.body().string())).execute();
+
+            //I don't think that this is what you meant to do
+            /*JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
                     Collections.singletonMap("User-Agent", "SkyBot-Release-Uploader"),
                     WebUtils.EncodingType.APPLICATION_JSON)
-                    .build(success -> new JSONObject(success.body().source()), WebUtilsErrorUtils::handleError).execute();
+                    .build(success -> new JSONObject(success.body().source()), WebUtilsErrorUtils::handleError).execute();*/
 
             if (releaseIn == null)
                 return;
