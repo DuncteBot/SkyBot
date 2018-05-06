@@ -2,9 +2,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.github.natanbc.reliqua.request.RequestException;
 import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -12,19 +10,15 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.Collections;
-
 public class GithubReleaseCommand extends Command {
 
     private static final String GITHUB_API = "https://api.github.com";
-    private static final String REPO_URL = GITHUB_API + "/repos/DuncteBot/SkyBot";
+    private static final String REPO_PART = "/repos/DuncteBot/SkyBot";
 
-    private static final String CREATE_RELEASE = REPO_URL + "/releases?access_token="
+    private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
-    private static final String UPLOAD_ASSET = REPO_URL + "/releases/%s/assets?name=&s?access_token="
+    private static final String UPLOAD_ASSET = "https://uploads.github.com" + REPO_PART + "/releases/%s/assets?name=&s?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
     @Override
