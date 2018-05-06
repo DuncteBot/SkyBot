@@ -16,8 +16,7 @@ import java.io.File;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class GithubReleaseCommand
-        extends Command {
+public class GithubReleaseCommand extends Command {
 
     private static final String CREATE_RELEASE = "https://api.github.com/repos/DuncteBot/SkyBot/releases?access_token="
             + AirUtils.CONFIG.getString("apis.github");
@@ -27,7 +26,7 @@ public class GithubReleaseCommand
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (!Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())
+        if (!isDev(event.getAuthor())
                 && !Settings.OWNER_ID.equals(event.getAuthor().getId())) {
             MessageUtils.sendError(event.getMessage());
             MessageUtils.sendMsg(event, "You must be the bot owner to run this command!");

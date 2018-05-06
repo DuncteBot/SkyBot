@@ -22,7 +22,10 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -105,7 +108,7 @@ public abstract class Command {
      */
     protected boolean isPatron(User u, TextChannel tc) {
         //noinspection deprecation
-        if (Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId())) {
+        if (isDev(u)) {
             return true;
         }
         Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
@@ -130,14 +133,19 @@ public abstract class Command {
         }
     }
 
+    @SuppressWarnings("deprecation")
+    protected boolean isDev(User u) {
+        return Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId());
+    }
+
     /**
      * Has this user upvoted the bot
      */
     protected boolean hasUpvoted(User user) {
         boolean upvoteCheck = upvotedIds.contains(user.getId());
-        if(!upvoteCheck) {
+        if (!upvoteCheck) {
             boolean dblCheck = checkVoteOnDBL(user.getId());
-            if(dblCheck) {
+            if (dblCheck) {
                 upvoteCheck = true;
                 upvotedIds.add(user.getId());
             }
