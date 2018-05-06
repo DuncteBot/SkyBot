@@ -18,10 +18,13 @@ import java.util.Collections;
 
 public class GithubReleaseCommand extends Command {
 
-    private static final String CREATE_RELEASE = "https://api.github.com/repos/DuncteBot/SkyBot/releases?access_token="
+    private static final String GITHUB_API = "https://api.github.com";
+    private static final String REPO_URL = GITHUB_API + "/repos/DuncteBot/SkyBot";
+
+    private static final String CREATE_RELEASE = REPO_URL + "/releases?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
-    private static final String UPLOAD_ASSET = "https://%s/repos/DuncteBot/SkyBot/releases/%s/assets?name=&s?access_token="
+    private static final String UPLOAD_ASSET = REPO_URL + "/releases/%s/assets?name=&s?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
     @Override
