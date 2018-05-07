@@ -26,6 +26,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.utils.TagUtils;
+import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -48,6 +49,7 @@ public class SkyBot {
     public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
     private static final SkyBot instance = new SkyBot();
     private static ShardManager shardManager = null;
+    private static final WebServer WEB_SERVER = new WebServer();
 
     private SkyBot() {
     }
@@ -138,6 +140,9 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+
+        //last start the server
+        WEB_SERVER.activate();
     }
 
     public static SkyBot getInstance() {
