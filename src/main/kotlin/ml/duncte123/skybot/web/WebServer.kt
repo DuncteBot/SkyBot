@@ -18,16 +18,47 @@
 
 package ml.duncte123.skybot.web
 
+import ml.duncte123.skybot.SkyBot
+import ml.duncte123.skybot.utils.GuildSettingsUtils
 import spark.kotlin.*
+
+/**
+ * Notes:
+ * duncte123: we're gonna use this for templating https://github.com/warhuhn/warhuhn-spark-template-jtwig
+ * it's twig and it's easy to use
+ */
 
 class WebServer {
 
     val http = ignite()
 
     fun activate() {
+        //Port has to be 2000 because of the apache proxy on the vps
+        http.port(2000)
 
         http.get("/") {
             "Hello world"
+        }
+
+        http.get("/api/servers") {
+            "Server count: ${SkyBot.getInstance().shardManager.guildCache.size()}"
+        }
+
+        http.get("/server/:guildid") {
+            val guild = SkyBot.getInstance()
+                    .shardManager.getGuildById(request.params(":guildid"))
+            if(guild == null) {
+                "This server was not found"
+            } else {
+                val settings = GuildSettingsUtils.getGuild(guild)
+                """<p>Guild prefix: ${settings.customPrefix}</p>
+                |<p>Join Message: ${settings.customJoinMessage}</p>
+            """.trimMargin()
+            }
+        }
+
+        http.notFound {
+            "This page could not be found"
         }
     }
 
