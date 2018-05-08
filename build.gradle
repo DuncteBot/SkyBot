@@ -117,7 +117,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //Spark for website
-    compile group: "com.sparkjava", name: "spark-kotlin", version: "1.0.0-alpha"
+    //compile group: "com.sparkjava", name: "spark-core", version: "2.7.2"
+    compile "com.sparkjava:spark-core:2.7.2"
 }
 
 javadoc {

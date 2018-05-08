@@ -237,19 +237,24 @@ public class AudioUtils {
      * @return The music manager for that guild
      */
     public GuildMusicManager getMusicManager(Guild guild) {
+        GuildMusicManager mng = getMusicManager(guild, true);
+        guild.getAudioManager().setSendingHandler(mng.getSendHandler());
+        return mng;
+    }
+
+    public GuildMusicManager getMusicManager(Guild guild, boolean createIfNull) {
         String guildId = guild.getId();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
-                if (mng == null) {
+                if (mng == null && createIfNull) {
                     mng = new GuildMusicManager(guild);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }
             }
         }
-        guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         return mng;
     }
 

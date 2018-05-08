@@ -19,8 +19,12 @@
 package ml.duncte123.skybot.web
 
 import ml.duncte123.skybot.SkyBot
+import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import spark.kotlin.*
+import net.dv8tion.jda.core.entities.Guild
+import spark.Request
+import spark.Response
+import spark.Spark.*
 
 /**
  * Notes:
@@ -30,36 +34,85 @@ import spark.kotlin.*
 
 class WebServer {
 
-    val http = ignite()
-
     fun activate() {
         //Port has to be 2000 because of the apache proxy on the vps
-        http.port(2000)
+        port(2000)
 
-        http.get("/") {
+        get("/") { request, response ->
             "Hello world"
         }
 
-        http.get("/api/servers") {
+        get("/api/servers") { request, response ->
             "Server count: ${SkyBot.getInstance().shardManager.guildCache.size()}"
         }
 
-        http.get("/server/:guildid") {
-            val guild = SkyBot.getInstance()
-                    .shardManager.getGuildById(request.params(":guildid"))
-            if(guild == null) {
-                "This server was not found"
-            } else {
-                val settings = GuildSettingsUtils.getGuild(guild)
-                """<p>Guild prefix: ${settings.customPrefix}</p>
-                |<p>Join Message: ${settings.customJoinMessage}</p>
-            """.trimMargin()
+        path("/server/:guildid") {
+            
+            before("*") { request, response ->
+                val guild = getGuildFromRequest(request, response)
+                if(guild == null && !request.uri().contains("invalid")) {
+                    response.redirect("/server/${request.params(":guildid*")}/invalid")
+                } else if(guild != null && request.uri().contains("invalid")) {
+                    response.redirect("/server/${request.params(":guildid*")}")
+                }
+            }
+            
+            //overview and editing
+            get("") { request, response ->
+                val guild = getGuildFromRequest(request, response)
+                if (guild != null) {
+                    val settings = GuildSettingsUtils.getGuild(guild)
+                    """<p>Guild prefix: ${settings.customPrefix}</p>
+                    |<p>Join Message: ${settings.customJoinMessage}</p>
+                    """.trimMargin()
+                } else { response.body() }
+            }
+            //audio stuff
+            get("/music") { request, response ->
+                val guild = getGuildFromRequest(request, response)
+                if(guild != null) {
+                    val mng = AudioUtils.ins.getMusicManager(guild, false)
+
+                    if(mng != null) {
+                        """<p>Audio player details:</p>
+                            |<p>Currently playing: <b>${ if (mng.player.playingTrack != null)
+                                                mng.player.playingTrack.info.title else "nothing" }</b></p>
+                            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
+                        """.trimMargin()
+                    } else {
+                        "The audio player does not seem to be active"
+                    }
+                } else { response.body() }
+            }
+
+            //when the guild is not found
+            get("/invalid") { _, response ->
+                response.status(404)
+                "DuncteBot is not in the requested server, why don't you <a href=\"#\">invite it</a>?"
             }
         }
 
-        http.notFound {
+        notFound { _, _ ->
             "This page could not be found"
         }
+    }
+
+
+    private fun getGuildFromRequest(request: Request, response: Response): Guild? {
+
+        val guildId = if(!request.params(":guildid").isNullOrEmpty())
+            request.params(":guildid")
+        else request.params(":guildid*")
+
+        val guild = SkyBot.getInstance()
+                .shardManager.getGuildById(guildId)
+
+        if(guild == null) {
+            response.body("DuncteBot is not in this server")
+            return null
+        }
+
+        return guild
     }
 
 }
