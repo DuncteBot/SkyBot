@@ -95,6 +95,10 @@ class WebServer {
         notFound { _, _ ->
             "This page could not be found"
         }
+
+        after("") { request, response ->
+            response.body()
+        }
     }
 
 
