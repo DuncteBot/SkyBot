@@ -173,51 +173,51 @@ public class ModerationUtils {
      * @param shardManager the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager shardManager) {
-        logger.debug("Checking for users to unban");
-        int usersUnbanned = 0;
-        Connection database = AirUtils.DB.getConnManager().getConnection();
+        AirUtils.DB.run(() -> {logger.debug("Checking for users to unban");
+            int usersUnbanned = 0;
+            Connection database = AirUtils.DB.getConnManager().getConnection();
 
-        try {
-
-            Statement smt = database.createStatement();
-
-            ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
-
-            while (res.next()) {
-                java.util.Date unbanDate = res.getTimestamp("unban_date");
-                java.util.Date currDate = new java.util.Date();
-
-                if (currDate.after(unbanDate)) {
-                    usersUnbanned++;
-                    String username = res.getString("Username");
-                    logger.debug("Unbanning " + username);
-                    try {
-                        String guildid = res.getString("guildId");
-                        String userID = res.getString("userId");
-                        shardManager.getGuildCache().getElementById(guildid).getController()
-                                .unban(userID).reason("Ban expired").queue();
-                        modLog(new ConsoleUser(),
-                                new FakeUser(username,
-                                        userID,
-                                        res.getString("discriminator")),
-                                "unbanned",
-                                shardManager.getGuildById(guildid)
-                        );
-                    } catch (NullPointerException ignored) {
-                    }
-                    database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
-                }
-            }
-            logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
             try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
-        }
+
+                Statement smt = database.createStatement();
+
+                ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
+
+                while (res.next()) {
+                    java.util.Date unbanDate = res.getTimestamp("unban_date");
+                    java.util.Date currDate = new java.util.Date();
+
+                    if (currDate.after(unbanDate)) {
+                        usersUnbanned++;
+                        String username = res.getString("Username");
+                        logger.debug("Unbanning " + username);
+                        try {
+                            String guildid = res.getString("guildId");
+                            String userID = res.getString("userId");
+                            shardManager.getGuildCache().getElementById(guildid).getController()
+                                    .unban(userID).reason("Ban expired").queue();
+                            modLog(new ConsoleUser(),
+                                    new FakeUser(username,
+                                            userID,
+                                            res.getString("discriminator")),
+                                    "unbanned",
+                                    shardManager.getGuildById(guildid)
+                            );
+                        } catch (NullPointerException ignored) {
+                        }
+                        database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    }
+                }
+                logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }});
     }
 
     public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {

@@ -27,8 +27,7 @@ import java.sql.Connection;
  *
  * @author ramidzkh
  */
-public interface DBConnectionManager
-        extends Closeable {
+public interface DBConnectionManager extends Closeable {
 
     /**
      * @return The connection to use
@@ -51,4 +50,5 @@ public interface DBConnectionManager
     default boolean hasSettings() {
         return true;
     }
+
 }

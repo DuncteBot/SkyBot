@@ -30,8 +30,7 @@ import java.sql.SQLException;
  * Represents a server database
  */
 @SuppressWarnings("SqlDialectInspection")
-class MySQLConnectionManager
-        implements DBConnectionManager {
+class MySQLConnectionManager implements DBConnectionManager {
 
     private final String dbHost;
     private final String user;
