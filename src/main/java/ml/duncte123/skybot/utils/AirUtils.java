@@ -215,6 +215,7 @@ public class AirUtils {
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }
+        DB.getService().shutdown();
     }
 
     /**
