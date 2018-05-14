@@ -40,7 +40,7 @@ apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
-version "3.68.5_${getGitHash()}"
+version "3.69.0_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
