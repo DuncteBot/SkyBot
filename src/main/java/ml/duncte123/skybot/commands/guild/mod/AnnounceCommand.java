@@ -101,7 +101,7 @@ public class AnnounceCommand extends Command {
     @Override
     public String help() {
         return "Announces a message.\n" +
-                "Usage `" + PREFIX + getName() + " <message>`";
+                "Usage `" + PREFIX + getName() + " <#channel> <message>`";
     }
 
     @Override
