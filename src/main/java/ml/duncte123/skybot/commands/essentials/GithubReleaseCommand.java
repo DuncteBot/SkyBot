@@ -7,15 +7,8 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.MiscUtil;
-import okhttp3.MediaType;
-import okhttp3.Request;
-import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 
 public class GithubReleaseCommand extends Command {
 
@@ -25,11 +18,11 @@ public class GithubReleaseCommand extends Command {
     private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
-    private static final String UPDATE_RELEASE = GITHUB_API + REPO_PART + "/releases/%s?access_token="
+    /*private static final String UPDATE_RELEASE = GITHUB_API + REPO_PART + "/releases/%s?access_token="
             + AirUtils.CONFIG.getString("apis.github");
 
     private static final String UPLOAD_ASSET = "https://uploads.github.com" + REPO_PART + "/releases/%s/assets?name=%s&access_token="
-            + AirUtils.CONFIG.getString("apis.github");
+            + AirUtils.CONFIG.getString("apis.github");*/
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
@@ -41,12 +34,8 @@ public class GithubReleaseCommand extends Command {
             return;
         }
 
-        // The running JAR file
-        /*File running = new File(SkyBot.class.getProtectionDomain().getCodeSource().getLocation().getFile());
-        String name = "v" + running.getName().split("_")[0];*/
-        String fullJarName = System.getProperty("java.class.path");
-        String firstPart = fullJarName.split("-")[1];
-        String name = "v" + firstPart.split("_")[0];
+        //get the version name
+        String name = "v" + Settings.VERSION.split("_")[0];
 
         // The message from after the {prefix}{invoke} syntax
         String message = event.getMessage().getContentDisplay();
@@ -69,14 +58,16 @@ public class GithubReleaseCommand extends Command {
                 .put("name", name)
                 .put("target_commitish", "dev")
                 .put("body", message)
-                //Set it as draft until the asset is uploaded
-                .put("draft", true)
+                .put("draft", false)
                 .put("prerelease", false);
 
         try {
             //You meant to post the json ramid?
             JSONObject releaseIn = WebUtils.ins.postJSON(CREATE_RELEASE, releaseOut,
-                    mapper -> new JSONObject(mapper.body().string())).execute();
+                    mapper -> {
+                        assert mapper.body() != null;
+                        return new JSONObject(mapper.body().string());
+                    }).execute();
 
             //I don't think that this is what you meant to do
             /*JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
@@ -87,12 +78,14 @@ public class GithubReleaseCommand extends Command {
             if (releaseIn == null)
                 return;
 
-            System.out.println(releaseIn.toString(4));
-            String releaseId = releaseIn.getString("id");
+            MessageUtils.sendMsg(event, "Release uploaded");
+
+            //System.out.println(releaseIn.toString(4));
+            //String releaseId = releaseIn.getString("id");
 
             // Now upload the asset
 
-            FileInputStream jarStream = new FileInputStream(fullJarName);
+            /*FileInputStream jarStream = new FileInputStream(fullJarName);
             MediaType type = MediaType.parse("application/zip");
             RequestBody body = MiscUtil.createRequestBody(type, jarStream);
 
@@ -106,9 +99,9 @@ public class GithubReleaseCommand extends Command {
                 for (int i = 0; i < 10; i++)
                     System.out.println();
                 System.out.println(asset.toString(4));
-            }, Throwable::printStackTrace);
+            }, Throwable::printStackTrace);*/
         }
-        catch (RequestException | FileNotFoundException e) {
+        catch (RequestException e) {
             MessageUtils.sendError(event.getMessage());
             MessageUtils.sendMsg(event, "An error occurred creating a release, it has been logged in the console");
         }
