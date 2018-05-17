@@ -80,10 +80,10 @@ dependencies {
     compile 'com.github.duncte123:botCommons:bae7224'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_362'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_366'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.63'
-    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '36f2bf8' ) {
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '8738c3c' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
     //Commons text, because UnicodeUnescaper
