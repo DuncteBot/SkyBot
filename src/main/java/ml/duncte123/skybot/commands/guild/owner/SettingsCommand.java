@@ -49,7 +49,7 @@ public class SettingsCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
         //noinspection deprecation
-        if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !event.getAuthor().getId().equals(Settings.wbkxwkZPaG4ni5lm8laY[0])) {
+        if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(event.getAuthor())) {
             sendMsg(event, "You need the \"Manage Server\" permission to use this command");
             return;
         }
