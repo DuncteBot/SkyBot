@@ -75,14 +75,14 @@ public class BadWordFilter {
     /**
      * Iterates over a String input and checks whether a cuss word was found in a list, then checks if the word should be ignored (e.g. bass contains the word *ss).
      *
-     * @param input The sentence to check
+     * @param in The sentence to check
      * @return every word as a item in array
      */
-    public ArrayList<String> badWordsFound(String input) {
-        if (input == null) {
+    private ArrayList<String> badWordsFound(String in) {
+        if (in == null) {
             return new ArrayList<>();
         }
-
+        String input = in;
         // remove leetspeak
         input = input.replaceAll("[1!]", "i");
         input = input.replaceAll("3", "e");

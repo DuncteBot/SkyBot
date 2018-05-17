@@ -19,18 +19,23 @@
 package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import me.duncte123.botCommons.text.TextColor;
+import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import net.dv8tion.jda.core.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Collections;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
+import java.util.*;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
@@ -38,7 +43,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public final Queue<AudioTrack> queue;
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
-    private AudioTrack lastTrack;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -90,7 +94,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        this.lastTrack = track;
+        @SuppressWarnings("UnnecessaryLocalVariable") AudioTrack lastTrack = track;
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");
@@ -98,12 +102,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
                     this.player.playTrack(lastTrack.makeClone());
-                    announceNextTrack(lastTrack);
+                    announceNextTrack(lastTrack, true);
                 } else {
                     logger.debug("a playlist.....");
                     nextTrack();
                     //Offer it to the queue to prevent the player from playing it
                     queue.offer(lastTrack.makeClone());
+
+                    MessageUtils.sendMsg(guildMusicManager.latestChannel, "Repeating the playlist");
                 }
             } else {
                 logger.debug("starting next track");
@@ -156,8 +162,33 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track) {
-        if (guildMusicManager.guildSettings.isAnnounceTracks())
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + track.getInfo().title);
+        announceNextTrack(track, false);
     }
 
+    private void announceNextTrack(AudioTrack track, boolean repeated) {
+        if (guildMusicManager.guildSettings.isAnnounceTracks()) {
+            String title = track.getInfo().title;
+            if (track.getInfo().isStream) {
+                Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                        .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                if (stream.isPresent())
+                    title = stream.get().getName();
+            }
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + title + (repeated ? " (repeated)" : ""));
+        }
+    }
+
+    @Override
+    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        ComparatingUtils.execCheck(exception);
+        if (exception.severity != FriendlyException.Severity.COMMON) {
+            Guild g = this.guildMusicManager.latestChannel.getGuild();
+            AudioTrackInfo info = track.getInfo();
+            final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                    g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
+            logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                    "Details: " + exception);
+        }
+    }
 }

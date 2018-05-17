@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Aug 19, 2006
  *
  */
@@ -35,7 +17,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 
-@SuppressWarnings("deprecation")
+
 public class ApacheHttpTransaction implements HttpTransaction {
 
     private HttpClient httpClient;
@@ -47,6 +29,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
     private int maxRetryCount;
     private int socketTimeoutMillis;  // use -1 for default
     private volatile boolean noRetry = false;
+
 
     ApacheHttpTransaction(HttpClient httpClient, URL url, ProxySettings proxySettings,
                           int maxRetryCount, int socketTimeoutMillis) {
@@ -64,7 +47,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
      * content using getResponseAsString() or getResponseAsStream(). If it throws, then
      * you do not have to read. You must always call release().
      *
-     * @throws WAHttpException which can be any other exception lol
+     * @throws HttpHandlerException
      */
     public void execute() throws WAHttpException {
 
@@ -101,7 +84,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
     }
 
 
-    public String[][] getResponseHeaders() {
+    public String[][] getResponseHeaders() throws IOException {
 
         Header[] hdrs = response.getAllHeaders();
         String[][] result = new String[hdrs.length][];
@@ -114,10 +97,11 @@ public class ApacheHttpTransaction implements HttpTransaction {
     /**
      * Only works for simple headers (ones that do not contain mltiple elements).
      *
-     * @param headerName the key name of the header
-     * @return the response header as a {@link String}
+     * @param headerName
+     * @return
+     * @throws IOException
      */
-    public String getResponseHeader(String headerName) {
+    public String getResponseHeader(String headerName) throws IOException {
 
         Header hdr = response.getFirstHeader(headerName);
         return hdr == null ? null : hdr.getValue();
@@ -128,7 +112,7 @@ public class ApacheHttpTransaction implements HttpTransaction {
         return entity == null ? -1 : entity.getContentLength();
     }
 
-    public String getCharSet() {
+    public String getCharSet() throws IOException {
         return EntityUtils.getContentCharSet(entity);
     }
 
@@ -205,17 +189,5 @@ public class ApacheHttpTransaction implements HttpTransaction {
      }
      }
      ***/
-
-    public int getMaxRetryCount() {
-        return maxRetryCount;
-    }
-
-    public int getSocketTimeoutMillis() {
-        return socketTimeoutMillis;
-    }
-
-    public boolean isNoRetry() {
-        return noRetry;
-    }
 
 }

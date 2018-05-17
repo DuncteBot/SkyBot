@@ -26,6 +26,7 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ExecutionException;
 
 public class TagUtils {
     /**
@@ -38,36 +39,38 @@ public class TagUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        logger.debug("Loading tags.");
+        AirUtils.DB.run(() -> {
+            logger.debug("Loading tags.");
 
-        Connection database = AirUtils.DB.getConnManager().getConnection();
-        try {
-            Statement smt = database.createStatement();
-
-            ResultSet resultSet = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".tags");
-
-            while (resultSet.next()) {
-                String tagName = resultSet.getString("tagName");
-
-                tagsList.put(tagName, new Tag(
-                        resultSet.getInt("id"),
-                        resultSet.getString("author"),
-                        resultSet.getString("authorId"),
-                        tagName,
-                        resultSet.getString("tagText")
-                ));
-            }
-
-            logger.debug("Loaded " + tagsList.keySet().size() + " tags.");
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
+            Connection database = AirUtils.DB.getConnManager().getConnection();
             try {
-                database.close();
-            } catch (SQLException e2) {
-                e2.printStackTrace();
+                Statement smt = database.createStatement();
+
+                ResultSet resultSet = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".tags");
+
+                while (resultSet.next()) {
+                    String tagName = resultSet.getString("tagName");
+
+                    tagsList.put(tagName, new Tag(
+                            resultSet.getInt("id"),
+                            resultSet.getString("author"),
+                            resultSet.getString("authorId"),
+                            tagName,
+                            resultSet.getString("tagText")
+                    ));
+                }
+
+                logger.debug("Loaded " + tagsList.keySet().size() + " tags.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    database.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
             }
-        }
+        });
     }
 
     /**
@@ -113,24 +116,30 @@ public class TagUtils {
      * @return true if the tag is deleted
      */
     public static boolean deleteTag(Tag tag) {
-
-        Connection database = AirUtils.DB.getConnManager().getConnection();
-
         try {
-            PreparedStatement statement = database.prepareStatement("DELETE FROM " + AirUtils.DB.getName() + ".tags WHERE tagName= ? ");
-            statement.setString(1, tag.getName());
-            statement.execute();
-        } catch (Exception e) {
+            return AirUtils.DB.run(() -> {
+                Connection database = AirUtils.DB.getConnManager().getConnection();
+
+                try {
+                    PreparedStatement statement = database.prepareStatement("DELETE FROM " + AirUtils.DB.getName() + ".tags WHERE tagName= ? ");
+                    statement.setString(1, tag.getName());
+                    statement.execute();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    try {
+                        tagsList.remove(tag.getName());
+                        database.close();
+                        return true;
+                    } catch (SQLException e2) {
+                        e2.printStackTrace();
+                    }
+                }
+                return false;
+            }).get();
+        } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
-        } finally {
-            try {
-                tagsList.remove(tag.getName());
-                database.close();
-                return true;
-            } catch (SQLException e2) {
-                e2.printStackTrace();
-            }
+            return false;
         }
-        return false;
     }
 }

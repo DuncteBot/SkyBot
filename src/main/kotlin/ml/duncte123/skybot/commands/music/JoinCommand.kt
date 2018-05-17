@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.exceptions.PermissionException
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 
 
-class JoinCommand : MusicCommand(){
+class JoinCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 

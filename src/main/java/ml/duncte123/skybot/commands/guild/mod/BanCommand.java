@@ -46,13 +46,8 @@ public class BanCommand extends Command {
     @Override
     public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
 
-        Permission[] perms = {
-                Permission.KICK_MEMBERS,
-                Permission.BAN_MEMBERS
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command");
+        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
+            MessageUtils.sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
         }
 
@@ -76,7 +71,7 @@ public class BanCommand extends Command {
                 if (!AirUtils.isInt(timeParts[0])) {
                     String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                            (__) -> {
+                            (m) -> {
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                                 MessageUtils.sendSuccess(event.getMessage());
                             }
@@ -84,60 +79,10 @@ public class BanCommand extends Command {
                     return;
                 }
 
-                String unbanDate = "";
-                int banTime; // initial value is always 0
-                try {
-                    banTime = Integer.parseInt(timeParts[0]);
-                } catch (NumberFormatException e) {
-                    MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
-                    return;
-                } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
-                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                    return;
-                }
-                if (banTime > 0) {
-                    if (timeParts.length != 2) {
-                        MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                        return;
-                    }
-                    //TODO make ban timed
-
-                    DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                    Date dt = new Date(System.currentTimeMillis());
-
-                    switch (timeParts[1]) {
-                        case "m":
-                            if (Integer.parseInt(timeParts[0]) < 10) {
-                                MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
-                                return;
-                            }
-                            dt = DateUtils.addMinutes(dt, banTime);
-                            break;
-                        case "h":
-                            dt = DateUtils.addHours(dt, banTime);
-                            break;
-                        case "d":
-                            dt = DateUtils.addDays(dt, banTime);
-                            break;
-                        case "w":
-                            dt = DateUtils.addWeeks(dt, banTime);
-                            break;
-                        case "M":
-                            dt = DateUtils.addMonths(dt, banTime);
-                            break;
-                        case "Y":
-                            dt = DateUtils.addYears(dt, banTime);
-                            break;
-
-                        default:
-                            MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
-                            return;
-                    }
-                    unbanDate = df.format(dt);
-                }
-
-                final String finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
-                final int finalBanTime = banTime;
+                CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
+                if (calculateBanTime.is()) return;
+                String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
+                int finalBanTime = calculateBanTime.getFinalBanTime();
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
@@ -171,5 +116,93 @@ public class BanCommand extends Command {
     @Override
     public String getName() {
         return "ban";
+    }
+
+    private class CalculateBanTime {
+        private boolean myResult;
+        private GuildMessageReceivedEvent event;
+        private String[] timeParts;
+        private String finalUnbanDate;
+        private int finalBanTime;
+
+        CalculateBanTime(GuildMessageReceivedEvent event, String... timeParts) {
+            this.event = event;
+            this.timeParts = timeParts;
+        }
+
+        boolean is() {
+            return myResult;
+        }
+
+        String getFinalUnbanDate() {
+            return finalUnbanDate;
+        }
+
+        int getFinalBanTime() {
+            return finalBanTime;
+        }
+
+        public CalculateBanTime invoke() {
+            String unbanDate = "";
+            int banTime; // initial value is always 0
+            try {
+                banTime = Integer.parseInt(timeParts[0]);
+            } catch (NumberFormatException e) {
+                MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
+                myResult = true;
+                return this;
+            } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
+                MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                myResult = true;
+                return this;
+            }
+            if (banTime > 0) {
+                if (timeParts.length != 2) {
+                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                    myResult = true;
+                    return this;
+                }
+
+                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                Date dt = new Date(System.currentTimeMillis());
+
+                switch (timeParts[1]) {
+                    case "m":
+                        if (Integer.parseInt(timeParts[0]) < 10) {
+                            MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
+                            myResult = true;
+                            return this;
+                        }
+                        dt = DateUtils.addMinutes(dt, banTime);
+                        break;
+                    case "h":
+                        dt = DateUtils.addHours(dt, banTime);
+                        break;
+                    case "d":
+                        dt = DateUtils.addDays(dt, banTime);
+                        break;
+                    case "w":
+                        dt = DateUtils.addWeeks(dt, banTime);
+                        break;
+                    case "M":
+                        dt = DateUtils.addMonths(dt, banTime);
+                        break;
+                    case "Y":
+                        dt = DateUtils.addYears(dt, banTime);
+                        break;
+
+                    default:
+                        MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
+                        myResult = true;
+                        return this;
+                }
+                unbanDate = df.format(dt);
+            }
+
+            finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
+            finalBanTime = banTime;
+            myResult = false;
+            return this;
+        }
     }
 }

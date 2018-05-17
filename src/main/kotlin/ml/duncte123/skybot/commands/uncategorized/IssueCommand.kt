@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.json.JSONException
 import org.json.JSONObject
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -32,6 +33,7 @@ class IssueCommand : Command() {
 
     val regex = "\\s+".toRegex()
 
+    @Suppress()
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         val arg = event.message.contentRaw.split(regex, 2)
         when (args.size) {
@@ -40,28 +42,31 @@ class IssueCommand : Command() {
                     |You can generate it by using our dashboard. Link: <https://bot.duncte123.me>""".trimMargin())
             }
             else -> {
-                val data = JSONObject(arg[1])
-                val cmds = data.getJSONArray("lastCommands").toList().map {
-                    if ((it as String).contains(regex)) {
-                        val split = it.split(regex)
-                        return@map split[0] + " " + split.takeLastWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = {"<$it>"})
-                    }
-                    else {
-                        return@map it
-                    }
-                }.joinToString(", ")
-                val embed = EmbedUtils.defaultEmbed()
+                try {
+                    val data = JSONObject(arg[1])
+                    val cmds = data.getJSONArray("lastCommands").toList().map {
+                        if ((it as String).contains(regex)) {
+                            val split = it.split(regex)
+                            return@map split[0] + " " + split.takeLastWhile { split.indexOf(it) != 0 }.joinToString(separator = " ", transform = { "<$it>" })
+                        } else {
+                            return@map it
+                        }
+                    }.joinToString(", ")
+                    val embed = EmbedUtils.defaultEmbed()
 
-                embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
-                        .setFooter(null, null)
-                        .setDescription("""
+                    embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
+                            .setFooter(null, null)
+                            .setDescription("""
                             |Description: ${data.getString("description")}
                             |Detailed report: ${data.getString("detailedReport")}
                             |List of recent run commands: $cmds
                             """.trimMargin())
-                        .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
+                            .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
-                MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
+                    MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
+                } catch (ex: JSONException) {
+                    MessageUtils.sendErrorWithMessage(event.message, "You malformed the JSON.\n${ex::class.java.simpleName}: ${ex.localizedMessage}")
+                }
             }
         }
     }

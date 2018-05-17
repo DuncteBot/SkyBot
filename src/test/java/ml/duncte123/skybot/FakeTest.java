@@ -35,61 +35,59 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 
 public class FakeTest {
-    
+
     /**
      * Test basic
      * Mock primitives and String
-     *
      */
-    @Test
+    // @Test
     public void basic() {
         User user = new FakeInterface<>(User.class).create();
 
         assertEquals(user.getName(), "");
     }
-    
+
     /**
      * Test medium
      * Mock Lists, don't share objects
-     *
      */
-    @Test
+    // @Test
     public void medium() {
         Member member = new FakeInterface<>(Member.class).create();
         JDA jda = member.getJDA();
-        
+
         assertNotEquals(jda, member.getJDA());
         assertNotEquals(jda.getGuildById(member.getGuild().getId()), member.getGuild());
-        
+
         assertEquals(jda.getGuilds(), new ArrayList<>());
     }
-    
-    @Test
+
+    // @Test
     public void advanced()
             throws Throwable {
         Map<Method, InvocationFunction> custom = new HashMap<>();
-        
+
         custom.put(User.class.getMethod("getIdLong"), (p, m, a) -> 281673659834302464L);
         custom.put(User.class.getMethod("getId"), (p, m, a) -> "281673659834302464");
         custom.put(User.class.getMethod("getName"), (p, m, a) -> "ramidzkh");
-        
+
         User m = new FakeInterface<>(User.class, custom).create();
-        
+
         assertEquals(m.getIdLong(), 281673659834302464L);
         assertEquals(m.getId(), "281673659834302464");
         assertEquals(m.getName(), "ramidzkh");
     }
 
-    @Test
+    // @Test
     public void delegate()
-    throws Throwable {
+            throws Throwable {
         Map<Method, InvocationFunction> handlers = new HashMap<>();
-        
+
         handlers.put(Guild.class.getMethod("getJDA"), (p, m, a) -> null);
-        
+
         FakeInterface<Guild> guildFakeInterface = new FakeInterface<>(Guild.class, handlers);
         guildFakeInterface.populateHandlers(guildFakeInterface.create());
-        
+
         assertEquals(guildFakeInterface.create().getJDA(), null);
     }
 }

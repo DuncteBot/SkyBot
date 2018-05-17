@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Feb 4, 2007
  *
  */
@@ -30,12 +12,11 @@ import java.net.URL;
 import java.util.logging.Logger;
 
 
-@SuppressWarnings({"NonAtomicOperationOnVolatileField", "ResultOfMethodCallIgnored"})
 public class URLFetcher {
 
     // Largest result that will be allowed to be returned as a byte[] instead of in a file.
     private static final int MAX_BUFFER_SIZE = 1000000;
-    public static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
+    private static Logger logger = Logger.getLogger("com.wolfram.alpha.net.URLFetcher");
     HttpProvider http;
     private URL url;
     private String outFile;
@@ -79,7 +60,7 @@ public class URLFetcher {
     /**
      * Doesn't mean that it finished successfully; could have been cancelled.
      *
-     * @return whether it's finish or not
+     * @return
      */
     public boolean isFinished() {
         return isFinished;
@@ -135,10 +116,8 @@ public class URLFetcher {
             if (wasCancelled)
                 return;
 
-            //long start = System.currentTimeMillis();
-
-            // TODO: Output?
-            // logger.info("Downloading url " + url);
+            long start = System.currentTimeMillis();
+            logger.info("Downloading url " + url);
 
             InputStream responseStream = null;
             OutputStream outStream = null;
@@ -180,7 +159,9 @@ public class URLFetcher {
                         outStream.write(buf, 0, numRead);
                 }
                 // Might be useful someday to handle all the checked exceptions differently...
-            } catch (WAHttpException | IOException e) {
+            } catch (WAHttpException e) {
+                exception = e;
+            } catch (IOException e) {
                 exception = e;
             } catch (Exception e) {
                 exception = e;
@@ -188,7 +169,7 @@ public class URLFetcher {
                 if (responseStream != null)
                     try {
                         responseStream.close();
-                    } catch (Exception ignored) {
+                    } catch (Exception e) {
                     }
                 if (trans != null)
                     trans.release();
@@ -197,7 +178,7 @@ public class URLFetcher {
                         bytes = ((ByteArrayOutputStream) outStream).toByteArray();
                     try {
                         outStream.close();
-                    } catch (Exception ignored) {
+                    } catch (Exception e) {
                     }
                 }
                 if (wasCancelled && downloadedFile != null) {
@@ -205,19 +186,17 @@ public class URLFetcher {
                     downloadedFile = null;
                 }
             }
-            
-            /*
+
             if (exception != null) {
-                // logger.warning("Exception downloading URL " + url + ". " + exception);
+                logger.warning("Exception downloading URL " + url + ". " + exception);
             }
-            
+
             if (wasCancelled)
-                logger.info("Download of URL " + url + " was cancelled by user. Elapsed millis: " + 
-                                (System.currentTimeMillis() - start));
+                logger.info("Download of URL " + url + " was cancelled by user. Elapsed millis: " +
+                        (System.currentTimeMillis() - start));
             else
                 logger.info("Finished downloading URL " + url +
                         ". Elapsed millis: " + (System.currentTimeMillis() - start));
-            */
         } finally {
             isFinished = true;
         }

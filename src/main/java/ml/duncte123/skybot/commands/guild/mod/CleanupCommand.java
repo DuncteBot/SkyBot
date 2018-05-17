@@ -28,7 +28,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import java.time.OffsetDateTime;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public class CleanupCommand extends Command {
@@ -49,15 +48,15 @@ public class CleanupCommand extends Command {
 
         int total = 5;
         //Little hack for lambda
-        boolean[] keepPinned = {false};
+        boolean keepPinned = false;
 
         if (args.length > 0) {
 
             if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
-                keepPinned[0] = true;
+                keepPinned = true;
             else {
                 if (args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
-                    keepPinned[0] = true;
+                    keepPinned = true;
                 try {
                     total = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
@@ -73,8 +72,9 @@ public class CleanupCommand extends Command {
         }
 
         try {
+            final Boolean keepPinnedFinal = keepPinned;
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
-                if (keepPinned[0])
+                if (keepPinnedFinal)
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
 
                 List<Message> failed = msgLst.stream()
@@ -87,7 +87,8 @@ public class CleanupCommand extends Command {
                     failed.addAll(msgLst);
                     msgLst.clear();
                 } else {
-                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {});
+                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {
+                    });
                 }
 
                 MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,

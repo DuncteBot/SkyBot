@@ -34,8 +34,7 @@ import java.util.regex.Pattern;
  * @author ramidzkh
  */
 @SuppressWarnings("SqlDialectInspection")
-class SQLiteDatabaseConnectionManager
-        implements DBConnectionManager {
+class SQLiteDatabaseConnectionManager implements DBConnectionManager {
 
     /**
      * The URL of this database
@@ -144,7 +143,11 @@ class SQLiteDatabaseConnectionManager
                             "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
                             "customWelcomeMessage TEXT NOT NULL," +
                             "serverDesc TEXT NULL," +
-                            "customLeaveMessage TEXT NOT NULL);"
+                            "customLeaveMessage TEXT NOT NULL," +
+                            "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
+                            "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
+                            "muteRoleId varchar(255) DEFAULT NULL," +
+                            "ratelimits TEXT DEFAULT NULL);"
             );
 
             connection.createStatement().execute(
@@ -167,7 +170,16 @@ class SQLiteDatabaseConnectionManager
                             "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
                             "guildId VARCHAR(255) NOT NULL);"
             );
-        } catch (SQLException e) {
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS customCommands" +
+                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "guildId VARCHAR(255) NOT NULL," +
+                            "invoke VARCHAR(10) NOT NULL," +
+                            "message TEXT NOT NULL);"
+            );
+            close();
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

@@ -19,8 +19,11 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import kotlin.Triple;
+import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
+import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -30,6 +33,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.ReadyEvent;
+import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
@@ -40,11 +44,14 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Arrays;
-import java.util.List;
+import java.util.HashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -59,7 +66,11 @@ public class BotListener extends ListenerAdapter {
     /**
      * This filter helps us to fiter out swearing
      */
-    private final BadWordFilter filter = new BadWordFilter();
+    private final BadWordFilter wordFilter = new BadWordFilter();
+    /**
+     * This filter helps us to fiter out spam
+     */
+    private final SpamFilter spamFilter = new SpamFilter();
     /**
      * This timer is for checking unbans
      */
@@ -71,12 +82,16 @@ public class BotListener extends ListenerAdapter {
     private final ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "Settings-Thread"));
     /**
+     * This timer is for clearing our caches
+     */
+    private final ScheduledExecutorService spamUpdateService = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "Spam-Thread"));
+    /**
      * A custom consumer that cancels the stupid unknown message error
      */
     private final Consumer<Throwable> CUSTOM_QUEUE_ERROR = it -> {
-        if (it instanceof ErrorResponseException) {
-            if (((ErrorResponseException) it).getErrorCode() != 10008)
-                logger.error("RestAction queue returned failure", it);
+        if (it instanceof ErrorResponseException && ((ErrorResponseException) it).getErrorCode() != 10008) {
+            logger.error("RestAction queue returned failure", it);
         }
     };
     /**
@@ -87,6 +102,39 @@ public class BotListener extends ListenerAdapter {
      * This tells us if the {@link #settingsUpdateService} is running
      */
     private boolean settingsUpdateTimerRunning = false;
+    /**
+     * Tells us whether {@link #spamUpdateService} clears cache of our {@link #spamFilter}.
+     */
+    private boolean isCacheCleanerActive = false;
+    /**
+     * This is used to check if we should trigger a update for the guild count when we leave a guild
+     */
+    private final HashMap<String, String> badGuilds = new HashMap<>();
+
+    @Override
+    public void onShutdown(ShutdownEvent event) {
+        MusicCommand.shutdown();
+
+        //Kill other things
+        ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
+        if (unbanTimerRunning)
+            this.unbanService.shutdown();
+
+        if (settingsUpdateTimerRunning)
+            this.settingsUpdateService.shutdown();
+
+        //clear the userinfo folder on shutdown as well
+        String imgDir = ((UserinfoCommand) AirUtils.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
+        try {
+            FileUtils.cleanDirectory(new File(imgDir));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AirUtils.stop();
+
+        System.exit(0);
+    }
 
     /**
      * Listen for messages send to the bot
@@ -98,44 +146,20 @@ public class BotListener extends ListenerAdapter {
         //We only want to respond to members/users
         if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null)
             return;
-
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
-
         //noinspection deprecation
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
                 && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
             logger.info("Initialising shutdown!!!");
-
-            MusicCommand.shutdown();
 
             event.getMessage().addReaction("✅").queue(
                     success -> killAllShards(event.getJDA().asBot().getShardManager()),
                     failure -> killAllShards(event.getJDA().asBot().getShardManager())
             );
 
-            if (LavalinkManager.ins.isEnabled()) {
-                LavalinkManager.ins.getLavalink().shutdown();
-            }
-
-            //Kill other things
-            ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
-            if (unbanTimerRunning)
-                this.unbanService.shutdown();
-
-            if (settingsUpdateTimerRunning)
-                this.settingsUpdateService.shutdown();
-
-            AirUtils.stop();
-
-            try {
-                Thread.sleep(3 * 1000);
-                System.exit(0);
-            } catch (InterruptedException ignored) {
-            }
-
             return;
         }
 
+        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
         String rw = event.getMessage().getContentRaw();
 
         if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
@@ -161,7 +185,7 @@ public class BotListener extends ListenerAdapter {
 
             if (settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
-                if (filter.filterText(rw)) {
+                if (wordFilter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                             .queue(null, CUSTOM_QUEUE_ERROR);
 
@@ -171,6 +195,16 @@ public class BotListener extends ListenerAdapter {
                             ),
                             m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return;
+                }
+            }
+
+            if (settings.getSpamFilterState()) {
+                Message messageToCheck = event.getMessage();
+                long[] rates = settings.getRatelimits();
+                spamFilter.applyRates(rates);
+                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
+                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
+                            settings.getKickState() ? "kicked" : "muted", "spam", event.getGuild());
                 }
             }
         }
@@ -195,16 +229,25 @@ public class BotListener extends ListenerAdapter {
             if (event.getChannel().getTopic().contains("-commands"))
                 return;
             for (String s : blocked) {
-                if (isCategory(s.toUpperCase())) {
-                    if (AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                            .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                                    .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))) {
-                        return;
+                if (s.startsWith("!")) {
+                    s = s.split("!")[1];
+                    if (isCategory(s.toUpperCase())) {
+                        if (!shouldBlockCommand(rw, s)) {
+                            return;
+                        }
+                    } else {
+                        if (isaBoolean(settings, rw, s))
+                            return;
                     }
                 } else {
-                    if (s.toLowerCase().equals(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                            .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()))
-                        return;
+                    if (isCategory(s.toUpperCase())) {
+                        if (shouldBlockCommand(rw, s)) {
+                            return;
+                        }
+                    } else {
+                        if (isaBoolean(settings, rw, s))
+                            return;
+                    }
                 }
             }
         }
@@ -220,6 +263,21 @@ public class BotListener extends ListenerAdapter {
         AirUtils.COMMAND_MANAGER.runCommand(event);
     }
 
+    /*
+     * Needs a better name
+     */
+    private boolean isaBoolean(GuildSettings settings, String rw, String s) {
+        return s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+    }
+
+    private boolean shouldBlockCommand(String rw, String s) {
+        return AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
+    }
+
     /**
      * When the bot is ready to go
      *
@@ -229,16 +287,12 @@ public class BotListener extends ListenerAdapter {
     public void onReady(ReadyEvent event) {
         logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
 
-        SelfUser selfUser = event.getJDA().getSelfUser();
-        for (Guild guild : event.getJDA().getGuilds()) {
-            unstableCheckThingy(selfUser, guild);
-        }
-
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            unbanService.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 10, 10, TimeUnit.MINUTES);
+            unbanService.scheduleAtFixedRate(() ->
+                    ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
@@ -249,8 +303,14 @@ public class BotListener extends ListenerAdapter {
             settingsUpdateTimerRunning = true;
         }
 
+        if (!isCacheCleanerActive) {
+            logger.info("Starting spam-cache-cleaner!");
+            spamUpdateService.scheduleAtFixedRate(spamFilter::clearMessages, 20, 11, TimeUnit.SECONDS);
+            isCacheCleanerActive = true;
+        }
+
         //Update guild count from then the bot was offline (should never die tho)
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     /**
@@ -260,6 +320,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
+        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -285,12 +346,14 @@ public class BotListener extends ListenerAdapter {
             Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
             if (r != null && !event.getGuild().getPublicRole().equals(r))
                 event.getGuild().getController()
-                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> { });
+                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
+                });
         }
     }
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
+        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
         GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
 
         if (settings.isEnableJoinMessage()) {
@@ -314,7 +377,7 @@ public class BotListener extends ListenerAdapter {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
         long[] counts = GuildUtils.getBotAndUserCount(event.getGuild());
-        if (botToUserRatio[1] >= 60) {
+        if (botToUserRatio[1] >= 70) {
             MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
                             event.getGuild().getOwner().getAsMention(),
@@ -329,23 +392,25 @@ public class BotListener extends ListenerAdapter {
                     event.getGuild().getName(),
                     counts[0],
                     counts[1]) + TextColor.RESET);
+            badGuilds.put(event.getGuild().getId(), "BAD BOI");
             return;
         }
         Guild g = event.getGuild();
-        if (unstableCheckThingy(event.getJDA().getSelfUser(), g)) {
-            return;
-        }
         String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(event.getGuild());
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
-        GuildSettingsUtils.deleteGuild(event.getGuild());
-        GuildUtils.updateGuildCountAndCheck(event.getJDA(), event.getJDA().asBot().getShardManager().getGuildCache().size());
+        if(!badGuilds.containsKey(event.getGuild().getId())) {
+            logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
+            GuildSettingsUtils.deleteGuild(event.getGuild());
+            GuildUtils.updateGuildCountAndCheck(event.getJDA());
+        } else {
+            badGuilds.remove(event.getGuild().getId());
+        }
     }
 
     /**
@@ -355,15 +420,14 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if (LavalinkManager.ins.isConnected(event.getGuild())) {
-            if (!event.getVoiceState().getMember().getUser().getId().equals(event.getJDA().getSelfUser().getId())) {
-                VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
-                if (vc != null) {
-                    if (!event.getChannelLeft().getId().equals(vc.getId())) {
-                        return;
-                    }
-                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+        if (LavalinkManager.ins.isConnected(event.getGuild())
+                && !event.getVoiceState().getMember().equals(event.getGuild().getSelfMember())) {
+            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
+            if (vc != null) {
+                if (!event.getChannelLeft().equals(vc)) {
+                    return;
                 }
+                channelCheckThing(event.getGuild(), event.getChannelLeft());
             }
         }
     }
@@ -377,7 +441,8 @@ public class BotListener extends ListenerAdapter {
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         try {
             if (LavalinkManager.ins.isConnected(event.getGuild())) {
-                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild())) && !event.getMember().equals(event.getGuild().getSelfMember())) {
+                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))
+                        && !event.getMember().equals(event.getGuild().getSelfMember())) {
                     return;
                 } else {
                     channelCheckThing(event.getGuild(), LavalinkManager.ins.getConnectedChannel(event.getGuild()));
@@ -387,7 +452,8 @@ public class BotListener extends ListenerAdapter {
                     //return;
                 }
             }
-        } catch (NullPointerException ignored) {}
+        } catch (NullPointerException ignored) {
+        }
     }
 
     /**
@@ -446,23 +512,11 @@ public class BotListener extends ListenerAdapter {
     }
 
     private void killAllShards(ShardManager manager) {
-        manager.getShards().forEach(jda -> {
+        manager.shutdown();
+        /*manager.getShards().forEach(jda -> {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             jda.shutdown();
-        });
-    }
-
-    private boolean unstableCheckThingy(SelfUser selfUser, Guild g) {
-        if (Settings.isUnstable && selfUser.getIdLong() != 210363111729790977L) {
-            //noinspection unchecked
-            List<Long> ids = AirUtils.CONFIG.getArray("access_ids");
-            if (!ids.contains(g.getIdLong())) {
-                g.leave().queue();
-                logger.info(TextColor.ORANGE + "Leaving Guild: " + g.getName() + ", because its not authorized for/in the UNSTABLE project." + TextColor.RESET);
-                return true;
-            }
-        }
-        return false;
+        });*/
     }
 
 }

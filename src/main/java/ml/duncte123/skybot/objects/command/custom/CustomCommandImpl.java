@@ -16,46 +16,51 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.animals;
+package ml.duncte123.skybot.objects.command.custom;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import ml.duncte123.skybot.utils.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.IOException;
+public class CustomCommandImpl extends Command implements CustomCommand {
 
-public class BirbCommandJava extends Command {
+    private final String invoke;
+    private final String message;
+    private final String guildId;
 
-    public BirbCommandJava() {
-        this.category = CommandCategory.ANIMALS;
+    public CustomCommandImpl(String invoke, String message, String guildId) {
+        this.invoke = invoke;
+        this.message = message;
+        this.guildId = guildId;
+
+        this.category = CommandCategory.UNLISTED;
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        try {
-            String it = WebUtils.getText("https://proximyst.com:4500/random/path/text");
-            MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://proximyst.com:4500/image/" + it + "/image"));
+    public String getMessage() {
+        return message;
+    }
 
-        } catch (IOException e) {
-            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
-        }
+    @Override
+    public String getGuildId() {
+        return guildId;
+    }
+
+    @Override
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+        if(guildId.equals(event.getGuild().getId()))
+            MessageUtils.sendMsg(event, message);
     }
 
     @Override
     public String help() {
-        return "Here is a Birb";
+        return "Custom Commands Don't have help";
     }
 
     @Override
     public String getName() {
-        return "birb";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[]{"bird"};
+        return invoke;
     }
 }

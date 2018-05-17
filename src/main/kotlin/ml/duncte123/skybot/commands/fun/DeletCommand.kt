@@ -18,40 +18,28 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import ml.duncte123.skybot.utils.WebUtils
+import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
-class BlobCommand : Command() {
-
+class DeletCommand : WeebCommandBase() {
     init {
         this.category = CommandCategory.FUN
+        this.displayAliasesInHelp = false
     }
 
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-
-        var blob = "blobnomcookie"
-
-        if (args.isNotEmpty()) {
-            blob = StringUtils.join(*args)
-        }
-
-        val responseBody = WebUtils.getRequest("https://i.duncte123.ml/blob/$blob.png").body()
-        if (responseBody!!.contentLength() <= 0) {
-            sendMsg(event, "This blob was not found on the server!!!")
-            return
-        }
-
-        event.channel.sendFile(responseBody.byteStream(), "blob.png", null).queue()
-
-
+    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        //delet_this
+        MessageUtils.sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("delet_this").url))
     }
 
-    override fun help() = "Gives you a blob.\n" +
-            "Usage: `$PREFIX$name [blob name]`"
+    override fun help() = """Delet this
+        |Usage: `$PREFIX$name`
+    """.trimMargin()
 
-    override fun getName() = "blob"
+    override fun getName() = "delet"
+
+    override fun getAliases() = arrayOf("deletthis", "deletethis")
 }

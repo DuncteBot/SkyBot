@@ -21,13 +21,10 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
-import java.sql.ResultSet
-import java.sql.SQLException
 
 class KpopCommand : Command() {
 
@@ -37,56 +34,20 @@ class KpopCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        val dbName = AirUtils.DB.name
-        val database = AirUtils.DB.connManager.connection
-
-        var id = ""
-        var name = ""
-        var group = ""
-        var imgUrl = ""
-        val res: ResultSet
-
-
-        try {
-
-            res = if (args.isNotEmpty()) {
-
-                val statement = database.prepareStatement("SELECT * FROM $dbName.kpop WHERE name LIKE ? OR id= ? LIMIT 1")
-                statement.setString(1, "%" + StringUtils.join(args, " ") + "%")
-                statement.setString(2, StringUtils.join(args, " "))
-
-                statement.executeQuery()
-
+        val queryString = if(!args.isEmpty()) args.joinToString(separator = "%20", prefix= "?search=") else ""
+        val url = "${Settings.API_BASE}/kpop/json$queryString"
+        WebUtils.ins.getJSONObject(url).async {
+            if(!it.optString("name").isBlank()) {
+                val eb = EmbedUtils.defaultEmbed()
+                        .setDescription("Here is a kpop member from the group ${it.getString("band")}")
+                        .addField("Name of the member", it.getString("name"), false)
+                        .setImage(it.getString("image"))
+                        .setFooter("Query id: ${it.getString("id")}", Settings.DEFAULT_ICON)
+                MessageUtils.sendEmbed(event, eb.build())
             } else {
-
-                val statement = database.createStatement()
-
-                statement.executeQuery("SELECT * FROM $dbName.kpop ORDER BY RAND() LIMIT 1")
+                // nothing found
+                MessageUtils.sendMsg(event, "Nothing found")
             }
-
-            while (res.next()) {
-                id = res.getString("id")
-                name = res.getString("name")
-                group = res.getString("band")
-                imgUrl = res.getString("img")
-            }
-
-            val eb = EmbedUtils.defaultEmbed()
-                    .setDescription("Here is a kpop member from the group $group")
-                    .addField("Name of the member", name, false)
-                    .setImage(imgUrl)
-                    .setFooter("Query id: $id", Settings.DEFAULT_ICON)
-            MessageUtils.sendEmbed(event, eb.build())
-        } catch (e: Exception) {
-            MessageUtils.sendMsg(event, "SCREAM THIS TO _duncte123#1245_: $e")
-            e.printStackTrace()
-        } finally {
-            try {
-                database.close()
-            } catch (e2: SQLException) {
-                e2.printStackTrace()
-            }
-
         }
     }
 

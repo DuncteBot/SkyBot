@@ -210,11 +210,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
             }
 
             @Override
-            public void setAutoReconnect(boolean reconnect) {
-
-            }
-
-            @Override
             public void setRequestTimeoutRetry(boolean retryOnTimeout) {
 
             }
@@ -222,6 +217,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
             @Override
             public boolean isAutoReconnect() {
                 return false;
+            }
+
+            @Override
+            public void setAutoReconnect(boolean reconnect) {
+
             }
 
             @Override

@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.30'
+    ext.kotlin_version = '1.2.41'
 
     repositories {
         mavenCentral()
@@ -33,18 +33,19 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.2'
-    id 'org.jetbrains.kotlin.jvm' version '1.2.30'
+    id 'org.jetbrains.kotlin.jvm' version '1.2.41'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
+apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
-version "3.62.0_${getGitHash()}"
+version "3.69.0_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
 task wrapper(type: Wrapper) {
-    gradleVersion = '4.5.1'
+    gradleVersion = '4.6'
 }
 
 repositories {
@@ -73,27 +74,26 @@ buildConfig {
 
 dependencies {
     //Weeb api
-    compile group: 'me.duncte123', name: 'weebJava', version: '1.0.0'
+    compile 'com.github.duncte123:weeb.java:9d3b70da4f'
+    //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
+    //My little utils
+    compile 'com.github.duncte123:botCommons:bae7224'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.5.1_348'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_366'
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.56'
-    compile(group: 'com.github.Frederikam', name: 'Lavalink', version: 'd648861') {
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.63'
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '8738c3c' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
-        exclude group: 'net.dv8tion', module: 'JDA'
-        exclude group: "com.sedmelluq", module: "lavaplayer"
     }
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
-    // jsoup HTML parser library @ https://jsoup.org/
-    compile group: 'org.jsoup', name: 'jsoup', version: '1.10.3'
     // MySQL
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
     //groovy
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.4.13'
+    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.0-rc-1'
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
     //JSON Extension
@@ -108,15 +108,13 @@ dependencies {
     compile 'com.google.apis:google-api-services-youtube:v3-rev192-1.23.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: '1.2.30'
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: '1.2.30'
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib-jdk8', version: kotlin_version
+    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
     compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.22.5'
-
-    //Bot?
-    compile group: 'ca.pjer', name: 'chatter-bot-api', version: '1.4.7'
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
+    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 javadoc {
@@ -164,6 +162,10 @@ build {
     jar.mustRunAfter clean
 }
 
+task printVersion {
+    println version
+}
+
 def getGitHash() {
     def stdout = new ByteArrayOutputStream()
     exec {
@@ -172,3 +174,4 @@ def getGitHash() {
     }
     return stdout.toString().trim()
 }
+

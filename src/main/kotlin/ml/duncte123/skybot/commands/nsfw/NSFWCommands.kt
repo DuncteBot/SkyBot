@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.WebUtils
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class NSFWCommands : Command() {
@@ -43,18 +43,23 @@ class NSFWCommands : Command() {
         }
         when (invoke) {
             "carsandhentai" -> {
-                val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")))
-                val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
-                MessageUtils.sendEmbed(event,
-                        EmbedUtils.defaultEmbed()
-                                .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
-                                .setImage(randomItem.getString("link")).build()
-                )
+                WebUtils.ins.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")).async {
+                    val jsonRaw = Ason(it)
+                    val jsonArray = jsonRaw.getJsonArray<Ason>("items")
+                    val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
+                    MessageUtils.sendEmbed(event,
+                            EmbedUtils.defaultEmbed()
+                                    .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
+                                    .setImage(randomItem.getString("link")).build()
+                    )
+                }
+
             }
             "lewdneko" -> {
-                val image = WebUtils.getJSONObject("https://nekos.life/api/v2/img/lewd").getString("url")
-                MessageUtils.sendEmbed(event, EmbedUtils.embedImage(image))
+                WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
+                    MessageUtils.sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
+                }
+
             }
         }
     }

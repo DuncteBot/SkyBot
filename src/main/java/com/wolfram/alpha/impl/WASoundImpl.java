@@ -1,28 +1,11 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 9, 2009
  *
  */
 package com.wolfram.alpha.impl;
 
 
+import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.WASound;
 import com.wolfram.alpha.net.HttpProvider;
 import com.wolfram.alpha.net.URLFetcher;
@@ -55,7 +38,7 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
     private transient File tempDir;
 
 
-    WASoundImpl(Element thisElement, HttpProvider http, File tempDir) {
+    WASoundImpl(Element thisElement, HttpProvider http, File tempDir) throws WAException {
 
         url = thisElement.getAttribute("url");
         format = thisElement.getAttribute("type");
@@ -108,17 +91,12 @@ public class WASoundImpl implements WASound, Visitable, Serializable {
             if (!url.equals("")) {
                 try {
                     String suffix;
-                    switch (format) {
-                        case "WAV":
-                            suffix = ".wav";
-                            break;
-                        case "MIDI":
-                            suffix = ".mid";
-                            break;
-                        default:
-                            suffix = ".tmp";
-                            break;
-                    }
+                    if (format == "WAV")
+                        suffix = ".wav";
+                    else if (format == "MIDI")
+                        suffix = ".mid";
+                    else
+                        suffix = ".tmp";
                     String outFile = File.createTempFile("WASound", suffix, tempDir).getAbsolutePath();
                     URLFetcher fetcher = new URLFetcher(new URL(url), outFile, http, null);
                     fetcher.fetch();

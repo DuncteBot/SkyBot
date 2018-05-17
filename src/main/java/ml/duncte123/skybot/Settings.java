@@ -55,10 +55,6 @@ public class Settings {
      */
     public static final String OTHER_PREFIX = "db.";
     /**
-     * Whether the bot is unstable or not
-     */
-    public static final boolean isUnstable = BuildConfig.UNSTABLE && AirUtils.CONFIG.getBoolean("launch_unstable", false);
-    /**
      * This is the version of the bot
      */
     public static final String VERSION = BuildConfig.VERSION;
@@ -78,14 +74,8 @@ public class Settings {
      * This holds if we can use the updater
      */
     public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
-    public static boolean useCooldown = false;
     /**
      * this tells the bot if we should send json errors
      */
     public static boolean useJSON = false;
-
-    // Idk groovy eval good enough but just to be save that we can set it on runtime if we have to
-    public static void setCooldown(final boolean cooldown) {
-        useCooldown = cooldown;
-    }
 }

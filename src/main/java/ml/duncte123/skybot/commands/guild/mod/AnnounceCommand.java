@@ -62,27 +62,38 @@ public class AnnounceCommand extends Command {
                 return;
             }
 
+            @SinceSkybot(version = "3.68.0")
             String msg = event.getMessage().getContentRaw().split("\\s+", 3)[2];
-            @SinceSkybot(version = "3.52.3")
-            EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
-            if (!event.getMessage().getAttachments().isEmpty()) {
-                event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
-                    if (invoke.endsWith("2"))
-                        embed.setThumbnail(attachment.getUrl());
-                    else
-                        embed.setImage(attachment.getUrl());
-                });
+            switch (invoke) {
+                case "announce1":
+                case "announce":
+                    MessageUtils.sendMsg(targetChannel, msg);
+                    MessageUtils.sendSuccess(event.getMessage());
+                    break;
+
+                default:
+                    EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
+
+                    if (!event.getMessage().getAttachments().isEmpty()) {
+                        event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
+                            if (invoke.endsWith("2"))
+                                embed.setThumbnail(attachment.getUrl());
+                            else if (invoke.endsWith("3"))
+                                embed.setImage(attachment.getUrl());
+                        });
+                    }
+
+                    MessageUtils.sendEmbed(targetChannel, embed.build());
+                    MessageUtils.sendSuccess(event.getMessage());
+                    break;
             }
-
-            MessageUtils.sendEmbed(targetChannel, embed.build());
-            MessageUtils.sendSuccess(event.getMessage());
 
         } catch (ArrayIndexOutOfBoundsException ex) {
             MessageUtils.sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
-            ComparatingUtils.execCheck(ex);
         } catch (Exception e) {
             MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
+            ComparatingUtils.execCheck(e);
             e.printStackTrace();
         }
     }
@@ -90,7 +101,7 @@ public class AnnounceCommand extends Command {
     @Override
     public String help() {
         return "Announces a message.\n" +
-                "Usage `" + PREFIX + getName() + " <message>`";
+                "Usage `" + PREFIX + getName() + " <#channel> <message>`";
     }
 
     @Override
@@ -100,6 +111,6 @@ public class AnnounceCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"announce2"};
+        return new String[]{"announce1", "announce2", "announce3"};
     }
 }

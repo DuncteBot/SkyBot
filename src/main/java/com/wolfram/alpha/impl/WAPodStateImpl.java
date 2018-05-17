@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 9, 2009
  *
  */
@@ -71,7 +53,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
     }
 
 
-    private synchronized void createFromDOM(Element thisElement) {
+    private synchronized void createFromDOM(Element thisElement) throws WAException {
 
         // Two types:
         //
@@ -100,7 +82,7 @@ public class WAPodStateImpl implements WAPodState, Visitable, Serializable {
             // although we have no intention of making such a change in the API output.
             NodeList states = thisElement.getChildNodes();
             int numStates = states.getLength();
-            List<Node> stateElements = new ArrayList<>(numStates);
+            List<Node> stateElements = new ArrayList<Node>(numStates);
             for (int i = 0; i < numStates; i++) {
                 Node stateNode = states.item(i);
                 if ("state".equals(stateNode.getNodeName()))

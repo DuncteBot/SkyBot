@@ -22,8 +22,12 @@ import ml.duncte123.skybot.utils.AirUtils;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.concurrent.*;
 
 public class DBManager {
+
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "SQL-thread"));
 
     public final DBConnectionManager connManager;
 
@@ -31,18 +35,11 @@ public class DBManager {
      * This is the database name
      */
     private final String name;
-
-    /**
-     * This is true if we are connected to the database
-     */
-    private final boolean isConnected;
-
     /**
      * This will set our stuff up
      */
     public DBManager() {
         this.connManager = createDBManager();
-        this.isConnected = connManager.isConnected();
         this.name = connManager.getName();
     }
 
@@ -57,7 +54,7 @@ public class DBManager {
      * @return true if we are connected
      */
     public boolean isConnected() {
-        return this.isConnected;
+        return connManager.isConnected();
     }
 
     /**
@@ -87,5 +84,17 @@ public class DBManager {
      */
     public DBConnectionManager getConnManager() {
         return connManager;
+    }
+
+    public <T>ScheduledFuture<T> run(Callable<T> c) {
+        return service.schedule(c, 0L, TimeUnit.MILLISECONDS);
+    }
+
+    public ScheduledFuture<?> run(Runnable r) {
+        return service.schedule(r, 0L, TimeUnit.MILLISECONDS);
+    }
+
+    public ScheduledExecutorService getService() {
+        return service;
     }
 }

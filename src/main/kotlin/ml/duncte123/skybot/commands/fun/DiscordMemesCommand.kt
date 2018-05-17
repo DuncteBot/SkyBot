@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.uncategorized
+package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -27,7 +27,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class DiscordMemesCommand : WeebCommandBase() {
 
     init {
-        this.category = CommandCategory.MAIN
+        this.category = CommandCategory.FUN
         this.displayAliasesInHelp = false
     }
 

@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 8, 2009
  *
  */
@@ -87,7 +69,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
             scanner = thisElement.getAttribute("scanner");
             try {
                 position = Integer.parseInt(thisElement.getAttribute("position"));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
             }
             id = thisElement.getAttribute("id");
             asyncURL = thisElement.getAttribute("async");
@@ -112,7 +94,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in a <states> is a <state>
                 // or <statelist>, although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> stateAndStatelistNodes = new ArrayList<>(numSubElements);
+                List<Node> stateAndStatelistNodes = new ArrayList<Node>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -136,7 +118,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in an <infos> is an <info>,
                 // although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> infoNodes = new ArrayList<>(numSubElements);
+                List<Node> infoNodes = new ArrayList<Node>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -157,7 +139,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                 // Program defensively and don't assume that every element in a <sounds> is an <sound>,
                 // although we have no intention of making such a change in the API output.
                 int numSubElements = subElements.getLength();
-                List<Node> soundNodes = new ArrayList<>(numSubElements);
+                List<Node> soundNodes = new ArrayList<Node>(numSubElements);
                 for (int i = 0; i < numSubElements; i++) {
                     Node child = subElements.item(i);
                     String name = child.getNodeName();
@@ -227,7 +209,7 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
     }
 
 
-    public void acquireImages() {
+    public void acquireImages() throws WAException {
 
         WASubpodImpl[] sps;
         synchronized (this) {
@@ -271,8 +253,15 @@ public class WAPodImpl implements WAPod, Visitable, Serializable {
                     asyncURL = null;
                 }
                 acquireImages();
-            } catch (ParserConfigurationException | FactoryConfigurationError | SAXException | IOException e) {
+            } catch (ParserConfigurationException e) {
                 // Probably impossible in any realistic circumstance.
+                newAsyncException = new WAException(e);
+            } catch (FactoryConfigurationError e) {
+                // Probably impossible in any realistic circumstance.
+                newAsyncException = new WAException(e);
+            } catch (IOException e) {
+                newAsyncException = new WAException(e);
+            } catch (SAXException e) {
                 newAsyncException = new WAException(e);
             }
             if (newAsyncException != null) {

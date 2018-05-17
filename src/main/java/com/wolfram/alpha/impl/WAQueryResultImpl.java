@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Nov 8, 2009
  *
  */
@@ -41,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-@SuppressWarnings("SuspiciousSystemArraycopy")
 public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable {
 
     private static final String[] EMPTY_STRING_ARRAY = new String[]{};
@@ -92,13 +73,12 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         this.bytes = bytes;
         this.tempDir = tempDir;
         try {
-            /*
-             * OLD SAX style, abandoned
-             * SAXParserFactory factory = SAXParserFactory.newInstance();
-             * SAXParser parser = factory.newSAXParser();
-             * AlphaSAXHandler handler = new AlphaSAXHandler(this);
-             * parser.parse(new ByteArrayInputStream(bytes), handler);
-             */
+            /*** OLD SAX style, abandoned
+             SAXParserFactory factory = SAXParserFactory.newInstance();
+             SAXParser parser = factory.newSAXParser();
+             AlphaSAXHandler handler = new AlphaSAXHandler(this);
+             parser.parse(new ByteArrayInputStream(bytes), handler);
+             ***/
             DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
             DocumentBuilder builder = factory.newDocumentBuilder();
             Document doc = builder.parse(new ByteArrayInputStream(bytes));
@@ -107,9 +87,16 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
             //NodeList queryResultNode = doc.getElementsByTagName("queryresult");
             createFromDOM(doc.getDocumentElement());
 
-        } catch (ParserConfigurationException | FactoryConfigurationError | IOException | SAXException e) {
+        } catch (ParserConfigurationException e) {
             // Probably impossible in any realistic circumstance.
+            throw new WAException(e);
+        } catch (FactoryConfigurationError e) {
+            // Probably impossible in any realistic circumstance.
+            throw new WAException(e);
+        } catch (IOException e) {
             // Don't think there can be an IOException on a ByteArrayInputStream.
+            throw new WAException(e);
+        } catch (SAXException e) {
             throw new WAException(e);
         }
     }
@@ -216,7 +203,11 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
 
         if (!imagesAcquired) {
             for (WAPodImpl pod : pods) {
-                pod.acquireImages();
+                try {
+                    pod.acquireImages();
+                } catch (WAException e) {
+                    // What to do here? Need to finish getting all even if there is an exception.
+                }
             }
             imagesAcquired = true;
         }
@@ -226,15 +217,18 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
     public void finishAsync() {
 
         acquireImages();
-        List<Thread> runningThreads = new ArrayList<>(pods.length);
+        List<Thread> runningThreads = new ArrayList<Thread>(pods.length);
         WAPod[] pods = getPods();
-        for (final WAPod pod : pods) {
+        for (int i = 0; i < pods.length; i++) {
+            final WAPod pod = pods[i];
             if (pod.getAsyncURL() != null) {
-                Thread t = new Thread(() -> {
-                    try {
-                        pod.finishAsync();
-                    } catch (WAException ignored) {
-                        //TODO: just for now
+                Thread t = new Thread(new Runnable() {
+                    public void run() {
+                        try {
+                            pod.finishAsync();
+                        } catch (WAException e) {
+                            // TODO: What here?
+                        }
                     }
                 });
                 t.start();
@@ -244,8 +238,8 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         for (Thread t : runningThreads) {
             try {
                 t.join();
-            } catch (InterruptedException ignored) {
-                //TODO: just for now
+            } catch (InterruptedException e) {
+                // TODO: What here?
             }
         }
     }
@@ -344,11 +338,11 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
         } else {
             try {
                 timing = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
             }
             try {
                 parseTiming = Double.parseDouble(thisElement.getAttribute("timing"));
-            } catch (NumberFormatException ignored) {
+            } catch (NumberFormatException e) {
             }
             version = thisElement.getAttribute("version");
             dataTypes = thisElement.getAttribute("datatypes").split(",");
@@ -374,7 +368,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element warningsElement = (Element) warningsElements.item(0);
                 NodeList children = warningsElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> warningElements = new ArrayList<>();
+                ArrayList<Element> warningElements = new ArrayList<Element>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)
@@ -398,7 +392,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element tipsElement = (Element) tipsElements.item(0);
                 NodeList children = tipsElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> tipElements = new ArrayList<>();
+                ArrayList<Element> tipElements = new ArrayList<Element>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)
@@ -407,7 +401,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 int numTips = tipElements.size();
                 splatTips = new String[numTips];
                 for (int i = 0; i < numTips; i++)
-                    splatTips[i] = tipElements.get(i).getAttribute("text");
+                    splatTips[i] = new String(tipElements.get(i).getAttribute("text"));
             }
 
             NodeList relatedLinkElements = thisElement.getElementsByTagName("sidebarlink");
@@ -451,7 +445,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 Element sourcesElement = (Element) sourcesElements.item(0);
                 NodeList children = sourcesElement.getChildNodes();
                 int numNodes = children.getLength();
-                ArrayList<Element> sourceElements = new ArrayList<>();
+                ArrayList<Element> sourceElements = new ArrayList<Element>();
                 for (int i = 0; i < numNodes; i++) {
                     Node child = children.item(i);
                     if (child instanceof Element)
@@ -460,7 +454,7 @@ public class WAQueryResultImpl implements WAQueryResult, Visitable, Serializable
                 int numSources = sourceElements.size();
                 sources = new WASourceInfoImpl[numSources];
                 for (int i = 0; i < numSources; i++)
-                    sources[i] = new WASourceInfoImpl(sourceElements.get(i));
+                    sources[i] = new WASourceInfoImpl((Element) sourceElements.get(i));
             }
 
             NodeList futureTopicElements = thisElement.getElementsByTagName("futuretopic");

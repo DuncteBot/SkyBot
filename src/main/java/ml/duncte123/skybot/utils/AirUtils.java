@@ -18,13 +18,17 @@
 
 package ml.duncte123.skybot.utils;
 
+import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
+import me.duncte123.botCommons.config.Config;
+import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.config.Config;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.discord.user.Profile;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
@@ -40,23 +44,23 @@ import java.util.Map;
 import java.util.Random;
 import java.util.regex.Pattern;
 
-@SuppressWarnings("ReturnInsideFinallyBlock")
+@SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
 
 
     public static final Config CONFIG = new ConfigUtils().loadConfig();
-    public static final CommandManager COMMAND_MANAGER = new CommandManager();
     public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
     public static final Random RAND = new Random();
     public static final DBManager DB = new DBManager();
-    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
+    public static final CommandManager COMMAND_MANAGER = new CommandManager();
+    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
     public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     public static final WAEngine ALPHA_ENGINE = getWolframEngine();
-    static Map<String, GuildSettings> guildSettings = new HashMap<>();
+    protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -107,7 +111,7 @@ public class AirUtils {
     public static String gameToString(Game g) {
         if (g == null) return "no game";
 
-        String gameType = "Playing";
+        String gameType;
 
         switch (g.getType().getKey()) {
             case 1:
@@ -118,10 +122,11 @@ public class AirUtils {
                 break;
             case 3:
                 gameType = "Watching";
+            default:
+                gameType = "Playing";
         }
 
-        String gameName = g.getName();
-        return gameType + " " + gameName;
+        return gameType + " " + g.getName();
     }
 
     /**
@@ -179,16 +184,9 @@ public class AirUtils {
     private static WAEngine getWolframEngine() {
         String appId = CONFIG.getString("apis.wolframalpha", "");
 
-        if (appId == null || appId.isEmpty()) {
-            IllegalStateException e
-                    = new IllegalStateException("Wolfram Alpha App ID not specified."
-                    + " Please generate one at "
-                    + "https://developer.wolframalpha.com/portal/myapps/");
-            //The logger can be null during tests
-            if (logger != null)
-                logger.error(e.getMessage(), e);
+        if (appId == null || appId.isEmpty())
             return null;
-        }
+
         WAEngine engine = new WAEngine();
 
         engine.setAppID(appId);
@@ -217,6 +215,7 @@ public class AirUtils {
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }
+        DB.getService().shutdown();
     }
 
     /**
@@ -285,5 +284,43 @@ public class AirUtils {
             default:
                 return "I CAN'T FLIP THIS TABLE";
         }
+    }
+
+    public static PendingRequest<Profile> getUserProfile(String uid) {
+        /*
+        * badges:
+        *
+        *   Discord dev: 1
+        *   Partner: 2
+        *   Nitro: (none, check for premium_since != null)
+        *   Hypesquad: 4
+        *   Bug Hunter: 8
+        */
+       /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
+        return WebUtils.ins.prepareRaw(
+                new Request.Builder()
+                        .get()
+                        .header("authorization", "")
+                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36 OPR/52.0.2871.40")
+                        .url(url)
+                        .build()
+                , b -> {
+                    JSONObject json = new JSONObject(Objects.requireNonNull(b).string());
+                    JSONObject userObj = json.optJSONObject("user");
+                    return new Profile(
+                            json.optString("premium_since", null),
+                            userObj.optInt("flags"),
+                            userObj.optString("id"),
+                            userObj.optString("avatar"),
+                            userObj.optString("username"),
+                            userObj.optString("discriminator")
+                    );
+                }
+        );*/
+       return null;
+    }
+
+    public static PendingRequest<String> shortenUrl(String url) {
+        return WebUtils.ins.shortenUrl(url, AirUtils.CONFIG.getString("apis.googl", "Google api key"));
     }
 }

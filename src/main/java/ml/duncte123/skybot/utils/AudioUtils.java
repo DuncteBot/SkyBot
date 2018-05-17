@@ -34,14 +34,18 @@ import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.objects.audioManagers.clypit.ClypitAudioSourceManager;
-import ml.duncte123.skybot.objects.audioManagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
@@ -64,7 +68,7 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    final Map<String, GuildMusicManager> musicManagers;
+    protected final Map<String, GuildMusicManager> musicManagers;
 
     /**
      * This will set everything up and get the player ready
@@ -136,6 +140,12 @@ public class AudioUtils {
      * @param addPlayList If the url is a playlist
      */
     public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
+        loadAndPlay(mng, channel, trackUrlRaw, addPlayList, true);
+    }
+
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw,
+                            final boolean addPlayList,
+                            final boolean announce) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -146,17 +156,26 @@ public class AudioUtils {
         }
 
         playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
-
-
             @Override
             public void trackLoaded(AudioTrack track) {
-                String msg = "Adding to queue: " + track.getInfo().title;
-                if (mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
+                String title = track.getInfo().title;
+                if (track.getInfo().isStream) {
+                    Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                            .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                    if (stream.isPresent())
+                        title = stream.get().getName();
                 }
 
                 mng.scheduler.queue(track);
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+
+                if(announce) {
+                    String msg = "Adding to queue: " + title;
+                    if (mng.player.getPlayingTrack() == null) {
+                        msg += "\nand the Player has started playing;";
+                    }
+
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                }
             }
 
             @Override
@@ -171,33 +190,41 @@ public class AudioUtils {
                 } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
-                String msg;
 
-                if (addPlayList) {
-                    msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-                    if (mng.player.getPlayingTrack() == null) {
-                        msg += "\nand the Player has started playing;";
-                    }
+                if(addPlayList)
                     tracks.forEach(mng.scheduler::queue);
-                } else {
-                    msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
-                    if (mng.player.getPlayingTrack() == null) {
-                        msg += "\nand the Player has started playing;";
-                    }
+                else
                     mng.scheduler.queue(firstTrack);
+
+                if(announce) {
+                    String msg;
+
+                    if (addPlayList) {
+                        msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
+                        if (mng.player.getPlayingTrack() == null) {
+                            msg += "\nand the Player has started playing;";
+                        }
+                    } else {
+                        msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                        if (mng.player.getPlayingTrack() == null) {
+                            msg += "\nand the Player has started playing;";
+                        }
+                    }
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
                 }
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
             }
 
 
             @Override
             public void noMatches() {
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
+                if(announce)
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                if(announce)
+                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
                         + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });

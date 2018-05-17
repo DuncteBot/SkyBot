@@ -22,11 +22,11 @@ def quick_mafs(int x) {
    return the_thing
 }
 
-//channel.sendFile(new URL("https://pbs.twimg.com/profile_images/892463026003222529/so6nfXWX.jpg").openStream(), "filename.png", new MessageBuilder()
+//channel.sendFile(new URL("https://i.redd.it/byolwd5dnaqz.jpg").openStream(), "filename.png", new MessageBuilder()
 //.setEmbed(EmbedUtils.defaultEmbed().setImage("attachment://filename.png").build()).build()).queue()
 
 channel.sendMessage("This has an embed with an image!")
-             .addFile(new URL("https://pbs.twimg.com/profile_images/892463026003222529/so6nfXWX.jpg").openStream(), "alpaca.png")
+             .addFile(new URL("https://i.redd.it/byolwd5dnaqz.jpg").openStream(), "alpaca.png")
              .embed(EmbedUtils.embedImage("attachment://alpaca.png"))
              .queue()
 

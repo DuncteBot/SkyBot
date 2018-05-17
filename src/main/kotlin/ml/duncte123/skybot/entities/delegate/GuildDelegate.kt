@@ -21,9 +21,9 @@
 
 package ml.duncte123.skybot.entities.delegate
 
-import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.exceptions.VRCubeException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Member
@@ -31,9 +31,9 @@ import net.dv8tion.jda.core.entities.Role
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.managers.GuildController
 import net.dv8tion.jda.core.managers.GuildManager
-import net.dv8tion.jda.core.managers.GuildManagerUpdatable
 import net.dv8tion.jda.core.requests.RestAction
 
+@Suppress("unused")
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 /**
@@ -45,7 +45,6 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
 
     override fun getJDA(): JDA = JDADelegate(this.jda)
     override fun getManager(): GuildManager = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getManagerUpdatable(): GuildManagerUpdatable = throw VRCubeException("**\uD83D\uDD25 lit**")
 
     override fun getMember(user: User): Member = MemberDelegate(z88Am1Alk.getMember(user)!!)
     override fun getSelfMember(): Member = MemberDelegate(z88Am1Alk.selfMember)

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audioManagers.clypit;
+package ml.duncte123.skybot.objects.audiomanagers.clypit;
 
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection;
 import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult;
@@ -29,7 +29,7 @@ import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
-import ml.duncte123.skybot.utils.WebUtils;
+import me.duncte123.botCommons.web.WebUtils;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 
@@ -58,10 +58,10 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
         if (m.matches()) {
             try {
                 String clypitId = m.group(m.groupCount());
-                JSONObject json = WebUtils.getJSONObject("https://api.clyp.it/" + clypitId);
+                JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
                 AudioReference httpReference = getAsHttpReference(new AudioReference(json.getString("Mp3Url"), json.getString("Title")));
                 return handleLoadResult(detectContainer(httpReference));
-            } catch (IOException e) {
+            } catch (Exception e) {
                 return null;
             }
         }

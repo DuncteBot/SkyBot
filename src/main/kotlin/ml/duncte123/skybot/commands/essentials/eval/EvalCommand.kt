@@ -18,21 +18,24 @@
 
 package ml.duncte123.skybot.commands.essentials.eval
 
-import ml.duncte123.skybot.exceptions.VRCubeException
 import groovy.lang.GroovyShell
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withTimeoutOrNull
+import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
+import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.TextColor
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.core.requests.RestAction
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.kohsuke.groovy.sandbox.SandboxTransformer
@@ -141,8 +144,9 @@ class EvalCommand : Command() {
             engine.put("args", args)
 
             @SinceSkybot("3.58.0")
-            async(start = CoroutineStart.ATOMIC) {
-                return@async eval(event, isRanByBotOwner, script, timeout)
+            launch(start = CoroutineStart.ATOMIC) {
+                //            async(start = CoroutineStart.ATOMIC) {
+                return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
@@ -154,8 +158,9 @@ class EvalCommand : Command() {
                 protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
 
             @SinceSkybot("3.58.0")
-            async {
-                return@async eval(event, isRanByBotOwner, script, timeout)
+            launch {
+                //            async {
+                return@launch eval(event, isRanByBotOwner, script, timeout)
             }
         }
 
@@ -193,10 +198,8 @@ class EvalCommand : Command() {
     @SinceSkybot("3.58.0")
     suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
-            lateinit var coroutine: CoroutineScope
             val out = withTimeoutOrNull(millis) {
                 engine.put("scope", this)
-                coroutine = this
                 try {
                     if (isRanByBotOwner) engine.eval(script)
                     else {
@@ -204,14 +207,14 @@ class EvalCommand : Command() {
                         protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
-
                     ComparatingUtils.checkEx(ex)
                     ex
+                } finally {
+                    filter.unregister()
                 }
             }
             when (out) {
                 null -> {
-                    coroutine.coroutineContext.cancel()
                     MessageUtils.sendSuccess(event.message)
                 }
                 is ArrayIndexOutOfBoundsException -> {
@@ -223,9 +226,6 @@ class EvalCommand : Command() {
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     out as Exception
-                    coroutine.coroutineContext.cancel()
-                    if (coroutine.isActive)
-                        coroutine.coroutineContext.cancel()
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is VRCubeException -> {
@@ -240,8 +240,12 @@ class EvalCommand : Command() {
                         // out.printStackTrace()
                     }
                 }
+                is RestAction<*> -> {
+                    out.queue()
+                    MessageUtils.sendSuccess(event.message)
+                }
                 else -> {
-                    if (out.toString().isEmpty() || out.toString().isBlank() || out.toString() == "") {
+                    if (out.toString().isEmpty() || out.toString().isBlank()) {
                         MessageUtils.sendSuccess(event.message)
                         return
                     }

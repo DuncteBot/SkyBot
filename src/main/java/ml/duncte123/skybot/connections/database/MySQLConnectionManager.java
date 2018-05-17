@@ -30,14 +30,13 @@ import java.sql.SQLException;
  * Represents a server database
  */
 @SuppressWarnings("SqlDialectInspection")
-class MySQLConnectionManager
-        implements DBConnectionManager {
+class MySQLConnectionManager implements DBConnectionManager {
 
     private final String dbHost;
-    private final int port;
     private final String user;
-    private final String pass;
+    private final int port;
     private final String dbName;
+    private final String pass;
     private Connection connection;
 
     MySQLConnectionManager() {
@@ -46,6 +45,14 @@ class MySQLConnectionManager
         this.user = AirUtils.CONFIG.getString("sql.username", "exampleUser");
         this.pass = AirUtils.CONFIG.getString("sql.password", "Ex@mplePAss");
         this.dbName = AirUtils.CONFIG.getString("sql.database", "Example_database");
+        try {
+            Class.forName("com.mysql.jdbc.Driver");
+            this.connection = DriverManager.getConnection(
+                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                    user, pass);
+        } catch (SQLException | ClassNotFoundException e) {
+            e.printStackTrace();
+        }
 
         innitDB(getConnection());
     }
@@ -56,16 +63,18 @@ class MySQLConnectionManager
      * @return The connection to the database
      */
     public Connection getConnection() {
-        try {
-            Class.forName("com.mysql.jdbc.Driver");
-            this.connection = DriverManager.getConnection(
-                    String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
-                    user, pass);
-            return connection;
-        } catch (SQLException | ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
+        if (!isConnected()) {
+            try {
+                Class.forName("com.mysql.jdbc.Driver");
+                this.connection = DriverManager.getConnection(
+                        String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
+                        user, pass);
+            } catch (SQLException | ClassNotFoundException e) {
+                e.printStackTrace();
+            }
         }
+
+        return connection;
     }
 
     /**
@@ -90,8 +99,9 @@ class MySQLConnectionManager
     @Override
     public boolean isConnected() {
         try {
-            return getConnection() != null && !connection.isClosed();
-        } catch (SQLException e) {
+            return connection != null && !connection.isClosed();
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }
@@ -159,8 +169,22 @@ class MySQLConnectionManager
                     "  `serverDesc` text DEFAULT NULL,\n" +
                     "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
                     "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
+                    "  `spamFilterState` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `kickInsteadState` tinyint(1) NOT NULL DEFAULT '0',\n" +
+                    "  `muteRoleId` varchar(255) DEFAULT NULL,\n" +
+                    "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
                     "PRIMARY KEY (`id`)\n" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS customCommands\n" +
+                            "(id int(11) AUTO_INCREMENT,\n" +
+                            "guildId VARCHAR(255) NOT NULL,\n" +
+                            "invoke VARCHAR(10) NOT NULL,\n" +
+                            "message TEXT NOT NULL,\n" +
+                            "PRIMARY KEY (`id`));"
+            );
+
             ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
             while (res.next()) {
                 if (res.getInt("items") == 0) {
@@ -168,7 +192,8 @@ class MySQLConnectionManager
                             "VALUES (DEFAULT, 'duncte123', 'FIRST')");
                 }
             }
-        } catch (SQLException e) {
+            close();
+        } catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

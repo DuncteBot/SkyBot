@@ -25,7 +25,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.WebUtils
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
@@ -51,15 +51,17 @@ class ImageCommand : Command() {
                 return
             }
             val keyword = StringUtils.join(args, "+")
+            WebUtils.ins.getText(String.format(AirUtils.GOOGLE_BASE_URL, keyword)).async {
+                val jsonRaw = Ason(it)
+                val jsonArray = jsonRaw.getJsonArray<Ason>("items")
+                val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
+                sendEmbed(event,
+                        EmbedUtils.defaultEmbed()
+                                .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
+                                .setImage(randomItem.getString("link")).build()
+                )
+            }
 
-            val jsonRaw = Ason(WebUtils.getText(String.format(AirUtils.GOOGLE_BASE_URL, keyword)))
-            val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-            val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
-            sendEmbed(event,
-                    EmbedUtils.defaultEmbed()
-                            .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
-                            .setImage(randomItem.getString("link")).build()
-            )
         }
     }
 

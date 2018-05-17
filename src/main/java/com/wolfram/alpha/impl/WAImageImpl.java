@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 9, 2009
  *
  */
@@ -61,13 +43,13 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
             int width = Integer.parseInt(thisElement.getAttribute("width"));
             int height = Integer.parseInt(thisElement.getAttribute("height"));
             dimensions = new int[]{width, height};
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
         }
     }
 
 
     // This ctor for use when not being created from an <img> element, like for the thumbnail images in WARelatedExample.
-    WAImageImpl(String url, HttpProvider http, File tempDir) {
+    WAImageImpl(String url, HttpProvider http, File tempDir) throws WAException {
 
         this.http = http;
         this.tempDir = tempDir;
@@ -141,17 +123,12 @@ public class WAImageImpl implements WAImage, Visitable, Serializable {
         if (!imageAcquired && http != null) {
             try {
                 String suffix;
-                switch (format) {
-                    case WAImage.FORMAT_GIF:
-                        suffix = ".gif";
-                        break;
-                    case WAImage.FORMAT_PNG:
-                        suffix = ".png";
-                        break;
-                    default:
-                        suffix = ".tmp";
-                        break;
-                }
+                if (format == WAImage.FORMAT_GIF)
+                    suffix = ".gif";
+                else if (format == WAImage.FORMAT_PNG)
+                    suffix = ".png";
+                else
+                    suffix = ".tmp";
                 String outFile = File.createTempFile("WAImage", suffix, tempDir).getAbsolutePath();
                 URLFetcher fetcher = new URLFetcher(new URL(url), outFile, http, null);
                 fetcher.fetch();

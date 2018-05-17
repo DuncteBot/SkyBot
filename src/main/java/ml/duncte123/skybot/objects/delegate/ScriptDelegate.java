@@ -18,13 +18,14 @@
 
 package ml.duncte123.skybot.objects.delegate;
 
-import ml.duncte123.skybot.exceptions.VRCubeException;
 import groovy.lang.Binding;
 import groovy.lang.Script;
+import ml.duncte123.skybot.exceptions.VRCubeException;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.io.File;
 
+@SuppressWarnings("unused")
 public class ScriptDelegate extends Script {
 
     private static int counter = 0;
@@ -87,6 +88,9 @@ public class ScriptDelegate extends Script {
         return b;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void setProperty(String property, Object newValue) {
     }
@@ -99,6 +103,7 @@ public class ScriptDelegate extends Script {
         return "You will never find me.";
     }
 
+    @SuppressWarnings("UnnecessaryLocalVariable")
     public int quick_mafs(int x) {
         int the_thing = x + 2 - 1;
         return the_thing;

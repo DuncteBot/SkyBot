@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 7, 2009
  *
  */
@@ -52,6 +34,8 @@ public class J2SEHttpTransaction implements HttpTransaction {
 
     public void abort() {
 
+        // TODO Auto-generated method stub
+
     }
 
 
@@ -72,6 +56,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
 
             int statusCode = conn.getResponseCode();
             if (statusCode != HttpURLConnection.HTTP_OK) {
+                String ignoredButMustRead = getResponseString();
                 throw new WAHttpException(statusCode);
             }
 
@@ -86,13 +71,16 @@ public class J2SEHttpTransaction implements HttpTransaction {
         return conn.getContentLength();
     }
 
-    public String getCharSet() {
+    public String getCharSet() throws IOException {
+
+        String contentType = conn.getContentType();
+        // TODO: Parse contentType to get the actual value.
         String charset = "ISO-8859-1";
         return charset;
 
     }
 
-    public String[][] getResponseHeaders() {
+    public String[][] getResponseHeaders() throws IOException {
 
         // TODO Auto-generated method stub
         return null;
@@ -136,7 +124,7 @@ public class J2SEHttpTransaction implements HttpTransaction {
                 if (strm != null)
                     strm.close();
             }
-        } catch (IOException ignored) {
+        } catch (IOException e) {
         }
     }
 
@@ -145,10 +133,6 @@ public class J2SEHttpTransaction implements HttpTransaction {
 
         // TODO Auto-generated method stub
 
-    }
-
-    public String getUserAgent() {
-        return userAgent;
     }
 
 }

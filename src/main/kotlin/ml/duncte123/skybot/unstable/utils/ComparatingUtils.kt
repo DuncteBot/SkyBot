@@ -21,10 +21,10 @@
 
 package ml.duncte123.skybot.unstable.utils
 
+import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.TextColor
-import ml.duncte123.skybot.utils.WebUtils.Companion.leeks
+import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils
@@ -73,7 +73,7 @@ class ComparatingUtils {
         fun provideData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Types", "StackTrace length")
             val table: ArrayList<List<String>> = ArrayList()
-            exceptionMap.forEach { cls, lowerMap ->
+            for ((cls, lowerMap) in exceptionMap) {
                 val row = ArrayList<String>()
                 row.add(cls.name)
                 row.add(lowerMap.keys.size.toString())
@@ -88,12 +88,13 @@ class ComparatingUtils {
         fun provideExactData(channel: MessageChannel) {
             val headers = listOf("Exception Class", "Count", "Message", "Trace length")
             val table: ArrayList<List<String>> = ArrayList()
-            exceptionMap.forEach { cls, lowerMap ->
-                var row = ArrayList<String>()
-                lowerMap.forEach { type, trace ->
-                    row.add(cls.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
+
+            for (lowerMap in exceptionMap.values) {
+                val row = ArrayList<String>()
+                for ((type, trace) in lowerMap) {
+                    row.add(type.ex::class.java.name); row.add(type.count.toString()); row.add(type.message); row.add(trace.size.toString())
                     table.add(row)
-                    row = ArrayList()
+                    row.clear()
                 }
             }
             if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))
@@ -107,10 +108,10 @@ class ComparatingUtils {
 
             val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "\n\n\n\n================================\n\n\n\n", prefix = "\n\n\n\n")
 
-            val haste = leeks(hastedata)
+            val haste = WebUtils.ins.wastebin(hastedata).execute()
 
             data.keys.forEachIndexed { index, exceptionType ->
-                table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste))
+                table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste as String))
             }
 
             if (channel is TextChannel) MessageUtils.sendMsg(channel, makeAsciiTable(headers, table))

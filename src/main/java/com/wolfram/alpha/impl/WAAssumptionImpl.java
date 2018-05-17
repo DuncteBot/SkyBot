@@ -1,28 +1,11 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Dec 8, 2009
  *
  */
 package com.wolfram.alpha.impl;
 
 import com.wolfram.alpha.WAAssumption;
+import com.wolfram.alpha.WAException;
 import com.wolfram.alpha.visitor.Visitable;
 import com.wolfram.alpha.visitor.Visitor;
 import org.w3c.dom.Element;
@@ -47,7 +30,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
     private boolean[] valids;
 
 
-    WAAssumptionImpl(Element thisElement) {
+    WAAssumptionImpl(Element thisElement) throws WAException {
 
         type = thisElement.getAttribute("type");
         word = thisElement.getAttribute("word");
@@ -58,11 +41,11 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
         // should never happen, although 'current' is often missing.
         try {
             count = Integer.parseInt(thisElement.getAttribute("count"));
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
         }
         try {
             current = Integer.parseInt(thisElement.getAttribute("current"));
-        } catch (NumberFormatException ignored) {
+        } catch (NumberFormatException e) {
         }
 
         NodeList valueElements = thisElement.getElementsByTagName("value");
@@ -78,7 +61,7 @@ public class WAAssumptionImpl implements WAAssumption, Visitable, Serializable {
             inputs[i] = value.getAttribute("input");
             descriptions[i] = value.getAttribute("desc");
             words[i] = value.getAttribute("word");
-            valids[i] = !value.getAttribute("valid").equals("false");
+            valids[i] = value.getAttribute("valid").equals("false") ? false : true;
         }
     }
 

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import com.github.natanbc.reliqua.request.PendingRequest;
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -27,49 +29,33 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
-import okhttp3.Response;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONException;
+import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class Command {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
+
+    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(2,
+            r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
      */
     protected static final String PREFIX = Settings.PREFIX;
-    private static boolean cooldown = false;
     /**
      * A list of users that have upvoted the bot
      */
-    protected static final Set<String> upvotedIds = new HashSet<String>() {
-        @Override
-        public boolean contains(Object o) {
-            if (o.getClass() != String.class) return false;
-
-            if (super.contains(o)) return true;
-
-            reloadUpvoted();
-
-            return super.contains(o);
-        }
-    };
-
-    static {
-        reloadUpvoted();
-    }
+    private static final Set<String> upvotedIds = new HashSet<>();
 
     /**
      * This holds the category
@@ -80,53 +66,24 @@ public abstract class Command {
      */
     protected boolean displayAliasesInHelp = false;
 
-    public Command() {
-        if (Settings.useCooldown) {
-            ScheduledExecutorService executorService = Executors.newSingleThreadScheduledExecutor();
-            executorService.scheduleWithFixedDelay(() -> {
-                if (cooldown)
-                    cooldown = false;
-            }, 0, 20, TimeUnit.SECONDS);
+
+    private boolean checkVoteOnDBL(String userid) {
+        String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
+
+        if (token == null || token.isEmpty()) {
+            logger.warn("Discord Bots token not found");
+            return false;
         }
-    }
+        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(new Request.Builder()
+                .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
+                .get()
+                .addHeader("Authorization", token)
+                .build(), (r) -> {
+            assert r.body() != null;
+            return new JSONObject(r.body().string());
+        });
 
-    /**
-     * Reloads the list of people who have upvoted this bot
-     */
-    protected static void reloadUpvoted() {
-        if (cooldown && Settings.useCooldown) return;
-        try {
-            String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
-
-            if (token == null || token.isEmpty()) {
-                logger.warn("Discord Bots token not found");
-                return;
-            }
-
-            Response it = WebUtilsJava.executeRequest(new Request.Builder()
-                    .url("https://discordbots.org/api/bots/210363111729790977/votes?onlyids=1")
-                    .get()
-                    .addHeader("Authorization", token)
-                    .build());
-            JSONArray json = null;
-            try {
-                json = new JSONArray(it.body().string());
-            } catch (IOException e1) {
-                logger.warn("Error (re)loading upvoted people: " + e1.getMessage(), e1);
-            }
-
-            upvotedIds.clear();
-
-            for (int i = 0; i < json.length(); i++) {
-                upvotedIds.add(json.getString(i));
-            }
-
-        } catch (JSONException e) {
-            //AirUtils.logger.warn("Error (re)loading upvoted people: " + e.getMessage(), e);
-            /* ignored */
-        }
-        if (Settings.useCooldown)
-            cooldown = true;
+        return 1 == Objects.requireNonNull(json.execute()).optInt("voted", 0);
     }
 
     /**
@@ -134,7 +91,7 @@ public abstract class Command {
      *
      * @return if the bot should take up the aliases in the help command
      */
-    public boolean isDisplayAliasesInHelp() {
+    public boolean shouldDisplayAliasesInHelp() {
         return displayAliasesInHelp;
     }
 
@@ -177,7 +134,16 @@ public abstract class Command {
      * Has this user upvoted the bot
      */
     protected boolean hasUpvoted(User user) {
-        return isPatron(user, null) || upvotedIds.contains(user.getId());
+        boolean upvoteCheck = upvotedIds.contains(user.getId());
+        if(!upvoteCheck) {
+            boolean dblCheck = checkVoteOnDBL(user.getId());
+            if(dblCheck) {
+                upvoteCheck = true;
+                upvotedIds.add(user.getId());
+            }
+        }
+
+        return isPatron(user, null) || upvoteCheck;
     }
 
     /**

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audioManagers.spotify;
+package ml.duncte123.skybot.objects.audiomanagers.spotify;
 
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.client.json.jackson2.JacksonFactory;
@@ -45,6 +45,7 @@ import org.slf4j.LoggerFactory;
 import java.io.DataInput;
 import java.io.DataOutput;
 import java.io.IOException;
+import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -69,7 +70,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ALBUM_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
-    private static YouTube youtube;
+    private final YouTube youtube;
     private final Api api;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
@@ -95,24 +96,24 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
             service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
 
-            try {
-                youtube = getYouTubeService();
-            } catch (Exception e) {
-                youtube = null;
-                e.printStackTrace();
-            }
+            youtube = getYouTubeService();
         }
     }
 
-    private static YouTube getYouTubeService() throws Exception {
-        return new YouTube.Builder(
-                GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
-        })
-                .setApplicationName("SkyBot-youtube-search")
-                .build();
+    private YouTube getYouTubeService() {
+        try {
+            return new YouTube.Builder(
+                    GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
+            })
+                    .setApplicationName("SkyBot-youtube-search")
+                    .build();
+        } catch (GeneralSecurityException | IOException e) {
+            e.printStackTrace();
+            return null;
+        }
     }
 
-    private static List<SearchResult> searchYoutube(String query) throws IOException {
+    private List<SearchResult> searchYoutube(String query) throws IOException {
         return youtube.search().list("id,snippet")
                 .setKey(AirUtils.CONFIG.getString("apis.googl"))
                 .setQ(query)
@@ -123,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                 .getItems();
     }
 
-    private static Video getVideoById(String videoID) throws Exception {
+    private Video getVideoById(String videoID) throws Exception {
         return youtube.videos().list("snippet,statistics,contentDetails")
                 .setId(videoID)
                 .setKey(AirUtils.CONFIG.getString("apis.googl"))
@@ -166,7 +167,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
                     throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
                 }
             }
         } else if (isSpotifyPlaylist(reference.identifier)) {
@@ -184,10 +184,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                         finalPlaylist.addAll(doThingWithPlaylist(results));
                     }
                     return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
-                } catch (Exception e) {
+                }
+                catch (IllegalArgumentException ex) {
+                    throw new FriendlyException("This playlist could not be loaded, make sure that it's public", FriendlyException.Severity.FAULT, ex);
+                }
+                catch (Exception e) {
                     //logger.error("Something went wrong!", e);
                     throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
                 }
             }
         } else if (isSpotyfyTrack(reference.identifier)) {
@@ -208,84 +211,25 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                             false,
                             "https://youtube.com/watch?v=" + v.getId()
                     ), youtubeAudioSourceManager);
-                    //return youtubeSearchProvider.loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName());
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
                     throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
                 }
             }
         }
 
-        /*if(isSpotifyAlbum(reference.identifier)) {
-            if(this.youtubeAudioSourceManager == null)
-                return null;
-            Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
-            if (res.matches()) {
-
-                try {
-                    final List<AudioTrack> playList = new ArrayList<>();
-                    final Album album = api.getAlbum(res.group(res.groupCount())).build().get();
-                    for(SimpleTrack t : album.getTracks().getItems()){
-                        String fakeUrl = album.getArtists().get(0).getName() + " - "+ t.getName();
-                        List<AudioTrack> tracks = ((AudioPlaylist)youtubeSearchProvider.loadSearchResult(fakeUrl)).getTracks();
-                        if(tracks.size() > 0)
-                            playList.add(tracks.get(0));
-                    }
-                    return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
-                }
-            }
-        } else if(isSpotifyPlaylist(reference.identifier)) {
-            if(this.youtubeAudioSourceManager == null)
-                return null;
-            Matcher res = SPOTIFY_PLAYLIST_REGEX.matcher(reference.identifier);
-            if (res.matches()) {
-
-                try {
-                    final List<AudioTrack> finalPlaylist = new ArrayList<>();
-                    final Playlist spotifyPlaylist = api.getPlaylist(res.group(res.groupCount()-1), res.group(res.groupCount())).build().get();
-                    for(PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()){
-                        String fakeUrl = playlistTrack.getTrack().getArtists().get(0).getName() + " - " + playlistTrack.getTrack().getName();
-                        System.out.println(fakeUrl);
-                        List<AudioTrack> tracks = ((AudioPlaylist)youtubeSearchProvider.loadSearchResult(fakeUrl)).getTracks();
-                        if(tracks.size() > 0)
-                            finalPlaylist.add(tracks.get(0));
-                    }
-                    return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
-                }
-            }
-        } else if(isSpotyfyTrack(reference.identifier)) {
-            if(this.youtubeAudioSourceManager == null)
-                return null;
-            Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
-            if (res.matches()) {
-
-                try {
-                    final Track track = api.getTrack(res.group(res.groupCount())).build().get();
-                    return youtubeSearchProvider.loadSearchResult(track.getArtists().get(0).getName() + " - "+ track.getName());
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
-                    //return null;
-                }
-            }
-        }*/
         return null;
     }
+
 
     @Override
     public boolean isTrackEncodable(AudioTrack track) {
         return true;
     }
 
+    /**
+     * {@inheritDoc}
+     */
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) {
 
@@ -320,10 +264,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private void updateAccessToken() {
         Futures.addCallback(api.clientCredentialsGrant().build().getAsync(), new FutureCallback<>() {
             @Override
-            public void onSuccess(ClientCredentials clientCredentials) {
+            public void onSuccess(@NotNull ClientCredentials clientCredentials) {
                 /* The tokens were retrieved successfully! */
-                logger.info("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
-                logger.info("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
+                logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
+                logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
                 api.setAccessToken(clientCredentials.getAccessToken());
             }
 

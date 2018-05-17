@@ -19,8 +19,13 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.*;
+import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.HelpEmbeds;
+import ml.duncte123.skybot.utils.TagUtils;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -30,6 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.security.auth.login.LoginException;
+import java.sql.Connection;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -55,29 +61,28 @@ public class SkyBot {
      */
     @Deprecated
     public static void main(String... args) throws Exception {
+        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
+
         //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(true);
-
-        if (AirUtils.CONFIG.hasKey("launch_unstable") && AirUtils.CONFIG.getBoolean("launch_unstable", false)) {
-            RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
-            logger.info(TextColor.RED_BACKGROUND + TextColor.YELLOW + "USING UNSTABLE BUILD!" + TextColor.RESET);
-        }
 
         //Set the logger to only info by default
 //        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 //        l.setLevel(INFO);
 
-        //Set the value for other classes to use
-        boolean useDatabase = AirUtils.NONE_SQLITE;
-        if (useDatabase) { //Don't try to connect if we don't want to
+        if (AirUtils.NONE_SQLITE) { //Don't try to connect if we don't want to
             if (!AirUtils.DB.connManager.hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
+            Connection conn = AirUtils.DB.getConnManager().getConnection();
             if (!AirUtils.DB.isConnected()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
+            } else {
+                logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
+                conn.close();
             }
         } else {
             int startIn = 5;
@@ -103,23 +108,25 @@ public class SkyBot {
         //Set the game from the config
         int gameId = AirUtils.CONFIG.getInt("discord.game.type", 3);
         String name = AirUtils.CONFIG.getString("discord.game.name", "over shard #{shardId}");
-        String[] url = {"https://www.twitch.tv/duncte123"};
+        String url = "https://www.twitch.tv/duncte123";
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
         if (type.equals(Game.GameType.STREAMING)) {
-            url[0] = AirUtils.CONFIG.getString("discord.game.streamUrl", url[0]);
+            url = AirUtils.CONFIG.getString("discord.game.streamUrl", url);
         }
 
         logger.info(AirUtils.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
+        //logger.info(AirUtils.COMMAND_MANAGER.getCustomCommands().size() + " custom commands loaded.");
         LavalinkManager.ins.start();
+        final String finalUrl = url;
         try {
             //Set up sharding for the bot
             shardManager = new DefaultShardManagerBuilder()
                     .setEventManager(new EventManager())
                     .setShardsTotal(TOTAL_SHARDS)
                     .setGameProvider(shardId -> Game.of(type,
-                            name.replace("{shardId}", Integer.toString(shardId + 1)), url[0])
+                            name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
                     )
                     .setToken(token)
                     .build();

@@ -18,6 +18,13 @@
 
 package ml.duncte123.skybot.objects
 
+import ml.duncte123.skybot.utils.EmbedUtils
+import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.core.entities.Message
+import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import net.dv8tion.jda.core.requests.RestAction
+
 class EvalFunctions {
 
     companion object {
@@ -26,10 +33,30 @@ class EvalFunctions {
             return number % 2 == 0
         }
 
+        @Suppress("UnnecessaryVariable", "LocalVariableName")
         @JvmStatic
         fun quick_mafs(x: Int): Int {
             val the_thing = x + 2 - 1
             return the_thing
+        }
+
+        @JvmStatic
+        fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
+            val embed = EmbedUtils.defaultEmbed()
+                    .addField("Guilds", shardManager.guildCache.size().toString(), true)
+                    .addField("Users", shardManager.userCache.size().toString(), true)
+                    .addField("Channels", (shardManager.textChannelCache.size()+shardManager.privateChannelCache.size()).toString(), true)
+                    .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
+            return channel.sendMessage(embed)
+        }
+
+        @JvmStatic
+        fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
+            val shardManager = event.jda.asBot().shardManager
+            val user = event.member
+            return shardManager.guildCache.filter { it.memberCache.contains(user) }.joinToString {
+                "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
+            }
         }
     }
 }

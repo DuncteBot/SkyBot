@@ -1,22 +1,4 @@
 /*
- * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
- *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>.
- */
-
-/*
  * Created on Nov 5, 2006
  *
  */
@@ -123,7 +105,8 @@ public class ProxySettings {
                 URI uri = new URI(url);
                 List<Proxy> proxyList = ps.select(uri);
                 int len = proxyList.size();
-                for (Proxy p : proxyList) {
+                for (int i = 0; i < len; i++) {
+                    Proxy p = (Proxy) proxyList.get(i);
                     InetSocketAddress addr = (InetSocketAddress) p.address();
                     if (addr != null) {
                         host = addr.getHostName();
@@ -194,8 +177,8 @@ public class ProxySettings {
         // The list we return when we want to indicate to the caller that no proxy should be used.
         // In older versions of Java you could return an empty list, but in newer ones there is a bug
         // where the java.net code will throw a NullPointerException if you return an empty list.
-        private final List<Proxy> NO_PROXY_LIST = new ArrayList<>(1);
-        ProxySelector origSelector;
+        private final List<Proxy> NO_PROXY_LIST = new ArrayList<Proxy>(1);
+        ProxySelector origSelector = null;
 
         private MyProxySelector() {
             origSelector = ProxySelector.getDefault();
@@ -211,20 +194,19 @@ public class ProxySettings {
         public List<Proxy> select(URI uri) {
 
             int useProxy = ProxySettings.getInstance().getUseProxy();
-            switch (useProxy) {
-                case PROXY_AUTOMATIC:
-                    return origSelector.select(uri);
-                case PROXY_MANUAL:
-                    Proxy p = ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
-                    if (p != null) {
-                        List<Proxy> proxies = new ArrayList<>(1);
-                        proxies.add(p);
-                        return proxies;
-                    } else {
-                        return NO_PROXY_LIST;
-                    }
-                default:
+            if (useProxy == PROXY_AUTOMATIC)
+                return origSelector.select(uri);
+            else if (useProxy == PROXY_MANUAL) {
+                Proxy p = (Proxy) ProxySettings.getInstance().getProxyForJavaNet(uri.toString());
+                if (p != null) {
+                    List<Proxy> proxies = new ArrayList<Proxy>(1);
+                    proxies.add(p);
+                    return proxies;
+                } else {
                     return NO_PROXY_LIST;
+                }
+            } else {
+                return NO_PROXY_LIST;
             }
         }
 

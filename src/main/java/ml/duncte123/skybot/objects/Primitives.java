@@ -18,43 +18,39 @@
 
 package ml.duncte123.skybot.objects;
 
-import java.util.Collections;
+import com.google.common.collect.BiMap;
+import com.google.common.collect.ImmutableBiMap;
+
 import java.util.HashMap;
 import java.util.Map;
 
 public class Primitives {
 
-    private static final Map<Class<?>, Class<?>> primitivesToWrapper;
-    private static final Map<Class<?>, Class<?>> wrapperToPrimitives;
+    private static final BiMap<Class<?>, Class<?>> map;
 
     static {
-        Map<Class<?>, Class<?>> p = new HashMap<>(16);
-        Map<Class<?>, Class<?>> w = new HashMap<>(16);
+        Map<Class<?>, Class<?>> temp = new HashMap<>();
+        
+        temp.put(boolean.class, Boolean.class);
+        temp.put(byte.class, Byte.class);
+        temp.put(char.class, Character.class);
+        temp.put(double.class, Double.class);
+        temp.put(float.class, Float.class);
+        temp.put(int.class, Integer.class);
+        temp.put(long.class, Long.class);
+        temp.put(short.class, Short.class);
+        temp.put(void.class, Void.class);
 
-        put(p, w, boolean.class, Boolean.class);
-        put(p, w, byte.class, Byte.class);
-        put(p, w, char.class, Character.class);
-        put(p, w, double.class, Double.class);
-        put(p, w, float.class, Float.class);
-        put(p, w, int.class, Integer.class);
-        put(p, w, long.class, Long.class);
-        put(p, w, short.class, Short.class);
-        put(p, w, void.class, Void.class);
-
-        primitivesToWrapper = Collections.unmodifiableMap(p);
-        wrapperToPrimitives = Collections.unmodifiableMap(w);
-    }
-
-    public static Class<?> unwrap(Class<?> type) {
-        return (wrapperToPrimitives.get(type) == null) ? type : wrapperToPrimitives.get(type);
+        map = ImmutableBiMap.copyOf(temp);
     }
 
     public static Class<?> wrap(Class<?> type) {
-        return (primitivesToWrapper.get(type) == null) ? type : primitivesToWrapper.get(type);
+        if(type == null || !type.isPrimitive()) return null;
+        return map.get(type);
     }
 
-    private static void put(Map<Class<?>, Class<?>> first, Map<Class<?>, Class<?>> second, Class<?> primitive, Class<?> wrapper) {
-        first.put(primitive, wrapper);
-        second.put(wrapper, primitive);
+    public static Class<?> unwrap(Class<?> type) {
+        if(type == null || !type.isPrimitive()) return null;
+        return map.inverse().get(type);
     }
 }
