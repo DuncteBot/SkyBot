@@ -19,14 +19,19 @@
 package ml.duncte123.skybot.audio;
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import net.dv8tion.jda.core.entities.Guild;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,12 +118,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
-    /*@Override
-    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
-        MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                "Details: " + exception);
-    }*/
-
     /**
      * This will tell you if the player is repeating
      *
@@ -179,4 +178,17 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         }
     }
 
+    @Override
+    public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
+        ComparatingUtils.execCheck(exception);
+        if (exception.severity != FriendlyException.Severity.COMMON) {
+            Guild g = this.guildMusicManager.latestChannel.getGuild();
+            AudioTrackInfo info = track.getInfo();
+            final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                    g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
+            logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                    "Details: " + exception);
+        }
+    }
 }

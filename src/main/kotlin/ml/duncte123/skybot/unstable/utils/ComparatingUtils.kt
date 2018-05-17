@@ -108,7 +108,7 @@ class ComparatingUtils {
 
             val hastedata = data.keys.map { it.ex.printStackTrace("") }.joinToString(separator = "\n\n\n\n================================\n\n\n\n", prefix = "\n\n\n\n")
 
-            val haste = WebUtils.ins.leeks(hastedata).execute()
+            val haste = WebUtils.ins.wastebin(hastedata).execute()
 
             data.keys.forEachIndexed { index, exceptionType ->
                 table.add(listOf("$index", exceptionType.message, "${exceptionType.count}", haste as String))

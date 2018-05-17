@@ -34,8 +34,7 @@ import java.util.regex.Pattern;
  * @author ramidzkh
  */
 @SuppressWarnings("SqlDialectInspection")
-class SQLiteDatabaseConnectionManager
-        implements DBConnectionManager {
+class SQLiteDatabaseConnectionManager implements DBConnectionManager {
 
     /**
      * The URL of this database

@@ -18,17 +18,11 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.TagUtils
-import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
-import java.util.*
-import java.util.regex.Pattern
 
 class TagCommand : Command() {
 
@@ -37,7 +31,8 @@ class TagCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val helpMessage = MessageBuilder()
+        MessageUtils.sendMsg(event, "The tag feature has been disabled, please use custom commands from this point forward")
+        /*val helpMessage = MessageBuilder()
                 .appendCodeBlock("Tag help: \n" +
                         "\t$PREFIX\u200B$invoke help: shows this \n" +
                         "\t$PREFIX\u200B$invoke list: lists all the tags \n" +
@@ -95,7 +90,7 @@ class TagCommand : Command() {
 
             }
         } else if (args.size >= 3 && (args[0] == "create" || args[0] == "new")) {
-            /*if (TagUtils.tagsList.containsKey(args[1])) {
+            if (TagUtils.tagsList.containsKey(args[1])) {
                 MessageUtils.sendMsg(event, "The tag `${args[1]}` already exist.")
                 return
             } else if (args[1].length > 10) {
@@ -116,10 +111,10 @@ class TagCommand : Command() {
 
             } else {
                 MessageUtils.sendMsg(event, "Failed to add tag.")
-            }*/
+            }
             MessageUtils.sendMsg(event, "Creating new tags has been disabled due to the custom command system replacing it.\n" +
                     "Make sure to convert your tags to the new custom commands before {DATE SOON}")
-        }
+        }*/
     }
 
     override fun help() = "Save it in a tag\n" +
