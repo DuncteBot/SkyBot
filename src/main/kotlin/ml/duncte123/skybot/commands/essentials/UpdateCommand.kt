@@ -106,6 +106,7 @@ class UpdateCommand : Command() {
             while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
+                    version = s
                     if (process.isAlive) process.destroy()
                     return@async true
                 }
