@@ -73,9 +73,6 @@ class RestartShardCommand : Command() {
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                        val end = EndReached()
-                        this.coroutineContext.cancelChildren(end)
-                        this.coroutineContext.cancel(end)
                     }
                 }
                 else -> MessageUtils.sendError(event.message)
