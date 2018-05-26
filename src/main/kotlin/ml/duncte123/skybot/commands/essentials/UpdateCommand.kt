@@ -42,7 +42,7 @@ class UpdateCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
+        if (!isDev(event.author)
                 && Settings.OWNER_ID != event.author.id) {
             MessageUtils.sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
@@ -105,7 +105,8 @@ class UpdateCommand : Command() {
             val scanner = Scanner(process.inputStream)
             while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
-                if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]_.{8}".toRegex())) {
+                if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
+                    version = s
                     if (process.isAlive) process.destroy()
                     return@async true
                 }

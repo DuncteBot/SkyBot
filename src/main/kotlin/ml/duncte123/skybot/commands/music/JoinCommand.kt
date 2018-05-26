@@ -46,7 +46,7 @@ class JoinCommand : MusicCommand() {
         mng.latestChannel = event.channel
 
         @Suppress("DEPRECATION")
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID)) {
+        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(isDev(event.author) || event.author.id == Settings.OWNER_ID)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)

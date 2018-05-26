@@ -22,8 +22,12 @@ import ml.duncte123.skybot.utils.AirUtils;
 
 import java.io.File;
 import java.sql.Connection;
+import java.util.concurrent.*;
 
 public class DBManager {
+
+    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
+            r -> new Thread(r, "SQL-thread"));
 
     public final DBConnectionManager connManager;
 
@@ -80,5 +84,17 @@ public class DBManager {
      */
     public DBConnectionManager getConnManager() {
         return connManager;
+    }
+
+    public <T>ScheduledFuture<T> run(Callable<T> c) {
+        return service.schedule(c, 0L, TimeUnit.MILLISECONDS);
+    }
+
+    public ScheduledFuture<?> run(Runnable r) {
+        return service.schedule(r, 0L, TimeUnit.MILLISECONDS);
+    }
+
+    public ScheduledExecutorService getService() {
+        return service;
     }
 }

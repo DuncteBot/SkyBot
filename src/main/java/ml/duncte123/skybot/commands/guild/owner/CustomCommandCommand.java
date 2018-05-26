@@ -83,15 +83,18 @@ public class CustomCommandCommand extends Command {
         } else {
             //fetch a custom command
             CustomCommand cmd = AirUtils.COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
-            //Run the custom command?
-            AirUtils.COMMAND_MANAGER.dispatchCommand((Command) cmd, arg, new String[0], event);
+            if(cmd != null)
+                //Run the custom command?
+                AirUtils.COMMAND_MANAGER.dispatchCommand((Command) cmd, arg, new String[0], event);
+            else
+                sendMsg(event, "Invalid arguments use `db!help customcommand`");
         }
     }
 
     private void deleteCustomCommand(String[] args, GuildMessageReceivedEvent event) {
         //Check for deleting
         if (!args[0].equalsIgnoreCase("delete")) {
-            sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            sendMsg(event, "Invalid arguments use `db!help customcommand`");
             return;
         }
 
@@ -119,7 +122,7 @@ public class CustomCommandCommand extends Command {
 
     private void addOrEditCustomCommand(String[] args, GuildMessageReceivedEvent event) {
         if (args.length < 3 && !systemInvokes.contains(args[0])) {
-            sendMsg(event, "Invalid arguments use `db!customcommand help`");
+            sendMsg(event, "Invalid arguments use `db!help customcommand`");
             return;
         }
 

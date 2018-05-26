@@ -42,7 +42,7 @@ class RestartShardCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
+        if (!isDev(event.author)) return
         val shardManager = event.jda.asBot().shardManager
 
         try {
@@ -73,9 +73,6 @@ class RestartShardCommand : Command() {
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                        val end = EndReached()
-                        this.coroutineContext.cancelChildren(end)
-                        this.coroutineContext.cancel(end)
                     }
                 }
                 else -> MessageUtils.sendError(event.message)

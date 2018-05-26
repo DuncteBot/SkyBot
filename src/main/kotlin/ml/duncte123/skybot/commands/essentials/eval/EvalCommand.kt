@@ -19,7 +19,9 @@
 package ml.duncte123.skybot.commands.essentials.eval
 
 import groovy.lang.GroovyShell
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.experimental.CoroutineStart
+import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.withTimeoutOrNull
 import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
@@ -105,7 +107,7 @@ class EvalCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
-        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID
+        val isRanByBotOwner = isDev(event.author) || event.author.id == Settings.OWNER_ID
         if (!isRanByBotOwner && !runIfNotOwner)
             return
 
@@ -196,10 +198,8 @@ class EvalCommand : Command() {
     @SinceSkybot("3.58.0")
     suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
-            lateinit var coroutine: CoroutineScope
             val out = withTimeoutOrNull(millis) {
                 engine.put("scope", this)
-                coroutine = this
                 try {
                     if (isRanByBotOwner) engine.eval(script)
                     else {
@@ -207,7 +207,6 @@ class EvalCommand : Command() {
                         protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
-
                     ComparatingUtils.checkEx(ex)
                     ex
                 } finally {
@@ -216,7 +215,6 @@ class EvalCommand : Command() {
             }
             when (out) {
                 null -> {
-                    coroutine.coroutineContext.cancel()
                     MessageUtils.sendSuccess(event.message)
                 }
                 is ArrayIndexOutOfBoundsException -> {
@@ -228,9 +226,6 @@ class EvalCommand : Command() {
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     out as Exception
-                    coroutine.coroutineContext.cancel()
-                    if (coroutine.isActive)
-                        coroutine.coroutineContext.cancel()
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is VRCubeException -> {
