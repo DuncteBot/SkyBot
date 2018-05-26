@@ -119,6 +119,7 @@ dependencies {
     //Spark for website
     //compile group: "com.sparkjava", name: "spark-core", version: "2.7.2"
     compile "com.sparkjava:spark-core:2.7.2"
+    compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
 }
 
 javadoc {

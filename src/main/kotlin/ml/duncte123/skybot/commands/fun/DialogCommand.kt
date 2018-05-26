@@ -24,7 +24,7 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
-import org.apache.commons.lang3.text.WordUtils
+import org.apache.commons.text.WordUtils
 
 class DialogCommand : Command() {
 

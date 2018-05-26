@@ -19,12 +19,15 @@
 package ml.duncte123.skybot.web
 
 import ml.duncte123.skybot.SkyBot
+import ml.duncte123.skybot.objects.StringMap
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
+import spark.ModelAndView
 import spark.Request
 import spark.Response
 import spark.Spark.*
+import spark.template.jtwig.JtwigTemplateEngine
 
 /**
  * Notes:
@@ -38,9 +41,9 @@ class WebServer {
         //Port has to be 2000 because of the apache proxy on the vps
         port(2000)
 
-        get("/") { request, response ->
-            "Hello world"
-        }
+        get("/", { request, response ->
+            ModelAndView(StringMap().put("title", "Home").map, "base.twig")
+        }, JtwigTemplateEngine())
 
         get("/api/servers") { request, response ->
             "Server count: ${SkyBot.getInstance().shardManager.guildCache.size()}"
