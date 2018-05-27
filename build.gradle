@@ -83,7 +83,7 @@ dependencies {
     compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_366'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.63'
-    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '8738c3c' ) {
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '8738c3cc05' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
     //Commons text, because UnicodeUnescaper
@@ -117,8 +117,8 @@ dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 
     //Spark for website
-    //compile group: "com.sparkjava", name: "spark-core", version: "2.7.2"
-    compile "com.sparkjava:spark-core:2.7.2"
+//    compile "com.sparkjava:spark-core:2.7.2"
+    compile "com.sparkjava:spark-kotlin:1.0.0-alpha"
     compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
 }
 

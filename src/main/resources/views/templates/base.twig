@@ -30,8 +30,8 @@
         <header>
             <div class="hide">
                 {% block menu %}
-                    <li><a href="">Home</a></li>
-                    <li><a href="">Commands</a></li>
+                    <li{% if title == "Home" %} class="active"{% endif %}><a href="/">Home</a></li>
+                    <li{% if title == "List of commands" %} class="active"{% endif %}><a href="/commands">Commands</a></li>
                     <li><a href="">Suggest</a></li>
                     <li><a href="">Dashboard</a></li>
                 {% endblock %}

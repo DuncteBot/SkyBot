@@ -485,6 +485,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                                 return null;
                             }
 
+                            @Override
+                            public MemberAction addMember(String accessToken, String userId) {
+                                return null;
+                            }
+
                             @Nonnull
                             @Override
                             public String getName() {

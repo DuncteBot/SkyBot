@@ -18,15 +18,18 @@
 
 package ml.duncte123.skybot.web
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
-import ml.duncte123.skybot.objects.StringMap
+import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
 import spark.ModelAndView
 import spark.Request
 import spark.Response
-import spark.Spark.*
+import spark.Spark.path
+import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
 
 /**
@@ -37,21 +40,24 @@ import spark.template.jtwig.JtwigTemplateEngine
 
 class WebServer {
 
+    val engine = JtwigTemplateEngine("views")
+
     fun activate() {
         //Port has to be 2000 because of the apache proxy on the vps
         port(2000)
 
-        get("/", { request, response ->
-            ModelAndView(StringMap().put("title", "Home").map, "base.twig")
-        }, JtwigTemplateEngine())
+        get("/", WebVariables().put("title", "Home"), "home.twig")
 
-        get("/api/servers") { request, response ->
+        get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
+                .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
+
+        get("/api/servers") {
             "Server count: ${SkyBot.getInstance().shardManager.guildCache.size()}"
         }
 
         path("/server/:guildid") {
             
-            before("*") { request, response ->
+            before("*") {
                 val guild = getGuildFromRequest(request, response)
                 if(guild == null && !request.uri().contains("invalid")) {
                     response.redirect("/server/${request.params(":guildid*")}/invalid")
@@ -61,7 +67,7 @@ class WebServer {
             }
             
             //overview and editing
-            get("") { request, response ->
+            get("") {
                 val guild = getGuildFromRequest(request, response)
                 if (guild != null) {
                     val settings = GuildSettingsUtils.getGuild(guild)
@@ -71,7 +77,7 @@ class WebServer {
                 } else { response.body() }
             }
             //audio stuff
-            get("/music") { request, response ->
+            get("/music") {
                 val guild = getGuildFromRequest(request, response)
                 if(guild != null) {
                     val mng = AudioUtils.ins.getMusicManager(guild, false)
@@ -89,21 +95,36 @@ class WebServer {
             }
 
             //when the guild is not found
-            get("/invalid") { _, response ->
+            get("/invalid") {
                 response.status(404)
                 "DuncteBot is not in the requested server, why don't you <a href=\"#\">invite it</a>?"
             }
         }
 
-        notFound { _, _ ->
-            "This page could not be found"
+        /*notFound {
+            ModelAndView(WebVariables().put("title", "404"), "errors/404.twig")
+        }*/
+
+        get("*") {
+            if(!request.pathInfo().startsWith("/static")){
+                response.status(404)
+                engine.render(ModelAndView(WebVariables().put("title", "Page not found")
+                        .put("path", request.pathInfo()).map, "errors/404.twig"))
+            } else {
+                ""
+            }
         }
 
-        after("") { request, response ->
+        after("") {
             response.body()
         }
     }
 
+    private fun get(path: String, map: WebVariables, model: String) {
+        get(path, DEFAULT_ACCEPT, engine) {
+            ModelAndView(map.map, model)
+        }
+    }
 
     private fun getGuildFromRequest(request: Request, response: Response): Guild? {
 

@@ -34,10 +34,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
@@ -70,6 +67,16 @@ public class CommandManager {
      */
     public Set<Command> getCommands() {
         return commands;
+    }
+
+    public List<Command> getSortedCommands() {
+        List<Command> commandArrayList = new ArrayList<>();
+        List<String> names = new ArrayList<>();
+        getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
+                .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
+        Collections.sort(names);
+        names.forEach( n -> commandArrayList.add(getCommand(n)));
+        return commandArrayList;
     }
 
     public Set<CustomCommand> getCustomCommands() {

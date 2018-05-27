@@ -21,20 +21,20 @@ package ml.duncte123.skybot.objects;
 import java.util.HashMap;
 import java.util.Map;
 
-public class StringMap {
+public class WebVariables {
 
-    private final Map<String, String> map;
+    private final Map<String, Object> map;
 
-    public StringMap() {
+    public WebVariables() {
         this.map = new HashMap<>();
     }
 
-    public StringMap put(String key, String value) {
+    public WebVariables put(String key, Object value) {
         this.map.put(key, value);
         return this;
     }
 
-    public Map<String, String> getMap() {
+    public Map<String, Object> getMap() {
         return map;
     }
 }
