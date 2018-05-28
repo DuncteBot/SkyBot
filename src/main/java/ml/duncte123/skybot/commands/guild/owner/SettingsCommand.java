@@ -270,7 +270,7 @@ public class SettingsCommand extends Command {
                 sendMsg(event, message);
                 break;
 
-            case "spamrole":
+            case "spamrole": case "muterole":
 
                 if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
                     sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
@@ -462,7 +462,8 @@ public class SettingsCommand extends Command {
                 "togglespamfilter",
                 "spamrole",
                 "setratelimits",
-                "togglekickmode"
+                "togglekickmode",
+                "muterole"
         };
     }
 
