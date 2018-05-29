@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web
 
+import com.afollestad.ason.Ason
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
@@ -32,19 +33,15 @@ import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
 
-/**
- * Notes:
- * duncte123: we're gonna use this for templating https://github.com/warhuhn/warhuhn-spark-template-jtwig
- * it's twig and it's easy to use
- */
-
 class WebServer {
 
-    val engine = JtwigTemplateEngine("views")
+    private val engine = JtwigTemplateEngine("views")
 
     fun activate() {
         //Port has to be 2000 because of the apache proxy on the vps
         port(2000)
+
+        staticFiles.location("/public")
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
@@ -52,46 +49,49 @@ class WebServer {
                 .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
 
         get("/api/servers") {
-            "Server count: ${SkyBot.getInstance().shardManager.guildCache.size()}"
+            response.type("application/json")
+            return@get Ason()
+                    .put("status", "success")
+                    .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                    .put("code", response.status())
         }
 
         path("/server/:guildid") {
-            
+
             before("*") {
                 val guild = getGuildFromRequest(request, response)
-                if(guild == null && !request.uri().contains("invalid")) {
+                if (guild == null && !request.uri().contains("invalid")) {
                     response.redirect("/server/${request.params(":guildid*")}/invalid")
-                } else if(guild != null && request.uri().contains("invalid")) {
+                } else if (guild != null && request.uri().contains("invalid")) {
                     response.redirect("/server/${request.params(":guildid*")}")
                 }
             }
-            
+
             //overview and editing
             get("") {
                 val guild = getGuildFromRequest(request, response)
                 if (guild != null) {
                     val settings = GuildSettingsUtils.getGuild(guild)
-                    """<p>Guild prefix: ${settings.customPrefix}</p>
+                    return@get """<p>Guild prefix: ${settings.customPrefix}</p>
                     |<p>Join Message: ${settings.customJoinMessage}</p>
                     """.trimMargin()
-                } else { response.body() }
+                } else { }
             }
             //audio stuff
             get("/music") {
                 val guild = getGuildFromRequest(request, response)
-                if(guild != null) {
+                if (guild != null) {
                     val mng = AudioUtils.ins.getMusicManager(guild, false)
 
-                    if(mng != null) {
-                        """<p>Audio player details:</p>
-                            |<p>Currently playing: <b>${ if (mng.player.playingTrack != null)
-                                                mng.player.playingTrack.info.title else "nothing" }</b></p>
+                    if (mng != null) {
+                        return@get """<p>Audio player details:</p>
+                            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
                             |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
                         """.trimMargin()
                     } else {
-                        "The audio player does not seem to be active"
+                        return@get "The audio player does not seem to be active"
                     }
-                } else { response.body() }
+                } else { }
             }
 
             //when the guild is not found
@@ -101,23 +101,14 @@ class WebServer {
             }
         }
 
-        /*notFound {
-            ModelAndView(WebVariables().put("title", "404"), "errors/404.twig")
-        }*/
-
-        get("*") {
-            if(!request.pathInfo().startsWith("/static")){
-                response.status(404)
-                engine.render(ModelAndView(WebVariables().put("title", "Page not found")
-                        .put("path", request.pathInfo()).map, "errors/404.twig"))
-            } else {
-                ""
-            }
+        notFound {
+            engine.render(ModelAndView(WebVariables().put("title", "404").put("path", request.pathInfo()).map,
+                    "errors/404.twig"))
         }
 
-        after("") {
+        /*after("*") {
             response.body()
-        }
+        }*/
     }
 
     private fun get(path: String, map: WebVariables, model: String) {
@@ -128,14 +119,14 @@ class WebServer {
 
     private fun getGuildFromRequest(request: Request, response: Response): Guild? {
 
-        val guildId = if(!request.params(":guildid").isNullOrEmpty())
+        val guildId = if (!request.params(":guildid").isNullOrEmpty())
             request.params(":guildid")
         else request.params(":guildid*")
 
         val guild = SkyBot.getInstance()
                 .shardManager.getGuildById(guildId)
 
-        if(guild == null) {
+        if (guild == null) {
             response.body("DuncteBot is not in this server")
             return null
         }

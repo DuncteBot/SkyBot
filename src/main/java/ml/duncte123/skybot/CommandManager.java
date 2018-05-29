@@ -47,7 +47,7 @@ public class CommandManager {
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-    private final Set<Command> commandsSorted = ConcurrentHashMap.newKeySet();
+    private final List<Command> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     /**
@@ -70,9 +70,9 @@ public class CommandManager {
         return commands;
     }
 
-    public Set<Command> getSortedCommands() {
+    public List<Command> getSortedCommands() {
         if(commandsSorted.isEmpty()) {
-            Set<Command> commandSet = new HashSet<>();
+            List<Command> commandSet = new ArrayList<>();
             List<String> names = new ArrayList<>();
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
                     .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
