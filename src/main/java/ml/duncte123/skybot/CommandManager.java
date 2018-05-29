@@ -47,6 +47,7 @@ public class CommandManager {
      * This stores all our commands
      */
     private final Set<Command> commands = ConcurrentHashMap.newKeySet();
+    private final Set<Command> commandsSorted = ConcurrentHashMap.newKeySet();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     /**
@@ -69,14 +70,17 @@ public class CommandManager {
         return commands;
     }
 
-    public List<Command> getSortedCommands() {
-        List<Command> commandArrayList = new ArrayList<>();
-        List<String> names = new ArrayList<>();
-        getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
-                .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
-        Collections.sort(names);
-        names.forEach( n -> commandArrayList.add(getCommand(n)));
-        return commandArrayList;
+    public Set<Command> getSortedCommands() {
+        if(commandsSorted.isEmpty()) {
+            Set<Command> commandSet = new HashSet<>();
+            List<String> names = new ArrayList<>();
+            getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
+                    .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
+            Collections.sort(names);
+            names.forEach(n -> commandSet.add(getCommand(n)));
+            commandsSorted.addAll(commandSet);
+        }
+        return commandsSorted;
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -224,7 +228,7 @@ public class CommandManager {
      * @param command The command to add
      * @return true if the command is added
      */
-    @SuppressWarnings("UnusedReturnValue")
+    @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
     public boolean addCommand(Command command) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
@@ -232,7 +236,8 @@ public class CommandManager {
 
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
-            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
+                    .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
             for (String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;

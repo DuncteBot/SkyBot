@@ -199,18 +199,23 @@ public abstract class Command {
      * This method is internally used to properly display the text on the webpages
      * @return the html parsed help
      */
+    @SuppressWarnings("unused")
     public String helpParsed() {
-        String s = help()
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("`(.*)`", "<code>$1</code>")
-                .replaceAll("\\n", "<br />")
-                .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
-        if(getAliases().length > 0) {
-            s += "<br />Aliases: " + Settings.PREFIX + StringUtils.join(getAliases(), ", " + Settings.PREFIX);
+        if(helpParsed == null) {
+            String s = help()
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll("`(.*)`", "<code>$1</code>")
+                    .replaceAll("\\n", "<br />")
+                    .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
+            if (getAliases().length > 0) {
+                s += "<br />Aliases: " + Settings.PREFIX + StringUtils.join(getAliases(), ", " + Settings.PREFIX);
+            }
+            helpParsed = s;
         }
-        return s;
+        return helpParsed;
     }
+    private String helpParsed = null;
 
     /**
      * This will hold the command name aka what the user puts after the prefix
