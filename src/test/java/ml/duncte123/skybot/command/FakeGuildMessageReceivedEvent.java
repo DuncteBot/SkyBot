@@ -486,6 +486,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                             }
 
                             @Override
+                            public RestAction<EnumSet<Region>> retrieveRegions(boolean includeDeprecated) {
+                                return null;
+                            }
+
+                            @Override
                             public MemberAction addMember(String accessToken, String userId) {
                                 return null;
                             }

@@ -19,12 +19,17 @@
 package ml.duncte123.skybot.web
 
 import com.afollestad.ason.Ason
+import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import com.jagrosh.jdautilities.oauth2.Scope
+import com.jagrosh.jdautilities.oauth2.session.Session
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.AirUtils.CONFIG
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
+import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Guild
 import spark.ModelAndView
 import spark.Request
@@ -36,6 +41,10 @@ import spark.template.jtwig.JtwigTemplateEngine
 class WebServer {
 
     private val engine = JtwigTemplateEngine("views")
+    private val oAuth2Client = OAuth2Client.Builder()
+            .setClientId(CONFIG.getLong("discord.oauth.clientId", 210363111729790977))
+            .setClientSecret(CONFIG.getString("discord.oauth.clientSecret", "aaa"))
+            .build()
 
     fun activate() {
         //Port has to be 2000 because of the apache proxy on the vps
@@ -48,17 +57,32 @@ class WebServer {
         get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
                 .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
 
-        get("/api/servers") {
-            response.type("application/json")
-            return@get Ason()
-                    .put("status", "success")
-                    .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
-                    .put("code", response.status())
+
+        path("/dashboard") {
+
+            /*before ("") {
+                if(!request.session().attributes().contains("sessionId"))*//* {
+                oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
+            } else *//*{
+                    val url = oAuth2Client.generateAuthorizationURL(
+                            CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
+                            Scope.IDENTIFY, Scope.GUILDS
+                    )
+                    request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
+                    response.redirect(url)
+                }
+            }*/
+
+            get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
         }
+
 
         path("/server/:guildid") {
 
             before("*") {
+                if(!request.session().attributes().contains("sessionId")) {
+                    response.redirect("/dashboard")
+                }
                 val guild = getGuildFromRequest(request, response)
                 if (guild == null && !request.uri().contains("invalid")) {
                     response.redirect("/server/${request.params(":guildid*")}/invalid")
@@ -101,6 +125,41 @@ class WebServer {
             }
         }
 
+        get("/callback") {
+            oAuth2Client.startSession(
+                    request.queryParams("code"),
+                    request.queryParams("state"),
+                    request.session().attribute("sessionId")
+            ).complete()
+            response.redirect("/dashboard")
+            /*.queue ({
+                //request.session().attribute("session", it)
+                return@queue response.redirect("/dashboard")
+            }, {
+                halt(it.message + "")
+            })*/
+        }
+
+        get("/api/servers") {
+            response.type("application/json")
+            return@get Ason()
+                    .put("status", "success")
+                    .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                    .put("code", response.status())
+        }
+
+        path("/api") {
+            get("/getUserGuilds") {
+                response.type("application/json")
+                return@get Ason()
+                        .put("status", "success")
+                        .put("guilds", oAuth2Client.getGuilds(getSession(request)).complete().filter {
+                            it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER) }
+                                .toCollection(arrayListOf()))
+                        .put("code", response.status())
+            }
+        }
+
         notFound {
             engine.render(ModelAndView(WebVariables().put("title", "404").put("path", request.pathInfo()).map,
                     "errors/404.twig"))
@@ -134,4 +193,7 @@ class WebServer {
         return guild
     }
 
+    private fun getSession(request: Request) : Session {
+        return oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
+    }
 }

@@ -77,10 +77,10 @@ dependencies {
     compile 'com.github.duncte123:weeb.java:9d3b70da4f'
     //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
     //My little utils
-    compile 'com.github.duncte123:botCommons:bae72246fa'
+    compile 'com.github.duncte123:botCommons:30fe36cbe5'
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
-    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_366'
+    compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_368'
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.2.63'
     compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '8738c3cc05' ) {
@@ -120,6 +120,8 @@ dependencies {
 //    compile "com.sparkjava:spark-core:2.7.2"
     compile "com.sparkjava:spark-kotlin:1.0.0-alpha"
     compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
+    // Oauth
+    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '12a0e7415a'
 }
 
 javadoc {

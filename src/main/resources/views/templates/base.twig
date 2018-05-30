@@ -33,7 +33,7 @@
                     <li{% if title == "Home" %} class="active"{% endif %}><a href="/">Home</a></li>
                     <li{% if title == "List of commands" %} class="active"{% endif %}><a href="/commands">Commands</a></li>
                     <li><a href="">Suggest</a></li>
-                    <li><a href="">Dashboard</a></li>
+                    <li{% if title == "Dashboard" %} class="active"{% endif %}><a href="/dashboard">Dashboard</a></li>
                 {% endblock %}
             </div>
 
@@ -99,5 +99,6 @@
                 $('.sidenav').sidenav();
             });
         </script>
+        {% block script %}{% endblock %}
     </body>
 </html>
