@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.web
 
-import com.afollestad.ason.Ason
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
+import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
@@ -31,6 +31,7 @@ import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Guild
+import org.json.JSONObject
 import spark.ModelAndView
 import spark.Request
 import spark.Response
@@ -60,10 +61,8 @@ class WebServer {
 
         path("/dashboard") {
 
-            /*before ("") {
-                if(!request.session().attributes().contains("sessionId"))*//* {
-                oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
-            } else *//*{
+            before ("") {
+                if(!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
                             CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
                             Scope.IDENTIFY, Scope.GUILDS
@@ -71,7 +70,7 @@ class WebServer {
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
                     response.redirect(url)
                 }
-            }*/
+            }
 
             get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
         }
@@ -126,23 +125,18 @@ class WebServer {
         }
 
         get("/callback") {
+            println(request.session().attribute("sessionId") as String)
             oAuth2Client.startSession(
                     request.queryParams("code"),
                     request.queryParams("state"),
                     request.session().attribute("sessionId")
             ).complete()
             response.redirect("/dashboard")
-            /*.queue ({
-                //request.session().attribute("session", it)
-                return@queue response.redirect("/dashboard")
-            }, {
-                halt(it.message + "")
-            })*/
         }
 
         get("/api/servers") {
             response.type("application/json")
-            return@get Ason()
+            return@get JSONObject()
                     .put("status", "success")
                     .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
                     .put("code", response.status())
@@ -151,11 +145,15 @@ class WebServer {
         path("/api") {
             get("/getUserGuilds") {
                 response.type("application/json")
-                return@get Ason()
+                val guilds = ArrayList<JSONObject>()
+                oAuth2Client.getGuilds(getSession(request)).complete().forEach {
+                    if(it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
+                        guilds.add(guildToJson(it))
+                    }
+                }
+                return@get JSONObject()
                         .put("status", "success")
-                        .put("guilds", oAuth2Client.getGuilds(getSession(request)).complete().filter {
-                            it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER) }
-                                .toCollection(arrayListOf()))
+                        .put("guilds", guilds)
                         .put("code", response.status())
             }
         }
@@ -193,7 +191,15 @@ class WebServer {
         return guild
     }
 
-    private fun getSession(request: Request) : Session {
-        return oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
-    }
+    private fun getSession(request: Request) =
+            oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
+
+
+    private fun guildToJson(guild: OAuth2Guild) = JSONObject()
+                .put("name", guild.name)
+                .put("iconId", guild.iconId)
+                .put("iconUrl", guild.iconUrl)
+                .put("owner", guild.isOwner)
+                .put("id", guild.id)
+
 }

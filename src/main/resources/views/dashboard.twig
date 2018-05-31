@@ -1,13 +1,27 @@
 {% extends 'templates/base.twig' %}
 
 {% block main %}
+    <style>
+        img {
+            height: 200px !important;
+            width: 200px !important;
+            max-width: 200px !important;
+            clip: rect(0px,100px,200px,0px);
+            position: absolute !important;
+        }
+        .card-image {
+            width: 100px !important;
+            overflow: hidden;
+        }
+    </style>
     <div class="row"></div>
-    <div class="row">
-        {% for i in [80,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17] %}
+    <div class="row" id="guilds">
+        <h1 class="center">Loading...</h1>
+        {#{% for i in [80,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17] %}
             <div class="col s12 m6 l4 xl3">
                 <div class="card horizontal hoverable">
                     <div class="card-image">
-                        <img src="http://lorempixel.com/100/200/nature/6/">
+                        <img src="https://cdn.discordapp.com/icons/191245668617158656/3e0f9810d2953beed849faf844ebef35.jpg?size=512">
                     </div>
                     <div class="card-stacked">
                         <div class="card-content">
@@ -21,7 +35,39 @@
                     </div>
                 </div>
             </div>
-        {% endfor %}
+        {% endfor %}#}
     </div>
 
+{% endblock %}
+{% block script %}
+    <script>
+        fetch("/api/getUserGuilds", {
+            credentials: "same-origin"
+        })
+            .then(response => response.json())
+            .then(json => {
+                const div = document.getElementById("guilds");
+                div.innerHTML = "";
+                for(let guild of json.guilds) {
+                    div.innerHTML += `<div class="col s12 m6 l4 xl3">
+                <div class="card horizontal hoverable">
+                    <div class="card-image">
+                        <img style="" src="${guild.iconUrl}?size=256">
+                    </div>
+                    <div class="card-stacked">
+                        <div class="card-content">
+                            <h6 class="truncate">${guild.name}</h6>
+                            <p>0 members</p>
+                        </div>
+                        <div class="card-action">
+                            <a href="/server/${guild.id}">Edit settings</a>
+                            <a href="https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1&guild_id=${guild.id}"
+                             target="_blank">Invite Bot</a>
+                        </div>
+                    </div>
+                </div>
+            </div>`;
+                }
+            });
+    </script>
 {% endblock %}

@@ -121,7 +121,8 @@ dependencies {
     compile "com.sparkjava:spark-kotlin:1.0.0-alpha"
     compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
     // Oauth
-    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '12a0e7415a'
+//    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '12a0e7415a'
+    compile group: 'com.github.duncte123.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'd62c5e0483'
 }
 
 javadoc {
