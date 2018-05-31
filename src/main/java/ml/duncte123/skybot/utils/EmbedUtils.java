@@ -67,6 +67,10 @@ public class EmbedUtils {
         return defaultEmbed().setImage(imageURL).build();
     }
 
+    public static MessageEmbed embedImageWithTitle(String title, String url, String image) {
+        return defaultEmbed().setTitle(title, url).setImage(image).build();
+    }
+
     /**
      * The default embed layout that all of the embeds are based off
      *

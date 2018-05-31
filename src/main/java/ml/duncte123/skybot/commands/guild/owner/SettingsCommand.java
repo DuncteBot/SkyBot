@@ -271,7 +271,8 @@ public class SettingsCommand extends Command {
                 break;
 
             case "spamrole":
-
+            case "muterole":
+                
                 if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
                     sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
                     return;
@@ -395,6 +396,7 @@ public class SettingsCommand extends Command {
                 return "Toggles whether we should handle your incoming spam.\n" +
                         "Usage: `" + PREFIX + invoke + "`";
             case "spamrole":
+            case "muterole":
                 return "Gives members a role when they spam.\n" +
                         "Usage: `" + PREFIX + invoke + " <role>`";
             case "setratelimits":
@@ -460,7 +462,8 @@ public class SettingsCommand extends Command {
                 "togglefilterinvites",
                 "toggleautodehoist",
                 "togglespamfilter",
-                "spamrole",
+                "spamrole",  
+                "muterole",
                 "setratelimits",
                 "togglekickmode"
         };
