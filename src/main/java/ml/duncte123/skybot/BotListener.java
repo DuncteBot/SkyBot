@@ -305,7 +305,7 @@ public class BotListener extends ListenerAdapter {
 
         if (!isCacheCleanerActive) {
             logger.info("Starting spam-cache-cleaner!");
-            spamUpdateService.scheduleAtFixedRate(spamFilter::clearMessages, 20, 11, TimeUnit.SECONDS);
+            spamUpdateService.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
             isCacheCleanerActive = true;
         }
 

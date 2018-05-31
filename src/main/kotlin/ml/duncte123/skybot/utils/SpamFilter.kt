@@ -100,7 +100,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size > 10)
+                    if (msgs.size > 7)
                         shouldModerate = true
                 }
             }
