@@ -181,6 +181,7 @@ class WebServer {
                 }.toList()
                 map.put("goodChannels", tcs)
                 map.put("settings", GuildSettingsUtils.getGuild(guild))
+                map.put("guild", guild)
             }
             ModelAndView(map.map, model)
         }

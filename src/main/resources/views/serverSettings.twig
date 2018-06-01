@@ -1,7 +1,9 @@
 {% extends 'templates/base.twig' %}
 
 {% block container %}
-    <div class="row"></div>
+    <div class="row">
+        <h5>Selected guild: {{ guild.getName() }}</h5>
+    </div>
     <div class="row">
         <form class="col s12">
             <div class="row">
@@ -11,8 +13,8 @@
                 </div>
 
                 <div class="input-field col s3">
-                    <select id="welcomeChannel">
-                        <option value="" disabled selected>Select an channel</option>
+                    <select id="welcomeChannel" onchange="checkSelect(this, 'welcomeChannelCB');">
+                        <option value="" selected disabled>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getWelcomeLeaveChannel() == textChannel.getId() %}
                                 <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
@@ -22,11 +24,21 @@
                         {% endfor %}
                     </select>
                     <label for="welcomeChannel">Welcome/Leave Channel</label>
+                    <!-- Switch -->
+                    <div class="switch">
+                        State:
+                        <label>
+                            Disabled
+                            <input type="checkbox" id="welcomeChannelCB" {% if settings.isEnableJoinMessage() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
                 </div>
 
                 <div class="input-field col s3">
                     <select id="modChannel">
-                        <option value="" disabled selected>Select an channel</option>
+                        <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getLogChannel() == textChannel.getId() %}
                                 <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
@@ -45,5 +57,15 @@
 {% block script %}
     <script>
         M.FormSelect.init(document.querySelectorAll('select'));
+
+        function checkSelect(select, checkBox) {
+            if(select.value) {
+                window[checkBox].checked = true;
+                window[checkBox].disabled = false;
+            } else {
+                window[checkBox].checked = false;
+                window[checkBox].disabled = true;
+            }
+        }
     </script>
 {% endblock %}
