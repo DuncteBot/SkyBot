@@ -21,7 +21,6 @@ package ml.duncte123.skybot.web
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
-import com.jagrosh.jdautilities.oauth2.session.Session
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
@@ -61,8 +60,8 @@ class WebServer {
 
         path("/dashboard") {
 
-            before ("") {
-                if(!request.session().attributes().contains("sessionId")) {
+            before("") {
+                if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
                             CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
                             Scope.IDENTIFY, Scope.GUILDS
@@ -79,7 +78,7 @@ class WebServer {
         path("/server/:guildid") {
 
             before("*") {
-                if(!request.session().attributes().contains("sessionId")) {
+                if (!request.session().attributes().contains("sessionId")) {
                     response.redirect("/dashboard")
                 }
                 val guild = getGuildFromRequest(request, response)
@@ -91,15 +90,18 @@ class WebServer {
             }
 
             //overview and editing
-            get("") {
+            get("", WebVariables()
+                    .put("title", "Dashboard"), "serverSettings.twig", true)
+            /*get("") {
                 val guild = getGuildFromRequest(request, response)
                 if (guild != null) {
                     val settings = GuildSettingsUtils.getGuild(guild)
                     return@get """<p>Guild prefix: ${settings.customPrefix}</p>
                     |<p>Join Message: ${settings.customJoinMessage}</p>
                     """.trimMargin()
-                } else { }
-            }
+                } else {
+                }
+            }*/
             //audio stuff
             get("/music") {
                 val guild = getGuildFromRequest(request, response)
@@ -114,7 +116,8 @@ class WebServer {
                     } else {
                         return@get "The audio player does not seem to be active"
                     }
-                } else { }
+                } else {
+                }
             }
 
             //when the guild is not found
@@ -134,20 +137,21 @@ class WebServer {
             response.redirect("/dashboard")
         }
 
-        get("/api/servers") {
-            response.type("application/json")
-            return@get JSONObject()
-                    .put("status", "success")
-                    .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
-                    .put("code", response.status())
-        }
-
         path("/api") {
+
+            get("/getServerCount") {
+                response.type("application/json")
+                return@get JSONObject()
+                        .put("status", "success")
+                        .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                        .put("code", response.status())
+            }
+
             get("/getUserGuilds") {
                 response.type("application/json")
                 val guilds = ArrayList<JSONObject>()
                 oAuth2Client.getGuilds(getSession(request)).complete().forEach {
-                    if(it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
+                    if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
                         guilds.add(guildToJson(it))
                     }
                 }
@@ -168,8 +172,16 @@ class WebServer {
         }*/
     }
 
-    private fun get(path: String, map: WebVariables, model: String) {
+    private fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path, DEFAULT_ACCEPT, engine) {
+            if(withGuildData) {
+                val guild = getGuildFromRequest(request, response)
+                val tcs = guild!!.textChannelCache.filter {
+                    it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
+                }.toList()
+                map.put("goodChannels", tcs)
+                map.put("settings", GuildSettingsUtils.getGuild(guild))
+            }
             ModelAndView(map.map, model)
         }
     }
@@ -196,10 +208,10 @@ class WebServer {
 
 
     private fun guildToJson(guild: OAuth2Guild) = JSONObject()
-                .put("name", guild.name)
-                .put("iconId", guild.iconId)
-                .put("iconUrl", guild.iconUrl)
-                .put("owner", guild.isOwner)
-                .put("id", guild.id)
+            .put("name", guild.name)
+            .put("iconId", guild.iconId)
+            .put("iconUrl", guild.iconUrl)
+            .put("owner", guild.isOwner)
+            .put("id", guild.id)
 
 }

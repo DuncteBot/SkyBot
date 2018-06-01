@@ -1,0 +1,49 @@
+{% extends 'templates/base.twig' %}
+
+{% block container %}
+    <div class="row"></div>
+    <div class="row">
+        <form class="col s12">
+            <div class="row">
+                <div class="input-field col s1">
+                    <input placeholder="db!" id="prefix" type="text" value="{{ settings.getCustomPrefix() }}">
+                    <label for="prefix">Prefix</label>
+                </div>
+
+                <div class="input-field col s3">
+                    <select id="welcomeChannel">
+                        <option value="" disabled selected>Select an channel</option>
+                        {% for textChannel in goodChannels %}
+                            {% if settings.getWelcomeLeaveChannel() == textChannel.getId() %}
+                                <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
+                            {% else %}
+                                <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="welcomeChannel">Welcome/Leave Channel</label>
+                </div>
+
+                <div class="input-field col s3">
+                    <select id="modChannel">
+                        <option value="" disabled selected>Select an channel</option>
+                        {% for textChannel in goodChannels %}
+                            {% if settings.getLogChannel() == textChannel.getId() %}
+                                <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
+                            {% else %}
+                                <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="modChannel">ModLog Channel</label>
+                </div>
+            </div>
+        </form>
+    </div>
+{% endblock %}
+
+{% block script %}
+    <script>
+        M.FormSelect.init(document.querySelectorAll('select'));
+    </script>
+{% endblock %}
