@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(?:https?://)(?:www\\.)?discord(?:app)?\\.(?:com|gg)+/(?:invite/)*(\\S*)");
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com\\/invite|\\.gg){1}\\/(\\S*)");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -167,20 +167,22 @@ public class BotListener extends ListenerAdapter {
 
             if (settings.isFilterInvites()) {
                 Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
-                if (matcher.find()) {
-                    //Get the invite Id from the message
-                    String inviteID = matcher.group(matcher.groupCount());
-
-                    Invite.resolve(event.getJDA(), inviteID).queue(invite -> {
-                        //Check if the invite is for this guild, if it is not delete the message
-                        if (!invite.getGuild().getId().equals(event.getGuild().getId())) {
-                            event.getMessage().delete().reason("Contained Invite").queue(it ->
-                                    MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
-                                            ", please don't post invite links here", m -> m.delete().queueAfter(3, TimeUnit.SECONDS))
-                            );
-                        }
-                    });
+                if (!matcher.find()) {
+                    return;
                 }
+                //Get the invite Id from the message
+                String inviteID = matcher.group(matcher.groupCount());
+
+                Invite.resolve(event.getJDA(), inviteID).queue(invite -> {
+                    //Check if the invite is for this guild, if it is not delete the message
+                    if (invite.getGuild().getIdLong() == event.getGuild().getIdLong()) {
+                        return;
+                    }
+                    event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
+                            MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
+                                    ", please don't post invite links here.", m -> m.delete().queueAfter(3, TimeUnit.SECONDS))
+                    );
+                });
             }
 
             if (settings.isEnableSwearFilter()) {
