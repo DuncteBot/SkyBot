@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
+import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
@@ -79,13 +80,13 @@ class WebServer {
 
             before("*") {
                 if (!request.session().attributes().contains("sessionId")) {
-                    response.redirect("/dashboard")
+                    return@before response.redirect("/dashboard")
                 }
                 val guild = getGuildFromRequest(request, response)
                 if (guild == null && !request.uri().contains("invalid")) {
-                    response.redirect("/server/${request.params(":guildid*")}/invalid")
+                    return@before response.redirect("/server/${request.params(":guildid*")}/invalid")
                 } else if (guild != null && request.uri().contains("invalid")) {
-                    response.redirect("/server/${request.params(":guildid*")}")
+                    return@before response.redirect("/server/${request.params(":guildid*")}")
                 }
             }
 
@@ -140,7 +141,7 @@ class WebServer {
         path("/api") {
 
             get("/getServerCount") {
-                response.type("application/json")
+                response.type(APPLICATION_JSON.type)
                 return@get JSONObject()
                         .put("status", "success")
                         .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
@@ -148,7 +149,7 @@ class WebServer {
             }
 
             get("/getUserGuilds") {
-                response.type("application/json")
+                response.type(APPLICATION_JSON.type)
                 val guilds = ArrayList<JSONObject>()
                 oAuth2Client.getGuilds(getSession(request)).complete().forEach {
                     if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
@@ -163,29 +164,45 @@ class WebServer {
         }
 
         notFound {
-            engine.render(ModelAndView(WebVariables().put("title", "404").put("path", request.pathInfo()).map,
-                    "errors/404.twig"))
+            if(response.type() == APPLICATION_JSON.type) {
+                return@notFound JSONObject()
+                        .put("status", "failure")
+                        .put("message", "'${request.pathInfo()}' was not found")
+                        .put("code", response.status())
+            } else {
+                return@notFound engine.render(ModelAndView(WebVariables()
+                        .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
+            }
         }
 
-        /*after("*") {
-            response.body()
-        }*/
+        internalServerError {
+            if(response.type() == APPLICATION_JSON.type) {
+                return@internalServerError JSONObject()
+                        .put("status", "failure")
+                        .put("message", "Internal server error")
+                        .put("code", response.status())
+            } else {
+                return@internalServerError "<html><body><h1>Internal server error</h1></body></html>"
+            }
+        }
     }
 
     private fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path, DEFAULT_ACCEPT, engine) {
             if(withGuildData) {
                 val guild = getGuildFromRequest(request, response)
-                val tcs = guild!!.textChannelCache.filter {
-                    it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
-                }.toList()
-                val goodRoles = guild.roles.filter {
-                    it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
-                }.toList()
-                map.put("goodChannels", tcs)
-                map.put("goodRoles", goodRoles)
-                map.put("settings", GuildSettingsUtils.getGuild(guild))
-                map.put("guild", guild)
+                if(guild != null) {
+                    val tcs = guild.textChannelCache.filter {
+                        it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
+                    }.toList()
+                    val goodRoles = guild.roles.filter {
+                        it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
+                    }.toList()
+                    map.put("goodChannels", tcs)
+                    map.put("goodRoles", goodRoles)
+                    map.put("settings", GuildSettingsUtils.getGuild(guild))
+                    map.put("guild", guild)
+                }
             }
             ModelAndView(map.map, model)
         }
