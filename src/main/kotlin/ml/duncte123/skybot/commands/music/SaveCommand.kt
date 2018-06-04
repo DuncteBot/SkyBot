@@ -9,16 +9,16 @@ import org.json.JSONArray
 
 import java.nio.charset.StandardCharsets.UTF_8
 
-class SaveCommand: MusicCommand() {
+class SaveCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         event.channel.sendFile(
                 toByteArray(event.guild),
                 "playlist.json",
                 MessageBuilder()
-                .append(event.author)
-                .append(", here is the queue which can be re-imported")
-                .build()).queue()
+                        .append(event.author)
+                        .append(", here is the queue which can be re-imported")
+                        .build()).queue()
     }
 
     private fun toByteArray(guild: Guild?): ByteArray {
@@ -31,7 +31,7 @@ class SaveCommand: MusicCommand() {
 
         urls.add(0, manager.player.playingTrack.identifier)
 
-        for(x in urls)
+        for (x in urls)
             array.put(x)
 
         return array.toString(2).toByteArray(UTF_8)

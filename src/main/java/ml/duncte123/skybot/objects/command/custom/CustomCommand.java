@@ -24,7 +24,9 @@ import org.jetbrains.annotations.NotNull;
 public interface CustomCommand {
 
     String getName();
+
     String getMessage();
+
     String getGuildId();
 
     void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);

@@ -50,7 +50,7 @@ public class CustomCommandImpl extends Command implements CustomCommand {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if(guildId.equals(event.getGuild().getId()))
+        if (guildId.equals(event.getGuild().getId()))
             MessageUtils.sendMsg(event, message);
     }
 

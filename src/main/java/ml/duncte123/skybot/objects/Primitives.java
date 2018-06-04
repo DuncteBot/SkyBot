@@ -30,7 +30,7 @@ public class Primitives {
 
     static {
         Map<Class<?>, Class<?>> temp = new HashMap<>();
-        
+
         temp.put(boolean.class, Boolean.class);
         temp.put(byte.class, Byte.class);
         temp.put(char.class, Character.class);
@@ -45,12 +45,12 @@ public class Primitives {
     }
 
     public static Class<?> wrap(Class<?> type) {
-        if(type == null || !type.isPrimitive()) return null;
+        if (type == null || !type.isPrimitive()) return null;
         return map.get(type);
     }
 
     public static Class<?> unwrap(Class<?> type) {
-        if(type == null || !type.isPrimitive()) return null;
+        if (type == null || !type.isPrimitive()) return null;
         return map.inverse().get(type);
     }
 }

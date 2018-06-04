@@ -21,7 +21,6 @@
 package ml.duncte123.skybot.unstable.commands.essentials
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.TFException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory

@@ -66,7 +66,7 @@ open class PlayCommand : MusicCommand() {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay
                 val res = searchYoutube(toPlay)
-                if(res.isEmpty()) {
+                if (res.isEmpty()) {
                     MessageUtils.sendError(event.message)
                     MessageUtils.sendMsg(event, "No tracks where found")
                     return

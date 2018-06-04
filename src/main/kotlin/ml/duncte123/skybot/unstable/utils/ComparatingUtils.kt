@@ -22,9 +22,9 @@
 package ml.duncte123.skybot.unstable.utils
 
 import me.duncte123.botCommons.text.TextColor
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.MessageUtils
-import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import org.apache.commons.lang3.StringUtils

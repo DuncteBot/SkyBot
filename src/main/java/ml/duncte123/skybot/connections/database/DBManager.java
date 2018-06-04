@@ -26,15 +26,14 @@ import java.util.concurrent.*;
 
 public class DBManager {
 
+    public final DBConnectionManager connManager;
     private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
             r -> new Thread(r, "SQL-thread"));
-
-    public final DBConnectionManager connManager;
-
     /**
      * This is the database name
      */
     private final String name;
+
     /**
      * This will set our stuff up
      */
@@ -86,7 +85,7 @@ public class DBManager {
         return connManager;
     }
 
-    public <T>ScheduledFuture<T> run(Callable<T> c) {
+    public <T> ScheduledFuture<T> run(Callable<T> c) {
         return service.schedule(c, 0L, TimeUnit.MILLISECONDS);
     }
 

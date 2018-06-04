@@ -151,6 +151,6 @@ class UpdateCommand : Command() {
                 appendln(scanner.nextLine())
             }
         }
-        return WebUtils.ins.leeks(out).execute()
+        return WebUtils.ins.wastebin(out).execute()
     }
 }

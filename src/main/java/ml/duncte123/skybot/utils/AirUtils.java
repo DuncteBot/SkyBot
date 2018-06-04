@@ -53,13 +53,14 @@ public class AirUtils {
     public static final Random RAND = new Random();
     public static final DBManager DB = new DBManager();
     public static final CommandManager COMMAND_MANAGER = new CommandManager();
-    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
+    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
+            .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
             .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
             .build();
     public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
-    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     public static final WAEngine ALPHA_ENGINE = getWolframEngine();
+    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
@@ -288,14 +289,14 @@ public class AirUtils {
 
     public static PendingRequest<Profile> getUserProfile(String uid) {
         /*
-        * badges:
-        *
-        *   Discord dev: 1
-        *   Partner: 2
-        *   Nitro: (none, check for premium_since != null)
-        *   Hypesquad: 4
-        *   Bug Hunter: 8
-        */
+         * badges:
+         *
+         *   Discord dev: 1
+         *   Partner: 2
+         *   Nitro: (none, check for premium_since != null)
+         *   Hypesquad: 4
+         *   Bug Hunter: 8
+         */
        /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
         return WebUtils.ins.prepareRaw(
                 new Request.Builder()
@@ -317,7 +318,7 @@ public class AirUtils {
                     );
                 }
         );*/
-       return null;
+        return null;
     }
 
     public static PendingRequest<String> shortenUrl(String url) {

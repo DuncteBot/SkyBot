@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.weeb
 
-import me.duncte123.weebJava.types.NSFWType
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -51,21 +50,22 @@ abstract class WeebCommandBase : Command() {
     }
 
     fun requestAndSend(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val nsfw = if(event.channel.isNSFW) NSFWType.TRUE else NSFWType.FALSE
-        val imageUrl = AirUtils.WEEB_API.getRandomImage(type, nsfw).url
-
-        if (args.isEmpty()) {
-            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
-        } else {
-            if (!event.message.mentionedMembers.isEmpty()) {
+        AirUtils.WEEB_API.getRandomImage(type).async {
+            val imageUrl = it.url
+            if (args.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
-                        , imageUrl))
+                        "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
             } else {
-                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${event.member.effectiveName} $thing ${StringUtils.join(args, " ")}", imageUrl))
+                if (!event.message.mentionedMembers.isEmpty()) {
+                    MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                            "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
+                            , imageUrl))
+                } else {
+                    MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                            "${event.member.effectiveName} $thing ${StringUtils.join(args, " ")}", imageUrl))
+                }
             }
         }
+
     }
 }

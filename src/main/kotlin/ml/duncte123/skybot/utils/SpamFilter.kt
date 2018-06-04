@@ -72,15 +72,14 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             displayContent.isBlank() -> {
                 if (msg.embeds.isEmpty()) {
                     true
-                }
-                else {
+                } else {
                     return msg.embeds.map {
                         it.description.isBlank()
-                        && it.footer.text.isBlank()
-                        && it.title.isBlank()
-                        && it.thumbnail.url.isBlank()
-                        && it.image.url.isBlank()
-                    }.count {it} < 1
+                                && it.footer.text.isBlank()
+                                && it.title.isBlank()
+                                && it.thumbnail.url.isBlank()
+                                && it.image.url.isBlank()
+                    }.count { it } < 1
                 }
             }
             displayContent.matches("^.(?<![?!.])(?![wola])(?!(\\d|x|D|k|h|\\.{1,2}))".toRegex()) -> {
@@ -100,7 +99,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size > 10)
+                    if (msgs.size > 7)
                         shouldModerate = true
                 }
             }

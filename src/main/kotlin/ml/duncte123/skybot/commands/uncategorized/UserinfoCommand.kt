@@ -51,7 +51,7 @@ class UserinfoCommand : Command() {
         val imgDir = File(folderName)
 
         //create the dir
-        if(!imgDir.exists())
+        if (!imgDir.exists())
             imgDir.mkdir()
 
         //clean the folder
@@ -159,8 +159,8 @@ class UserinfoCommand : Command() {
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
                 AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-            AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
-                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
+            AirUtils.WEEB_API.generateDiscordStatus(toWeebshStatus(m),
+                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 
                 val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
 

@@ -44,7 +44,7 @@ public class CustomCommandCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        if(args.length < 1) {
+        if (args.length < 1) {
             sendMsg(event, "Insufficient arguments use `db!help customcommand`");
             return;
         }
@@ -72,18 +72,18 @@ public class CustomCommandCommand extends Command {
             AirUtils.COMMAND_MANAGER.getCustomCommands().stream()
                     .filter(c -> c.getGuildId().equals(event.getGuild().getId()))
                     .forEach(cmd -> {
-                        sb.append(s.getCustomPrefix())
-                            .append(cmd.getName())
-                            .append("\n");
-                    }
-            );
+                                sb.append(s.getCustomPrefix())
+                                        .append(cmd.getName())
+                                        .append("\n");
+                            }
+                    );
 
             sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
                     .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
             CustomCommand cmd = AirUtils.COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
-            if(cmd != null)
+            if (cmd != null)
                 //Run the custom command?
                 AirUtils.COMMAND_MANAGER.dispatchCommand((Command) cmd, arg, new String[0], event);
             else
@@ -142,7 +142,7 @@ public class CustomCommandCommand extends Command {
         String guildId = event.getGuild().getId();
         if (commandExists(commandName, guildId)) {
             if (!args[0].equalsIgnoreCase("edit") && !args[0].equalsIgnoreCase("change")) {
-                    sendMsg(event, "A command already exists for this server.");
+                sendMsg(event, "A command already exists for this server.");
             } else {
                 if (editCustomCommand(AirUtils.COMMAND_MANAGER.getCustomCommand(commandName, guildId), commandAction))
                     sendMsg(event, "The command has been updated.");
@@ -174,7 +174,7 @@ public class CustomCommandCommand extends Command {
         return AirUtils.COMMAND_MANAGER.addCustomCommand(new CustomCommandImpl(name, action, guildId));
     }
 
-    private boolean editCustomCommand(CustomCommand customCommand, String newMessage ) {
+    private boolean editCustomCommand(CustomCommand customCommand, String newMessage) {
         CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
         return AirUtils.COMMAND_MANAGER.editCustomCommand(cmd);
     }

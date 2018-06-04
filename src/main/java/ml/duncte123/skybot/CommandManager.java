@@ -162,7 +162,7 @@ public class CommandManager {
                     return null;
                 }).get();
 
-                if(res != null && !res.getFirst()) {
+                if (res != null && !res.getFirst()) {
                     return res;
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -189,7 +189,7 @@ public class CommandManager {
 
     public boolean removeCustomCommand(String name, String guildId) {
         CustomCommand cmd = getCustomCommand(name, guildId);
-        if(cmd == null)
+        if (cmd == null)
             return false;
 
         try {

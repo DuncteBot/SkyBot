@@ -40,14 +40,14 @@ class WeebCommands : WeebCommandBase() {
         when (invoke) {
             "hug" -> requestAndSend("hug", "hugs", args, event)
             "lewd" -> sendEmbed(event,
-                    getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").url))
+                    getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").execute().url))
             "pat" -> requestAndSend("pat", "pats", args, event)
             "punch" -> requestAndSend("punch", "punches", args, event)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
-                    AirUtils.WEEB_API.getRandomImage("shrug").url))
+                    AirUtils.WEEB_API.getRandomImage("shrug").execute().url))
             "lick" -> requestAndSend("lick", "licks", args, event)
-            "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
-            "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
+            "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").execute().url))
+            "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage(listOf("b1nzy")).execute().url))
             "megumin" -> {
                 WebUtils.ins.getJSONObject("https://megumin.torque.ink/api/explosion").async({
                     val chant = it.optString("chant")
@@ -56,7 +56,7 @@ class WeebCommands : WeebCommandBase() {
                 }, {
                     //When the site is down or dies
                     val img = AirUtils.WEEB_API.getRandomImage("megumin")
-                    sendEmbed(event, getWeebEmbedImage(img.url))
+                    sendEmbed(event, getWeebEmbedImage(img.execute().url))
                 })
             }
             "weeb" -> {
@@ -64,8 +64,8 @@ class WeebCommands : WeebCommandBase() {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
                     return
                 }
-                if(weebTags.isEmpty()) {
-                    weebTags.addAll(AirUtils.WEEB_API.getTypes(HiddenMode.DEFAULT).types)
+                if (weebTags.isEmpty()) {
+                    weebTags.addAll(AirUtils.WEEB_API.getTypes(HiddenMode.DEFAULT).execute().types)
                 }
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
@@ -76,7 +76,7 @@ class WeebCommands : WeebCommandBase() {
                 }
                 val type = StringUtils.join(args, "")
                 if (weebTags.contains(type)) {
-                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, ""))
+                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, "")).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
                     sendMsg(event, "That category could not be found, Use `${PREFIX}weeb_image categories` for all categories")
