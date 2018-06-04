@@ -179,7 +179,11 @@ class WebServer {
                 val tcs = guild!!.textChannelCache.filter {
                     it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                 }.toList()
+                val goodRoles = guild.roles.filter {
+                    it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
+                }.toList()
                 map.put("goodChannels", tcs)
+                map.put("goodRoles", goodRoles)
                 map.put("settings", GuildSettingsUtils.getGuild(guild))
                 map.put("guild", guild)
             }

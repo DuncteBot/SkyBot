@@ -201,6 +201,10 @@ public class GuildSettings {
         return this;
     }
 
+    public boolean isAutoroleEnabled() {
+        return this.autoroleRole != null && !this.autoroleRole.isEmpty();
+    }
+
     /**
      * Returns the channel in where the welcome or leave messages should display
      *

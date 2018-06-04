@@ -5,7 +5,7 @@
         <h5>Selected guild: {{ guild.getName() }}</h5>
     </div>
     <div class="row">
-        <form class="col s12">
+        <form class="col s12" method="post">
             <div class="row">
                 <div class="input-field col s1">
                     <input placeholder="db!" id="prefix" type="text" value="{{ settings.getCustomPrefix() }}">
@@ -36,8 +36,34 @@
                         </label>
                     </div>
                 </div>
-                {# Modlog #}
+
+                {# Autorole #}
                 <div class="input-field col s3">
+                    <select id="autoRoleRole" onchange="checkSelect(this, 'autoRoleRoleCB');">
+                        <option value="" selected disabled>Select a role</option>
+                        {% for role in goodRoles %}
+                            {% if settings.getAutoroleRole() == role.getId() %}
+                                <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
+                            {% else %}
+                                <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="autoRoleRole">AutoRole</label>
+                    <!-- Switch -->
+                    <div class="switch">
+                        State:
+                        <label>
+                            Disabled
+                            <input type="checkbox" id="autoRoleRoleCB" {% if settings.isAutoroleEnabled() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+                </div>
+
+                {# Modlog #}
+                <div class="input-field col s2">
                     <select id="modChannel">
                         <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
@@ -50,6 +76,56 @@
                     </select>
                     <label for="modChannel">ModLog Channel</label>
                 </div>
+
+                {# Other boolean flags #}
+                <div class="input-field col s3">
+
+                    <div class="switch">
+                        Announce tracks:
+                        <label>
+                            Disabled
+                            <input type="checkbox" id="" {% if settings.isAnnounceTracks() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
+                    <div class="switch">
+                        Auto de-hoist:
+                        <label>
+                            Disabled
+                            <input type="checkbox" id="" {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
+                    <div class="switch">
+                        Filter invites:
+                        <label>
+                            Disabled
+                            <input type="checkbox" id="" {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="row">
+
+                <div class="input-field col s6">
+                    <textarea id="welcomeMessage" class="materialize-textarea">{{ settings.getCustomJoinMessage() }}</textarea>
+                    <label for="welcomeMessage">Welcome Message</label>
+                </div>
+
+                <div class="input-field col s6">
+                    <textarea id="leaveMessage" class="materialize-textarea">{{ settings.getCustomLeaveMessage() }}</textarea>
+                    <label for="leaveMessage">Leave Message</label>
+                </div>
+
             </div>
         </form>
     </div>
