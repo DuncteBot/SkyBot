@@ -45,7 +45,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.function.Consumer;
 import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
@@ -168,7 +167,7 @@ public class AudioUtils {
 
                 mng.scheduler.queue(track);
 
-                if(announce) {
+                if (announce) {
                     String msg = "Adding to queue: " + title;
                     if (mng.player.getPlayingTrack() == null) {
                         msg += "\nand the Player has started playing;";
@@ -191,12 +190,12 @@ public class AudioUtils {
                     firstTrack = playlist.getTracks().get(0);
                 }
 
-                if(addPlayList)
+                if (addPlayList)
                     tracks.forEach(mng.scheduler::queue);
                 else
                     mng.scheduler.queue(firstTrack);
 
-                if(announce) {
+                if (announce) {
                     String msg;
 
                     if (addPlayList) {
@@ -217,15 +216,15 @@ public class AudioUtils {
 
             @Override
             public void noMatches() {
-                if(announce)
+                if (announce)
                     MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                if(announce)
+                if (announce)
                     MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
-                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+                            + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }

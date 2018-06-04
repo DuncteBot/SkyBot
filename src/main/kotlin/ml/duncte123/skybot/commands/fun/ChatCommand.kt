@@ -133,7 +133,7 @@ class ChatCommand : Command() {
             for (element in Jsoup.parse(response).getElementsByTag("a")) {
                 response = response.replace(oldValue = element.toString(),
                         newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else
-                            //It's usefull to show the text
+                        //It's usefull to show the text
                             "${element.text()}(<${element.attr("href")}>)")
             }
             if (`with"Ads"`) {

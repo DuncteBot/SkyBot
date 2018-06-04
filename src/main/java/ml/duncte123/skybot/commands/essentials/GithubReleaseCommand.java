@@ -100,8 +100,7 @@ public class GithubReleaseCommand extends Command {
                     System.out.println();
                 System.out.println(asset.toString(4));
             }, Throwable::printStackTrace);*/
-        }
-        catch (RequestException e) {
+        } catch (RequestException e) {
             MessageUtils.sendError(event.getMessage());
             MessageUtils.sendMsg(event, "An error occurred creating a release, it has been logged in the console");
         }

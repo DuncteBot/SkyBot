@@ -32,7 +32,9 @@ class DeletCommand : WeebCommandBase() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         //delet_this
-        MessageUtils.sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("delet_this").url))
+        AirUtils.WEEB_API.getRandomImage("delet_this").async {
+            MessageUtils.sendEmbed(event, getWeebEmbedImage(it.url))
+        }
     }
 
     override fun help() = """Delet this

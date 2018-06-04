@@ -7,16 +7,16 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class ReaddCommand: MusicCommand() {
+class ReaddCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!channelChecks(event))
+        if (!channelChecks(event))
             return
 
         val manager = getMusicManager(event.guild)
         val t = manager.player.playingTrack
 
-        if(t == null) {
+        if (t == null) {
             MessageUtils.sendError(event.message)
             MessageUtils.sendMsg(event, "No tracks in queue")
             return

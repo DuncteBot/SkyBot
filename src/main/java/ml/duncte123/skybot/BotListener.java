@@ -95,6 +95,10 @@ public class BotListener extends ListenerAdapter {
         }
     };
     /**
+     * This is used to check if we should trigger a update for the guild count when we leave a guild
+     */
+    private final HashMap<String, String> badGuilds = new HashMap<>();
+    /**
      * This tells us if the {@link #unbanService} is running
      */
     private boolean unbanTimerRunning = false;
@@ -106,10 +110,6 @@ public class BotListener extends ListenerAdapter {
      * Tells us whether {@link #spamUpdateService} clears cache of our {@link #spamFilter}.
      */
     private boolean isCacheCleanerActive = false;
-    /**
-     * This is used to check if we should trigger a update for the guild count when we leave a guild
-     */
-    private final HashMap<String, String> badGuilds = new HashMap<>();
 
     @Override
     public void onShutdown(ShutdownEvent event) {
@@ -406,7 +406,7 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        if(!badGuilds.containsKey(event.getGuild().getId())) {
+        if (!badGuilds.containsKey(event.getGuild().getId())) {
             logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
             GuildSettingsUtils.deleteGuild(event.getGuild());
             GuildUtils.updateGuildCountAndCheck(event.getJDA());

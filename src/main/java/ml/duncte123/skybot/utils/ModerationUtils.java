@@ -55,7 +55,7 @@ public class ModerationUtils {
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
         String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
-        if(chan != null && !chan.isEmpty()) {
+        if (chan != null && !chan.isEmpty()) {
             TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
             if (time != null && !time.isEmpty()) {
@@ -173,7 +173,8 @@ public class ModerationUtils {
      * @param shardManager the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager shardManager) {
-        AirUtils.DB.run(() -> {logger.debug("Checking for users to unban");
+        AirUtils.DB.run(() -> {
+            logger.debug("Checking for users to unban");
             int usersUnbanned = 0;
             Connection database = AirUtils.DB.getConnManager().getConnection();
 
@@ -217,7 +218,8 @@ public class ModerationUtils {
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
-            }});
+            }
+        });
     }
 
     public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
@@ -227,7 +229,7 @@ public class ModerationUtils {
 
         if (muteRoleId == null || muteRoleId.isEmpty()) {
             MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
-                "We disabled your spam filter until you have set up a role.");
+                    "We disabled your spam filter until you have set up a role.");
             guildSettings.setSpamFilterState(false);
             return;
         }
@@ -250,19 +252,19 @@ public class ModerationUtils {
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
-        (success) -> {
-            guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute").queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
-        },
-        (failure) -> {
-            String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
-            if(chan != null && !chan.isEmpty()) {
-                TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+                (success) -> {
+                    guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute").queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
+                },
+                (failure) -> {
+                    String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
+                    if (chan != null && !chan.isEmpty()) {
+                        TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
-                String message = String.format("%#s bypassed the mute.", member.getUser());
+                        String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                MessageUtils.sendEmbed(logChannel, EmbedUtils.defaultEmbed().setDescription(message).build());
-            }
-        });
+                        MessageUtils.sendEmbed(logChannel, EmbedUtils.defaultEmbed().setDescription(message).build());
+                    }
+                });
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {

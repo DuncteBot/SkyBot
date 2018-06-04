@@ -4,15 +4,15 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-class RestartCommand: MusicCommand() {
+class RestartCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if(!channelChecks(event))
+        if (!channelChecks(event))
             return
 
         val player = getMusicManager(event.guild).player
 
-        if(player.playingTrack == null) {
+        if (player.playingTrack == null) {
             MessageUtils.sendError(event.message)
             MessageUtils.sendMsg(event, "No track currently playing")
         }

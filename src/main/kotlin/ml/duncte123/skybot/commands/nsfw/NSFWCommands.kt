@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.commands.nsfw
 
 import com.afollestad.ason.Ason
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import me.duncte123.botCommons.web.WebUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class NSFWCommands : Command() {

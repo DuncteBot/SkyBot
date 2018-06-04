@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -272,7 +271,7 @@ public class SettingsCommand extends Command {
 
             case "spamrole":
             case "muterole":
-                
+
                 if (!guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
                     sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
                     return;
@@ -303,15 +302,15 @@ public class SettingsCommand extends Command {
                 sendMsg(event, "SpamRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
-                
+
             case "togglekickmode":
                 boolean kickState = !settings.getKickState();
                 GuildSettingsUtils.updateGuildSettings(guild, settings.setKickState(kickState));
                 sendMsg(event, "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
                 break;
-                
+
             case "setratelimits":
-                
+
                 if (args.length == 0) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
                     return;
@@ -319,7 +318,7 @@ public class SettingsCommand extends Command {
 
                 if ("default".equals(args[0])) {
                     sendMsg(event, "Ratelimits have beed reset.");
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(new long[] {20, 45, 60, 120, 240, 2400}));
+                    GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
                     return;
                 }
 
@@ -462,7 +461,7 @@ public class SettingsCommand extends Command {
                 "togglefilterinvites",
                 "toggleautodehoist",
                 "togglespamfilter",
-                "spamrole",  
+                "spamrole",
                 "muterole",
                 "setratelimits",
                 "togglekickmode"

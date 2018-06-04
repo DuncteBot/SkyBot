@@ -44,6 +44,10 @@ public class Profile {
         this.discriminator = discriminator;
     }
 
+    public static Profile emptyProfile() {
+        return new Profile("", 0, "", "", "", "");
+    }
+
     public int getFlags() {
         return flags;
     }
@@ -67,15 +71,13 @@ public class Profile {
     public String getUsername() {
         return username;
     }
+
     public boolean isNitro() {
         return premiumSince != null;
     }
+
     public List<Badge> getBadges() {
         return Badge.getBadges(flags, isNitro());
-    }
-
-    public static Profile emptyProfile() {
-        return new Profile("", 0, "", "", "","");
     }
 
     public enum Badge {
@@ -93,6 +95,17 @@ public class Profile {
         NITRO(1, -1),
 
         UNKNOWN(0, -1);*/
+
+        public static final byte ALL_FLAGS = getFlags(DISCORD_PARTNER, DISCORD_STAFF, HYPESQUAD);
+        private final byte offset;
+        private final byte priority;
+        private final byte value;
+
+        Badge(final int priority, final int offset) {
+            this.priority = (byte) priority;
+            this.offset = (byte) offset;
+            this.value = (byte) (1 << offset);
+        }
 
         public static List<Badge> getBadges(final int flags, final boolean nitro) {
             final ArrayList<Badge> badges = new ArrayList<>(1);
@@ -128,18 +141,6 @@ public class Profile {
                     flags |= badge.value;
             }
             return flags;
-        }
-
-        public static final byte ALL_FLAGS = getFlags(DISCORD_PARTNER, DISCORD_STAFF, HYPESQUAD);
-
-        private final byte offset;
-        private final byte priority;
-        private final byte value;
-
-        Badge(final int priority, final int offset) {
-            this.priority = (byte) priority;
-            this.offset = (byte) offset;
-            this.value = (byte) (1 << offset);
         }
 
         public byte getValue() {

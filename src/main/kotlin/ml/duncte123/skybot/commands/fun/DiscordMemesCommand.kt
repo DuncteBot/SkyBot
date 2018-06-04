@@ -32,7 +32,9 @@ class DiscordMemesCommand : WeebCommandBase() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        MessageUtils.sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("discord_memes").url))
+        AirUtils.WEEB_API.getRandomImage("discord_memes").async {
+            MessageUtils.sendEmbed(event, getWeebEmbedImage(it.url))
+        }
     }
 
     override fun help() = """Gives you a discord meme

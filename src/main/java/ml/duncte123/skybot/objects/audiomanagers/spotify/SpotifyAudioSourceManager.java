@@ -184,11 +184,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                         finalPlaylist.addAll(doThingWithPlaylist(results));
                     }
                     return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
-                }
-                catch (IllegalArgumentException ex) {
+                } catch (IllegalArgumentException ex) {
                     throw new FriendlyException("This playlist could not be loaded, make sure that it's public", FriendlyException.Severity.FAULT, ex);
-                }
-                catch (Exception e) {
+                } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
                     throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
                 }
