@@ -38,6 +38,12 @@ import spark.Response
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
+import java.util.HashMap
+import org.apache.http.NameValuePair
+import org.apache.http.client.utils.URLEncodedUtils
+import java.nio.charset.Charset
+
+
 
 class WebServer {
 
@@ -93,6 +99,28 @@ class WebServer {
             //overview and editing
             get("", WebVariables()
                     .put("title", "Dashboard"), "serverSettings.twig", true)
+
+            post("") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
+
+                val prefix = params["prefix"]
+                val serverDescription = params["serverDescription"]
+                val welcomeChannel = params["welcomeChannel"]
+                val welcomeLeaveEnabled = params["welcomeChannelCB"]
+                val autorole = params["autoRoleRole"]
+                val autoRoleEnabled = params["autoRoleRoleCB"]
+                val modLogChannel = params["modChannel"]
+                val announceTracks = params["announceTracks"]
+                val autoDeHoist = params["autoDeHoist"]
+                val filterInvites = params["filterInvites"]
+                val welcomeMessage = params["welcomeMessage"]
+                val leaveMessage = params["leaveMessage"]
+
+
+                ""
+            }
+
             /*get("") {
                 val guild = getGuildFromRequest(request, response)
                 if (guild != null) {
@@ -235,5 +263,14 @@ class WebServer {
             .put("iconUrl", guild.iconUrl)
             .put("owner", guild.isOwner)
             .put("id", guild.id)
+
+    private fun toMap(pairs: List<NameValuePair>): Map<String, String> {
+        val map = HashMap<String, String>()
+        for (i in pairs.indices) {
+            val pair = pairs[i]
+            map[pair.name] = pair.value
+        }
+        return map
+    }
 
 }
