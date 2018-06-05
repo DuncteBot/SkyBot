@@ -20,6 +20,8 @@ package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.Settings;
 
+import java.util.Arrays;
+
 /**
  * This class will hold the settings for a guild
  */
@@ -323,6 +325,13 @@ public class GuildSettings {
 
     public long[] getRatelimits() {
         return ratelimits;
+    }
+
+    public Long[] getRateLimitsForTwig() {
+        Long[] temp = new Long[ratelimits.length];
+        for(int i = 0; i < ratelimits.length; i++)
+            temp[i] = ratelimits[i];
+        return temp;
     }
 
     public GuildSettings setRatelimits(long[] ratelimits) {

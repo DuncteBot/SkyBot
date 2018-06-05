@@ -71,7 +71,7 @@ class WebServer {
                 if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
                             CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
-                            Scope.IDENTIFY, Scope.GUILDS
+                            Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
                     response.redirect(url)
@@ -104,18 +104,20 @@ class WebServer {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
                 val params = toMap(pairs)
 
-                val prefix = params["prefix"]
-                val serverDescription = params["serverDescription"]
-                val welcomeChannel = params["welcomeChannel"]
+                val prefix              = params["prefix"]
+                val serverDescription   = params["serverDescription"]
+                val welcomeChannel      = params["welcomeChannel"]
                 val welcomeLeaveEnabled = params["welcomeChannelCB"]
-                val autorole = params["autoRoleRole"]
-                val autoRoleEnabled = params["autoRoleRoleCB"]
-                val modLogChannel = params["modChannel"]
-                val announceTracks = params["announceTracks"]
-                val autoDeHoist = params["autoDeHoist"]
-                val filterInvites = params["filterInvites"]
-                val welcomeMessage = params["welcomeMessage"]
-                val leaveMessage = params["leaveMessage"]
+                val autorole            = params["autoRoleRole"]
+                val autoRoleEnabled     = params["autoRoleRoleCB"]
+                val modLogChannel       = params["modChannel"]
+                val announceTracks      = params["announceTracks"]
+                val autoDeHoist         = params["autoDeHoist"]
+                val filterInvites       = params["filterInvites"]
+                val welcomeMessage      = params["welcomeMessage"]
+                val leaveMessage        = params["leaveMessage"]
+                val muteRole            = params["muteRole"]
+                val kickMode            = params["kickMode"]
 
 
                 ""
@@ -188,6 +190,18 @@ class WebServer {
                         .put("status", "success")
                         .put("guilds", guilds)
                         .put("code", response.status())
+            }
+
+            get("/joinGuild") {
+                try {
+                    val session = getSession(request)
+                    SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
+                            .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
+                    response.redirect("/dashboard")
+                } catch (e: Exception) {
+                    e.printStackTrace()
+                    response.redirect("https://discord.gg/NKM9Xtk")
+                }
             }
         }
 

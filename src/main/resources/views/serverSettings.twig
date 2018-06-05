@@ -144,6 +144,59 @@
                 <div class="divider"></div>
             </div>
 
+            {# Spam filter #}
+            <div class="row section">
+                <h6>Moderation:</h6> <br />
+
+                {# Mute role #}
+                <div class="input-field col s12 m3">
+                    <select id="muteRole" name="muteRole" {#onchange="checkSelect(this.id, 'autoRoleRoleCB');"#}>
+                        <option value="" selected disabled>Select a role</option>
+                        {% for role in goodRoles %}
+                            {% if settings.getAutoroleRole() == role.getId() %}
+                                <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
+                            {% else %}
+                                <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="">Disable</option>
+                    </select>
+                    <label for="muteRole">Mute role</label>
+                </div>
+
+                {# Kick mode #}
+                <div class="input-field col s12 m4">
+                    <!-- Switch -->
+                    <div class="switch">
+                        Kick mode:
+                        <label>
+                            Mute members
+                            <input type="checkbox" name="kickMode" id="kickMode" {% if settings.getKickState() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Kick members
+                        </label>
+                    </div>
+                </div>
+
+               {# <div class="input-field col s12 m5">
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[0] }}" />
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[1] }}" />
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[2] }}" />
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[3] }}" />
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[4] }}" />
+                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[5] }}" />
+                </div>#}
+            </div>
+
+
+            <div class="row">
+
+                {% for r in settings.getRateLimitsForTwig() %}
+                    <div class="input-field col s12 m1">
+                        <input type="number" name="rateLimits[]" value="{{ r }}" />
+                    </div>
+                {% endfor %}
+            </div>
 
             {# Hidden fields #}
             <input type="hidden" name="serverDescription" id="serverDescription" value="{{ settings.getServerDesc() }}" />
