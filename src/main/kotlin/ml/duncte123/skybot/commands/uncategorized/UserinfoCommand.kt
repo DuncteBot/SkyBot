@@ -149,6 +149,7 @@ class UserinfoCommand : Command() {
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
                         |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Join position:** #${index + 1}
                         |**Join Order:** $joinOrder
                         |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}

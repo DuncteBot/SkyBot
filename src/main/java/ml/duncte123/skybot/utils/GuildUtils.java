@@ -32,9 +32,11 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class GuildUtils {
 
@@ -193,5 +195,10 @@ public class GuildUtils {
             return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
         }
         return "None";
+    }
+
+    public static int getMemberJoinPosition(Member member) {
+        return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
+                .collect(Collectors.toList()).indexOf(member) + 1;
     }
 }
