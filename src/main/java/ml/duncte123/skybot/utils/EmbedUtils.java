@@ -21,12 +21,16 @@ package ml.duncte123.skybot.utils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.MessageBuilder;
+import net.dv8tion.jda.core.MessageBuilder.SplitPolicy;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Queue;
 
 /**
  * A simple class to help me build embeds
@@ -199,5 +203,9 @@ public class EmbedUtils {
         }
 
         return msg.toString();
+    }
+
+    public static Queue<Message> embedToCodeBlock(MessageEmbed embed) {
+        return new MessageBuilder().appendCodeBlock(embedToMessage(embed), "java").buildAll(SplitPolicy.NEWLINE);
     }
 }

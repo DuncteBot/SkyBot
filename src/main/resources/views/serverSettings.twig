@@ -153,7 +153,7 @@
                     <select id="muteRole" name="muteRole" {#onchange="checkSelect(this.id, 'autoRoleRoleCB');"#}>
                         <option value="" selected disabled>Select a role</option>
                         {% for role in goodRoles %}
-                            {% if settings.getAutoroleRole() == role.getId() %}
+                            {% if settings.getMuteRoleId() == role.getId() %}
                                 <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
                             {% else %}
                                 <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
@@ -177,29 +177,22 @@
                         </label>
                     </div>
                 </div>
-
-               {# <div class="input-field col s12 m5">
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[0] }}" />
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[1] }}" />
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[2] }}" />
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[3] }}" />
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[4] }}" />
-                    <input type="number" name="rateLimits[]" value="{{ settings.getRateLimitsForTwig()[5] }}" />
-                </div>#}
             </div>
 
 
             <div class="row">
 
-                {% for r in settings.getRateLimitsForTwig() %}
+                {% for i,r in settings.getRateLimitsForTwig() %}
                     <div class="input-field col s12 m1">
-                        <input type="number" name="rateLimits[]" value="{{ r }}" />
+                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" />
                     </div>
                 {% endfor %}
             </div>
 
             {# Hidden fields #}
             <input type="hidden" name="serverDescription" id="serverDescription" value="{{ settings.getServerDesc() }}" />
+
+            <input type="submit" value="submit" />
         </form>
     </div>
 

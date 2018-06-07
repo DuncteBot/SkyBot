@@ -20,8 +20,6 @@ package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.Settings;
 
-import java.util.Arrays;
-
 /**
  * This class will hold the settings for a guild
  */
@@ -36,7 +34,7 @@ public class GuildSettings {
     private String logChannel = null;
     private String welcomeLeaveChannel = null;
     private String autoroleRole = null;
-    private String serverDesc = null;
+    private String serverDesc = "";
     private boolean announceTracks = false;
     private boolean autoDeHoist = false;
     private boolean filterInvites = false;

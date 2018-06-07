@@ -177,13 +177,13 @@ public class GuildSettingsUtils {
                         "WHERE guildId='" + settings.getGuildId() + "'");
                 smt.setBoolean(1, settings.isEnableJoinMessage());
                 smt.setBoolean(2, settings.isEnableSwearFilter());
-                smt.setString(3, replaceUnicodeAndLines(settings.getCustomJoinMessage()));
+                smt.setString(3, fixUnicodeAndLines(settings.getCustomJoinMessage()));
                 smt.setString(4, replaceUnicode(settings.getCustomPrefix()));
                 smt.setString(5, settings.getAutoroleRole());
                 smt.setString(6, settings.getLogChannel());
                 smt.setString(7, settings.getWelcomeLeaveChannel());
-                smt.setString(8, replaceUnicodeAndLines(settings.getCustomLeaveMessage()));
-                smt.setString(9, replaceUnicodeAndLines(settings.getServerDesc()));
+                smt.setString(8, fixUnicodeAndLines(settings.getCustomLeaveMessage()));
+                smt.setString(9, fixUnicodeAndLines(settings.getServerDesc()));
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
@@ -290,6 +290,12 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\\\n", "\n");
     }
 
+    private static String fixNewLines(String entery) {
+        if (entery == null || entery.isEmpty())
+            return null;
+        return entery.replaceAll("\n", "\\\\n");
+    }
+
     private static String replaceUnicode(String entery) {
         if (entery == null || entery.isEmpty())
             return null;
@@ -298,6 +304,10 @@ public class GuildSettingsUtils {
 
     private static String replaceUnicodeAndLines(String s) {
         return replaceUnicode(replaceNewLines(s));
+    }
+
+    private static String fixUnicodeAndLines(String s) {
+        return replaceUnicode(fixNewLines(replaceNewLines(s)));
     }
 
     private static String convertJ2S(long[] in) {
