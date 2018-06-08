@@ -197,7 +197,6 @@ class WebServer {
             }
 
             get("/getUserGuilds") {
-//                response.type(APPLICATION_JSON.type)
                 val guilds = ArrayList<JSONObject>()
                 oAuth2Client.getGuilds(getSession(request)).complete().forEach {
                     if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
