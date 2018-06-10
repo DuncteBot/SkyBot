@@ -17,21 +17,32 @@
  */
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:JvmName("ExceptionsKt")
 
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.exceptions.VRCubeException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class TableFlipException() : VRCubeException() {
-
-    override lateinit var message: String
+open class TableFlipException(override val message: String?, override val cause: Throwable?) : VRCubeException() {
 
     private fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
 
-    constructor(message: String) : this() {
-        this.message = message
-    }
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    constructor() : this(null, null)
 
     override fun getLocalizedMessage(): String = "${getMeme()} $message"
+}
+
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+open class EndReached : Throwable()
+
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+open class SkybotContextException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause) {
+    constructor(message: String?) : this(message, null)
+    constructor(cause: Throwable?) : this(cause?.toString(), cause)
+    constructor() : this(null, null)
+
+    override fun getLocalizedMessage(): String = "$message at ${this.stackTrace[0]} caused by ${cause?.toString()}"
 }

@@ -159,13 +159,14 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+        Guild guild = event.getGuild();
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
         String rw = event.getMessage().getContentRaw();
 
-        if (event.getGuild().getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
+        if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
                 && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
-            if (settings.isFilterInvites()) {
+            if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
                 if (!matcher.find()) {
                     return;
@@ -173,16 +174,27 @@ public class BotListener extends ListenerAdapter {
                 //Get the invite Id from the message
                 String inviteID = matcher.group(matcher.groupCount());
 
-                Invite.resolve(event.getJDA(), inviteID).queue(invite -> {
+                //Prohibiting failure because the bot is currently banned from the other guild.
+                guild.getInvites().queue((invites) -> {
                     //Check if the invite is for this guild, if it is not delete the message
-                    if (invite.getGuild().getIdLong() == event.getGuild().getIdLong()) {
-                        return;
+                    if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
+                        event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
+                                MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
+                                        ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                        );
                     }
-                    event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
-                            MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
-                                    ", please don't post invite links here.", m -> m.delete().queueAfter(3, TimeUnit.SECONDS))
-                    );
+                }, (thr) -> {
+                    try {
+                        throw new SkybotContextException(thr.getMessage(), thr);
+                    } catch (SkybotContextException e) {
+                        MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
+                                "Grant the permission `MANAGE_SERVER` for me.\n" +
+                                "Error: " +  e.getMessage());
+                    }
                 });
+            } else {
+                MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
+                        "Grant the permission `MANAGE_SERVER` for me.");
             }
 
             if (settings.isEnableSwearFilter()) {
@@ -206,13 +218,13 @@ public class BotListener extends ListenerAdapter {
                 spamFilter.applyRates(rates);
                 if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                            settings.getKickState() ? "kicked" : "muted", "spam", event.getGuild());
+                            settings.getKickState() ? "kicked" : "muted", "spam", guild);
                 }
             }
         }
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
-                && rw.equals(event.getGuild().getSelfMember().getAsMention())) {
+                && rw.equals(guild.getSelfMember().getAsMention())) {
             MessageUtils.sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                     event.getAuthor().getId(),
                     Settings.PREFIX)
@@ -220,7 +232,7 @@ public class BotListener extends ListenerAdapter {
             return;
         } else if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
                 !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(event.getGuild().getSelfMember().getAsMention())
+                && !rw.startsWith(guild.getSelfMember().getAsMention())
                 && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return;
         }
@@ -253,7 +265,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
-        if (rw.startsWith(event.getGuild().getSelfMember().getAsMention())) {
+        if (rw.startsWith(guild.getSelfMember().getAsMention())) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
             //Handle the chat command
             Command cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
@@ -322,7 +334,8 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
+        Guild guild = event.getGuild();
+        if (event.getMember().equals(guild.getSelfMember())) return;
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -332,22 +345,22 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
 
         if (settings.isEnableJoinMessage()) {
             String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getWelcomeLeaveChannel())
-                    ? GuildUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel());
-            TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
+                    ? GuildUtils.getPublicChannel(guild).getId() : settings.getWelcomeLeaveChannel());
+            TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
                 MessageUtils.sendMsg(welcomeLeaveChannel, msg);
         }
 
         if (settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole())
-                && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
-            if (r != null && !event.getGuild().getPublicRole().equals(r))
-                event.getGuild().getController()
+                && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+            Role r = guild.getRoleById(settings.getAutoroleRole());
+            if (r != null && !guild.getPublicRole().equals(r))
+                guild.getController()
                         .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
                 });
         }
@@ -355,14 +368,15 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-        if (event.getMember().equals(event.getGuild().getSelfMember())) return;
-        GuildSettings settings = GuildSettingsUtils.getGuild(event.getGuild());
+        Guild guild = event.getGuild();
+        if (event.getMember().equals(guild.getSelfMember())) return;
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
 
         if (settings.isEnableJoinMessage()) {
             String welcomeLeaveChannelId =
                     (settings.getWelcomeLeaveChannel() == null || settings.getWelcomeLeaveChannel().isEmpty())
-                            ? GuildUtils.getPublicChannel(event.getGuild()).getId() : settings.getWelcomeLeaveChannel();
-            TextChannel welcomeLeaveChannel = event.getGuild().getTextChannelById(welcomeLeaveChannelId);
+                            ? GuildUtils.getPublicChannel(guild).getId() : settings.getWelcomeLeaveChannel();
+            TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
                 MessageUtils.sendMsg(welcomeLeaveChannel, msg);
@@ -376,42 +390,44 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
+        Guild guild = event.getGuild();
         //if 70 of a guild is bots, we'll leave it
-        double[] botToUserRatio = GuildUtils.getBotRatio(event.getGuild());
-        long[] counts = GuildUtils.getBotAndUserCount(event.getGuild());
+        double[] botToUserRatio = GuildUtils.getBotRatio(guild);
+        long[] counts = GuildUtils.getBotAndUserCount(guild);
         if (botToUserRatio[1] >= 70) {
-            MessageUtils.sendMsg(GuildUtils.getPublicChannel(event.getGuild()),
+            MessageUtils.sendMsg(GuildUtils.getPublicChannel(guild),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
-                            event.getGuild().getOwner().getAsMention(),
+                            guild.getOwner().getAsMention(),
                             botToUserRatio[1],
                             "%",
-                            event.getGuild().getMemberCache().size()
+                            guild.getMemberCache().size()
                     ),
                     message -> message.getGuild().leave().queue(),
-                    er -> event.getGuild().leave().queue()
+                    er -> guild.leave().queue()
             );
             logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
-                    event.getGuild().getName(),
+                    guild.getName(),
                     counts[0],
                     counts[1]) + TextColor.RESET);
-            badGuilds.put(event.getGuild().getId(), "BAD BOI");
+            badGuilds.put(guild.getId(), "BAD BOI");
             return;
         }
-        Guild g = event.getGuild();
-        String message = String.format("Joining guild %s, ID: %s on shard %s.", g.getName(), g.getId(), g.getJDA().getShardInfo().getShardId());
+        String message = String.format("Joining guild %s, ID: %s on shard %s.", guild.getName(), guild.getId(), guild.getJDA().getShardInfo()
+                .getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
-        GuildSettingsUtils.registerNewGuild(event.getGuild());
+        GuildSettingsUtils.registerNewGuild(guild);
         GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        if (!badGuilds.containsKey(event.getGuild().getId())) {
-            logger.info(TextColor.RED + "Leaving guild: " + event.getGuild().getName() + "." + TextColor.RESET);
-            GuildSettingsUtils.deleteGuild(event.getGuild());
+        Guild guild = event.getGuild();
+        if (!badGuilds.containsKey(guild.getId())) {
+            logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
+            GuildSettingsUtils.deleteGuild(guild);
             GuildUtils.updateGuildCountAndCheck(event.getJDA());
         } else {
-            badGuilds.remove(event.getGuild().getId());
+            badGuilds.remove(guild.getId());
         }
     }
 
@@ -422,14 +438,15 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        if (LavalinkManager.ins.isConnected(event.getGuild())
-                && !event.getVoiceState().getMember().equals(event.getGuild().getSelfMember())) {
-            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(event.getGuild());
+        Guild guild = event.getGuild();
+        if (LavalinkManager.ins.isConnected(guild)
+                && !event.getVoiceState().getMember().equals(guild.getSelfMember())) {
+            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(guild);
             if (vc != null) {
                 if (!event.getChannelLeft().equals(vc)) {
                     return;
                 }
-                channelCheckThing(event.getGuild(), event.getChannelLeft());
+                channelCheckThing(guild, event.getChannelLeft());
             }
         }
     }
@@ -441,16 +458,17 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
+        Guild guild = event.getGuild();
         try {
-            if (LavalinkManager.ins.isConnected(event.getGuild())) {
-                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))
-                        && !event.getMember().equals(event.getGuild().getSelfMember())) {
+            if (LavalinkManager.ins.isConnected(guild)) {
+                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild))
+                        && !event.getMember().equals(guild.getSelfMember())) {
                     return;
                 } else {
-                    channelCheckThing(event.getGuild(), LavalinkManager.ins.getConnectedChannel(event.getGuild()));
+                    channelCheckThing(guild, LavalinkManager.ins.getConnectedChannel(guild));
                 }
-                if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(event.getGuild()))) {
-                    channelCheckThing(event.getGuild(), event.getChannelLeft());
+                if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(guild))) {
+                    channelCheckThing(guild, event.getChannelLeft());
                     //return;
                 }
             }
@@ -489,18 +507,19 @@ public class BotListener extends ListenerAdapter {
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent))
             return "NOPE";
 
-        String autoRoleId = GuildSettingsUtils.getGuild(event.getGuild()).getAutoroleRole();
+        Guild guild = event.getGuild();
+        String autoRoleId = GuildSettingsUtils.getGuild(guild).getAutoroleRole();
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
                 .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
                 .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
-                .replaceAll("\\{\\{GUILD_NAME}}", event.getGuild().getName())
-                .replaceAll("\\{\\{GUILD_USER_COUNT}}", event.getGuild().getMemberCache().size() + "")
+                .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
+                .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
 
                 //This one can be kept a secret :P
                 .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId == null || autoRoleId.isEmpty() ?
-                        "Not set" : event.getGuild().getRoleById(autoRoleId).getName())
+                        "Not set" : guild.getRoleById(autoRoleId).getName())
                 .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
     }
 
