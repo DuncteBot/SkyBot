@@ -28,6 +28,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
@@ -183,7 +184,7 @@ public class BotListener extends ListenerAdapter {
                                         ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                         );
                     }
-                }, (thr) -> {
+                }, ComparatingUtils::execCheck/*, (thr) -> {
                     try {
                         throw new SkybotContextException(thr.getMessage(), thr);
                     } catch (SkybotContextException e) {
@@ -191,11 +192,11 @@ public class BotListener extends ListenerAdapter {
                                 "Grant the permission `MANAGE_SERVER` for me.\n" +
                                 "Error: " +  e.getMessage());
                     }
-                });
-            } else {
+                }*/);
+            }/* else {
                 MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
                         "Grant the permission `MANAGE_SERVER` for me.");
-            }
+            }*/
 
             if (settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
