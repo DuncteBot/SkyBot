@@ -78,30 +78,39 @@ dependencies {
     //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
     //My little utils
     compile 'com.github.duncte123:botCommons:bae72246fa'
+
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_371'
+
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.2'
     compile( group: 'com.github.Frederikam', name: 'Lavalink', version: 'a5e04efdd1' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
+
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
+
     // MySQL
     compile group: 'mysql', name: 'mysql-connector-java', version: '5.1.6'
     // SQLite
     compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.20.1'
+
     //groovy
     compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.0-rc-1'
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.6'
+
     //JSON Extension
     compile group: 'com.afollestad', name: 'ason', version: '1.4.16'
+
     // Logback classic
     compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
-    // Reflection stuffz
+
+    // cp scraping stuffz
     compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+
     //Spotify API
     compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '1.5.0'
     // Youtube api
@@ -114,7 +123,6 @@ dependencies {
 
     //test stufzz
     testCompile group: 'junit', name: 'junit', version: '4.12'
-    compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
 }
 
 javadoc {
