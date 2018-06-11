@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -31,8 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.*;
-import java.util.Map;
-import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
 
 public class ModerationUtils {
@@ -104,7 +100,32 @@ public class ModerationUtils {
      * @param guildId           What guild the user got banned in
      */
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-        Map<String, Object> postFields = new TreeMap<>();
+
+        AirUtils.DB.run(() -> {
+            Connection conn = AirUtils.DB.getConnManager().getConnection();
+            try {
+                PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
+                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
+
+                smt.setString(1, modID);
+                smt.setString(2, userName);
+                smt.setString(3, userDiscriminator);
+                smt.setString(4, userId);
+                smt.setDate(5, Date.valueOf(unbanDate));
+                smt.setString(6, guildId);
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /*Map<String, Object> postFields = new TreeMap<>();
         postFields.put("modId", modID);
         postFields.put("username", userName);
         postFields.put("discriminator", userDiscriminator);
@@ -116,7 +137,7 @@ public class ModerationUtils {
             WebUtils.ins.preparePost(Settings.API_BASE + "/ban/json", postFields).async();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     /**
