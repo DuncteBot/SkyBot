@@ -28,7 +28,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
@@ -182,7 +181,7 @@ public class BotListener extends ListenerAdapter {
                                             ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                             );
                         }
-                    }, ComparatingUtils::execCheck/*, (thr) -> {
+                    }, (__) -> {}/*, (thr) -> {
                     try {
                         throw new SkybotContextException(thr.getMessage(), thr);
                     } catch (SkybotContextException e) {
