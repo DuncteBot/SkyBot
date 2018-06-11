@@ -69,37 +69,11 @@ public class GithubReleaseCommand extends Command {
                         return new JSONObject(mapper.body().string());
                     }).execute();
 
-            //I don't think that this is what you meant to do
-            /*JSONObject releaseIn = WebUtils.ins.preparePost(CREATE_RELEASE,
-                    Collections.singletonMap("User-Agent", "SkyBot-Release-Uploader"),
-                    WebUtils.EncodingType.APPLICATION_JSON)
-                    .build(success -> new JSONObject(success.body().source()), WebUtilsErrorUtils::handleError).execute();*/
-
             if (releaseIn == null)
                 return;
 
+            System.out.println(releaseIn);
             MessageUtils.sendMsg(event, "Release uploaded");
-
-            //System.out.println(releaseIn.toString(4));
-            //String releaseId = releaseIn.getString("id");
-
-            // Now upload the asset
-
-            /*FileInputStream jarStream = new FileInputStream(fullJarName);
-            MediaType type = MediaType.parse("application/zip");
-            RequestBody body = MiscUtil.createRequestBody(type, jarStream);
-
-            Request request = new Request.Builder()
-                    .post(body)
-                    .header("User-Agent", WebUtils.getUserAgent())
-                    .url(String.format(UPLOAD_ASSET, releaseId, fullJarName))
-                    .build();
-
-            WebUtils.ins.prepareRaw(request, mapper -> new JSONObject(mapper.body().string())).async( asset -> {
-                for (int i = 0; i < 10; i++)
-                    System.out.println();
-                System.out.println(asset.toString(4));
-            }, Throwable::printStackTrace);*/
         } catch (RequestException e) {
             MessageUtils.sendError(event.getMessage());
             MessageUtils.sendMsg(event, "An error occurred creating a release, it has been logged in the console");
