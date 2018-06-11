@@ -30,11 +30,7 @@ import net.dv8tion.jda.core.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
+import java.sql.*;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -132,7 +128,10 @@ public class ModerationUtils {
     public static int getWarningCountForUser(User u, Guild g) {
         if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
-        try {
+
+        return ApiUtils.getWarnsForUser(u.getId(), g.getId()).getWarnings().size();
+
+        /*try {
             return WebUtils.ins.getJSONObject(String.format(
                     "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
                     Settings.API_BASE,
@@ -141,7 +140,7 @@ public class ModerationUtils {
         } catch (Exception e) {
             e.printStackTrace();
             return 0;
-        }
+        }*/
     }
 
     /**
@@ -153,7 +152,29 @@ public class ModerationUtils {
      * @param jda       a jda instance because we need the token for auth
      */
     public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
-        Map<String, Object> postFields = new HashMap<>();
+
+        AirUtils.DB.run(() -> {
+            Connection conn = AirUtils.DB.getConnManager().getConnection();
+            try {
+                PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
+                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
+                smt.setString(1, moderator.getId());
+                smt.setString(2, target.getId());
+                smt.setString(3, reason);
+                smt.setString(4, guild.getId());
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
+
+        /*Map<String, Object> postFields = new HashMap<>();
         postFields.put("mod_id", moderator.getId());
         postFields.put("user_id", target.getId());
         postFields.put("guild_id", guild.getId());
@@ -164,7 +185,7 @@ public class ModerationUtils {
             WebUtils.ins.preparePost(Settings.API_BASE + "/addWarning/json", postFields).async();
         } catch (NullPointerException e) {
             e.printStackTrace();
-        }
+        }*/
     }
 
     /**

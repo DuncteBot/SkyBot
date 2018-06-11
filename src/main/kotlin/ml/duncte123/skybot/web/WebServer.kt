@@ -27,6 +27,7 @@ import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AirUtils.CONFIG
+import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.Permission
@@ -218,6 +219,19 @@ class WebServer {
                 } catch (e: Exception) {
                     response.redirect("https://discord.gg/NKM9Xtk")
                 }
+            }
+
+            get("/llama") {
+                return@get ApiUtils.getRandomLlama().toJson()
+                        .put("status", "success")
+                        .put("code", response.status())
+            }
+
+            get("/kpop") {
+                val search = request.queryParamOrDefault("search", "")
+                return@get ApiUtils.getRandomKpopMember(search).toJson()
+                        .put("status", "success")
+                        .put("code", response.status())
             }
         }
 
