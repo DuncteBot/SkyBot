@@ -168,22 +168,20 @@ public class BotListener extends ListenerAdapter {
 
             if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
-                if (!matcher.find()) {
-                    return;
-                }
-                //Get the invite Id from the message
-                String inviteID = matcher.group(matcher.groupCount());
+                if (matcher.find()) {
+                    //Get the invite Id from the message
+                    String inviteID = matcher.group(matcher.groupCount());
 
-                //Prohibiting failure because the bot is currently banned from the other guild.
-                guild.getInvites().queue((invites) -> {
-                    //Check if the invite is for this guild, if it is not delete the message
-                    if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
-                        event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
-                                MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
-                                        ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
-                        );
-                    }
-                }, (thr) -> {
+                    //Prohibiting failure because the bot is currently banned from the other guild.
+                    guild.getInvites().queue((invites) -> {
+                        //Check if the invite is for this guild, if it is not delete the message
+                        if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
+                            event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
+                                    MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
+                                            ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                            );
+                        }
+                    }, (__) -> {}/*, (thr) -> {
                     try {
                         throw new SkybotContextException(thr.getMessage(), thr);
                     } catch (SkybotContextException e) {
@@ -191,11 +189,12 @@ public class BotListener extends ListenerAdapter {
                                 "Grant the permission `MANAGE_SERVER` for me.\n" +
                                 "Error: " +  e.getMessage());
                     }
-                });
-            } else {
+                }*/);
+                }
+            }/* else {
                 MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
                         "Grant the permission `MANAGE_SERVER` for me.");
-            }
+            }*/
 
             if (settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
