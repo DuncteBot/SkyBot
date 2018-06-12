@@ -37,6 +37,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.List;
@@ -323,5 +324,9 @@ public class AirUtils {
 
     public static PendingRequest<String> shortenUrl(String url) {
         return WebUtils.ins.shortenUrl(url, AirUtils.CONFIG.getString("apis.googl", "Google api key"));
+    }
+
+    public static String colorToHex(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 }

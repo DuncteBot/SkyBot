@@ -116,7 +116,7 @@ public class ModerationUtils {
                 smt.execute();
             } catch (Exception e) {
                 e.printStackTrace();
-            }finally {
+            } finally {
                 try {
                     conn.close();
                 } catch (SQLException e) {
@@ -238,7 +238,7 @@ public class ModerationUtils {
                             String guildId = res.getString("guildId");
                             String userID = res.getString("userId");
                             Guild guild = shardManager.getGuildById(guildId);
-                            if(guild != null) {
+                            if (guild != null) {
                                 guild.getController()
                                         .unban(userID).reason("Ban expired").queue();
                                 modLog(new ConsoleUser(),

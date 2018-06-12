@@ -25,3 +25,21 @@ body {
 main {
     flex: 1 0 auto;
 }
+
+.promo {
+    width: 100%;
+}
+
+.promo i {
+    margin: 40px 0;
+    color: var(--color);
+    font-size: 7rem;
+    display: block;
+}
+
+.promo-caption {
+    font-size: 1.7rem;
+    font-weight: 500;
+    margin-top: 5px;
+    margin-bottom: 0;
+}

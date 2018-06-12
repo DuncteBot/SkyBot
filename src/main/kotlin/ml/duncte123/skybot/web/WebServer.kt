@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.AirUtils.CONFIG
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
@@ -278,6 +279,7 @@ class WebServer {
                     map.put("guild", guild)
                 }
             }
+            map.put("color", colorToHex(Settings.defaultColour))
             ModelAndView(map.map, model)
         }
     }
