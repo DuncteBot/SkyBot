@@ -111,10 +111,10 @@ public class ModerationUtils {
                 smt.setString(2, userName);
                 smt.setString(3, userDiscriminator);
                 smt.setString(4, userId);
-                smt.setDate(5, Date.valueOf(unbanDate));
+                smt.setString(5, unbanDate);
                 smt.setString(6, guildId);
-                smt.executeUpdate();
-            } catch (SQLException e) {
+                smt.execute();
+            } catch (Exception e) {
                 e.printStackTrace();
             }finally {
                 try {
@@ -235,17 +235,20 @@ public class ModerationUtils {
                         String username = res.getString("Username");
                         logger.debug("Unbanning " + username);
                         try {
-                            String guildid = res.getString("guildId");
+                            String guildId = res.getString("guildId");
                             String userID = res.getString("userId");
-                            shardManager.getGuildCache().getElementById(guildid).getController()
-                                    .unban(userID).reason("Ban expired").queue();
-                            modLog(new ConsoleUser(),
-                                    new FakeUser(username,
-                                            userID,
-                                            res.getString("discriminator")),
-                                    "unbanned",
-                                    shardManager.getGuildById(guildid)
-                            );
+                            Guild guild = shardManager.getGuildById(guildId);
+                            if(guild != null) {
+                                guild.getController()
+                                        .unban(userID).reason("Ban expired").queue();
+                                modLog(new ConsoleUser(),
+                                        new FakeUser(username,
+                                                userID,
+                                                res.getString("discriminator")),
+                                        "unbanned",
+                                        guild
+                                );
+                            }
                         } catch (NullPointerException ignored) {
                         }
                         database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");

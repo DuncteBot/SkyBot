@@ -21,78 +21,76 @@ package ml.duncte123.skybot.utils
 import ml.duncte123.skybot.objects.api.KpopObject
 import ml.duncte123.skybot.objects.api.LlamaObject
 import ml.duncte123.skybot.objects.api.WarnObject
-import ml.duncte123.skybot.objects.api.WarningObject
+import ml.duncte123.skybot.objects.api.Warning
 import java.sql.ResultSet
 
-class ApiUtils {
+object ApiUtils {
 
-    companion object {
 
-        @JvmStatic
-        fun getRandomLlama(): LlamaObject {
+    @JvmStatic
+    fun getRandomLlama(): LlamaObject {
 
-            val conn = AirUtils.DB.getConnManager().connection
+        val conn = AirUtils.DB.getConnManager().connection
 
-            val resultSet = conn.createStatement()
-                    .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
-            resultSet.next()
-            val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
-            conn.close()
+        val resultSet = conn.createStatement()
+                .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
+        resultSet.next()
+        val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
+        conn.close()
 
-            return obj
-        }
-
-        @JvmStatic
-        fun getRandomKpopMember(search: String = ""): KpopObject {
-
-            val conn = AirUtils.DB.getConnManager().connection
-
-            lateinit var resultSet: ResultSet
-            if (!search.isEmpty()) {
-                val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
-                stmt.setString(1, "%$search%")
-                stmt.setString(2, search)
-                resultSet = stmt.executeQuery()
-            } else {
-                resultSet = conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
-            }
-            resultSet.next()
-            val obj = KpopObject(
-                    resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("band"),
-                    resultSet.getString("img")
-            )
-            conn.close()
-
-            return obj
-        }
-
-        @JvmStatic
-        fun getWarnsForUser(userId: String, guildId: String): WarnObject {
-            val conn = AirUtils.DB.getConnManager().connection
-            val smt = conn.prepareStatement(
-                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
-            smt.setString(1, userId)
-            smt.setString(2, guildId)
-            val result = smt.executeQuery()
-
-            val warnings = ArrayList<WarningObject>()
-
-            while (result.next()) {
-                warnings.add(WarningObject(
-                        result.getInt("id"),
-                        result.getDate("warn_date"),
-                        result.getDate("expire_date"),
-                        result.getString("mod_id"),
-                        result.getString("reason"),
-                        result.getString("guild_id")
-                ))
-            }
-
-            conn.close()
-            return WarnObject(userId, warnings)
-        }
-
+        return obj
     }
+
+    @JvmStatic
+    fun getRandomKpopMember(search: String = ""): KpopObject {
+
+        val conn = AirUtils.DB.getConnManager().connection
+
+        lateinit var resultSet: ResultSet
+        if (!search.isEmpty()) {
+            val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
+            stmt.setString(1, "%$search%")
+            stmt.setString(2, search)
+            resultSet = stmt.executeQuery()
+        } else {
+            resultSet = conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
+        }
+        resultSet.next()
+        val obj = KpopObject(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("band"),
+                resultSet.getString("img")
+        )
+        conn.close()
+
+        return obj
+    }
+
+    @JvmStatic
+    fun getWarnsForUser(userId: String, guildId: String): WarnObject {
+        val conn = AirUtils.DB.getConnManager().connection
+        val smt = conn.prepareStatement(
+                "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
+        smt.setString(1, userId)
+        smt.setString(2, guildId)
+        val result = smt.executeQuery()
+
+        val warnings = ArrayList<Warning>()
+
+        while (result.next()) {
+            warnings.add(Warning(
+                    result.getInt("id"),
+                    result.getDate("warn_date"),
+                    result.getDate("expire_date"),
+                    result.getString("mod_id"),
+                    result.getString("reason"),
+                    result.getString("guild_id")
+            ))
+        }
+
+        conn.close()
+        return WarnObject(userId, warnings)
+    }
+
 }
