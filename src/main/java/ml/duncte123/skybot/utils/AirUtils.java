@@ -30,6 +30,7 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -61,6 +62,7 @@ public class AirUtils {
     public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     public static final WAEngine ALPHA_ENGINE = getWolframEngine();
+    public static final WebServer WEB_SERVER = new WebServer();
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 

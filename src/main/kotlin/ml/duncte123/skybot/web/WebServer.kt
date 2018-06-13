@@ -237,6 +237,15 @@ class WebServer {
             }
         }
 
+        path("/crons") {
+
+            get("/clearExpiredWarns") {
+                AirUtils.DB.connManager.connection.createStatement()
+                        .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
+            }
+
+        }
+
         notFound {
             if(request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
                 response.type(APPLICATION_JSON.type)
