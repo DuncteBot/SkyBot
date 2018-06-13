@@ -167,7 +167,8 @@ class WebServer {
             //when the guild is not found
             get("/invalid") {
                 response.status(404)
-                "DuncteBot is not in the requested server, why don't you <a href=\"#\">invite it</a>?"
+                "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
+                        "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
         }
 

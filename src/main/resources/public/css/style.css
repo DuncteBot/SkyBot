@@ -43,3 +43,15 @@ main {
     margin-top: 5px;
     margin-bottom: 0;
 }
+
+.delay-1 {
+    animation-delay: 300ms;
+}
+
+.delay-2 {
+    animation-delay: 600ms;
+}
+
+.delay-3 {
+    animation-delay: 900ms;
+}
