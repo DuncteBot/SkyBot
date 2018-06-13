@@ -124,20 +124,6 @@ public class ModerationUtils {
                 }
             }
         });
-
-        /*Map<String, Object> postFields = new TreeMap<>();
-        postFields.put("modId", modID);
-        postFields.put("username", userName);
-        postFields.put("discriminator", userDiscriminator);
-        postFields.put("userId", userId);
-        postFields.put("unbanDate", unbanDate);
-        postFields.put("guildId", guildId);
-
-        try {
-            WebUtils.ins.preparePost(Settings.API_BASE + "/ban/json", postFields).async();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }*/
     }
 
     /**
@@ -151,17 +137,6 @@ public class ModerationUtils {
             throw new IllegalArgumentException("User to check can not be null");
 
         return ApiUtils.getWarnsForUser(u.getId(), g.getId()).getWarnings().size();
-
-        /*try {
-            return WebUtils.ins.getJSONObject(String.format(
-                    "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
-                    Settings.API_BASE,
-                    u.getId(),
-                    g.getId())).execute().getJSONArray("warnings").length();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }*/
     }
 
     /**
@@ -194,19 +169,6 @@ public class ModerationUtils {
                 }
             }
         });
-
-        /*Map<String, Object> postFields = new HashMap<>();
-        postFields.put("mod_id", moderator.getId());
-        postFields.put("user_id", target.getId());
-        postFields.put("guild_id", guild.getId());
-        postFields.put("reason", reason.isEmpty() ? "No Reason provided" : " for " + reason);
-        postFields.put("token", jda.getToken());
-
-        try {
-            WebUtils.ins.preparePost(Settings.API_BASE + "/addWarning/json", postFields).async();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }*/
     }
 
     /**
@@ -267,14 +229,20 @@ public class ModerationUtils {
         });
     }
 
-    public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+        muteUser(guild, member, channel, cause, minutesUntilUnMute, false);
+    }
+
+    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
         Member self = guild.getSelfMember();
         GuildSettings guildSettings = GuildSettingsUtils.getGuild(guild);
         String muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId == null || muteRoleId.isEmpty()) {
-            MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                     "We disabled your spam filter until you have set up a role.");
+
             guildSettings.setSpamFilterState(false);
             return;
         }
@@ -282,23 +250,27 @@ public class ModerationUtils {
         Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
-            MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
-            MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
-            MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
             return;
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
                 (success) -> {
-                    guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute").queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
+                    guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
+                            .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
                 },
                 (failure) -> {
                     String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
@@ -307,21 +279,28 @@ public class ModerationUtils {
 
                         String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                        MessageUtils.sendEmbed(logChannel, EmbedUtils.defaultEmbed().setDescription(message).build());
+                        if(sendMessages)
+                            MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
                     }
                 });
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {
+        kickUser(guild, member, channel, cause, false);
+    }
+
+    public static void kickUser(Guild guild, Member member, TextChannel channel, String cause, boolean sendMessages) {
         Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
-            MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
             return;
         }
 
         if (!self.canInteract(member)) {
-            MessageUtils.sendMsg(channel, "I can not access the member.");
+            if(sendMessages)
+                MessageUtils.sendMsg(channel, "I can not access the member.");
             return;
         }
         String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
