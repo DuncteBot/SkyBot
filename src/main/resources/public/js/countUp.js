@@ -15,23 +15,23 @@
 const CountUp = function(target, startVal, endVal, decimals, duration, options) {
 
     let self = this;
-    self.version = function () { return '1.9.3'; };
+    self.version = function () { return "1.9.3"; };
 
     // default options
     self.options = {
         useEasing: true, // toggle easing
         useGrouping: true, // 1,000,000 vs 1000000
-        separator: ',', // character to use as a separator
-        decimal: '.', // character to use as a decimal
+        separator: ",", // character to use as a separator
+        decimal: ".", // character to use as a decimal
         easingFn: easeOutExpo, // optional custom easing function, default is Robert Penner's easeOutExpo
         formattingFn: formatNumber, // optional custom formatting function, default is formatNumber above
-        prefix: '', // optional text before the result
-        suffix: '', // optional text after the result
+        prefix: "", // optional text before the result
+        suffix: "", // optional text after the result
         numerals: [] // optionally pass an array of custom numerals for 0-9
     };
 
     // extend default options with passed options object
-    if (options && typeof options === 'object') {
+    if (options && typeof options === "object") {
         for (let key in self.options) {
             if (options.hasOwnProperty(key) && options[key] !== null) {
                 self.options[key] = options[key];
@@ -39,22 +39,22 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
     }
 
-    if (self.options.separator === '') {
+    if (self.options.separator === "") {
         self.options.useGrouping = false;
     }
     else {
         // ensure the separator is a string (formatNumber assumes this)
-        self.options.separator = '' + self.options.separator;
+        self.options.separator = "" + self.options.separator;
     }
 
     // make sure requestAnimationFrame and cancelAnimationFrame are defined
     // polyfill for browsers without native support
     // by Opera engineer Erik Möller
     let lastTime = 0;
-    let vendors = ['webkit', 'moz', 'ms', 'o'];
+    let vendors = ["webkit", "moz", "ms", "o"];
     for(let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+'RequestAnimationFrame'];
-        window.cancelAnimationFrame = window[vendors[x]+'CancelAnimationFrame'] || window[vendors[x]+'CancelRequestAnimationFrame'];
+        window.requestAnimationFrame = window[vendors[x]+"RequestAnimationFrame"];
+        window.cancelAnimationFrame = window[vendors[x]+"CancelAnimationFrame"] || window[vendors[x]+"CancelRequestAnimationFrame"];
     }
     if (!window.requestAnimationFrame) {
         window.requestAnimationFrame = function(callback, element) {
@@ -75,12 +75,12 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         let neg = (num < 0),
             x, x1, x2, x3, i, len;
         num = Math.abs(num).toFixed(self.decimals);
-        num += '';
-        x = num.split('.');
+        num += "";
+        x = num.split(".");
         x1 = x[0];
-        x2 = x.length > 1 ? self.options.decimal + x[1] : '';
+        x2 = x.length > 1 ? self.options.decimal + x[1] : "";
         if (self.options.useGrouping) {
-            x3 = '';
+            x3 = "";
             for (i = 0, len = x1.length; i < len; ++i) {
                 if (i !== 0 && ((i % 3) === 0)) {
                     x3 = self.options.separator + x3;
@@ -98,23 +98,23 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
                 return self.options.numerals[+w];
             })
         }
-        return (neg ? '-' : '') + self.options.prefix + x1 + x2 + self.options.suffix;
+        return (neg ? "-" : "") + self.options.prefix + x1 + x2 + self.options.suffix;
     }
     // Robert Penner's easeOutExpo
     function easeOutExpo(t, b, c, d) {
         return c * (-Math.pow(2, -10 * t / d) + 1) * 1024 / 1023 + b;
     }
     function ensureNumber(n) {
-        return (typeof n === 'number' && !isNaN(n));
+        return (typeof n === "number" && !isNaN(n));
     }
 
     self.initialize = function() {
         if (self.initialized) return true;
 
-        self.error = '';
-        self.d = (typeof target === 'string') ? document.getElementById(target) : target;
+        self.error = "";
+        self.d = (typeof target === "string") ? document.getElementById(target) : target;
         if (!self.d) {
-            self.error = '[CountUp] target is null or undefined'
+            self.error = "[CountUp] target is null or undefined"
             return false;
         }
         self.startVal = Number(startVal);
@@ -130,7 +130,7 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
             return true;
         }
         else {
-            self.error = '[CountUp] startVal ('+startVal+') or endVal ('+endVal+') is not a number';
+            self.error = "[CountUp] startVal ("+startVal+") or endVal ("+endVal+") is not a number";
             return false;
         }
     };
@@ -139,10 +139,10 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
     self.printValue = function(value) {
         let result = self.options.formattingFn(value);
 
-        if (self.d.tagName === 'INPUT') {
+        if (self.d.tagName === "INPUT") {
             this.d.value = result;
         }
-        else if (self.d.tagName === 'text' || self.d.tagName === 'tspan') {
+        else if (self.d.tagName === "text" || self.d.tagName === "tspan") {
             this.d.textContent = result;
         }
         else {
@@ -227,10 +227,10 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         if (!self.initialize()) return;
         newEndVal = Number(newEndVal);
         if (!ensureNumber(newEndVal)) {
-            self.error = '[CountUp] update() - new endVal is not a number: '+newEndVal;
+            self.error = "[CountUp] update() - new endVal is not a number: "+newEndVal;
             return;
         }
-        self.error = '';
+        self.error = "";
         if (newEndVal === self.frameVal) return;
         cancelAnimationFrame(self.rAF);
         self.paused = false;
