@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.sql.SQLException
 
 class KpopCommand : Command() {
 
@@ -43,26 +44,9 @@ class KpopCommand : Command() {
                     .setImage(member.image)
                     .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
             MessageUtils.sendEmbed(event, eb.build())
-        }
-        catch (ignored: Exception) {
+        } catch (ignored: SQLException) {
             MessageUtils.sendMsg(event, "Nothing found")
         }
-
-        /*val queryString = if (!args.isEmpty()) args.joinToString(separator = "%20", prefix = "?search=") else ""
-        val url = "${Settings.API_BASE}/kpop/json$queryString"
-        WebUtils.ins.getJSONObject(url).async {
-            if (!it.optString("name").isBlank()) {
-                val eb = EmbedUtils.defaultEmbed()
-                        .setDescription("Here is a kpop member from the group ${it.getString("band")}")
-                        .addField("Name of the member", it.getString("name"), false)
-                        .setImage(it.getString("image"))
-                        .setFooter("Query id: ${it.getString("id")}", Settings.DEFAULT_ICON)
-                MessageUtils.sendEmbed(event, eb.build())
-            } else {
-                // nothing found
-                MessageUtils.sendMsg(event, "Nothing found")
-            }
-        }*/
     }
 
     override fun help() = "Gives you a random kpop member, command suggestion by Exa\n" +

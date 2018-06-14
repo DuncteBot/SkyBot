@@ -70,6 +70,8 @@ public abstract class Command {
      */
     protected boolean displayAliasesInHelp = false;
 
+    private String helpParsed = null;
+
 
     private boolean checkVoteOnDBL(String userid) {
         String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
@@ -215,7 +217,6 @@ public abstract class Command {
         }
         return helpParsed;
     }
-    private String helpParsed = null;
 
     /**
      * This will hold the command name aka what the user puts after the prefix

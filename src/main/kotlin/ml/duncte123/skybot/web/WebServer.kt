@@ -26,8 +26,8 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.AirUtils.CONFIG
+import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
@@ -42,6 +42,7 @@ import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
 import java.nio.charset.Charset
+import java.sql.SQLException
 import java.util.*
 
 
@@ -53,7 +54,7 @@ class WebServer {
             .setClientSecret(CONFIG.getString("discord.oauth.clientSecret", "aaa"))
             .build()
 
-    fun activate() {
+    init {
         //Port has to be 2000 because of the apache proxy on the vps
         port(2000)
 
@@ -104,23 +105,23 @@ class WebServer {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
                 val params = toMap(pairs)
 
-                val prefix               = params["prefix"]
-                val serverDescription    = params["serverDescription"]
-                val welcomeChannel       = params["welcomeChannel"]
+                val prefix = params["prefix"]
+                val serverDescription = params["serverDescription"]
+                val welcomeChannel = params["welcomeChannel"]
                 val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
-                val autorole             = params["autoRoleRole"]
+                val autorole = params["autoRoleRole"]
                 //val autoRoleEnabled      = params["autoRoleRoleCB"]
-                val modLogChannel        = params["modChannel"]
-                val announceTracks      = paramToBoolean(params["announceTracks"])
-                val autoDeHoist         = paramToBoolean(params["autoDeHoist"])
-                val filterInvites       = paramToBoolean(params["filterInvites"])
-                val welcomeMessage       = params["welcomeMessage"]
-                val leaveMessage         = params["leaveMessage"]
-                val muteRole             = params["muteRole"]
-                val kickMode            = paramToBoolean(params["kickMode"])
+                val modLogChannel = params["modChannel"]
+                val announceTracks = paramToBoolean(params["announceTracks"])
+                val autoDeHoist = paramToBoolean(params["autoDeHoist"])
+                val filterInvites = paramToBoolean(params["filterInvites"])
+                val welcomeMessage = params["welcomeMessage"]
+                val leaveMessage = params["leaveMessage"]
+                val muteRole = params["muteRole"]
+                val kickMode = paramToBoolean(params["kickMode"])
                 val rateLimits: MutableList<Int> = arrayListOf()
 
-                for ( i in 0..5) {
+                for (i in 0..5) {
                     rateLimits.add(params["rateLimits[$i]"]!!.toInt())
                 }
 
@@ -161,6 +162,7 @@ class WebServer {
                         return@get "The audio player does not seem to be active"
                     }
                 } else {
+                    return@get "ERROR"
                 }
             }
 
@@ -218,7 +220,7 @@ class WebServer {
                     SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
                             .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
                     response.redirect("/dashboard")
-                } catch (e: Exception) {
+                } catch (e: IllegalStateException) {
                     response.redirect("https://discord.gg/NKM9Xtk")
                 }
             }
@@ -231,9 +233,17 @@ class WebServer {
 
             get("/kpop") {
                 val search = request.queryParamOrDefault("search", "")
-                return@get ApiUtils.getRandomKpopMember(search).toJson()
-                        .put("status", "success")
-                        .put("code", response.status())
+                try {
+                    return@get ApiUtils.getRandomKpopMember(search).toJson()
+                            .put("status", "success")
+                            .put("code", response.status())
+                } catch (e: SQLException) {
+                    response.status(404)
+                    return@get JSONObject()
+                            .put("status", "faiure")
+                            .put("message", "Nothing found")
+                            .put("code", response.status())
+                }
             }
         }
 
@@ -247,7 +257,7 @@ class WebServer {
         }
 
         notFound {
-            if(request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
+            if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
                 response.type(APPLICATION_JSON.type)
                 return@notFound JSONObject()
                         .put("status", "failure")
@@ -260,7 +270,7 @@ class WebServer {
         }
 
         internalServerError {
-            if(request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
+            if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
                 response.type(APPLICATION_JSON.type)
                 return@internalServerError JSONObject()
                         .put("status", "failure")
@@ -274,9 +284,9 @@ class WebServer {
 
     private fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path, DEFAULT_ACCEPT, engine) {
-            if(withGuildData) {
+            if (withGuildData) {
                 val guild = getGuildFromRequest(request)
-                if(guild != null) {
+                if (guild != null) {
                     val tcs = guild.textChannelCache.filter {
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
@@ -296,7 +306,7 @@ class WebServer {
 
     private fun getGuildFromRequest(request: Request): Guild? {
 
-        val guildId =  request.params(":guildid")
+        val guildId = request.params(":guildid")
 
         return SkyBot.getInstance()
                 .shardManager.getGuildById(guildId) ?: null
@@ -309,8 +319,8 @@ class WebServer {
     private fun guildToJson(guild: OAuth2Guild) = JSONObject()
             .put("name", guild.name)
             .put("iconId", guild.iconId)
-            .put("iconUrl", if(!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
-                else "https://cdn.discordapp.com/embed/avatars/0.png" )
+            .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
+            else "https://cdn.discordapp.com/embed/avatars/0.png")
             .put("owner", guild.isOwner)
             .put("id", guild.id)
 
@@ -324,7 +334,7 @@ class WebServer {
     }
 
     private fun paramToBoolean(param: String?): Boolean {
-        return if(param.isNullOrEmpty()) false else (param == "on")
+        return if (param.isNullOrEmpty()) false else (param == "on")
     }
 
 }

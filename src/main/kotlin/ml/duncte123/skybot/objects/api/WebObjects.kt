@@ -24,12 +24,12 @@ import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
 
 
-data class LlamaObject(val id: Int, val file: String): ApiObject()
+data class LlamaObject(val id: Int, val file: String) : ApiObject()
 
-data class KpopObject(val id: Int, val name: String, val band: String, val image: String): ApiObject()
+data class KpopObject(val id: Int, val name: String, val band: String, val image: String) : ApiObject()
 
-data class WarnObject(val userId: String, val warnings: List<Warning>): ApiObject()
-data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId: String, val reason: String, val guildId: String? = null): ApiObject()
+data class WarnObject(val userId: String, val warnings: List<Warning>) : ApiObject()
+data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId: String, val reason: String, val guildId: String? = null) : ApiObject()
 
 
 open class ApiObject {

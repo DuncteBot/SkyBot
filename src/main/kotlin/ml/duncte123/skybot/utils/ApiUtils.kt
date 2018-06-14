@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.api.LlamaObject
 import ml.duncte123.skybot.objects.api.WarnObject
 import ml.duncte123.skybot.objects.api.Warning
 import java.sql.ResultSet
+import java.sql.SQLException
 
 object ApiUtils {
 
@@ -70,27 +71,32 @@ object ApiUtils {
     @JvmStatic
     fun getWarnsForUser(userId: String, guildId: String): WarnObject {
         val conn = AirUtils.DB.getConnManager().connection
-        val smt = conn.prepareStatement(
-                "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
-        smt.setString(1, userId)
-        smt.setString(2, guildId)
-        val result = smt.executeQuery()
+        try {
+            val smt = conn.prepareStatement(
+                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
+            smt.setString(1, userId)
+            smt.setString(2, guildId)
+            val result = smt.executeQuery()
 
-        val warnings = ArrayList<Warning>()
+            val warnings = ArrayList<Warning>()
 
-        while (result.next()) {
-            warnings.add(Warning(
-                    result.getInt("id"),
-                    result.getDate("warn_date"),
-                    result.getDate("expire_date"),
-                    result.getString("mod_id"),
-                    result.getString("reason"),
-                    result.getString("guild_id")
-            ))
+            while (result.next()) {
+                warnings.add(Warning(
+                        result.getInt("id"),
+                        result.getDate("warn_date"),
+                        result.getDate("expire_date"),
+                        result.getString("mod_id"),
+                        result.getString("reason"),
+                        result.getString("guild_id")
+                ))
+            }
+
+            conn.close()
+            return WarnObject(userId, warnings)
+        } catch (e: SQLException) {
+            conn.close()
+            throw e
         }
-
-        conn.close()
-        return WarnObject(userId, warnings)
     }
 
 }

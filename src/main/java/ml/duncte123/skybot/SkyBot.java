@@ -140,7 +140,7 @@ public class SkyBot {
         HelpEmbeds.init();
 
         //last start the server
-        AirUtils.WEB_SERVER.activate();
+        //AirUtils.WEB_SERVER.activate();
     }
 
     public static SkyBot getInstance() {
