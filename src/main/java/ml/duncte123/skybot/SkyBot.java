@@ -138,6 +138,9 @@ public class SkyBot {
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+
+        //last start the server
+        //AirUtils.WEB_SERVER.activate();
     }
 
     public static SkyBot getInstance() {

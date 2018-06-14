@@ -188,7 +188,7 @@ class OneLinerCommands : Command() {
             |`${PREFIX}yesno` => Chooses between yes or no
             |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
             |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
-            |'${PREFIX}xkcd' => Get a random comic from xkcd.com
+            |`${PREFIX}xkcd` => Get a random comic from xkcd.com
     """.trimMargin()
 
     override fun getName() = "ping"

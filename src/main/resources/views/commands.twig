@@ -1,0 +1,22 @@
+{% extends 'templates/base.twig' %}
+
+{% block container %}
+    <table class="striped">
+        <thead>
+        <tr>
+            <th>Command</th>
+            <th>Description</th>
+        </tr>
+        </thead>
+
+        <tbody>
+
+        {% for command in commands %}
+            <tr>
+                <td>{{ prefix }}{{ command.getName() }}</td>
+                <td>{{ command.helpParsed() }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

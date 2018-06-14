@@ -355,11 +355,11 @@ public class BotListener extends ListenerAdapter {
                 MessageUtils.sendMsg(welcomeLeaveChannel, msg);
         }
 
-        if (settings.getAutoroleRole() != null && !"".equals(settings.getAutoroleRole())
-                && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            Role r = guild.getRoleById(settings.getAutoroleRole());
-            if (r != null && !guild.getPublicRole().equals(r))
-                guild.getController()
+        if (settings.isAutoroleEnabled()
+                && event.getGuild().getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+            Role r = event.getGuild().getRoleById(settings.getAutoroleRole());
+            if (r != null && !event.getGuild().getPublicRole().equals(r))
+                event.getGuild().getController()
                         .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
                 });
         }

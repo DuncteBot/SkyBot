@@ -34,7 +34,7 @@ public class GuildSettings {
     private String logChannel = null;
     private String welcomeLeaveChannel = null;
     private String autoroleRole = null;
-    private String serverDesc = null;
+    private String serverDesc = "";
     private boolean announceTracks = false;
     private boolean autoDeHoist = false;
     private boolean filterInvites = false;
@@ -201,6 +201,10 @@ public class GuildSettings {
         return this;
     }
 
+    public boolean isAutoroleEnabled() {
+        return this.autoroleRole != null && !this.autoroleRole.isEmpty();
+    }
+
     /**
      * Returns the channel in where the welcome or leave messages should display
      *
@@ -319,6 +323,13 @@ public class GuildSettings {
 
     public long[] getRatelimits() {
         return ratelimits;
+    }
+
+    public Long[] getRateLimitsForTwig() {
+        Long[] temp = new Long[ratelimits.length];
+        for(int i = 0; i < ratelimits.length; i++)
+            temp[i] = ratelimits[i];
+        return temp;
     }
 
     public GuildSettings setRatelimits(long[] ratelimits) {

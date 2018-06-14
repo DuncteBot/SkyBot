@@ -111,7 +111,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {
-                    ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
+                    ModerationUtils.muteUser(guild, author, msg.textChannel, "Spam", ratelimit)
                 }
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
                 msg.textChannel.deleteMessages(clearable).queue {

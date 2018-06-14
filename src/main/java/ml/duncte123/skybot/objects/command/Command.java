@@ -32,6 +32,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -68,6 +69,8 @@ public abstract class Command {
      * This tells the bot to display the aliases of the command in the help command
      */
     protected boolean displayAliasesInHelp = false;
+
+    private String helpParsed = null;
 
 
     private boolean checkVoteOnDBL(String userid) {
@@ -192,6 +195,27 @@ public abstract class Command {
      */
     public String help(String invoke) {
         return help();
+    }
+
+    /**
+     * This method is internally used to properly display the text on the webpages
+     * @return the html parsed help
+     */
+    @SuppressWarnings("unused")
+    public String helpParsed() {
+        if(helpParsed == null) {
+            String s = help()
+                    .replaceAll("<", "&lt;")
+                    .replaceAll(">", "&gt;")
+                    .replaceAll("`(.*)`", "<code>$1</code>")
+                    .replaceAll("\\n", "<br />")
+                    .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
+            if (getAliases().length > 0) {
+                s += "<br />Aliases: " + Settings.PREFIX + StringUtils.join(getAliases(), ", " + Settings.PREFIX);
+            }
+            helpParsed = s;
+        }
+        return helpParsed;
     }
 
     /**
