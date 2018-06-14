@@ -40,7 +40,7 @@ public class LlamaCommand extends Command {
 
         MessageUtils.sendEmbed(event, EmbedUtils.embedImage(llama.getFile()));
 
-        /*WebUtils.ins.getJSONObject(Settings.API_BASE + "/llama/json").async(
+        /*WebUtils.ins.getJSONObject(Settings.OLD_API_BASE + "/llama/json").async(
                 (json) -> MessageUtils.sendEmbed(event, EmbedUtils.embedImage(json.getString("file")))
         );*/
     }
