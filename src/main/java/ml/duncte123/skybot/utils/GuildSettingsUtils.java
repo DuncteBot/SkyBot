@@ -302,9 +302,9 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\P{Print}", "");
     }
 
-    private static String replaceUnicodeAndLines(String s) {
+    /*private static String replaceUnicodeAndLines(String s) {
         return replaceUnicode(replaceNewLines(s));
-    }
+    }*/
 
     private static String fixUnicodeAndLines(String s) {
         return replaceUnicode(fixNewLines(replaceNewLines(s)));
