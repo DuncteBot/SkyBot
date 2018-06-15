@@ -30,6 +30,11 @@
                 const div = document.getElementById("guilds");
                 div.innerHTML = "";
                 for(let guild of json.guilds) {
+                    let members = "Bot not in server";
+                    if(guild.members) {
+                        members =  guild.members + " members";
+                    }
+
                     div.innerHTML += `<div class="col s12 m6 l4 xl3">
                 <div class="card horizontal hoverable">
                     <div class="card-image">
@@ -38,7 +43,7 @@
                     <div class="card-stacked">
                         <div class="card-content">
                             <h6 class="truncate">${guild.name}</h6>
-                            <p>0 members</p>
+                            <p>${members}</p>
                         </div>
                         <div class="card-action">
                             <a href="/server/${guild.id}/">Edit settings</a>

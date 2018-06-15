@@ -316,13 +316,19 @@ class WebServer {
             oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
 
 
-    private fun guildToJson(guild: OAuth2Guild) = JSONObject()
-            .put("name", guild.name)
-            .put("iconId", guild.iconId)
-            .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
-            else "https://cdn.discordapp.com/embed/avatars/0.png")
-            .put("owner", guild.isOwner)
-            .put("id", guild.id)
+    private fun guildToJson(guild: OAuth2Guild):JSONObject {
+
+        val jdaGuild = SkyBot.getInstance().shardManager.getGuildById(guild.id)
+
+        return JSONObject()
+                .put("name", guild.name)
+                .put("iconId", guild.iconId)
+                .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
+                else "https://cdn.discordapp.com/embed/avatars/0.png")
+                .put("owner", guild.isOwner)
+                .put("members", jdaGuild?.memberCache?.size() ?: false)
+                .put("id", guild.id)
+    }
 
     private fun toMap(pairs: List<NameValuePair>): Map<String, String> {
         val map = HashMap<String, String>()
