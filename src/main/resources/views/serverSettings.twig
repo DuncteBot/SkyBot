@@ -14,7 +14,7 @@
                 <h6>Basic settings:</h6> <br />
 
                 <div class="input-field col s12 m1">
-                    <input placeholder="db!" id="prefix" name="prefix" type="text" value="{{ settings.getCustomPrefix() }}">
+                    <input placeholder="db!" id="prefix" name="prefix" type="text" value="{{ settings.getCustomPrefix() }}" required>
                     <label for="prefix">Prefix</label>
                 </div>
 
@@ -117,6 +117,16 @@
                         </label>
                     </div>
 
+                    <div class="switch">
+                        Swearword filter:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="swearFilter" id="" {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
                 </div>
 
             </div>
@@ -181,10 +191,12 @@
 
 
             <div class="row">
-
+                <h6>Ratelimits:</h6>
+                <small>The following values indicate the mutes duration for incrementing amount of violations</small>
+                <br />
                 {% for i,r in settings.getRateLimitsForTwig() %}
                     <div class="input-field col s12 m1">
-                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" />
+                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required />
                     </div>
                 {% endfor %}
             </div>
