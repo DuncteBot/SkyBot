@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
 import net.dv8tion.jda.core.MessageBuilder
@@ -83,11 +82,12 @@ class RadioCommand : MusicCommand() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val `with"Ads"` = AirUtils.RAND.nextInt(800) in 215 until 248 && !hasUpvoted(event.author)
-        if (`with"Ads"`) {
+        if (!hasUpvoted(event.author)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
-                            "You can upvote the bot [here](https://discordbots.org/bot/210363111729790977)" +
-                            " or become a patreon [here](https://patreon.com/duncte123) for supporting our bot!").build())
+                    "You cannot use the shorten command as you haven't up-voted the bot." +
+                            " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
+                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
+            return
         }
         if (!channelChecks(event))
             return
