@@ -115,6 +115,7 @@ class WebServer {
                 val announceTracks = paramToBoolean(params["announceTracks"])
                 val autoDeHoist = paramToBoolean(params["autoDeHoist"])
                 val filterInvites = paramToBoolean(params["filterInvites"])
+                val swearFilter = paramToBoolean(params["swearFilter"])
                 val welcomeMessage = params["welcomeMessage"]
                 val leaveMessage = params["leaveMessage"]
                 val muteRole = params["muteRole"]
@@ -141,6 +142,7 @@ class WebServer {
                         .setFilterInvites(filterInvites)
                         .setMuteRoleId(muteRole)
                         .setKickState(kickMode)
+                        .setEnableSwearFilter(swearFilter)
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings)
 
