@@ -84,7 +84,7 @@ class RadioCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (!hasUpvoted(event.author)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
-                    "You cannot use the shorten command as you haven't up-voted the bot." +
+                    "You cannot use the radio command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
                             ") or become a patreon [here](https://patreon.com/duncte123)").build())
             return
