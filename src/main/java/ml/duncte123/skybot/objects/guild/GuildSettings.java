@@ -40,7 +40,7 @@ public class GuildSettings {
     private boolean filterInvites = false;
     private boolean spamFilterState = false;
     private String muteRoleId = null;
-    private long[] ratelimits = new long[]{};
+    private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
     private boolean kickInstead = false;
 
     /**
