@@ -20,25 +20,16 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.services.youtube.YouTube
-import com.google.api.services.youtube.model.SearchResult
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
-import java.io.IOException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand : MusicCommand() {
-
-    private val youtube: YouTube = YouTube.Builder(
-            GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance()) { _ -> }
-            .setApplicationName("SkyBot-youtube-search")
-            .build()
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
@@ -89,16 +80,4 @@ open class PlayCommand : MusicCommand() {
             |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
 
     override fun getName(): String = "play"
-
-    @Throws(IOException::class)
-    private fun searchYoutube(query: String): List<SearchResult> {
-        return youtube.search().list("id,snippet")
-                .setKey(AirUtils.CONFIG.getString("apis.googl"))
-                .setQ(query)
-                .setType("video")
-                .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                .setMaxResults(1L)
-                .execute()
-                .items
-    }
 }
