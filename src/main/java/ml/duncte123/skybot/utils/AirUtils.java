@@ -24,6 +24,7 @@ import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
+import me.duncte123.weebJava.types.Endpoint;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;

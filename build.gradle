@@ -74,8 +74,7 @@ buildConfig {
 
 dependencies {
     //Weeb api
-    compile 'com.github.duncte123:weeb.java:c1a6a7db2e'
-    //compile group: 'me.duncte123', name: 'weebJava', version: '1.2.1'
+    compile group: 'me.duncte123', name: 'weebJava', version: '2.0.0'
     //My little utils
     compile 'com.github.duncte123:botCommons:30fe36cbe5'
 
