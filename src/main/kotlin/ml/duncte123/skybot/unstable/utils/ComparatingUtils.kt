@@ -38,35 +38,14 @@ class ComparatingUtils {
         var exceptionMap: Map<Class<*>, Map<ExceptionType, Array<out StackTraceElement>>> = HashMap()
 
         @JvmStatic
-        inline fun <reified T : Throwable> checkEx(throwable: T): BooleanArray {
-            val mapHasKey = exceptionMap.containsKey(throwable::class.java)
-            val exactMatch =
-                    if (mapHasKey) {
-                        exceptionMap[throwable::class.java]!!.entries.filter { it.key.ex compare throwable }.count() > 0
-                    } else {
-                        false
-                    }
-            val added: Boolean = if (!mapHasKey && !exactMatch) {
-                exceptionMap += throwable::class.java to hashMapOf(ExceptionType(throwable) to throwable.stackTrace)
-                true
-            } else if (mapHasKey && !exactMatch) {
-                var lowerMap = exceptionMap[throwable::class.java]!!
-                lowerMap += hashMapOf(ExceptionType(throwable) to throwable.stackTrace)
-                exceptionMap += throwable::class.java to lowerMap
-                true
-            } else {
-                exceptionMap[throwable::class.java]!!.keys.first().increase()
-                false
-            }
-            val data = booleanArrayOf(mapHasKey, exactMatch, added)
-            LoggerFactory.getLogger(ComparatingUtils::class.java)
-                    .debug("${TextColor.CYAN}ExceptionData: [HadKey: ${data[0]}, HadMatching: ${data[1]}, Added: ${data[2]}]${TextColor.RESET}")
-            return data
+        inline fun <reified T : Throwable> checkEx(throwable: T) {
+
+            throwable.printStackTrace()
         }
 
         @JvmStatic
-        fun execCheck(throwable: Throwable): BooleanArray {
-            return checkEx(throwable)
+        fun execCheck(throwable: Throwable) {
+            checkEx(throwable)
         }
 
         @JvmStatic
