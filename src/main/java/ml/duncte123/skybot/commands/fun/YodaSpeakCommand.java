@@ -26,6 +26,7 @@ public class YodaSpeakCommand extends Command {
                 .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
                 .get()
                 .addHeader("X-User-id", event.getJDA().getSelfUser().getId())
+                .addHeader("X-client-token", event.getJDA().getToken())
                 .addHeader("Accept", "text/plain")
                 .addHeader("User-Agent", WebUtils.getUserAgent())
                 .build(), Response::body).async(
