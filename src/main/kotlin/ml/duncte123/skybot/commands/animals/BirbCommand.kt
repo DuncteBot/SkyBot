@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.animals
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
@@ -43,7 +42,6 @@ class BirbCommand : Command() {
 
         } catch (e: IOException) {
             sendMsg(event, "ERROR: " + e.message)
-            ComparatingUtils.checkEx(e)
         }
     }
 

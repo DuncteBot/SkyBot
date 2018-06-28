@@ -26,7 +26,6 @@ import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -81,7 +80,6 @@ class RestartShardCommand : Command() {
             if (Settings.useJSON)
                 MessageUtils.sendErrorJSON(event.message, ex, false)
             else {
-                ComparatingUtils.checkEx(ex)
                 MessageUtils.sendError(event.message)
             }
         }

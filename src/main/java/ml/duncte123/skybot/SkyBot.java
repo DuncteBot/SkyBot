@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botCommons.text.TextColor;
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
@@ -64,7 +63,7 @@ public class SkyBot {
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
+        RestAction.DEFAULT_FAILURE = (t) -> {};
         RestAction.setPassContext(true);
 
         //Set the logger to only info by default

@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.uncategorized
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.discord.user.Profile
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
@@ -170,7 +169,6 @@ class UserinfoCommand : Command() {
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue({}, {
-                    ComparatingUtils.execCheck(it)
                     MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
                 })
             }

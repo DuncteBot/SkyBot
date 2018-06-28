@@ -30,7 +30,6 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
@@ -207,7 +206,6 @@ class EvalCommand : Command() {
                         protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
-                    ComparatingUtils.checkEx(ex)
                     ex
                 } finally {
                     filter.unregister()
