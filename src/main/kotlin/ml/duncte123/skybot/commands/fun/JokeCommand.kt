@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.utils.AirUtils.RAND
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -42,6 +43,21 @@ class JokeCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
+        when (RAND.nextInt(2)) {
+            0 -> sendRedditEmbed(event)
+            1 -> sendRanddomJoke(event)
+        }
+
+    }
+
+    override fun help() = "See a funny joke. Dad's love them!\n" +
+            "Usage: `$PREFIX$name`"
+
+    override fun getName() = "joke"
+
+    override fun getAliases() = arrayOf("meme")
+
+    private fun sendRedditEmbed(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400").async {
             val posts = it.getJSONObject("data").getJSONArray("children").filter {
                 it as JSONObject
@@ -72,10 +88,9 @@ class JokeCommand : Command() {
         }
     }
 
-    override fun help() = "See a funny joke. Dad's love them!\n" +
-            "Usage: `$PREFIX$name`"
-
-    override fun getName() = "joke"
-
-    override fun getAliases() = arrayOf("meme")
+    private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
+        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
+            sendMsg(event, EmbedUtils.embedMessage(it.getString("joke")))
+        }
+    }
 }

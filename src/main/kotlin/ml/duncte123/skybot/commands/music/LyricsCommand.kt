@@ -62,7 +62,9 @@ class LyricsCommand : MusicCommand() {
                 } else {
                     val url = "https://genius.com$it"
                     WebUtils.ins.scrapeWebPage(url).async { doc ->
-                        val text = doc.select("div.lyrics").first().child(0).html().replace("<br>", "\n")
+                        val text = doc.select("div.lyrics").first().child(0).wholeText()
+                                .replace("<br>", "\n")
+                        println(text)
                         MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
                                 .setTitle("Lyrics for $search", url)
                                 .setDescription(StringUtils.abbreviate(text, 1900))
