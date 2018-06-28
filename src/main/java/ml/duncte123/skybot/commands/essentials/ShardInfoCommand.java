@@ -24,7 +24,7 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.apache.commons.lang3.text.WordUtils;
+import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.ArrayList;
@@ -49,14 +49,14 @@ public class ShardInfoCommand extends Command {
         List<List<String>> table = new ArrayList<>();
         List<JDA> shards = new ArrayList<>(event.getJDA().asBot().getShardManager().getShards());
         Collections.reverse(shards);
-        for (JDA jda : shards) {
+        for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
-            row.add((jda.getShardInfo().getShardId() + 1) +
-                    (event.getJDA().getShardInfo().getShardId() == jda.getShardInfo().getShardId() ? " (current)" : ""));
-            row.add(WordUtils.capitalizeFully(jda.getStatus().toString().replace("_", " ")));
-            row.add(String.valueOf(jda.getPing()));
-            row.add(String.valueOf(jda.getGuilds().size()));
-            row.add(String.valueOf(jda.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
+            row.add((shard.getShardInfo().getShardId() + 1) +
+                    (event.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
+            row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
+            row.add(String.valueOf(shard.getPing()));
+            row.add(String.valueOf(shard.getGuilds().size()));
+            row.add(String.valueOf(shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
                     .getSelfMember())).count()));
             table.add(row);
             if (table.size() == 20) {

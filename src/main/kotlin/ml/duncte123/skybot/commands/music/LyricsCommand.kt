@@ -26,7 +26,7 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import okhttp3.Request
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
 
@@ -62,7 +62,9 @@ class LyricsCommand : MusicCommand() {
                 } else {
                     val url = "https://genius.com$it"
                     WebUtils.ins.scrapeWebPage(url).async { doc ->
-                        val text = doc.select("div.lyrics").first().child(0).html().replace("<br>", "\n")
+                        val text = doc.select("div.lyrics").first().child(0).wholeText()
+                                .replace("<br>", "\n")
+                        println(text)
                         MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
                                 .setTitle("Lyrics for $search", url)
                                 .setDescription(StringUtils.abbreviate(text, 1900))
@@ -79,7 +81,7 @@ class LyricsCommand : MusicCommand() {
 
     override fun getName() = "lyrics"
 
-    fun getAuthToken(): String {
+    private fun getAuthToken(): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
             formData["client_id"] = AirUtils.CONFIG.getString("genius.client_id", "CLIENT_ID")
@@ -91,7 +93,7 @@ class LyricsCommand : MusicCommand() {
         return "Bearer $authToken"
     }
 
-    fun searchForSong(t: String?, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(
                 Request.Builder()
                         .get()

@@ -21,6 +21,8 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.weebJava.models.impl.WeebApiImpl;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
@@ -63,6 +65,12 @@ public class BotListener extends ListenerAdapter {
 
     private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com/invite|\\.gg)/([\\S\\w]*\b)");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
+
+    /**
+     * Check if we are updating
+     */
+    public static boolean isUpdating = false;
+
     /**
      * This filter helps us to fiter out swearing
      */
@@ -133,7 +141,11 @@ public class BotListener extends ListenerAdapter {
 
         AirUtils.stop();
 
-        System.exit(0);
+        /*
+         * Only shut down if we are not updating
+         */
+        if(!isUpdating)
+            System.exit(0);
     }
 
     /**

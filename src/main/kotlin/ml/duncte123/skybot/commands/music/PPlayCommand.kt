@@ -44,7 +44,7 @@ class PPlayCommand : MusicCommand() {
 
         var toPlay = StringUtils.join(args, " ")
         if (!AirUtils.isURL(toPlay)) {
-            toPlay = "ytsearch:" + toPlay
+            toPlay = "ytsearch:$toPlay"
         }
         if (toPlay.length > 1024) {
             MessageUtils.sendError(event.message)
