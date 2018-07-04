@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Consumer;
 
+import static ml.duncte123.skybot.utils.EmbedUtils.embedToMessage;
+
 @SuppressWarnings({"unused", "WeakerAccess"})
 public class MessageUtils {
 
@@ -149,7 +151,7 @@ public class MessageUtils {
     public static void sendEmbed(TextChannel channel, MessageEmbed embed) {
         if (channel != null) {
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
-                (new MessageBuilder()).append(EmbedUtils.embedToMessage(embed))
+                (new MessageBuilder()).append(embedToMessage(embed))
                         .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
                         .forEach(it -> sendMsg(channel, it));
 //                sendMsg(channel, EmbedUtils.embedToMessage(embed));
@@ -169,7 +171,7 @@ public class MessageUtils {
                         .append(newContent.getContentRaw())
                         .append('\n');
                 newContent.getEmbeds().forEach(
-                        messageEmbed -> mb.append(EmbedUtils.embedToMessage(messageEmbed))
+                        messageEmbed -> mb.append(embedToMessage(messageEmbed))
                 );
                 message.editMessage(mb.build()).queue();
                 return;

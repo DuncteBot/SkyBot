@@ -34,17 +34,17 @@ public class GuildSettingsUtils {
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
 
     /**
-     * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
+     * This runs both {@link #loadGuildSettings()} and { #loadFooterQuotes()}
      */
     public static void loadAllSettings() {
         loadGuildSettings();
-        loadFooterQuotes();
+        //loadFooterQuotes();
     }
 
-    /**
+    /*
      * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
      */
-    private static void loadFooterQuotes() {
+    /*private static void loadFooterQuotes() {
         if (!AirUtils.NONE_SQLITE) return;
         logger.debug("Loading footer quotes");
 
@@ -73,7 +73,7 @@ public class GuildSettingsUtils {
                 }
             }
         });
-    }
+    }*/
 
     /**
      * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
