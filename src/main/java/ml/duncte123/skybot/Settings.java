@@ -65,7 +65,7 @@ public class Settings {
     /**
      * The icon url for the embeds
      */
-    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
+    public static final String DEFAULT_ICON = "https://bot.duncte123.me/favicon.ico";
     /**
      * The colour of the bar that your embed has
      */
