@@ -65,6 +65,11 @@ class WebServer {
         get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
                 .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
 
+        get("/suggest") {
+            "<h1 style=\"text-align: center;\">I will add this page tomorrow</h1>" +
+            "<h6 style=\"text-align: center;\">- duncte123 (2 month ago as of 05/06/2018</h6>"
+        }
+
 
         path("/dashboard") {
 

@@ -54,7 +54,7 @@ public class ChangeLogCommand extends Command {
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
         WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
             String date1 = json.getJSONObject(1).getString("published_at");
-            String date2 = json.getJSONObject(0).getString("published_at");
+            String date2 = json.getJSONObject(0).getString("publishWed_at");
             WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1
                     + "&until=" + date2).async(commits -> {
                 EmbedBuilder eb = EmbedUtils.defaultEmbed()
