@@ -23,13 +23,35 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class ChangeLogCommand extends Command {
+
+    private MessageEmbed embed = null;
+
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+        if(embed != null) {
+            MessageUtils.sendEmbed(event, embed);
+        } else {
+            fetchLatetstGitHubCommits(event);
+        }
+    }
+
+    @Override
+    public String help() {
+        return "shows the changelog on the bot";
+    }
+
+    @Override
+    public String getName() {
+        return "changelog";
+    }
+
+    private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
         WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
             String date1 = json.getJSONObject(1).getString("published_at");
             String date2 = json.getJSONObject(0).getString("published_at");
@@ -45,18 +67,9 @@ public class ChangeLogCommand extends Command {
                             j.getString("html_url") + ")** - " +
                             j.getJSONObject("author").getString("login") + "\n", false);
                 });
-                MessageUtils.sendEmbed(event, eb.build());
+                embed = eb.build();
+                MessageUtils.sendEmbed(event, embed);
             });
         });
-    }
-
-    @Override
-    public String help() {
-        return "shows the changelog on the bot";
-    }
-
-    @Override
-    public String getName() {
-        return "changelog";
     }
 }

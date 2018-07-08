@@ -38,8 +38,8 @@ public class Settings {
     @Deprecated
     public static final String[] wbkxwkZPaG4ni5lm8laY = {
             new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
-            new String(new byte[]{50, 56, 49, 54, 55, 51, 54, 53, 57, 56, 51, 52, 51, 48, 50, 52, 54, 52}),
-            new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52})
+            new String(new byte[]{50, 56, 49, 54, 55, 51, 54, 53, 57, 56, 51, 52, 51, 48, 50, 52, 54, 52})
+            //new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52})
     };
 
     /**
@@ -65,7 +65,7 @@ public class Settings {
     /**
      * The icon url for the embeds
      */
-    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
+    public static final String DEFAULT_ICON = "https://bot.duncte123.me/favicon.ico";
     /**
      * The colour of the bar that your embed has
      */

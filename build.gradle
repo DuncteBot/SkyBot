@@ -17,7 +17,7 @@
  */
 
 buildscript {
-    ext.kotlin_version = '1.2.41'
+    ext.kotlin_version = '1.2.51'
 
     repositories {
         mavenCentral()
@@ -40,7 +40,7 @@ apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
-version "3.70.1_${getGitHash()}"
+version "3.72.0_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -76,15 +76,15 @@ dependencies {
     //Weeb api
     compile group: 'me.duncte123', name: 'weebJava', version: '2.0.0'
     //My little utils
-    compile 'com.github.duncte123:botCommons:30fe36cbe5'
+    compile 'com.github.duncte123:botCommons:f55d559'
 
     //JDA (java discord api)
     //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '8f23211'
     compile group: 'net.dv8tion', name: 'JDA', version: '3.6.0_376'
 
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.2'
-    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: 'a5e04efdd1' ) {
+    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.7'
+    compile( group: 'com.github.Frederikam', name: 'Lavalink', version: '99f093d482' ) {
         exclude group: 'com.github.Frederikam.Lavalink', module: 'Lavalink-Server'
     }
 
@@ -131,7 +131,7 @@ dependencies {
     compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '8e11e6d'
 }
 
-javadoc {
+/*javadoc {
     failOnError = false
     options.memberLevel = JavadocMemberLevel.PUBLIC
     options.author()
@@ -143,7 +143,7 @@ javadoc {
             'com/wolfram/alpha/net',
             'com/wolfram/alpha/impl',
             'com/wolfram/alpha/visitor')
-}
+}*/
 
 shadowJar {
     mainClassName = "ml.duncte123.skybot.SkyBot"
@@ -158,11 +158,11 @@ compileKotlin {
         jvmTarget = "1.8"
     }
 }
-compileTestKotlin {
+/*compileTestKotlin {
     kotlinOptions {
         jvmTarget = "1.8"
     }
-}
+}*/
 kotlin {
     experimental {
         coroutines "enable"
