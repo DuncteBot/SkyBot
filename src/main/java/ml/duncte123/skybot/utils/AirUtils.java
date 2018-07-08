@@ -76,14 +76,14 @@ public class AirUtils {
     public static String convertStatus(OnlineStatus status) {
         switch (status) {
             case ONLINE:
-                return "<:online:313956277808005120>";
+                return "<:online2:464520569975603200>";
             case IDLE:
-                return "<:away:313956277220802560>";
+                return "<:away2:464520569862357002>";
             case DO_NOT_DISTURB:
-                return "<:dnd:313956276893646850>";
+                return "<:dnd2:464520569560498197>";
 
             default:
-                return "<:offline:313956277237710868>";
+                return "<:offline2:464520569929334784>";
         }
     }
 

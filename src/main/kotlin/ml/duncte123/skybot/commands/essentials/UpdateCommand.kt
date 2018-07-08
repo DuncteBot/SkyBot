@@ -31,6 +31,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
@@ -45,7 +46,7 @@ class UpdateCommand : Command() {
         @Suppress("DEPRECATION")
         if (!isDev(event.author)
                 && Settings.OWNER_ID != event.author.id) {
-            MessageUtils.sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
+            sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
             return
         }
@@ -64,7 +65,7 @@ class UpdateCommand : Command() {
 
         when (args.size) {
             0 -> {
-                MessageUtils.sendMsg(event, "✅ Updating", {
+                sendMsg(event, "✅ Updating") {
                     // This will also shutdown eval
                     event.jda.asBot().shardManager.shutdown()
 
@@ -73,16 +74,16 @@ class UpdateCommand : Command() {
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
-                })
+                }
             }
             1 -> {
                 if (args[0] != "gradle")
                     return
-                MessageUtils.sendMsg(event, "✅ Updating", {
+                sendMsg(event, "✅ Updating") {
                     launch {
                         initUpdate(event, it.id)
                     }
-                })
+                }
             }
         }
     }
@@ -123,7 +124,7 @@ class UpdateCommand : Command() {
         val progress = updateprogress.await()
 
         if (progress) {
-            MessageUtils.sendMsg(event, "✅ Update built. Shutting running version down.", {
+            sendMsg(event, "✅ Update built. Shutting running version down.") {
                 event.channel.deleteMessageById(id).queue()
                 if (!version.isEmpty()) {
                     // This will also shutdown eval
@@ -135,11 +136,11 @@ class UpdateCommand : Command() {
                     // Magic code. Tell the updater to update
                     System.exit(0x64)
                 }
-            })
+            }
         } else {
-            MessageUtils.sendMsg(event, "❌ Update failed building. $links", {
+            sendMsg(event, "❌ Update failed building. $links") {
                 event.channel.deleteMessageById(id).queue()
-            })
+            }
         }
     }
 
