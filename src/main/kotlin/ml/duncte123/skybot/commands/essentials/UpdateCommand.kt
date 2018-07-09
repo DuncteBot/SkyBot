@@ -98,7 +98,7 @@ class UpdateCommand : Command() {
 
         val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
             val pull = getCommand("git pull")
-            val build = getCommand("gradlew build --refresh-dependencies")
+            val build = getCommand("gradlew build --refresh-dependencies -x test")
             val versioncmd = getCommand("gradlew printVersion")
 
             links = buildString {
