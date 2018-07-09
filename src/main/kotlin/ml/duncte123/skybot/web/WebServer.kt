@@ -191,7 +191,7 @@ class WebServer {
         }
 
         get("/liveServerCount") {
-            engine.render(ModelAndView(hashMapOf("nothing" to "something"),
+            engine.render(ModelAndView(mapOf("nothing" to "something"),
                     "static/liveServerCount.twig"))
         }
 
