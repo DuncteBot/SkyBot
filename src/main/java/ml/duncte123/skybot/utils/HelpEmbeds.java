@@ -138,7 +138,7 @@ public class HelpEmbeds {
                 .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
                 .addField("Other suff",
                         "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                                "Support development of this bot: [https://www.patreon.com/duncte123](https://www.patreon.com/duncte123)", false)
+                                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
                 .build();
     }
 
