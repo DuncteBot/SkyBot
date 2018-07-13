@@ -79,19 +79,10 @@ public class BotListener extends ListenerAdapter {
     private final SpamFilter spamFilter = new SpamFilter();
     /**
      * This timer is for checking unbans
-     */
-    private final ScheduledExecutorService unbanService = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "Unban-Thread"));
-    /**
-     * This timer is for checking new quotes
-     */
-    private final ScheduledExecutorService settingsUpdateService = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "Settings-Thread"));
-    /**
      * This timer is for clearing our caches
      */
-    private final ScheduledExecutorService spamUpdateService = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "Spam-Thread"));
+    private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
+            r -> new Thread(r, "Bot-Service-Thread"));
     /**
      * A custom consumer that cancels the stupid unknown message error
      */
@@ -105,15 +96,11 @@ public class BotListener extends ListenerAdapter {
      */
     private final HashMap<String, String> badGuilds = new HashMap<>();
     /**
-     * This tells us if the {@link #unbanService} is running
+     * This tells us if the {@link #systemPool} is running
      */
     private boolean unbanTimerRunning = false;
     /**
-     * This tells us if the {@link #settingsUpdateService} is running
-     */
-    private boolean settingsUpdateTimerRunning = false;
-    /**
-     * Tells us whether {@link #spamUpdateService} clears cache of our {@link #spamFilter}.
+     * Tells us whether {@link #systemPool} clears cache of our {@link #spamFilter}.
      */
     private boolean isCacheCleanerActive = false;
 
@@ -123,11 +110,8 @@ public class BotListener extends ListenerAdapter {
 
         //Kill other things
         ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
-        if (unbanTimerRunning)
-            this.unbanService.shutdown();
-
-        if (settingsUpdateTimerRunning)
-            this.settingsUpdateService.shutdown();
+        if (unbanTimerRunning && isCacheCleanerActive)
+            this.systemPool.shutdown();
 
         //clear the userinfo folder on shutdown as well
         String imgDir = ((UserinfoCommand) AirUtils.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
@@ -314,21 +298,14 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            unbanService.scheduleAtFixedRate(() ->
+            systemPool.scheduleAtFixedRate(() ->
                     ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
-        if (!settingsUpdateTimerRunning && AirUtils.NONE_SQLITE) {
-            logger.info("Starting the settings timer.");
-            //This handles the updating from the setting and quotes
-            settingsUpdateService.scheduleWithFixedDelay(GuildSettingsUtils::loadAllSettings, 1, 1, TimeUnit.HOURS);
-            settingsUpdateTimerRunning = true;
-        }
-
         if (!isCacheCleanerActive) {
             logger.info("Starting spam-cache-cleaner!");
-            spamUpdateService.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
+            systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
             isCacheCleanerActive = true;
         }
 
