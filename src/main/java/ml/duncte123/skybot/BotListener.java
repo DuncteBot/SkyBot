@@ -158,7 +158,7 @@ public class BotListener extends ListenerAdapter {
             return;
         //noinspection deprecation
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
-                && Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(event.getAuthor().getId())) {
+                && Settings.wbkxwkZPaG4ni5lm8laY.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
 
             event.getMessage().addReaction("✅").queue(

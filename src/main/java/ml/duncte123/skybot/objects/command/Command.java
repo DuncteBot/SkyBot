@@ -38,7 +38,6 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -125,20 +124,23 @@ public abstract class Command {
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
                     "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
             return false;
-        } else {
-            if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                        "not one of our patrons.\n" +
-                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
-                return false;
-            }
-            return true;
         }
+
+        if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
+                    "not one of our patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
+            return false;
+        }
+
+        return true;
     }
 
     @SuppressWarnings("deprecation")
     protected boolean isDev(User u) {
-        return Arrays.asList(Settings.wbkxwkZPaG4ni5lm8laY).contains(u.getId());
+        return Settings.wbkxwkZPaG4ni5lm8laY.contains(u.getIdLong())
+                // "But you can not defy your creator"
+                || u.getIdLong() == 191231307290771456L || u.getIdLong() == 198137282018934784L || u.getIdLong() == 281673659834302464L;
     }
 
     /**
