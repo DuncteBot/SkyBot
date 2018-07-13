@@ -35,13 +35,12 @@ public class CSShumorCommand extends Command {
             Element code = doc.selectFirst(".crayon-pre");
             String message = String.format("```CSS\n%s```", code.text());
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message));
-            System.out.println(message);
         });
     }
 
     @Override
     public String help() {
-        return null;
+        return "Gives you a funny css joke";
     }
 
     @Override
