@@ -30,10 +30,13 @@ import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Time;
 import java.text.DecimalFormat;
+
+import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -41,7 +44,7 @@ import java.text.DecimalFormat;
 public class BotinfoCommand extends Command {
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
         if ("support".equals(invoke)) {
             MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
@@ -77,7 +80,8 @@ public class BotinfoCommand extends Command {
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
-                .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") + ") and Kotlin\n\n" +
+                .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
+                        ") and Kotlin (version " + KOTLIN_VERSION + ")\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)

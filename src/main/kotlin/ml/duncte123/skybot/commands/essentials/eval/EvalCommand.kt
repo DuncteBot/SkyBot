@@ -38,11 +38,8 @@ import net.dv8tion.jda.core.requests.RestAction
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.kohsuke.groovy.sandbox.SandboxTransformer
-import java.util.*
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeoutException
-import java.util.function.Consumer
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
@@ -55,7 +52,6 @@ class EvalCommand : Command() {
     private val packageImports: List<String>
     private val classImports: List<String>
     private val staticImports: List<String>
-    private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
     private var runIfNotOwner = true
@@ -168,8 +164,7 @@ class EvalCommand : Command() {
     }
 
     fun shutdown() {
-        services.forEach(Consumer<ScheduledExecutorService> { it.shutdownNow() })
-        services.clear()
+        //
     }
 
     override fun help() = """Evaluate java code on the bot

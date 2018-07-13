@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 
@@ -38,7 +39,7 @@ import java.time.format.DateTimeFormatter;
 public class GuildInfoCommand extends Command {
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         try {
             Guild g = event.getGuild();
             //https://stackoverflow.com/a/1915107/4453592

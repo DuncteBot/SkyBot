@@ -34,7 +34,7 @@ import kotlin.annotation.AnnotationTarget.*
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
+annotation class SinceSkybot(val version: String = Settings.VERSION)
 
 /**
  * Specifies any part in any kind of files.

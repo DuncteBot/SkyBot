@@ -16,21 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.command;
+package ml.duncte123.skybot.commands.fun;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jsoup.nodes.Element;
 
-/**
- * This is a dummy command to test some things with commands
- */
-public class DummyCommand extends Command {
-    boolean hasRun = false;
+import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
 
+public class CSShumorCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        hasRun = true;
+        WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async( (doc) -> {
+            Element code = doc.selectFirst(".crayon-pre");
+            String message = String.format("```CSS\n%s```", code.text());
+            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message));
+            System.out.println(message);
+        });
     }
 
     @Override
@@ -40,6 +46,6 @@ public class DummyCommand extends Command {
 
     @Override
     public String getName() {
-        return "dummy";
+        return "csshumor";
     }
 }

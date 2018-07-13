@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.regex.Pattern;
 
@@ -34,7 +35,7 @@ public class HelpCommand extends Command {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         if (args.length > 0) {
             String toSearch = StringUtils.join(args, " ").toLowerCase()
                     .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +

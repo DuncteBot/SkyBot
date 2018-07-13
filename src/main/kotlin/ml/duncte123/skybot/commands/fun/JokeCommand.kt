@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.BuildConfig.URL_ARRAY
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.AirUtils.RAND
@@ -89,7 +90,7 @@ class JokeCommand : Command() {
     }
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
-        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
+        WebUtils.ins.getJSONObject(URL_ARRAY[1]).async {
             sendEmbed(event, EmbedUtils.embedMessage(it.getString("joke")))
         }
     }

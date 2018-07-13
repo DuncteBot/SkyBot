@@ -35,9 +35,6 @@ public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
     public static TLongLongMap cooldowns = new TLongLongHashMap();
-    @SinceSkybot(version = "3.54.2")
-    /*private static ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "MusicCooldown - Thread"));*/
     private static AudioUtils audioUtils = AudioUtils.ins;
 
     static {

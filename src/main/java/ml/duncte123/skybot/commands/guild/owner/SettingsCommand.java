@@ -31,6 +31,7 @@ import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +47,7 @@ public class SettingsCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         //noinspection deprecation
         if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(event.getAuthor())) {
             sendMsg(event, "You need the \"Manage Server\" permission to use this command");

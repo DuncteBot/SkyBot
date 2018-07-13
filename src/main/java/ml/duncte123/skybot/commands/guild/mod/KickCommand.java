@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 
@@ -37,7 +38,7 @@ public class KickCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.");

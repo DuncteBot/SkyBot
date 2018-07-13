@@ -20,13 +20,16 @@ package ml.duncte123.skybot;
 
 import ml.duncte123.skybot.utils.AirUtils;
 
-import java.awt.*;
+import java.awt.Color;
+
+import static java.awt.Color.decode;
+import static java.lang.System.getProperty;
 
 public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String OWNER_ID = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.ownerId);
+    public static final String OWNER_ID = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.OWNER_ID);
     // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
@@ -65,15 +68,15 @@ public class Settings {
     /**
      * The icon url for the embeds
      */
-    public static final String DEFAULT_ICON = "https://bot.duncte123.me/favicon.ico";
+    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = Color.decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
+    public static final Color defaultColour = decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
     /**
      * This holds if we can use the updater
      */
-    public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
+    public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     /**
      * this tells the bot if we should send json errors
      */
