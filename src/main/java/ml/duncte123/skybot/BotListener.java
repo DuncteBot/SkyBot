@@ -122,7 +122,7 @@ public class BotListener extends ListenerAdapter {
         MusicCommand.shutdown();
 
         //Kill other things
-        ((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
+        //((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
         if (unbanTimerRunning)
             this.unbanService.shutdown();
 

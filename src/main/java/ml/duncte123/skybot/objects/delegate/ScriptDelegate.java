@@ -20,10 +20,32 @@ package ml.duncte123.skybot.objects.delegate;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
+import kotlin.collections.CollectionsKt;
+import kotlin.jvm.functions.Function1;
+import kotlin.jvm.internal.Intrinsics;
+import ml.duncte123.skybot.entities.delegate.GuildDelegate;
+import ml.duncte123.skybot.entities.delegate.JDADelegate;
+import ml.duncte123.skybot.entities.delegate.MemberDelegate;
+import ml.duncte123.skybot.entities.delegate.RoleDelegate;
 import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.objects.EvalFunctions;
+import net.dv8tion.jda.bot.JDABot;
+import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.JDA;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
 import org.codehaus.groovy.control.CompilationFailedException;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class ScriptDelegate extends Script {
@@ -111,6 +133,16 @@ public class ScriptDelegate extends Script {
 
     public boolean isEven(int number) {
         return number % 2 == 0;
+    }
+
+    public int countPeopleWithRole(String name) {
+        GuildDelegate guild = (GuildDelegate) super.getBinding().getProperty("guild");
+        List<Role> roles =  guild.getRolesByName(name, true);
+        if(roles.size() == 0)
+            return 0;
+        Role role = roles.get(0);
+        List<Member> members = guild.getMembersWithRoles( ((RoleDelegate)role).getUA83D3Ax_ky() );
+        return members.size();
     }
 
     @Override

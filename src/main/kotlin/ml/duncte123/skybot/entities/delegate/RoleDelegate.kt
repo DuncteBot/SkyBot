@@ -35,7 +35,7 @@ import net.dv8tion.jda.core.requests.restaction.RoleAction
 /**
  * @see Role
  */
-class RoleDelegate(private val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
+class RoleDelegate(val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
 
     private val jda: JDA = JDADelegate(uA83D3Ax_ky.jda)
     private val guild: Guild = GuildDelegate(uA83D3Ax_ky.guild)

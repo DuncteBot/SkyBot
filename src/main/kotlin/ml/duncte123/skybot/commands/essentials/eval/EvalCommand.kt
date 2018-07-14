@@ -91,11 +91,13 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
+                "ml.duncte123.skybot.objects.eval.EvalFunctionsJava",
                 "ml.duncte123.skybot.exceptions.VRCubeException"
         )
 
         staticImports = listOf(
                 "ml.duncte123.skybot.objects.EvalFunctions.*",
+                "ml.duncte123.skybot.objects.eval.EvalFunctionsJava.*",
                 "ml.duncte123.skybot.utils.MessageUtils.*"
         )
     }
@@ -121,7 +123,7 @@ class EvalCommand : Command() {
 
         var timeout = 5000L
 
-        if (isRanByBotOwner) {
+        if (isRanByBotOwner && invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
             engine.put("commandManager", AirUtils.COMMAND_MANAGER)
@@ -155,16 +157,12 @@ class EvalCommand : Command() {
             @SinceSkybot("3.58.0")
             launch {
                 //            async {
-                return@launch eval(event, isRanByBotOwner, script, timeout)
+                return@launch eval(event, false, script, timeout)
             }
         }
 
         // Garbage collect
         System.gc()
-    }
-
-    fun shutdown() {
-        //
     }
 
     override fun help() = """Evaluate java code on the bot
@@ -174,7 +172,7 @@ class EvalCommand : Command() {
     override fun getName() = "eval"
 
     override fun getAliases(): Array<String> {
-        return arrayOf("eval™", "evaluate", "evan", "eva;")
+        return arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
     }
 
     fun toggleFilter(): Boolean {
