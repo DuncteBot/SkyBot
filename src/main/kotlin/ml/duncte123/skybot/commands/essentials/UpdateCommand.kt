@@ -145,10 +145,11 @@ class UpdateCommand : Command() {
     }
 
     private fun getCommand(cmd: String): String {
-        return if (System.getProperty("os.name").contains("Windows", false))
-            "cmd /C $cmd"
-        else
-            if (cmd.startsWith("gradle", false)) "./$cmd" else cmd
+        return when {
+            System.getProperty("os.name").contains("Windows", false) -> "cmd /C $cmd"
+            cmd.startsWith("gradle", false) -> "./$cmd"
+            else -> cmd
+        }
     }
 
     private fun runProcess(process: Process): String {
