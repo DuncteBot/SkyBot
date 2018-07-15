@@ -94,7 +94,10 @@ public class EvalFilter extends GroovyValueFilter {
             RoleDelegate.class,
             TextChannelDelegate.class,
             UserDelegate.class,
-            VoiceChannelDelegate.class
+            VoiceChannelDelegate.class,
+
+            //Statics?
+            Class.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
@@ -155,6 +158,7 @@ public class EvalFilter extends GroovyValueFilter {
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
+
         throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1]);
     }
 

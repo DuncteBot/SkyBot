@@ -20,11 +20,14 @@ package ml.duncte123.skybot.objects
 
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.core.JDA
+import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
 
+@Suppress("unused")
 class EvalFunctions {
 
     companion object {
@@ -52,11 +55,26 @@ class EvalFunctions {
 
         @JvmStatic
         fun getSharedGuilds(event: GuildMessageReceivedEvent): String {
-            val shardManager = event.jda.asBot().shardManager
-            val user = event.member
-            return shardManager.guildCache.filter { it.memberCache.contains(user) }.joinToString {
-                "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
+            return getSharedGuilds(event.jda, event.member)
+        }
+
+        @JvmStatic
+        fun getSharedGuilds(jda: JDA, member: Member): String {
+            val shardManager = jda.asBot().shardManager
+            val user = member
+
+            var out = ""
+
+            shardManager.guildCache.filter { it.memberCache.contains(user) }.forEach {
+                out += "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
             }
+
+            return out
+        }
+
+        @JvmStatic
+        fun pinnedMessageCheck(channel: MessageChannel): String {
+            return "${channel.pinnedMessages.complete().size}/50 messages pinned in this channel"
         }
     }
 }

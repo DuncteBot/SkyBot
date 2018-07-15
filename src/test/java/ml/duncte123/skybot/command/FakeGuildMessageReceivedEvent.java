@@ -652,12 +652,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
                             @Nonnull
                             @Override
-                            public GuildManagerUpdatable getManagerUpdatable() {
-                                return null;
-                            }
-
-                            @Nonnull
-                            @Override
                             public GuildController getController() {
                                 return null;
                             }
@@ -833,11 +827,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                         return null;
                     }
 
-                    @Nonnull
-                    @Override
-                    public ChannelManagerUpdatable getManagerUpdatable() {
-                        return null;
-                    }
 
                     @Nonnull
                     @Override

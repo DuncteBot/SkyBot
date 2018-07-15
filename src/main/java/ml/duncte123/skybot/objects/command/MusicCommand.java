@@ -22,6 +22,7 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -123,5 +124,13 @@ public abstract class MusicCommand extends Command {
         }
         getMusicManager(event.getGuild()).latestChannel = event.getChannel();
         return true;
+    }
+
+    protected boolean isOwner(GuildMessageReceivedEvent event) {
+        return isDev(event.getAuthor()) || event.getAuthor().getId().equals(Settings.OWNER_ID);
+    }
+
+    protected boolean hasCoolDown(Guild guild) {
+        return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;
     }
 }

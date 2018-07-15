@@ -47,4 +47,6 @@ class PresenceDelegate(private val presence: Presence) : Presence by presence {
     override fun setPresence(status: OnlineStatus, game: Game) = throw VRCubeException("Can not set the game and online status")
     override fun setPresence(status: OnlineStatus, idle: Boolean) = throw VRCubeException("Can not set the online status and idle state")
     override fun setPresence(status: OnlineStatus, game: Game, idle: Boolean) = throw VRCubeException("Can not set the online status, game and idle state")
+
+    override fun toString() = presence.toString()
 }

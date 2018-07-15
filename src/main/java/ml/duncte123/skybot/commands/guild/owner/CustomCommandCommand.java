@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -134,7 +133,7 @@ public class CustomCommandCommand extends Command {
         String commandName = args[1];
 
         if (commandName.length() > 10) {
-            MessageUtils.sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
+            sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
             return;
         }
 

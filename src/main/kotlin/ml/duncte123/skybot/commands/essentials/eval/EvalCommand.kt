@@ -112,16 +112,17 @@ class EvalCommand : Command() {
                 classImports.joinToString(separator = "\nimport ", postfix = "\n") +
                 staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
 
-        val script = try {
-            importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
-        } catch (ex: ArrayIndexOutOfBoundsException) {
+        val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
+        if(userInput.size < 2) {
             MessageUtils.sendSuccess(event.message)
             return
         }
 
+        val script = importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+
         var timeout = 5000L
 
-        if (isRanByBotOwner) {
+        if (isRanByBotOwner && invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
             engine.put("commandManager", AirUtils.COMMAND_MANAGER)
@@ -155,16 +156,12 @@ class EvalCommand : Command() {
             @SinceSkybot("3.58.0")
             launch {
                 //            async {
-                return@launch eval(event, isRanByBotOwner, script, timeout)
+                return@launch eval(event, false, script, timeout)
             }
         }
 
         // Garbage collect
         System.gc()
-    }
-
-    fun shutdown() {
-        //
     }
 
     override fun help() = """Evaluate java code on the bot
@@ -174,7 +171,7 @@ class EvalCommand : Command() {
     override fun getName() = "eval"
 
     override fun getAliases(): Array<String> {
-        return arrayOf("eval™", "evaluate", "evan", "eva;")
+        return arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
     }
 
     fun toggleFilter(): Boolean {

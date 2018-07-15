@@ -93,21 +93,7 @@ class ChatCommand : Command() {
         var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
         event.channel.sendTyping().queue()
 
-        //We don't need this because we are using contentDisplay instead of contentRaw
-        //We need it since contentDisplay leaves # and @
-        for (it in event.message.mentionedChannels) {
-            message = message.replace(it.asMention, it.name)
-        }
-        for (it in event.message.mentionedRoles) {
-            message = message.replace(it.asMention, it.name)
-        }
-        for (it in event.message.mentionedUsers) {
-            message = message.replace(it.asMention, it.name)
-        }
-        for (it in event.message.emotes) {
-            message = message.replace(it.asMention, it.name)
-        }
-        message = message.replace("@here", "here").replace("@everyone", "everyone")
+        message = replaceStuff(event, message)
 
         if (!sessions.containsKey(event.author.id)) {
             sessions[event.author.id] = ChatSession(botid, event.author.id)
@@ -128,15 +114,10 @@ class ChatCommand : Command() {
                 response = sessions[event.author.id]?.session?.think(message)
             }*/
 
-            val `with"Ads"` = AirUtils.RAND.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
+            val withAds = AirUtils.RAND.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
 
-            for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response.replace(oldValue = element.toString(),
-                        newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else
-                        //It's usefull to show the text
-                            "${element.text()}(<${element.attr("href")}>)")
-            }
-            if (`with"Ads"`) {
+            response = parseATags(response, withAds)
+            if (withAds) {
                 response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
                         "or becoming a patron [here](https://patreon.com/duncte123)."
                 MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
@@ -146,6 +127,37 @@ class ChatCommand : Command() {
             logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
         }
 
+    }
+
+    private fun parseATags(response: String, withAds: Boolean): String {
+        var response1 = response
+        for (element in Jsoup.parse(response1).getElementsByTag("a")) {
+            response1 = response1.replace(oldValue = element.toString(),
+                    newValue = if (withAds) "[${element.text()}](${element.attr("href")})" else
+                    //It's usefull to show the text
+                        "${element.text()}(<${element.attr("href")}>)")
+        }
+        return response1
+    }
+
+    private fun replaceStuff(event: GuildMessageReceivedEvent, m: String): String {
+        //We don't need this because we are using contentDisplay instead of contentRaw
+        //We need it since contentDisplay leaves # and @
+        var message = m
+        for (it in event.message.mentionedChannels) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.mentionedRoles) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.mentionedUsers) {
+            message = message.replace(it.asMention, it.name)
+        }
+        for (it in event.message.emotes) {
+            message = message.replace(it.asMention, it.name)
+        }
+        message = message.replace("@here", "here").replace("@everyone", "everyone")
+        return message
     }
 
     override fun help() = "Have a chat with dunctebot\n" +

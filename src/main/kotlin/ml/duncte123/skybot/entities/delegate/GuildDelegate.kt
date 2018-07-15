@@ -64,4 +64,6 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
 
     override fun getController(): GuildController = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun leave(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    override fun toString() = z88Am1Alk.toString()
 }

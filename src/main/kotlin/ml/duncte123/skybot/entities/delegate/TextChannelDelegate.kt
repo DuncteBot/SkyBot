@@ -36,7 +36,7 @@ import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationActi
 /**
  * @see TextChannel
  */
-class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k7S83hjaA, ChannelDelegate(k7S83hjaA) {
+class TextChannelDelegate(val k7S83hjaA: TextChannel) : TextChannel by k7S83hjaA, ChannelDelegate(k7S83hjaA) {
 
     override fun getHistory(): MessageHistory = throw VRCubeException("**\uD83D\uDD25 lit**")
 
@@ -97,9 +97,10 @@ class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k
     override fun getHistoryAfter(messageId: Long, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun getHistoryAfter(message: Message, limit: Int): MessageHistory.MessageRetrieveAction = throw VRCubeException("**\uD83D\uDD25 lit**")
 
-    override fun toString(): String = "TC:$name($id)"
     override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+
+    override fun toString() = k7S83hjaA.toString()
 }

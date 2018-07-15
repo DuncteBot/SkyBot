@@ -328,6 +328,9 @@ public class SettingsCommand extends Command {
                 String steps = Arrays.stream(rates).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", " minutes"));
                 sendMsg(event, "The new rates are " + steps);
                 break;
+
+            default:
+                break;
         }
     }
 

@@ -49,7 +49,7 @@ public class IsNowIllegalCommand extends Command {
 
                             String rawJson = getFileJSON(jsonData.getString("word"));
 
-                            if (rawJson.equals("null")) {
+                            if ("null".equals(rawJson)) {
                                 success.editMessage(jsonData.getString("word") + " is legal").queue();
                             }
                             JSONObject j = new JSONObject(rawJson);

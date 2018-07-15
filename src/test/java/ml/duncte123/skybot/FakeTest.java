@@ -24,7 +24,6 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
-import org.junit.Test;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
