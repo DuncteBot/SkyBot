@@ -100,6 +100,7 @@ public class ScriptDelegate extends Script {
      */
     @Override
     public void setProperty(String property, Object newValue) {
+        //Nothing that we allow them to set
     }
 
     public Object dump() {

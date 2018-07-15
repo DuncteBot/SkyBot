@@ -189,7 +189,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
      */
     @Override
     public void encodeTrack(AudioTrack track, DataOutput output) {
-
+        // Nothing to encode
     }
 
     @Override
