@@ -23,9 +23,7 @@ import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.exceptions.VRCubeException;
-import ml.duncte123.skybot.objects.EvalFunctions;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
-import ml.duncte123.skybot.objects.eval.EvalFunctionsJava;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.Presence;
@@ -98,8 +96,7 @@ public class EvalFilter extends GroovyValueFilter {
             UserDelegate.class,
             VoiceChannelDelegate.class,
 
-            //Allow some function
-            EvalFunctionsJava.class,
+            //Statics?
             Class.class
     };
 
@@ -161,9 +158,6 @@ public class EvalFilter extends GroovyValueFilter {
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-
-        if(o instanceof EvalFunctionsJava || o instanceof EvalFunctions)
-            return o;
 
         throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1]);
     }

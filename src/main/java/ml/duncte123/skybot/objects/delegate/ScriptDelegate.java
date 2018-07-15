@@ -20,31 +20,16 @@ package ml.duncte123.skybot.objects.delegate;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
-import kotlin.collections.CollectionsKt;
-import kotlin.jvm.functions.Function1;
-import kotlin.jvm.internal.Intrinsics;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;
-import ml.duncte123.skybot.entities.delegate.JDADelegate;
-import ml.duncte123.skybot.entities.delegate.MemberDelegate;
 import ml.duncte123.skybot.entities.delegate.RoleDelegate;
+import ml.duncte123.skybot.entities.delegate.TextChannelDelegate;
 import ml.duncte123.skybot.exceptions.VRCubeException;
-import ml.duncte123.skybot.objects.EvalFunctions;
-import net.dv8tion.jda.bot.JDABot;
-import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import net.dv8tion.jda.core.utils.cache.SnowflakeCacheView;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.codehaus.groovy.control.CompilationFailedException;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 
 @SuppressWarnings("unused")
@@ -143,6 +128,12 @@ public class ScriptDelegate extends Script {
         Role role = roles.get(0);
         List<Member> members = guild.getMembersWithRoles( ((RoleDelegate)role).getUA83D3Ax_ky() );
         return members.size();
+    }
+
+    public String pinnedMessageCheck() {
+        TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
+        int count = channel.getPinnedMessages().complete().size();
+        return count + "/50 messages pinned in this channel";
     }
 
     @Override

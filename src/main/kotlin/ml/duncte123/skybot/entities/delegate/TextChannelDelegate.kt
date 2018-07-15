@@ -36,7 +36,7 @@ import net.dv8tion.jda.core.requests.restaction.pagination.MessagePaginationActi
 /**
  * @see TextChannel
  */
-class TextChannelDelegate(private val k7S83hjaA: TextChannel) : TextChannel by k7S83hjaA, ChannelDelegate(k7S83hjaA) {
+class TextChannelDelegate(val k7S83hjaA: TextChannel) : TextChannel by k7S83hjaA, ChannelDelegate(k7S83hjaA) {
 
     override fun getHistory(): MessageHistory = throw VRCubeException("**\uD83D\uDD25 lit**")
 

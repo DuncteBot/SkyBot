@@ -91,13 +91,11 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
-                "ml.duncte123.skybot.objects.eval.EvalFunctionsJava",
                 "ml.duncte123.skybot.exceptions.VRCubeException"
         )
 
         staticImports = listOf(
                 "ml.duncte123.skybot.objects.EvalFunctions.*",
-                "ml.duncte123.skybot.objects.eval.EvalFunctionsJava.*",
                 "ml.duncte123.skybot.utils.MessageUtils.*"
         )
     }

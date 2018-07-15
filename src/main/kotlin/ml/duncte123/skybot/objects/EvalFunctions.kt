@@ -71,5 +71,10 @@ class EvalFunctions {
 
             return out
         }
+
+        @JvmStatic
+        fun pinnedMessageCheck(channel: MessageChannel): String {
+            return "${channel.pinnedMessages.complete().size}/50 messages pinned in this channel"
+        }
     }
 }
