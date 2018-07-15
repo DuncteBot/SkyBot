@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import ml.duncte123.skybot.utils.AirUtils;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;

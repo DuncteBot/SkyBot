@@ -21,7 +21,6 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.Permission
@@ -45,8 +44,7 @@ class JoinCommand : MusicCommand() {
         val mng = getMusicManager(guild)
         mng.latestChannel = event.channel
 
-        @Suppress("DEPRECATION")
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(isDev(event.author) || event.author.id == Settings.OWNER_ID)) {
+        if (hasCoolDown(guild) && !isOwner(event)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)
@@ -68,8 +66,6 @@ class JoinCommand : MusicCommand() {
             } else {
                 MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
-        } catch (e1: Exception) {
-            e1.printStackTrace()
         }
 
     }

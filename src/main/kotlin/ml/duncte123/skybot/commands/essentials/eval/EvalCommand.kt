@@ -112,12 +112,13 @@ class EvalCommand : Command() {
                 classImports.joinToString(separator = "\nimport ", postfix = "\n") +
                 staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
 
-        val script = try {
-            importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
-        } catch (ex: ArrayIndexOutOfBoundsException) {
+        val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
+        if(userInput.size < 2) {
             MessageUtils.sendSuccess(event.message)
             return
         }
+
+        val script = importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
 
         var timeout = 5000L
 
