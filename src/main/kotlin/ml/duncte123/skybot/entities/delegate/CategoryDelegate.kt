@@ -47,5 +47,5 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 
-    override fun toString(): String = "GC:$name($id)"
+    override fun toString() = a6sG3x_Hw.toString()
 }

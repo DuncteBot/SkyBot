@@ -41,4 +41,6 @@ class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
 
     override fun getMutualGuilds(): List<Guild> = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) } as List<Guild>
     override fun openPrivateChannel(): RestAction<PrivateChannel> = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    override fun toString() = yBGyt8Kduo.toString()
 }

@@ -43,5 +43,5 @@ class VoiceChannelDelegate(private val I99h9uhOs: VoiceChannel) : VoiceChannel b
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 
-    override fun toString(): String = "VC:$name($id)"
+    override fun toString() = I99h9uhOs.toString()
 }

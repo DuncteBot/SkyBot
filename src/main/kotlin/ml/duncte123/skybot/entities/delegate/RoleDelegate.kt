@@ -49,4 +49,6 @@ class RoleDelegate(val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
     override fun delete(): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
     override fun createCopy(guild: Guild): RoleAction = throw VRCubeException("**\uD83D\uDD25 lit guild: ${guild.name}**")
     override fun createCopy(): RoleAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+
+    override fun toString() = uA83D3Ax_ky.toString()
 }

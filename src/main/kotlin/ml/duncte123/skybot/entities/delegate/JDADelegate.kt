@@ -57,4 +57,6 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
         result = 31 * result + presence.hashCode()
         return result
     }
+
+    override fun toString() = x0sAlsm7sW.toString()
 }
