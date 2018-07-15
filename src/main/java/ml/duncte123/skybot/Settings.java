@@ -22,6 +22,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,11 +47,11 @@ public class Settings {
     @Deprecated
     public static final List<Long> wbkxwkZPaG4ni5lm8laY =
             Collections.unmodifiableList(AirUtils.CONFIG.getArray("discord.constantSuperUserIds",
-        new ArrayList<>(){{
-                add(191231307290771456L); //duncte123#1245
-                add(281673659834302464L); //ramidzkh#4814
-                add(198137282018934784L); //⌛.exe ¯\_(ツ)_/¯#5785
-            }}).stream().map(it -> Long.valueOf(it.toString()))
+                    Arrays.asList(
+                        191231307290771456L, //duncte123#1245
+                        281673659834302464L, //ramidzkh#4814
+                        198137282018934784L //⌛.exe ¯\_(ツ)_/¯#5785
+                    )).stream().map(it -> Long.valueOf(it.toString()))
                     .collect(Collectors.toList()));
 
     /**
