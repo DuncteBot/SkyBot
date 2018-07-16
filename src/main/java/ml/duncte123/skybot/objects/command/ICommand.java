@@ -16,16 +16,25 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command.custom;
+package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface CustomCommand extends ICommand {
+public interface ICommand {
 
-    String getMessage();
+    void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
 
-    String getGuildId();
+    String help();
+
+    default String help(String invoke) {
+        return help();
+    }
+
+    String getName();
+
+    default String[] getAliases() {
+        return new String[0];
+    }
 
 }

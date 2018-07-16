@@ -22,7 +22,10 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static ml.duncte123.skybot.utils.CustomCommandUtils.PARSER;
 
 public class CustomCommandImpl extends Command implements CustomCommand {
 
@@ -50,8 +53,15 @@ public class CustomCommandImpl extends Command implements CustomCommand {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (guildId.equals(event.getGuild().getId()))
-            MessageUtils.sendMsg(event, message);
+        if (!guildId.equals(event.getGuild().getId()))
+            return;
+
+            MessageUtils.sendMsg(event, "\u200B" + PARSER.clear()
+                    .put("user", event.getAuthor())
+                    .put("channel", event.getChannel())
+                    .put("args", StringUtils.join(args, "|"))
+                    .parse(message)
+            );
     }
 
     @Override

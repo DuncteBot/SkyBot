@@ -131,6 +131,8 @@ dependencies {
     compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
     // Oauth
     compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '8e11e6d'
+
+    compile group: 'com.jagrosh', name: 'JagTag', version: '0.5'
 }
 
 /*javadoc {

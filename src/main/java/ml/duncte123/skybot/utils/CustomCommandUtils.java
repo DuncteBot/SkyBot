@@ -16,16 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command.custom;
+package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.objects.command.ICommand;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import com.jagrosh.jagtag.JagTag;
+import com.jagrosh.jagtag.Parser;
+import com.jagrosh.jagtag.libraries.Functional;
+import ml.duncte123.skybot.objects.jagtag.Methods;
 
-public interface CustomCommand extends ICommand {
+public class CustomCommandUtils {
 
-    String getMessage();
-
-    String getGuildId();
-
+    public static final Parser PARSER = JagTag.newDefaultBuilder()
+            .addMethods(Methods.getMethods())
+            .addMethods(Functional.getMethods())
+            .build();
 }
