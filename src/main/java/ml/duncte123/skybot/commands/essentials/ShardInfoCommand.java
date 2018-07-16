@@ -21,12 +21,14 @@ package ml.duncte123.skybot.commands.essentials;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -47,7 +49,8 @@ public class ShardInfoCommand extends Command {
         headers.add("Connected VCs");
 
         List<List<String>> table = new ArrayList<>();
-        List<JDA> shards = new ArrayList<>(event.getJDA().asBot().getShardManager().getShards());
+        ShardManager shardManager = event.getJDA().asBot().getShardManager();
+        List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
         for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
@@ -60,12 +63,12 @@ public class ShardInfoCommand extends Command {
                     .getSelfMember())).count()));
             table.add(row);
             if (table.size() == 20) {
-                MessageUtils.sendMsg(event, makeAsciiTable(headers, table));
+                MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
                 table = new ArrayList<>();
             }
         }
         if (table.size() > 0) {
-            MessageUtils.sendMsg(event, makeAsciiTable(headers, table));
+            MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
         }
     }
 
@@ -88,7 +91,7 @@ public class ShardInfoCommand extends Command {
      * These 2 functions have been inspired from FlareBot
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
      */
-    private String makeAsciiTable(List<String> headers, List<List<String>> table) {
+    private String makeAsciiTable(List<String> headers, List<List<String>> table, ShardManager shardManager) {
         StringBuilder sb = new StringBuilder();
         int padding = 1;
         int[] widths = new int[headers.size()];
@@ -120,6 +123,14 @@ public class ShardInfoCommand extends Command {
         for (List<String> row : table) {
             sb.append(String.format(formatLine.toString(), row.toArray()));
         }
+        sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
+        String connectedShards = String.valueOf(shardManager.getShards().stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
+        String guilds = String.valueOf(shardManager.getGuildCache().size());
+        long connectedVC = shardManager.getShards().stream().mapToLong(shard -> {
+            return shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
+        }).sum();
+        sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, String.valueOf(connectedVC)));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");
         return sb.toString();
