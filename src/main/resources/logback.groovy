@@ -18,9 +18,7 @@
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
-import static ch.qos.logback.classic.Level.DEBUG
-
-def logToFile = false
+//def logToFile = false
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -34,7 +32,7 @@ root(INFO, ["STDOUT"])
 //root(DEBUG, ["STDOUT"])
 
 
-if (logToFile) {
+/*if (logToFile) {
     def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
     appender("FILE", FileAppender) {
@@ -44,6 +42,18 @@ if (logToFile) {
         }
     }
     root(DEBUG, ["FILE", "STDOUT"])
+}*/
+
+def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
+
+appender("FILE", FileAppender) {
+    file = "logs-for-minn/log-${bySecond}.txt"
+    encoder(PatternLayoutEncoder) {
+        pattern = "[%d{dd-MM-yyyy HH:mm:ss}][%logger{35}] - %msg%n"
+    }
 }
+
+logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE, ["FILE", "STDOUT"])
+logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE", "STDOUT"])
 
 
