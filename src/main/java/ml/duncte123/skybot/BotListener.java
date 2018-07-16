@@ -25,6 +25,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -260,7 +261,7 @@ public class BotListener extends ListenerAdapter {
         if (rw.startsWith(guild.getSelfMember().getAsMention())) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
             //Handle the chat command
-            Command cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
+            ICommand cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
                 cmd.executeCommand("chat", Arrays.copyOfRange(split, 1, split.length), event);
             return;

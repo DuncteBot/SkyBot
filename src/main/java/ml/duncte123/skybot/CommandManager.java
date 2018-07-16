@@ -22,12 +22,16 @@ import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
@@ -46,8 +50,8 @@ public class CommandManager {
     /**
      * This stores all our commands
      */
-    private final Set<Command> commands = ConcurrentHashMap.newKeySet();
-    private final List<Command> commandsSorted = new ArrayList<>();
+    private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
+    private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     /**
@@ -66,13 +70,13 @@ public class CommandManager {
      *
      * @return A list of all the commands
      */
-    public Set<Command> getCommands() {
+    public Set<ICommand> getCommands() {
         return commands;
     }
 
-    public List<Command> getSortedCommands() {
+    public List<ICommand> getSortedCommands() {
         if(commandsSorted.isEmpty()) {
-            List<Command> commandSet = new ArrayList<>();
+            List<ICommand> commandSet = new ArrayList<>();
             List<String> names = new ArrayList<>();
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
                     .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
@@ -93,8 +97,8 @@ public class CommandManager {
      * @param name the name of the command
      * @return a possible null command for the name
      */
-    public Command getCommand(String name) {
-        Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
+    public ICommand getCommand(String name) {
+        Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
         if (!cmd.isPresent()) {
             cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
@@ -103,7 +107,7 @@ public class CommandManager {
         return cmd.orElse(null);
     }
 
-    public List<Command> getCommands(CommandCategory category) {
+    public List<ICommand> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
@@ -266,17 +270,34 @@ public class CommandManager {
     }
 
     public void dispatchCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        Command cmd = getCommand(invoke);
+        ICommand cmd = getCommand(invoke);
         if (cmd == null) {
-            cmd = (Command) getCustomCommand(invoke, event.getGuild().getId());
+            cmd = getCustomCommand(invoke, event.getGuild().getId());
         }
         dispatchCommand(cmd, invoke, args, event);
     }
 
-    public void dispatchCommand(Command cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void dispatchCommand(ICommand cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (cmd != null) {
             try {
-                cmd.executeCommand(invoke, args, event);
+                if(!cmd.isCustom()) {
+                    cmd.executeCommand(invoke, args, event);
+                } else {
+
+                    CustomCommand cc = (CustomCommand) cmd;
+
+                    if (!cc.getGuildId().equals(event.getGuild().getId()))
+                        return;
+
+                    String message = CustomCommandUtils.PARSER.clear()
+                            .put("user", event.getAuthor())
+                            .put("channel", event.getChannel())
+                            .put("args", StringUtils.join(args, "|"))
+                            .put("splitargs", args)
+                            .parse(cc.getMessage());
+
+                    MessageUtils.sendMsg(event, "\u200B" + message);
+                }
             } catch (Throwable ex) {
                 ComparatingUtils.execCheck(ex);
             }

@@ -555,6 +555,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                                 return null;
                             }
 
+                            @Override
+                            public long getOwnerIdLong() {
+                                return 0;
+                            }
+
                             @Nonnull
                             @Override
                             public Timeout getAfkTimeout() {

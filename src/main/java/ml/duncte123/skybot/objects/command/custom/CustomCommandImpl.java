@@ -18,16 +18,7 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.MessageUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
-
-import static ml.duncte123.skybot.utils.CustomCommandUtils.PARSER;
-
-public class CustomCommandImpl extends Command implements CustomCommand {
+public class CustomCommandImpl implements CustomCommand {
 
     private final String invoke;
     private final String message;
@@ -37,8 +28,6 @@ public class CustomCommandImpl extends Command implements CustomCommand {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
-
-        this.category = CommandCategory.UNLISTED;
     }
 
     @Override
@@ -49,24 +38,6 @@ public class CustomCommandImpl extends Command implements CustomCommand {
     @Override
     public String getGuildId() {
         return guildId;
-    }
-
-    @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (!guildId.equals(event.getGuild().getId()))
-            return;
-
-            MessageUtils.sendMsg(event, "\u200B" + PARSER.clear()
-                    .put("user", event.getAuthor())
-                    .put("channel", event.getChannel())
-                    .put("args", StringUtils.join(args, "|"))
-                    .parse(message)
-            );
-    }
-
-    @Override
-    public String help() {
-        return "Custom Commands Don't have help";
     }
 
     @Override

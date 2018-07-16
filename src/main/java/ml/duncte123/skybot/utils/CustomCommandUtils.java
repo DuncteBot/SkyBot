@@ -20,13 +20,11 @@ package ml.duncte123.skybot.utils;
 
 import com.jagrosh.jagtag.JagTag;
 import com.jagrosh.jagtag.Parser;
-import com.jagrosh.jagtag.libraries.Functional;
-import ml.duncte123.skybot.objects.jagtag.Methods;
+import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 
 public class CustomCommandUtils {
 
     public static final Parser PARSER = JagTag.newDefaultBuilder()
-            .addMethods(Methods.getMethods())
-            .addMethods(Functional.getMethods())
+            .addMethods(DiscordMethods.getMethods())
             .build();
 }

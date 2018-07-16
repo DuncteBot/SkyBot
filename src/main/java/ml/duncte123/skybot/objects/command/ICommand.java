@@ -33,8 +33,16 @@ public interface ICommand {
 
     String getName();
 
+    CommandCategory getCategory();
+
     default String[] getAliases() {
         return new String[0];
     }
+
+    default boolean isCustom() {
+        return false;
+    }
+
+    boolean shouldDisplayAliasesInHelp();
 
 }

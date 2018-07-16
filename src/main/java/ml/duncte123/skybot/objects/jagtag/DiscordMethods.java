@@ -23,11 +23,11 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
-public class Methods {
+public class DiscordMethods {
 
-    public static List<Method> getMethods() {
+    public static Collection<Method> getMethods() {
         return Arrays.asList(
                 new Method("user", (env) -> {
                     User u = env.get("user");

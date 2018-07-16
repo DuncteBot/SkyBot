@@ -94,6 +94,7 @@ public abstract class Command implements ICommand {
      *
      * @return if the bot should take up the aliases in the help command
      */
+    @Override
     public boolean shouldDisplayAliasesInHelp() {
         return displayAliasesInHelp;
     }
