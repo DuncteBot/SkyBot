@@ -59,7 +59,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+        String reason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
         Member toMute = event.getMessage().getMentionedMembers().get(0);
         Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 

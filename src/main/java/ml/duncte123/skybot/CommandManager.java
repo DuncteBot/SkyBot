@@ -44,6 +44,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
+import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
 
@@ -289,17 +292,23 @@ public class CommandManager {
                     if (!cc.getGuildId().equals(event.getGuild().getId()))
                         return;
 
-                    String message = CustomCommandUtils.PARSER.clear()
-                            .put("user", event.getAuthor())
-                            .put("channel", event.getChannel())
-                            .put("args", StringUtils.join(args, "|"))
-                            .put("splitargs", args)
-                            .parse(cc.getMessage());
+                    try {
+                        String message = CustomCommandUtils.PARSER.clear()
+                                .put("user", event.getAuthor())
+                                .put("channel", event.getChannel())
+                                .put("args", StringUtils.join(args, "|"))
+                                .put("splitargs", args)
+                                .parse(cc.getMessage());
 
-                    MessageUtils.sendMsg(event, "\u200B" + message);
+                        sendMsg(event, "\u200B" + message);
+                    }
+                    catch (Exception e) {
+                        sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+                        execCheck(e);
+                    }
                 }
             } catch (Throwable ex) {
-                ComparatingUtils.execCheck(ex);
+                execCheck(ex);
             }
         }
     }
