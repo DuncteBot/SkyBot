@@ -16,11 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
-import static ch.qos.logback.classic.Level.DEBUG
-
-def logToFile = false
+def logToFile = true
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -30,6 +29,8 @@ appender("STDOUT", ConsoleAppender) {
         pattern = "%d{dd-MM-yyyy HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
     }
 }
+logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE)
+logger("net.dv8tion.jda.core.handle.EventCache", TRACE)
 root(INFO, ["STDOUT"])
 //root(DEBUG, ["STDOUT"])
 
@@ -39,11 +40,12 @@ if (logToFile) {
 
     appender("FILE", FileAppender) {
         file = "log-${bySecond}-debug.txt"
+        immediateFlush = false
         encoder(PatternLayoutEncoder) {
-            pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
+            pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%thread] [%logger{36}] %X{jda.shard} %level - %msg%n"
         }
     }
-    root(DEBUG, ["FILE", "STDOUT"])
+    root(DEBUG, ["FILE"])
 }
 
 
