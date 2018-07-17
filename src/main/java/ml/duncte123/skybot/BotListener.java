@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com/invite|\\.gg)/([\\S\\w]*\b)");
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com/invite|\\.gg)/([\\S\\w]*\\b)");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
 
     /**
