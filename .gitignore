@@ -140,3 +140,5 @@ config_old\.json
 /user_avatars/*
 \.idea/
 !\.idea/copyright/*
+
+logs-for-minn/

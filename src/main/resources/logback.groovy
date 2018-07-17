@@ -34,7 +34,6 @@ logger("net.dv8tion.jda.core.handle.EventCache", TRACE)
 root(INFO, ["STDOUT"])
 //root(DEBUG, ["STDOUT"])
 
-
 if (logToFile) {
     def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
