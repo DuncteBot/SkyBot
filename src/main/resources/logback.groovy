@@ -38,7 +38,7 @@ if (logToFile) {
     def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 
     appender("FILE", FileAppender) {
-        file = "log-${bySecond}-debug.txt"
+        file = "logs-for-minn/log-${bySecond}-debug.txt"
         immediateFlush = false
         encoder(PatternLayoutEncoder) {
             pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%thread] [%logger{36}] %X{jda.shard} %level - %msg%n"
