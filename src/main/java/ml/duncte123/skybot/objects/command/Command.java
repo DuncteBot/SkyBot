@@ -30,10 +30,8 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +43,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 @SuppressWarnings("SameParameterValue")
-public abstract class Command {
+public abstract class Command implements ICommand {
 
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
 
@@ -96,6 +94,7 @@ public abstract class Command {
      *
      * @return if the bot should take up the aliases in the help command
      */
+    @Override
     public boolean shouldDisplayAliasesInHelp() {
         return displayAliasesInHelp;
     }
@@ -169,36 +168,6 @@ public abstract class Command {
     }
 
     /**
-     * This is the action of the command, this will hold what the commands needs to to
-     *
-     * @param invoke The command that is ran
-     * @param args   The command agruments
-     * @param event  a instance of {@link GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     */
-    public abstract void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
-
-    /**
-     * The usage instructions of the command
-     *
-     * @return the help instructions of the command
-     * @see #help(String)
-     */
-    public abstract String help();
-
-    /**
-     * The usage instructions of the command
-     *
-     * @param invoke the command that you want the help info for
-     *               Some commands are packed together and they will return specific info depending on what you put into
-     *               the command
-     * @return the help instructions of the command
-     * @see #help()
-     */
-    public String help(String invoke) {
-        return help();
-    }
-
-    /**
      * This method is internally used to properly display the text on the webpages
      * @return the html parsed help
      */
@@ -217,22 +186,6 @@ public abstract class Command {
             helpParsed = s;
         }
         return helpParsed;
-    }
-
-    /**
-     * This will hold the command name aka what the user puts after the prefix
-     *
-     * @return The command name
-     */
-    public abstract String getName();
-
-    /**
-     * This wil hold any aliases that this command might have
-     *
-     * @return the current aliases for the command if set
-     */
-    public String[] getAliases() {
-        return new String[0];
     }
 
     /**

@@ -57,7 +57,7 @@ public class SoftbanCommand extends Command {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+            String reason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     nothing -> {
                         ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());

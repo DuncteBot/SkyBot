@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.ICommand;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.BufferedWriter;
@@ -63,7 +64,7 @@ public class GenerateCommandList {
         Collections.sort(names);
 
         for (String n : names) {
-            Command cmd = AirUtils.COMMAND_MANAGER.getCommand(n);
+            ICommand cmd = AirUtils.COMMAND_MANAGER.getCommand(n);
             if (!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
                 writer.append("\t")
                         .append('"')

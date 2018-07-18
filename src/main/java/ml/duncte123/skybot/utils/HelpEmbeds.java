@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;
 
@@ -50,7 +51,7 @@ public class HelpEmbeds {
      * This loads all the commands in the lists
      */
     public static void init() {
-        for (Command c : AirUtils.COMMAND_MANAGER.getCommands()) {
+        for (ICommand c : AirUtils.COMMAND_MANAGER.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());

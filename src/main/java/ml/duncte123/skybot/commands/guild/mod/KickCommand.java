@@ -59,7 +59,7 @@ public class KickCommand extends Command {
                 return;
             }
             //Arrays.copyOfRange(Array, From, to)
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+            String reason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     (noting) -> {
                         ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());

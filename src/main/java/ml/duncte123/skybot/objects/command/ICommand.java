@@ -16,50 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command.custom;
+package ml.duncte123.skybot.objects.command;
 
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-public interface CustomCommand extends ICommand {
+public interface ICommand {
 
-    String getMessage();
+    void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
 
-    String getGuildId();
+    String help();
 
-    @Override
-    default boolean isCustom() {
-        return true;
-    }
-
-    //Override some methods that are not needed
-    @Override
-    default void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {}
-
-    @Override
-    default String help() {
-        return null;
-    }
-
-    @Override
     default String help(String invoke) {
-        return null;
+        return help();
     }
 
-    @Override
-    default CommandCategory getCategory() {
-        return null;
-    }
+    String getName();
 
-    @Override
+    CommandCategory getCategory();
+
     default String[] getAliases() {
         return new String[0];
     }
 
-    @Override
-    default boolean shouldDisplayAliasesInHelp() {
+    default boolean isCustom() {
         return false;
     }
+
+    boolean shouldDisplayAliasesInHelp();
+
 }

@@ -16,32 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command.custom;
+package ml.duncte123.skybot.utils;
 
-public class CustomCommandImpl implements CustomCommand {
+import com.jagrosh.jagtag.JagTag;
+import com.jagrosh.jagtag.Parser;
+import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 
-    private final String invoke;
-    private final String message;
-    private final String guildId;
+public class CustomCommandUtils {
 
-    public CustomCommandImpl(String invoke, String message, String guildId) {
-        this.invoke = invoke;
-        this.message = message;
-        this.guildId = guildId;
-    }
-
-    @Override
-    public String getMessage() {
-        return message;
-    }
-
-    @Override
-    public String getGuildId() {
-        return guildId;
-    }
-
-    @Override
-    public String getName() {
-        return invoke;
-    }
+    public static final Parser PARSER = JagTag.newDefaultBuilder()
+            .addMethods(DiscordMethods.getMethods())
+            .build();
 }
