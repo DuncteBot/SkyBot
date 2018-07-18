@@ -53,7 +53,7 @@ appender("FILE", FileAppender) {
     }
 }
 
-logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE, ["FILE", "STDOUT"])
-logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE", "STDOUT"])
+logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE, ["FILE"])
+logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE"])
 
 
