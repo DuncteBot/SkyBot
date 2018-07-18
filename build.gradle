@@ -40,7 +40,7 @@ apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
 
-version "3.73.0_${getGitHash()}"
+version "3.73.1_${getGitHash()}"
 
 sourceCompatibility = 1.9
 
@@ -81,7 +81,7 @@ dependencies {
     compile 'com.github.duncte123:botCommons:f55d559'
 
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '906d55b' //Current: Guild-setup
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'acbb09f5'
 //    compile group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382'
 
     //Lavaplayer/Lavalink
