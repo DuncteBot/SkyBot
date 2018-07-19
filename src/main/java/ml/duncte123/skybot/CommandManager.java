@@ -25,11 +25,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -296,11 +294,13 @@ public class CommandManager {
                         String message = CustomCommandUtils.PARSER.clear()
                                 .put("user", event.getAuthor())
                                 .put("channel", event.getChannel())
+                                .put("guild", event.getGuild())
                                 .put("args", StringUtils.join(args, "|"))
                                 .put("splitargs", args)
                                 .parse(cc.getMessage());
 
                         sendMsg(event, "\u200B" + message);
+                        CustomCommandUtils.PARSER.clear();
                     }
                     catch (Exception e) {
                         sendMsg(event, "Error with parsing custom command: " + e.getMessage());

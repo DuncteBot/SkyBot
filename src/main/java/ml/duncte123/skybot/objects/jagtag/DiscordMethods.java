@@ -20,9 +20,7 @@ package ml.duncte123.skybot.objects.jagtag;
 
 import com.jagrosh.jagtag.Method;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -67,23 +65,23 @@ public class DiscordMethods {
                 }),
 
                 new Method("server", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    return tc.getGuild().getName();
+                    Guild guild = env.get("guild");
+                    return guild.getName();
                 }),
 
                 new Method("serverid", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    return tc.getGuild().getId();
+                    Guild guild = env.get("guild");
+                    return guild.getId();
                 }),
 
                 new Method("servercount", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    return String.valueOf(tc.getGuild().getMemberCache().size());
+                    Guild guild = env.get("guild");
+                    return String.valueOf(guild.getMemberCache().size());
                 }),
 
                 new Method("servericon", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    return tc.getGuild().getIconUrl();
+                    Guild guild = env.get("guild");
+                    return guild.getIconUrl();
                 }),
 
                 new Method("channel", (env) -> {
@@ -97,24 +95,69 @@ public class DiscordMethods {
                 }),
 
                 new Method("randuser", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    List<Member> members = tc.getGuild().getMemberCache().asList();
+                    Guild guild = env.get("guild");
+                    List<Member> members = guild.getMemberCache().asList();
                     Member m = members.get(RAND.nextInt(members.size()));
                     return m.getEffectiveName();
+                }),
+
+                new Method("randatuser", (env) -> {
+                    Guild guild = env.get("guild");
+                    List<Member> members = guild.getMemberCache().asList();
+                    Member m = members.get(RAND.nextInt(members.size()));
+                    return m.getAsMention();
                 }),
 
                 new Method("randonline", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    List<Member> members = tc.getGuild().getMemberCache().stream().filter( it -> it.getOnlineStatus()
+                    Guild guild = env.get("guild");
+                    List<Member> members = guild.getMemberCache().stream().filter( it -> it.getOnlineStatus()
                             .equals(OnlineStatus.ONLINE) ).collect(Collectors.toList());
+                    if (members.isEmpty()) {
+                        return "";
+                    }
+                    if (members.size() == 1) {
+                        return members.get(0).getEffectiveName();
+                    }
                     Member m = members.get(RAND.nextInt(members.size()));
                     return m.getEffectiveName();
                 }),
 
+                new Method("randatonline", (env) -> {
+                    Guild guild = env.get("guild");
+                    List<Member> members = guild.getMemberCache().stream().filter( it -> it.getOnlineStatus()
+                            .equals(OnlineStatus.ONLINE) ).collect(Collectors.toList());
+                    if (members.isEmpty()) {
+                        return "";
+                    }
+                    if (members.size() == 1) {
+                        return members.get(0).getAsMention();
+                    }
+                    Member m = members.get(RAND.nextInt(members.size()));
+                    return m.getAsMention();
+                }),
+
                 new Method("randchannel", (env) -> {
-                    TextChannel tc = env.get("channel");
-                    List<TextChannel> channels = tc.getGuild().getTextChannelCache().asList();
+                    Guild guild = env.get("guild");
+                    List<TextChannel> channels = guild.getTextChannelCache().asList();
+                    if (channels.isEmpty()) {
+                        return "";
+                    }
+                    if (channels.size() == 1) {
+                        return channels.get(0).getAsMention();
+                    }
                     return channels.get(RAND.nextInt(channels.size())).getAsMention();
+                }),
+
+                new Method("randemote", (env) -> {
+                    Guild guild = env.get("guild");
+                    List<Emote> emotes = guild.getEmoteCache().asList();
+                    if (emotes.isEmpty()) {
+                        return "";
+                    }
+                    if (emotes.size() == 1) {
+                        return emotes.get(0).getAsMention();
+                    }
+                    return emotes.get(RAND.nextInt(emotes.size())).getAsMention();
                 })
         );
     }

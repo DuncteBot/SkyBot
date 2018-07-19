@@ -49,7 +49,7 @@ def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
 appender("FILE", FileAppender) {
     file = "logs-for-minn/log-${bySecond}.txt"
     encoder(PatternLayoutEncoder) {
-        pattern = "[%d{dd-MM-yyyy HH:mm:ss}][%logger{35}] - %msg%n"
+        pattern = "[%d{dd-MM-yyyy HH:mm:ss}][%logger{35}] %level - %msg%n"
     }
 }
 
