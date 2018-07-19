@@ -54,7 +54,7 @@ class EvalCommand : Command() {
     private val staticImports: List<String>
     private val filter = EvalFilter()
 
-    private var runIfNotOwner = true
+//    private var runIfNotOwner = true
 
     /**
      * This initialises the engine
@@ -103,8 +103,8 @@ class EvalCommand : Command() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         @Suppress("DEPRECATION")
         val isRanByBotOwner = isDev(event.author) || event.author.id == Settings.OWNER_ID
-        if (!isRanByBotOwner && !runIfNotOwner)
-            return
+        /*if (!isRanByBotOwner && !runIfNotOwner)
+            return*/
 
         if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
 
@@ -174,7 +174,7 @@ class EvalCommand : Command() {
         return arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
     }
 
-    fun toggleFilter(): Boolean {
+    /*fun toggleFilter(): Boolean {
         val ret = runIfNotOwner
         runIfNotOwner = !runIfNotOwner
         return ret
@@ -184,7 +184,7 @@ class EvalCommand : Command() {
         val ret = runIfNotOwner
         runIfNotOwner = status
         return ret
-    }
+    }*/
 
     @SinceSkybot("3.58.0")
     suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {

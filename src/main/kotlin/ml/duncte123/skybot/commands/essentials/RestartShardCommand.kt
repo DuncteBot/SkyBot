@@ -30,6 +30,7 @@ import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.experimental.coroutineContext
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -57,8 +58,8 @@ class RestartShardCommand : Command() {
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
                         val end = EndReached()
-                        this.coroutineContext.cancelChildren(end)
-                        this.coroutineContext.cancel(end)
+                        coroutineContext.cancelChildren(end)
+                        coroutineContext.cancel(end)
                     }
                 }
                 1 -> {
