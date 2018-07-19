@@ -32,6 +32,7 @@ import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -182,15 +183,15 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            Guild g = this.guildMusicManager.latestChannel.getGuild();
+            Guild g = guildMusicManager.latestChannel.getGuild();
+
             AudioTrackInfo info = track.getInfo();
             final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
                     g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
             logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            Throwable finalCause = exception;
-            while (finalCause.getCause() != null) {
-                finalCause = finalCause.getCause();
-            }
+
+            Throwable rootCause = ExceptionUtils.getRootCause(exception);
+            Throwable finalCause = rootCause != null ? rootCause : exception;
             MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
                     "Details: " + finalCause);
         }
