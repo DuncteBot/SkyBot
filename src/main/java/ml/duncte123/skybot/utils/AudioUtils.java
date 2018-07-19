@@ -47,6 +47,9 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.logging.Level;
 
+import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+
 @SinceSkybot(version = "3.5.1")
 public class AudioUtils {
 
@@ -173,7 +176,7 @@ public class AudioUtils {
                         msg += "\nand the Player has started playing;";
                     }
 
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                    sendEmbed(channel, embedField(embedTitle, msg));
                 }
             }
 
@@ -183,7 +186,7 @@ public class AudioUtils {
                 List<AudioTrack> tracks = playlist.getTracks();
 
                 if (tracks.size() == 0) {
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
+                    sendEmbed(channel, embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
                 } else if (firstTrack == null) {
@@ -204,12 +207,14 @@ public class AudioUtils {
                             msg += "\nand the Player has started playing;";
                         }
                     } else {
-                        msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                        String prefix = GuildSettingsUtils.getGuild(channel.getGuild()).getCustomPrefix();
+                        msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
+                                "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
                         if (mng.player.getPlayingTrack() == null) {
                             msg += "\nand the Player has started playing;";
                         }
                     }
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                    sendEmbed(channel, embedField(embedTitle, msg));
                 }
             }
 
@@ -217,13 +222,13 @@ public class AudioUtils {
             @Override
             public void noMatches() {
                 if (announce)
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
+                    sendEmbed(channel, embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
                 if (announce)
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
+                    sendEmbed(channel, embedField(embedTitle, "Could not play: " + exception.getMessage()
                             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });

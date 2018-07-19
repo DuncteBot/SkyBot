@@ -187,8 +187,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
                     g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
             logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            Throwable finalCause = exception;
+            while (finalCause.getCause() != null) {
+                finalCause = finalCause.getCause();
+            }
             MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                    "Details: " + exception);
+                    "Details: " + finalCause);
         }
     }
 }
