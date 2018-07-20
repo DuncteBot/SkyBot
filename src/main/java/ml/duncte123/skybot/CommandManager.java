@@ -299,6 +299,7 @@ public class CommandManager {
                                 .parse(cc.getMessage());
 
                         sendMsg(event, "\u200B" + message);
+                        CustomCommandUtils.PARSER.clear();
                     }
                     catch (Exception e) {
                         sendMsg(event, "Error with parsing custom command: " + e.getMessage());
