@@ -295,12 +295,10 @@ public class CommandManager {
                                 .put("user", event.getAuthor())
                                 .put("channel", event.getChannel())
                                 .put("guild", event.getGuild())
-                                .put("args", StringUtils.join(args, "|"))
-                                .put("splitargs", args)
+                                .put("args", StringUtils.join(args, " "))
                                 .parse(cc.getMessage());
 
                         sendMsg(event, "\u200B" + message);
-                        CustomCommandUtils.PARSER.clear();
                     }
                     catch (Exception e) {
                         sendMsg(event, "Error with parsing custom command: " + e.getMessage());
