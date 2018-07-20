@@ -23,7 +23,6 @@ import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -205,7 +204,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            if (settings.getSpamFilterState()) {
+            if (settings.getEnableSpamFilter()) {
                 Message messageToCheck = event.getMessage();
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);

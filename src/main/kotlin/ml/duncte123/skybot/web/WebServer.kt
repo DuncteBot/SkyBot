@@ -150,6 +150,7 @@ class WebServer {
                 val welcomeMessage = params["welcomeMessage"]
                 val leaveMessage = params["leaveMessage"]
                 val muteRole = params["muteRole"]
+                val spamFilter = paramToBoolean(params["spamFilter"])
                 val kickMode = paramToBoolean(params["kickMode"])
                 val rateLimits: MutableList<Int> = arrayListOf()
 
@@ -173,6 +174,7 @@ class WebServer {
                         .setFilterInvites(filterInvites)
                         .setMuteRoleId(muteRole)
                         .setKickState(kickMode)
+                        .setEnableSpamFilter(spamFilter)
                         .setEnableSwearFilter(swearFilter)
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings)

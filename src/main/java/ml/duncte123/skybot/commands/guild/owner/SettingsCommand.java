@@ -70,7 +70,7 @@ public class SettingsCommand extends Command {
                         "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
                         "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
                         "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
-                        "**Spamfilter:** " + boolToEmoji(settings.getSpamFilterState()) + "\n" +
+                        "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
                         "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
                         "**MuteRole:** " + (settings.getMuteRoleId() == null || settings.getMuteRoleId().equals("")
                         ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +
@@ -257,8 +257,8 @@ public class SettingsCommand extends Command {
                 break;
 
             case "togglespamfilter":
-                boolean spamState = !settings.getSpamFilterState();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setSpamFilterState(spamState));
+                boolean spamState = !settings.getEnableSpamFilter();
+                GuildSettingsUtils.updateGuildSettings(guild, settings.setEnableSpamFilter(spamState));
                 String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
                 String muteRoleId = settings.getMuteRoleId();
                 if (muteRoleId == null || muteRoleId.isEmpty()) {
@@ -287,7 +287,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "SpamRole feature & SpamFilter has been disabled");
                     //Never clean the role's id so activating the filter wont cause issues.
                     //GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(""));
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setSpamFilterState(false));
+                    GuildSettingsUtils.updateGuildSettings(guild, settings.setEnableSpamFilter(false));
                     return;
                 }
 

@@ -176,6 +176,17 @@
 
                 {# Kick mode #}
                 <div class="input-field col s12 m4">
+
+                    <div class="switch">
+                        Toggle spam filter:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="spamFilter" id="" {% if settings.getSpamFilterState() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
                     <!-- Switch -->
                     <div class="switch">
                         Kick mode:

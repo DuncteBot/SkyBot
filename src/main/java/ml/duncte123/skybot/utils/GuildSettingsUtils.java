@@ -105,7 +105,7 @@ public class GuildSettingsUtils {
                             .setAnnounceTracks(res.getBoolean("announceNextTrack"))
                             .setAutoDeHoist(res.getBoolean("autoDeHoist"))
                             .setFilterInvites(res.getBoolean("filterInvites"))
-                            .setSpamFilterState(res.getBoolean("spamFilterState"))
+                            .setEnableSpamFilter(res.getBoolean("spamFilterState"))
                             .setMuteRoleId(res.getString("muteRoleId"))
                             .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                             .setKickState(res.getBoolean("kickInsteadState"))
@@ -187,7 +187,7 @@ public class GuildSettingsUtils {
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
-                smt.setBoolean(13, settings.getSpamFilterState());
+                smt.setBoolean(13, settings.getEnableSpamFilter());
                 smt.setString(14, settings.getMuteRoleId());
                 smt.setString(15, convertJ2S(settings.getRatelimits()));
                 smt.setBoolean(16, settings.getKickState());

@@ -243,7 +243,7 @@ public class ModerationUtils {
                 MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                     "We disabled your spam filter until you have set up a role.");
 
-            guildSettings.setSpamFilterState(false);
+            guildSettings.setEnableSpamFilter(false);
             return;
         }
 

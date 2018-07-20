@@ -38,7 +38,7 @@ public class GuildSettings {
     private boolean announceTracks = false;
     private boolean autoDeHoist = false;
     private boolean filterInvites = false;
-    private boolean spamFilterState = false;
+    private boolean enableSpamFilter = false;
     private String muteRoleId = null;
     private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
     private boolean kickInstead = false;
@@ -303,12 +303,12 @@ public class GuildSettings {
         return this;
     }
 
-    public boolean getSpamFilterState() {
-        return spamFilterState;
+    public boolean getEnableSpamFilter() {
+        return enableSpamFilter;
     }
 
-    public GuildSettings setSpamFilterState(boolean newState) {
-        spamFilterState = newState;
+    public GuildSettings setEnableSpamFilter(boolean newState) {
+        enableSpamFilter = newState;
         return this;
     }
 
@@ -352,6 +352,6 @@ public class GuildSettings {
     @Override
     public String toString() {
         return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, customPrefix,
-                (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (spamFilterState ? "Enabled" : "Disabled"));
+                (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
     }
 }
