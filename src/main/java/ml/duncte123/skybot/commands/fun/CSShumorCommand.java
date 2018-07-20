@@ -34,10 +34,10 @@ public class CSShumorCommand extends Command {
         WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async( (doc) -> {
             Element code = doc.selectFirst(".crayon-pre");
             String text = code.text()
-                .replace('*/ ', '*/\n') // Newline + tab after comments
-                .replace('{ ', '{\n\t') // Newline + tab after {
+                .replace("*/ ", "*/\n") // Newline + tab after comments
+                .replace("{ ", "{\n\t") // Newline + tab after {
                 .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
-                .replace('; }', ';\n}');
+                .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message));
         });
