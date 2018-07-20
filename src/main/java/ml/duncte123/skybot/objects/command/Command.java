@@ -137,9 +137,7 @@ public abstract class Command implements ICommand {
 
     @SuppressWarnings("deprecation")
     protected boolean isDev(User u) {
-        return Settings.wbkxwkZPaG4ni5lm8laY.contains(u.getIdLong())
-                // "But you can not defy your creator"
-                || u.getIdLong() == 191231307290771456L || u.getIdLong() == 198137282018934784L || u.getIdLong() == 281673659834302464L;
+        return Settings.wbkxwkZPaG4ni5lm8laY.contains(u.getIdLong());
     }
 
     /**

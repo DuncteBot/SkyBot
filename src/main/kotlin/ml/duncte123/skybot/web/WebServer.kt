@@ -48,6 +48,7 @@ import java.util.*
 
 class WebServer {
 
+    private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
             .setClientId(CONFIG.getLong("discord.oauth.clientId", 210363111729790977))
@@ -65,10 +66,34 @@ class WebServer {
         get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
                 .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
 
-        get("/suggest", WebVariables().put("title", "Leave a suggestion"), "suggest.twig")
+        get("/suggest", WebVariables().put("title", "Leave a suggestion")
+                .put("chapta_sitekey", AirUtils.CONFIG.getString("apis.chapta.sitekey")), "suggest.twig")
 
         post("/suggest") {
-            "Sigh"
+            val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+            val params = toMap(pairs)
+
+            val captcha = params["g-recaptcha-response"] + ""
+            val name = params["name"]
+            val suggestion = params["sug"]
+            val description = params["desc"]
+
+            if(name.isNullOrEmpty() || suggestion.isNullOrEmpty()) {
+                return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
+            }
+
+            val cap = helpers.verifyCapcha(captcha)
+
+            if(!cap.getBoolean("success")) {
+                return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
+            }
+
+            val extraDesc = if(!description.isNullOrEmpty()) "$description\n\n" else ""
+            val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
+
+            val url = helpers.addTrelloCard(suggestion.toString(), descText).getString("shortUrl")
+
+            renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
         }
 
 
@@ -310,6 +335,13 @@ class WebServer {
             map.put("color", colorToHex(Settings.defaultColour))
             ModelAndView(map.map, model)
         }
+    }
+
+    private fun renderSugPage(map: WebVariables): String {
+        map.put("title", "Leave a suggestion")
+                .put("chapta_sitekey", AirUtils.CONFIG.getString("apis.chapta.sitekey"))
+
+        return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
 
     private fun getGuildFromRequest(request: Request): Guild? {

@@ -10,7 +10,7 @@
         <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
         <!-- Compiled and minified CSS -->
         <link rel="stylesheet"
-              href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.1/css/materialize.min.css"/>
+              href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/css/materialize.min.css"/>
         <link rel="stylesheet" href="/css/style.css"/>
         <link rel="stylesheet" href="/css/animate.css"/>
 
@@ -26,7 +26,7 @@
                 {% block menu %}
                     <li{% if title == "Home" %} class="active"{% endif %}><a href="/">Home</a></li>
                     <li{% if title == "List of commands" %} class="active"{% endif %}><a href="/commands">Commands</a></li>
-                    <li><a href="/suggest">Suggest</a></li>
+                    <li{% if title == "Leave a suggestion" %} class="active"{% endif %}><a href="/suggest">Suggest</a></li>
                     <li{% if title == "Dashboard" %} class="active"{% endif %}><a href="/dashboard">Dashboard</a></li>
                 {% endblock %}
             </div>
@@ -85,7 +85,7 @@
 
         <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
         <!-- Compiled and minified JavaScript -->
-        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.1/js/materialize.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
         <script src="/js/main.js"></script>
         {% block script %}{% endblock %}
     </body>
