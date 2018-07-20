@@ -7,7 +7,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 class SuggestCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        MessageUtils.sendMsg(event, "You can leave suggestions for the bot on his page: https://bot.duncte123.me/suggest.html")
+        MessageUtils.sendMsg(event, "You can leave suggestions for the bot on his page: https://bot.duncte123.me/suggest")
     }
 
     override fun getName() = "suggest"

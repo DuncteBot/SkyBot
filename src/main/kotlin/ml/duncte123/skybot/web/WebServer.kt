@@ -179,7 +179,7 @@ class WebServer {
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings)
 
-                response.redirect(request.url())
+                response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
             }
 
             //audio stuff
@@ -332,6 +332,9 @@ class WebServer {
                     map.put("goodRoles", goodRoles)
                     map.put("settings", GuildSettingsUtils.getGuild(guild))
                     map.put("guild", guild)
+
+                    if(queryMap().hasKey("message"))
+                        map.put("message", queryParams("message"))
                 }
             }
             map.put("color", colorToHex(Settings.defaultColour))

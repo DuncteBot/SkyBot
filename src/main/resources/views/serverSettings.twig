@@ -1,6 +1,13 @@
 {% extends 'templates/base.twig' %}
 
 {% block container %}
+
+    {% if message %}
+        <div class="row col s5">
+            <div>{{ message | raw }}</div>
+        </div>
+    {% endif %}
+
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
         <p><a href="#serverDescModal"
@@ -181,7 +188,7 @@
                         Toggle spam filter:
                         <label>
                             Disabled
-                            <input type="checkbox" name="spamFilter" id="" {% if settings.getSpamFilterState() %}checked="checked"{% endif %}>
+                            <input type="checkbox" name="spamFilter" id="" {% if settings.getEnableSpamFilter() %}checked="checked"{% endif %}>
                             <span class="lever"></span>
                             Enabled
                         </label>
@@ -215,7 +222,7 @@
             {# Hidden fields #}
             <input type="hidden" name="serverDescription" id="serverDescription" value="{{ settings.getServerDesc() }}" />
 
-            <input type="submit" value="submit" />
+            <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit" >Submit</button>
         </form>
     </div>
 
