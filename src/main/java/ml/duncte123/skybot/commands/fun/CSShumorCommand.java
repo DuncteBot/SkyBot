@@ -33,7 +33,12 @@ public class CSShumorCommand extends Command {
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async( (doc) -> {
             Element code = doc.selectFirst(".crayon-pre");
-            String message = String.format("```CSS\n%s```", code.text());
+            String text = code.text()
+                .replace('*/ ', '*/\n') // Newline + tab after comments
+                .replace('{ ', '{\n\t') // Newline + tab after {
+                .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
+                .replace('; }', ';\n}');
+            String message = String.format("```CSS\n%s```", text);
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message));
         });
     }
