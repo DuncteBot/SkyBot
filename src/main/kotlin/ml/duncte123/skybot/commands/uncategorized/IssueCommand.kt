@@ -39,7 +39,7 @@ class IssueCommand : Command() {
         when (args.size) {
             0 -> {
                 MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
-                    |You can generate it by using our dashboard. Link: <https://bot.duncte123.me>""".trimMargin())
+                    |You can generate it by using our dashboard. Link: <https://bot.duncte123.me/issuegenerator>""".trimMargin())
             }
             else -> {
                 try {
@@ -65,15 +65,18 @@ class IssueCommand : Command() {
 
                     MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
                 } catch (ex: JSONException) {
-                    MessageUtils.sendErrorWithMessage(event.message, "You malformed the JSON.\n${ex::class.java.simpleName}: ${ex.localizedMessage}")
+                    val msg =
+                            """You malformed the JSON.
+                            | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/abcdefh"}"""
+                    MessageUtils.sendErrorWithMessage(event.message, msg.trimMargin())
                 }
             }
         }
     }
 
-    override fun help(): String = """Reports heavy and wierd issues to the developers.
+    override fun help(): String = """Reports heavy and weird issues to the developers.
         |This will create an invite to your server, so we can join and help you directly.
-        |Those issues are hard to explain / resolve if we can't see nor read the chat other things that happen.
+        |Those issues are hard to explain / resolve if we can't see nor read the chat or other things that happen.
     """.trimMargin()
 
     override fun getName(): String = "issue"
