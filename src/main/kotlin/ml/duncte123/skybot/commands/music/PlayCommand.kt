@@ -33,7 +33,7 @@ open class PlayCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if (!channelChecks(event, false)) {
+        if (!channelChecks(event, false) && isPatron(event.author, event.channel)) {
             // Not gonna copy pasta a whole command. Gotta be smart.
             // https://media.discordapp.net/attachments/392422484168802314/396378062674984960/smart_nigger.png
             AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", arrayOf(), event)
@@ -75,7 +75,7 @@ open class PlayCommand : MusicCommand() {
                 return
             }
 
-            audioUtils.loadAndPlay(mng, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, false)
         }
     }
 

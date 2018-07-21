@@ -32,7 +32,7 @@ class LoadCommand : MusicCommand() {
 
         var attachment = attachments[0]
 
-        attachment.withInputStream({
+        attachment.withInputStream {
             try {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream
@@ -43,6 +43,7 @@ class LoadCommand : MusicCommand() {
                             // This probably announces it to the channel
                             AudioUtils.ins.loadAndPlay(getMusicManager(event.guild),
                                     event.channel,
+                                    event.author,
                                     it.toString(),
                                     false,
                                     false)
@@ -54,7 +55,7 @@ class LoadCommand : MusicCommand() {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Invalid JSON file!")
             }
-        })
+        }
     }
 
     override fun getName() = "load"

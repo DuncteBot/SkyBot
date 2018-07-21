@@ -54,7 +54,7 @@ class PPlayCommand : MusicCommand() {
 
         MessageUtils.sendMsg(event, "Loading playlist.......\n" +
                 "This may take a while depending on the size.")
-        audioUtils.loadAndPlay(mng, event.channel, toPlay, true)
+        audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

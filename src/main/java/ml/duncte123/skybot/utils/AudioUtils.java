@@ -40,11 +40,9 @@ import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.logging.Level;
 
 import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
@@ -141,11 +139,11 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
-        loadAndPlay(mng, channel, trackUrlRaw, addPlayList, true);
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw, final boolean addPlayList) {
+        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, true);
     }
 
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw,
+    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw,
                             final boolean addPlayList,
                             final boolean announce) {
         final String trackUrl;
@@ -168,6 +166,8 @@ public class AudioUtils {
                         title = stream.get().getName();
                 }
 
+                track.setUserData(requester);
+
                 mng.scheduler.queue(track);
 
                 if (announce) {
@@ -183,7 +183,12 @@ public class AudioUtils {
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
-                List<AudioTrack> tracks = playlist.getTracks();
+                List<AudioTrack> tracks = new ArrayList<>();
+
+                for (final AudioTrack track : playlist.getTracks()) {
+                    track.setUserData(requester);
+                    tracks.add(track);
+                }
 
                 if (tracks.size() == 0) {
                     sendEmbed(channel, embedField(embedTitle, "Error: This playlist is empty."));
