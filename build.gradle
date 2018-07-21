@@ -32,7 +32,7 @@ plugins {
     id 'idea'
     id 'maven'
     id 'application'
-    id 'com.github.johnrengelman.shadow' version '2.0.2'
+    id 'com.github.johnrengelman.shadow' version '2.0.4'
     id 'org.jetbrains.kotlin.jvm' version '1.2.51'
     id 'de.fuerstenau.buildconfig' version '1.1.8'
 }
@@ -42,7 +42,7 @@ group = 'ml.duncte123.skybot'
 
 version "3.73.2_${getGitHash()}"
 
-sourceCompatibility = JavaVersion.VERSION_1_10
+sourceCompatibility = JavaVersion.VERSION_1_9
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.9'

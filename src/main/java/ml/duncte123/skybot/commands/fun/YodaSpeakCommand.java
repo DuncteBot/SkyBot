@@ -1,12 +1,14 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import java.io.IOException;
 
@@ -31,9 +33,9 @@ public class YodaSpeakCommand extends Command {
                 .build(), Response::body).async(
                 (body) -> {
                     try {
-                        final String text = body.string();
-                        logger.debug("Yoda response: " + text);
-                        sendMsg(event, text);
+                        final JSONObject json = new JSONObject(body.string());
+                        logger.debug("Yoda response: " + json);
+                        sendMsg(event, json.getString("sentence"));
                     } catch (IOException e) {
                         e.printStackTrace();
                         sendMsg(event, "Yoda is asleep tell my developers to wake him up");

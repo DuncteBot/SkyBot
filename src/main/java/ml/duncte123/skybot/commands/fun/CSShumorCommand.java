@@ -39,7 +39,11 @@ public class CSShumorCommand extends Command {
                 .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
                 .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message));
+            Element link = doc.selectFirst(".funny h2 a");
+            MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
+                    .setTitle(link.text(), link.attr("href"))
+                    .setDescription(message)
+                    .build());
         });
     }
 

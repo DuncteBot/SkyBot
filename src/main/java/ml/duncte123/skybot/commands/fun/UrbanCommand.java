@@ -31,11 +31,12 @@ public class UrbanCommand extends Command {
         String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async( json -> {
+            System.out.println(json);
             if(json.getJSONArray("list").length() < 1) {
                 sendMsg(event, "Nothing found");
                 return;
             }
-            String tags = "`" + StringUtils.join(json.getJSONArray("tags"), "`, `") + "`";
+            String tags = "`" + StringUtils.join(json.optJSONArray("tags"), "`, `") + "`";
             JSONObject item = json.getJSONArray("list").getJSONObject(0);
             String permaLink = item.getString("permalink");
 
