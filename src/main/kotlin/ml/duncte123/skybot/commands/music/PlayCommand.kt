@@ -33,8 +33,11 @@ open class PlayCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if (!channelChecks(event))
-            return
+        if (!channelChecks(event, false)) {
+            // Not gonna copy pasta a whole command. Gotta be smart.
+            // https://media.discordapp.net/attachments/392422484168802314/396378062674984960/smart_nigger.png
+            AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", arrayOf(), event)
+        }
 
         val guild = event.guild
         val mng = getMusicManager(guild)

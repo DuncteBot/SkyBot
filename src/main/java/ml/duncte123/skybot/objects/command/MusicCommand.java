@@ -104,26 +104,38 @@ public abstract class MusicCommand extends Command {
     }
 
     /**
-     * This performs some checks that we need for the music
+     * This performs some checks that we need for the music and may suppress error messages.
+     *
+     * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param reply whether the bot replies that you should make it join first
+     * @return true if the checks pass
+     */
+    protected boolean channelChecks(GuildMessageReceivedEvent event, boolean reply) {
+        LavalinkManager lavalinkManager = getLavalinkManager();
+        if (!lavalinkManager.isConnected(event.getGuild())) {
+            if (reply)
+                MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
+            return false;
+        }
+
+        if (lavalinkManager.getConnectedChannel(event.getGuild()) != null &&
+                !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
+            if (reply)
+                MessageUtils.sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+            return false;
+        }
+        getMusicManager(event.getGuild()).latestChannel = event.getChannel();
+        return true;
+    }
+
+    /**
+     * This performs some checks that we need for the music and will always reply with error messages.
      *
      * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        LavalinkManager lavalinkManager = getLavalinkManager();
-        if (!lavalinkManager.isConnected(event.getGuild())) {
-            MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
-            return false;
-        }
-
-        if (lavalinkManager.getConnectedChannel(event.getGuild()) != null && !lavalinkManager.getConnectedChannel(event.getGuild())
-                .getMembers().contains(event.getMember())) {
-            MessageUtils.sendMsg(event,
-                    "I'm sorry, but you have to be in the same channel as me to use any music related commands");
-            return false;
-        }
-        getMusicManager(event.getGuild()).latestChannel = event.getChannel();
-        return true;
+        return channelChecks(event, true);
     }
 
     protected boolean isOwner(GuildMessageReceivedEvent event) {
