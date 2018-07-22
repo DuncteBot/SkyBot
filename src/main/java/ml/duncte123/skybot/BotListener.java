@@ -327,7 +327,7 @@ public class BotListener extends ListenerAdapter {
             logger.info(String.format("Found %s normal patrons", patrons.size()));
 
 
-            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
                     .stream().map(Member::getUser).collect(Collectors.toList());
 
             List<Long> patronGuilds = manager.getMutualGuilds(guildPatrons).stream().map(Guild::getIdLong)
