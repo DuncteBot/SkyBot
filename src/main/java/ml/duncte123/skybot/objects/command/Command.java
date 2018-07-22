@@ -112,7 +112,7 @@ public abstract class Command implements ICommand {
      * @param tc the channel to send the message to, if the text channel is null it wont send a message
      * @return true if the user is a patron
      */
-    protected boolean isPatron(User u, TextChannel tc) {
+    private boolean isPatron(User u, TextChannel tc) {
         //noinspection deprecation
         if (isDev(u)) {
             return true;
@@ -147,10 +147,36 @@ public abstract class Command implements ICommand {
 
     private boolean isGuildPatron(User u, Guild g) {
 
-        return false;
+        if(guildPatrons.contains(g.getIdLong())) {
+            return true;
+        }
+
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(guildId);
+        if (supportGuild == null) {
+            return false;
+        }
+
+        Member m = supportGuild.getMember(u);
+
+        if(m == null) {
+            return false;
+        }
+
+        if(!m.getRoles().contains(supportGuild.getRoleById(guildPatronsRole))) {
+            return false;
+        }
+
+        guildPatrons.add(g.getIdLong());
+
+        return true;
     }
 
     protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
+        boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
+        if(isGuild) {
+            return true;
+        }
+
         return isPatron(event.getAuthor(), event.getChannel());
     }
 

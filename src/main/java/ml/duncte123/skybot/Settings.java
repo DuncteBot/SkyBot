@@ -83,5 +83,5 @@ public class Settings {
     /**
      * this tells the bot if we should send json errors
      */
-    public static boolean useJSON = false;
+    public static final boolean useJSON = false;
 }
