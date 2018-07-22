@@ -59,12 +59,12 @@ public abstract class Command implements ICommand {
      * A list of users that have upvoted the bot
      */
     private static final Set<Long> upvotedIds = new HashSet<>();
-    private static final Set<Long> patrons = new HashSet<>();
-    private static final Set<Long> guildPatrons = new HashSet<>();
+    public static final Set<Long> patrons = new HashSet<>();
+    public static final Set<Long> guildPatrons = new HashSet<>();
 
-    private static final long guildId = 191245668617158656L;
-    private static final long guildPatronsRole = 470581447196147733L;
-    private static final long patronsRole = 402497345721466892L;
+    public static final long supportGuildId = 191245668617158656L;
+    public static final long guildPatronsRole = 470581447196147733L;
+    public static final long patronsRole = 402497345721466892L;
 
     /**
      * This holds the category
@@ -120,7 +120,7 @@ public abstract class Command implements ICommand {
         if (patrons.contains(u.getIdLong())) {
             return true;
         }
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(guildId);
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
         if (supportGuild == null) {
             return false;
         }
@@ -151,7 +151,7 @@ public abstract class Command implements ICommand {
             return true;
         }
 
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(guildId);
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
         if (supportGuild == null) {
             return false;
         }
