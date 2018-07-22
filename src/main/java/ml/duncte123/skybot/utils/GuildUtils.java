@@ -43,68 +43,6 @@ public class GuildUtils {
     private static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
 
     /**
-     * This sends a post request to the bot lists with the new guild count
-     *
-     * @param jda the jda instance for the token
-     * @return the response from the server
-     */
-    private static String updateGuildCount(JDA jda) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", jda.asBot().getShardManager().getGuildCache().size());
-        postFields.put("auth", jda.getToken());
-        try {
-            return Objects.requireNonNull(
-                    WebUtils.ins.preparePost(Settings.OLD_API_BASE + "/postGuildCount/json", postFields).execute());
-        } catch (NullPointerException ignored) {
-            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            ComparatingUtils.execCheck(e);
-            return new JSONObject().put("status", "failure").put("message", e.toString()).toString();
-        }
-    }
-
-
-    /**
-     * This method updates the guild count and checks it on startup and every time we join or leave a guild.
-     *
-     * @param jda the jda
-     * @throws UnsupportedOperationException if the request failed.
-     */
-    public static void updateGuildCountAndCheck(JDA jda) {
-        JSONObject returnValue = new JSONObject(updateGuildCount(jda));
-        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
-            String exceptionMessage = "%s";
-            try {
-                switch (returnValue.getInt("code")) {
-                    case 401: {
-                        exceptionMessage = "Unauthorized access! %s";
-                        break;
-                    }
-                    case 400: {
-                        exceptionMessage = "Bad request! %s";
-                        break;
-                    }
-
-                    default: {
-                        exceptionMessage = "Server responded with a unknown status message: %s";
-                        break;
-                    }
-                }
-            } catch (JSONException ex) {
-                String x = returnValue.getString("message");
-                if ("ignored exception".equals(x))
-                    return;
-                logger.error(String.format(exceptionMessage, x), ex);
-            }
-            String x = returnValue.getString("message");
-            if ("ignored exception".equals(x))
-                return;
-            logger.error(String.format(exceptionMessage, returnValue.getString("message")));
-        }
-    }
-
-    /**
      * Returns an array with the member counts of the guild
      * 0 = the total users
      * 1 = the total bots

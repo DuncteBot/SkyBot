@@ -26,7 +26,7 @@ import org.apache.commons.lang3.StringUtils
 
 class VolumeCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (!isPatron(event.author, event.channel))
+        if (!isUserOrGuildPatron(event))
             return
 
         val mng = getMusicManager(event.guild)

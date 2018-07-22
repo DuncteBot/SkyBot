@@ -106,7 +106,7 @@ class EvalCommand : Command() {
         /*if (!isRanByBotOwner && !runIfNotOwner)
             return*/
 
-        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
+        if (!isRanByBotOwner && !isUserOrGuildPatron(event)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\nimport ", postfix = "\n") +

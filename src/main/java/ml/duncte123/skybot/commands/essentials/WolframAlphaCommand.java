@@ -108,7 +108,7 @@ public class WolframAlphaCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (!isPatron(event.getAuthor(), event.getChannel())) return;
+        if (!isUserOrGuildPatron(event)) return;
 
         if (args.length == 0) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");

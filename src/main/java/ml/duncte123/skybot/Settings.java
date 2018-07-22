@@ -49,14 +49,9 @@ public class Settings {
                     Arrays.asList(
                             191231307290771456L, //duncte123#1245
                             281673659834302464L, //ramidzkh#4814
-                            198137282018934784L //⌛.exe ¯\_(ツ)_/¯#5785
+                            198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
                     )).stream().map(it -> Long.valueOf(it.toString()))
                     .collect(Collectors.toList()));
-
-    /**
-     * This is the base url from the custom api
-     */
-    public static final String OLD_API_BASE = "https://bot-old.duncte123.me/api";
     /**
      * This is the prefix that your bot has, by default is the /
      */

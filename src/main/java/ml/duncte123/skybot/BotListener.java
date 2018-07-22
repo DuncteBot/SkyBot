@@ -306,9 +306,6 @@ public class BotListener extends ListenerAdapter {
             systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
             isCacheCleanerActive = true;
         }
-
-        //Update guild count from then the bot was offline (should never die tho)
-        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     /**
@@ -400,7 +397,6 @@ public class BotListener extends ListenerAdapter {
                 .getShardId());
         logger.info(TextColor.GREEN + message + TextColor.RESET);
         GuildSettingsUtils.registerNewGuild(guild);
-        GuildUtils.updateGuildCountAndCheck(event.getJDA());
     }
 
     @Override
@@ -409,7 +405,6 @@ public class BotListener extends ListenerAdapter {
         if (!badGuilds.containsKey(guild.getId())) {
             logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
             GuildSettingsUtils.deleteGuild(guild);
-            GuildUtils.updateGuildCountAndCheck(event.getJDA());
         } else {
             badGuilds.remove(guild.getId());
         }

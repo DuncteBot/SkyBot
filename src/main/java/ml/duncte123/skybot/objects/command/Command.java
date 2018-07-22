@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -30,6 +31,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
@@ -37,7 +39,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.HashSet;
-import java.util.Objects;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -57,7 +58,13 @@ public abstract class Command implements ICommand {
     /**
      * A list of users that have upvoted the bot
      */
-    private static final Set<String> upvotedIds = new HashSet<>();
+    private static final Set<Long> upvotedIds = new HashSet<>();
+    private static final Set<Long> patrons = new HashSet<>();
+    private static final Set<Long> guildPatrons = new HashSet<>();
+
+    private static final long guildId = 191245668617158656L;
+    private static final long guildPatronsRole = 470581447196147733L;
+    private static final long patronsRole = 402497345721466892L;
 
     /**
      * This holds the category
@@ -82,12 +89,9 @@ public abstract class Command implements ICommand {
                 .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
                 .get()
                 .addHeader("Authorization", token)
-                .build(), (r) -> {
-            assert r.body() != null;
-            return new JSONObject(r.body().string());
-        });
+                .build(), WebUtilsErrorUtils::toJSONObject);
 
-        return 1 == Objects.requireNonNull(json.execute()).optInt("voted", 0);
+        return 1 == json.execute().optInt("voted", 0);
     }
 
     /**
@@ -113,7 +117,10 @@ public abstract class Command implements ICommand {
         if (isDev(u)) {
             return true;
         }
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById("191245668617158656");
+        if (patrons.contains(u.getIdLong())) {
+            return true;
+        }
+        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(guildId);
         if (supportGuild == null) {
             return false;
         }
@@ -126,14 +133,25 @@ public abstract class Command implements ICommand {
             return false;
         }
 
-        if (!m.getRoles().contains(supportGuild.getRoleById("402497345721466892"))) {
+        if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
             MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
                     "not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;
         }
 
+        patrons.add(u.getIdLong());
+
         return true;
+    }
+
+    private boolean isGuildPatron(User u, Guild g) {
+
+        return false;
+    }
+
+    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
+        return isPatron(event.getAuthor(), event.getChannel());
     }
 
     @SuppressWarnings("deprecation")
@@ -145,12 +163,12 @@ public abstract class Command implements ICommand {
      * Has this user upvoted the bot
      */
     protected boolean hasUpvoted(User user) {
-        boolean upvoteCheck = upvotedIds.contains(user.getId());
+        boolean upvoteCheck = upvotedIds.contains(user.getIdLong());
         if (!upvoteCheck) {
             boolean dblCheck = checkVoteOnDBL(user.getId());
             if (dblCheck) {
                 upvoteCheck = true;
-                upvotedIds.add(user.getId());
+                upvotedIds.add(user.getIdLong());
             }
         }
 

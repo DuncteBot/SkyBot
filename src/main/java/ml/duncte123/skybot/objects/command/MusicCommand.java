@@ -141,7 +141,7 @@ public abstract class MusicCommand extends Command {
     }
 
     protected boolean prejoinChecks(GuildMessageReceivedEvent event) {
-        if (isPatron(event.getAuthor(), event.getChannel())) {
+        if (isUserOrGuildPatron(event)) {
             // Not gonna copy pasta a whole command. Gotta be smart.
             AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
             return true;

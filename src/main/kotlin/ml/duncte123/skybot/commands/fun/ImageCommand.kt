@@ -45,7 +45,7 @@ class ImageCommand : Command() {
                              "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
              return
          }*/
-        if (isPatron(event.author, event.channel)) {
+        if (isUserOrGuildPatron(event)) {
             if (args.isEmpty()) {
                 MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
