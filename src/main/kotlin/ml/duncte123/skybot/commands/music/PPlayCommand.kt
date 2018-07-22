@@ -31,8 +31,9 @@ import org.apache.commons.lang3.StringUtils
 class PPlayCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if (!channelChecks(event))
+        if (!prejoinChecks(event)) {
             return
+        }
 
         val guild = event.guild
         val mng = getMusicManager(guild)

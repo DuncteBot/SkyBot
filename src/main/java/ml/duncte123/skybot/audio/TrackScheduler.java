@@ -28,6 +28,7 @@ import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -170,14 +171,14 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private void announceNextTrack(AudioTrack track, boolean repeated) {
         if (guildMusicManager.guildSettings.isAnnounceTracks()) {
             String title = track.getInfo().title;
-            User requester = (User) track.getUserData();
+            TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
                 Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
                         .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            final String message = String.format("Now playing: %s by %#s %s", title, requester, (repeated ? "(repeated)" : ""));
+            final String message = String.format("Now playing: %s by %#s %s", title, userData.getUser(), (repeated ? "(repeated)" : ""));
             MessageUtils.sendMsg(guildMusicManager.latestChannel, message);
         }
     }

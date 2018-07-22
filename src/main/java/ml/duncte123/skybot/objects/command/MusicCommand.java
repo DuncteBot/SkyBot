@@ -25,6 +25,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
@@ -114,7 +115,8 @@ public abstract class MusicCommand extends Command {
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply)
-                MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel");
+                MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
+                        "Want to have the bot automatically join your channel? Conciser becoming a patron.");
             return false;
         }
 
@@ -136,6 +138,18 @@ public abstract class MusicCommand extends Command {
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event) {
         return channelChecks(event, true);
+    }
+
+    protected boolean prejoinChecks(GuildMessageReceivedEvent event) {
+        if(isPatron(event.getAuthor(), event.getChannel())) {
+            // Not gonna copy pasta a whole command. Gotta be smart.
+            AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
+            return true;
+        } else {
+            //If the user is not a patron return
+            channelChecks(event, true);
+            return false;
+        }
     }
 
     protected boolean isOwner(GuildMessageReceivedEvent event) {

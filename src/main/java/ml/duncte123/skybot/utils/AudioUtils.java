@@ -36,9 +36,11 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -166,7 +168,7 @@ public class AudioUtils {
                         title = stream.get().getName();
                 }
 
-                track.setUserData(requester);
+                track.setUserData(new TrackUserData(requester));
 
                 mng.scheduler.queue(track);
 
@@ -186,7 +188,7 @@ public class AudioUtils {
                 List<AudioTrack> tracks = new ArrayList<>();
 
                 for (final AudioTrack track : playlist.getTracks()) {
-                    track.setUserData(requester);
+                    track.setUserData(new TrackUserData(requester));
                     tracks.add(track);
                 }
 
