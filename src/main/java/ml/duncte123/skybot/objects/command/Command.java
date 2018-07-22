@@ -168,11 +168,12 @@ public abstract class Command implements ICommand {
 
     /**
      * This method is internally used to properly display the text on the webpages
+     *
      * @return the html parsed help
      */
     @SuppressWarnings("unused")
     public String helpParsed() {
-        if(helpParsed == null) {
+        if (helpParsed == null) {
             String s = help()
                     .replaceAll("<", "&lt;")
                     .replaceAll(">", "&gt;")

@@ -25,6 +25,7 @@ package ml.duncte123.skybot.utils
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import lavalink.client.player.IPlayer
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
@@ -32,6 +33,7 @@ import ml.duncte123.skybot.audio.TrackScheduler
 import ml.duncte123.skybot.entities.delegate.*
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.managers.Presence
 import org.json.JSONArray
 import org.json.JSONObject
@@ -229,5 +231,52 @@ class EarthUtils {
                 JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
                         .put("stream", track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
                         .put("title", track.info.title)
+
+        @JvmStatic
+        fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
+            val stort = if(all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
+            WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$stort").async {
+                println(it)
+                val posts = it.getJSONObject("data").getJSONArray("children").filter {
+                    it as JSONObject
+                    (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
+                            it.getJSONObject("data").getString("selftext").length <= 550
+                            && it.getJSONObject("data").getString("title").length <= 256)
+                }
+                if (posts.isEmpty()) {
+                    MessageUtils.sendError(event.message)
+                    MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
+                    |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
+                } else {
+
+                    if (!index.containsKey(event.guild.id) || index.getOrDefault(event.guild.id, 0) >= posts.size) {
+                        index[event.guild.id] = 0
+                    }
+
+                    val postI = index.getOrDefault(event.guild.id, 0)
+
+                    val post: JSONObject = JSONArray(posts).getJSONObject(postI).getJSONObject("data")
+                    index[event.guild.id] = postI + 1
+                    val title: String = post.getString("title")
+                    val text: String = post.optString("selftext", "")
+                    val url: String = post.getString("url")
+
+                    val embed = EmbedUtils.defaultEmbed().setTitle(title, url)
+
+                    if(text.isNotEmpty())
+                            embed.setDescription(text)
+
+                    val imagesO = post.optJSONObject("preview")
+                    println(imagesO)
+                    val images = imagesO?.optJSONArray("images")
+                    if(images != null) {
+                        val image = images.getJSONObject(0).getJSONObject("source").getString("url")
+                        embed.setImage(image)
+                    }
+
+                    MessageUtils.sendEmbed(event, embed.build())
+                }
+            }
+        }
     }
 }

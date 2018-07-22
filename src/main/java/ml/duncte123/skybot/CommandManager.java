@@ -76,7 +76,7 @@ public class CommandManager {
     }
 
     public List<ICommand> getSortedCommands() {
-        if(commandsSorted.isEmpty()) {
+        if (commandsSorted.isEmpty()) {
             List<ICommand> commandSet = new ArrayList<>();
             List<String> names = new ArrayList<>();
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
@@ -281,7 +281,7 @@ public class CommandManager {
     public void dispatchCommand(ICommand cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
         if (cmd != null) {
             try {
-                if(!cmd.isCustom()) {
+                if (!cmd.isCustom()) {
                     cmd.executeCommand(invoke, args, event);
                 } else {
 
@@ -300,8 +300,7 @@ public class CommandManager {
 
                         sendMsg(event, "\u200B" + message);
                         CustomCommandUtils.PARSER.clear();
-                    }
-                    catch (Exception e) {
+                    } catch (Exception e) {
                         sendMsg(event, "Error with parsing custom command: " + e.getMessage());
                         execCheck(e);
                     }

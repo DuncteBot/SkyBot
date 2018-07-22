@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -91,7 +90,7 @@ public class CustomCommandCommand extends Command {
 
     private void deleteOrShowCustomCommand(String[] args, GuildMessageReceivedEvent event) {
         //Check for deleting
-        if(args[0].equalsIgnoreCase("raw")) {
+        if (args[0].equalsIgnoreCase("raw")) {
             final String commandName = args[1];
             final String guildid = event.getGuild().getId();
 
@@ -100,7 +99,7 @@ public class CustomCommandCommand extends Command {
                 return;
             }
             CustomCommand cmd = COMMAND_MANAGER.getCustomCommand(commandName, guildid);
-            sendMsg(event, "Raw data for `" +  commandName + "`:```perl\n" + cmd.getMessage() + "```");
+            sendMsg(event, "Raw data for `" + commandName + "`:```perl\n" + cmd.getMessage() + "```");
         } else if (args[0].equalsIgnoreCase("delete")) {
 
             if (!isAdmin(event)) {
@@ -130,7 +129,7 @@ public class CustomCommandCommand extends Command {
 
     private void addEditOrInvokeCustomCommand(String[] args, GuildMessageReceivedEvent event) {
 
-        if(!systemInvokes.contains(args[0])) {
+        if (!systemInvokes.contains(args[0])) {
 
 
             //fetch a custom command

@@ -123,11 +123,11 @@ public class ScriptDelegate extends Script {
 
     public int countPeopleWithRole(String name) {
         GuildDelegate guild = (GuildDelegate) super.getBinding().getProperty("guild");
-        List<Role> roles =  guild.getRolesByName(name, true);
-        if(roles.size() == 0)
+        List<Role> roles = guild.getRolesByName(name, true);
+        if (roles.size() == 0)
             return 0;
         Role role = roles.get(0);
-        List<Member> members = guild.getMembersWithRoles( ((RoleDelegate)role).getUA83D3Ax_ky() );
+        List<Member> members = guild.getMembersWithRoles(((RoleDelegate) role).getUA83D3Ax_ky());
         return members.size();
     }
 

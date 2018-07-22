@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import org.apache.commons.lang3.StringUtils;

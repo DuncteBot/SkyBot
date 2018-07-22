@@ -33,7 +33,6 @@ import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

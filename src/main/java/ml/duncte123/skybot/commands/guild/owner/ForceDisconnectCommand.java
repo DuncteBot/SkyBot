@@ -30,7 +30,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 public class ForceDisconnectCommand extends MusicCommand {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if(event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
+        if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             Guild g = event.getGuild();
             GuildMusicManager manager = getMusicManager(g);
 

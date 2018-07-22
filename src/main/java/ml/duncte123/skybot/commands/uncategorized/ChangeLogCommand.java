@@ -34,7 +34,7 @@ public class ChangeLogCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if(embed != null) {
+        if (embed != null) {
             MessageUtils.sendEmbed(event, embed);
         } else {
             fetchLatetstGitHubCommits(event);

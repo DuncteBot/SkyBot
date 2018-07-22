@@ -61,13 +61,11 @@ import java.util.regex.Pattern;
 public class BotListener extends ListenerAdapter {
 
     private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com/invite|\\.gg)/([\\S\\w]*\\b)");
-    private final Logger logger = LoggerFactory.getLogger(BotListener.class);
-
     /**
      * Check if we are updating
      */
     public static boolean isUpdating = false;
-
+    private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
      */
@@ -125,7 +123,7 @@ public class BotListener extends ListenerAdapter {
         /*
          * Only shut down if we are not updating
          */
-        if(!isUpdating)
+        if (!isUpdating)
             System.exit(0);
     }
 
@@ -174,7 +172,8 @@ public class BotListener extends ListenerAdapter {
                                             ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                             );
                         }
-                    }, (__) -> {}/*, (thr) -> {
+                    }, (__) -> {
+                    }/*, (thr) -> {
                     try {
                         throw new SkybotContextException(thr.getMessage(), thr);
                     } catch (SkybotContextException e) {

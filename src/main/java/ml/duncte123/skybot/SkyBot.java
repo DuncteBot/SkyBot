@@ -63,7 +63,8 @@ public class SkyBot {
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = (t) -> {};
+        RestAction.DEFAULT_FAILURE = (t) -> {
+        };
         RestAction.setPassContext(true);
 
         //Set the logger to only info by default

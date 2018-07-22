@@ -40,7 +40,6 @@ import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 

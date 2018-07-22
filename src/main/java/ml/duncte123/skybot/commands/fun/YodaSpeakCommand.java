@@ -1,7 +1,6 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Request;
@@ -18,7 +17,7 @@ public class YodaSpeakCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        if(args.length < 1) {
+        if (args.length < 1) {
             sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <A sentence.>`");
             return;
         }

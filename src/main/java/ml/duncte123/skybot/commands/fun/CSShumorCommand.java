@@ -20,24 +20,52 @@ package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
+import java.util.Map;
+import java.util.TreeMap;
+
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
+import static ml.duncte123.skybot.utils.AirUtils.RAND;
+import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 
 public class CSShumorCommand extends Command {
+
+    private final Map<String, Integer> cssIndex;
+
+    public CSShumorCommand() {
+        this.category = CommandCategory.FUN;
+        this.cssIndex = new TreeMap<>();
+    }
+
+
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async( (doc) -> {
+
+        switch (RAND.nextInt(2)) {
+            case 1:
+                sendRedditPost("css_irl", cssIndex, event, true);
+                break;
+            default:
+                sendCssJoke(event);
+                break;
+        }
+
+    }
+
+    private void sendCssJoke(GuildMessageReceivedEvent event) {
+        WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async((doc) -> {
             Element code = doc.selectFirst(".crayon-pre");
             String text = code.text()
-                .replace("*/ ", "*/\n") // Newline + tab after comments
-                .replace("{ ", "{\n\t") // Newline + tab after {
-                .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
-                .replace("; }", ";\n}");
+                    .replace("*/ ", "*/\n") // Newline + tab after comments
+                    .replace("{ ", "{\n\t") // Newline + tab after {
+                    .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
+                    .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
             Element link = doc.selectFirst(".funny h2 a");
             MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
@@ -55,5 +83,10 @@ public class CSShumorCommand extends Command {
     @Override
     public String getName() {
         return "csshumor";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"cssjoke"};
     }
 }

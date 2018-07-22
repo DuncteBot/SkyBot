@@ -47,9 +47,9 @@ public class Settings {
     public static final List<Long> wbkxwkZPaG4ni5lm8laY =
             Collections.unmodifiableList(AirUtils.CONFIG.getArray("discord.constantSuperUserIds",
                     Arrays.asList(
-                        191231307290771456L, //duncte123#1245
-                        281673659834302464L, //ramidzkh#4814
-                        198137282018934784L //⌛.exe ¯\_(ツ)_/¯#5785
+                            191231307290771456L, //duncte123#1245
+                            281673659834302464L, //ramidzkh#4814
+                            198137282018934784L //⌛.exe ¯\_(ツ)_/¯#5785
                     )).stream().map(it -> Long.valueOf(it.toString()))
                     .collect(Collectors.toList()));
 

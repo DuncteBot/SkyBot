@@ -22,7 +22,7 @@ public class UrbanCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        if(args.length < 1) {
+        if (args.length < 1) {
             sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <search term>`");
             return;
         }
@@ -30,9 +30,9 @@ public class UrbanCommand extends Command {
         String term = StringUtils.join(args, " ");
         String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
-        WebUtils.ins.getJSONObject(url).async( json -> {
+        WebUtils.ins.getJSONObject(url).async(json -> {
             System.out.println(json);
-            if(json.getJSONArray("list").length() < 1) {
+            if (json.getJSONArray("list").length() < 1) {
                 sendMsg(event, "Nothing found");
                 return;
             }
@@ -50,8 +50,7 @@ public class UrbanCommand extends Command {
                     .addField("Upvotes:", item.getInt("thumbs_up") + "", true)
                     .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
                     .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false)
-                    .addField("Tags:", tags, false)
-                    ;
+                    .addField("Tags:", tags, false);
             sendEmbed(event, eb.build());
         });
 

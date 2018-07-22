@@ -325,16 +325,16 @@ public class GuildSettings {
         return ratelimits;
     }
 
-    public Long[] getRateLimitsForTwig() {
-        Long[] temp = new Long[ratelimits.length];
-        for(int i = 0; i < ratelimits.length; i++)
-            temp[i] = ratelimits[i];
-        return temp;
-    }
-
     public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
         return this;
+    }
+
+    public Long[] getRateLimitsForTwig() {
+        Long[] temp = new Long[ratelimits.length];
+        for (int i = 0; i < ratelimits.length; i++)
+            temp[i] = ratelimits[i];
+        return temp;
     }
 
     public boolean getKickState() {

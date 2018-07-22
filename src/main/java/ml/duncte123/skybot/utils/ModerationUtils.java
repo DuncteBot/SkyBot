@@ -239,9 +239,9 @@ public class ModerationUtils {
         String muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId == null || muteRoleId.isEmpty()) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
-                    "We disabled your spam filter until you have set up a role.");
+                        "We disabled your spam filter until you have set up a role.");
 
             guildSettings.setEnableSpamFilter(false);
             return;
@@ -250,19 +250,19 @@ public class ModerationUtils {
         Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
             return;
         }
@@ -279,7 +279,7 @@ public class ModerationUtils {
 
                         String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                        if(sendMessages)
+                        if (sendMessages)
                             MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
                     }
                 });
@@ -293,13 +293,13 @@ public class ModerationUtils {
         Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
             return;
         }
 
         if (!self.canInteract(member)) {
-            if(sendMessages)
+            if (sendMessages)
                 MessageUtils.sendMsg(channel, "I can not access the member.");
             return;
         }

@@ -110,8 +110,8 @@ public class DiscordMethods {
 
                 new Method("randonline", (env) -> {
                     Guild guild = env.get("guild");
-                    List<Member> members = guild.getMemberCache().stream().filter( it -> it.getOnlineStatus()
-                            .equals(OnlineStatus.ONLINE) ).collect(Collectors.toList());
+                    List<Member> members = guild.getMemberCache().stream().filter(it -> it.getOnlineStatus()
+                            .equals(OnlineStatus.ONLINE)).collect(Collectors.toList());
                     if (members.isEmpty()) {
                         return "";
                     }
@@ -124,8 +124,8 @@ public class DiscordMethods {
 
                 new Method("randatonline", (env) -> {
                     Guild guild = env.get("guild");
-                    List<Member> members = guild.getMemberCache().stream().filter( it -> it.getOnlineStatus()
-                            .equals(OnlineStatus.ONLINE) ).collect(Collectors.toList());
+                    List<Member> members = guild.getMemberCache().stream().filter(it -> it.getOnlineStatus()
+                            .equals(OnlineStatus.ONLINE)).collect(Collectors.toList());
                     if (members.isEmpty()) {
                         return "";
                     }
