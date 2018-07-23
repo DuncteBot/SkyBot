@@ -332,7 +332,8 @@ public class BotListener extends ListenerAdapter {
 
             guildPatrons.forEach( (patron) -> {
                 List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                        .filter( (it) -> it.getOwner().equals(it.getMember(patron)))
+                        .filter( (it) -> it.getOwner().equals(it.getMember(patron)) ||
+                                it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
                         .map(Guild::getIdLong)
                         .collect(Collectors.toList());
 
