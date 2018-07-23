@@ -33,6 +33,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
+import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+
 public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
@@ -115,7 +117,7 @@ public abstract class MusicCommand extends Command {
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply)
-                MessageUtils.sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
+                sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
                         "Want to have the bot automatically join your channel? Conciser becoming a patron.");
             return false;
         }
@@ -123,7 +125,7 @@ public abstract class MusicCommand extends Command {
         if (lavalinkManager.getConnectedChannel(event.getGuild()) != null &&
                 !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
             if (reply)
-                MessageUtils.sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+                sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             return false;
         }
         getMusicManager(event.getGuild()).latestChannel = event.getChannel();
@@ -142,6 +144,11 @@ public abstract class MusicCommand extends Command {
 
     protected boolean prejoinChecks(GuildMessageReceivedEvent event) {
         if (isUserOrGuildPatron(event)) {
+            //If the member is not connected
+            if (!event.getMember().getVoiceState().inVoiceChannel()) {
+                sendMsg(event, "Please join a voice channel first.");
+                return false;
+            }
             // Not gonna copy pasta a whole command. Gotta be smart.
             AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
             return true;
