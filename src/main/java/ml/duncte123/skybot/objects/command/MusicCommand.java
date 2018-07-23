@@ -149,8 +149,10 @@ public abstract class MusicCommand extends Command {
                 sendMsg(event, "Please join a voice channel first.");
                 return false;
             }
-            // Not gonna copy pasta a whole command. Gotta be smart.
-            AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
+            if(!getLavalinkManager().isConnected(event.getGuild())) {
+                // Not gonna copy pasta a whole command. Gotta be smart.
+                AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
+            }
             return true;
         } else {
             //If the user is not a patron return
