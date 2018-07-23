@@ -18,24 +18,15 @@
 
 package ml.duncte123.skybot.utils;
 
-import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class GuildUtils {

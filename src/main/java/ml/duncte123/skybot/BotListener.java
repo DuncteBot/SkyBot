@@ -50,6 +50,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -295,7 +296,6 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event) {
-        shardsReady++;
         logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
 
         //Start the timers if they have not been started yet
@@ -313,12 +313,11 @@ public class BotListener extends ListenerAdapter {
             isCacheCleanerActive = true;
         }
 
-        int TOTAL_SHARDS = AirUtils.CONFIG.getInt("discord.totalShards", 1);
-        if(shardsReady == TOTAL_SHARDS) {
+        shardsReady++;
+        ShardManager manager = event.getJDA().asBot().getShardManager();
+        if(shardsReady == manager.getShardsTotal()) {
 
             logger.info("Collecting patrons");
-
-            ShardManager manager = event.getJDA().asBot().getShardManager();
             Guild supportGuild = manager.getGuildById(Command.supportGuildId);
             List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
                     .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
@@ -326,12 +325,19 @@ public class BotListener extends ListenerAdapter {
 
             logger.info(String.format("Found %s normal patrons", patrons.size()));
 
-
             List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
                     .stream().map(Member::getUser).collect(Collectors.toList());
 
-            List<Long> patronGuilds = manager.getMutualGuilds(guildPatrons).stream().map(Guild::getIdLong)
-                    .collect(Collectors.toList());
+            List<Long> patronGuilds = new ArrayList<>();
+
+            guildPatrons.forEach( (patron) -> {
+                List<Long> guilds = manager.getMutualGuilds(patron).stream()
+                        .filter( (it) -> it.getOwner().equals(it.getMember(patron)))
+                        .map(Guild::getIdLong)
+                        .collect(Collectors.toList());
+
+                patronGuilds.addAll(guilds);
+            });
             Command.guildPatrons.addAll(patronGuilds);
 
             logger.info(String.format("Found %s guild patrons", patronGuilds.size()));

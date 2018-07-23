@@ -37,15 +37,11 @@ public interface CustomCommand extends ICommand {
     //Override some methods that are not needed
     @Override
     default void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+        // Custom commands are executed in a different way
     }
 
     @Override
     default String help() {
-        return null;
-    }
-
-    @Override
-    default String help(String invoke) {
         return null;
     }
 
