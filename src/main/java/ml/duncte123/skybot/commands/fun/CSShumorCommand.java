@@ -87,6 +87,6 @@ public class CSShumorCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"cssjoke"};
+        return new String[]{"cssjoke"};
     }
 }

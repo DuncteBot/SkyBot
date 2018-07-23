@@ -296,7 +296,7 @@ public class BotListener extends ListenerAdapter {
      */
     @Override
     public void onReady(ReadyEvent event) {
-        logger.info("Logged in as " + String.format("%#s (Shard #%s)", event.getJDA().getSelfUser(), event.getJDA().getShardInfo().getShardId()));
+        logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
@@ -315,7 +315,7 @@ public class BotListener extends ListenerAdapter {
 
         shardsReady++;
         ShardManager manager = event.getJDA().asBot().getShardManager();
-        if(shardsReady == manager.getShardsTotal()) {
+        if (shardsReady == manager.getShardsTotal()) {
 
             logger.info("Collecting patrons");
             Guild supportGuild = manager.getGuildById(Command.supportGuildId);
@@ -323,16 +323,16 @@ public class BotListener extends ListenerAdapter {
                     .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
             Command.patrons.addAll(patrons);
 
-            logger.info(String.format("Found %s normal patrons", patrons.size()));
+            logger.info("Found {} normal patrons", patrons.size());
 
             List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
                     .stream().map(Member::getUser).collect(Collectors.toList());
 
             List<Long> patronGuilds = new ArrayList<>();
 
-            guildPatrons.forEach( (patron) -> {
+            guildPatrons.forEach((patron) -> {
                 List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                        .filter( (it) -> it.getOwner().equals(it.getMember(patron)) ||
+                        .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
                                 it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
                         .map(Guild::getIdLong)
                         .collect(Collectors.toList());
@@ -341,7 +341,7 @@ public class BotListener extends ListenerAdapter {
             });
             Command.guildPatrons.addAll(patronGuilds);
 
-            logger.info(String.format("Found %s guild patrons", patronGuilds.size()));
+            logger.info("Found {} guild patrons", patronGuilds.size());
         }
     }
 

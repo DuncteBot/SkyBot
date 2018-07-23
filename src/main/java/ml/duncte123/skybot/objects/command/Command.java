@@ -46,8 +46,12 @@ import java.util.concurrent.ScheduledExecutorService;
 @SuppressWarnings("SameParameterValue")
 public abstract class Command implements ICommand {
 
+    public static final Set<Long> patrons = new HashSet<>();
+    public static final Set<Long> guildPatrons = new HashSet<>();
+    public static final long supportGuildId = 191245668617158656L;
+    public static final long guildPatronsRole = 470581447196147733L;
+    public static final long patronsRole = 402497345721466892L;
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
-
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(4,
             r -> new Thread(r, "Command-Thread"));
@@ -59,13 +63,6 @@ public abstract class Command implements ICommand {
      * A list of users that have upvoted the bot
      */
     private static final Set<Long> upvotedIds = new HashSet<>();
-    public static final Set<Long> patrons = new HashSet<>();
-    public static final Set<Long> guildPatrons = new HashSet<>();
-
-    public static final long supportGuildId = 191245668617158656L;
-    public static final long guildPatronsRole = 470581447196147733L;
-    public static final long patronsRole = 402497345721466892L;
-
     /**
      * This holds the category
      */
@@ -147,7 +144,7 @@ public abstract class Command implements ICommand {
 
     private boolean isGuildPatron(User u, Guild g) {
 
-        if(guildPatrons.contains(g.getIdLong())) {
+        if (guildPatrons.contains(g.getIdLong())) {
             return true;
         }
 
@@ -158,11 +155,11 @@ public abstract class Command implements ICommand {
 
         Member m = supportGuild.getMember(u);
 
-        if(m == null) {
+        if (m == null) {
             return false;
         }
 
-        if(!m.getRoles().contains(supportGuild.getRoleById(guildPatronsRole))) {
+        if (!m.getRoles().contains(supportGuild.getRoleById(guildPatronsRole))) {
             return false;
         }
 
@@ -173,7 +170,7 @@ public abstract class Command implements ICommand {
 
     protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
         boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
-        if(isGuild) {
+        if (isGuild) {
             return true;
         }
 
