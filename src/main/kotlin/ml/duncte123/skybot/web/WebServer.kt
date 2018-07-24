@@ -113,6 +113,50 @@ class WebServer {
                 }
 
                 get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
+
+                get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
+
+                post("/issue") {
+//                    val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+//                    val params = toMap(pairs)
+//
+//                    val captcha = params["g-recaptcha-response"] + ""
+//                    val name = params["name"]
+//                    val description = params["desc"]
+//                    // this should be an array
+//                    val lastCommands = arrayListOf<String>()
+//                    // full link or just invite code
+//                    val invite = params["inv"]
+//                    // hasteb.in or screenshot / video or whatever
+//                    val detailed = params["detailed"]
+//
+//                    var i = 0
+//                    var res: String? = params["cmds[$i]"]
+//                    while (res != null) {
+//                        lastCommands.add(res)
+//                        res = params["cmds[${++i}]"]
+//                    }
+//
+//                    if (name.isNullOrEmpty() || (description.isNullOrEmpty() || detailed.isNullOrEmpty())) {
+//                        return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
+//                    } else if (lastCommands.isEmpty()) {
+//                        return@post renderSugPage(WebVariables().put("message", "Please add at least one command."))
+//                    }
+//
+//                    val cap = helpers.verifyCapcha(captcha)
+//
+//                    if (!cap.getBoolean("success")) {
+//                        return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
+//                    }
+//
+//                    val json = JSONObject()
+//                    json.put("description", "$description").put("inv", "$invite").put("detailedReport", "$detailed")
+//                    val array = JSONArray()
+//                    lastCommands.forEach { array.put(it) }
+//                    return@post json.put("lastCommands", array).toString()
+                    return@post "{\"lastCommands\":[\"help\", \"join\", \"play duncan\"], \"detailedReport\":\"\",\"description\":\"dank meme\"," +
+                            "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
+                }
             }
 
 
