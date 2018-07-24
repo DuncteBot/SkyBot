@@ -35,7 +35,7 @@ public class GuildMusicManager {
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
-    protected final GuildSettings guildSettings;
+    final GuildSettings guildSettings;
     /**
      * This is what actually sends the audio
      */

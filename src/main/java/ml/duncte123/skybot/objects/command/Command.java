@@ -174,9 +174,13 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
+    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event, boolean reply) {
         boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
-        return isGuild || isPatron(event.getAuthor(), event.getChannel(), !LavalinkManager.ins.isConnected(event.getGuild()));
+        return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
+    }
+
+    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent e) {
+        return isUserOrGuildPatron(e, true);
     }
 
     @SuppressWarnings("deprecation")
