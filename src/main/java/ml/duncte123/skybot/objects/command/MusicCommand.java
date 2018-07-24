@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -115,16 +114,18 @@ public abstract class MusicCommand extends Command {
     protected boolean channelChecks(GuildMessageReceivedEvent event, boolean reply) {
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
-            if (reply)
+            if (reply) {
                 sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
                         "Want to have the bot automatically join your channel? Conciser becoming a patron.");
+            }
             return false;
         }
 
         if (lavalinkManager.getConnectedChannel(event.getGuild()) != null &&
                 !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
-            if (reply)
+            if (reply) {
                 sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
+            }
             return false;
         }
         getMusicManager(event.getGuild()).latestChannel = event.getChannel();
@@ -148,16 +149,9 @@ public abstract class MusicCommand extends Command {
                 sendMsg(event, "Please join a voice channel first.");
                 return false;
             }
-            if(!getLavalinkManager().isConnected(event.getGuild())) {
-                // Not gonna copy pasta a whole command. Gotta be smart.
-                AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
-                return true;
-            }
-            return false;
-        } else {
-            //If the user is not a patron return
-            return channelChecks(event, true);
+            return !getLavalinkManager().isConnected(event.getGuild());
         }
+        return false;
     }
 
     protected boolean isOwner(GuildMessageReceivedEvent event) {

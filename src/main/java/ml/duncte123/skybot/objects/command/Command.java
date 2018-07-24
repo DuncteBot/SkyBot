@@ -176,11 +176,7 @@ public abstract class Command implements ICommand {
 
     protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
         boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
-        if (isGuild) {
-            return true;
-        }
-
-        return isPatron(event.getAuthor(), event.getChannel(), false);
+        return isGuild || isPatron(event.getAuthor(), event.getChannel(), true);
     }
 
     @SuppressWarnings("deprecation")
