@@ -110,7 +110,7 @@ public abstract class Command implements ICommand {
      * @param tc the channel to send the message to, if the text channel is null it wont send a message
      * @return true if the user is a patron
      */
-    private boolean isPatron(User u, TextChannel tc, boolean reply) {
+    private boolean isPatron(User u, TextChannel tc) {
         //noinspection deprecation
         if (isDev(u)) {
             return true;
@@ -124,19 +124,17 @@ public abstract class Command implements ICommand {
         }
         Member m = supportGuild.getMember(u);
         if (m == null) {
-            if (reply)
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
-                        "are not one of our patrons.\n" +
-                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
-                        "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
+                    "are not one of our patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
+                    "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
             return false;
         }
 
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
-            if (reply)
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
-                        "are not one of our patrons.\n" +
-                        "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
+                    "are not one of our patrons.\n" +
+                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;
         }
 
@@ -145,8 +143,9 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    private boolean isPatron(User u, TextChannel tc) {
-        return isPatron(u, tc, true);
+    private boolean isPatron(User u, TextChannel tc, boolean reply) {
+        TextChannel textChannel = reply ? tc : null;
+        return isPatron(u, textChannel);
     }
 
     private boolean isGuildPatron(User u, Guild g) {

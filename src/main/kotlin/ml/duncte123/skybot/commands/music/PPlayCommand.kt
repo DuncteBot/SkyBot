@@ -31,7 +31,9 @@ import org.apache.commons.lang3.StringUtils
 class PPlayCommand : MusicCommand() {
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
 
-        if (!prejoinChecks(event)) {
+        if (prejoinChecks(event)) {
+            AirUtils.COMMAND_MANAGER.getCommand("join")?.executeCommand("join", arrayOfNulls(0), event)
+        } else if (!channelChecks(event)) {
             return
         }
 

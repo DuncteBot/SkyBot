@@ -81,7 +81,7 @@ dependencies {
     compile 'com.github.duncte123:botCommons:f55d559'
 
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '5c931ea'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '137ed19'
 //    compile group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382'
 
     //Lavaplayer/Lavalink
@@ -134,6 +134,9 @@ dependencies {
     compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '8e11e6d'
 
     compile group: 'com.jagrosh', name: 'JagTag', version: '0.5'
+
+    //Wolfaram alpha
+    implementation group: 'com.github.DuncteBot', name: 'wolfram-alpha-java-binding', version: '5c123ae'
 }
 
 /*javadoc {
