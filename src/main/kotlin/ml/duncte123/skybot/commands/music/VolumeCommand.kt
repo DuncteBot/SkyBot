@@ -29,6 +29,9 @@ class VolumeCommand : MusicCommand() {
         if (!isUserOrGuildPatron(event))
             return
 
+        if(!channelChecks(event))
+            return
+
         val mng = getMusicManager(event.guild)
         val player = mng.player
 
