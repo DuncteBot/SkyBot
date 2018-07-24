@@ -27,7 +27,6 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -152,12 +151,12 @@ public abstract class MusicCommand extends Command {
             if(!getLavalinkManager().isConnected(event.getGuild())) {
                 // Not gonna copy pasta a whole command. Gotta be smart.
                 AirUtils.COMMAND_MANAGER.getCommand("join").executeCommand("join", new String[0], event);
+                return true;
             }
-            return true;
+            return false;
         } else {
             //If the user is not a patron return
-            channelChecks(event, true);
-            return false;
+            return channelChecks(event, true);
         }
     }
 
