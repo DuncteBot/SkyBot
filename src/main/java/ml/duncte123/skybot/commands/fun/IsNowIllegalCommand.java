@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -73,5 +74,10 @@ public class IsNowIllegalCommand extends Command {
 
     private String getFileJSON(String word) {
         return WebUtils.ins.getText("https://is-now-illegal.firebaseio.com/gifs/" + word + ".json").execute();
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.FUN;
     }
 }

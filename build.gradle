@@ -67,7 +67,8 @@ buildConfig {
     buildConfigField("String", "OWNER_ID", "191231307290771456")
     buildConfigField("String", "KOTLIN_VERSION", kotlin_version)
     buildConfigField("boolean", "UNSTABLE", "false")
-    buildConfigField("String[]", "URL_ARRAY", '{"https://csshumor.com/", "https://icanhazdadjoke.com/"}')
+    buildConfigField("String[]", "URL_ARRAY", '{"https://csshumor.com/", "https://icanhazdadjoke.com/", ' +
+            '"https://api.alexflipnote.xyz/colour", "http://www.colr.org/json/color"}')
     packageName = project.group
     charset = 'UTF-8'
 

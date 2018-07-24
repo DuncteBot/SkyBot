@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
+import kotlin.jvm.internal.IntCompanionObject;
 import ml.duncte123.skybot.exceptions.VRCubeException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -234,7 +235,7 @@ public class CommandManager {
      * @return true if the command is added
      */
     @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
-    public boolean addCommand(Command command) {
+    public boolean addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new VRCubeException("Name can't have spaces!");
         }
@@ -313,10 +314,12 @@ public class CommandManager {
 
     private void registerCommandsFromReflection(Reflections reflections) {
         //Loop over them commands
-        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
+        for (Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
             try {
+                ICommand command = cmd.getDeclaredConstructor().newInstance();
+//                System.out.println(command.getName());
                 //Add the command
-                this.addCommand(cmd.getDeclaredConstructor().newInstance());
+                this.addCommand(command);
             } catch (Exception ignored) {
             }
         }
