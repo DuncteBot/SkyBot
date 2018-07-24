@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
+import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
@@ -124,8 +125,8 @@ public abstract class Command implements ICommand {
         Member m = supportGuild.getMember(u);
         if (m == null) {
             if (reply)
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                        "not one of our patrons.\n" +
+                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
+                        "are not one of our patrons.\n" +
                         "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
                         "You will also need to join our support guild [here](https://discord.gg/NKM9Xtk)"));
             return false;
@@ -133,8 +134,8 @@ public abstract class Command implements ICommand {
 
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
             if (reply)
-                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command and is locked for you because you are " +
-                        "not one of our patrons.\n" +
+                MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a premium command (shortcut) and is locked for you because you " +
+                        "are not one of our patrons.\n" +
                         "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;
         }
@@ -176,7 +177,7 @@ public abstract class Command implements ICommand {
 
     protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event) {
         boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
-        return isGuild || isPatron(event.getAuthor(), event.getChannel(), true);
+        return isGuild || isPatron(event.getAuthor(), event.getChannel(), !LavalinkManager.ins.isConnected(event.getGuild()));
     }
 
     @SuppressWarnings("deprecation")
