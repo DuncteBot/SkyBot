@@ -38,14 +38,13 @@ class VolumeCommand : MusicCommand() {
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
         } else {
-            val joined = StringUtils.join(args, "")
             try {
-                val newVolume = Math.max(10, Math.min(100, Integer.parseInt(joined)))
+                val newVolume = Math.max(10, Math.min(100, Integer.parseInt(args[0])))
                 val oldVolume = player.volume
                 player.volume = newVolume
                 MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
             } catch (e: NumberFormatException) {
-                MessageUtils.sendMsg(event, "**$joined** is not a valid integer. (10 - 100)")
+                MessageUtils.sendMsg(event, "**${args[0]}** is not a valid integer. (10 - 100)")
             }
         }
     }
