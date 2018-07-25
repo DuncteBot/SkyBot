@@ -84,7 +84,7 @@ dependencies {
     compile 'com.github.duncte123:botCommons:f55d559'
 
     //JDA (java discord api)
-    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '137ed19'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '099bbe3'
 //    compile group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382'
 
     //Lavaplayer/Lavalink
