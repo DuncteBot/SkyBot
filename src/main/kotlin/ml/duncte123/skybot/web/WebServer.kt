@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
+import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
@@ -38,6 +39,7 @@ import org.apache.http.client.utils.URLEncodedUtils
 import org.json.JSONObject
 import spark.ModelAndView
 import spark.Request
+import spark.Response
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
@@ -286,7 +288,7 @@ class WebServer {
 
                 get("/getUserGuilds") {
                     val guilds = ArrayList<JSONObject>()
-                    oAuth2Client.getGuilds(getSession(request)).complete().forEach {
+                    oAuth2Client.getGuilds(getSession(request, response)).complete().forEach {
                         if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
                             guilds.add(guildToJson(it))
                         }
@@ -299,7 +301,7 @@ class WebServer {
 
                 get("/joinGuild") {
                     try {
-                        val session = getSession(request)
+                        val session = getSession(request, response)
                         SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
                                 .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
                         response.redirect("/dashboard")
@@ -406,8 +408,13 @@ class WebServer {
                 .shardManager.getGuildById(guildId) ?: null
     }
 
-    private fun getSession(request: Request) =
-            oAuth2Client.sessionController.getSession(request.session().attribute("sessionId"))
+    private fun getSession(request: Request, response: Response): Session {
+        val session: String = request.session().attribute("sessionId")
+        if(session.isEmpty()) {
+            response.redirect("/dashboard")
+        }
+        return oAuth2Client.sessionController.getSession(session)
+    }
 
 
     private fun guildToJson(guild: OAuth2Guild):JSONObject {
