@@ -38,7 +38,7 @@ public class FakeInterface<T> {
     }
 
     public FakeInterface(Class<T> type, Map<Method, InvocationFunction> handlers) {
-        if (type == null) throw new NullPointerException("Type of interface is null");
+        if (type == null) throw new IllegalArgumentException("Type of interface is null");
         if (!type.isInterface())
             throw new IllegalArgumentException("Type " + type + " is not an interface");
         if (type.isAnnotation())
