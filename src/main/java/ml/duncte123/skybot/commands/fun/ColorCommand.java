@@ -19,21 +19,11 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.BuildConfig;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONArray;
-import org.json.JSONObject;
-
-import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.awt.Color.decode;
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
@@ -44,16 +34,19 @@ public class ColorCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONObject(URL_ARRAY[3] + "/random").async((json) -> {
 
-            JSONObject color = json.getJSONArray("colors").getJSONObject(0);
-            String hex = color.getString("hex");
+        WebUtils.ins.getJSONObject(URL_ARRAY[2] + "/random").async((json) -> {
+            String hex = json.getString("hex");
+            String image = json.getString("image");
+            int integer = json.getInt("int");
+            String name = json.getString("name");
+            String rgb = json.getString("rgb");
 
             EmbedBuilder embed = defaultEmbed()
-                    .setColor(decode("#" + hex))
-                    .setThumbnail(URL_ARRAY[2] + "/image/" + hex );
+                    .setColor(decode(hex))
+                    .setThumbnail(image);
 
-            String desc = String.format("Name(s): %s%nHex: #%s", combineTagsToString(color.getJSONArray("tags")), hex);
+            String desc = String.format("Name(s): %s%nHex: %s%nInt: %s%nRGB: %s", name, hex, integer, rgb);
             embed.setDescription(desc);
 
             sendEmbed(event, embed.build());
@@ -72,22 +65,11 @@ public class ColorCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"color"};
+        return new String[]{"color"};
     }
 
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.FUN;
-    }
-
-    private String combineTagsToString(JSONArray tags) {
-        List<String> t = new ArrayList<>();
-
-        tags.forEach((tag) -> {
-            JSONObject jsonTag = (JSONObject) tag;
-            t.add(jsonTag.getString("name"));
-        });
-
-        return StringUtils.join(t, ", ");
     }
 }

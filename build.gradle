@@ -39,7 +39,6 @@ plugins {
 apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
-
 version "3.73.3_${getGitHash()}"
 
 sourceCompatibility = JavaVersion.VERSION_1_9
@@ -65,15 +64,17 @@ repositories {
 buildConfig {
     appName = project.name
     version = project.version
+    setPackageName project.group.toString()
+//    packageName = project.group
+    charset = 'UTF-8'
+    clsName = 'BuildConfig'
+
     buildConfigField("String", "OWNER_ID", "191231307290771456")
     buildConfigField("String", "KOTLIN_VERSION", kotlin_version)
     buildConfigField("boolean", "UNSTABLE", "false")
     buildConfigField("String[]", "URL_ARRAY", '{"https://csshumor.com/", "https://icanhazdadjoke.com/", ' +
-            '"https://api.alexflipnote.xyz/colour", "http://www.colr.org/json/color"}')
-    packageName = project.group
-    charset = 'UTF-8'
-
-    clsName = 'BuildConfig'
+            '"https://api.alexflipnote.xyz/colour", ' + // <- currently unused, might use later
+            '"http://www.colr.org/json/color"}')
 }
 
 dependencies {

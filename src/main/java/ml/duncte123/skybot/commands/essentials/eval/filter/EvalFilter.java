@@ -94,10 +94,10 @@ public class EvalFilter extends GroovyValueFilter {
             RoleDelegate.class,
             TextChannelDelegate.class,
             UserDelegate.class,
-            VoiceChannelDelegate.class,
+            VoiceChannelDelegate.class/*,
 
             //Statics?
-            Class.class
+            Class.class*/
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());

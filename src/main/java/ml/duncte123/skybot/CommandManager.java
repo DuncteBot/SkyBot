@@ -19,9 +19,7 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
-import kotlin.jvm.internal.IntCompanionObject;
 import ml.duncte123.skybot.exceptions.VRCubeException;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
