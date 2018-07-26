@@ -50,7 +50,7 @@ public class HelpEmbeds {
      * This loads all the commands in the lists
      */
     public static void init() {
-        for (ICommand c : AirUtils.COMMAND_MANAGER.getCommands()) {
+        for (ICommand c : Variables.COMMAND_MANAGER.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());

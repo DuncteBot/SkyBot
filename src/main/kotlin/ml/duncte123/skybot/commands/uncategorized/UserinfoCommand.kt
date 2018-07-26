@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.discord.user.Profile
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
@@ -158,8 +159,8 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-            AirUtils.WEEB_API.generateDiscordStatus(toWeebshStatus(m),
+                Variables.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            Variables.WEEB_API.generateDiscordStatus(toWeebshStatus(m),
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 
                 val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")

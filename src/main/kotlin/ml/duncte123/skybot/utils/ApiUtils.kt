@@ -31,7 +31,7 @@ object ApiUtils {
     @JvmStatic
     fun getRandomLlama(): LlamaObject {
 
-        val conn = AirUtils.DB.getConnManager().connection
+        val conn = Variables.DATABASE.getConnManager().connection
 
         val resultSet = conn.createStatement()
                 .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
@@ -45,7 +45,7 @@ object ApiUtils {
     @JvmStatic
     fun getRandomKpopMember(search: String = ""): KpopObject {
 
-        val conn = AirUtils.DB.getConnManager().connection
+        val conn = Variables.DATABASE.getConnManager().connection
 
         lateinit var resultSet: ResultSet
         if (!search.isEmpty()) {
@@ -70,7 +70,7 @@ object ApiUtils {
 
     @JvmStatic
     fun getWarnsForUser(userId: String, guildId: String): WarnObject {
-        val conn = AirUtils.DB.getConnManager().connection
+        val conn = Variables.DATABASE.getConnManager().connection
         try {
             val smt = conn.prepareStatement(
                     "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")

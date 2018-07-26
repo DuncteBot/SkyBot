@@ -21,7 +21,7 @@ package ml.duncte123.skybot.web
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
-import ml.duncte123.skybot.utils.AirUtils.CONFIG as conf
+import ml.duncte123.skybot.utils.Variables.CONFIG as conf
 import org.json.JSONObject
 import me.duncte123.botCommons.web.WebUtils.ins as web
 

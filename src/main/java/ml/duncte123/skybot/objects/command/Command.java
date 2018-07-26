@@ -23,16 +23,15 @@ import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
@@ -76,15 +75,14 @@ public abstract class Command implements ICommand {
 
 
     private boolean checkVoteOnDBL(String userid) {
-        String token = AirUtils.CONFIG.getString("apis.discordbots_userToken", "");
+        String token = Variables.CONFIG.getString("apis.discordbots_userToken", "");
 
         if (token == null || token.isEmpty()) {
             logger.warn("Discord Bots token not found");
             return false;
         }
-        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(new Request.Builder()
+        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
                 .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
-                .get()
                 .addHeader("Authorization", token)
                 .build(), WebUtilsErrorUtils::toJSONObject);
 

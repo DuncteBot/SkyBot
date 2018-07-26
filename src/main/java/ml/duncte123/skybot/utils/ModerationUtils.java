@@ -101,8 +101,8 @@ public class ModerationUtils {
      */
     public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
 
-        AirUtils.DB.run(() -> {
-            Connection conn = AirUtils.DB.getConnManager().getConnection();
+        Variables.DATABASE.run(() -> {
+            Connection conn = Variables.DATABASE.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
                         "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
@@ -149,8 +149,8 @@ public class ModerationUtils {
      */
     public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
 
-        AirUtils.DB.run(() -> {
-            Connection conn = AirUtils.DB.getConnManager().getConnection();
+        Variables.DATABASE.run(() -> {
+            Connection conn = Variables.DATABASE.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
                         "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
@@ -177,16 +177,16 @@ public class ModerationUtils {
      * @param shardManager the current shard manager for this bot
      */
     public static void checkUnbans(ShardManager shardManager) {
-        AirUtils.DB.run(() -> {
+        Variables.DATABASE.run(() -> {
             logger.debug("Checking for users to unban");
             int usersUnbanned = 0;
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
 
             try {
 
                 Statement smt = database.createStatement();
 
-                ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
+                ResultSet res = smt.executeQuery("SELECT * FROM " + Variables.DATABASE.getName() + ".bans");
 
                 while (res.next()) {
                     java.util.Date unbanDate = res.getTimestamp("unban_date");
@@ -213,7 +213,7 @@ public class ModerationUtils {
                             }
                         } catch (NullPointerException ignored) {
                         }
-                        database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                        database.createStatement().executeUpdate("DELETE FROM " + Variables.DATABASE.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                     }
                 }
                 logger.debug("Checking done, unbanned " + usersUnbanned + " users.");

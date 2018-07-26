@@ -39,14 +39,14 @@ public class TagUtils {
      * Attempts to load all the tags from the database
      */
     public static void loadAllTags() {
-        AirUtils.DB.run(() -> {
+        Variables.DATABASE.run(() -> {
             logger.debug("Loading tags.");
 
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
             try {
                 Statement smt = database.createStatement();
 
-                ResultSet resultSet = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".tags");
+                ResultSet resultSet = smt.executeQuery("SELECT * FROM " + Variables.DATABASE.getName() + ".tags");
 
                 while (resultSet.next()) {
                     String tagName = resultSet.getString("tagName");
@@ -84,10 +84,10 @@ public class TagUtils {
         if (tagsList.containsKey(tag.getName())) //Return false if the tag is already here
             return false;
 
-        Connection database = AirUtils.DB.getConnManager().getConnection();
+        Connection database = Variables.DATABASE.getConnManager().getConnection();
 
         try {
-            PreparedStatement statement = database.prepareStatement("INSERT INTO " + AirUtils.DB.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
+            PreparedStatement statement = database.prepareStatement("INSERT INTO " + Variables.DATABASE.getName() + ".tags(author ,authorId ,tagName ,tagText) " +
                     "VALUES(? , ? , ? , ?)");
             statement.setString(1, String.format("%#s", author));
             statement.setString(2, author.getId());
@@ -117,11 +117,11 @@ public class TagUtils {
      */
     public static boolean deleteTag(Tag tag) {
         try {
-            return AirUtils.DB.run(() -> {
-                Connection database = AirUtils.DB.getConnManager().getConnection();
+            return Variables.DATABASE.run(() -> {
+                Connection database = Variables.DATABASE.getConnManager().getConnection();
 
                 try {
-                    PreparedStatement statement = database.prepareStatement("DELETE FROM " + AirUtils.DB.getName() + ".tags WHERE tagName= ? ");
+                    PreparedStatement statement = database.prepareStatement("DELETE FROM " + Variables.DATABASE.getName() + ".tags WHERE tagName= ? ");
                     statement.setString(1, tag.getName());
                     statement.execute();
                 } catch (Exception e) {

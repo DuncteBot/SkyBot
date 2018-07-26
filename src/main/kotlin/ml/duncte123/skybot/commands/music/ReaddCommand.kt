@@ -19,10 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.AudioUtils
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.*
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class ReaddCommand : MusicCommand() {
@@ -45,7 +42,7 @@ class ReaddCommand : MusicCommand() {
         // This is from AudioUtils.java but in Kotlin
         var title = track.info.title
         if (track.info.isStream) {
-            val stream = (AirUtils.COMMAND_MANAGER.getCommand("radio") as RadioCommand)
+            val stream = (Variables.COMMAND_MANAGER.getCommand("radio") as RadioCommand)
                     .radioStreams.stream().filter { s -> s.url == track.info.uri }.findFirst()
             if (stream.isPresent)
                 title = stream.get().name

@@ -30,8 +30,8 @@ import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -172,7 +172,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             String title = track.getInfo().title;
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
-                Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                Optional<RadioStream> stream = ((RadioCommand) Variables.COMMAND_MANAGER.getCommand("radio"))
                         .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();

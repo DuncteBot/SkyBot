@@ -48,7 +48,7 @@ public class YoutubeUtils {
     public static Video getVideoById(String videoID) throws Exception {
         return youtube.videos().list("snippet,statistics,contentDetails")
                 .setId(videoID)
-                .setKey(AirUtils.CONFIG.getString("apis.googl"))
+                .setKey(Variables.CONFIG.getString("apis.googl"))
                 .execute()
                 .getItems().get(0);
     }
@@ -56,7 +56,7 @@ public class YoutubeUtils {
 
     public static List<SearchResult> searchYoutube(String query) throws IOException {
         return youtube.search().list("id,snippet")
-                .setKey(AirUtils.CONFIG.getString("apis.googl"))
+                .setKey(Variables.CONFIG.getString("apis.googl"))
                 .setQ(query)
                 .setType("video")
                 .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")

@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class TagCommand : Command() {
@@ -125,7 +125,7 @@ class TagCommand : Command() {
     override fun getAliases() = arrayOf("pasta", "tags", "t")
 
     private fun getLang(): String {
-        when (AirUtils.RAND.nextInt(4)) {
+        when (Variables.RAND.nextInt(4)) {
             0 -> return "YAML"
             1 -> return "ldif"
             2 -> return "PHP"

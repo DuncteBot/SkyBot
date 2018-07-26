@@ -20,17 +20,8 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.weebJava.WeebApiBuilder;
-import me.duncte123.weebJava.models.WeebApi;
-import me.duncte123.weebJava.types.TokenType;
-import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -40,31 +31,12 @@ import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
-
-
-    public static final Config CONFIG = new ConfigUtils().loadConfig();
-    public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
-    public static final Random RAND = new Random();
-    public static final DBManager DB = new DBManager();
-    public static final CommandManager COMMAND_MANAGER = new CommandManager();
-    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
-            .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-            .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
-            .build();
-    public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-            "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
-    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
-    public static final WebServer WEB_SERVER = new WebServer();
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
-    protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -187,8 +159,8 @@ public class AirUtils {
      * @return A possibly-null {@link com.wolfram.alpha.WAEngine Wolfram|Alpha engine} instance configured with the
      * token
      */
-    private static WAEngine getWolframEngine() {
-        String appId = CONFIG.getString("apis.wolframalpha", "");
+    static WAEngine getWolframEngine() {
+        String appId = Variables.CONFIG.getString("apis.wolframalpha", "");
 
         if (appId == null || appId.isEmpty())
             return null;
@@ -210,7 +182,7 @@ public class AirUtils {
      */
     public static void stop() {
         try {
-            DB.getConnManager().getConnection().close();
+            Variables.DATABASE.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -221,7 +193,7 @@ public class AirUtils {
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }
-        DB.getService().shutdown();
+        Variables.DATABASE.getService().shutdown();
     }
 
     /**
@@ -257,7 +229,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (RAND.nextFloat() * chars.length());
+            int index = (int) (Variables.RAND.nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -278,7 +250,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (RAND.nextInt(4)) {
+        switch (Variables.RAND.nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -327,7 +299,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, AirUtils.CONFIG.getString("apis.googl", "Google api key"));
+        return WebUtils.ins.shortenUrl(url, Variables.CONFIG.getString("apis.googl", "Google api key"));
     }
 
     public static String colorToHex(Color color) {

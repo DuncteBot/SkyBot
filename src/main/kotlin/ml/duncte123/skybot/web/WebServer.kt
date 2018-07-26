@@ -26,12 +26,12 @@ import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SkyBot
 import ml.duncte123.skybot.objects.WebVariables
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.AirUtils.CONFIG
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
+import ml.duncte123.skybot.utils.Variables
+import ml.duncte123.skybot.utils.Variables.CONFIG
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Guild
 import org.apache.http.NameValuePair
@@ -58,68 +58,67 @@ class WebServer {
             .build()
 
     init {
-        if(!AirUtils.CONFIG.getBoolean("discord.local", false)) {
 
-            //Port has to be 2000 because of the apache proxy on the vps
-            port(2000)
+        //Port has to be 2000 because of the apache proxy on the vps
+        port(2000)
 
-            staticFiles.location("/public")
+        staticFiles.location("/public")
 
-            get("/", WebVariables().put("title", "Home"), "home.twig")
+        get("/", WebVariables().put("title", "Home"), "home.twig")
 
-            get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
-                    .put("commands", AirUtils.COMMAND_MANAGER.sortedCommands), "commands.twig")
+        get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
+                .put("commands", Variables.COMMAND_MANAGER.sortedCommands), "commands.twig")
 
-            get("/suggest", WebVariables().put("title", "Leave a suggestion")
-                    .put("chapta_sitekey", AirUtils.CONFIG.getString("apis.chapta.sitekey")), "suggest.twig")
+        get("/suggest", WebVariables().put("title", "Leave a suggestion")
+                .put("chapta_sitekey", CONFIG.getString("apis.chapta.sitekey")), "suggest.twig")
 
-            post("/suggest") {
-                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-                val params = toMap(pairs)
+        post("/suggest") {
+            val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+            val params = toMap(pairs)
 
-                val captcha = params["g-recaptcha-response"] + ""
-                val name = params["name"]
-                val suggestion = params["sug"]
-                val description = params["desc"]
+            val captcha = params["g-recaptcha-response"] + ""
+            val name = params["name"]
+            val suggestion = params["sug"]
+            val description = params["desc"]
 
-                if (name.isNullOrEmpty() || suggestion.isNullOrEmpty()) {
-                    return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
-                }
-
-                val cap = helpers.verifyCapcha(captcha)
-
-                if (!cap.getBoolean("success")) {
-                    return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
-                }
-
-                val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
-                val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
-
-                val url = helpers.addTrelloCard(suggestion.toString(), descText).getString("shortUrl")
-
-                renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
+            if (name.isNullOrEmpty() || suggestion.isNullOrEmpty()) {
+                return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
             }
 
+            val cap = helpers.verifyCapcha(captcha)
 
-            path("/dashboard") {
+            if (!cap.getBoolean("success")) {
+                return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
+            }
 
-                before("") {
-                    if (!request.session().attributes().contains("sessionId")) {
-                        val url = oAuth2Client.generateAuthorizationURL(
-                                CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
-                                Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
-                        )
-                        request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
-                        response.redirect(url)
-                    }
+            val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
+            val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
+
+            val url = helpers.addTrelloCard(suggestion.toString(), descText).getString("shortUrl")
+
+            renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
+        }
+
+
+        path("/dashboard") {
+
+            before("") {
+                if (!request.session().attributes().contains("sessionId")) {
+                    val url = oAuth2Client.generateAuthorizationURL(
+                            CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
+                            Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
+                    )
+                    request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
+                    response.redirect(url)
                 }
+            }
 
-                get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
+            get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
 
-                get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
+            get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
-                post("/issue") {
-//                    val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+            post("/issue") {
+                //                    val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
 //                    val params = toMap(pairs)
 //
 //                    val captcha = params["g-recaptcha-response"] + ""
@@ -156,214 +155,213 @@ class WebServer {
 //                    val array = JSONArray()
 //                    lastCommands.forEach { array.put(it) }
 //                    return@post json.put("lastCommands", array).toString()
-                    return@post "{\"lastCommands\":[\"help\", \"join\", \"play duncan\"], \"detailedReport\":\"\",\"description\":\"dank meme\"," +
-                            "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
+                return@post "{\"lastCommands\":[\"help\", \"join\", \"play duncan\"], \"detailedReport\":\"\",\"description\":\"dank meme\"," +
+                        "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
+            }
+        }
+
+
+        path("/server/:guildid") {
+
+            before("/*") {
+                if (!request.session().attributes().contains("sessionId")) {
+                    return@before response.redirect("/dashboard")
+                }
+                val guild = getGuildFromRequest(request)
+                if (guild == null && !request.uri().contains("invalid")) {
+                    return@before response.redirect("/server/${request.params(":guildid")}/invalid")
+                } else if (guild != null && request.uri().contains("invalid")) {
+                    return@before response.redirect("/server/${request.params(":guildid")}/")
                 }
             }
 
+            //overview and editing
+            get("/", WebVariables()
+                    .put("title", "Dashboard"), "serverSettings.twig", true)
 
-            path("/server/:guildid") {
+            post("/") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
 
-                before("/*") {
-                    if (!request.session().attributes().contains("sessionId")) {
-                        return@before response.redirect("/dashboard")
-                    }
-                    val guild = getGuildFromRequest(request)
-                    if (guild == null && !request.uri().contains("invalid")) {
-                        return@before response.redirect("/server/${request.params(":guildid")}/invalid")
-                    } else if (guild != null && request.uri().contains("invalid")) {
-                        return@before response.redirect("/server/${request.params(":guildid")}/")
-                    }
+                val prefix = params["prefix"]
+                val serverDescription = params["serverDescription"]
+                val welcomeChannel = params["welcomeChannel"]
+                val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
+                val autorole = params["autoRoleRole"]
+                //val autoRoleEnabled      = params["autoRoleRoleCB"]
+                val modLogChannel = params["modChannel"]
+                val announceTracks = paramToBoolean(params["announceTracks"])
+                val autoDeHoist = paramToBoolean(params["autoDeHoist"])
+                val filterInvites = paramToBoolean(params["filterInvites"])
+                val swearFilter = paramToBoolean(params["swearFilter"])
+                val welcomeMessage = params["welcomeMessage"]
+                val leaveMessage = params["leaveMessage"]
+                val muteRole = params["muteRole"]
+                val spamFilter = paramToBoolean(params["spamFilter"])
+                val kickMode = paramToBoolean(params["kickMode"])
+
+                val rateLimits = LongArray(6)
+
+                for (i in 0..5) {
+                    rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
                 }
 
-                //overview and editing
-                get("/", WebVariables()
-                        .put("title", "Dashboard"), "serverSettings.twig", true)
+                val guild = getGuildFromRequest(request)
 
-                post("/") {
-                    val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-                    val params = toMap(pairs)
+                val newSettings = GuildSettingsUtils.getGuild(guild)
+                        .setCustomPrefix(prefix)
+                        .setServerDesc(serverDescription)
+                        .setWelcomeLeaveChannel(welcomeChannel)
+                        .setCustomJoinMessage(welcomeMessage)
+                        .setCustomLeaveMessage(leaveMessage)
+                        .setEnableJoinMessage(welcomeLeaveEnabled)
+                        .setAutoroleRole(autorole)
+                        .setLogChannel(modLogChannel)
+                        .setAnnounceTracks(announceTracks)
+                        .setAutoDeHoist(autoDeHoist)
+                        .setFilterInvites(filterInvites)
+                        .setMuteRoleId(muteRole)
+                        .setKickState(kickMode)
+                        .setRatelimits(rateLimits)
+                        .setEnableSpamFilter(spamFilter)
+                        .setEnableSwearFilter(swearFilter)
 
-                    val prefix = params["prefix"]
-                    val serverDescription = params["serverDescription"]
-                    val welcomeChannel = params["welcomeChannel"]
-                    val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
-                    val autorole = params["autoRoleRole"]
-                    //val autoRoleEnabled      = params["autoRoleRoleCB"]
-                    val modLogChannel = params["modChannel"]
-                    val announceTracks = paramToBoolean(params["announceTracks"])
-                    val autoDeHoist = paramToBoolean(params["autoDeHoist"])
-                    val filterInvites = paramToBoolean(params["filterInvites"])
-                    val swearFilter = paramToBoolean(params["swearFilter"])
-                    val welcomeMessage = params["welcomeMessage"]
-                    val leaveMessage = params["leaveMessage"]
-                    val muteRole = params["muteRole"]
-                    val spamFilter = paramToBoolean(params["spamFilter"])
-                    val kickMode = paramToBoolean(params["kickMode"])
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings)
 
-                    val rateLimits = LongArray(6)
+                response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
+            }
 
-                    for (i in 0..5) {
-                        rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
-                    }
+            //audio stuff
+            get("/music") {
+                val guild = getGuildFromRequest(request)
+                if (guild != null) {
+                    val mng = AudioUtils.ins.getMusicManager(guild, false)
 
-                    val guild = getGuildFromRequest(request)
-
-                    val newSettings = GuildSettingsUtils.getGuild(guild)
-                            .setCustomPrefix(prefix)
-                            .setServerDesc(serverDescription)
-                            .setWelcomeLeaveChannel(welcomeChannel)
-                            .setCustomJoinMessage(welcomeMessage)
-                            .setCustomLeaveMessage(leaveMessage)
-                            .setEnableJoinMessage(welcomeLeaveEnabled)
-                            .setAutoroleRole(autorole)
-                            .setLogChannel(modLogChannel)
-                            .setAnnounceTracks(announceTracks)
-                            .setAutoDeHoist(autoDeHoist)
-                            .setFilterInvites(filterInvites)
-                            .setMuteRoleId(muteRole)
-                            .setKickState(kickMode)
-                            .setRatelimits(rateLimits)
-                            .setEnableSpamFilter(spamFilter)
-                            .setEnableSwearFilter(swearFilter)
-
-                    GuildSettingsUtils.updateGuildSettings(guild, newSettings)
-
-                    response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
-                }
-
-                //audio stuff
-                get("/music") {
-                    val guild = getGuildFromRequest(request)
-                    if (guild != null) {
-                        val mng = AudioUtils.ins.getMusicManager(guild, false)
-
-                        if (mng != null) {
-                            return@get """<p>Audio player details:</p>
+                    if (mng != null) {
+                        return@get """<p>Audio player details:</p>
                             |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
                             |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
                         """.trimMargin()
-                        } else {
-                            return@get "The audio player does not seem to be active"
-                        }
                     } else {
-                        return@get "ERROR"
+                        return@get "The audio player does not seem to be active"
+                    }
+                } else {
+                    return@get "ERROR"
+                }
+            }
+
+            //when the guild is not found
+            get("/invalid") {
+                response.status(404)
+                "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
+                        "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
+            }
+        }
+
+        get("/callback") {
+            oAuth2Client.startSession(
+                    request.queryParams("code"),
+                    request.queryParams("state"),
+                    request.session().attribute("sessionId")
+            ).complete()
+            response.redirect("/dashboard")
+        }
+
+        get("/liveServerCount") {
+            engine.render(ModelAndView(mapOf("nothing" to "something"),
+                    "static/liveServerCount.twig"))
+        }
+
+        path("/api") {
+
+            before("/*") {
+                response.type(APPLICATION_JSON.type)
+            }
+
+            get("/getServerCount") {
+                return@get JSONObject()
+                        .put("status", "success")
+                        .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                        .put("code", response.status())
+            }
+
+            get("/getUserGuilds") {
+                val guilds = ArrayList<JSONObject>()
+                oAuth2Client.getGuilds(getSession(request, response)).complete().forEach {
+                    if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
+                        guilds.add(guildToJson(it))
                     }
                 }
+                return@get JSONObject()
+                        .put("status", "success")
+                        .put("guilds", guilds)
+                        .put("code", response.status())
+            }
 
-                //when the guild is not found
-                get("/invalid") {
+            get("/joinGuild") {
+                try {
+                    val session = getSession(request, response)
+                    SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
+                            .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
+                    response.redirect("/dashboard")
+                } catch (e: IllegalStateException) {
+                    response.redirect("https://discord.gg/NKM9Xtk")
+                }
+            }
+
+            get("/llama") {
+                return@get ApiUtils.getRandomLlama().toJson()
+                        .put("status", "success")
+                        .put("code", response.status())
+            }
+
+            get("/kpop") {
+                val search = request.queryParamOrDefault("search", "")
+                try {
+                    return@get ApiUtils.getRandomKpopMember(search).toJson()
+                            .put("status", "success")
+                            .put("code", response.status())
+                } catch (e: SQLException) {
                     response.status(404)
-                    "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
-                            "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
-                }
-            }
-
-            get("/callback") {
-                oAuth2Client.startSession(
-                        request.queryParams("code"),
-                        request.queryParams("state"),
-                        request.session().attribute("sessionId")
-                ).complete()
-                response.redirect("/dashboard")
-            }
-
-            get("/liveServerCount") {
-                engine.render(ModelAndView(mapOf("nothing" to "something"),
-                        "static/liveServerCount.twig"))
-            }
-
-            path("/api") {
-
-                before("/*") {
-                    response.type(APPLICATION_JSON.type)
-                }
-
-                get("/getServerCount") {
                     return@get JSONObject()
-                            .put("status", "success")
-                            .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                            .put("status", "faiure")
+                            .put("message", "Nothing found")
                             .put("code", response.status())
-                }
-
-                get("/getUserGuilds") {
-                    val guilds = ArrayList<JSONObject>()
-                    oAuth2Client.getGuilds(getSession(request, response)).complete().forEach {
-                        if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
-                            guilds.add(guildToJson(it))
-                        }
-                    }
-                    return@get JSONObject()
-                            .put("status", "success")
-                            .put("guilds", guilds)
-                            .put("code", response.status())
-                }
-
-                get("/joinGuild") {
-                    try {
-                        val session = getSession(request, response)
-                        SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
-                                .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
-                        response.redirect("/dashboard")
-                    } catch (e: IllegalStateException) {
-                        response.redirect("https://discord.gg/NKM9Xtk")
-                    }
-                }
-
-                get("/llama") {
-                    return@get ApiUtils.getRandomLlama().toJson()
-                            .put("status", "success")
-                            .put("code", response.status())
-                }
-
-                get("/kpop") {
-                    val search = request.queryParamOrDefault("search", "")
-                    try {
-                        return@get ApiUtils.getRandomKpopMember(search).toJson()
-                                .put("status", "success")
-                                .put("code", response.status())
-                    } catch (e: SQLException) {
-                        response.status(404)
-                        return@get JSONObject()
-                                .put("status", "faiure")
-                                .put("message", "Nothing found")
-                                .put("code", response.status())
-                    }
                 }
             }
+        }
 
-            path("/crons") {
+        path("/crons") {
 
-                get("/clearExpiredWarns") {
-                    AirUtils.DB.connManager.connection.createStatement()
-                            .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
-                }
-
+            get("/clearExpiredWarns") {
+                Variables.DATABASE.connManager.connection.createStatement()
+                        .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
             }
 
-            notFound {
-                if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
-                    response.type(APPLICATION_JSON.type)
-                    return@notFound JSONObject()
-                            .put("status", "failure")
-                            .put("message", "'${request.pathInfo()}' was not found")
-                            .put("code", response.status())
-                } else {
-                    return@notFound engine.render(ModelAndView(WebVariables()
-                            .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
-                }
-            }
+        }
 
-            internalServerError {
-                if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
-                    response.type(APPLICATION_JSON.type)
-                    return@internalServerError JSONObject()
-                            .put("status", "failure")
-                            .put("message", "Internal server error")
-                            .put("code", response.status())
-                } else {
-                    return@internalServerError "<html><body><h1>Internal server error</h1></body></html>"
-                }
+        notFound {
+            if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
+                response.type(APPLICATION_JSON.type)
+                return@notFound JSONObject()
+                        .put("status", "failure")
+                        .put("message", "'${request.pathInfo()}' was not found")
+                        .put("code", response.status())
+            } else {
+                return@notFound engine.render(ModelAndView(WebVariables()
+                        .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
+            }
+        }
+
+        internalServerError {
+            if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
+                response.type(APPLICATION_JSON.type)
+                return@internalServerError JSONObject()
+                        .put("status", "failure")
+                        .put("message", "Internal server error")
+                        .put("code", response.status())
+            } else {
+                return@internalServerError "<html><body><h1>Internal server error</h1></body></html>"
             }
         }
     }
@@ -384,7 +382,7 @@ class WebServer {
                     map.put("settings", GuildSettingsUtils.getGuild(guild))
                     map.put("guild", guild)
 
-                    if(queryMap().hasKey("message"))
+                    if (queryMap().hasKey("message"))
                         map.put("message", queryParams("message"))
                 }
             }
@@ -395,7 +393,7 @@ class WebServer {
 
     private fun renderSugPage(map: WebVariables): String {
         map.put("title", "Leave a suggestion")
-                .put("chapta_sitekey", AirUtils.CONFIG.getString("apis.chapta.sitekey"))
+                .put("chapta_sitekey", CONFIG.getString("apis.chapta.sitekey"))
 
         return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
@@ -410,14 +408,14 @@ class WebServer {
 
     private fun getSession(request: Request, response: Response): Session {
         val session: String = request.session().attribute("sessionId")
-        if(session.isEmpty()) {
+        if (session.isEmpty()) {
             response.redirect("/dashboard")
         }
         return oAuth2Client.sessionController.getSession(session)
     }
 
 
-    private fun guildToJson(guild: OAuth2Guild):JSONObject {
+    private fun guildToJson(guild: OAuth2Guild): JSONObject {
 
         val jdaGuild = SkyBot.getInstance().shardManager.getGuildById(guild.id)
 
@@ -443,5 +441,6 @@ class WebServer {
     private fun paramToBoolean(param: String?): Boolean {
         return if (param.isNullOrEmpty()) false else (param == "on")
     }
+
 
 }

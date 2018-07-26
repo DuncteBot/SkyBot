@@ -24,9 +24,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -140,8 +140,8 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                Triple<Boolean, Boolean, Boolean> res = AirUtils.DB.run(() -> {
-                    Connection conn = AirUtils.DB.getConnManager().getConnection();
+                Triple<Boolean, Boolean, Boolean> res = Variables.DATABASE.run(() -> {
+                    Connection conn = Variables.DATABASE.getConnManager().getConnection();
 
                     String sqlQuerry = (isEdit) ?
                             "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
@@ -197,8 +197,8 @@ public class CommandManager {
             return false;
 
         try {
-            return AirUtils.DB.run(() -> {
-                Connection con = AirUtils.DB.getConnManager().getConnection();
+            return Variables.DATABASE.run(() -> {
+                Connection con = Variables.DATABASE.getConnManager().getConnection();
 
                 try {
                     PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
@@ -324,8 +324,8 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        AirUtils.DB.run(() -> {
-            Connection con = AirUtils.DB.getConnManager().getConnection();
+        Variables.DATABASE.run(() -> {
+            Connection con = Variables.DATABASE.getConnManager().getConnection();
             try {
                 ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
                 while (res.next()) {

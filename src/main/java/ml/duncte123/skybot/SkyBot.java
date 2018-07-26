@@ -21,10 +21,10 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botCommons.text.TextColor;
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.utils.TagUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -71,13 +71,13 @@ public class SkyBot {
 //        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
 //        l.setLevel(INFO);
 
-        if (AirUtils.NONE_SQLITE) { //Don't try to connect if we don't want to
-            if (!AirUtils.DB.connManager.hasSettings()) {
+        if (Variables.NONE_SQLITE) { //Don't try to connect if we don't want to
+            if (!Variables.DATABASE.connManager.hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
-            Connection conn = AirUtils.DB.getConnManager().getConnection();
-            if (!AirUtils.DB.isConnected()) {
+            Connection conn = Variables.DATABASE.getConnManager().getConnection();
+            if (!Variables.DATABASE.isConnected()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             } else {
@@ -100,23 +100,23 @@ public class SkyBot {
         TagUtils.loadAllTags();
 
         //Set the token to a string
-        String token = AirUtils.CONFIG.getString("discord.token", "Your Bot Token");
+        String token = Variables.CONFIG.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = AirUtils.CONFIG.getInt("discord.totalShards", 1);
+        int TOTAL_SHARDS = Variables.CONFIG.getInt("discord.totalShards", 1);
 
         //Set the game from the config
-        int gameId = AirUtils.CONFIG.getInt("discord.game.type", 3);
-        String name = AirUtils.CONFIG.getString("discord.game.name", "over shard #{shardId}");
+        int gameId = Variables.CONFIG.getInt("discord.game.type", 3);
+        String name = Variables.CONFIG.getString("discord.game.name", "over shard #{shardId}");
         String url = "https://www.twitch.tv/duncte123";
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
         if (type.equals(Game.GameType.STREAMING)) {
-            url = AirUtils.CONFIG.getString("discord.game.streamUrl", url);
+            url = Variables.CONFIG.getString("discord.game.streamUrl", url);
         }
 
-        logger.info(AirUtils.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
+        logger.info(Variables.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
         //logger.info(AirUtils.COMMAND_MANAGER.getCustomCommands().size() + " custom commands loaded.");
         LavalinkManager.ins.start();
         final String finalUrl = url;

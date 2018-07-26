@@ -117,7 +117,7 @@ public class BotListener extends ListenerAdapter {
             this.systemPool.shutdown();
 
         //clear the userinfo folder on shutdown as well
-        String imgDir = ((UserinfoCommand) AirUtils.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
+        String imgDir = ((UserinfoCommand) Variables.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
         try {
             FileUtils.cleanDirectory(new File(imgDir));
         } catch (IOException e) {
@@ -265,13 +265,13 @@ public class BotListener extends ListenerAdapter {
         if (rw.startsWith(guild.getSelfMember().getAsMention())) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
             //Handle the chat command
-            ICommand cmd = AirUtils.COMMAND_MANAGER.getCommand("chat");
+            ICommand cmd = Variables.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
                 cmd.executeCommand("chat", Arrays.copyOfRange(split, 1, split.length), event);
             return;
         }
         //Handle the command
-        AirUtils.COMMAND_MANAGER.runCommand(event);
+        Variables.COMMAND_MANAGER.runCommand(event);
     }
 
     /*
@@ -284,8 +284,8 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean shouldBlockCommand(String rw, String s) {
-        return AirUtils.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                .contains(AirUtils.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+        return Variables.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                .contains(Variables.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
                         .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
     }
 
@@ -299,7 +299,7 @@ public class BotListener extends ListenerAdapter {
         logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
-        if (!unbanTimerRunning && AirUtils.NONE_SQLITE) {
+        if (!unbanTimerRunning && Variables.NONE_SQLITE) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
             systemPool.scheduleAtFixedRate(() ->

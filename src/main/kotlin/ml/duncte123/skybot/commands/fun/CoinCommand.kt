@@ -22,9 +22,9 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
 
@@ -40,7 +40,7 @@ class CoinCommand : Command() {
         event.channel.sendTyping().queue {
             event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
                 MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
-                        + imagesArr[AirUtils.RAND.nextInt(2)]))
+                        + imagesArr[Variables.RAND.nextInt(2)]))
             })
         }
     }

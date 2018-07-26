@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.animals;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
@@ -39,7 +39,7 @@ public class KittyCommand extends Command {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        String apiKey = AirUtils.CONFIG.getString("apis.thecatapi", "");
+        String apiKey = Variables.CONFIG.getString("apis.thecatapi", "");
         WebUtils.ins.getText("http://thecatapi.com/api/images/get?" +
                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
             Document doc = Jsoup.parse(xml, "", Parser.xmlParser());

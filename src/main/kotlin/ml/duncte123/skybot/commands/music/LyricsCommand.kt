@@ -19,13 +19,13 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.web.WebUtils
+import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import okhttp3.Request
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
@@ -84,8 +84,8 @@ class LyricsCommand : MusicCommand() {
     private fun getAuthToken(): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
-            formData["client_id"] = AirUtils.CONFIG.getString("genius.client_id", "CLIENT_ID")
-            formData["client_secret"] = AirUtils.CONFIG.getString("genius.client_secret", "CLIENT_SECRET")
+            formData["client_id"] = Variables.CONFIG.getString("genius.client_id", "CLIENT_ID")
+            formData["client_secret"] = Variables.CONFIG.getString("genius.client_secret", "CLIENT_SECRET")
             formData["grant_type"] = "client_credentials"
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
             this.authToken = JSONObject(raw).optString("access_token")
@@ -94,13 +94,10 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun searchForSong(t: String?, callback: (String?) -> Unit) {
-        WebUtils.ins.prepareRaw(
-                Request.Builder()
-                        .get()
+        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
                         .header("Authorization", getAuthToken())
                         .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                { it -> JSONObject(it.body()!!.string()) }
-        ).async {
+                WebUtilsErrorUtils::toJSONObject) .async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
                 callback.invoke(null)

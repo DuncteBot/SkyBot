@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.utils.AirUtils;
-
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
@@ -28,13 +26,14 @@ import java.util.stream.Collectors;
 
 import static java.awt.Color.decode;
 import static java.lang.System.getProperty;
+import static ml.duncte123.skybot.utils.Variables.CONFIG;
 
 
 public class Settings {
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String OWNER_ID = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.OWNER_ID);
+    public static final String OWNER_ID = CONFIG.getString("discord.botOwnerId", BuildConfig.OWNER_ID);
     // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
@@ -45,7 +44,7 @@ public class Settings {
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
     public static final List<Long> wbkxwkZPaG4ni5lm8laY =
-            Collections.unmodifiableList(AirUtils.CONFIG.getArray("discord.constantSuperUserIds",
+            Collections.unmodifiableList(CONFIG.getArray("discord.constantSuperUserIds",
                     Arrays.asList(
                             191231307290771456L, //duncte123#1245
                             281673659834302464L, //ramidzkh#4814
@@ -55,7 +54,7 @@ public class Settings {
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String PREFIX = AirUtils.CONFIG.getString("discord.prefix", "db!");
+    public static final String PREFIX = CONFIG.getString("discord.prefix", "db!");
     /**
      * This is another prefix because I can
      */
@@ -75,7 +74,7 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
+    public static final Color defaultColour = decode(CONFIG.getString("discord.embedColour", "#0751c6"));
     /**
      * This holds if we can use the updater
      */

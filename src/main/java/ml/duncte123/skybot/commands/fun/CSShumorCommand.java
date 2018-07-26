@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.TreeMap;
 
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
-import static ml.duncte123.skybot.utils.AirUtils.RAND;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
+import static ml.duncte123.skybot.utils.Variables.RAND;
 
 public class CSShumorCommand extends Command {
 
