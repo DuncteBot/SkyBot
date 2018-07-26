@@ -26,6 +26,7 @@ import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.web.WebServer;
 
@@ -49,6 +50,7 @@ public class Variables {
     public static final DBManager DATABASE = new DBManager();
     public static final CommandManager COMMAND_MANAGER = new CommandManager();
     static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
+    public static final BlargBot BLARG_BOT = new BlargBot("TOKEN BLA BLA BLA");
 
     static {
         if (!CONFIG.getBoolean("discord.local", false)) {
