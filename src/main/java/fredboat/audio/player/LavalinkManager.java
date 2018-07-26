@@ -25,8 +25,8 @@ import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.LavalinkNode;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.jetbrains.annotations.NotNull;
@@ -55,16 +55,16 @@ public class LavalinkManager {
     public void start() {
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(AirUtils.CONFIG.getString("discord.token"));
+        String userId = getIdFromToken(Variables.CONFIG.getString("discord.token"));
 
         lavalink = new Lavalink(
                 userId,
-                AirUtils.CONFIG.getInt("discord.totalShards", 1),
+                Variables.CONFIG.getInt("discord.totalShards", 1),
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
         defaultNodes.add(new LavalinkNode("ws://localhost", "youshallnotpass"));
-        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes);
+        List<Ason> nodes = Variables.CONFIG.getArray("lavalink.nodes", defaultNodes);
         List<LavalinkNode> nodeList = new ArrayList<>();
 
         nodes.forEach(it -> nodeList.add(Ason.deserialize(it, LavalinkNode.class)));
@@ -75,7 +75,7 @@ public class LavalinkManager {
     }
 
     public boolean isEnabled() {
-        return AirUtils.CONFIG.getBoolean("lavalink.enable", false);
+        return Variables.CONFIG.getBoolean("lavalink.enable", false);
     }
 
     public IPlayer createPlayer(String guildId) {

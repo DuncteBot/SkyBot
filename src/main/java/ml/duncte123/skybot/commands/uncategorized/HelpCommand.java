@@ -21,10 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -43,7 +40,7 @@ public class HelpCommand extends Command {
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                             Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
 
-            for (ICommand cmd : AirUtils.COMMAND_MANAGER.getCommands()) {
+            for (ICommand cmd : Variables.COMMAND_MANAGER.getCommands()) {
                 if (cmd.getName().equals(toSearch)) {
                     MessageUtils.sendMsg(event, "Command help for `" +
                             cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +

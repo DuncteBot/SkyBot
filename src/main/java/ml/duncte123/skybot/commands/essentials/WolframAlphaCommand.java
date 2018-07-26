@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -115,7 +116,7 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        WAEngine engine = AirUtils.ALPHA_ENGINE;
+        WAEngine engine = Variables.ALPHA_ENGINE;
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;

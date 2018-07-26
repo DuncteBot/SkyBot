@@ -48,9 +48,9 @@ public class GuildSettingsUtils {
         if (!AirUtils.NONE_SQLITE) return;
         logger.debug("Loading footer quotes");
 
-        String dbName = AirUtils.DB.getName();
-        AirUtils.DB.run(() -> {
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        String dbName = AirUtils.DATABASE.getName();
+        AirUtils.DATABASE.run(() -> {
+            Connection database = AirUtils.DATABASE.getConnManager().getConnection();
             try {
                 Statement smt = database.createStatement();
 
@@ -76,14 +76,14 @@ public class GuildSettingsUtils {
     }*/
 
     /**
-     * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
+     * This will get the settings from our database and store them in the {@link Variables#GUILD_SETTINGS settings}
      */
     private static void loadGuildSettings() {
         logger.debug("Loading Guild settings.");
 
-        String dbName = AirUtils.DB.getName();
-        AirUtils.DB.run(() -> {
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        String dbName = Variables.DATABASE.getName();
+        Variables.DATABASE.run(() -> {
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
             try {
                 Statement smt = database.createStatement();
 
@@ -92,7 +92,7 @@ public class GuildSettingsUtils {
                 while (res.next()) {
                     String guildId = res.getString("guildId");
 
-                    AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
+                    Variables.GUILD_SETTINGS.put(guildId, new GuildSettings(guildId)
                             .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
                             .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
                             .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
@@ -112,7 +112,7 @@ public class GuildSettingsUtils {
                     );
                 }
 
-                logger.debug("Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
+                logger.debug("Loaded settings for " + Variables.GUILD_SETTINGS.keySet().size() + " guilds.");
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
@@ -133,11 +133,11 @@ public class GuildSettingsUtils {
      */
     public static GuildSettings getGuild(Guild guild) {
 
-        if (!AirUtils.guildSettings.containsKey(guild.getId())) {
+        if (!Variables.GUILD_SETTINGS.containsKey(guild.getId())) {
             return registerNewGuild(guild);
         }
 
-        return AirUtils.guildSettings.get(guild.getId());
+        return Variables.GUILD_SETTINGS.get(guild.getId());
 
     }
 
@@ -148,13 +148,13 @@ public class GuildSettingsUtils {
      * @param settings the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings) {
-        if (!AirUtils.guildSettings.containsKey(settings.getGuildId())) {
+        if (!Variables.GUILD_SETTINGS.containsKey(settings.getGuildId())) {
             registerNewGuild(guild);
             return;
         }
-        AirUtils.DB.run(() -> {
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        Variables.DATABASE.run(() -> {
+            String dbName = Variables.DATABASE.getName();
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
 
             try {
                 PreparedStatement smt = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
@@ -215,14 +215,14 @@ public class GuildSettingsUtils {
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
-        if (AirUtils.guildSettings.containsKey(g.getId())) {
-            return AirUtils.guildSettings.get(g.getId());
+        if (Variables.GUILD_SETTINGS.containsKey(g.getId())) {
+            return Variables.GUILD_SETTINGS.get(g.getId());
         }
         GuildSettings newGuildSettings = new GuildSettings(g.getId());
-        AirUtils.DB.run(() -> {
+        Variables.DATABASE.run(() -> {
 
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+            String dbName = Variables.DATABASE.getName();
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
 
             try {
                 ResultSet resultSet = database.createStatement()
@@ -253,7 +253,7 @@ public class GuildSettingsUtils {
                     }
                 }
             }
-            AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+            Variables.GUILD_SETTINGS.put(g.getId(), newGuildSettings);
         });
         return newGuildSettings;
     }
@@ -264,10 +264,10 @@ public class GuildSettingsUtils {
      * @param g the guild to remove from the database
      */
     public static void deleteGuild(Guild g) {
-        AirUtils.guildSettings.remove(g.getId());
-        AirUtils.DB.run(() -> {
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        Variables.GUILD_SETTINGS.remove(g.getId());
+        Variables.DATABASE.run(() -> {
+            String dbName = Variables.DATABASE.getName();
+            Connection database = Variables.DATABASE.getConnManager().getConnection();
 
             try {
                 Statement smt = database.createStatement();

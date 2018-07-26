@@ -27,7 +27,7 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.utils.AirUtils.RAND;
+import static ml.duncte123.skybot.utils.Variables.RAND;
 
 public class DiscordMethods {
 

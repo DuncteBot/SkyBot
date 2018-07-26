@@ -30,8 +30,8 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.VRCubeException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
@@ -125,7 +125,7 @@ class EvalCommand : Command() {
         if (isRanByBotOwner && invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
-            engine.put("commandManager", AirUtils.COMMAND_MANAGER)
+            engine.put("commandManager", Variables.COMMAND_MANAGER)
 
             engine.put("message", event.message)
             engine.put("channel", event.message.textChannel)

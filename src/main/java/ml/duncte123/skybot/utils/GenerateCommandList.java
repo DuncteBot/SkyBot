@@ -59,11 +59,11 @@ public class GenerateCommandList {
         writer.newLine();
 
         List<String> names = new ArrayList<>();
-        AirUtils.COMMAND_MANAGER.getCommands().forEach(c -> names.add(c.getName()));
+        Variables.COMMAND_MANAGER.getCommands().forEach(c -> names.add(c.getName()));
         Collections.sort(names);
 
         for (String n : names) {
-            ICommand cmd = AirUtils.COMMAND_MANAGER.getCommand(n);
+            ICommand cmd = Variables.COMMAND_MANAGER.getCommand(n);
             if (!cmd.getCategory().equals(CommandCategory.UNLISTED)) {
                 writer.append("\t")
                         .append('"')

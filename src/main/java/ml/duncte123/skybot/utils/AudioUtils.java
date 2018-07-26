@@ -161,7 +161,7 @@ public class AudioUtils {
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
                 if (track.getInfo().isStream) {
-                    Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                    Optional<RadioStream> stream = ((RadioCommand) Variables.COMMAND_MANAGER.getCommand("radio"))
                             .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();

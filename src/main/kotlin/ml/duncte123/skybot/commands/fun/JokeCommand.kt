@@ -22,7 +22,7 @@ import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.BuildConfig.URL_ARRAY
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils.RAND
+import ml.duncte123.skybot.utils.Variables.RAND
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed

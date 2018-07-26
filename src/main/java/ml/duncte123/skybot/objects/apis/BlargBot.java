@@ -23,6 +23,7 @@ import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtils.EncodingType;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import okhttp3.RequestBody;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.InputStream;
@@ -33,7 +34,7 @@ public class BlargBot {
 
     private final String token;
 
-    public BlargBot(String token) {
+    public BlargBot(@NotNull String token) {
         this.token = token;
     }
 

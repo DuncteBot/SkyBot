@@ -31,7 +31,7 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Variables;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -71,9 +71,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager) {
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
-        String clientId = AirUtils.CONFIG.getString("apis.spotify.clientId", defaultValue);
-        String clientSecret = AirUtils.CONFIG.getString("apis.spotify.clientSecret", defaultValue);
-        String youtubeApiKey = AirUtils.CONFIG.getString("apis.googl");
+        String clientId = Variables.CONFIG.getString("apis.spotify.clientId", defaultValue);
+        String clientSecret = Variables.CONFIG.getString("apis.spotify.clientSecret", defaultValue);
+        String youtubeApiKey = Variables.CONFIG.getString("apis.googl");
         if (clientId == null || clientSecret == null || clientId.equals(defaultValue) || clientId.equals(defaultValue)
                 || youtubeApiKey.isEmpty()) {
             logger.error("Could not load Spotify keys\n" + defaultValue);

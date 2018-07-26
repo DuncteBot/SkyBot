@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.Variables;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -40,11 +40,11 @@ class MySQLConnectionManager implements DBConnectionManager {
     private Connection connection;
 
     MySQLConnectionManager() {
-        this.dbHost = AirUtils.CONFIG.getString("sql.host", "sql.example.com");
-        this.port = AirUtils.CONFIG.getInt("sql.port", 3306);
-        this.user = AirUtils.CONFIG.getString("sql.username", "exampleUser");
-        this.pass = AirUtils.CONFIG.getString("sql.password", "Ex@mplePAss");
-        this.dbName = AirUtils.CONFIG.getString("sql.database", "Example_database");
+        this.dbHost = Variables.CONFIG.getString("sql.host", "sql.example.com");
+        this.port = Variables.CONFIG.getInt("sql.port", 3306);
+        this.user = Variables.CONFIG.getString("sql.username", "exampleUser");
+        this.pass = Variables.CONFIG.getString("sql.password", "Ex@mplePAss");
+        this.dbName = Variables.CONFIG.getString("sql.database", "Example_database");
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(

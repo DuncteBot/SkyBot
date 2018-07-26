@@ -22,8 +22,8 @@ import com.github.natanbc.reliqua.request.RequestException;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -34,7 +34,7 @@ public class GithubReleaseCommand extends Command {
     private static final String REPO_PART = "/repos/DuncteBot/SkyBot";
 
     private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token="
-            + AirUtils.CONFIG.getString("apis.github");
+            + Variables.CONFIG.getString("apis.github");
 
     /*private static final String UPDATE_RELEASE = GITHUB_API + REPO_PART + "/releases/%s?access_token="
             + AirUtils.CONFIG.getString("apis.github");

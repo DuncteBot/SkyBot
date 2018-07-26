@@ -22,9 +22,9 @@ import com.afollestad.ason.Ason
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class NSFWCommands : Command() {
@@ -43,10 +43,10 @@ class NSFWCommands : Command() {
         }
         when (invoke) {
             "carsandhentai" -> {
-                WebUtils.ins.getText(String.format(AirUtils.GOOGLE_BASE_URL, "Cars and hentai")).async {
+                WebUtils.ins.getText(String.format(Variables.GOOGLE_BASE_URL, "Cars and hentai")).async {
                     val jsonRaw = Ason(it)
                     val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                    val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
+                    val randomItem = jsonArray.getJsonObject(Variables.RAND.nextInt(jsonArray.size()))
                     MessageUtils.sendEmbed(event,
                             EmbedUtils.defaultEmbed()
                                     .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
