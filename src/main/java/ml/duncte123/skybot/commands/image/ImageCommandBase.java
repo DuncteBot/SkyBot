@@ -48,7 +48,7 @@ public abstract class ImageCommandBase extends Command {
 
     private boolean hasArgs(GuildMessageReceivedEvent event, String[] args) {
         if(args.length == 0) {
-            sendMsg(event, "Please provide a reason");
+            sendMsg(event, "Too little arguments");
             return false;
         }
         return true;
