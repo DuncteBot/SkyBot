@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 import java.util.Arrays;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.Variables.COMMAND_MANAGER;
 import static ml.duncte123.skybot.utils.MessageUtils.*;
+import static ml.duncte123.skybot.utils.Variables.COMMAND_MANAGER;
 
 public class CustomCommandCommand extends Command {
 

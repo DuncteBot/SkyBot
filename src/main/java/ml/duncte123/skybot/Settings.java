@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.utils.Variables;
-
 import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;

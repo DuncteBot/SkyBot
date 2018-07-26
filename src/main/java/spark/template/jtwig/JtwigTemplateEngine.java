@@ -17,13 +17,12 @@
  */
 package spark.template.jtwig;
 
-import java.util.Map;
-
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
-
 import spark.ModelAndView;
 import spark.TemplateEngine;
+
+import java.util.Map;
 
 /**
  * Defaults to the 'templates' directory under the resource path.

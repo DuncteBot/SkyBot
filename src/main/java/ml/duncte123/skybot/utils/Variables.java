@@ -36,8 +36,8 @@ import java.util.Random;
 import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
 public class Variables {
-    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
     public static final Config CONFIG = new ConfigUtils().loadConfig();
+    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
     public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS)
@@ -51,7 +51,7 @@ public class Variables {
     static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
 
     static {
-        if(!CONFIG.getBoolean("discord.local", false)) {
+        if (!CONFIG.getBoolean("discord.local", false)) {
             // init web server
             new WebServer();
         }
