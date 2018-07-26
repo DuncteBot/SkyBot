@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.web.WebUtils
+import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
@@ -94,13 +95,10 @@ class LyricsCommand : MusicCommand() {
     }
 
     private fun searchForSong(t: String?, callback: (String?) -> Unit) {
-        WebUtils.ins.prepareRaw(
-                Request.Builder()
-                        .get()
+        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
                         .header("Authorization", getAuthToken())
                         .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                { it -> JSONObject(it.body()!!.string()) }
-        ).async {
+                WebUtilsErrorUtils::toJSONObject) .async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
                 callback.invoke(null)

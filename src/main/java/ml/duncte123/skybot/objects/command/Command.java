@@ -82,9 +82,8 @@ public abstract class Command implements ICommand {
             logger.warn("Discord Bots token not found");
             return false;
         }
-        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(new Request.Builder()
+        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
                 .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
-                .get()
                 .addHeader("Authorization", token)
                 .build(), WebUtilsErrorUtils::toJSONObject);
 
