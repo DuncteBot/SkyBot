@@ -39,7 +39,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
-version "3.73.3_${getGitHash()}"
+version "3.74.0_${getGitHash()}"
 
 sourceCompatibility = JavaVersion.VERSION_1_9
 targetCompatibility = JavaVersion.VERSION_1_9
@@ -79,7 +79,7 @@ buildConfig {
 
 dependencies {
     //Weeb api
-    compile group: 'me.duncte123', name: 'weebJava', version: '2.0.0'
+    compile group: 'me.duncte123', name: 'weebJava', version: '2.0.1'
     //My little utils
     compile 'com.github.duncte123:botCommons:b65ea97'
 
