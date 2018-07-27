@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -32,9 +35,21 @@ public class TheSearchCommand extends ImageCommandBase {
             return;
         }
 
-        String reason = String.join(" ", args);
+        String text = String.join(" ", args);
 
-        BLARG_BOT.getTheSearch(reason).async((image) -> handleBasicImage(event, image));
+        for(User user : event.getMessage().getMentionedUsers()) {
+            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
+        }
+
+        for(TextChannel channel : event.getMessage().getMentionedChannels()) {
+            text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
+        }
+
+        for(Role role : event.getMessage().getMentionedRoles()) {
+            text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
+        }
+
+        BLARG_BOT.getTheSearch(text).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

@@ -55,8 +55,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     boolean doAllChecks(GuildMessageReceivedEvent event, String[] args) {
-        event.getChannel().sendTyping().queue();
-        return canSendFile(event) && isUserOrGuildPatron(event) && hasArgs(event, args);
+        return doAllChecksButNotTheArgsBecauseWeDontNeedThem(event) && hasArgs(event, args);
     }
 
     boolean doAllChecksButNotTheArgsBecauseWeDontNeedThem(GuildMessageReceivedEvent event) {
