@@ -37,6 +37,14 @@ main {
     display: block;
 }
 
+.bg {
+    background: var(--color) !important;
+}
+
+.bg:hover {
+    background: #052e6a !important;
+}
+
 .promo-caption {
     font-size: 1.7rem;
     font-weight: 500;

@@ -272,6 +272,10 @@ class WebServer {
                     "static/liveServerCount.twig"))
         }
 
+        get("/invite") {
+            response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
+        }
+
         path("/api") {
 
             before("/*") {
