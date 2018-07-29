@@ -129,6 +129,11 @@ class OneLinerCommands : Command() {
     override fun help(invoke: String?): String {
 
         return when (invoke) {
+            "ping" -> {
+                """Pong
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
             "cookie" -> {
                 """blobnomcookie
                     |Usage: `$PREFIX$invoke`

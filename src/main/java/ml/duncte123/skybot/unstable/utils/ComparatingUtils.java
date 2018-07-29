@@ -18,10 +18,8 @@
 
 package ml.duncte123.skybot.unstable.utils;
 
-@Deprecated
 public class ComparatingUtils {
-
-    @Deprecated
+    // Needs to be fixed
     public static void execCheck(Throwable t) {
         t.printStackTrace();
     }
