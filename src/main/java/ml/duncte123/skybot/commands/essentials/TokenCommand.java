@@ -41,7 +41,7 @@ public class TokenCommand extends Command {
     private static final String STRING_FORMAT = "Deconstruction results for token: `%s`%n%n" +
             "**ID:** %s%n**Generated:** %s%n%n" +
             "Checking validity...%s%n%n" +
-            "Keep in mind that verifying if the token is valid my making a request to discord is against the TOS";
+            "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
 
     public TokenCommand() {
         this.category = CommandCategory.NERD_STUFF;
