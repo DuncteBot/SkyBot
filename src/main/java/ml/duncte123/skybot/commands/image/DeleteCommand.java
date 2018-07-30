@@ -37,15 +37,15 @@ public class DeleteCommand extends ImageCommandBase {
 
         String text = String.join(" ", args);
 
-        for(User user : event.getMessage().getMentionedUsers()) {
-                text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
+        for (User user : event.getMessage().getMentionedUsers()) {
+            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
         }
 
-        for(TextChannel channel : event.getMessage().getMentionedChannels()) {
+        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
             text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
         }
 
-        for(Role role : event.getMessage().getMentionedRoles()) {
+        for (Role role : event.getMessage().getMentionedRoles()) {
             text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 

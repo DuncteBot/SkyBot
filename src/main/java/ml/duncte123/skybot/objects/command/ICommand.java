@@ -25,19 +25,19 @@ public interface ICommand {
 
     void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
 
+    String getName();
+
+    default String[] getAliases() {
+        return new String[0];
+    }
+
     String help();
 
     default String help(String invoke) {
         return help();
     }
 
-    String getName();
-
     CommandCategory getCategory();
-
-    default String[] getAliases() {
-        return new String[0];
-    }
 
     default boolean isCustom() {
         return false;

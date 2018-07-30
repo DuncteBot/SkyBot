@@ -37,15 +37,15 @@ public class PcCheckCommand extends ImageCommandBase {
 
         String reason = String.join(" ", args);
 
-        for(User user : event.getMessage().getMentionedUsers()) {
+        for (User user : event.getMessage().getMentionedUsers()) {
             reason = reason.replaceAll(user.getAsMention(), String.format("%#s", user));
         }
 
-        for(TextChannel channel : event.getMessage().getMentionedChannels()) {
+        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
             reason = reason.replaceAll(channel.getAsMention(), String.format("%#s", channel));
         }
 
-        for(Role role : event.getMessage().getMentionedRoles()) {
+        for (Role role : event.getMessage().getMentionedRoles()) {
             reason = reason.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 

@@ -21,26 +21,27 @@ package ml.duncte123.skybot.commands.essentials;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
 
+import java.math.BigInteger;
 import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Base64;
 import java.util.Calendar;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static java.util.Base64.getDecoder;
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class TokenCommand extends Command {
 
     private static final Pattern TOKEN_REGEX = Pattern.compile("([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)");
+    private static final long TOKEN_EPOCH = 1293840000L;
     private static final String STRING_FORMAT = "Deconstruction results for token: `%s`%n%n" +
-                                                "**ID:** %s%n**Generated:** %s%n%n" +
-                                                "Checking validity...%s%n%n" +
-                                                "Keep in mind that verifying if the token is valid my making a request to discord is against the TOS";
+            "**ID:** %s%n**Generated:** %s%n%n" +
+            "Checking validity...%s%n%n" +
+            "Keep in mind that verifying if the token is valid my making a request to discord is against the TOS";
 
     public TokenCommand() {
         this.category = CommandCategory.NERD_STUFF;
@@ -95,33 +96,22 @@ public class TokenCommand extends Command {
     }
 
     private byte[] decodeBase64(String input) {
-        return getDecoder().decode(input);
+        return Base64.getDecoder().decode(input);
     }
 
     private String decodeBase64ToString(String input) {
-        return new String(getDecoder().decode(input));
+        return new String(decodeBase64(input));
     }
 
     private OffsetDateTime toTimeStamp(String input) {
-        byte[] receivedEpoch = decodeBase64(input);
-//        long receivedTime = 0;
-        StringBuilder b = new StringBuilder();
+        BigInteger decoded = new BigInteger(decodeBase64(input));
+        long receivedTime = Long.valueOf(decoded.toString());
 
-        for (byte aReceivedEpoch : receivedEpoch) {
-//            receivedTime = (receivedTime << 8) + (aReceivedEpoch & 0xff);
-            b.append(aReceivedEpoch);
-        }
-
-        long receivedTime = Long.valueOf(b.toString());
-
-        System.out.println(receivedTime);
-
-        long timestamp = MiscUtil.DISCORD_EPOCH + receivedTime;
-
-        System.out.println(timestamp);
+        long timestamp = TOKEN_EPOCH + receivedTime;
 
         Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        gmt.setTimeInMillis(timestamp);
+        long millis = timestamp * 1000;
+        gmt.setTimeInMillis(millis);
 
         return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
     }

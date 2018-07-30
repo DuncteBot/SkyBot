@@ -49,8 +49,8 @@ public class Variables {
     public static final Random RAND = new Random();
     public static final DBManager DATABASE = new DBManager();
     public static final CommandManager COMMAND_MANAGER = new CommandManager();
-    static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
     public static final BlargBot BLARG_BOT = new BlargBot(CONFIG.getString("apis.blargbot", "aaaaa"));
+    static Map<String, GuildSettings> GUILD_SETTINGS = new HashMap<>();
 
     static {
         if (!CONFIG.getBoolean("discord.local", false)) {

@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -38,7 +37,7 @@ public abstract class ImageCommandBase extends Command {
     private static final String dir = "user_avatars";
 
     private boolean canSendFile(GuildMessageReceivedEvent event) {
-        if(event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+        if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
             MessageUtils.sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
@@ -47,7 +46,7 @@ public abstract class ImageCommandBase extends Command {
     }
 
     private boolean hasArgs(GuildMessageReceivedEvent event, String[] args) {
-        if(args.length == 0) {
+        if (args.length == 0) {
             sendMsg(event, "Too little arguments");
             return false;
         }

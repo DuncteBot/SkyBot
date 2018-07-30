@@ -31,21 +31,21 @@ public class TheSearchCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
 
-        if(!doAllChecks(event, args)) {
+        if (!doAllChecks(event, args)) {
             return;
         }
 
         String text = String.join(" ", args);
 
-        for(User user : event.getMessage().getMentionedUsers()) {
+        for (User user : event.getMessage().getMentionedUsers()) {
             text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
         }
 
-        for(TextChannel channel : event.getMessage().getMentionedChannels()) {
+        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
             text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
         }
 
-        for(Role role : event.getMessage().getMentionedRoles()) {
+        for (Role role : event.getMessage().getMentionedRoles()) {
             text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 

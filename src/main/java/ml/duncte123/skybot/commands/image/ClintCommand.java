@@ -38,7 +38,7 @@ public class ClintCommand extends ImageCommandBase {
 
         String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
 
-        if(args.length > 0) {
+        if (args.length > 0) {
             try {
                 url = new URL(args[0]).toString();
             } catch (MalformedURLException ignored) {
