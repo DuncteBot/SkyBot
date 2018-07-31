@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
+import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -56,8 +57,11 @@ class RadioCommand : MusicCommand() {
                             ") or become a patreon [here](https://patreon.com/duncte123)").build())
             return
         }
-        if (!channelChecks(event))
+        if (prejoinChecks(event)) {
+            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand("join", arrayOfNulls(0), event)
+        } else if (!channelChecks(event)) {
             return
+        }
 
         val guild = event.guild
         val mng = getMusicManager(guild)

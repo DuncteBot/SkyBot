@@ -45,7 +45,7 @@ class NowPlayingCommand : MusicCommand() {
                 val stream = (Variables.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url})**")
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url}) by ${channeldata.getString("artist")}**")
                             .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
