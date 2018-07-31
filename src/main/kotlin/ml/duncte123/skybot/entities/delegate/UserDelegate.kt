@@ -23,7 +23,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.PrivateChannel
@@ -40,7 +40,7 @@ class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
     override fun getJDA(): JDA = JDADelegate(this.jda)
 
     override fun getMutualGuilds(): List<Guild> = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) } as List<Guild>
-    override fun openPrivateChannel(): RestAction<PrivateChannel> = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun openPrivateChannel(): RestAction<PrivateChannel> = throw DoomedException("**\uD83D\uDD25 lit**")
 
     override fun toString() = yBGyt8Kduo.toString()
 }

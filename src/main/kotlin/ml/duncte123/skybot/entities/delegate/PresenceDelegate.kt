@@ -22,7 +22,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.entities.Game
@@ -39,14 +39,14 @@ class PresenceDelegate(private val presence: Presence) : Presence by presence {
 
     override fun getJDA(): JDA = JDADelegate(presence.jda)
 
-    override fun setGame(game: Game) = throw VRCubeException("Can not set the game")
+    override fun setGame(game: Game) = throw DoomedException("Can not set the game")
 
-    override fun setIdle(idle: Boolean) = throw VRCubeException("Can not set the idle state")
-    override fun setStatus(status: OnlineStatus) = throw VRCubeException("Can not set the online status")
-    override fun setPresence(game: Game, idle: Boolean) = throw VRCubeException("Can not set the game and idle state")
-    override fun setPresence(status: OnlineStatus, game: Game) = throw VRCubeException("Can not set the game and online status")
-    override fun setPresence(status: OnlineStatus, idle: Boolean) = throw VRCubeException("Can not set the online status and idle state")
-    override fun setPresence(status: OnlineStatus, game: Game, idle: Boolean) = throw VRCubeException("Can not set the online status, game and idle state")
+    override fun setIdle(idle: Boolean) = throw DoomedException("Can not set the idle state")
+    override fun setStatus(status: OnlineStatus) = throw DoomedException("Can not set the online status")
+    override fun setPresence(game: Game, idle: Boolean) = throw DoomedException("Can not set the game and idle state")
+    override fun setPresence(status: OnlineStatus, game: Game) = throw DoomedException("Can not set the game and online status")
+    override fun setPresence(status: OnlineStatus, idle: Boolean) = throw DoomedException("Can not set the online status and idle state")
+    override fun setPresence(status: OnlineStatus, game: Game, idle: Boolean) = throw DoomedException("Can not set the online status, game and idle state")
 
     override fun toString() = presence.toString()
 }

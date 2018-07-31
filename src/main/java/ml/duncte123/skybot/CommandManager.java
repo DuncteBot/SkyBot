@@ -19,7 +19,7 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
@@ -127,7 +127,7 @@ public class CommandManager {
 
     public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
-            throw new VRCubeException("Name can't have spaces!");
+            throw new DoomedException("Name can't have spaces!");
         }
 
         boolean commandFound = this.customCommands.stream()
@@ -235,7 +235,7 @@ public class CommandManager {
     @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
     public boolean addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
-            throw new VRCubeException("Name can't have spaces!");
+            throw new DoomedException("Name can't have spaces!");
         }
 
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {

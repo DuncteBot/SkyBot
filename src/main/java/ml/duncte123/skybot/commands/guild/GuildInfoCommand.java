@@ -38,23 +38,24 @@ import java.time.format.DateTimeFormatter;
 
 public class GuildInfoCommand extends Command {
 
+    //https://stackoverflow.com/a/1915107/4453592
+    private static final String INVITE_STRING_TEMPLATE = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
+
     @Override
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         try {
             Guild g = event.getGuild();
-            //https://stackoverflow.com/a/1915107/4453592
-            final String inviteStringTemplate = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
                     g.getInvites().queue(invites ->
                             invites.stream().findFirst().ifPresent(invite ->
-                                    sendGuildInfoEmbed(event, String.format(inviteStringTemplate, invite.getCode()))
+                                    sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
                             )
                     );
                 } else {
                     g.getVanityUrl().queue(invite ->
-                            sendGuildInfoEmbed(event, String.format(inviteStringTemplate, invite))
+                            sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
             } else {

@@ -21,10 +21,10 @@
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-open class TableFlipException(override val message: String?, override val cause: Throwable?) : VRCubeException() {
+open class TableFlipException(override val message: String?, override val cause: Throwable?) : DoomedException() {
 
     private fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
 

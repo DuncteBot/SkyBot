@@ -23,7 +23,7 @@ import groovy.lang.Script;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;
 import ml.duncte123.skybot.entities.delegate.RoleDelegate;
 import ml.duncte123.skybot.entities.delegate.TextChannelDelegate;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.exceptions.DoomedException;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -50,42 +50,42 @@ public class ScriptDelegate extends Script {
 
     @Override
     public void println() {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void print(Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void println(Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void printf(String format, Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void printf(String format, Object[] values) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public Object evaluate(String expression) throws CompilationFailedException {
-        throw new VRCubeException("This method is blocked");
+        throw new DoomedException("This method is blocked");
     }
 
     @Override
     public Object evaluate(File file) throws CompilationFailedException {
-        throw new VRCubeException("How did you get access to the file class?");
+        throw new DoomedException("How did you get access to the file class?");
     }
 
     @Override
     public void run(File file, String[] arguments) throws CompilationFailedException {
-        throw new VRCubeException("I am a bot, I can't run");
+        throw new DoomedException("I am a bot, I can't run");
     }
 
     @Override

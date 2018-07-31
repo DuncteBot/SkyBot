@@ -27,7 +27,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.MessageUtils
@@ -68,9 +68,9 @@ class EvalCommand : Command() {
             @Throws(CompilationFailedException::class)
             override fun evaluate(scriptText: String): Any {
                 if (filter.filterArrays(scriptText))
-                    throw VRCubeException("Arrays are not allowed")
+                    throw DoomedException("Arrays are not allowed")
                 if (filter.filterLoops(scriptText))
-                    throw VRCubeException("Loops are not allowed")
+                    throw DoomedException("Loops are not allowed")
                 return super.evaluate(scriptText)
             }
         }
@@ -91,7 +91,7 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot")
         classImports = listOf(
                 "ml.duncte123.skybot.objects.FakeInterface",
-                "ml.duncte123.skybot.exceptions.VRCubeException"
+                "ml.duncte123.skybot.exceptions.DoomedException"
         )
 
         staticImports = listOf(
@@ -218,7 +218,7 @@ class EvalCommand : Command() {
                     out as Exception
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
-                is IllegalArgumentException, is VRCubeException -> {
+                is IllegalArgumentException, is DoomedException -> {
                     out as RuntimeException
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
