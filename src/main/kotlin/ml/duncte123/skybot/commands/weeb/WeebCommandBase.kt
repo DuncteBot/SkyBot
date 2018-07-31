@@ -54,17 +54,17 @@ abstract class WeebCommandBase : Command() {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
-            } else {
-                if (!event.message.mentionedMembers.isEmpty()) {
-                    MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                            "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
-                            , imageUrl))
-                } else {
-                    MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                            "${event.member.effectiveName} $thing ${StringUtils.join(args, " ")}", imageUrl))
-                }
+                        "${Settings.DEFAULT_NAME} $thing ${event.member.asMention}", imageUrl))
+                return@async
             }
+            if (!event.message.mentionedMembers.isEmpty()) {
+                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                        "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
+                        , imageUrl))
+                return@async
+            }
+            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                    "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
         }
 
     }

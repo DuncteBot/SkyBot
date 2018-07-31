@@ -39,7 +39,7 @@ public class HelpCommand extends Command {
     public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
         if (args.length > 0) {
             String toSearch = StringUtils.join(args, " ").toLowerCase()
-                    .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
+                    .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                             Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
 

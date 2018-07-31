@@ -43,7 +43,6 @@ class UpdateCommand : Command() {
     }
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
         if (!isDev(event.author)
                 && Settings.OWNER_ID != event.author.id) {
             sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")

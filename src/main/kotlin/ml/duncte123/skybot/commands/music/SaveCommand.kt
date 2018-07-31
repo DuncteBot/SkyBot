@@ -40,10 +40,10 @@ class SaveCommand : MusicCommand() {
     }
 
     private fun toByteArray(guild: Guild?): ByteArray {
-        var array = JSONArray()
-        var manager = getMusicManager(guild)
+        val array = JSONArray()
+        val manager = getMusicManager(guild)
 
-        var urls = manager.scheduler.queue
+        val urls = manager.scheduler.queue
                 .map { it.identifier }
                 .toMutableList()
 
@@ -57,5 +57,5 @@ class SaveCommand : MusicCommand() {
 
     override fun getName() = "save"
 
-    override fun help() = "Saves a playlist into a file with can be loaded with ${Settings.PREFIX}load"
+    override fun help() = "Saves a playlist into a file with can be loaded with ${PREFIX}load"
 }

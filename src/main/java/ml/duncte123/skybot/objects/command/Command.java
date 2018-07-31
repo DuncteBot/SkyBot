@@ -225,7 +225,7 @@ public abstract class Command implements ICommand {
                     .replaceAll("\\n", "<br />")
                     .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
             if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
-                s += "<br />Aliases: " + Settings.PREFIX + StringUtils.join(getAliases(), ", " + Settings.PREFIX);
+                s += "<br />Aliases: " + PREFIX + StringUtils.join(getAliases(), ", " + PREFIX);
             }
             helpParsed = s;
         }

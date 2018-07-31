@@ -21,9 +21,7 @@
 
 package ml.duncte123.skybot
 
-import ml.duncte123.skybot.exceptions.DoomedException
-
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
+/*@Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class TableFlipException(override val message: String?, override val cause: Throwable?) : DoomedException() {
 
     private fun getMeme(): String = "(╯°□°）╯︵ ┻━┻"
@@ -33,11 +31,12 @@ open class TableFlipException(override val message: String?, override val cause:
     constructor() : this(null, null)
 
     override fun getLocalizedMessage(): String = "${getMeme()} $message"
-}
+}*/
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class EndReached : Throwable()
 
+/*
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class SkybotContextException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause) {
     constructor(message: String?) : this(message, null)
@@ -45,4 +44,4 @@ open class SkybotContextException(override val message: String?, override val ca
     constructor() : this(null, null)
 
     override fun getLocalizedMessage(): String = "$message at ${this.stackTrace[0]} caused by ${cause?.toString()}"
-}
+}*/
