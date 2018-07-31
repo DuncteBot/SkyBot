@@ -45,7 +45,7 @@ public class HelpCommand extends Command {
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                             Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
 
-            if (isCategory(toSearch.toUpperCase()))
+            if (isCategory(toSearch))
                 sendCategoryHelp(event, toSearch.toUpperCase());
             else
                 sendCommandHelp(event, toSearch);
