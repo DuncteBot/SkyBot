@@ -19,8 +19,8 @@
 package fredboat.audio.player;
 
 import com.afollestad.ason.Ason;
-import lavalink.client.io.Lavalink;
 import lavalink.client.io.Link;
+import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
 import ml.duncte123.skybot.SkyBot;
@@ -47,7 +47,7 @@ import java.util.Objects;
 public class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
-    private Lavalink lavalink = null;
+    private JdaLavalink lavalink = null;
 
     private LavalinkManager() {
     }
@@ -57,7 +57,7 @@ public class LavalinkManager {
 
         String userId = getIdFromToken(Variables.CONFIG.getString("discord.token"));
 
-        lavalink = new Lavalink(
+        lavalink = new JdaLavalink(
                 userId,
                 Variables.CONFIG.getInt("discord.totalShards", 1),
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
@@ -114,7 +114,7 @@ public class LavalinkManager {
         return guild.getSelfMember().getVoiceState().getChannel();
     }
 
-    public Lavalink getLavalink() {
+    public JdaLavalink getLavalink() {
         return lavalink;
     }
 
