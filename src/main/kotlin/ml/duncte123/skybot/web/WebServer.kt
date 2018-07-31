@@ -66,8 +66,25 @@ class WebServer {
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
-        get("/commands", WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
-                .put("commands", Variables.COMMAND_MANAGER.sortedCommands), "commands.twig")
+        get("/commands", DEFAULT_ACCEPT, engine) {
+            val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
+                    .put("commands", Variables.COMMAND_MANAGER.sortedCommands)
+
+            if(request.queryParams().contains("server")) {
+                val serverId: String = request.queryParams("server")
+                if(serverId.isNotEmpty()) {
+                    val guild = SkyBot.getInstance().shardManager.getGuildById(serverId)
+                    if(guild != null) {
+                        val settings = GuildSettingsUtils.getGuild(guild)
+                        map.put("prefix", settings.customPrefix)
+                    }
+                }
+            }
+
+            map.put("color", colorToHex(Settings.defaultColour))
+
+            ModelAndView(map.map, "commands.twig")
+        }
 
         get("/suggest", WebVariables().put("title", "Leave a suggestion")
                 .put("chapta_sitekey", CONFIG.getString("apis.chapta.sitekey")), "suggest.twig")
