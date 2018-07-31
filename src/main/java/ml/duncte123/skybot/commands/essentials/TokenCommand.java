@@ -36,7 +36,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class TokenCommand extends Command {
 
-    private static final Pattern TOKEN_REGEX = Pattern.compile("([a-zA-Z0-9\\-]+)\\.([a-zA-Z0-9]+)\\.([a-zA-Z0-9\\-]+)");
+    private static final Pattern TOKEN_REGEX = Pattern.compile("([a-zA-Z0-9]+)\\.([a-zA-Z0-9]+)\\.([a-zA-Z0-9\\-_]+)");
     private static final long TOKEN_EPOCH = 1293840000L;
     private static final String STRING_FORMAT = "Deconstruction results for token: `%s`%n%n" +
             "**ID:** %s%n**Generated:** %s%n%n" +
