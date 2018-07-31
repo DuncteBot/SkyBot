@@ -22,7 +22,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Role
@@ -44,11 +44,11 @@ class RoleDelegate(val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
 
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 
-    override fun getManager(): RoleManager = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getManager(): RoleManager = throw DoomedException("**\uD83D\uDD25 lit**")
 
-    override fun delete(): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun createCopy(guild: Guild): RoleAction = throw VRCubeException("**\uD83D\uDD25 lit guild: ${guild.name}**")
-    override fun createCopy(): RoleAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun delete(): AuditableRestAction<Void> = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun createCopy(guild: Guild): RoleAction = throw DoomedException("**\uD83D\uDD25 lit guild: ${guild.name}**")
+    override fun createCopy(): RoleAction = throw DoomedException("**\uD83D\uDD25 lit**")
 
     override fun toString() = uA83D3Ax_ky.toString()
 }

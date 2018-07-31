@@ -25,21 +25,21 @@ import ml.duncte123.skybot.utils.AirUtils;
  *
  * @author Duncan "duncte123" Sterken
  */
-public class VRCubeException extends SecurityException {
+public class DoomedException extends SecurityException {
 
-    public VRCubeException() {
+    public DoomedException() {
         super();
     }
 
-    public VRCubeException(String message) {
+    public DoomedException(String message) {
         super(message);
     }
 
-    public VRCubeException(String message, Throwable cause) {
+    public DoomedException(String message, Throwable cause) {
         super(message, cause);
     }
 
-    public VRCubeException(Throwable cause) {
+    public DoomedException(Throwable cause) {
         super(cause);
     }
 

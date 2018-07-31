@@ -69,7 +69,7 @@ public class EventManager
             botListener.onEvent(event);
             deHoistListener.onEvent(event);
         } catch (Throwable thr) {
-            logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
+            logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
 

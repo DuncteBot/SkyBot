@@ -38,10 +38,10 @@ class CoinCommand : Command() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         event.channel.sendTyping().queue {
-            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS, {
+            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
                 MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
                         + imagesArr[Variables.RAND.nextInt(2)]))
-            })
+            }
         }
     }
 

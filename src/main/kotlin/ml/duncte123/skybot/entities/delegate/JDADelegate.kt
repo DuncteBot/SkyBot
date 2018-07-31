@@ -22,7 +22,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.TFException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.managers.Presence
 
@@ -37,7 +37,7 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
 
     override fun getToken(): String = this.token
     override fun getPresence(): Presence = this.presence
-    override fun shutdown() = throw TFException("Can not shutdown")
+    override fun shutdown() = throw DoomedException("Can not shutdown")
     override fun shutdownNow() = this.shutdown()
 
     override fun equals(other: Any?): Boolean {

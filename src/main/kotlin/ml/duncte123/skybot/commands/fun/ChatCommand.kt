@@ -41,7 +41,8 @@ import javax.xml.xpath.XPathFactory
 class ChatCommand : Command() {
 
     private val botid = "b0dafd24ee35a477"
-    private val sessions = TreeMap<String, ChatSession>()
+    private val sessions = TreeMap<Long, ChatSession>()
+    private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
             "My prefix in this guild is *`{PREFIX}`*",
             "Thanks for asking, my prefix here is *`{PREFIX}`*",
@@ -54,9 +55,8 @@ class ChatCommand : Command() {
         this.category = CommandCategory.FUN
 
         commandService.scheduleAtFixedRate({
-            val temp = TreeMap<String, ChatSession>(sessions)
+            val temp = TreeMap<Long, ChatSession>(sessions)
             val now = Date()
-            val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
             var cleared = 0
             temp.forEach {
                 val duration = now.time - it.value.time.time
@@ -95,24 +95,16 @@ class ChatCommand : Command() {
 
         message = replaceStuff(event, message)
 
-        if (!sessions.containsKey(event.author.id)) {
-            sessions[event.author.id] = ChatSession(botid, event.author.id)
+        if (!sessions.containsKey(event.author.idLong)) {
+            sessions[event.author.idLong] = ChatSession(botid, event.author.idLong)
             //sessions[event.author.id]?.session =
         }
         logger.debug("Message: \"$message\"")
         //Set the current date in the object
-        sessions[event.author.id]?.time = Date()
+        sessions[event.author.idLong]!!.time = Date()
 
-        sessions[event.author.id]?.think(message) {
+        sessions[event.author.idLong]!!.think(message) {
             var response = it
-
-            //Reset the ai if it dies
-            //But not for now to see how user separated sessions go
-            /*if (response == "" || response == "You have been banned from talking to me." ||
-                    response == "I am not talking to you any more.") {
-                sessions[event.author.id]?.session = builder.createSession()
-                response = sessions[event.author.id]?.session?.think(message)
-            }*/
 
             val withAds = Variables.RAND.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
 
@@ -169,7 +161,7 @@ class ChatCommand : Command() {
 /**
  * Little wrapper class to help us keep track of inactive sessions
  */
-class ChatSession(botid: String, userId: String) {
+class ChatSession(botid: String, userId: Long) {
     private val vars: MutableMap<String, Any>
 
     init {
