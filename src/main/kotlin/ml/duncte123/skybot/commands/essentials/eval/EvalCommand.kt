@@ -90,7 +90,6 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.entities.delegate",
                 "ml.duncte123.skybot")
         classImports = listOf(
-                "ml.duncte123.skybot.objects.FakeInterface",
                 "ml.duncte123.skybot.exceptions.DoomedException"
         )
 
