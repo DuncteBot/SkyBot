@@ -299,11 +299,10 @@ public class BotListener extends ListenerAdapter {
         logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
-        if (!unbanTimerRunning && Variables.NONE_SQLITE) {
+        if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(() ->
-                    ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 5, 5, TimeUnit.MINUTES);
+            systemPool.scheduleAtFixedRate(ModerationUtils::checkUnbans, 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 

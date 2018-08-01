@@ -124,9 +124,9 @@ public class HelpEmbeds {
      * @param prefix the prefix that we need
      * @return a embed containing all the commands
      */
-    public static MessageEmbed getCommandListWithPrefix(String prefix) {
+    /*public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return getCommandListWithPrefix(prefix, null);
-    }
+    }*/
 
     public static MessageEmbed getCommandListWithPrefix(String prefix, CommandCategory... categories) {
         EmbedBuilder embed = EmbedUtils.defaultEmbed()

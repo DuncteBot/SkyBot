@@ -38,11 +38,6 @@ import java.util.*
 @SinceSkybot("3.52.2")
 class RadioCommand : MusicCommand() {
 
-    init {
-        //This command takes up a lot of data hence I made it a patron only command - duncte123
-        this.category = CommandCategory.MUSIC
-    }
-
     var radioStreams: List<RadioStream> = ArrayList()
 
     init {
@@ -51,10 +46,10 @@ class RadioCommand : MusicCommand() {
 
     override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
         if (!hasUpvoted(event.author)) {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+            sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the radio command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
+                            ") or become a patreon [here](https://patreon.com/duncte123)"))
             return
         }
         if (prejoinChecks(event)) {

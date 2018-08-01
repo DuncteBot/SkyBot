@@ -125,7 +125,7 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (shouldModerate) {
                 val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
-                ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild, jda)
+                ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild)
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {

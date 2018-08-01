@@ -63,11 +63,11 @@ class WarnCommand : Command() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        ModerationUtils.addWarningToDb(event.author, target.user, reason, event.guild, event.jda)
+        ModerationUtils.addWarningToDb(event.author, target.user, reason, event.guild)
         ModerationUtils.modLog(event.author, target.user, "warned", reason, event.guild)
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console
-            it.sendMessage(dmMessage).queue(null, {})
+            it.sendMessage(dmMessage).queue(null) {}
         }
         MessageUtils.sendSuccess(event.message)
 
