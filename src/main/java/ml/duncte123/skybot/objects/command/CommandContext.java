@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Collections;
@@ -56,5 +57,27 @@ public class CommandContext {
 
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
+    }
+
+    //----- Methods that are in the GuildMessageReceivedEvent --------//
+
+    public Message getMessage() {
+        return this.event.getMessage();
+    }
+
+    public User getAuthor() {
+        return this.event.getAuthor();
+    }
+
+    public Member getMember() {
+        return this.event.getMember();
+    }
+
+    public TextChannel getChannel() {
+        return this.event.getChannel();
+    }
+
+    public Guild getGuild() {
+        return this.event.getGuild();
     }
 }
