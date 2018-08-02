@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class GithubReleaseCommand extends Command {
@@ -43,7 +44,7 @@ public class GithubReleaseCommand extends Command {
             + AirUtils.CONFIG.getString("apis.github");*/
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!isDev(event.getAuthor())

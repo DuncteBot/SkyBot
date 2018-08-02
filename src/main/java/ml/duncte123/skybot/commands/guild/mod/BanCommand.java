@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -44,7 +45,7 @@ public class BanCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();

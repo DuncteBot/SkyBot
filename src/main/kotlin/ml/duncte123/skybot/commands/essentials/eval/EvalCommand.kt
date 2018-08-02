@@ -120,7 +120,7 @@ class EvalCommand : Command() {
             return
         }
 
-        val script = importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+        val script = importString + ctx.rawArgs
 
         var timeout = 5000L
 

@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.command.custom;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import org.jetbrains.annotations.NotNull;
 
 public interface CustomCommand extends ICommand {
 
@@ -35,7 +36,7 @@ public interface CustomCommand extends ICommand {
 
     //Override some methods that are not needed
     @Override
-    default void executeCommand(CommandContext ctx) {
+    default void executeCommand(@NotNull CommandContext ctx) {
         // Custom commands are executed in a different way
     }
 

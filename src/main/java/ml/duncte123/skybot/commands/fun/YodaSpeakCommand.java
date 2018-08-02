@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.IOException;
@@ -35,7 +36,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class YodaSpeakCommand extends Command {
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();

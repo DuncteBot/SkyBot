@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
@@ -37,7 +38,7 @@ public class UrbanCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         if (ctx.getArgs().size() < 1) {
             sendMsg(ctx.getEvent(), "Correct usage: `" + PREFIX + getName() + " <search term>`");

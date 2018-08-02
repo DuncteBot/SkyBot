@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.util.Objects;
@@ -31,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 public class IsNowIllegalCommand extends Command {
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         String input = ctx.getRawArgs()
                 .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() < 1) {

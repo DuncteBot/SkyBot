@@ -22,6 +22,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -47,7 +48,7 @@ public class CommandContext {
     }
 
     public String getRawArgs() {
-        return this.event.getMessage().getContentRaw().split("\\s+", 1)[1];
+        return this.event.getMessage().getContentRaw().split("\\s+", 2)[1];
     }
 
     public GuildSettings getGuildSettings() {

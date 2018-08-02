@@ -29,6 +29,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
@@ -40,7 +41,7 @@ public class CustomCommandCommand extends Command {
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "raw");
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();

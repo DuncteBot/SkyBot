@@ -18,9 +18,11 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import org.jetbrains.annotations.NotNull;
+
 public interface ICommand {
 
-    void executeCommand(CommandContext ctx);
+    void executeCommand(@NotNull CommandContext ctx);
 
     String getName();
 

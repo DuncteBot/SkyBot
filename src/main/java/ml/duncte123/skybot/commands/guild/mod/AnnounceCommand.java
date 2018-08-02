@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 public class AnnounceCommand extends Command {
 
@@ -38,7 +39,7 @@ public class AnnounceCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         String invoke = ctx.getInvoke();
         GuildMessageReceivedEvent event = ctx.getEvent();
 

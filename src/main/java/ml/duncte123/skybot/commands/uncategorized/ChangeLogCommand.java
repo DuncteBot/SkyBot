@@ -26,6 +26,7 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class ChangeLogCommand extends Command {
@@ -33,7 +34,7 @@ public class ChangeLogCommand extends Command {
     private MessageEmbed embed = null;
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         if (embed != null) {
             MessageUtils.sendEmbed(ctx.getEvent(), embed);
         } else {

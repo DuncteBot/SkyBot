@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class SealCommand extends Command {
 
@@ -31,7 +32,7 @@ public class SealCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         int availableSeals = 83;
         int sealID = (int) Math.floor(Math.random() * availableSeals) + 1;
         String idStr = ("0000" + String.valueOf(sealID)).substring(String.valueOf(sealID).length());

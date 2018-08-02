@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ApiUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import org.jetbrains.annotations.NotNull;
 
 public class LlamaCommand extends Command {
 
@@ -33,7 +34,7 @@ public class LlamaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         LlamaObject llama = ApiUtils.getRandomLlama();
 

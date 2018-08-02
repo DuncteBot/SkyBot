@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
+import org.jetbrains.annotations.NotNull;
 
 import static java.awt.Color.decode;
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
@@ -32,7 +33,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 public class ColorCommand extends Command {
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         WebUtils.ins.getJSONObject(URL_ARRAY[2] + "/random").async((json) -> {
             String hex = json.getString("hex");

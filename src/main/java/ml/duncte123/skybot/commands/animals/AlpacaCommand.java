@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
+import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
 public class AlpacaCommand extends Command {
@@ -33,7 +34,7 @@ public class AlpacaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(CommandContext ctx) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async((doc) -> {
             Element img = doc.select("img").first();
