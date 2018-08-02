@@ -54,7 +54,8 @@ class DialogCommand : Command() {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```")
-        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
+//        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
+        MessageUtils.sendMsg(ctx.event, sb.toString())
     }
 
     override fun help() = "Gives you a nice dialog\n" +
