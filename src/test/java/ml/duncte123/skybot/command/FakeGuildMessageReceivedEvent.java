@@ -59,11 +59,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                 return 0;
             }
 
-            @Override
-            public JDA awaitStatus(Status status) throws InterruptedException {
-                return null;
-            }
-
             @Nonnull
             @Override
             public List<String> getCloudflareRays() {
@@ -561,6 +556,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                                 return null;
                             }
 
+                            @Override
+                            public long getOwnerIdLong() {
+                                return 0;
+                            }
+
                             @Nonnull
                             @Override
                             public Timeout getAfkTimeout() {
@@ -653,11 +653,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                             @Nonnull
                             @Override
                             public GuildManager getManager() {
-                                return null;
-                            }
-
-                            @Override
-                            public GuildManagerUpdatable getManagerUpdatable() {
                                 return null;
                             }
 
@@ -837,12 +832,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                     public ChannelManager getManager() {
                         return null;
                     }
-
-                    @Override
-                    public ChannelManagerUpdatable getManagerUpdatable() {
-                        return null;
-                    }
-
 
                     @Nonnull
                     @Override

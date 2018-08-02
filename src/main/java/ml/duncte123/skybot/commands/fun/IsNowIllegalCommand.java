@@ -21,9 +21,8 @@ package ml.duncte123.skybot.commands.fun;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -33,17 +32,17 @@ import java.util.concurrent.TimeUnit;
 public class IsNowIllegalCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        String input = StringUtils.join(args, " ")
+    public void executeCommand(@NotNull CommandContext ctx) {
+        String input = ctx.getRawArgs()
                 .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() < 1) {
-            MessageUtils.sendMsg(event, "This command requires a text argument.");
+            MessageUtils.sendMsg(ctx.getEvent(), "This command requires a text argument.");
             return;
         }
         if (input.length() > 10)
             input = input.substring(0, 9);
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
-        MessageUtils.sendMsg(event, "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
+        MessageUtils.sendMsg(ctx.getEvent(), "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
                 WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData,
                         r -> Objects.requireNonNull(r.body()).string()).async(txt ->
                         commandService.schedule(() -> {

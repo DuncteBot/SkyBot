@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -29,13 +30,15 @@ import static ml.duncte123.skybot.utils.Variables.BLARG_BOT;
 public class PcCheckCommand extends ImageCommandBase {
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (!doAllChecks(event, args)) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (!doAllChecks(event, ctx.getArgs())) {
             return;
         }
 
-        String reason = String.join(" ", args);
+        String reason = ctx.getRawArgs();
 
         for (User user : event.getMessage().getMentionedUsers()) {
             reason = reason.replaceAll(user.getAsMention(), String.format("%#s", user));

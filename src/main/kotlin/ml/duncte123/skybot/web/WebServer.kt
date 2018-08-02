@@ -70,11 +70,11 @@ class WebServer {
             val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
                     .put("commands", Variables.COMMAND_MANAGER.sortedCommands)
 
-            if(request.queryParams().contains("server")) {
+            if (request.queryParams().contains("server")) {
                 val serverId: String = request.queryParams("server")
-                if(serverId.isNotEmpty()) {
+                if (serverId.isNotEmpty()) {
                     val guild = SkyBot.getInstance().shardManager.getGuildById(serverId)
-                    if(guild != null) {
+                    if (guild != null) {
                         val settings = GuildSettingsUtils.getGuild(guild)
                         map.put("prefix", settings.customPrefix)
                     }

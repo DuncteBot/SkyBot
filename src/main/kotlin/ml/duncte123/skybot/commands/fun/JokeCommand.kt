@@ -22,10 +22,11 @@ import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.BuildConfig.URL_ARRAY
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.Variables.RAND
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.Variables.RAND
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
@@ -41,11 +42,11 @@ class JokeCommand : Command() {
         this.jokeIndex = TreeMap()
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
 
         when (RAND.nextInt(2)) {
-            0 -> sendRedditPost("Jokes", jokeIndex, event)
-            1 -> sendRanddomJoke(event)
+            0 -> sendRedditPost("Jokes", jokeIndex, ctx.event)
+            1 -> sendRanddomJoke(ctx.event)
         }
 
     }

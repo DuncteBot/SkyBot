@@ -234,7 +234,7 @@ class EarthUtils {
 
         @JvmStatic
         fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
-            val stort = if(all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
+            val stort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$stort").async {
                 val posts = it.getJSONObject("data").getJSONArray("children").filter {
                     it as JSONObject
@@ -262,13 +262,13 @@ class EarthUtils {
 
                     val embed = EmbedUtils.defaultEmbed().setTitle(title, url)
 
-                    if(text.isNotEmpty())
-                            embed.setDescription(text)
+                    if (text.isNotEmpty())
+                        embed.setDescription(text)
 
                     val imagesO = post.optJSONObject("preview")
                     println(imagesO)
                     val images = imagesO?.optJSONArray("images")
-                    if(images != null) {
+                    if (images != null) {
                         val image = images.getJSONObject(0).getJSONObject("source").getString("url")
                         embed.setImage(image)
                     }

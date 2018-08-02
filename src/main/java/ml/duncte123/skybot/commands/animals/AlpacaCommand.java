@@ -21,9 +21,9 @@ package ml.duncte123.skybot.commands.animals;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
@@ -34,11 +34,11 @@ public class AlpacaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async((doc) -> {
             Element img = doc.select("img").first();
-            MessageUtils.sendEmbed(event, EmbedUtils.embedImage(img.attributes().get("src")));
+            MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(img.attributes().get("src")));
         });
     }
 

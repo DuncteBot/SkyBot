@@ -30,7 +30,6 @@ appender("STDOUT", ConsoleAppender) {
 }
 root(INFO, ["STDOUT"])
 
-
 /*if (logToFile) {
     def bySecond = timestamp("yyyyMMdd'T'HHmmss")
 

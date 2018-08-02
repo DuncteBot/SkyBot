@@ -21,17 +21,18 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PlayRawCommand : PlayCommand() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand("join", arrayOfNulls(0), event)
+            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }
@@ -41,7 +42,7 @@ class PlayRawCommand : PlayCommand() {
         val player = mng.player
         val scheduler = mng.scheduler
 
-        if (args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             when {
                 player.isPaused -> {
                     player.isPaused = false
@@ -51,7 +52,7 @@ class PlayRawCommand : PlayCommand() {
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
             }
         } else {
-            val toPlay = StringUtils.join(args, " ")
+            val toPlay = ctx.rawArgs
             if (toPlay.length > 1024) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")

@@ -21,10 +21,10 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.sql.SQLException
 
 class KpopCommand : Command() {
@@ -33,19 +33,19 @@ class KpopCommand : Command() {
         this.category = CommandCategory.FUN
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
 
         try {
-            val queryString = if (!args.isEmpty()) args.joinToString(separator = " ") else ""
+            val queryString = if (!ctx.args.isEmpty()) ctx.rawArgs else ""
             val member = ApiUtils.getRandomKpopMember(queryString)
             val eb = EmbedUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group ${member.band}")
                     .addField("Name of the member", member.name, false)
                     .setImage(member.image)
                     .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
-            MessageUtils.sendEmbed(event, eb.build())
+            MessageUtils.sendEmbed(ctx.event, eb.build())
         } catch (ignored: SQLException) {
-            MessageUtils.sendMsg(event, "Nothing found")
+            MessageUtils.sendMsg(ctx.event, "Nothing found")
         }
     }
 

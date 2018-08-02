@@ -29,6 +29,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
+import java.util.List;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
@@ -45,15 +46,15 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    private boolean hasArgs(GuildMessageReceivedEvent event, String[] args) {
-        if (args.length == 0) {
+    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+        if (args.size() == 0) {
             sendMsg(event, "Too little arguments");
             return false;
         }
         return true;
     }
 
-    boolean doAllChecks(GuildMessageReceivedEvent event, String[] args) {
+    boolean doAllChecks(GuildMessageReceivedEvent event, List<String> args) {
         return doAllChecksButNotTheArgsBecauseWeDontNeedThem(event) && hasArgs(event, args);
     }
 

@@ -19,15 +19,15 @@
 package ml.duncte123.skybot.commands.mod
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
-import java.util.*
 
 class WarnCommand : Command() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command")
@@ -35,7 +35,7 @@ class WarnCommand : Command() {
             return
         }
 
-        if (args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
+        if (ctx.args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
             MessageUtils.sendMsg(event, "Must mention a member")
             MessageUtils.sendError(event.message)
             return
@@ -56,8 +56,8 @@ class WarnCommand : Command() {
             return
         }
         var reason = ""
-        if (args.size > 1)
-            reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.size), " ")
+        if (ctx.args.size > 1)
+            reason = ctx.rawArgs
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}

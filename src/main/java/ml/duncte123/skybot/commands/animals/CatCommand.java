@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.animals;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -41,7 +42,8 @@ public class CatCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
         WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
                     String file = json.getString("file"),
                             ext = FilenameUtils.getExtension(file);
@@ -54,7 +56,7 @@ public class CatCommand extends Command {
                     }
                 },
                 (error) -> {
-                    Variables.COMMAND_MANAGER.dispatchCommand("kitty", args, event);
+                    Variables.COMMAND_MANAGER.dispatchCommand("kitty", ctx.getArgs(), event);
                     ComparatingUtils.execCheck(error);
                 }
         );

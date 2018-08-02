@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
@@ -40,7 +41,10 @@ public class CleanupCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command!");
@@ -51,15 +55,15 @@ public class CleanupCommand extends Command {
         //Little hack for lambda
         boolean keepPinned = false;
 
-        if (args.length > 0) {
+        if (args.size() > 0) {
 
-            if (args.length == 1 && args[0].equalsIgnoreCase("keep-pinned"))
+            if (args.size() == 1 && args.get(0).equalsIgnoreCase("keep-pinned"))
                 keepPinned = true;
             else {
-                if (args.length == 2 && args[1].equalsIgnoreCase("keep-pinned"))
+                if (args.size() == 2 && args.get(1).equalsIgnoreCase("keep-pinned"))
                     keepPinned = true;
                 try {
-                    total = Integer.parseInt(args[0]);
+                    total = Integer.parseInt(args.get(0));
                 } catch (NumberFormatException e) {
                     MessageUtils.sendError(event.getMessage());
                     MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
@@ -73,7 +77,7 @@ public class CleanupCommand extends Command {
         }
 
         try {
-            final Boolean keepPinnedFinal = keepPinned;
+            final boolean keepPinnedFinal = keepPinned;
             event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
                 if (keepPinnedFinal)
                     msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());

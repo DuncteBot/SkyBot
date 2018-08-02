@@ -21,6 +21,7 @@ package ml.duncte123.skybot;
 import kotlin.Triple;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
@@ -266,10 +267,10 @@ public class CommandManager {
                 "").split("\\s+");
         final String invoke = split[0].toLowerCase();
 
-        dispatchCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
+        dispatchCommand(invoke, Arrays.asList(split).subList(1, split.length), event);
     }
 
-    public void dispatchCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
         if (cmd == null) {
             cmd = getCustomCommand(invoke, event.getGuild().getId());
@@ -277,11 +278,13 @@ public class CommandManager {
         dispatchCommand(cmd, invoke, args, event);
     }
 
-    public void dispatchCommand(ICommand cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
         if (cmd != null) {
             try {
                 if (!cmd.isCustom()) {
-                    cmd.executeCommand(invoke, args, event);
+                    cmd.executeCommand(
+                            new CommandContext(invoke, args, event)
+                    );
                 } else {
 
                     CustomCommand cc = (CustomCommand) cmd;

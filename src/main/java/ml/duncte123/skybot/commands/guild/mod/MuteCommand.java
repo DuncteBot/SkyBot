@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -29,7 +30,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.List;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendSuccess;
@@ -41,13 +42,16 @@ public class MuteCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
         }
 
-        if (event.getMessage().getMentionedMembers().size() < 1 || args.length < 2) {
+        if (event.getMessage().getMentionedMembers().size() < 1 || args.size() < 2) {
             sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <reason>");
             return;
         }
@@ -59,7 +63,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        String reason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
+        String reason = StringUtils.join(args.subList(1, args.size()), " ");
         Member toMute = event.getMessage().getMentionedMembers().get(0);
         Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 

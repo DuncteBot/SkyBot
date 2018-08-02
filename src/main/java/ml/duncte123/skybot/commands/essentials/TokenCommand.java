@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -28,6 +29,7 @@ import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.Base64;
 import java.util.Calendar;
+import java.util.List;
 import java.util.TimeZone;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -48,37 +50,40 @@ public class TokenCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (args.length == 0) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
+        if (args.size() == 0) {
             sendMsg(event, "Missing arguments");
             return;
         }
 
-        Matcher matcher = TOKEN_REGEX.matcher(args[0]);
+        Matcher matcher = TOKEN_REGEX.matcher(args.get(0));
 
         if (!matcher.matches()) {
-            sendMsg(event, "Your input `" + args[0] + "` has the wrong token format.");
+            sendMsg(event, "Your input `" + args.get(0) + "` has the wrong token format.");
             return;
         }
 
         String id = decodeBase64ToString(matcher.group(1));
         String timestamp = toTimeStamp(matcher.group(2)).format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
-        sendMsg(event, String.format(STRING_FORMAT, args[0], id, timestamp, ""), (message) -> {
+        sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
                 event.getJDA().retrieveUserById(id).queue((user) -> {
                     String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
-                    String newMessage = String.format(STRING_FORMAT, args[0], id, timestamp, userinfo);
+                    String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, userinfo);
                     message.editMessage(newMessage).queue();
                 }, (error) -> {
                     String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
-                    String newMessage = String.format(STRING_FORMAT, args[0], id, timestamp, info);
+                    String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
                     message.editMessage(newMessage).queue();
                 });
             } catch (NumberFormatException e) {
                 String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
-                String newMessage = String.format(STRING_FORMAT, args[0], id, timestamp, info);
+                String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
                 message.editMessage(newMessage).queue();
             }
         });

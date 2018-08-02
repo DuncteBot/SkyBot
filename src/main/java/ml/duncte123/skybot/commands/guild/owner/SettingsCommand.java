@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -30,7 +31,6 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -47,17 +47,20 @@ public class SettingsCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        //noinspection deprecation
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
         if (!event.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(event.getAuthor())) {
             sendMsg(event, "You need the \"Manage Server\" permission to use this command");
             return;
         }
 
         Guild guild = event.getGuild();
-        GuildSettings settings = getSettings(guild);
+        GuildSettings settings = ctx.getGuildSettings();
         boolean isEnabled;
-        switch (invoke) {
+        switch (ctx.getInvoke()) {
             case "settings":
             case "options": {
                 //true <:check:314349398811475968>
@@ -87,32 +90,32 @@ public class SettingsCommand extends Command {
             }
 
             case "setprefix":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
-                String newPrefix = StringUtils.join(args, " ");
+                String newPrefix = ctx.getRawArgs();
                 GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
             case "setjoinmessage":
             case "setwelcomenmessage":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = event.getMessage().getContentRaw().split("\\s+", 2)[1].replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newJoinMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
 
             case "setleavemessage":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
-                String newLeaveMessage = event.getMessage().getContentRaw().split("\\s+", 2)[1].replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newLeaveMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
@@ -136,7 +139,7 @@ public class SettingsCommand extends Command {
                 break;
 
             case "setlogchannel":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
                     return;
                 }
@@ -152,7 +155,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                TextChannel tc = AirUtils.getLogChannel(StringUtils.join(args), guild);
+                TextChannel tc = AirUtils.getLogChannel(ctx.getRawArgs(), guild);
                 if (tc == null) {
                     sendMsg(event, "This channel could not be found.");
                     return;
@@ -162,7 +165,7 @@ public class SettingsCommand extends Command {
                 break;
             case "setwelcomechannel":
             case "setleavechannel":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "setwelcomechannel [text channel]`");
                     return;
                 }
@@ -178,7 +181,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                TextChannel welcomeChannel = AirUtils.getLogChannel(StringUtils.join(args), guild);
+                TextChannel welcomeChannel = AirUtils.getLogChannel(ctx.getRawArgs(), guild);
                 if (welcomeChannel == null) {
                     sendMsg(event, "This channel could not be found.");
                     return;
@@ -194,18 +197,18 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                if (args.length == 0) {
+                if (args.size() == 0) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "autorole <role name/disable>`");
                     return;
                 }
 
-                if ("disable".equals(args[0])) {
+                if ("disable".equals(args.get(0))) {
                     sendMsg(event, "AutoRole feature has been disabled");
                     GuildSettingsUtils.updateGuildSettings(guild, settings.setAutoroleRole(""));
                     return;
                 }
 
-                List<Role> rolesFound = guild.getRolesByName(StringUtils.join(args, " "), true);
+                List<Role> rolesFound = guild.getRolesByName(ctx.getRawArgs(), true);
 
                 if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {
@@ -220,12 +223,12 @@ public class SettingsCommand extends Command {
             }
 
             case "setdescription":
-                if (args.length < 1) {
+                if (args.size() < 1) {
                     sendError(event.getMessage());
                     sendMsg(event, "Incorrect usage\n" +
-                            "Correct usage : `" + PREFIX + invoke + " <description>`");
+                            "Correct usage : `" + PREFIX + ctx.getInvoke() + " <description>`");
                     return;
-                } else if ("null".equals(args[0])) {
+                } else if ("null".equals(args.get(0))) {
                     GuildSettingsUtils.updateGuildSettings(guild, settings.setServerDesc(null));
                     sendMsg(event, "Description has been reset.");
                     return;
@@ -278,12 +281,12 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                if (args.length == 0) {
+                if (args.size() == 0) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "spamrole <role name/disable>`");
                     return;
                 }
 
-                if ("disable".equals(args[0])) {
+                if ("disable".equals(args.get(0))) {
                     sendMsg(event, "SpamRole feature & SpamFilter has been disabled");
                     //Never clean the role's id so activating the filter wont cause issues.
                     //GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(""));
@@ -291,7 +294,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                List<Role> rolesFound = guild.getRolesByName(StringUtils.join(args, " "), true);
+                List<Role> rolesFound = guild.getRolesByName(ctx.getRawArgs(), true);
 
                 if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {
@@ -312,18 +315,18 @@ public class SettingsCommand extends Command {
 
             case "setratelimits":
 
-                if (args.length == 0) {
+                if (args.size() == 0) {
                     sendMsg(event, "Incorrect usage: `" + PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
                     return;
                 }
 
-                if ("default".equals(args[0])) {
+                if ("default".equals(args.get(0))) {
                     sendMsg(event, "Ratelimits have beed reset.");
                     GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
                     return;
                 }
 
-                long[] rates = GuildSettingsUtils.ratelimmitChecks(args[0]);
+                long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
                 GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(rates));
                 String steps = Arrays.stream(rates).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", " minutes"));
                 sendMsg(event, "The new rates are " + steps);

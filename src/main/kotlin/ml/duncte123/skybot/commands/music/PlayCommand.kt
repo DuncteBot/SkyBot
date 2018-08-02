@@ -21,21 +21,22 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand : MusicCommand() {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand("join", arrayOfNulls(0), event)
+            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }
@@ -45,7 +46,7 @@ open class PlayCommand : MusicCommand() {
         val player = mng.player
         val scheduler = mng.scheduler
 
-        if (args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             when {
                 player.isPaused -> {
                     player.isPaused = false
@@ -56,7 +57,7 @@ open class PlayCommand : MusicCommand() {
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
-            var toPlay = StringUtils.join(args, " ")
+            var toPlay = ctx.rawArgs
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay

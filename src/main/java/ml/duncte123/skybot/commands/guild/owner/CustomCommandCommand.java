@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner;
 
 import kotlin.Triple;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -30,7 +31,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.MessageUtils.*;
@@ -41,16 +41,19 @@ public class CustomCommandCommand extends Command {
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "raw");
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (args.length < 1) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
+        if (args.size() < 1) {
             sendMsg(event, "Insufficient arguments use `db!help customcommand`");
             return;
         }
 
-        switch (args.length) {
+        switch (args.size()) {
             case 1:
-                invokeCustomCommand(args[0], event);
+                invokeCustomCommand(args.get(0), event);
                 break;
 
             case 2:
@@ -82,16 +85,16 @@ public class CustomCommandCommand extends Command {
             CustomCommand cmd = COMMAND_MANAGER.getCustomCommand(arg, event.getGuild().getId());
             if (cmd != null)
                 //Run the custom command?
-                COMMAND_MANAGER.dispatchCommand(cmd, arg, new String[0], event);
+                COMMAND_MANAGER.dispatchCommand(cmd, arg, List.of(), event);
             else
                 sendMsg(event, "Invalid arguments use `db!help customcommand`");
         }
     }
 
-    private void deleteOrShowCustomCommand(String[] args, GuildMessageReceivedEvent event) {
+    private void deleteOrShowCustomCommand(List<String> args, GuildMessageReceivedEvent event) {
         //Check for deleting
-        if (args[0].equalsIgnoreCase("raw")) {
-            final String commandName = args[1];
+        if (args.get(0).equalsIgnoreCase("raw")) {
+            final String commandName = args.get(1);
             final String guildid = event.getGuild().getId();
 
             if (!commandExists(commandName, guildid)) {
@@ -100,14 +103,14 @@ public class CustomCommandCommand extends Command {
             }
             CustomCommand cmd = COMMAND_MANAGER.getCustomCommand(commandName, guildid);
             sendMsg(event, "Raw data for `" + commandName + "`:```perl\n" + cmd.getMessage() + "```");
-        } else if (args[0].equalsIgnoreCase("delete")) {
+        } else if (args.get(0).equalsIgnoreCase("delete")) {
 
             if (!isAdmin(event)) {
                 sendMsg(event, "You need the \"Administrator\" permission to add or remove commands");
                 return;
             }
 
-            final String commandName = args[1];
+            final String commandName = args.get(1);
             final String guildid = event.getGuild().getId();
 
             if (!commandExists(commandName, guildid)) {
@@ -127,22 +130,22 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private void addEditOrInvokeCustomCommand(String[] args, GuildMessageReceivedEvent event) {
+    private void addEditOrInvokeCustomCommand(List<String> args, GuildMessageReceivedEvent event) {
 
-        if (!systemInvokes.contains(args[0])) {
+        if (!systemInvokes.contains(args.get(0))) {
 
 
             //fetch a custom command
-            CustomCommand cmd = COMMAND_MANAGER.getCustomCommand(args[0], event.getGuild().getId());
+            CustomCommand cmd = COMMAND_MANAGER.getCustomCommand(args.get(0), event.getGuild().getId());
             if (cmd != null)
                 //Run the custom command?
-                COMMAND_MANAGER.dispatchCommand(cmd, args[0], Arrays.copyOfRange(args, 1, args.length), event);
+                COMMAND_MANAGER.dispatchCommand(cmd, args.get(0), args.subList(1, args.size()), event);
 
             return;
 
         }
 
-        if (args.length < 3 && !systemInvokes.contains(args[0])) {
+        if (args.size() < 3 && !systemInvokes.contains(args.get(0))) {
             sendMsg(event, "Invalid arguments use `db!help customcommand`");
             return;
         }
@@ -152,17 +155,17 @@ public class CustomCommandCommand extends Command {
             return;
         }
         //new command
-        String commandName = args[1];
+        String commandName = args.get(1);
 
         if (commandName.length() > 10) {
             sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
             return;
         }
 
-        String commandAction = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
+        String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
         String guildId = event.getGuild().getId();
         if (commandExists(commandName, guildId)) {
-            if (!args[0].equalsIgnoreCase("edit") && !args[0].equalsIgnoreCase("change")) {
+            if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
                 sendMsg(event, "A command already exists for this server.");
             } else {
                 if (editCustomCommand(COMMAND_MANAGER.getCustomCommand(commandName, guildId), commandAction))

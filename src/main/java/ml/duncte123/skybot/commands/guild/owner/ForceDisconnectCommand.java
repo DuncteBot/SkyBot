@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -29,7 +30,10 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class ForceDisconnectCommand extends MusicCommand {
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
         if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             Guild g = event.getGuild();
             GuildMusicManager manager = getMusicManager(g);

@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONTokener
@@ -30,11 +30,14 @@ import java.util.*
 
 class LoadCommand : MusicCommand() {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!channelChecks(event))
             return
 
-        var attachments = event.message.attachments
+        val attachments = event.message.attachments
 
         if (attachments.size == 0) {
             MessageUtils.sendError(event.message)
@@ -48,13 +51,13 @@ class LoadCommand : MusicCommand() {
             return
         }
 
-        var attachment = attachments[0]
+        val attachment = attachments[0]
 
         attachment.withInputStream {
             try {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream
-                var array = JSONArray(JSONTokener(it))
+                val array = JSONArray(JSONTokener(it))
 
                 array.filter(Objects::nonNull)
                         .forEach {

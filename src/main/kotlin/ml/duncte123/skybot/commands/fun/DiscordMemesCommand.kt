@@ -20,9 +20,9 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class DiscordMemesCommand : WeebCommandBase() {
 
@@ -31,9 +31,9 @@ class DiscordMemesCommand : WeebCommandBase() {
         this.displayAliasesInHelp = false
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
         Variables.WEEB_API.getRandomImage("discord_memes").async {
-            MessageUtils.sendEmbed(event, getWeebEmbedImage(it.url))
+            MessageUtils.sendEmbed(ctx.event, getWeebEmbedImage(it.url))
         }
     }
 
