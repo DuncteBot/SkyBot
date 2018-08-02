@@ -47,15 +47,17 @@ public class YodaSpeakCommand extends Command {
         }
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
-                .addHeader("X-User-id", event.getJDA().getSelfUser().getId())
+//                .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
+                .url("http://localhost/yoda?sentence=" + StringUtils.join(args, "+"))
+                .addHeader("X-user-id", event.getJDA().getSelfUser().getId())
                 .addHeader("X-client-token", event.getJDA().getToken())
                 .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
                 .build(), Response::body).async(
                 (body) -> {
                     try {
-                        final JSONObject json = new JSONObject(body.string());
-                        logger.debug("Yoda response: " + json);
+                        final String res = body.string();
+                        logger.debug("Yoda response: " + res);
+                        final JSONObject json = new JSONObject(res);
                         sendMsg(event, json.getString("sentence"));
                     } catch (IOException e) {
                         e.printStackTrace();
