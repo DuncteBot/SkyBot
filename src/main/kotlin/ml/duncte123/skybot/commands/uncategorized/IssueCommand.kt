@@ -22,9 +22,9 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -34,9 +34,12 @@ class IssueCommand : Command() {
     val regex = "\\s+".toRegex()
 
     @Suppress()
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         val arg = event.message.contentRaw.split(regex, 2)
-        when (args.size) {
+        when (ctx.args.size) {
             0 -> {
                 MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
                     |You can generate it by using our dashboard. Link: <https://bot.duncte123.me/issuegenerator>""".trimMargin())

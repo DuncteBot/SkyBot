@@ -261,7 +261,8 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
             public JDABot asBot() {
                 return null;
             }
-        }, 0L, new Message() {
+        }, 0L,
+                new Message() {
             @Nonnull
             @Override
             public List<User> getMentionedUsers() {
@@ -831,7 +832,6 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                     public ChannelManager getManager() {
                         return null;
                     }
-
 
                     @Nonnull
                     @Override

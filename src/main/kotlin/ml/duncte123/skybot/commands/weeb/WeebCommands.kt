@@ -21,11 +21,11 @@ package ml.duncte123.skybot.commands.weeb
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class WeebCommands : WeebCommandBase() {
@@ -36,8 +36,12 @@ class WeebCommands : WeebCommandBase() {
         this.category = CommandCategory.WEEB
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        when (invoke) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
+        when (ctx.invoke) {
             "hug" -> requestAndSend("hug", "hugs", args, event)
             "lewd" -> sendEmbed(event,
                     getWeebEmbedImage(Variables.WEEB_API.getRandomImage("lewd").execute().url))

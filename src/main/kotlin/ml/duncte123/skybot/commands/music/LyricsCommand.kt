@@ -21,11 +21,11 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
@@ -35,7 +35,10 @@ class LyricsCommand : MusicCommand() {
     private var authToken: String = ""
     private val apiBase = "https://api.genius.com"
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!hasUpvoted(event.author)) {
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
                     "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
@@ -45,7 +48,7 @@ class LyricsCommand : MusicCommand() {
             val mng = getMusicManager(event.guild)
             val player = mng.player
             val search: String? = when {
-                !args.isEmpty() -> StringUtils.join(args, " ")
+                !ctx.args.isEmpty() -> ctx.rawArgs
                 player.playingTrack != null && !player.playingTrack.info.isStream ->
                     player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
                 else -> null
@@ -95,9 +98,9 @@ class LyricsCommand : MusicCommand() {
 
     private fun searchForSong(t: String?, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                        .header("Authorization", getAuthToken())
-                        .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                WebUtilsErrorUtils::toJSONObject) .async {
+                .header("Authorization", getAuthToken())
+                .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
+                WebUtilsErrorUtils::toJSONObject).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
                 callback.invoke(null)

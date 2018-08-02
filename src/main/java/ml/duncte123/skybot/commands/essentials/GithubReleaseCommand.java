@@ -22,6 +22,7 @@ import com.github.natanbc.reliqua.request.RequestException;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -43,7 +44,9 @@ public class GithubReleaseCommand extends Command {
             + AirUtils.CONFIG.getString("apis.github");*/
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
         if (!isDev(event.getAuthor())
                 && !Settings.OWNER_ID.equals(event.getAuthor().getId())) {
             MessageUtils.sendError(event.getMessage());
@@ -54,6 +57,7 @@ public class GithubReleaseCommand extends Command {
 
         //get the version name
         String name = "v" + Settings.VERSION.split("_")[0];
+        String invoke = ctx.getInvoke();
 
         // The message from after the {prefix}{invoke} syntax
         String message = event.getMessage().getContentDisplay();

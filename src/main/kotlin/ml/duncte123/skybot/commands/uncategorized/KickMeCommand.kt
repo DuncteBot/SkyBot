@@ -19,14 +19,18 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
 
 class KickMeCommand : Command() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
         val warningMsg = """**WARNING** this command will kick you from this server
                         |If you are sure that you want to kick yourself off this server use `${PREFIX}kickme YESIMSURE`
                         |By running `${PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.

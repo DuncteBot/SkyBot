@@ -23,16 +23,19 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.ILoveStream
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!channelChecks(event))
             return
         val mng = getMusicManager(event.guild)

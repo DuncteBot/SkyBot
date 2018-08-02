@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
@@ -35,8 +36,12 @@ class OneLinerCommands : Command() {
         this.displayAliasesInHelp = true
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        when (invoke) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
+        when (ctx.invoke) {
             "ping" -> pingCommand(event)
 
             "cookie" -> sendMsg(event, "<:blobnomcookie_secret:317636549342789632>")
@@ -75,11 +80,11 @@ class OneLinerCommands : Command() {
                     sendMsg(event, "https:" + it.select("#comic img").attr("src"))
                 }
             }
-            else -> println("Invoke was invalid: $invoke")
+            else -> println("Invoke was invalid: ${ctx.invoke}")
         }
     }
 
-    private fun donateCommand(args: Array<out String>, event: GuildMessageReceivedEvent) {
+    private fun donateCommand(args: List<String>, event: GuildMessageReceivedEvent) {
         val amount = if (args.isNotEmpty()) "/" + args.joinToString(separator = "") else ""
         sendMsg(event, """Hey there thank you for your interest in supporting the bot.
                         |You can use one of the following methods to donate:
@@ -90,7 +95,7 @@ class OneLinerCommands : Command() {
                     """.trimMargin())
     }
 
-    private fun instaCommand(args: Array<out String>, event: GuildMessageReceivedEvent) {
+    private fun instaCommand(args: List<String>, event: GuildMessageReceivedEvent) {
         //LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!") // neither are some of the other commands in here
         val username = if (args.isNotEmpty()) args.joinToString(separator = "") else "duncte123"
         WebUtils.ins.getJSONObject("https://apis.duncte123.me/insta/$username").async {

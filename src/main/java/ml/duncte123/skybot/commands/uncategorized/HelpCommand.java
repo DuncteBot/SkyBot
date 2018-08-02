@@ -21,10 +21,10 @@ package ml.duncte123.skybot.commands.uncategorized;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -32,18 +32,27 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.Arrays;
+import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class HelpCommand extends Command {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (args.length > 0) {
-            String toSearch = StringUtils.join(args, " ").toLowerCase()
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (ctx.getArgs().size() > 0) {
+            String toSearch = ctx.getRawArgs().toLowerCase()
                     .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                            Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
+                            Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch))
                 sendCategoryHelp(event, toSearch.toUpperCase());
@@ -73,6 +82,12 @@ public class HelpCommand extends Command {
     @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
         try {
+            List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
+                    .equals(name.toLowerCase())).collect(Collectors.toList());
+            if (categoryList.size() > 0) {
+                return true;
+            }
+
             return CommandCategory.valueOf(name.toUpperCase()) != null;
         } catch (IllegalArgumentException ignored) {
             return false;
@@ -82,27 +97,27 @@ public class HelpCommand extends Command {
     private void sendHelp(GuildMessageReceivedEvent event, MessageEmbed embed) {
         event.getAuthor().openPrivateChannel().queue(
                 pc -> pc.sendMessage(embed).queue(
-                        msg -> MessageUtils.sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
+                        msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                         //When sending fails, send to the channel
-                        err -> MessageUtils.sendMsg(event, (new MessageBuilder())
+                        err -> sendMsg(event, (new MessageBuilder())
                                 .append("Message could not be delivered to dm's and has been send in this channel.")
                                 .setEmbed(embed).build())
                 ),
-                err -> MessageUtils.sendMsg(event, "ERROR: " + err.getMessage())
+                err -> sendMsg(event, "ERROR: " + err.getMessage())
         );
     }
 
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch) {
         for (ICommand cmd : Variables.COMMAND_MANAGER.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
-                MessageUtils.sendMsg(event, "Command help for `" +
+                sendMsg(event, "Command help for `" +
                         cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
                         (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
                 return;
             } else {
                 for (String alias : cmd.getAliases()) {
                     if (alias.equals(toSearch)) {
-                        MessageUtils.sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" +
+                        sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" +
                                 cmd.help(alias) + (cmd.getAliases().length > 0 ? "\nAliases: "
                                 + StringUtils.join(cmd.getAliases(), ", ") : ""));
                         return;
@@ -113,12 +128,23 @@ public class HelpCommand extends Command {
             }
         }
 
-        MessageUtils.sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
+        sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String toSearch) {
-        CommandCategory cat = CommandCategory.valueOf(toSearch);
+        CommandCategory cat = getCategory(toSearch);
         MessageEmbed embed = HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix(), cat);
-        sendHelp(event, embed);
+        sendEmbed(event, embed);
+    }
+
+    private CommandCategory getCategory(String search) {
+
+        try {
+            return CommandCategory.valueOf(search.toUpperCase());
+        } catch (IllegalArgumentException ignored) {
+            List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
+                    .equals(search.toLowerCase())).collect(Collectors.toList());
+            return categoryList.get(0);
+        }
     }
 }

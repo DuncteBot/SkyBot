@@ -112,12 +112,12 @@ public class FakeUser implements User {
 
     @Override
     public boolean isFake() {
-        return false;
+        return true;
     }
 
     @Override
     public String getAsMention() {
-        return null;
+        return String.format("%s#%s", this.name, this.discrm);
     }
 
     @Override

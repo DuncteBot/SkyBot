@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
@@ -70,7 +71,10 @@ class ChatCommand : Command() {
     }
 
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[Variables.RAND.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
@@ -85,12 +89,12 @@ class ChatCommand : Command() {
 //            return
 //        }
 
-        if (args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
         val time = System.currentTimeMillis()
-        var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+        var message = ctx.rawArgs
         event.channel.sendTyping().queue()
 
         message = replaceStuff(event, message)

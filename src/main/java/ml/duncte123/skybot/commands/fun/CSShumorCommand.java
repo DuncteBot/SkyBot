@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.fun;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -45,14 +46,14 @@ public class CSShumorCommand extends Command {
 
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
         switch (RAND.nextInt(2)) {
             case 1:
-                sendRedditPost("css_irl", cssIndex, event, true);
+                sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
                 break;
             default:
-                sendCssJoke(event);
+                sendCssJoke(ctx.getEvent());
                 break;
         }
 

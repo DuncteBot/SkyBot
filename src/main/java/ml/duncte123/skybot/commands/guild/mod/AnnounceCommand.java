@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -38,7 +39,9 @@ public class AnnounceCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+        String invoke = ctx.getInvoke();
+        GuildMessageReceivedEvent event = ctx.getEvent();
 
         Permission[] perms = {
                 Permission.ADMINISTRATOR
@@ -64,7 +67,7 @@ public class AnnounceCommand extends Command {
             }
 
             @SinceSkybot(version = "3.68.0")
-            String msg = event.getMessage().getContentRaw().split("\\s+", 3)[2];
+            String msg = ctx.getRawArgs();
 
             switch (invoke) {
                 case "announce1":

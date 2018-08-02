@@ -25,7 +25,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
-import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
@@ -38,27 +38,25 @@ import java.util.*
 @SinceSkybot("3.52.2")
 class RadioCommand : MusicCommand() {
 
-    init {
-        //This command takes up a lot of data hence I made it a patron only command - duncte123
-        this.category = CommandCategory.MUSIC
-    }
-
     var radioStreams: List<RadioStream> = ArrayList()
 
     init {
         loadStations()
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!hasUpvoted(event.author)) {
-            sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(
+            sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the radio command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)").build())
+                            ") or become a patreon [here](https://patreon.com/duncte123)"))
             return
         }
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand("join", arrayOfNulls(0), event)
+            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }
@@ -67,12 +65,12 @@ class RadioCommand : MusicCommand() {
         val mng = getMusicManager(guild)
         val scheduler = mng.scheduler
 
-        when (args.size) {
+        when (ctx.args.size) {
             0 -> {
                 sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
             }
             1 -> {
-                when (args[0]) {
+                when (ctx.args[0]) {
                     "list" -> {
                         sendRadioSender(event = event)
                         return@executeCommand
@@ -82,7 +80,7 @@ class RadioCommand : MusicCommand() {
                         return@executeCommand
                     }
                     else -> {
-                        val radio = radioStreams.firstOrNull { it.name == args[0].replace(oldValue = "❤", newValue = "love") }
+                        val radio = radioStreams.firstOrNull { it.name == ctx.args[0].replace(oldValue = "❤", newValue = "love") }
                         if (radio == null) {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand

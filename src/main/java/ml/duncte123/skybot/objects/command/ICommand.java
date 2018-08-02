@@ -18,12 +18,11 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 public interface ICommand {
 
-    void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
+    void executeCommand(@NotNull CommandContext ctx);
 
     String getName();
 

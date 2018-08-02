@@ -21,10 +21,10 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -32,7 +32,9 @@ import net.dv8tion.jda.core.exceptions.PermissionException
 
 class JoinCommand : MusicCommand() {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (!event.member.voiceState.inVoiceChannel()) {
             MessageUtils.sendMsg(event, "Please join a voice channel first.")

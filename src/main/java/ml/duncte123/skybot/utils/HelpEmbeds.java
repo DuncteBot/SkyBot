@@ -124,10 +124,9 @@ public class HelpEmbeds {
      * @param prefix the prefix that we need
      * @return a embed containing all the commands
      */
-    public static MessageEmbed getCommandListWithPrefix(String prefix) {
+    /*public static MessageEmbed getCommandListWithPrefix(String prefix) {
         return getCommandListWithPrefix(prefix, null);
-    }
-
+    }*/
     public static MessageEmbed getCommandListWithPrefix(String prefix, CommandCategory... categories) {
         EmbedBuilder embed = EmbedUtils.defaultEmbed()
                 .setThumbnail(Settings.DEFAULT_ICON)
@@ -183,7 +182,7 @@ public class HelpEmbeds {
             }
         }
 
-        return  embed.addField("Other suff",
+        return embed.addField("Other suff",
                 "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                         "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
                 .build();

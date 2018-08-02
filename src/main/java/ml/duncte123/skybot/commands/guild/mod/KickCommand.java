@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -29,7 +30,7 @@ import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class KickCommand extends Command {
 
@@ -38,7 +39,10 @@ public class KickCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.");
@@ -59,7 +63,7 @@ public class KickCommand extends Command {
                 return;
             }
             //Arrays.copyOfRange(Array, From, to)
-            String reason = StringUtils.join(Arrays.asList(args).subList(1, args.length), " ");
+            String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     (noting) -> {
                         ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());

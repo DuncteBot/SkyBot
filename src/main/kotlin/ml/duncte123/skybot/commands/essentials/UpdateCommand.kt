@@ -28,6 +28,7 @@ import ml.duncte123.skybot.BotListener
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
@@ -42,7 +43,10 @@ class UpdateCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!isDev(event.author)
                 && Settings.OWNER_ID != event.author.id) {
             sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
@@ -62,7 +66,7 @@ class UpdateCommand : Command() {
          */
         BotListener.isUpdating = true
 
-        when (args.size) {
+        when (ctx.args.size) {
             0 -> {
                 sendMsg(event, "✅ Updating") {
                     // This will also shutdown eval
@@ -76,7 +80,7 @@ class UpdateCommand : Command() {
                 }
             }
             1 -> {
-                if (args[0] != "gradle")
+                if (ctx.args[0] != "gradle")
                     return
                 sendMsg(event, "✅ Updating") {
                     launch {

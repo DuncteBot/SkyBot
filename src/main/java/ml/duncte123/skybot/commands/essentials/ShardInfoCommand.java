@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
@@ -40,13 +41,15 @@ public class ShardInfoCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
         List<String> headers = new ArrayList<>();
         headers.add("Shard ID");
         headers.add("Status");
         headers.add("Ping");
         headers.add("Guild Count");
         headers.add("Connected VCs");
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
 
         List<List<String>> table = new ArrayList<>();
         ShardManager shardManager = event.getJDA().asBot().getShardManager();
@@ -127,9 +130,9 @@ public class ShardInfoCommand extends Command {
         String connectedShards = String.valueOf(shardManager.getShards().stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         String guilds = String.valueOf(shardManager.getGuildCache().size());
-        long connectedVC = shardManager.getShards().stream().mapToLong(shard -> {
-            return shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
-        }).sum();
+        long connectedVC = shardManager.getShards().stream().mapToLong(shard ->
+                shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
+        ).sum();
         sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, String.valueOf(connectedVC)));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");

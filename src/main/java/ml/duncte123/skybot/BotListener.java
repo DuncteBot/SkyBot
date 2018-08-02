@@ -23,10 +23,7 @@ import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.objects.command.MusicCommand;
+import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -267,7 +264,11 @@ public class BotListener extends ListenerAdapter {
             //Handle the chat command
             ICommand cmd = Variables.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
-                cmd.executeCommand("chat", Arrays.copyOfRange(split, 1, split.length), event);
+                cmd.executeCommand(new CommandContext(
+                        "chat",
+                        Arrays.asList(split).subList(1, split.length),
+                        event
+                ));
             return;
         }
         //Handle the command
@@ -299,11 +300,10 @@ public class BotListener extends ListenerAdapter {
         logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
-        if (!unbanTimerRunning && Variables.NONE_SQLITE) {
+        if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(() ->
-                    ModerationUtils.checkUnbans(event.getJDA().asBot().getShardManager()), 5, 5, TimeUnit.MINUTES);
+            systemPool.scheduleAtFixedRate(ModerationUtils::checkUnbans, 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 

@@ -22,11 +22,11 @@ import com.afollestad.ason.Ason
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class ImageCommand : Command() {
@@ -35,13 +35,16 @@ class ImageCommand : Command() {
         this.category = CommandCategory.PATRON
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (isUserOrGuildPatron(event)) {
-            if (args.isEmpty()) {
+            if (ctx.args.isEmpty()) {
                 MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
             }
-            val keyword = StringUtils.join(args, "+")
+            val keyword = StringUtils.join(ctx.args, "+")
             WebUtils.ins.getText(String.format(Variables.GOOGLE_BASE_URL, keyword)).async {
                 val jsonRaw = Ason(it)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
