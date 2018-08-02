@@ -20,10 +20,9 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 import org.apache.commons.text.WordUtils
 
 class DialogCommand : Command() {
@@ -32,14 +31,14 @@ class DialogCommand : Command() {
         this.category = CommandCategory.FUN
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Correct usage: `$PREFIX$name <words>`")
+    override fun executeCommand(ctx: CommandContext) {
+        if (ctx.args.isEmpty()) {
+            MessageUtils.sendMsg(ctx.event, "Correct usage: `$PREFIX$name <words>`")
             return
         }
 
         val lines = WordUtils.wrap(
-                StringUtils.join(args, " ").replace("`", "")
+                ctx.rawArgs.replace("`", "")
                 , 25, null, true).split("\n")
 
         val sb = StringBuilder()
@@ -55,7 +54,7 @@ class DialogCommand : Command() {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```")
-        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(sb.toString()))
+        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
     }
 
     override fun help() = "Gives you a nice dialog\n" +

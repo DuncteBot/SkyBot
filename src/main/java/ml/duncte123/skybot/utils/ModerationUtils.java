@@ -145,7 +145,8 @@ public class ModerationUtils {
 
     /**
      * This attempts to register a warning in the database
-     *  @param moderator The mod that executed the warning
+     *
+     * @param moderator The mod that executed the warning
      * @param target    The user to warn
      * @param reason    the reason for the warn
      */
@@ -270,8 +271,8 @@ public class ModerationUtils {
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
                 (success) ->
-                    guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
-                            .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
+                        guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
+                                .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
                 ,
                 (failure) -> {
                     String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();

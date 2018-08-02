@@ -22,10 +22,10 @@ import com.afollestad.ason.Ason
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class NSFWCommands : Command() {
 
@@ -34,14 +34,17 @@ class NSFWCommands : Command() {
         this.displayAliasesInHelp = true;
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!event.channel.isNSFW) {
             MessageUtils.sendMsg(event, """Woops, this channel is not marked as NSFW.
                 |Please mark this channel as NSFW to use this command
                 """.trimMargin())
             return
         }
-        when (invoke) {
+        when (ctx.invoke) {
             "carsandhentai" -> {
                 WebUtils.ins.getText(String.format(Variables.GOOGLE_BASE_URL, "Cars and hentai")).async {
                     val jsonRaw = Ason(it)

@@ -18,18 +18,20 @@
 
 package ml.duncte123.skybot.commands.music
 
-import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Guild
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.json.JSONArray
 
 import java.nio.charset.StandardCharsets.UTF_8
 
 class SaveCommand : MusicCommand() {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         event.channel.sendFile(
                 toByteArray(event.guild),
                 "playlist.json",

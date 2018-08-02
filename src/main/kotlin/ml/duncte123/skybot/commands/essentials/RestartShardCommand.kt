@@ -26,9 +26,9 @@ import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.coroutineContext
 
@@ -40,13 +40,15 @@ class RestartShardCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!isDev(event.author)) return
         val shardManager = event.jda.asBot().shardManager
 
         try {
-            when (args.size) {
+            when (ctx.args.size) {
                 0 -> {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
@@ -63,7 +65,7 @@ class RestartShardCommand : Command() {
                     }
                 }
                 1 -> {
-                    val id = args[0].toInt()
+                    val id = ctx.args[0].toInt()
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, event.jda.asBot().shardManager)

@@ -23,6 +23,7 @@ import com.sun.management.OperatingSystemMXBean;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -30,7 +31,6 @@ import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Time;
@@ -44,9 +44,11 @@ import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
 public class BotinfoCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(CommandContext ctx) {
 
-        if ("support".equals(invoke)) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if ("support".equals(ctx.getInvoke())) {
             MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
             return;
         }

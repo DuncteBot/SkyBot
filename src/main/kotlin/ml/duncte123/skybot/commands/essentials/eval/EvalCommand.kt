@@ -30,6 +30,7 @@ import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
@@ -99,8 +100,10 @@ class EvalCommand : Command() {
         )
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         val isRanByBotOwner = isDev(event.author) || event.author.id == Settings.OWNER_ID
         /*if (!isRanByBotOwner && !runIfNotOwner)
             return*/
@@ -112,7 +115,7 @@ class EvalCommand : Command() {
                 staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
 
         val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
-        if(userInput.size < 2) {
+        if (userInput.size < 2) {
             MessageUtils.sendSuccess(event.message)
             return
         }
@@ -121,7 +124,7 @@ class EvalCommand : Command() {
 
         var timeout = 5000L
 
-        if (isRanByBotOwner && invoke.toLowerCase() != "safeeval") {
+        if (isRanByBotOwner && ctx.invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
             engine.put("commandManager", Variables.COMMAND_MANAGER)
@@ -136,7 +139,7 @@ class EvalCommand : Command() {
             engine.put("event", event)
 
             engine.put("skraa", script)
-            engine.put("args", args)
+            engine.put("args", ctx.args)
 
             @SinceSkybot("3.58.0")
             launch(start = CoroutineStart.ATOMIC) {

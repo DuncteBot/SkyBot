@@ -22,21 +22,25 @@ import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtils.EncodingType;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Response;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.util.List;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class YodaSpeakCommand extends Command {
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(CommandContext ctx) {
 
-        if (args.length < 1) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
+        if (args.size() < 1) {
             sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <A sentence.>`");
             return;
         }

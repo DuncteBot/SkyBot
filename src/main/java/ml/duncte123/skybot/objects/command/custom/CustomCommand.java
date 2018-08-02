@@ -19,9 +19,8 @@
 package ml.duncte123.skybot.objects.command.custom;
 
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 
 public interface CustomCommand extends ICommand {
 
@@ -36,7 +35,7 @@ public interface CustomCommand extends ICommand {
 
     //Override some methods that are not needed
     @Override
-    default void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    default void executeCommand(CommandContext ctx) {
         // Custom commands are executed in a different way
     }
 

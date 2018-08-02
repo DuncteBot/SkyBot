@@ -30,10 +30,12 @@
 // duration = duration of animation in seconds, default 2
 // options = optional object of options (see below)
 
-const CountUp = function(target, startVal, endVal, decimals, duration, options) {
+const CountUp = function (target, startVal, endVal, decimals, duration, options) {
 
     let self = this;
-    self.version = function () { return "1.9.3"; };
+    self.version = function () {
+        return "1.9.3";
+    };
 
     // default options
     self.options = {
@@ -70,21 +72,23 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
     // by Opera engineer Erik Möller
     let lastTime = 0;
     let vendors = ["webkit", "moz", "ms", "o"];
-    for(let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
-        window.requestAnimationFrame = window[vendors[x]+"RequestAnimationFrame"];
-        window.cancelAnimationFrame = window[vendors[x]+"CancelAnimationFrame"] || window[vendors[x]+"CancelRequestAnimationFrame"];
+    for (let x = 0; x < vendors.length && !window.requestAnimationFrame; ++x) {
+        window.requestAnimationFrame = window[vendors[x] + "RequestAnimationFrame"];
+        window.cancelAnimationFrame = window[vendors[x] + "CancelAnimationFrame"] || window[vendors[x] + "CancelRequestAnimationFrame"];
     }
     if (!window.requestAnimationFrame) {
-        window.requestAnimationFrame = function(callback, element) {
+        window.requestAnimationFrame = function (callback, element) {
             let currTime = new Date().getTime();
             let timeToCall = Math.max(0, 16 - (currTime - lastTime));
-            let id = window.setTimeout(function() { callback(currTime + timeToCall); }, timeToCall);
+            let id = window.setTimeout(function () {
+                callback(currTime + timeToCall);
+            }, timeToCall);
             lastTime = currTime + timeToCall;
             return id;
         };
     }
     if (!window.cancelAnimationFrame) {
-        window.cancelAnimationFrame = function(id) {
+        window.cancelAnimationFrame = function (id) {
             clearTimeout(id);
         };
     }
@@ -109,24 +113,26 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
         // optional numeral substitution
         if (self.options.numerals.length) {
-            x1 = x1.replace(/[0-9]/g, function(w) {
+            x1 = x1.replace(/[0-9]/g, function (w) {
                 return self.options.numerals[+w];
             })
-            x2 = x2.replace(/[0-9]/g, function(w) {
+            x2 = x2.replace(/[0-9]/g, function (w) {
                 return self.options.numerals[+w];
             })
         }
         return (neg ? "-" : "") + self.options.prefix + x1 + x2 + self.options.suffix;
     }
+
     // Robert Penner's easeOutExpo
     function easeOutExpo(t, b, c, d) {
         return c * (-Math.pow(2, -10 * t / d) + 1) * 1024 / 1023 + b;
     }
+
     function ensureNumber(n) {
         return (typeof n === "number" && !isNaN(n));
     }
 
-    self.initialize = function() {
+    self.initialize = function () {
         if (self.initialized) return true;
 
         self.error = "";
@@ -148,13 +154,13 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
             return true;
         }
         else {
-            self.error = "[CountUp] startVal ("+startVal+") or endVal ("+endVal+") is not a number";
+            self.error = "[CountUp] startVal (" + startVal + ") or endVal (" + endVal + ") is not a number";
             return false;
         }
     };
 
     // Print value to target
-    self.printValue = function(value) {
+    self.printValue = function (value) {
         let result = self.options.formattingFn(value);
 
         if (self.d.tagName === "INPUT") {
@@ -168,9 +174,11 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
     };
 
-    self.count = function(timestamp) {
+    self.count = function (timestamp) {
 
-        if (!self.startTime) { self.startTime = timestamp; }
+        if (!self.startTime) {
+            self.startTime = timestamp;
+        }
 
         self.timestamp = timestamp;
         let progress = timestamp - self.startTime;
@@ -199,7 +207,7 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
 
         // decimal
-        self.frameVal = Math.round(self.frameVal*self.dec)/self.dec;
+        self.frameVal = Math.round(self.frameVal * self.dec) / self.dec;
 
         // format and print value
         self.printValue(self.frameVal);
@@ -212,13 +220,13 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
     };
     // start your animation
-    self.start = function(callback) {
+    self.start = function (callback) {
         if (!self.initialize()) return;
         self.callback = callback;
         self.rAF = requestAnimationFrame(self.count);
     };
     // toggles pause/resume animation
-    self.pauseResume = function() {
+    self.pauseResume = function () {
         if (!self.paused) {
             self.paused = true;
             cancelAnimationFrame(self.rAF);
@@ -231,7 +239,7 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         }
     };
     // reset to startVal so animation can be run again
-    self.reset = function() {
+    self.reset = function () {
         self.paused = false;
         delete self.startTime;
         self.initialized = false;
@@ -245,7 +253,7 @@ const CountUp = function(target, startVal, endVal, decimals, duration, options) 
         if (!self.initialize()) return;
         newEndVal = Number(newEndVal);
         if (!ensureNumber(newEndVal)) {
-            self.error = "[CountUp] update() - new endVal is not a number: "+newEndVal;
+            self.error = "[CountUp] update() - new endVal is not a number: " + newEndVal;
             return;
         }
         self.error = "";

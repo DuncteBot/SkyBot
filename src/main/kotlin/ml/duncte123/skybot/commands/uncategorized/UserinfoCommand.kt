@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -59,7 +60,11 @@ class UserinfoCommand : Command() {
     }
 
 
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
         var u: User
         var m: Member? //this can be lateinit var m: Member //Nope, check line 61
 
@@ -95,7 +100,7 @@ class UserinfoCommand : Command() {
 
         u = m.user
 
-        if (invoke == "avatar") {
+        if (ctx.invoke == "avatar") {
             MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
             return
         }

@@ -32,6 +32,7 @@ public enum CommandCategory {
     UNLISTED("null");
 
     private final String search;
+
     CommandCategory(String search) {
         this.search = search;
     }

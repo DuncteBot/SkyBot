@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
@@ -29,7 +30,6 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -43,12 +43,15 @@ public class HelpCommand extends Command {
 
     @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        if (args.length > 0) {
-            String toSearch = StringUtils.join(args, " ").toLowerCase()
+    public void executeCommand(CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (ctx.getArgs().size() > 0) {
+            String toSearch = ctx.getRawArgs().toLowerCase()
                     .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                            Pattern.quote(getSettings(event.getGuild()).getCustomPrefix()) + ")", "");
+                            Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch))
                 sendCategoryHelp(event, toSearch.toUpperCase());

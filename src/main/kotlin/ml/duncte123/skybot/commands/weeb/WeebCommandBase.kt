@@ -49,7 +49,7 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    fun requestAndSend(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent) {
         Variables.WEEB_API.getRandomImage(type).async {
             val imageUrl = it.url
             if (args.isEmpty()) {

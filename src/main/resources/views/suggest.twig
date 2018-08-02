@@ -13,14 +13,16 @@
             <h3>Suggestions</h3>
             <div class="divider"></div>
             <p>If you feel that the bot is missing a feature why not suggest it here?</p>
-            <p>Make sure to check our <a href="https://trello.com/b/iSaxpcGR/skybot-suggestions" target="_blank">Trello board</a> to see if someone already suggested your idea.</p>
+            <p>Make sure to check our <a href="https://trello.com/b/iSaxpcGR/skybot-suggestions" target="_blank">Trello
+                    board</a> to see if someone already suggested your idea.</p>
             <form id="quotesForm" action="" method="post" autocomplete="off">
                 <div class="input-field">
-                    <input type="text" class="input-field validate " name="name" id="name" required />
+                    <input type="text" class="input-field validate " name="name" id="name" required/>
                     <label for="name">Your (user)name</label>
                 </div>
                 <div class="input-field">
-                    <input type="text" class="input-field validate " name="sug" data-length="100" maxlength="100" id="sug" required />
+                    <input type="text" class="input-field validate " name="sug" data-length="100" maxlength="100"
+                           id="sug" required/>
                     <label for="sug">Your suggestion</label>
                 </div>
 
@@ -33,7 +35,8 @@
 
                 <button class="btn waves-effect waves-light waves-ripple blue accent-4 g-recaptcha"
                         data-sitekey="{{ chapta_sitekey }}"
-                        data-callback="submitForm">Submit</button>
+                        data-callback="submitForm">Submit
+                </button>
                 <span id="msg" class="fadeOut"></span>
             </form>
         </div>

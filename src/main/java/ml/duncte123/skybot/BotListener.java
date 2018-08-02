@@ -51,7 +51,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -267,7 +266,7 @@ public class BotListener extends ListenerAdapter {
             //Handle the chat command
             ICommand cmd = Variables.COMMAND_MANAGER.getCommand("chat");
             if (cmd != null)
-                cmd.executeCommand("chat", Arrays.copyOfRange(split, 1, split.length), event);
+                cmd.executeCommand("chat");
             return;
         }
         //Handle the command

@@ -19,8 +19,7 @@
 package ml.duncte123.skybot.command;
 
 import ml.duncte123.skybot.objects.command.Command;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import ml.duncte123.skybot.objects.command.CommandContext;
 
 /**
  * This is a dummy command to test some things with commands
@@ -29,7 +28,7 @@ public class DummyCommand extends Command {
     boolean hasRun = false;
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(CommandContext ctx) {
         hasRun = true;
     }
 

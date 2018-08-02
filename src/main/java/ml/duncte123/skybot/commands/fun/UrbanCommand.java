@@ -21,11 +21,10 @@ package ml.duncte123.skybot.commands.fun;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
-import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
@@ -38,20 +37,20 @@ public class UrbanCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(CommandContext ctx) {
 
-        if (args.length < 1) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <search term>`");
+        if (ctx.getArgs().size() < 1) {
+            sendMsg(ctx.getEvent(), "Correct usage: `" + PREFIX + getName() + " <search term>`");
             return;
         }
 
-        String term = StringUtils.join(args, " ");
+        String term = ctx.getRawArgs();
         String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async(json -> {
 //            System.out.println(json);
             if (json.getJSONArray("list").length() < 1) {
-                sendMsg(event, "Nothing found");
+                sendMsg(ctx.getEvent(), "Nothing found");
                 return;
             }
             String tags = "`" + StringUtils.join(json.optJSONArray("tags"), "`, `") + "`";
@@ -69,7 +68,7 @@ public class UrbanCommand extends Command {
                     .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
                     .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false)
                     .addField("Tags:", tags, false);
-            sendEmbed(event, eb.build());
+            sendEmbed(ctx.getEvent(), eb.build());
         });
 
     }
