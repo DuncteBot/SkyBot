@@ -47,8 +47,8 @@ public class YodaSpeakCommand extends Command {
         }
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-//                .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
-                .url("http://localhost/yoda?sentence=" + StringUtils.join(args, "+"))
+                .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
+//                .url("http://localhost/yoda?sentence=" + StringUtils.join(args, "+"))
                 .addHeader("X-user-id", event.getJDA().getSelfUser().getId())
                 .addHeader("X-client-token", event.getJDA().getToken())
                 .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
