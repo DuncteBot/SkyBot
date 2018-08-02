@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.github.natanbc.reliqua.request.RequestException;
 import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -47,9 +48,9 @@ public class GithubReleaseCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!isDev(event.getAuthor())
-                && !Settings.OWNER_ID.equals(event.getAuthor().getId())) {
-            MessageUtils.sendError(event.getMessage());
+        if (!isDev(ctx.getAuthor())
+                && !Settings.OWNER_ID.equals(ctx.getAuthor().getId())) {
+            MessageUtils.sendError(ctx.getMessage());
             MessageUtils.sendMsg(event, "You must be the bot owner to run this command!");
 
             return;
@@ -60,7 +61,7 @@ public class GithubReleaseCommand extends Command {
         String invoke = ctx.getInvoke();
 
         // The message from after the {prefix}{invoke} syntax
-        String message = event.getMessage().getContentDisplay();
+        String message = ctx.getMessage().getContentDisplay();
         message = message.substring(message.indexOf(invoke) + invoke.length());
 
         /*
@@ -70,9 +71,9 @@ public class GithubReleaseCommand extends Command {
          *
          * <given message>
          */
-        message = String.format("SkyBot %s, release authored by %s%n%n%s",
+        message = String.format("SkyBot %s, release authored by %#s%n%n%s",
                 name,
-                event.getAuthor().getName() + '#' + event.getAuthor().getDiscriminator(),
+                ctx.getAuthor(),
                 message);
 
         JSONObject releaseOut = new JSONObject()
@@ -85,11 +86,7 @@ public class GithubReleaseCommand extends Command {
 
         try {
             //You meant to post the json ramid?
-            JSONObject releaseIn = WebUtils.ins.postJSON(CREATE_RELEASE, releaseOut,
-                    mapper -> {
-                        assert mapper.body() != null;
-                        return new JSONObject(mapper.body().string());
-                    }).execute();
+            JSONObject releaseIn = WebUtils.ins.postJSON(CREATE_RELEASE, releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
 
             if (releaseIn == null)
                 return;

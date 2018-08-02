@@ -52,13 +52,13 @@ public class ShardInfoCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         List<List<String>> table = new ArrayList<>();
-        ShardManager shardManager = event.getJDA().asBot().getShardManager();
+        ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
         List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
         for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
             row.add((shard.getShardInfo().getShardId() + 1) +
-                    (event.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
+                    (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
             row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
