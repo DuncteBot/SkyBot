@@ -140,6 +140,7 @@ class EvalCommand : Command() {
 
             engine.put("skraa", script)
             engine.put("args", ctx.args)
+            engine.put("ctx", ctx)
 
             @SinceSkybot("3.58.0")
             launch(start = CoroutineStart.ATOMIC) {
