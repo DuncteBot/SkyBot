@@ -27,12 +27,14 @@ import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -177,7 +179,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            final String message = String.format("Now playing: %s by %#s %s", title, userData.getUser(), (repeated ? "(repeated)" : ""));
+            User user = userData.getUser();
+            final String message = String.format("Now playing: %s by %#s %s", title, (user == null) ? new ConsoleUser() : user, (repeated ? "(repeated)" : ""));
             MessageUtils.sendMsg(guildMusicManager.latestChannel, message);
         }
     }
