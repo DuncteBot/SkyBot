@@ -18,6 +18,7 @@
 
 buildscript {
     ext.kotlin_version = '1.2.60'
+    ext.jda_utils_version = '8e11e6d'
 
     repositories {
         mavenCentral()
@@ -128,7 +129,7 @@ dependencies {
     compile "com.sparkjava:spark-kotlin:1.0.0-alpha"
     compile "org.jtwig:jtwig-core:5.87.0.RELEASE"
     // Oauth
-    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '8e11e6d'
+    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: jda_utils_version
 
     compile group: 'com.jagrosh', name: 'JagTag', version: '0.5'
 

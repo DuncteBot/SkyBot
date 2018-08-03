@@ -19,9 +19,13 @@
 package ml.duncte123.skybot.objects.jagtag;
 
 import com.jagrosh.jagtag.Method;
+import com.jagrosh.jagtag.ParseException;
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.utils.MiscUtil;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
@@ -36,22 +40,73 @@ public class DiscordMethods {
                 new Method("user", (env) -> {
                     User u = env.get("user");
                     return u.getName();
+                }, (env,in) -> {
+                    if(in[0].equals(""))
+                        return "";
+                    List<Member> members = null;
+                    Guild g = env.get("guild");
+                    if(g!=null)
+                        members = FinderUtil.findMembers(in[0], g);
+                    if(members == null || members.isEmpty())
+                        throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
+                    return members.get(0).getUser().getName();
                 }),
 
                 new Method("nick", (env) -> {
                     User u = env.get("user");
-                    TextChannel tc = env.get("channel");
-                    return tc.getGuild().getMember(u).getEffectiveName();
+                    Guild g = env.get("guild");
+                    return g.getMember(u).getEffectiveName();
+                }, (env,in) -> {
+                    if(in[0].equals(""))
+                        return "";
+                    List<Member> members = null;
+                    Guild g = env.get("guild");
+                    if(g!=null)
+                        members = FinderUtil.findMembers(in[0], g);
+                    if(members == null || members.isEmpty())
+                        throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
+                    return members.get(0).getEffectiveName();
                 }),
 
                 new Method("discrim", (env) -> {
                     User u = env.get("user");
                     return u.getDiscriminator();
+                }, (env,in) -> {
+                    if(in[0].equals(""))
+                        return "";
+                    List<Member> members = null;
+                    Guild g = env.get("guild");
+                    if(g!=null)
+                        members = FinderUtil.findMembers(in[0], g);
+                    if(members == null || members.isEmpty())
+                        throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
+                    return members.get(0).getUser().getDiscriminator();
                 }),
 
                 new Method("avatar", (env) -> {
                     User u = env.get("user");
-                    return u.getEffectiveAvatarUrl();
+                    return u.getEffectiveAvatarUrl() + "?size=2048";
+                }, (env,in) -> {
+                    if(in[0].equals(""))
+                        return "";
+                    List<Member> members = null;
+                    Guild g = env.get("guild");
+                    if(g!=null)
+                        members = FinderUtil.findMembers(in[0], g);
+                    if(members == null || members.isEmpty())
+                        throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
+                    return members.get(0).getUser().getEffectiveAvatarUrl() + "?size=2048";
+                }),
+
+                new Method("creation", (env, in) -> {
+                    long id;
+                    try {
+                        id = Long.parseUnsignedLong(in[0]);
+                    }
+                    catch (NumberFormatException ignored) {
+                        throw new ParseException(String.format("Your input `%s` is not a valid long", in[0]));
+                    }
+                    return MiscUtil.getCreationTime(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);
                 }),
 
                 new Method("userid", (env) -> {
