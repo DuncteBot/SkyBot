@@ -81,7 +81,7 @@ public class SkyBot {
                 System.exit(-3);
             } else {
                 logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
-                conn.close();
+                //conn.close();
             }
         } else {
             int startIn = 5;
