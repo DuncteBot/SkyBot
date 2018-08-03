@@ -33,12 +33,12 @@ public class IsNowIllegalCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        String input = ctx.getRawArgs()
-                .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
-        if (input.length() < 1) {
+        if (ctx.getArgs().size() < 1) {
             MessageUtils.sendMsg(ctx.getEvent(), "This command requires a text argument.");
             return;
         }
+        String input = ctx.getRawArgs()
+                .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() > 10)
             input = input.substring(0, 9);
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
