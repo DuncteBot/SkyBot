@@ -179,8 +179,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            User user = userData.getUser();
-            final String message = String.format("Now playing: %s by %#s %s", title, (user == null) ? new ConsoleUser() : user, (repeated ? "(repeated)" : ""));
+            User user = userData != null ? userData.getUser() : new ConsoleUser();
+            final String message = String.format("Now playing: %s by %#s %s", title, user, (repeated ? "(repeated)" : ""));
             MessageUtils.sendMsg(guildMusicManager.latestChannel, message);
         }
     }
