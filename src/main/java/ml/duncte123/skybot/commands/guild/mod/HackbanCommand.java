@@ -23,10 +23,12 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+import java.util.Optional;
 
 public class HackbanCommand extends Command {
 
@@ -50,18 +52,26 @@ public class HackbanCommand extends Command {
             return;
         }
 
-        String[] arg = {""};
+        String id = "";
+        String arg0 = args.get(0);
 
-        if (args.get(0).matches("<@\\d{17,20}>"))
-            arg[0] = args.get(0).substring(2, args.get(0).length() - 1);
-        else if (args.get(0).matches(".{2,32}#\\d{4}")) {
+        if (arg0.matches("<@\\d{17,20}>")) {
+            id = arg0.substring(2, args.get(0).length() - 1);
+        } else if (arg0.matches(".{2,32}#\\d{4}")) {
 
-            event.getJDA().getUsersByName(args.get(0).substring(0, args.get(0).length() - 5), false).stream()
-                    .findFirst().ifPresent(user -> arg[0] = user.getId());
+            Optional<User> opt = event.getJDA().getUsersByName(arg0.substring(0, arg0.length() - 5), false).stream()
+                    .findFirst();
+
+            if (opt.isPresent()) {
+                id = opt.get().getId();
+            }
+
+        } else if (arg0.matches("\\d{17,20}")) {
+            id = arg0;
         }
 
         try {
-            event.getGuild().getController().ban(arg[0], 0).queue((v) ->
+            event.getGuild().getController().ban(id, 0).queue((v) ->
                     MessageUtils.sendMsg(event, "User has been banned!"));
         } catch (Exception e) {
             e.printStackTrace();
