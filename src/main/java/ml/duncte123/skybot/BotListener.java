@@ -526,6 +526,12 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
         long autoRoleId = GuildSettingsUtils.getGuild(guild).getAutoroleRole();
 
+        message = CustomCommandUtils.PARSER.clear()
+                .put("user", event.getUser())
+                .put("guild", event.getGuild())
+                .put("args", "")
+                .parse(message);
+
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
                 .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
