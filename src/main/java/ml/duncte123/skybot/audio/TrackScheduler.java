@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
@@ -40,6 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static ml.duncte123.skybot.SkyBot.getInstance;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
@@ -179,7 +182,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            User user = userData != null ? userData.getUser() : new ConsoleUser();
+            User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
             final String message = String.format("Now playing: %s by %#s %s", title, user, (repeated ? "(repeated)" : ""));
             MessageUtils.sendMsg(guildMusicManager.latestChannel, message);
         }

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -26,7 +27,6 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -57,8 +57,8 @@ public class SettingsCommand extends Command {
             return;
         }
 
-        Guild guild = event.getGuild();
-        GuildSettings settings = ctx.getGuildSettings();
+        DunctebotGuild guild = ctx.getGuild();
+        GuildSettings settings = guild.getSettings();
         boolean isEnabled;
         switch (ctx.getInvoke()) {
             case "settings":
@@ -95,7 +95,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
                 String newPrefix = ctx.getRawArgs();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomPrefix(newPrefix));
+                guild.setSettings(settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
 
@@ -106,7 +106,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
                 String newJoinMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomJoinMessage(newJoinMessage));
+                guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
 
@@ -116,7 +116,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
                 String newLeaveMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setCustomLeaveMessage(newLeaveMessage));
+                guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
 
@@ -124,8 +124,7 @@ public class SettingsCommand extends Command {
             case "disablejoinmessage":
             case "togglejoinmessage":
                 isEnabled = settings.isEnableJoinMessage();
-                GuildSettingsUtils.updateGuildSettings(guild,
-                        settings.setEnableJoinMessage(!isEnabled));
+                guild.setSettings(settings.setEnableJoinMessage(!isEnabled));
                 sendMsg(event, "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
@@ -133,8 +132,7 @@ public class SettingsCommand extends Command {
             case "disableswearfilter":
             case "toggleswearfilter":
                 isEnabled = settings.isEnableSwearFilter();
-                GuildSettingsUtils.updateGuildSettings(guild,
-                        settings.setEnableSwearFilter(!isEnabled));
+                guild.setSettings(settings.setEnableSwearFilter(!isEnabled));
                 sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
                 break;
 
@@ -150,7 +148,7 @@ public class SettingsCommand extends Command {
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setLogChannel(tc.getId()));
+                    guild.setSettings(settings.setLogChannel(tc.getId()));
                     sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                     return;
                 }
@@ -160,7 +158,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "This channel could not be found.");
                     return;
                 }
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setLogChannel(tc.getId()));
+                guild.setSettings(settings.setLogChannel(tc.getId()));
                 sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                 break;
             case "setwelcomechannel":
@@ -176,7 +174,7 @@ public class SettingsCommand extends Command {
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                    guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
                     sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                     return;
                 }
@@ -186,7 +184,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "This channel could not be found.");
                     return;
                 }
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
                 sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                 break;
 
@@ -204,7 +202,7 @@ public class SettingsCommand extends Command {
 
                 if ("disable".equals(args.get(0))) {
                     sendMsg(event, "AutoRole feature has been disabled");
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setAutoroleRole(""));
+                    guild.setSettings(settings.setAutoroleRole(""));
                     return;
                 }
 
@@ -216,7 +214,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setAutoroleRole(rolesFound.get(0).getId()));
+                guild.setSettings(settings.setAutoroleRole(rolesFound.get(0).getId()));
                 sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
@@ -234,34 +232,34 @@ public class SettingsCommand extends Command {
                     return;
                 }
                 String description = event.getMessage().getContentRaw().split("\\s+", 2)[1].replaceAll("\n", "\\\\n");
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setServerDesc(description));
+                guild.setSettings(settings.setServerDesc(description));
                 sendMsg(event, "Description has been updated, check `" + PREFIX + "guildinfo` to see your description");
                 break;
 
             case "toggleannouncetracks":
                 boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setAnnounceTracks(shouldAnnounceTracks));
+                guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
                 sendMsg(event, "Announcing the next track has been **"
                         + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
                 break;
 
             case "togglefilterinvites":
                 boolean shouldFilterInvites = !settings.isFilterInvites();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setFilterInvites(shouldFilterInvites));
+                guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
                 sendMsg(event, "Filtering discord invites has been **"
                         + (shouldFilterInvites ? "enabled" : "disabled") + "**");
                 break;
 
             case "toggleautodehoist":
                 boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setAutoDeHoist(shouldAutoDeHoist));
+                guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
                 sendMsg(event, "Auto de-hoisting has been **"
                         + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
                 break;
 
             case "togglespamfilter":
                 boolean spamState = !settings.getEnableSpamFilter();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setEnableSpamFilter(spamState));
+                guild.setSettings(settings.setEnableSpamFilter(spamState));
                 String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
                 String muteRoleId = settings.getMuteRoleId();
                 if (muteRoleId == null || muteRoleId.isEmpty()) {
@@ -290,7 +288,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "SpamRole feature & SpamFilter has been disabled");
                     //Never clean the role's id so activating the filter wont cause issues.
                     //GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(""));
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setEnableSpamFilter(false));
+                    guild.setSettings(settings.setEnableSpamFilter(false));
                     return;
                 }
 
@@ -302,7 +300,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setMuteRoleId(rolesFound.get(0).getId()));
+                guild.setSettings(settings.setMuteRoleId(rolesFound.get(0).getId()));
                 sendMsg(event, "SpamRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
@@ -322,12 +320,12 @@ public class SettingsCommand extends Command {
 
                 if ("default".equals(args.get(0))) {
                     sendMsg(event, "Ratelimits have beed reset.");
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
+                    guild.setSettings(settings.setRatelimits(new long[]{20, 45, 60, 120, 240, 2400}));
                     return;
                 }
 
                 long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setRatelimits(rates));
+                guild.setSettings(settings.setRatelimits(rates));
                 String steps = Arrays.stream(rates).mapToObj(String::valueOf).collect(Collectors.joining(", ", "", " minutes"));
                 sendMsg(event, "The new rates are " + steps);
                 break;

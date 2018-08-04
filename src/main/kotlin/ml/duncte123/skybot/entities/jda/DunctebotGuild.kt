@@ -16,6 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects
+package ml.duncte123.skybot.entities.jda
 
-data class TrackUserData(val userId: Long)
+import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.GuildSettingsUtils
+import net.dv8tion.jda.core.entities.Guild
+
+class DunctebotGuild (private val guild: Guild) : Guild by guild {
+
+    fun getSettings() = GuildSettingsUtils.getGuild(this.guild)
+
+    fun setSettings(settings: GuildSettings) {
+        GuildSettingsUtils.updateGuildSettings(this.guild, settings)
+    }
+}
