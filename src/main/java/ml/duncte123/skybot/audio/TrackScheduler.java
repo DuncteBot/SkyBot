@@ -95,27 +95,27 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Gets run when a track ends
      *
      * @param player    The {@link AudioPlayer AudioTrack} for that guild
-     * @param track     The {@link AudioTrack AudioTrack} that ended
+     * @param lastTrack     The {@link AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
+    public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");
             if (repeating) {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
-                    AudioTrack clone = track.makeClone();
-                    clone.setUserData(track.getUserData());
+                    AudioTrack clone = lastTrack.makeClone();
+                    clone.setUserData(lastTrack.getUserData());
                     this.player.playTrack(clone);
-                    announceNextTrack(track, true);
+                    announceNextTrack(lastTrack, true);
                 } else {
                     logger.debug("a playlist.....");
                     nextTrack();
                     //Offer it to the queue to prevent the player from playing it
-                    AudioTrack clone = track.makeClone();
-                    clone.setUserData(track.getUserData());
+                    AudioTrack clone = lastTrack.makeClone();
+                    clone.setUserData(lastTrack.getUserData());
                     queue.offer(clone);
                 }
             } else {
@@ -173,7 +173,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track, boolean repeated) {
-        if (guildMusicManager.guildSettings.isAnnounceTracks()) {
+        if (guildMusicManager.isAnnounceTracks()) {
             String title = track.getInfo().title;
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
