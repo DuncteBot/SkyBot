@@ -75,11 +75,11 @@ public class SettingsCommand extends Command {
                         "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
                         "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
                         "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
-                        "**MuteRole:** " + (settings.getMuteRoleId() == null || settings.getMuteRoleId().equals("")
+                        "**MuteRole:** " + (settings.getMuteRoleId() <= 0
                         ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +
                         "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
                         "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
-                        "**AutoRole:** " + (settings.getAutoroleRole() == null || settings.getAutoroleRole().equals("")
+                        "**AutoRole:** " + (settings.getAutoroleRole() <= 0
                         ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
                         "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
                         "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
@@ -148,7 +148,7 @@ public class SettingsCommand extends Command {
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
-                    guild.setSettings(settings.setLogChannel(tc.getId()));
+                    guild.setSettings(settings.setLogChannel(tc.getIdLong()));
                     sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                     return;
                 }
@@ -158,7 +158,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "This channel could not be found.");
                     return;
                 }
-                guild.setSettings(settings.setLogChannel(tc.getId()));
+                guild.setSettings(settings.setLogChannel(tc.getIdLong()));
                 sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
                 break;
             case "setwelcomechannel":
@@ -174,7 +174,7 @@ public class SettingsCommand extends Command {
                         sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
                         return;
                     }
-                    guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                    guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getIdLong()));
                     sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                     return;
                 }
@@ -184,7 +184,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "This channel could not be found.");
                     return;
                 }
-                guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getId()));
+                guild.setSettings(settings.setWelcomeLeaveChannel(welcomeChannel.getIdLong()));
                 sendMsg(event, "The new welcome channel has been set to " + welcomeChannel.getAsMention());
                 break;
 
@@ -202,7 +202,7 @@ public class SettingsCommand extends Command {
 
                 if ("disable".equals(args.get(0))) {
                     sendMsg(event, "AutoRole feature has been disabled");
-                    guild.setSettings(settings.setAutoroleRole(""));
+                    guild.setSettings(settings.setAutoroleRole(0L));
                     return;
                 }
 
@@ -214,7 +214,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                guild.setSettings(settings.setAutoroleRole(rolesFound.get(0).getId()));
+                guild.setSettings(settings.setAutoroleRole(rolesFound.get(0).getIdLong()));
                 sendMsg(event, "AutoRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;
@@ -261,12 +261,12 @@ public class SettingsCommand extends Command {
                 boolean spamState = !settings.getEnableSpamFilter();
                 guild.setSettings(settings.setEnableSpamFilter(spamState));
                 String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
-                String muteRoleId = settings.getMuteRoleId();
-                if (muteRoleId == null || muteRoleId.isEmpty()) {
+                long muteRoleId = settings.getMuteRoleId();
+                if (muteRoleId <= 0) {
                     message = "**__Please set a spam/mute role first!__**";
                 } else {
                     Role r = guild.getRoleById(muteRoleId);
-                    message += "\nThe spam rule is " + ((r == null) ? "deleted. Please update it." : r.getName() + ". Change it if it's outdated.");
+                    message += "\nThe spam role is " + ((r == null) ? "deleted. Please update it." : r.getName() + ". Change it if it's outdated.");
                 }
                 sendMsg(event, message);
                 break;
@@ -300,7 +300,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                guild.setSettings(settings.setMuteRoleId(rolesFound.get(0).getId()));
+                guild.setSettings(settings.setMuteRoleId(rolesFound.get(0).getIdLong()));
                 sendMsg(event, "SpamRole has been set to " + rolesFound.get(0).getAsMention());
 
                 break;

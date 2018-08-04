@@ -81,7 +81,7 @@ public class SkyBot {
                 System.exit(-3);
             } else {
                 logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
-                //conn.close();
+                conn.close();
             }
         } else {
             int startIn = 5;
@@ -91,6 +91,8 @@ public class SkyBot {
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
+        //2 seconds safe sleep for database
+        Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings();

@@ -58,7 +58,7 @@ public class MuteCommand extends Command {
 
         GuildSettings settings = getSettings(event.getGuild());
 
-        if (settings.getMuteRoleId() == null || settings.getMuteRoleId().isEmpty()) {
+        if (settings.getMuteRoleId() <= 0 ) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
             return;
         }

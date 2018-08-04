@@ -366,8 +366,8 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(guild);
 
         if (settings.isEnableJoinMessage()) {
-            String welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() == null || "".equals(settings.getWelcomeLeaveChannel())
-                    ? GuildUtils.getPublicChannel(guild).getId() : settings.getWelcomeLeaveChannel());
+            long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
+                    ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
@@ -391,9 +391,9 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(guild);
 
         if (settings.isEnableJoinMessage()) {
-            String welcomeLeaveChannelId =
-                    (settings.getWelcomeLeaveChannel() == null || settings.getWelcomeLeaveChannel().isEmpty())
-                            ? GuildUtils.getPublicChannel(guild).getId() : settings.getWelcomeLeaveChannel();
+            long welcomeLeaveChannelId =
+                    (settings.getWelcomeLeaveChannel() <= 0)
+                            ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
@@ -524,7 +524,7 @@ public class BotListener extends ListenerAdapter {
             return "NOPE";
 
         Guild guild = event.getGuild();
-        String autoRoleId = GuildSettingsUtils.getGuild(guild).getAutoroleRole();
+        long autoRoleId = GuildSettingsUtils.getGuild(guild).getAutoroleRole();
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
@@ -534,7 +534,7 @@ public class BotListener extends ListenerAdapter {
                 .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
 
                 //This one can be kept a secret :P
-                .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId == null || autoRoleId.isEmpty() ?
+                .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId <= 0 ?
                         "Not set" : guild.getRoleById(autoRoleId).getName())
                 .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
     }

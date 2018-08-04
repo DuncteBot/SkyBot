@@ -90,23 +90,23 @@ public class GuildSettingsUtils {
                 ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
 
                 while (res.next()) {
-                    String guildId = res.getString("guildId");
+                    long guildId = toLong(res.getString("guildId"));
 
                     Variables.GUILD_SETTINGS.put(guildId, new GuildSettings(guildId)
                             .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
                             .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
                             .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
                             .setCustomPrefix(res.getString("prefix"))
-                            .setLogChannel(res.getString("logChannelId"))
-                            .setWelcomeLeaveChannel(res.getString("welcomeLeaveChannel"))
+                            .setLogChannel(toLong(res.getString("logChannelId")))
+                            .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
                             .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                            .setAutoroleRole(res.getString("autoRole"))
+                            .setAutoroleRole(toLong(res.getString("autoRole")))
                             .setServerDesc(replaceNewLines(res.getString("serverDesc")))
                             .setAnnounceTracks(res.getBoolean("announceNextTrack"))
                             .setAutoDeHoist(res.getBoolean("autoDeHoist"))
                             .setFilterInvites(res.getBoolean("filterInvites"))
                             .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                            .setMuteRoleId(res.getString("muteRoleId"))
+                            .setMuteRoleId(toLong(res.getString("muteRoleId")))
                             .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                             .setKickState(res.getBoolean("kickInsteadState"))
                     );
@@ -133,11 +133,11 @@ public class GuildSettingsUtils {
      */
     public static GuildSettings getGuild(Guild guild) {
 
-        if (!Variables.GUILD_SETTINGS.containsKey(guild.getId())) {
+        if (!Variables.GUILD_SETTINGS.containsKey(guild.getIdLong())) {
             return registerNewGuild(guild);
         }
 
-        return Variables.GUILD_SETTINGS.get(guild.getId());
+        return Variables.GUILD_SETTINGS.get(guild.getIdLong());
 
     }
 
@@ -179,16 +179,16 @@ public class GuildSettingsUtils {
                 smt.setBoolean(2, settings.isEnableSwearFilter());
                 smt.setString(3, fixUnicodeAndLines(settings.getCustomJoinMessage()));
                 smt.setString(4, replaceUnicode(settings.getCustomPrefix()));
-                smt.setString(5, settings.getAutoroleRole());
-                smt.setString(6, settings.getLogChannel());
-                smt.setString(7, settings.getWelcomeLeaveChannel());
+                smt.setString(5, String.valueOf(settings.getAutoroleRole()));
+                smt.setString(6, String.valueOf(settings.getLogChannel()));
+                smt.setString(7, String.valueOf(settings.getWelcomeLeaveChannel()));
                 smt.setString(8, fixUnicodeAndLines(settings.getCustomLeaveMessage()));
                 smt.setString(9, fixUnicodeAndLines(settings.getServerDesc()));
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
                 smt.setBoolean(13, settings.getEnableSpamFilter());
-                smt.setString(14, settings.getMuteRoleId());
+                smt.setString(14, String.valueOf(settings.getMuteRoleId()));
                 smt.setString(15, convertJ2S(settings.getRatelimits()));
                 smt.setBoolean(16, settings.getKickState());
                 smt.executeUpdate();
@@ -215,10 +215,10 @@ public class GuildSettingsUtils {
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g) {
-        if (Variables.GUILD_SETTINGS.containsKey(g.getId())) {
-            return Variables.GUILD_SETTINGS.get(g.getId());
+        if (Variables.GUILD_SETTINGS.containsKey(g.getIdLong())) {
+            return Variables.GUILD_SETTINGS.get(g.getIdLong());
         }
-        GuildSettings newGuildSettings = new GuildSettings(g.getId());
+        GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
         Variables.DATABASE.run(() -> {
 
             String dbName = Variables.DATABASE.getName();
@@ -253,7 +253,7 @@ public class GuildSettingsUtils {
                     }
                 }
             }
-            Variables.GUILD_SETTINGS.put(g.getId(), newGuildSettings);
+            Variables.GUILD_SETTINGS.put(g.getIdLong(), newGuildSettings);
         });
         return newGuildSettings;
     }
@@ -264,7 +264,7 @@ public class GuildSettingsUtils {
      * @param g the guild to remove from the database
      */
     public static void deleteGuild(Guild g) {
-        Variables.GUILD_SETTINGS.remove(g.getId());
+        Variables.GUILD_SETTINGS.remove(g.getIdLong());
         Variables.DATABASE.run(() -> {
             String dbName = Variables.DATABASE.getName();
             Connection database = Variables.DATABASE.getConnManager().getConnection();
@@ -325,5 +325,14 @@ public class GuildSettingsUtils {
             return new long[]{20, 45, 60, 120, 240, 2400};
 
         return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
+    }
+
+    public static long toLong(String s) {
+        try {
+            return Long.parseUnsignedLong(s);
+        }
+        catch (NumberFormatException ignored) {
+            return 0L;
+        }
     }
 }

@@ -50,8 +50,8 @@ public class ModerationUtils {
      * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
-        String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
-        if (chan != null && !chan.isEmpty()) {
+        long chan = GuildSettingsUtils.getGuild(g).getLogChannel();
+        if (chan > 0) {
             TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
             if (time != null && !time.isEmpty()) {
@@ -238,9 +238,9 @@ public class ModerationUtils {
     public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
         Member self = guild.getSelfMember();
         GuildSettings guildSettings = GuildSettingsUtils.getGuild(guild);
-        String muteRoleId = guildSettings.getMuteRoleId();
+        long muteRoleId = guildSettings.getMuteRoleId();
 
-        if (muteRoleId == null || muteRoleId.isEmpty()) {
+        if (muteRoleId <= 0) {
             if (sendMessages)
                 MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                         "We disabled your spam filter until you have set up a role.");
@@ -275,8 +275,8 @@ public class ModerationUtils {
                                 .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
                 ,
                 (failure) -> {
-                    String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
-                    if (chan != null && !chan.isEmpty()) {
+                    long chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
+                    if (chan > 0) {
                         TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
                         String message = String.format("%#s bypassed the mute.", member.getUser());
