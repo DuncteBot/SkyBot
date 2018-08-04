@@ -85,9 +85,8 @@ dependencies {
     compile 'com.github.duncte123:botCommons:b65ea97'
 
     //JDA (java discord api)
-    //compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'c18bfd9'
+    compile group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '9457a7f'
 //    compile group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382'
-    compile files(new File("D:\\Maurice\\programming\\REPOS\\Sanduhr32\\JDA-3\\build\\libs\\JDA-3.7.1_DEV-withDependencies.jar"))
 
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.7'
