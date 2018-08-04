@@ -26,12 +26,12 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
+import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
@@ -186,7 +186,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             }
             User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
             final String message = String.format("Now playing: %s by %#s %s", title, user, (repeated ? "(repeated)" : ""));
-            MessageUtils.sendMsg(SkyBot.getInstance().getShardManager().getTextChannelById(guildMusicManager.latestChannel), message);
+            MessageUtils.sendMsg(GuildUtils.getTextChannelById(guildMusicManager.latestChannel), message);
         }
     }
 
@@ -194,13 +194,17 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            TextChannel tc = SkyBot.getInstance().getShardManager().getTextChannelById(guildMusicManager.latestChannel);
-            Guild g = tc.getGuild();
+            TextChannel tc = GuildUtils.getTextChannelById(guildMusicManager.latestChannel);
+            Guild g = (tc == null) ? null : tc.getGuild();
 
-            AudioTrackInfo info = track.getInfo();
-            final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
-                    g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
-            logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            try {
+                AudioTrackInfo info = track.getInfo();
+                @SuppressWarnings("ConstantConditions")
+                final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                        g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
+                logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            } catch (NullPointerException ignored) {
+            }
 
             Throwable rootCause = ExceptionUtils.getRootCause(exception);
             Throwable finalCause = rootCause != null ? rootCause : exception;

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -129,5 +130,12 @@ public class GuildUtils {
     public static int getMemberJoinPosition(Member member) {
         return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
                 .collect(Collectors.toList()).indexOf(member) + 1;
+    }
+
+    public static TextChannel getTextChannelById(long id) {
+        if (id == -1 || id == 0)
+            return null;
+
+        return SkyBot.getInstance().getShardManager().getTextChannelById(id);
     }
 }
