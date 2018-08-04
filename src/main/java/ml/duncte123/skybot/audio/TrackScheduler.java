@@ -26,7 +26,6 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
-import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
@@ -101,22 +100,23 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        @SuppressWarnings("UnnecessaryLocalVariable") AudioTrack lastTrack = track;
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");
             if (repeating) {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
-                    this.player.playTrack(lastTrack.makeClone());
-                    announceNextTrack(lastTrack, true);
+                    AudioTrack clone = track.makeClone();
+                    clone.setUserData(track.getUserData());
+                    this.player.playTrack(clone);
+                    announceNextTrack(track, true);
                 } else {
                     logger.debug("a playlist.....");
                     nextTrack();
                     //Offer it to the queue to prevent the player from playing it
-                    queue.offer(lastTrack.makeClone());
-
-                    MessageUtils.sendMsg(guildMusicManager.latestChannel, "Repeating the playlist");
+                    AudioTrack clone = track.makeClone();
+                    clone.setUserData(track.getUserData());
+                    queue.offer(clone);
                 }
             } else {
                 logger.debug("starting next track");
