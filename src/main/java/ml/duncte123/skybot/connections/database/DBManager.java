@@ -22,13 +22,15 @@ import ml.duncte123.skybot.utils.Variables;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DBManager {
 
     public final DBConnectionManager connManager;
-    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "SQL-thread"));
+    private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-thread"));
     /**
      * This is the database name
      */
@@ -85,15 +87,15 @@ public class DBManager {
         return connManager;
     }
 
-    public <T> ScheduledFuture<T> run(Callable<T> c) {
-        return service.schedule(c, 0L, TimeUnit.MILLISECONDS);
+    public <T> Future<T> run(Callable<T> c) {
+        return service.submit(c);
     }
 
-    public ScheduledFuture<?> run(Runnable r) {
-        return service.schedule(r, 0L, TimeUnit.MILLISECONDS);
+    public Future<?> run(Runnable r) {
+        return service.submit(r);
     }
 
-    public ScheduledExecutorService getService() {
+    public ExecutorService getService() {
         return service;
     }
 }

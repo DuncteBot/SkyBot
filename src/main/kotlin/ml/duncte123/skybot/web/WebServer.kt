@@ -30,6 +30,7 @@ import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
+import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
 import ml.duncte123.skybot.utils.Variables
 import ml.duncte123.skybot.utils.Variables.CONFIG
 import net.dv8tion.jda.core.Permission
@@ -228,16 +229,16 @@ class WebServer {
                 val newSettings = GuildSettingsUtils.getGuild(guild)
                         .setCustomPrefix(prefix)
                         .setServerDesc(serverDescription)
-                        .setWelcomeLeaveChannel(welcomeChannel)
+                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
                         .setCustomJoinMessage(welcomeMessage)
                         .setCustomLeaveMessage(leaveMessage)
                         .setEnableJoinMessage(welcomeLeaveEnabled)
-                        .setAutoroleRole(autorole)
-                        .setLogChannel(modLogChannel)
+                        .setAutoroleRole(toLong(autorole))
+                        .setLogChannel(toLong(modLogChannel))
                         .setAnnounceTracks(announceTracks)
                         .setAutoDeHoist(autoDeHoist)
                         .setFilterInvites(filterInvites)
-                        .setMuteRoleId(muteRole)
+                        .setMuteRoleId(toLong(muteRole))
                         .setKickState(kickMode)
                         .setRatelimits(rateLimits)
                         .setEnableSpamFilter(spamFilter)

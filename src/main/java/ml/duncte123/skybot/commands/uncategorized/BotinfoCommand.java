@@ -56,11 +56,12 @@ public class BotinfoCommand extends Command {
 
         User u = event.getJDA().getSelfUser();
 
-        String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
-                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
-                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
-        String cpu0 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getProcessCpuLoad());
-        String cpu2 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad());
+        OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        String OS = platformMXBean.getName() +
+                " " + platformMXBean.getArch() +
+                " " + platformMXBean.getVersion();
+        String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
+        String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
         long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
         long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;

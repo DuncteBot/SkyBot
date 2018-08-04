@@ -25,21 +25,21 @@ import ml.duncte123.skybot.Settings;
  */
 public class GuildSettings {
 
-    private final String guildId;
+    private final long guildId;
     private boolean enableJoinMessage = false;
     private boolean enableSwearFilter = false;
     private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
     private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
     private String customPrefix = Settings.PREFIX;
-    private String logChannel = null;
-    private String welcomeLeaveChannel = null;
-    private String autoroleRole = null;
+    private long logChannel = 0L;
+    private long welcomeLeaveChannel = 0L;
+    private long autoroleRole = 0L;
+    private long muteRoleId = 0L;
     private String serverDesc = "";
     private boolean announceTracks = false;
     private boolean autoDeHoist = false;
     private boolean filterInvites = false;
     private boolean enableSpamFilter = false;
-    private String muteRoleId = null;
     private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
     private boolean kickInstead = false;
 
@@ -48,7 +48,7 @@ public class GuildSettings {
      *
      * @param guildId the id of the guild that the settings are for
      */
-    public GuildSettings(String guildId) {
+    public GuildSettings(long guildId) {
         this.guildId = guildId;
     }
 
@@ -97,7 +97,7 @@ public class GuildSettings {
      *
      * @return The id of that guild as a String
      */
-    public String getGuildId() {
+    public long getGuildId() {
         return guildId;
     }
 
@@ -166,7 +166,7 @@ public class GuildSettings {
      *
      * @return the channel to log in
      */
-    public String getLogChannel() {
+    public long getLogChannel() {
         return logChannel;
     }
 
@@ -176,7 +176,7 @@ public class GuildSettings {
      * @param tc the channel to log
      * @return the current {@link GuildSettings}
      */
-    public GuildSettings setLogChannel(String tc) {
+    public GuildSettings setLogChannel(long tc) {
         this.logChannel = tc;
         return this;
     }
@@ -186,7 +186,7 @@ public class GuildSettings {
      *
      * @return the role id for the autorole feature
      */
-    public String getAutoroleRole() {
+    public long getAutoroleRole() {
         return autoroleRole;
     }
 
@@ -196,13 +196,13 @@ public class GuildSettings {
      * @param autoroleRole the role to set the autorole to
      * @return the current {@link GuildSettings}
      */
-    public GuildSettings setAutoroleRole(String autoroleRole) {
+    public GuildSettings setAutoroleRole(long autoroleRole) {
         this.autoroleRole = autoroleRole;
         return this;
     }
 
     public boolean isAutoroleEnabled() {
-        return this.autoroleRole != null && !this.autoroleRole.isEmpty();
+        return this.autoroleRole > 0;
     }
 
     /**
@@ -210,7 +210,7 @@ public class GuildSettings {
      *
      * @return the channel in where the welcome or leave messages should display
      */
-    public String getWelcomeLeaveChannel() {
+    public long getWelcomeLeaveChannel() {
         return welcomeLeaveChannel;
     }
 
@@ -220,7 +220,7 @@ public class GuildSettings {
      * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
      * @return the current {@link GuildSettings}
      */
-    public GuildSettings setWelcomeLeaveChannel(String welcomeLeaveChannel) {
+    public GuildSettings setWelcomeLeaveChannel(long welcomeLeaveChannel) {
         this.welcomeLeaveChannel = welcomeLeaveChannel;
         return this;
     }
@@ -312,11 +312,11 @@ public class GuildSettings {
         return this;
     }
 
-    public String getMuteRoleId() {
+    public long getMuteRoleId() {
         return muteRoleId;
     }
 
-    public GuildSettings setMuteRoleId(String muteRoleId) {
+    public GuildSettings setMuteRoleId(long muteRoleId) {
         this.muteRoleId = muteRoleId;
         return this;
     }

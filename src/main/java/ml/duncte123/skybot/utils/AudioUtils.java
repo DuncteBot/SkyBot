@@ -167,7 +167,7 @@ public class AudioUtils {
                         title = stream.get().getName();
                 }
 
-                track.setUserData(new TrackUserData(requester));
+                track.setUserData(new TrackUserData(requester.getIdLong()));
 
                 mng.scheduler.queue(track);
 
@@ -187,7 +187,7 @@ public class AudioUtils {
                 List<AudioTrack> tracks = new ArrayList<>();
 
                 for (final AudioTrack track : playlist.getTracks()) {
-                    track.setUserData(new TrackUserData(requester));
+                    track.setUserData(new TrackUserData(requester.getIdLong()));
                     tracks.add(track);
                 }
 

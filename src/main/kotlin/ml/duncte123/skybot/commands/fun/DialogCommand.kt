@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import org.apache.commons.text.WordUtils
 
@@ -54,7 +53,8 @@ class DialogCommand : Command() {
                 .append("║  └─────────┘  └────────┘  ║\n")
                 .append("╚═══════════════════════════╝\n")
                 .append("```")
-        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
+//        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
+        MessageUtils.sendMsg(ctx.event, sb.toString())
     }
 
     override fun help() = "Gives you a nice dialog\n" +

@@ -80,6 +80,15 @@ class OneLinerCommands : Command() {
                     sendMsg(event, "https:" + it.select("#comic img").attr("src"))
                 }
             }
+
+            "reverse" -> {
+                if(args.isEmpty()) {
+                    sendMsg(event, "Missing arguments")
+                    return
+                }
+                sendMsg(event, ctx.rawArgs.reversed())
+            }
+
             else -> println("Invoke was invalid: ${ctx.invoke}")
         }
     }
@@ -192,6 +201,9 @@ class OneLinerCommands : Command() {
             "xkcd" -> """Get a random comic from xkcd.com
                 |Usage: `$PREFIX$invoke`
             """.trimMargin()
+            "reverse" -> """Reverses a string
+                |Usage: `$PREFIX$invoke <text>`
+            """.trimMargin()
             else -> "invalid invoke"
         }
     }
@@ -208,10 +220,11 @@ class OneLinerCommands : Command() {
             |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
             |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
             |`${PREFIX}xkcd` => Get a random comic from xkcd.com
+            |`${PREFIX}reverse <text>` => reverses a string
     """.trimMargin()
 
     override fun getName() = "ping"
 
     override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-            "insta", "donate", "insta", "xkcd")
+            "insta", "donate", "insta", "xkcd", "reverse")
 }

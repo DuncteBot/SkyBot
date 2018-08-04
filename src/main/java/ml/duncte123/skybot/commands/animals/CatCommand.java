@@ -48,7 +48,7 @@ public class CatCommand extends Command {
                     String file = json.getString("file"),
                             ext = FilenameUtils.getExtension(file);
                     try {
-                        event.getChannel().sendFile(new URL(file).openStream(),
+                        ctx.getChannel().sendFile(new URL(file).openStream(),
                                 "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
                     } catch (IOException e) {
                         MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));

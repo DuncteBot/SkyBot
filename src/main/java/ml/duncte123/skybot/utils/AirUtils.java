@@ -196,6 +196,10 @@ public class AirUtils {
         Variables.DATABASE.getService().shutdown();
     }
 
+    public static TextChannel getLogChannel(long channel, Guild g) {
+        return getLogChannel(String.valueOf(channel), g);
+    }
+
     /**
      * This gets the channel from a name or id
      *

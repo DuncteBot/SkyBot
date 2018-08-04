@@ -129,17 +129,18 @@ class EvalCommand : Command() {
 
             engine.put("commandManager", Variables.COMMAND_MANAGER)
 
-            engine.put("message", event.message)
-            engine.put("channel", event.message.textChannel)
-            engine.put("guild", event.guild)
-            engine.put("member", event.member)
-            engine.put("author", event.author)
-            engine.put("jda", event.jda)
-            engine.put("shardManager", event.jda.asBot().shardManager)
+            engine.put("message", ctx.message)
+            engine.put("channel", ctx.message.textChannel)
+            engine.put("guild", ctx.guild)
+            engine.put("member", ctx.member)
+            engine.put("author", ctx.author)
+            engine.put("jda", ctx.jda)
+            engine.put("shardManager", ctx.jda.asBot().shardManager)
             engine.put("event", event)
 
             engine.put("skraa", script)
             engine.put("args", ctx.args)
+            engine.put("ctx", ctx)
 
             @SinceSkybot("3.58.0")
             launch(start = CoroutineStart.ATOMIC) {
