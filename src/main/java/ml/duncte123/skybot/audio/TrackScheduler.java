@@ -173,7 +173,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track, boolean repeated) {
-        if (guildMusicManager.guildSettings.isAnnounceTracks()) {
+        if (guildMusicManager.isAnnounceTracks()) {
             String title = track.getInfo().title;
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {

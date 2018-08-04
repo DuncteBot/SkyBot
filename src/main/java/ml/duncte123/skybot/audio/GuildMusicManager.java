@@ -35,7 +35,7 @@ public class GuildMusicManager {
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
-    final GuildSettings guildSettings;
+    private final boolean announceTracks;
     /**
      * This is what actually sends the audio
      */
@@ -55,7 +55,7 @@ public class GuildMusicManager {
         scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
-        this.guildSettings = GuildSettingsUtils.getGuild(g);
+        this.announceTracks = GuildSettingsUtils.getGuild(g).isAnnounceTracks();
     }
 
     /**
@@ -65,5 +65,9 @@ public class GuildMusicManager {
      */
     public AudioPlayerSenderHandler getSendHandler() {
         return sendHandler;
+    }
+
+    boolean isAnnounceTracks() {
+        return announceTracks;
     }
 }
