@@ -128,7 +128,7 @@ public abstract class MusicCommand extends Command {
             }
             return false;
         }
-        getMusicManager(event.getGuild()).latestChannel = event.getChannel();
+        getMusicManager(event.getGuild()).latestChannel = event.getChannel().getIdLong();
         return true;
     }
 

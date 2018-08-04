@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
@@ -34,6 +35,7 @@ import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
@@ -184,7 +186,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             }
             User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
             final String message = String.format("Now playing: %s by %#s %s", title, user, (repeated ? "(repeated)" : ""));
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, message);
+            MessageUtils.sendMsg(SkyBot.getInstance().getShardManager().getTextChannelById(guildMusicManager.latestChannel), message);
         }
     }
 
@@ -192,7 +194,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            Guild g = guildMusicManager.latestChannel.getGuild();
+            TextChannel tc = SkyBot.getInstance().getShardManager().getTextChannelById(guildMusicManager.latestChannel);
+            Guild g = tc.getGuild();
 
             AudioTrackInfo info = track.getInfo();
             final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
@@ -201,7 +204,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
             Throwable rootCause = ExceptionUtils.getRootCause(exception);
             Throwable finalCause = rootCause != null ? rootCause : exception;
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+            MessageUtils.sendMsg(tc, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
                     "Details: " + finalCause);
         }
     }
