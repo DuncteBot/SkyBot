@@ -56,7 +56,7 @@ public class CommandManager {
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-    private final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
 
     /**
      * This makes sure that all the commands are added

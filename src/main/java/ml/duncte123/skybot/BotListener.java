@@ -104,6 +104,16 @@ public class BotListener extends ListenerAdapter {
 
     private int shardsReady = 0;
 
+    /*@Override
+    public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
+        ReactionEmote emote = event.getReactionEmote();
+        if(emote.isEmote()) {
+            if(emote.getIdLong() == 334221955911647234L) {
+                event.getGuild().getController().ban(event.getUser(), 0).reason("testing for minn").queue();
+            }
+        }
+    }*/
+
     @Override
     public void onShutdown(ShutdownEvent event) {
         MusicCommand.shutdown();
@@ -122,6 +132,7 @@ public class BotListener extends ListenerAdapter {
         }
 
         AirUtils.stop();
+        Variables.COMMAND_MANAGER.commandThread.shutdown();
 
         /*
          * Only shut down if we are not updating
