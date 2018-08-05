@@ -535,11 +535,14 @@ public class BotListener extends ListenerAdapter {
             return "NOPE";
 
         Guild guild = event.getGuild();
-        long autoRoleId = GuildSettingsUtils.getGuild(guild).getAutoroleRole();
+        GuildSettings s = GuildSettingsUtils.getGuild(guild);
+        long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
+        long autoRoleId = s.getAutoroleRole();
 
         message = CustomCommandUtils.PARSER.clear()
                 .put("user", event.getUser())
                 .put("guild", event.getGuild())
+                .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
                 .put("args", "")
                 .parse(message);
 

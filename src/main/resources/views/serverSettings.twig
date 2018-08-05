@@ -32,7 +32,7 @@
                             onchange="checkSelect(this.id, 'welcomeChannelCB');">
                         <option value="" selected disabled>Select a channel</option>
                         {% for textChannel in goodChannels %}
-                            {% if settings.getWelcomeLeaveChannel() == textChannel.getId() %}
+                            {% if settings.getWelcomeLeaveChannel() == textChannel.getIdLong() %}
                                 <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
@@ -58,7 +58,7 @@
                     <select id="autoRoleRole" name="autoRoleRole" onchange="checkSelect(this.id, 'autoRoleRoleCB');">
                         <option value="" selected disabled>Select a role</option>
                         {% for role in goodRoles %}
-                            {% if settings.getAutoroleRole() == role.getId() %}
+                            {% if settings.getAutoroleRole() == role.getIdLong() %}
                                 <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
                             {% else %}
                                 <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
@@ -85,7 +85,7 @@
                     <select id="modChannel" name="modChannel">
                         <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
-                            {% if settings.getLogChannel() == textChannel.getId() %}
+                            {% if settings.getLogChannel() == textChannel.getIdLong() %}
                                 <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
@@ -180,7 +180,7 @@
                     <select id="muteRole" name="muteRole" {#onchange="checkSelect(this.id, 'autoRoleRoleCB');"#}>
                         <option value="" selected disabled>Select a role</option>
                         {% for role in goodRoles %}
-                            {% if settings.getMuteRoleId() == role.getId() %}
+                            {% if settings.getMuteRoleId() == role.getIdLong() %}
                                 <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
                             {% else %}
                                 <option value="{{ role.getId() }}">@{{ role.getName() }}</option>

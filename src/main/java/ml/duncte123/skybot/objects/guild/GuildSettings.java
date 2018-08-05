@@ -28,8 +28,8 @@ public class GuildSettings {
     private final long guildId;
     private boolean enableJoinMessage = false;
     private boolean enableSwearFilter = false;
-    private String customJoinMessage = "Welcome {{USER_MENTION}}, to the official **{{GUILD_NAME}}** guild.";
-    private String customLeaveMessage = "**{{USER_NAME}}** has left **{{GUILD_NAME}}** :worried:";
+    private String customJoinMessage = "Welcome {atuser}, to the official **{server}** guild.";
+    private String customLeaveMessage = "**{user}** has left **{server}** :worried:";
     private String customPrefix = Settings.PREFIX;
     private long logChannel = 0L;
     private long welcomeLeaveChannel = 0L;
@@ -296,7 +296,7 @@ public class GuildSettings {
 
     /**
      * @param filterInvites Sets if we should filter out invites in messages
-     * @return
+     * @return the current settings for chaining
      */
     public GuildSettings setFilterInvites(boolean filterInvites) {
         this.filterInvites = filterInvites;
