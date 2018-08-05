@@ -29,4 +29,6 @@ class DunctebotGuild (private val guild: Guild) : Guild by guild {
     fun setSettings(settings: GuildSettings) {
         GuildSettingsUtils.updateGuildSettings(this.guild, settings)
     }
+
+    override fun toString() = "G:${this.guild.name} (${this.guild.id}"
 }

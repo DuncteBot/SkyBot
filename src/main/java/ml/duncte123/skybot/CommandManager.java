@@ -39,6 +39,8 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -54,6 +56,7 @@ public class CommandManager {
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
+    private final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
 
     /**
      * This makes sure that all the commands are added
@@ -279,38 +282,40 @@ public class CommandManager {
     }
 
     public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
-        if (cmd != null) {
-            try {
-                if (!cmd.isCustom()) {
-                    cmd.executeCommand(
-                            new CommandContext(invoke, args, event)
-                    );
-                } else {
+        commandThread.submit(() -> {
+            if (cmd != null) {
+                try {
+                    if (!cmd.isCustom()) {
+                        cmd.executeCommand(
+                                new CommandContext(invoke, args, event)
+                        );
+                    } else {
 
-                    CustomCommand cc = (CustomCommand) cmd;
+                        CustomCommand cc = (CustomCommand) cmd;
 
-                    if (!cc.getGuildId().equals(event.getGuild().getId()))
-                        return;
+                        if (!cc.getGuildId().equals(event.getGuild().getId()))
+                            return;
 
-                    try {
-                        String message = CustomCommandUtils.PARSER.clear()
-                                .put("user", event.getAuthor())
-                                .put("channel", event.getChannel())
-                                .put("guild", event.getGuild())
-                                .put("args", StringUtils.join(args, " "))
-                                .parse(cc.getMessage());
+                        try {
+                            String message = CustomCommandUtils.PARSER.clear()
+                                    .put("user", event.getAuthor())
+                                    .put("channel", event.getChannel())
+                                    .put("guild", event.getGuild())
+                                    .put("args", StringUtils.join(args, " "))
+                                    .parse(cc.getMessage());
 
-                        sendMsg(event, "\u200B" + message);
-                        CustomCommandUtils.PARSER.clear();
-                    } catch (Exception e) {
-                        sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-                        execCheck(e);
+                            sendMsg(event, "\u200B" + message);
+                            CustomCommandUtils.PARSER.clear();
+                        } catch (Exception e) {
+                            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+                            execCheck(e);
+                        }
                     }
+                } catch (Throwable ex) {
+                    execCheck(ex);
                 }
-            } catch (Throwable ex) {
-                execCheck(ex);
             }
-        }
+        });
     }
 
     private void registerCommandsFromReflection(Reflections reflections) {

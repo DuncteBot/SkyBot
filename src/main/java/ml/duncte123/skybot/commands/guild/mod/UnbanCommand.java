@@ -25,6 +25,7 @@ import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
@@ -55,10 +56,11 @@ public class UnbanCommand extends Command {
         try {
             event.getGuild().getBanList().queue(list -> {
                 for (Guild.Ban ban : list) {
-                    if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
-                        event.getGuild().getController().unban(ban.getUser())
+                    User user = ban.getUser();
+                    if (user.getName().equalsIgnoreCase(StringUtils.join(args, " ")) || user.getId().equals(args.get(0))) {
+                        event.getGuild().getController().unban(user)
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
-                        MessageUtils.sendMsg(event, "User " + ban.getUser().getName() + " unbanned.");
+                        MessageUtils.sendMsg(event, "User " + user.getName() + " unbanned.");
                         ModerationUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", event.getGuild());
                         return;
                     }
