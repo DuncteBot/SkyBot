@@ -46,7 +46,7 @@ class JoinCommand : MusicCommand() {
         val mng = getMusicManager(guild)
         mng.latestChannel = event.channel.idLong
 
-        if (hasCoolDown(guild) && !isOwner(event)) {
+        if (hasCoolDown(guild) && !isPatron(ctx.author, null)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)

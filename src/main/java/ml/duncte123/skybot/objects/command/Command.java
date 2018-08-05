@@ -107,7 +107,7 @@ public abstract class Command implements ICommand {
      * @param tc the channel to send the message to, if the text channel is null it wont send a message
      * @return true if the user is a patron
      */
-    private boolean isPatron(User u, TextChannel tc) {
+    protected boolean isPatron(User u, TextChannel tc) {
         //noinspection deprecation
         if (isDev(u)) {
             return true;
