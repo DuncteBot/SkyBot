@@ -89,7 +89,7 @@ public class HackbanCommand extends Command {
         }
 
         sendMsg(event, String.join("\n", messages));
-
+        messages.clear();
     }
 
     @Override

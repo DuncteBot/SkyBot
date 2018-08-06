@@ -330,8 +330,7 @@ public class GuildSettingsUtils {
     public static long toLong(String s) {
         try {
             return Long.parseUnsignedLong(s);
-        }
-        catch (NumberFormatException ignored) {
+        } catch (NumberFormatException ignored) {
             return 0L;
         }
     }

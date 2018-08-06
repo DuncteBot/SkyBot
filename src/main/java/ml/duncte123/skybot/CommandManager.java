@@ -50,13 +50,13 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
 
+    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
     /**
      * This stores all our commands
      */
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
 
     /**
      * This makes sure that all the commands are added

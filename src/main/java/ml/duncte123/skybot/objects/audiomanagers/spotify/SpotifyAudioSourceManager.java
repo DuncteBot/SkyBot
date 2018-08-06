@@ -74,7 +74,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         String clientId = Variables.CONFIG.getString("apis.spotify.clientId", defaultValue);
         String clientSecret = Variables.CONFIG.getString("apis.spotify.clientSecret", defaultValue);
         String youtubeApiKey = Variables.CONFIG.getString("apis.googl");
-        if (clientId == null || clientSecret == null || clientId.equals(defaultValue) || clientId.equals(defaultValue)
+        if (clientId == null || clientSecret == null || clientId.equals(defaultValue) || clientSecret.equals(defaultValue)
                 || youtubeApiKey.isEmpty()) {
             logger.error("Could not load Spotify keys\n" + defaultValue);
             this.spotifyApi = null;
@@ -121,7 +121,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Album album = albumFuture.get();
 
                     for (TrackSimplified t : album.getTracks().getItems()) {
-                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " - " + t.getName());
+                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName());
                         playList.addAll(doThingWithPlaylist(results));
                     }
 
@@ -164,7 +164,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
                     final Track track = trackFuture.get();
 
-                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " - " + track.getName());
+                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName());
 
                     Video v = getVideoById(results.get(0).getId().getVideoId());
                     return audioTrackFromVideo(v);

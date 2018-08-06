@@ -97,7 +97,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Gets run when a track ends
      *
      * @param player    The {@link AudioPlayer AudioTrack} for that guild
-     * @param lastTrack     The {@link AudioTrack AudioTrack} that ended
+     * @param lastTrack The {@link AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
@@ -199,8 +199,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
             try {
                 AudioTrackInfo info = track.getInfo();
-                @SuppressWarnings("ConstantConditions")
-                final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                @SuppressWarnings("ConstantConditions") final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
                         g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
             } catch (NullPointerException ignored) {

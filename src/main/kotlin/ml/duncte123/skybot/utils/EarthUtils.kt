@@ -160,7 +160,7 @@ class EarthUtils {
         fun audioJSON(): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
             for ((key, value) in AudioUtils.ins.musicManagers.entries) {
-                json.put(key, JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
+                json.put(key.toString(), JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
             }
             return json
         }

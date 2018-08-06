@@ -69,7 +69,7 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    protected final Map<String, GuildMusicManager> musicManagers;
+    protected final Map<Long, GuildMusicManager> musicManagers;
 
     /**
      * This will set everything up and get the player ready
@@ -253,7 +253,7 @@ public class AudioUtils {
     }
 
     public GuildMusicManager getMusicManager(Guild guild, boolean createIfNull) {
-        String guildId = guild.getId();
+        long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
             synchronized (musicManagers) {
@@ -268,7 +268,7 @@ public class AudioUtils {
         return mng;
     }
 
-    public Map<String, GuildMusicManager> getMusicManagers() {
+    public Map<Long, GuildMusicManager> getMusicManagers() {
         return musicManagers;
     }
 }

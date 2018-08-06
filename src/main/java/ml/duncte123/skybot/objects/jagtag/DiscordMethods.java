@@ -40,14 +40,14 @@ public class DiscordMethods {
                 new Method("user", (env) -> {
                     User u = env.get("user");
                     return u.getName();
-                }, (env,in) -> {
-                    if(in[0].equals(""))
+                }, (env, in) -> {
+                    if (in[0].equals(""))
                         return "";
                     List<Member> members = null;
                     Guild g = env.get("guild");
-                    if(g!=null)
+                    if (g != null)
                         members = FinderUtil.findMembers(in[0], g);
-                    if(members == null || members.isEmpty())
+                    if (members == null || members.isEmpty())
                         throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
                     return members.get(0).getUser().getName();
                 }),
@@ -56,14 +56,14 @@ public class DiscordMethods {
                     User u = env.get("user");
                     Guild g = env.get("guild");
                     return g.getMember(u).getEffectiveName();
-                }, (env,in) -> {
-                    if(in[0].equals(""))
+                }, (env, in) -> {
+                    if (in[0].equals(""))
                         return "";
                     List<Member> members = null;
                     Guild g = env.get("guild");
-                    if(g!=null)
+                    if (g != null)
                         members = FinderUtil.findMembers(in[0], g);
-                    if(members == null || members.isEmpty())
+                    if (members == null || members.isEmpty())
                         throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
                     return members.get(0).getEffectiveName();
                 }),
@@ -71,14 +71,14 @@ public class DiscordMethods {
                 new Method("discrim", (env) -> {
                     User u = env.get("user");
                     return u.getDiscriminator();
-                }, (env,in) -> {
-                    if(in[0].equals(""))
+                }, (env, in) -> {
+                    if (in[0].equals(""))
                         return "";
                     List<Member> members = null;
                     Guild g = env.get("guild");
-                    if(g!=null)
+                    if (g != null)
                         members = FinderUtil.findMembers(in[0], g);
-                    if(members == null || members.isEmpty())
+                    if (members == null || members.isEmpty())
                         throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
                     return members.get(0).getUser().getDiscriminator();
                 }),
@@ -86,14 +86,14 @@ public class DiscordMethods {
                 new Method("avatar", (env) -> {
                     User u = env.get("user");
                     return u.getEffectiveAvatarUrl() + "?size=2048";
-                }, (env,in) -> {
-                    if(in[0].equals(""))
+                }, (env, in) -> {
+                    if (in[0].equals(""))
                         return "";
                     List<Member> members = null;
                     Guild g = env.get("guild");
-                    if(g!=null)
+                    if (g != null)
                         members = FinderUtil.findMembers(in[0], g);
-                    if(members == null || members.isEmpty())
+                    if (members == null || members.isEmpty())
                         throw new ParseException(String.format("Your input `%s` returned no members", in[0]));
                     return members.get(0).getUser().getEffectiveAvatarUrl() + "?size=2048";
                 }),
@@ -102,8 +102,7 @@ public class DiscordMethods {
                     long id;
                     try {
                         id = Long.parseUnsignedLong(in[0]);
-                    }
-                    catch (NumberFormatException ignored) {
+                    } catch (NumberFormatException ignored) {
                         throw new ParseException(String.format("Your input `%s` is not a valid long", in[0]));
                     }
                     return MiscUtil.getCreationTime(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);

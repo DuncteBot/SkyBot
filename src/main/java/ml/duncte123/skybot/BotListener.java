@@ -49,7 +49,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -61,7 +60,7 @@ import java.util.stream.Collectors;
 
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("discord(?:app\\.com/invite|\\.gg)/([\\S\\w]*\\b)");
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(\\/\\/)?(discordapp|discord).(gg|io|me|com)\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!-/]))?");
     /**
      * Check if we are updating
      */
@@ -92,7 +91,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This is used to check if we should trigger a update for the guild count when we leave a guild
      */
-    private final HashMap<String, String> badGuilds = new HashMap<>();
+    private final List<Long> botLists = new ArrayList<>();
     /**
      * This tells us if the {@link #systemPool} is running
      */
@@ -102,50 +101,58 @@ public class BotListener extends ListenerAdapter {
      */
     private boolean isCacheCleanerActive = false;
 
-    private int shardsReady = 0;
-
-    /*@Override
-    public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
-        ReactionEmote emote = event.getReactionEmote();
-        if(emote.isEmote()) {
-            if(emote.getIdLong() == 334221955911647234L) {
-                event.getGuild().getController().ban(event.getUser(), 0).reason("testing for minn").queue();
-            }
-        }
-    }*/
+    private short shardsReady = 0;
 
     @Override
-    public void onShutdown(ShutdownEvent event) {
-        MusicCommand.shutdown();
+    public void onReady(ReadyEvent event) {
+        logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
 
-        //Kill other things
-        //((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
-        if (unbanTimerRunning && isCacheCleanerActive)
-            this.systemPool.shutdown();
-
-        //clear the userinfo folder on shutdown as well
-        String imgDir = ((UserinfoCommand) Variables.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
-        try {
-            FileUtils.cleanDirectory(new File(imgDir));
-        } catch (IOException e) {
-            e.printStackTrace();
+        //Start the timers if they have not been started yet
+        if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
+            logger.info("Starting the unban timer.");
+            //Register the timer for the auto unbans
+            systemPool.scheduleAtFixedRate(ModerationUtils::checkUnbans, 5, 5, TimeUnit.MINUTES);
+            unbanTimerRunning = true;
         }
 
-        AirUtils.stop();
-        Variables.COMMAND_MANAGER.commandThread.shutdown();
+        if (!isCacheCleanerActive) {
+            logger.info("Starting spam-cache-cleaner!");
+            systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
+            isCacheCleanerActive = true;
+        }
 
-        /*
-         * Only shut down if we are not updating
-         */
-        if (!isUpdating)
-            System.exit(0);
+        shardsReady++;
+        ShardManager manager = event.getJDA().asBot().getShardManager();
+        if (shardsReady == manager.getShardsTotal()) {
+
+            logger.info("Collecting patrons");
+            Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+            List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+                    .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
+            Command.patrons.addAll(patrons);
+
+            logger.info("Found {} normal patrons", patrons.size());
+
+            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
+                    .stream().map(Member::getUser).collect(Collectors.toList());
+
+            List<Long> patronGuilds = new ArrayList<>();
+
+            guildPatrons.forEach((patron) -> {
+                List<Long> guilds = manager.getMutualGuilds(patron).stream()
+                        .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
+                                it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
+                        .map(Guild::getIdLong)
+                        .collect(Collectors.toList());
+
+                patronGuilds.addAll(guilds);
+            });
+            Command.guildPatrons.addAll(patronGuilds);
+
+            logger.info("Found {} guild patrons", patronGuilds.size());
+        }
     }
 
-    /**
-     * Listen for messages send to the bot
-     *
-     * @param event The corresponding {@link GuildMessageReceivedEvent}
-     */
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
         //We only want to respond to members/users
@@ -197,10 +204,7 @@ public class BotListener extends ListenerAdapter {
                     }
                 }*/);
                 }
-            }/* else {
-                MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
-                        "Grant the permission `MANAGE_SERVER` for me.");
-            }*/
+            }
 
             if (settings.isEnableSwearFilter()) {
                 Message messageToCheck = event.getMessage();
@@ -255,7 +259,7 @@ public class BotListener extends ListenerAdapter {
                             return;
                         }
                     } else {
-                        if (isaBoolean(settings, rw, s))
+                        if (startsWithPrefix(settings, rw, s))
                             return;
                     }
                 } else {
@@ -264,7 +268,7 @@ public class BotListener extends ListenerAdapter {
                             return;
                         }
                     } else {
-                        if (isaBoolean(settings, rw, s))
+                        if (startsWithPrefix(settings, rw, s))
                             return;
                     }
                 }
@@ -286,81 +290,6 @@ public class BotListener extends ListenerAdapter {
         Variables.COMMAND_MANAGER.runCommand(event);
     }
 
-    /*
-     * Needs a better name
-     */
-    private boolean isaBoolean(GuildSettings settings, String rw, String s) {
-        return s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
-    }
-
-    private boolean shouldBlockCommand(String rw, String s) {
-        return Variables.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                .contains(Variables.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
-    }
-
-    /**
-     * When the bot is ready to go
-     *
-     * @param event The corresponding {@link ReadyEvent}
-     */
-    @Override
-    public void onReady(ReadyEvent event) {
-        logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
-
-        //Start the timers if they have not been started yet
-        if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
-            logger.info("Starting the unban timer.");
-            //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(ModerationUtils::checkUnbans, 5, 5, TimeUnit.MINUTES);
-            unbanTimerRunning = true;
-        }
-
-        if (!isCacheCleanerActive) {
-            logger.info("Starting spam-cache-cleaner!");
-            systemPool.scheduleAtFixedRate(spamFilter::clearMessages, 20, 13, TimeUnit.SECONDS);
-            isCacheCleanerActive = true;
-        }
-
-        shardsReady++;
-        ShardManager manager = event.getJDA().asBot().getShardManager();
-        if (shardsReady == manager.getShardsTotal()) {
-
-            logger.info("Collecting patrons");
-            Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-            List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
-                    .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
-            Command.patrons.addAll(patrons);
-
-            logger.info("Found {} normal patrons", patrons.size());
-
-            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
-                    .stream().map(Member::getUser).collect(Collectors.toList());
-
-            List<Long> patronGuilds = new ArrayList<>();
-
-            guildPatrons.forEach((patron) -> {
-                List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                        .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
-                                it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
-                        .map(Guild::getIdLong)
-                        .collect(Collectors.toList());
-
-                patronGuilds.addAll(guilds);
-            });
-            Command.guildPatrons.addAll(patronGuilds);
-
-            logger.info("Found {} guild patrons", patronGuilds.size());
-        }
-    }
-
-    /**
-     * This will fire when a new member joins
-     *
-     * @param event The corresponding {@link GuildMemberJoinEvent}
-     */
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Guild guild = event.getGuild();
@@ -412,11 +341,6 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * This will fire when the bot joins a guild and we check if we are allowed to join this guild
-     *
-     * @param event The corresponding {@link GuildJoinEvent}
-     */
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         Guild guild = event.getGuild();
@@ -434,35 +358,45 @@ public class BotListener extends ListenerAdapter {
                     message -> message.getGuild().leave().queue(),
                     er -> guild.leave().queue()
             );
-            logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
+            /*logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
                     guild.getName(),
                     counts[0],
-                    counts[1]) + TextColor.RESET);
-            badGuilds.put(guild.getId(), "BAD BOI");
+                    counts[1]) + TextColor.RESET);*/
+            logger.info("{}Joining guild: {}, and leaving it after. BOT ALTER ({}/{}){}",
+                    TextColor.RED,
+                    guild.getName(),
+                    counts[0],
+                    counts[1],
+                    TextColor.RESET
+            );
+            botLists.add(guild.getIdLong());
             return;
         }
-        String message = String.format("Joining guild %s, ID: %s on shard %s.", guild.getName(), guild.getId(), guild.getJDA().getShardInfo()
+        /*String message = String.format("Joining guild %s, ID: %s on shard %s.", guild.getName(), guild.getId(), guild.getJDA().getShardInfo()
                 .getShardId());
-        logger.info(TextColor.GREEN + message + TextColor.RESET);
+        logger.info(TextColor.GREEN + message + TextColor.RESET);*/
+
+        logger.info("{}Joining guild {}, ID: {} on shard {}{}",
+                TextColor.GREEN,
+                guild.getName(),
+                guild.getId(),
+                guild.getJDA().getShardInfo().getShardId(),
+                TextColor.RESET
+        );
         GuildSettingsUtils.registerNewGuild(guild);
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         Guild guild = event.getGuild();
-        if (!badGuilds.containsKey(guild.getId())) {
+        if (!botLists.contains(guild.getIdLong())) {
             logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
             GuildSettingsUtils.deleteGuild(guild);
         } else {
-            badGuilds.remove(guild.getId());
+            botLists.remove(guild.getIdLong());
         }
     }
 
-    /**
-     * This will fire when a member leaves a channel in a guild, we check if the channel is empty and if it is we leave it
-     *
-     * @param event {@link GuildVoiceLeaveEvent}
-     */
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         Guild guild = event.getGuild();
@@ -478,11 +412,6 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    /**
-     * This will fire when a member moves from channel, if a member moves we will check if our channel is empty
-     *
-     * @param event {@link GuildVoiceMoveEvent}
-     */
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         Guild guild = event.getGuild();
@@ -501,6 +430,48 @@ public class BotListener extends ListenerAdapter {
             }
         } catch (NullPointerException ignored) {
         }
+    }
+
+    @Override
+    public void onShutdown(ShutdownEvent event) {
+        MusicCommand.shutdown();
+
+        //Kill other things
+        //((EvalCommand) AirUtils.COMMAND_MANAGER.getCommand("eval")).shutdown();
+        if (unbanTimerRunning && isCacheCleanerActive)
+            this.systemPool.shutdown();
+
+        //clear the userinfo folder on shutdown as well
+        String imgDir = ((UserinfoCommand) Variables.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
+        try {
+            FileUtils.cleanDirectory(new File(imgDir));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        AirUtils.stop();
+        Variables.COMMAND_MANAGER.commandThread.shutdown();
+
+        /*
+         * Only shut down if we are not updating
+         */
+        if (!isUpdating)
+            System.exit(0);
+    }
+
+    /*
+     * Needs a better name
+     */
+    private boolean startsWithPrefix(GuildSettings settings, String rw, String s) {
+        return s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+    }
+
+    private boolean shouldBlockCommand(String rw, String s) {
+        return Variables.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                .contains(Variables.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
     }
 
     /**
@@ -524,7 +495,7 @@ public class BotListener extends ListenerAdapter {
             MessageUtils.sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {
                 LavalinkManager.ins.closeConnection(g);
-                AudioUtils.ins.getMusicManagers().remove(g.getId());
+                AudioUtils.ins.getMusicManagers().remove(g.getIdLong());
             }
         }
     }
