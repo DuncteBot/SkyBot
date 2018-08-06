@@ -28,6 +28,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -68,15 +69,18 @@ public class BotinfoCommand extends Command {
         long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
         Time uptimeTime = new Time(uptimeLong - 3600000);
 
+        String duncte = getDev(event, 191231307290771456L, "duncte123 (duncte123#1245)");
+        String sanduhr = getDev(event, 198137282018934784L, "Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)");
+        String ramid = getDev(event, 281673659834302464L, "ramidzkh (ramidzkh#4814)");
 
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
-                        "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
+                        duncte + ", " + ramid + " and " + sanduhr + ".\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                        "\n[**Support server**](https://discord.gg/NKM9Xtk) \u2022 [**Website**](https://bot.duncte123.me) \u2022 " +
-                        "[**Invite me**](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)" +
+                        "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
+                        "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
                         "\n\u200B", true)
                 .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.VERSION + "\n"
@@ -108,6 +112,16 @@ public class BotinfoCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"about", "info", "support"};
+    }
+
+    private String getDev(GuildMessageReceivedEvent event, long id, String defaultM) {
+        Member m = event.getGuild().getMemberById(id);
+
+        if(m != null) {
+            return m.getAsMention();
+        }
+
+        return defaultM;
     }
 
 }

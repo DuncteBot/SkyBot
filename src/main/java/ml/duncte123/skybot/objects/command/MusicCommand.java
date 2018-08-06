@@ -112,6 +112,12 @@ public abstract class MusicCommand extends Command {
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event, boolean reply) {
+
+        if(!event.getMember().getVoiceState().inVoiceChannel()) {
+            sendMsg(event, "Please join a voice channel first");
+            return false;
+        }
+
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply) {

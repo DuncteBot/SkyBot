@@ -78,9 +78,9 @@ public class LavalinkManager {
         return Variables.CONFIG.getBoolean("lavalink.enable", false);
     }
 
-    public IPlayer createPlayer(String guildId) {
+    public IPlayer createPlayer(long guildId) {
         return isEnabled()
-                ? lavalink.getLink(guildId).getPlayer()
+                ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
                 : new LavaplayerPlayerWrapper(AudioUtils.ins.getPlayerManager().createPlayer());
     }
 

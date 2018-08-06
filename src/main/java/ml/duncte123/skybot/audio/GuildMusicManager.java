@@ -49,7 +49,7 @@ public class GuildMusicManager {
      * @param g The guild that we wannt the manager for
      */
     public GuildMusicManager(Guild g) {
-        player = LavalinkManager.ins.createPlayer(g.getId());
+        player = LavalinkManager.ins.createPlayer(g.getIdLong());
         scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
