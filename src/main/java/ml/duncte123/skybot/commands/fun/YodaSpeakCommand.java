@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtils.EncodingType;
+import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -46,11 +47,13 @@ public class YodaSpeakCommand extends Command {
             return;
         }
 
+        QueryBuilder builder = new QueryBuilder()
+                .append("https://apis.duncte123.me/yoda")
+                .append("sentence", StringUtils.join(args, "+"))
+                .append("token", event.getJDA().getToken());
+
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .url("https://apis.duncte123.me/yoda?sentence=" + StringUtils.join(args, "+"))
-//                .url("http://localhost/yoda?sentence=" + StringUtils.join(args, "+"))
-                .addHeader("X-user-id", event.getJDA().getSelfUser().getId())
-                .addHeader("X-client-token", event.getJDA().getToken())
+                .url(builder.build())
                 .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
                 .build(), Response::body).async(
                 (body) -> {
