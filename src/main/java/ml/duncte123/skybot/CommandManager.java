@@ -41,6 +41,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 public class CommandManager {
 
     public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     /**
      * This stores all our commands
      */
@@ -267,10 +269,19 @@ public class CommandManager {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
                 "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                         Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
-                "").split("\\s+");
+                "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 
-        dispatchCommand(invoke, Arrays.asList(split).subList(1, split.length), event);
+        List<String> args = new ArrayList<>();
+
+        if(split.length > 1) {
+            String raw = split[1];
+            Matcher m = COMMAND_PATTERN.matcher(raw);
+            while (m.find())
+                args.add(m.group(1).replace("\"", "")); // Add .replace("\"", "") to remove surrounding quotes.
+        }
+
+        dispatchCommand(invoke, args, event);
     }
 
     public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
