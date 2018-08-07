@@ -49,7 +49,7 @@ public class YodaSpeakCommand extends Command {
 
         QueryBuilder builder = new QueryBuilder()
                 .append("https://apis.duncte123.me/yoda")
-                .append("sentence", StringUtils.join(args, "+"))
+                .append("sentence", StringUtils.join(args, " "))
                 .append("token", event.getJDA().getToken());
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
@@ -61,7 +61,7 @@ public class YodaSpeakCommand extends Command {
                         final String res = body.string();
                         logger.debug("Yoda response: " + res);
                         final JSONObject json = new JSONObject(res);
-                        sendMsg(event, json.getString("sentence"));
+                        sendMsg(event, json.getString("message"));
                     } catch (IOException e) {
                         e.printStackTrace();
                         sendMsg(event, "Yoda is asleep tell my developers to wake him up");
