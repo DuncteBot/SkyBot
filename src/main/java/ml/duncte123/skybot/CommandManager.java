@@ -51,8 +51,8 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
 
-    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
     /**
      * This stores all our commands
      */

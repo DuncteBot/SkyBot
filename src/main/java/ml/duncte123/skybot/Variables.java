@@ -36,8 +36,6 @@ import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
 public class Variables {
 
-    public static final Variables ins = new Variables();
-
     private final Config config;
     private final WAEngine alphaEngine;
     private final String googleBaseUrl;
@@ -107,4 +105,6 @@ public class Variables {
     boolean isSql() {
         return isSql;
     }
+
+    public static final Variables ins = new Variables();
 }

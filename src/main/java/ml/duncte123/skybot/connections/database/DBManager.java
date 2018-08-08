@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 
 public class DBManager {
 
-    public final DBConnectionManager connManager;
+    private final DBConnectionManager connManager;
     private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-thread"));
     /**
      * This is the database name
@@ -71,9 +71,7 @@ public class DBManager {
      * This will get the connection for us
      *
      * @return the connection, will we null if we aren't connected
-     * @deprecated use {@link #getConnManager()} instead
      */
-    @Deprecated
     public Connection getConnection() {
         return connManager.getConnection();
     }

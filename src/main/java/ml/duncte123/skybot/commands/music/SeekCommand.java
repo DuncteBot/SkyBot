@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.music;
 
+import lavalink.client.player.IPlayer;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -55,13 +55,19 @@ public class SeekCommand extends MusicCommand {
             sendMsg(event, "Invalid time format");
             return;
         }
+        IPlayer player = getMusicManager(ctx.getGuild()).player;
+
+        if(player.getPlayingTrack() == null) {
+            sendMsg(event, "The player is currently not playing anything");
+            return;
+        }
 
         long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
         long seconds = Integer.parseInt(matcher.group(2)) * 1000;
 
         long finalTime = minutes + seconds;
 
-        getMusicManager(ctx.getGuild()).player.seekTo(finalTime);
+        player.seekTo(finalTime);
 
         ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
 

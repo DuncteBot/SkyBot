@@ -87,6 +87,7 @@ class MySQLConnectionManager implements DBConnectionManager {
         try {
             return !dbHost.isEmpty() && !user.isEmpty() && !dbName.isEmpty();
         } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
     }

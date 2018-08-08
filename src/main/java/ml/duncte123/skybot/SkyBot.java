@@ -58,16 +58,17 @@ public class SkyBot {
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = (t) -> { };
+        RestAction.DEFAULT_FAILURE = (t) -> {
+        };
         RestAction.setPassContext(true);
 
         if (!vars.isSql()) { //Don't try to connect if we don't want to
-            if (!database.connManager.hasSettings()) {
+            if (!database.getConnManager().hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
-            Connection conn = database.getConnManager().getConnection();
-            if (!database.isConnected()) {
+            Connection conn = database.getConnection();
+            if (!database.isConnected() && vars.isSql()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             } else {
@@ -124,6 +125,8 @@ public class SkyBot {
         HelpEmbeds.init(commandManager);
 
         AudioUtils.ins.setConfig(config);
+        //Force the player to boot up because it has to load the config
+        AudioUtils.ins.getPlayerManager();
 
         if (!config.getBoolean("discord.local", false)) {
             // init web server

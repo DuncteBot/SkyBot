@@ -86,7 +86,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     public boolean isConnected() {
         try {
             return con != null && !con.isClosed();
-        } catch (SQLException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -105,7 +105,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
      */
     @Override
     public boolean hasSettings() {
-        return isConnected();
+        return true;
     }
 
     @Override

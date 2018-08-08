@@ -22,7 +22,6 @@ import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.Variables
 
 class DiscordMemesCommand : WeebCommandBase() {
 

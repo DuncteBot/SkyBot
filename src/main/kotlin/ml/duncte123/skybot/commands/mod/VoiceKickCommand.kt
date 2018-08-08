@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.mod
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.MessageUtils.sendSuccess
 import net.dv8tion.jda.core.Permission
@@ -39,7 +38,7 @@ class VoiceKickCommand : Command() {
                 Permission.VOICE_MOVE_OTHERS
         )
 
-        if(!ctx.guild.selfMember.hasPermission(neededPerms)) {
+        if (!ctx.guild.selfMember.hasPermission(neededPerms)) {
             sendMsg(event, "I need these permissions in order for this command to work: `${neededPerms.joinToString()}`")
             return
         }
@@ -68,7 +67,7 @@ class VoiceKickCommand : Command() {
 
         if (ctx.message.mentionedMembers.isNotEmpty()) {
             val member = ctx.message.mentionedMembers[0]
-            if(member.voiceState.channel == null) {
+            if (member.voiceState.channel == null) {
                 sendMsg(event, "That member is not in a voice channel")
                 return
             }

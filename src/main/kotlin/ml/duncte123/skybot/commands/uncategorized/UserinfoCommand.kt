@@ -19,11 +19,13 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.weebJava.types.StatusType
-import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
-import ml.duncte123.skybot.utils.*
+import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.GuildUtils
+import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
@@ -172,7 +174,7 @@ class UserinfoCommand : Command() {
 
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                ).queue(null) {_ ->
+                ).queue(null) { _ ->
                     MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
                 }
             }

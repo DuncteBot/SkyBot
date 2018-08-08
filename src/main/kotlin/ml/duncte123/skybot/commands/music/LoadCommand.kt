@@ -60,13 +60,14 @@ class LoadCommand : MusicCommand() {
                 val array = JSONArray(JSONTokener(it))
 
                 array.filter(Objects::nonNull)
-                        .forEach {obj ->
+                        .forEach { obj ->
                             // This probably announces it to the channel
                             AudioUtils.ins.loadAndPlay(getMusicManager(event.guild),
                                     event.channel,
                                     event.author,
                                     obj.toString(),
                                     false,
+                                    ctx.commandManager,
                                     false)
                         }
 

@@ -67,7 +67,7 @@ class WarnCommand : Command() {
         ModerationUtils.modLog(event.author, target.user, "warned", reason, event.guild)
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console
-            it.sendMessage(dmMessage).queue(null) {_ ->}
+            it.sendMessage(dmMessage).queue(null) { _ -> }
         }
         MessageUtils.sendSuccess(event.message)
 

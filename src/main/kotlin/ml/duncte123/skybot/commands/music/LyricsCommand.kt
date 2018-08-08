@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.Variables
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder

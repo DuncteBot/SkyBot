@@ -117,7 +117,7 @@ public class BotinfoCommand extends Command {
     private String getDev(GuildMessageReceivedEvent event, long id, String defaultM) {
         Member m = event.getGuild().getMemberById(id);
 
-        if(m != null) {
+        if (m != null) {
             return m.getAsMention();
         }
 

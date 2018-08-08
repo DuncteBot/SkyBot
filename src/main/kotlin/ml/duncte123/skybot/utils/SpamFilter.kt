@@ -25,7 +25,7 @@ import net.dv8tion.jda.core.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
-class SpamFilter(private  val database: DBManager) : HashMap<Long, SpamCache>() {
+class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
 
     private lateinit var rates: LongArray
 

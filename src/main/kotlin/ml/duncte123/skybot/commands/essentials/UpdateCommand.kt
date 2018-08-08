@@ -113,7 +113,7 @@ class UpdateCommand : Command() {
 
             //val process = Runtime.getRuntime().exec(versioncmd)
 
-           // val scanner = Scanner(process.inputStream)
+            // val scanner = Scanner(process.inputStream)
             /*while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {

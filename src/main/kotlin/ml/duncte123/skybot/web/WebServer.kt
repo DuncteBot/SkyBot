@@ -50,8 +50,8 @@ import java.sql.SQLException
 import java.util.*
 
 
-class WebServer (private val shardManager: ShardManager, private val config: Config,
-                 private val commandManager: CommandManager, private val database: DBManager) {
+class WebServer(private val shardManager: ShardManager, private val config: Config,
+                private val commandManager: CommandManager, private val database: DBManager) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")

@@ -93,6 +93,9 @@ public class BotListener extends ListenerAdapter {
      * This is used to check if we should trigger a update for the guild count when we leave a guild
      */
     private final List<Long> botLists = new ArrayList<>();
+    private final DBManager database;
+    private final CommandManager commandManager;
+    private final Variables variables;
     /**
      * This tells us if the {@link #systemPool} is running
      */
@@ -101,12 +104,7 @@ public class BotListener extends ListenerAdapter {
      * Tells us whether {@link #systemPool} clears cache of our {@link #spamFilter}.
      */
     private boolean isCacheCleanerActive = false;
-
     private short shardsReady = 0;
-    private final DBManager database;
-    private final CommandManager commandManager;
-
-    private final Variables variables;
 
     BotListener(Variables variables) {
         this.variables = variables;

@@ -55,7 +55,7 @@ public class FakeUser implements User {
 
     @Override
     public String getDiscriminator() {
-        return  String.format("%04d", this.discrm);
+        return String.format("%04d", this.discrm);
     }
 
     @Override
@@ -129,8 +129,7 @@ public class FakeUser implements User {
     }
 
     @Override
-    public void formatTo(Formatter formatter, int flags, int width, int precision)
-    {
+    public void formatTo(Formatter formatter, int flags, int width, int precision) {
         boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
         boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
         boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;

@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
 
-class DunctebotGuild (private val guild: Guild, private val database: DBManager) : Guild by guild {
+class DunctebotGuild(private val guild: Guild, private val database: DBManager) : Guild by guild {
 
     fun getSettings() = GuildSettingsUtils.getGuild(this.guild)
 

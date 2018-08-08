@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.Variables
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PPlayCommand : MusicCommand() {
@@ -59,7 +58,7 @@ class PPlayCommand : MusicCommand() {
 
         MessageUtils.sendMsg(event, "Loading playlist.......\n" +
                 "This may take a while depending on the size.")
-        audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, true)
+        audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

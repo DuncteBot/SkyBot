@@ -23,7 +23,6 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
-import ml.duncte123.skybot.Variables;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
