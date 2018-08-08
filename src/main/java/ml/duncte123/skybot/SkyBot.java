@@ -19,11 +19,14 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.text.TextColor;
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.Variables;
+import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
@@ -46,6 +49,11 @@ public class SkyBot {
     private final ShardManager shardManager;
 
     private SkyBot() throws Exception {
+
+        Variables vars = Variables.ins;
+        Config config = vars.getConfig();
+        DBManager database = vars.getDatabase();
+        CommandManager commandManager = vars.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
@@ -53,13 +61,13 @@ public class SkyBot {
         RestAction.DEFAULT_FAILURE = (t) -> { };
         RestAction.setPassContext(true);
 
-        if (Variables.NONE_SQLITE) { //Don't try to connect if we don't want to
-            if (!Variables.DATABASE.connManager.hasSettings()) {
+        if (!vars.isSql()) { //Don't try to connect if we don't want to
+            if (!database.connManager.hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
-            Connection conn = Variables.DATABASE.getConnManager().getConnection();
-            if (!Variables.DATABASE.isConnected()) {
+            Connection conn = database.getConnManager().getConnection();
+            if (!database.isConnected()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             } else {
@@ -78,32 +86,33 @@ public class SkyBot {
         Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings();
+        GuildSettingsUtils.loadAllSettings(database);
 
         //Set the token to a string
-        String token = Variables.CONFIG.getString("discord.token", "Your Bot Token");
+        String token = config.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = Variables.CONFIG.getInt("discord.totalShards", 1);
+        int TOTAL_SHARDS = config.getInt("discord.totalShards", 1);
 
         //Set the game from the config
-        int gameId = Variables.CONFIG.getInt("discord.game.type", 3);
-        String name = Variables.CONFIG.getString("discord.game.name", "over shard #{shardId}");
+        int gameId = config.getInt("discord.game.type", 3);
+        String name = config.getString("discord.game.name", "over shard #{shardId}");
         String url = "https://www.twitch.tv/duncte123";
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
         if (type.equals(Game.GameType.STREAMING)) {
-            url = Variables.CONFIG.getString("discord.game.streamUrl", url);
+            url = Variables.ins.getConfig().getString("discord.game.streamUrl", url);
         }
 
-        logger.info(Variables.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
-        LavalinkManager.ins.start();
+        logger.info(commandManager.getCommands().size() + " commands loaded.");
+        LavalinkManager.ins.start(config);
         final String finalUrl = url;
 
         //Set up sharding for the bot
+        EventManager eventManager = new EventManager(vars);
         this.shardManager = new DefaultShardManagerBuilder()
-                .setEventManager(new EventManager())
+                .setEventManager(eventManager)
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.of(type,
                         name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
@@ -112,7 +121,14 @@ public class SkyBot {
                 .build();
 
         //Load all the commands for the help embed last
-        HelpEmbeds.init();
+        HelpEmbeds.init(commandManager);
+
+        AudioUtils.ins.setConfig(config);
+
+        if (!config.getBoolean("discord.local", false)) {
+            // init web server
+            new WebServer(shardManager, config, commandManager, database);
+        }
     }
 
     /**
@@ -123,7 +139,7 @@ public class SkyBot {
      * @deprecated Because I can lol
      */
     @Deprecated
-    public static void main(String... args) throws Exception {
+    public static void main(String[] args) throws Exception {
         instance = new SkyBot();
     }
 

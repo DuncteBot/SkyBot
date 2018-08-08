@@ -22,7 +22,7 @@ import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
+import ml.duncte123.skybot.Variables
 
 class DiscordMemesCommand : WeebCommandBase() {
 
@@ -32,7 +32,7 @@ class DiscordMemesCommand : WeebCommandBase() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-        Variables.WEEB_API.getRandomImage("discord_memes").async {
+        ctx.weebApi.getRandomImage("discord_memes").async {
             MessageUtils.sendEmbed(ctx.event, getWeebEmbedImage(it.url))
         }
     }

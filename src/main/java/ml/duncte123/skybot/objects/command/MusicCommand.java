@@ -160,9 +160,9 @@ public abstract class MusicCommand extends Command {
         return false;
     }
 
-    protected boolean isOwner(GuildMessageReceivedEvent event) {
+    /*protected boolean isOwner(GuildMessageReceivedEvent event) {
         return isDev(event.getAuthor()) || event.getAuthor().getId().equals(Settings.OWNER_ID);
-    }
+    }*/
 
     protected boolean hasCoolDown(Guild guild) {
         return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;

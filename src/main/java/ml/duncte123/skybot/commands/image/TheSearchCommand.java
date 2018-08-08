@@ -25,8 +25,6 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static ml.duncte123.skybot.utils.Variables.BLARG_BOT;
-
 public class TheSearchCommand extends ImageCommandBase {
 
     @Override
@@ -52,7 +50,7 @@ public class TheSearchCommand extends ImageCommandBase {
             text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 
-        BLARG_BOT.getTheSearch(text).async((image) -> handleBasicImage(event, image));
+        getBlargbot().getTheSearch(text).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

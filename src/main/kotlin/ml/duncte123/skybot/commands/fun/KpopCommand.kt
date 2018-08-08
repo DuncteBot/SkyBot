@@ -37,7 +37,7 @@ class KpopCommand : Command() {
 
         try {
             val queryString = if (!ctx.args.isEmpty()) ctx.rawArgs else ""
-            val member = ApiUtils.getRandomKpopMember(queryString)
+            val member = ApiUtils.getRandomKpopMember(ctx.database, queryString)
             val eb = EmbedUtils.defaultEmbed()
                     .setDescription("Here is a kpop member from the group ${member.band}")
                     .addField("Name of the member", member.name, false)

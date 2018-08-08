@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
@@ -25,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
+import ml.duncte123.skybot.Variables
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
@@ -57,7 +58,7 @@ class LyricsCommand : MusicCommand() {
                 MessageUtils.sendMsg(event, "The player is not currently playing anything!")
                 return
             }
-            searchForSong(search) {
+            searchForSong(search, ctx.config) {
                 if (it.isNullOrBlank()) {
                     MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
                             "Alternatively you can try `$PREFIX$name song name` to search for the lyrics on this soing.\n" +
@@ -83,11 +84,11 @@ class LyricsCommand : MusicCommand() {
 
     override fun getName() = "lyrics"
 
-    private fun getAuthToken(): String {
+    private fun getAuthToken(config: Config): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
-            formData["client_id"] = Variables.CONFIG.getString("genius.client_id", "CLIENT_ID")
-            formData["client_secret"] = Variables.CONFIG.getString("genius.client_secret", "CLIENT_SECRET")
+            formData["client_id"] = config.getString("genius.client_id", "CLIENT_ID")
+            formData["client_secret"] = config.getString("genius.client_secret", "CLIENT_SECRET")
             formData["grant_type"] = "client_credentials"
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
             this.authToken = JSONObject(raw).optString("access_token")
@@ -95,9 +96,9 @@ class LyricsCommand : MusicCommand() {
         return "Bearer $authToken"
     }
 
-    private fun searchForSong(t: String?, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, config: Config, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .header("Authorization", getAuthToken())
+                .header("Authorization", getAuthToken(config))
                 .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
                 WebUtilsErrorUtils::toJSONObject).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")

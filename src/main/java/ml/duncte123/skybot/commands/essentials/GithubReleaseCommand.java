@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -35,8 +34,8 @@ public class GithubReleaseCommand extends Command {
     private static final String GITHUB_API = "https://api.github.com";
     private static final String REPO_PART = "/repos/DuncteBot/SkyBot";
 
-    private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token="
-            + Variables.CONFIG.getString("apis.github");
+    private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token=%s";
+//            + Variables.CONFIG.getString("apis.github");
 
     /*private static final String UPDATE_RELEASE = GITHUB_API + REPO_PART + "/releases/%s?access_token="
             + AirUtils.CONFIG.getString("apis.github");
@@ -49,7 +48,7 @@ public class GithubReleaseCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!isDev(ctx.getAuthor())
-                && !Settings.OWNER_ID.equals(ctx.getAuthor().getId())) {
+                && Settings.OWNER_ID != ctx.getAuthor().getIdLong()) {
             MessageUtils.sendError(ctx.getMessage());
             MessageUtils.sendMsg(event, "You must be the bot owner to run this command!");
 
@@ -86,7 +85,8 @@ public class GithubReleaseCommand extends Command {
 
         try {
             //You meant to post the json ramid?
-            JSONObject releaseIn = WebUtils.ins.postJSON(CREATE_RELEASE, releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
+            JSONObject releaseIn = WebUtils.ins.postJSON(String.format(CREATE_RELEASE,
+                    ctx.getConfig().getString("apis.github")), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
 
             if (releaseIn == null)
                 return;

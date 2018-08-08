@@ -22,11 +22,11 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -75,7 +75,7 @@ public abstract class Command implements ICommand {
 
 
     private boolean checkVoteOnDBL(String userid) {
-        String token = Variables.CONFIG.getString("apis.discordbots_userToken", "");
+        String token = Variables.ins.getConfig().getString("apis.discordbots_userToken", "");
 
         if (token == null || token.isEmpty()) {
             logger.warn("Discord Bots token not found");

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
@@ -51,8 +52,8 @@ public class HelpEmbeds {
     /**
      * This loads all the commands in the lists
      */
-    public static void init() {
-        for (ICommand c : Variables.COMMAND_MANAGER.getCommands()) {
+    public static void init(CommandManager manager) {
+        for (ICommand c : manager.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());

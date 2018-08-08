@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.music;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
-import ml.duncte123.skybot.utils.Variables;
+import ml.duncte123.skybot.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -63,7 +63,7 @@ public class SeekCommand extends MusicCommand {
 
         getMusicManager(ctx.getGuild()).player.seekTo(finalTime);
 
-        Variables.COMMAND_MANAGER.getCommand("nowplaying").executeCommand(ctx);
+        ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
 
     }
 

@@ -18,6 +18,11 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import me.duncte123.botCommons.config.Config;
+import me.duncte123.weebJava.models.WeebApi;
+import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -30,20 +35,58 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Random;
 
 public class CommandContext {
 
     private final String invoke;
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
+    private final Variables variables;
+    private final CommandManager commandManager;
+    private final Config config;
+    private final DBManager database;
+    private final Random random;
+    private final WeebApi weebApi;
 
-    public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
         this.invoke = invoke;
         this.args = Collections.unmodifiableList(args);
         this.event = event;
+        this.variables = variables;
+        this.commandManager = variables.getCommandManager();
+        this.config = variables.getConfig();
+        this.database = variables.getDatabase();
+        this.random = variables.getRandom();
+        this.weebApi = variables.getWeebApi();
     }
 
+    // --------------- Methods from the Variables class --------------- //
+    public Variables getVariables() {
+        return variables;
+    }
 
+    public CommandManager getCommandManager() {
+        return this.commandManager;
+    }
+
+    public Config getConfig() {
+        return this.config;
+    }
+
+    public DBManager getDatabase() {
+        return database;
+    }
+
+    public Random getRandom() {
+        return random;
+    }
+
+    public WeebApi getWeebApi() {
+        return weebApi;
+    }
+
+    // --------------- Normal methods --------------- //
     public String getInvoke() {
         return this.invoke;
     }
@@ -64,7 +107,7 @@ public class CommandContext {
         return this.event;
     }
 
-    //----- Methods that are in the GuildMessageReceivedEvent --------//
+    // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //
 
     public Message getMessage() {
         return this.event.getMessage();
@@ -83,7 +126,7 @@ public class CommandContext {
     }
 
     public DunctebotGuild getGuild() {
-        return new DunctebotGuild(this.event.getGuild());
+        return new DunctebotGuild(this.event.getGuild(), this.database);
     }
 
     public JDA getJDA() {

@@ -32,10 +32,9 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import me.duncte123.botCommons.config.Config;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.commands.music.RadioCommand;
-import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
@@ -43,7 +42,10 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 
 import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
@@ -71,15 +73,21 @@ public class AudioUtils {
      */
     protected final Map<Long, GuildMusicManager> musicManagers;
 
+    private Config config;
+
     /**
      * This will set everything up and get the player ready
      */
     private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
 
-        initPlayerManager();
+//        initPlayerManager(config);
 
         musicManagers = new HashMap<>();
+    }
+
+    public void setConfig(Config config) {
+        this.config = config;
     }
 
     /**
@@ -100,17 +108,17 @@ public class AudioUtils {
         }
     }
 
-    private void initPlayerManager() {
+    private void initPlayerManager(Config config) {
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
-            playerManager.enableGcMonitoring();
+//            playerManager.enableGcMonitoring();
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
             SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 
-            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
 
 
@@ -128,7 +136,7 @@ public class AudioUtils {
     }
 
     public AudioPlayerManager getPlayerManager() {
-        initPlayerManager();
+        initPlayerManager(config);
         return playerManager;
     }
 
@@ -156,16 +164,16 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
+        getPlayerManager().loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
-                if (track.getInfo().isStream) {
+                /*if (track.getInfo().isStream) {
                     Optional<RadioStream> stream = ((RadioCommand) Variables.COMMAND_MANAGER.getCommand("radio"))
                             .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();
-                }
+                }*/
 
                 track.setUserData(new TrackUserData(requester.getIdLong()));
 

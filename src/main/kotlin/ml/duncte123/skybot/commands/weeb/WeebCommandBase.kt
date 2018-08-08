@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.weebJava.models.WeebApi
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -49,8 +49,8 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent) {
-        Variables.WEEB_API.getRandomImage(type).async {
+    fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
+        weebApi.getRandomImage(type).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(

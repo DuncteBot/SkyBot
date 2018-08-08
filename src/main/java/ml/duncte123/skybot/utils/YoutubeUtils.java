@@ -23,6 +23,7 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
+import ml.duncte123.skybot.Variables;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
@@ -45,18 +46,18 @@ public class YoutubeUtils {
     }
 
 
-    public static Video getVideoById(String videoID) throws Exception {
+    public static Video getVideoById(String videoID, String apiKey) throws Exception {
         return youtube.videos().list("snippet,statistics,contentDetails")
                 .setId(videoID)
-                .setKey(Variables.CONFIG.getString("apis.googl"))
+                .setKey(apiKey)
                 .execute()
                 .getItems().get(0);
     }
 
 
-    public static List<SearchResult> searchYoutube(String query) throws IOException {
+    public static List<SearchResult> searchYoutube(String query, String apiKey) throws IOException {
         return youtube.search().list("id,snippet")
-                .setKey(Variables.CONFIG.getString("apis.googl"))
+                .setKey(apiKey)
                 .setQ(query)
                 .setType("video")
                 .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")

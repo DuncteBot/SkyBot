@@ -21,6 +21,8 @@ package ml.duncte123.skybot.utils;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
@@ -159,8 +161,8 @@ public class AirUtils {
      * @return A possibly-null {@link com.wolfram.alpha.WAEngine Wolfram|Alpha engine} instance configured with the
      * token
      */
-    static WAEngine getWolframEngine() {
-        String appId = Variables.CONFIG.getString("apis.wolframalpha", "");
+    public static WAEngine getWolframEngine(String appId) {
+//        String appId = Variables.CONFIG.getString("apis.wolframalpha", "");
 
         if (appId == null || appId.isEmpty())
             return null;
@@ -180,9 +182,9 @@ public class AirUtils {
     /**
      * Stops everything
      */
-    public static void stop() {
+    public static void stop(DBManager database) {
         try {
-            Variables.DATABASE.getConnManager().getConnection().close();
+            database.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -193,7 +195,7 @@ public class AirUtils {
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }
-        Variables.DATABASE.getService().shutdown();
+        database.getService().shutdown();
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {
@@ -233,7 +235,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (Variables.RAND.nextFloat() * chars.length());
+            int index = (int) (Variables.ins.getRandom().nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -254,7 +256,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (Variables.RAND.nextInt(4)) {
+        switch (Variables.ins.getRandom().nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -303,7 +305,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, Variables.CONFIG.getString("apis.googl", "Google api key"));
+        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().getString("apis.googl", "Google api key"));
     }
 
     public static String colorToHex(Color color) {

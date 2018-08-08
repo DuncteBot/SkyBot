@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.command;
 
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import org.junit.Test;
@@ -29,7 +30,7 @@ import static org.junit.Assert.*;
 
 public class SkybotCommandTest {
 
-    private final CommandManager manager = new CommandManager();
+    private final CommandManager manager = new CommandManager(new Variables());
 
     @Test
     public void testCommandGetterForName() {

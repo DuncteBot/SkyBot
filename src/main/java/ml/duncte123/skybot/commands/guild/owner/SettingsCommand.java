@@ -227,7 +227,7 @@ public class SettingsCommand extends Command {
                             "Correct usage : `" + PREFIX + ctx.getInvoke() + " <description>`");
                     return;
                 } else if ("null".equals(args.get(0))) {
-                    GuildSettingsUtils.updateGuildSettings(guild, settings.setServerDesc(null));
+                    guild.setSettings(settings.setServerDesc(null));
                     sendMsg(event, "Description has been reset.");
                     return;
                 }
@@ -307,7 +307,7 @@ public class SettingsCommand extends Command {
 
             case "togglekickmode":
                 boolean kickState = !settings.getKickState();
-                GuildSettingsUtils.updateGuildSettings(guild, settings.setKickState(kickState));
+                guild.setSettings(settings.setKickState(kickState));
                 sendMsg(event, "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
                 break;
 

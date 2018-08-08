@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
@@ -107,10 +108,10 @@ class UserinfoCommand : Command() {
         },{
             renderEmbed(event, m, null)
         })*/
-        renderEmbed(event, m, null)
+        renderEmbed(event, m, null, ctx)
     }
 
-    private fun renderEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?) {
+    private fun renderEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
         var badgesString = ""
         if (p != null) {
             badgesString = "**Badges:** " + p.badges.joinToString()
@@ -161,8 +162,8 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                Variables.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-            Variables.WEEB_API.generateDiscordStatus(toWeebshStatus(m),
+                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 
                 val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
@@ -171,9 +172,9 @@ class UserinfoCommand : Command() {
 
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                ).queue({}, {
+                ).queue(null) {_ ->
                     MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
-                })
+                }
             }
         } else {
             MessageUtils.sendEmbed(event, embed.build())

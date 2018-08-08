@@ -23,6 +23,7 @@ import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -73,7 +74,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This filter helps us to fiter out spam
      */
-    private final SpamFilter spamFilter = new SpamFilter();
+    private final SpamFilter spamFilter;
     /**
      * This timer is for checking unbans
      * This timer is for clearing our caches
@@ -102,6 +103,18 @@ public class BotListener extends ListenerAdapter {
     private boolean isCacheCleanerActive = false;
 
     private short shardsReady = 0;
+    private final DBManager database;
+    private final CommandManager commandManager;
+
+    private final Variables variables;
+
+    BotListener(Variables variables) {
+        this.variables = variables;
+        this.database = variables.getDatabase();
+        this.commandManager = variables.getCommandManager();
+
+        this.spamFilter = new SpamFilter(database);
+    }
 
     @Override
     public void onReady(ReadyEvent event) {
@@ -111,7 +124,7 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(ModerationUtils::checkUnbans, 5, 5, TimeUnit.MINUTES);
+            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(database), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
@@ -277,17 +290,18 @@ public class BotListener extends ListenerAdapter {
         if (rw.startsWith(guild.getSelfMember().getAsMention())) {
             final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
             //Handle the chat command
-            ICommand cmd = Variables.COMMAND_MANAGER.getCommand("chat");
+            ICommand cmd = commandManager.getCommand("chat");
             if (cmd != null)
                 cmd.executeCommand(new CommandContext(
                         "chat",
                         Arrays.asList(split).subList(1, split.length),
-                        event
+                        event,
+                        variables
                 ));
             return;
         }
         //Handle the command
-        Variables.COMMAND_MANAGER.runCommand(event);
+        commandManager.runCommand(event);
     }
 
     @Override
@@ -383,7 +397,7 @@ public class BotListener extends ListenerAdapter {
                 guild.getJDA().getShardInfo().getShardId(),
                 TextColor.RESET
         );
-        GuildSettingsUtils.registerNewGuild(guild);
+        GuildSettingsUtils.registerNewGuild(guild, database);
     }
 
     @Override
@@ -391,7 +405,7 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
         if (!botLists.contains(guild.getIdLong())) {
             logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
-            GuildSettingsUtils.deleteGuild(guild);
+            GuildSettingsUtils.deleteGuild(guild, database);
         } else {
             botLists.remove(guild.getIdLong());
         }
@@ -442,15 +456,15 @@ public class BotListener extends ListenerAdapter {
             this.systemPool.shutdown();
 
         //clear the userinfo folder on shutdown as well
-        String imgDir = ((UserinfoCommand) Variables.COMMAND_MANAGER.getCommand("userinfo")).getFolderName();
+        String imgDir = ((UserinfoCommand) commandManager.getCommand("userinfo")).getFolderName();
         try {
             FileUtils.cleanDirectory(new File(imgDir));
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        AirUtils.stop();
-        Variables.COMMAND_MANAGER.commandThread.shutdown();
+        AirUtils.stop(database);
+        commandManager.commandThread.shutdown();
 
         /*
          * Only shut down if we are not updating
@@ -469,8 +483,8 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean shouldBlockCommand(String rw, String s) {
-        return Variables.COMMAND_MANAGER.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                .contains(Variables.COMMAND_MANAGER.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
+        return commandManager.getCommands(CommandCategory.valueOf(s.toUpperCase()))
+                .contains(commandManager.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
                         .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
     }
 

@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
-import ml.duncte123.skybot.utils.Variables
+import ml.duncte123.skybot.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -56,7 +56,7 @@ class RadioCommand : MusicCommand() {
             return
         }
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
+            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }

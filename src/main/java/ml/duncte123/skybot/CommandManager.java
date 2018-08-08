@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -27,7 +28,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
@@ -59,11 +59,17 @@ public class CommandManager {
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
+    private final DBManager database;
+
+    private final Variables variables;
 
     /**
      * This makes sure that all the commands are added
      */
-    public CommandManager() {
+    public CommandManager(Variables variables) {
+        this.variables = variables;
+        this.database = variables.getDatabase();
+
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
@@ -146,8 +152,8 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                Triple<Boolean, Boolean, Boolean> res = Variables.DATABASE.run(() -> {
-                    Connection conn = Variables.DATABASE.getConnManager().getConnection();
+                Triple<Boolean, Boolean, Boolean> res = database.run(() -> {
+                    Connection conn = database.getConnManager().getConnection();
 
                     String sqlQuerry = (isEdit) ?
                             "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
@@ -203,8 +209,8 @@ public class CommandManager {
             return false;
 
         try {
-            return Variables.DATABASE.run(() -> {
-                Connection con = Variables.DATABASE.getConnManager().getConnection();
+            return database.run(() -> {
+                Connection con = database.getConnManager().getConnection();
 
                 try {
                     PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
@@ -274,7 +280,7 @@ public class CommandManager {
 
         List<String> args = new ArrayList<>();
 
-        if(split.length > 1) {
+        if (split.length > 1) {
             String raw = split[1];
             Matcher m = COMMAND_PATTERN.matcher(raw);
             while (m.find())
@@ -298,7 +304,7 @@ public class CommandManager {
                 try {
                     if (!cmd.isCustom()) {
                         cmd.executeCommand(
-                                new CommandContext(invoke, args, event)
+                                new CommandContext(invoke, args, event, variables)
                         );
                     } else {
 
@@ -343,8 +349,8 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        Variables.DATABASE.run(() -> {
-            Connection con = Variables.DATABASE.getConnManager().getConnection();
+        database.run(() -> {
+            Connection con = database.getConnManager().getConnection();
             try {
                 ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
                 while (res.next()) {

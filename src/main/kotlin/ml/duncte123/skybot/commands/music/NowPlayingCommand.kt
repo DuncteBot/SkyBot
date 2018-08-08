@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
+import ml.duncte123.skybot.Variables
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -45,7 +45,7 @@ class NowPlayingCommand : MusicCommand() {
                 EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng))
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                val stream = (Variables.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
+                val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
                     EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url}) by ${channeldata.getString("artist")}**")

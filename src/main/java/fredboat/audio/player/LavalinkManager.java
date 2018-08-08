@@ -23,10 +23,10 @@ import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
+import me.duncte123.botCommons.config.Config;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.LavalinkNode;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import org.jetbrains.annotations.NotNull;
@@ -48,23 +48,25 @@ public class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
     private JdaLavalink lavalink = null;
+    private Config config = null;
 
     private LavalinkManager() {
     }
 
-    public void start() {
+    public void start(Config c) {
+        this.config = c;
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(Variables.CONFIG.getString("discord.token"));
+        String userId = getIdFromToken(config.getString("discord.token"));
 
         lavalink = new JdaLavalink(
                 userId,
-                Variables.CONFIG.getInt("discord.totalShards", 1),
+                config.getInt("discord.totalShards", 1),
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
         defaultNodes.add(new LavalinkNode("ws://localhost", "youshallnotpass"));
-        List<Ason> nodes = Variables.CONFIG.getArray("lavalink.nodes", defaultNodes);
+        List<Ason> nodes = config.getArray("lavalink.nodes", defaultNodes);
         List<LavalinkNode> nodeList = new ArrayList<>();
 
         nodes.forEach(it -> nodeList.add(Ason.deserialize(it, LavalinkNode.class)));
@@ -75,7 +77,7 @@ public class LavalinkManager {
     }
 
     public boolean isEnabled() {
-        return Variables.CONFIG.getBoolean("lavalink.enable", false);
+        return config.getBoolean("lavalink.enable", false);
     }
 
     public IPlayer createPlayer(long guildId) {

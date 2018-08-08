@@ -36,7 +36,7 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        LlamaObject llama = ApiUtils.getRandomLlama();
+        LlamaObject llama = ApiUtils.getRandomLlama(ctx.getDatabase());
 
         MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
 

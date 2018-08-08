@@ -19,11 +19,14 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
+import ml.duncte123.skybot.connections.database.DBManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.IEventManager;
+import org.parboiled.support.Var;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,8 +42,14 @@ public class EventManager
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
-    private final BotListener botListener = new BotListener();
+    private final BotListener botListener;
     private final DeHoistListener deHoistListener = new DeHoistListener();
+
+    EventManager(Variables variables) {
+        this.botListener = new BotListener(variables);
+    }
+
+
 
     @Override
     public void register(Object listener) {
