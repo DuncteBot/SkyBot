@@ -62,8 +62,8 @@ public class Settings {
      * This is the prefix that your bot has, by default is the /
      */
 //    public static final String PREFIX = CONFIG.getString("discord.prefix", "db!");
-//    public static final String PREFIX = "db!";
-    public static final String PREFIX = "//";
+    public static final String PREFIX = "db!";
+//    public static final String PREFIX = "//";
     /**
      * This is another prefix because I can
      */
