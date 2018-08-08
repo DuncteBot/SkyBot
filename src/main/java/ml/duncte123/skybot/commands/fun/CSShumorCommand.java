@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -48,7 +47,7 @@ public class CSShumorCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        switch (Variables.ins.getRandom().nextInt(2)) {
+        switch (ctx.getRandom().nextInt(2)) {
             case 1:
                 sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
                 break;

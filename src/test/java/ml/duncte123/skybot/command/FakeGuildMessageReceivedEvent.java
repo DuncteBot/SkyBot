@@ -269,7 +269,7 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
                   @Override
                   public RestAction<Webhook> getWebhookById(String webhookId) {
-                      return null;
+                      return new RestAction.EmptyRestAction<>(null, null);
                   }
               }, 0L,
                 new Message() {

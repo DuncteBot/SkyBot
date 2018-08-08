@@ -103,7 +103,7 @@ public class SkyBot {
 
         Game.GameType type = Game.GameType.fromKey(gameId);
         if (type.equals(Game.GameType.STREAMING)) {
-            url = Variables.ins.getConfig().getString("discord.game.streamUrl", url);
+            url = config.getString("discord.game.streamUrl", url);
         }
 
         logger.info(commandManager.getCommands().size() + " commands loaded.");

@@ -123,7 +123,7 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        WAEngine engine = Variables.ins.getAlphaEngine();
+        WAEngine engine = ctx.getVariables().getAlphaEngine();
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
