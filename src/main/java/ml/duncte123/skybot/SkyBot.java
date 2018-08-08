@@ -32,7 +32,6 @@ import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.sql.Connection;
 
 /**
@@ -43,32 +42,16 @@ import java.sql.Connection;
 @Author
 public class SkyBot {
 
-    public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
-    private static final SkyBot instance = new SkyBot();
-    private static ShardManager shardManager = null;
+    private static SkyBot instance;
+    private final ShardManager shardManager;
 
-    private SkyBot() {
-    }
-
-    /**
-     * This is our main method
-     *
-     * @param args The args passed in while running the bot
-     * @throws Exception When you mess something up
-     * @deprecated Because I can lol
-     */
-    @Deprecated
-    public static void main(String... args) throws Exception {
+    private SkyBot() throws Exception {
+        Logger logger = LoggerFactory.getLogger(SkyBot.class);
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = (t) -> {
-        };
+        RestAction.DEFAULT_FAILURE = (t) -> { };
         RestAction.setPassContext(true);
-
-        //Set the logger to only info by default
-//        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-//        l.setLevel(INFO);
 
         if (Variables.NONE_SQLITE) { //Don't try to connect if we don't want to
             if (!Variables.DATABASE.connManager.hasSettings()) {
@@ -115,30 +98,33 @@ public class SkyBot {
         }
 
         logger.info(Variables.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
-        //logger.info(AirUtils.COMMAND_MANAGER.getCustomCommands().size() + " custom commands loaded.");
         LavalinkManager.ins.start();
         final String finalUrl = url;
-        try {
-            //Set up sharding for the bot
-            shardManager = new DefaultShardManagerBuilder()
-                    .setEventManager(new EventManager())
-                    .setShardsTotal(TOTAL_SHARDS)
-                    .setGameProvider(shardId -> Game.of(type,
-                            name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
-                    )
-                    .setToken(token)
-                    .build();
-        } catch (LoginException e) {
-            //Kill the system if we can't log in
-            logger.error(TextColor.RED + "Could not log in, check if your token is correct" + TextColor.RESET, e);
-            System.exit(-4);
-        }
+
+        //Set up sharding for the bot
+        this.shardManager = new DefaultShardManagerBuilder()
+                .setEventManager(new EventManager())
+                .setShardsTotal(TOTAL_SHARDS)
+                .setGameProvider(shardId -> Game.of(type,
+                        name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
+                )
+                .setToken(token)
+                .build();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init();
+    }
 
-        //last start the server
-        //AirUtils.WEB_SERVER.activate();
+    /**
+     * This is our main method
+     *
+     * @param args The args passed in while running the bot
+     * @throws Exception When you mess something up
+     * @deprecated Because I can lol
+     */
+    @Deprecated
+    public static void main(String... args) throws Exception {
+        instance = new SkyBot();
     }
 
     public static SkyBot getInstance() {
