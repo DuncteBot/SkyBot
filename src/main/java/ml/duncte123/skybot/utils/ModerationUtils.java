@@ -207,8 +207,8 @@ public class ModerationUtils {
                                         .unban(userID).reason("Ban expired").queue();
                                 modLog(new ConsoleUser(),
                                         new FakeUser(username,
-                                                userID,
-                                                res.getString("discriminator")),
+                                                Long.parseUnsignedLong(userID),
+                                                Short.valueOf(res.getString("discriminator"))),
                                         "unbanned",
                                         guild
                                 );

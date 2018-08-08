@@ -131,11 +131,4 @@ public class GuildUtils {
         return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
                 .collect(Collectors.toList()).indexOf(member) + 1;
     }
-
-    public static TextChannel getTextChannelById(long id) {
-        if (id == -1 || id == 0)
-            return null;
-
-        return SkyBot.getInstance().getShardManager().getTextChannelById(id);
-    }
 }

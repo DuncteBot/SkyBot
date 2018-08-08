@@ -51,11 +51,6 @@ public interface CustomCommand extends ICommand {
     }
 
     @Override
-    default String[] getAliases() {
-        return new String[0];
-    }
-
-    @Override
     default boolean shouldDisplayAliasesInHelp() {
         return false;
     }

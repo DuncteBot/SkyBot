@@ -20,8 +20,10 @@ package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
 
 public class GuildMusicManager {
 
@@ -67,5 +69,11 @@ public class GuildMusicManager {
 
     boolean isAnnounceTracks() {
         return announceTracks;
+    }
+
+    TextChannel getLatestChannel() {
+        if (this.latestChannel == -1 || this.latestChannel == 0)
+            return null;
+        return SkyBot.getInstance().getShardManager().getTextChannelById(this.latestChannel);
     }
 }

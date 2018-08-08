@@ -185,8 +185,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                     title = stream.get().getName();
             }
             User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
-            final String message = String.format("Now playing: %s by %#s %s", title, user, (repeated ? "(repeated)" : ""));
-            MessageUtils.sendMsg(GuildUtils.getTextChannelById(guildMusicManager.latestChannel), message);
+            final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message);
         }
     }
 
@@ -194,7 +194,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            TextChannel tc = GuildUtils.getTextChannelById(guildMusicManager.latestChannel);
+            TextChannel tc = guildMusicManager.getLatestChannel();
             Guild g = (tc == null) ? null : tc.getGuild();
 
             try {
