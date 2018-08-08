@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -56,7 +55,7 @@ public class CatCommand extends Command {
                     }
                 },
                 (error) -> {
-                    Variables.COMMAND_MANAGER.dispatchCommand("kitty", ctx.getArgs(), event);
+                    ctx.getCommandManager().dispatchCommand("kitty", ctx.getArgs(), event);
                     ComparatingUtils.execCheck(error);
                 }
         );

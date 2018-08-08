@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.Variables.RAND
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
@@ -44,7 +43,7 @@ class JokeCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
 
-        when (RAND.nextInt(2)) {
+        when (ctx.random.nextInt(2)) {
             0 -> sendRedditPost("Jokes", jokeIndex, ctx.event)
             1 -> sendRanddomJoke(ctx.event)
         }

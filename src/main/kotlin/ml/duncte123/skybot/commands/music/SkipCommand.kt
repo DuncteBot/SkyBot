@@ -21,6 +21,8 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.ConsoleUser
+import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
@@ -56,9 +58,12 @@ class SkipCommand : MusicCommand() {
         repeat(count) {
             scheduler.nextTrack()
         }
+        val userData = mng.player.playingTrack.userData as TrackUserData
+        val user = ctx.jda.getUserById(userData.userId)
         MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
                 if (mng.player.playingTrack != null) {
-                    "\nNow playing: ${mng.player.playingTrack.info.title}"
+                    "\nNow playing: ${mng.player.playingTrack.info.title}\n" +
+                            "Requester: ${String.format("%#s", user)}"
                 } else "")
         mng.latestChannel = event.channel.idLong
     }

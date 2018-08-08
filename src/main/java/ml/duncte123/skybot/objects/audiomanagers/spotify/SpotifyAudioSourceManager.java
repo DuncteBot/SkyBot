@@ -31,7 +31,7 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
-import ml.duncte123.skybot.utils.Variables;
+import me.duncte123.botCommons.config.Config;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
@@ -68,12 +68,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private final SpotifyApi spotifyApi;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
+    private final Config config;
 
-    public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager) {
+    public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager, Config config) {
+        this.config = config;
+
         String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
-        String clientId = Variables.CONFIG.getString("apis.spotify.clientId", defaultValue);
-        String clientSecret = Variables.CONFIG.getString("apis.spotify.clientSecret", defaultValue);
-        String youtubeApiKey = Variables.CONFIG.getString("apis.googl");
+        String clientId = config.getString("apis.spotify.clientId", defaultValue);
+        String clientSecret = config.getString("apis.spotify.clientSecret", defaultValue);
+        String youtubeApiKey = config.getString("apis.googl");
         if (clientId == null || clientSecret == null || clientId.equals(defaultValue) || clientSecret.equals(defaultValue)
                 || youtubeApiKey.isEmpty()) {
             logger.error("Could not load Spotify keys\n" + defaultValue);
@@ -121,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Album album = albumFuture.get();
 
                     for (TrackSimplified t : album.getTracks().getItems()) {
-                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName());
+                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(), config.getString("apis.googl"));
                         playList.addAll(doThingWithPlaylist(results));
                     }
 
@@ -144,7 +147,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
                     for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
                         List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
-                                + " - " + playlistTrack.getTrack().getName());
+                                + " - " + playlistTrack.getTrack().getName(), config.getString("apis.googl"));
                         finalPlaylist.addAll(doThingWithPlaylist(results));
                     }
 
@@ -164,9 +167,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
                     final Track track = trackFuture.get();
 
-                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName());
+                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(), config.getString("apis.googl"));
 
-                    Video v = getVideoById(results.get(0).getId().getVideoId());
+                    Video v = getVideoById(results.get(0).getId().getVideoId(), config.getString("apis.googl"));
                     return audioTrackFromVideo(v);
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
@@ -249,7 +252,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             SearchResult video = results.get(0);
             ResourceId rId = video.getId();
             if (rId.getKind().equals("youtube#video")) {
-                Video v = getVideoById(video.getId().getVideoId());
+                Video v = getVideoById(video.getId().getVideoId(), config.getString("apis.googl"));
                 playList.add(audioTrackFromVideo(v));
             }
         }

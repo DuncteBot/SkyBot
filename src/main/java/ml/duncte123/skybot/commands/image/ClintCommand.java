@@ -27,8 +27,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.Variables.BLARG_BOT;
-
 public class ClintCommand extends ImageCommandBase {
 
     @Override
@@ -52,7 +50,7 @@ public class ClintCommand extends ImageCommandBase {
             }
         }
 
-        BLARG_BOT.getClint(url).async((image) -> handleBasicImage(event, image));
+        getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

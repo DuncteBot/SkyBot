@@ -266,6 +266,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                   public JDABot asBot() {
                       return null;
                   }
+
+                  @Override
+                  public RestAction<Webhook> getWebhookById(String webhookId) {
+                      return new RestAction.EmptyRestAction<>(null, null);
+                  }
               }, 0L,
                 new Message() {
                     @Nonnull

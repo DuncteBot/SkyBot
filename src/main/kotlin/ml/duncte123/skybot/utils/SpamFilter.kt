@@ -19,12 +19,13 @@
 package ml.duncte123.skybot.utils
 
 import me.duncte123.botCommons.text.TextColor
+import ml.duncte123.skybot.connections.database.DBManager
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
-class SpamFilter : HashMap<Long, SpamCache>() {
+class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
 
     private lateinit var rates: LongArray
 
@@ -123,9 +124,9 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             }
 
             if (shouldModerate) {
-                val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
+                val warnings = ModerationUtils.getWarningCountForUser(database, user, author.guild) + 1
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
-                ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild)
+                ModerationUtils.addWarningToDb(database, jda.selfUser, user, "Spam", guild)
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {

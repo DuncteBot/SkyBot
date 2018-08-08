@@ -39,8 +39,13 @@ public class EventManager
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
-    private final BotListener botListener = new BotListener();
+    private final BotListener botListener;
     private final DeHoistListener deHoistListener = new DeHoistListener();
+
+    EventManager(Variables variables) {
+        this.botListener = new BotListener(variables);
+    }
+
 
     @Override
     public void register(Object listener) {

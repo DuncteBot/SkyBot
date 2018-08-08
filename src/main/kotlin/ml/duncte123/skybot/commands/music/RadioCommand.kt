@@ -29,7 +29,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.*
-import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -56,7 +55,7 @@ class RadioCommand : MusicCommand() {
             return
         }
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
+            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }
@@ -85,7 +84,7 @@ class RadioCommand : MusicCommand() {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand
                         }
-                        audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, false)
+                        audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, false)
                         scheduler.queue.forEach {
                             if (it.info.uri != radio.url)
                                 scheduler.nextTrack()

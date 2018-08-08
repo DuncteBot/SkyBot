@@ -22,17 +22,18 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
+import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
+import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.SkyBot
+import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
-import ml.duncte123.skybot.utils.Variables
-import ml.duncte123.skybot.utils.Variables.CONFIG
+import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Guild
 import org.apache.http.NameValuePair
@@ -49,13 +50,14 @@ import java.sql.SQLException
 import java.util.*
 
 
-class WebServer {
+class WebServer(private val shardManager: ShardManager, private val config: Config,
+                private val commandManager: CommandManager, private val database: DBManager) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
-            .setClientId(CONFIG.getLong("discord.oauth.clientId", 210363111729790977))
-            .setClientSecret(CONFIG.getString("discord.oauth.clientSecret", "aaa"))
+            .setClientId(config.getLong("discord.oauth.clientId", 210363111729790977))
+            .setClientSecret(config.getString("discord.oauth.clientSecret", "aaa"))
             .build()
 
     init {
@@ -69,12 +71,12 @@ class WebServer {
 
         get("/commands", DEFAULT_ACCEPT, engine) {
             val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
-                    .put("commands", Variables.COMMAND_MANAGER.sortedCommands)
+                    .put("commands", commandManager.sortedCommands)
 
             if (request.queryParams().contains("server")) {
                 val serverId: String = request.queryParams("server")
                 if (serverId.isNotEmpty()) {
-                    val guild = SkyBot.getInstance().shardManager.getGuildById(serverId)
+                    val guild = shardManager.getGuildById(serverId)
                     if (guild != null) {
                         val settings = GuildSettingsUtils.getGuild(guild)
                         map.put("prefix", settings.customPrefix)
@@ -88,7 +90,7 @@ class WebServer {
         }
 
         get("/suggest", WebVariables().put("title", "Leave a suggestion")
-                .put("chapta_sitekey", CONFIG.getString("apis.chapta.sitekey")), "suggest.twig")
+                .put("chapta_sitekey", config.getString("apis.chapta.sitekey")), "suggest.twig")
 
         post("/suggest") {
             val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
@@ -103,7 +105,7 @@ class WebServer {
                 return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
             }
 
-            val cap = helpers.verifyCapcha(captcha)
+            val cap = helpers.verifyCapcha(captcha, config)
 
             if (!cap.getBoolean("success")) {
                 return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
@@ -112,7 +114,7 @@ class WebServer {
             val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
             val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
 
-            val url = helpers.addTrelloCard(suggestion.toString(), descText).getString("shortUrl")
+            val url = helpers.addTrelloCard(suggestion.toString(), descText, config).getString("shortUrl")
 
             renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
         }
@@ -123,7 +125,7 @@ class WebServer {
             before("") {
                 if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
-                            CONFIG.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
+                            config.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
                             Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
@@ -244,7 +246,7 @@ class WebServer {
                         .setEnableSpamFilter(spamFilter)
                         .setEnableSwearFilter(swearFilter)
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings)
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
 
                 response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
             }
@@ -303,7 +305,7 @@ class WebServer {
             get("/getServerCount") {
                 return@get JSONObject()
                         .put("status", "success")
-                        .put("server_count", SkyBot.getInstance().shardManager.guildCache.size())
+                        .put("server_count", shardManager.guildCache.size())
                         .put("code", response.status())
             }
 
@@ -323,7 +325,7 @@ class WebServer {
             get("/joinGuild") {
                 try {
                     val session = getSession(request, response)
-                    SkyBot.getInstance().shardManager.getGuildById("191245668617158656")
+                    shardManager.getGuildById("191245668617158656")
                             .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
                     response.redirect("/dashboard")
                 } catch (e: IllegalStateException) {
@@ -332,7 +334,7 @@ class WebServer {
             }
 
             get("/llama") {
-                return@get ApiUtils.getRandomLlama().toJson()
+                return@get ApiUtils.getRandomLlama(database).toJson()
                         .put("status", "success")
                         .put("code", response.status())
             }
@@ -340,7 +342,7 @@ class WebServer {
             get("/kpop") {
                 val search = request.queryParamOrDefault("search", "")
                 try {
-                    return@get ApiUtils.getRandomKpopMember(search).toJson()
+                    return@get ApiUtils.getRandomKpopMember(database, search).toJson()
                             .put("status", "success")
                             .put("code", response.status())
                 } catch (e: SQLException) {
@@ -356,7 +358,7 @@ class WebServer {
         path("/crons") {
 
             get("/clearExpiredWarns") {
-                Variables.DATABASE.connManager.connection.createStatement()
+                database.connManager.connection.createStatement()
                         .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
             }
 
@@ -415,7 +417,7 @@ class WebServer {
 
     private fun renderSugPage(map: WebVariables): String {
         map.put("title", "Leave a suggestion")
-                .put("chapta_sitekey", CONFIG.getString("apis.chapta.sitekey"))
+                .put("chapta_sitekey", config.getString("apis.chapta.sitekey"))
 
         return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
@@ -424,8 +426,7 @@ class WebServer {
 
         val guildId = request.params(":guildid")
 
-        return SkyBot.getInstance()
-                .shardManager.getGuildById(guildId) ?: null
+        return shardManager.getGuildById(guildId) ?: null
     }
 
     private fun getSession(request: Request, response: Response): Session {
@@ -439,7 +440,7 @@ class WebServer {
 
     private fun guildToJson(guild: OAuth2Guild): JSONObject {
 
-        val jdaGuild = SkyBot.getInstance().shardManager.getGuildById(guild.id)
+        val jdaGuild = shardManager.getGuildById(guild.id)
 
         return JSONObject()
                 .put("name", guild.name)

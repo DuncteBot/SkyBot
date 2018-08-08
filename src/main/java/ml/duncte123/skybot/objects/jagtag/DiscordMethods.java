@@ -29,13 +29,12 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Random;
 import java.util.stream.Collectors;
-
-import static ml.duncte123.skybot.utils.Variables.RAND;
 
 public class DiscordMethods {
 
-    public static Collection<Method> getMethods() {
+    public static Collection<Method> getMethods(Random rand) {
         return Arrays.asList(
                 new Method("user", (env) -> {
                     User u = env.get("user");
@@ -151,14 +150,14 @@ public class DiscordMethods {
                 new Method("randuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
-                    Member m = members.get(RAND.nextInt(members.size()));
+                    Member m = members.get(rand.nextInt(members.size()));
                     return m.getEffectiveName();
                 }),
 
                 new Method("randatuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
-                    Member m = members.get(RAND.nextInt(members.size()));
+                    Member m = members.get(rand.nextInt(members.size()));
                     return m.getAsMention();
                 }),
 
@@ -172,7 +171,7 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getEffectiveName();
                     }
-                    Member m = members.get(RAND.nextInt(members.size()));
+                    Member m = members.get(rand.nextInt(members.size()));
                     return m.getEffectiveName();
                 }),
 
@@ -186,7 +185,7 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getAsMention();
                     }
-                    Member m = members.get(RAND.nextInt(members.size()));
+                    Member m = members.get(rand.nextInt(members.size()));
                     return m.getAsMention();
                 }),
 
@@ -199,7 +198,7 @@ public class DiscordMethods {
                     if (channels.size() == 1) {
                         return channels.get(0).getAsMention();
                     }
-                    return channels.get(RAND.nextInt(channels.size())).getAsMention();
+                    return channels.get(rand.nextInt(channels.size())).getAsMention();
                 }),
 
                 new Method("randemote", (env) -> {
@@ -211,7 +210,7 @@ public class DiscordMethods {
                     if (emotes.size() == 1) {
                         return emotes.get(0).getAsMention();
                     }
-                    return emotes.get(RAND.nextInt(emotes.size())).getAsMention();
+                    return emotes.get(rand.nextInt(emotes.size())).getAsMention();
                 })
         );
     }

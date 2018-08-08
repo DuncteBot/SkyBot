@@ -22,7 +22,6 @@ import fredboat.audio.player.LavalinkManager;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -113,7 +112,7 @@ public abstract class MusicCommand extends Command {
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event, boolean reply) {
 
-        if(!event.getMember().getVoiceState().inVoiceChannel()) {
+        if (!event.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(event, "Please join a voice channel first");
             return false;
         }
@@ -160,9 +159,9 @@ public abstract class MusicCommand extends Command {
         return false;
     }
 
-    protected boolean isOwner(GuildMessageReceivedEvent event) {
+    /*protected boolean isOwner(GuildMessageReceivedEvent event) {
         return isDev(event.getAuthor()) || event.getAuthor().getId().equals(Settings.OWNER_ID);
-    }
+    }*/
 
     protected boolean hasCoolDown(Guild guild) {
         return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;

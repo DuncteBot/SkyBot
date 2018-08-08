@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -36,7 +35,7 @@ open class PlayCommand : MusicCommand() {
         val event = ctx.event
 
         if (prejoinChecks(event)) {
-            Variables.COMMAND_MANAGER.getCommand("join")?.executeCommand(ctx)
+            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event)) {
             return
         }
@@ -61,7 +60,7 @@ open class PlayCommand : MusicCommand() {
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay
-                val res = searchYoutube(toPlay)
+                val res = searchYoutube(toPlay, ctx.config.getString("apis.googl"))
                 if (res.isEmpty()) {
                     MessageUtils.sendError(event.message)
                     MessageUtils.sendMsg(event, "No tracks where found")
@@ -77,7 +76,7 @@ open class PlayCommand : MusicCommand() {
                 return
             }
 
-            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
         }
     }
 

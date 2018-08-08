@@ -59,6 +59,6 @@ public class ForceDisconnectCommand extends MusicCommand {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"forceleave"};
+        return new String[]{"forceleave"};
     }
 }

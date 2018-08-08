@@ -90,7 +90,8 @@ public class BanCommand extends Command {
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
-                                ModerationUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                                ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
+                                        toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), event.getGuild());
                             } else {

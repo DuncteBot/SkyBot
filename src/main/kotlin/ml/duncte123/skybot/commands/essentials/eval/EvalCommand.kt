@@ -32,7 +32,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
@@ -104,7 +103,7 @@ class EvalCommand : Command() {
 
         val event = ctx.event
 
-        val isRanByBotOwner = isDev(event.author) || event.author.id == Settings.OWNER_ID
+        val isRanByBotOwner = isDev(event.author) || event.author.idLong == Settings.OWNER_ID
         /*if (!isRanByBotOwner && !runIfNotOwner)
             return*/
 
@@ -127,7 +126,7 @@ class EvalCommand : Command() {
         if (isRanByBotOwner && ctx.invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
-            engine.put("commandManager", Variables.COMMAND_MANAGER)
+            engine.put("commandManager", ctx.commandManager)
 
             engine.put("message", ctx.message)
             engine.put("channel", ctx.message.textChannel)

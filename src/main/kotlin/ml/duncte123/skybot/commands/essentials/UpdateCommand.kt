@@ -26,6 +26,7 @@ import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.BotListener
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -48,7 +49,7 @@ class UpdateCommand : Command() {
         val event = ctx.event
 
         if (!isDev(event.author)
-                && Settings.OWNER_ID != event.author.id) {
+                && Settings.OWNER_ID != event.author.idLong) {
             sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
             return
@@ -73,7 +74,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop()
+                    AirUtils.stop(ctx.database)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
@@ -84,7 +85,7 @@ class UpdateCommand : Command() {
                     return
                 sendMsg(event, "✅ Updating") {
                     launch {
-                        initUpdate(event, it.id)
+                        initUpdate(event, it.id, ctx.database)
                     }
                 }
             }
@@ -95,7 +96,7 @@ class UpdateCommand : Command() {
 
     override fun getName() = "update"
 
-    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String) {
+    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String, database: DBManager) {
         lateinit var version: String
         lateinit var links: String
 
@@ -112,7 +113,7 @@ class UpdateCommand : Command() {
 
             //val process = Runtime.getRuntime().exec(versioncmd)
 
-           // val scanner = Scanner(process.inputStream)
+            // val scanner = Scanner(process.inputStream)
             /*while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
@@ -135,7 +136,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop()
+                    AirUtils.stop(database)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x64)

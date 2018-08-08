@@ -36,6 +36,7 @@ class RestartCommand : MusicCommand() {
         if (player.playingTrack == null) {
             MessageUtils.sendError(event.message)
             MessageUtils.sendMsg(event, "No track currently playing")
+            return
         }
 
         player.seekTo(0)

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -25,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.Variables;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -57,7 +57,7 @@ public class HelpCommand extends Command {
             if (isCategory(toSearch))
                 sendCategoryHelp(event, toSearch.toUpperCase());
             else
-                sendCommandHelp(event, toSearch);
+                sendCommandHelp(event, toSearch, ctx.getCommandManager());
 
             return;
         }
@@ -107,8 +107,8 @@ public class HelpCommand extends Command {
         );
     }
 
-    private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch) {
-        for (ICommand cmd : Variables.COMMAND_MANAGER.getCommands()) {
+    private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
+        for (ICommand cmd : manager.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
                 sendMsg(event, "Command help for `" +
                         cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +

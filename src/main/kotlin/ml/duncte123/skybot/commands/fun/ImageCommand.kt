@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.Variables
 import org.apache.commons.lang3.StringUtils
 
 class ImageCommand : Command() {
@@ -45,10 +44,10 @@ class ImageCommand : Command() {
                 return
             }
             val keyword = StringUtils.join(ctx.args, "+")
-            WebUtils.ins.getText(String.format(Variables.GOOGLE_BASE_URL, keyword)).async {
+            WebUtils.ins.getText(String.format(ctx.variables.googleBaseUrl, keyword)).async {
                 val jsonRaw = Ason(it)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                val randomItem = jsonArray.getJsonObject(Variables.RAND.nextInt(jsonArray.size()))
+                val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
                 sendEmbed(event,
                         EmbedUtils.defaultEmbed()
                                 .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))

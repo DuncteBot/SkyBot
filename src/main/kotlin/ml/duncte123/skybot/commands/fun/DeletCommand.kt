@@ -22,7 +22,6 @@ import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
 
 class DeletCommand : WeebCommandBase() {
     init {
@@ -32,7 +31,7 @@ class DeletCommand : WeebCommandBase() {
 
     override fun executeCommand(ctx: CommandContext) {
         //delet_this
-        Variables.WEEB_API.getRandomImage("delet_this").async {
+        ctx.weebApi.getRandomImage("delet_this").async {
             MessageUtils.sendEmbed(ctx.event, getWeebEmbedImage(it.url))
         }
     }

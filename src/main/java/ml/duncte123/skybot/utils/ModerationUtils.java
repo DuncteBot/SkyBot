@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -31,8 +32,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
-
-import static ml.duncte123.skybot.utils.Variables.DATABASE;
 
 @SuppressWarnings("SqlDialectInspection")
 public class ModerationUtils {
@@ -103,10 +102,10 @@ public class ModerationUtils {
      * @param unbanDate         When we need to unban the user
      * @param guildId           What guild the user got banned in
      */
-    public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
+    public static void addBannedUserToDb(DBManager database, String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
 
-        DATABASE.run(() -> {
-            Connection conn = DATABASE.getConnManager().getConnection();
+        database.run(() -> {
+            Connection conn = database.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
                         "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
@@ -136,11 +135,11 @@ public class ModerationUtils {
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(User u, Guild g) {
+    public static int getWarningCountForUser(DBManager database, User u, Guild g) {
         if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
 
-        return ApiUtils.getWarnsForUser(u.getId(), g.getId()).getWarnings().size();
+        return ApiUtils.getWarnsForUser(database, u.getId(), g.getId()).getWarnings().size();
     }
 
     /**
@@ -150,10 +149,10 @@ public class ModerationUtils {
      * @param target    The user to warn
      * @param reason    the reason for the warn
      */
-    public static void addWarningToDb(User moderator, User target, String reason, Guild guild) {
+    public static void addWarningToDb(DBManager database, User moderator, User target, String reason, Guild guild) {
 
-        DATABASE.run(() -> {
-            Connection conn = DATABASE.getConnManager().getConnection();
+        database.run(() -> {
+            Connection conn = database.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
                         "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
@@ -177,18 +176,18 @@ public class ModerationUtils {
     /**
      * This will check if there are users that can be unbanned
      */
-    public static void checkUnbans() {
-        DATABASE.run(() -> {
+    public static void checkUnbans(DBManager database) {
+        database.run(() -> {
             ShardManager shardManager = SkyBot.getInstance().getShardManager();
             logger.debug("Checking for users to unban");
             int usersUnbanned = 0;
-            Connection database = DATABASE.getConnManager().getConnection();
+            Connection connection = database.getConnManager().getConnection();
 
             try {
 
-                Statement smt = database.createStatement();
+                Statement smt = connection.createStatement();
 
-                ResultSet res = smt.executeQuery("SELECT * FROM " + DATABASE.getName() + ".bans");
+                ResultSet res = smt.executeQuery("SELECT * FROM " + database.getName() + ".bans");
 
                 while (res.next()) {
                     Date unbanDate = res.getTimestamp("unban_date");
@@ -215,7 +214,7 @@ public class ModerationUtils {
                             }
                         } catch (NullPointerException ignored) {
                         }
-                        database.createStatement().executeUpdate("DELETE FROM " + DATABASE.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                        connection.createStatement().executeUpdate("DELETE FROM " + database.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                     }
                 }
                 logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
@@ -223,7 +222,7 @@ public class ModerationUtils {
                 e.printStackTrace();
             } finally {
                 try {
-                    database.close();
+                    connection.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }

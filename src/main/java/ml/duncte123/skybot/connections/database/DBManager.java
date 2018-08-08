@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import ml.duncte123.skybot.utils.Variables;
+import me.duncte123.botCommons.config.Config;
 
 import java.io.File;
 import java.sql.Connection;
@@ -29,7 +29,7 @@ import java.util.concurrent.Future;
 
 public class DBManager {
 
-    public final DBConnectionManager connManager;
+    private final DBConnectionManager connManager;
     private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-thread"));
     /**
      * This is the database name
@@ -39,13 +39,13 @@ public class DBManager {
     /**
      * This will set our stuff up
      */
-    public DBManager() {
-        this.connManager = createDBManager();
+    public DBManager(boolean isSql, Config config) {
+        this.connManager = createDBManager(isSql, config);
         this.name = connManager.getName();
     }
 
-    private static DBConnectionManager createDBManager() {
-        if (Variables.NONE_SQLITE) return new MySQLConnectionManager();
+    private DBConnectionManager createDBManager(boolean isSql, Config config) {
+        if (isSql) return new MySQLConnectionManager(config);
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
 
@@ -71,9 +71,7 @@ public class DBManager {
      * This will get the connection for us
      *
      * @return the connection, will we null if we aren't connected
-     * @deprecated use {@link #getConnManager()} instead
      */
-    @Deprecated
     public Connection getConnection() {
         return connManager.getConnection();
     }

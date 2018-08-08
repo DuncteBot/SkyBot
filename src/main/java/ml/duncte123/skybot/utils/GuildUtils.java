@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import ml.duncte123.skybot.SkyBot;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;

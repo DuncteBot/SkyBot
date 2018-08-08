@@ -33,7 +33,6 @@ import java.util.TreeMap;
 
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
-import static ml.duncte123.skybot.utils.Variables.RAND;
 
 public class CSShumorCommand extends Command {
 
@@ -48,7 +47,7 @@ public class CSShumorCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        switch (RAND.nextInt(2)) {
+        switch (ctx.getRandom().nextInt(2)) {
             case 1:
                 sendRedditPost("css_irl", cssIndex, ctx.getEvent(), true);
                 break;

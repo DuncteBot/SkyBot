@@ -25,7 +25,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.Variables
 
 class NSFWCommands : Command() {
 
@@ -46,10 +45,10 @@ class NSFWCommands : Command() {
         }
         when (ctx.invoke) {
             "carsandhentai" -> {
-                WebUtils.ins.getText(String.format(Variables.GOOGLE_BASE_URL, "Cars and hentai")).async {
+                WebUtils.ins.getText(String.format(ctx.variables.googleBaseUrl, "Cars and hentai")).async {
                     val jsonRaw = Ason(it)
                     val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                    val randomItem = jsonArray.getJsonObject(Variables.RAND.nextInt(jsonArray.size()))
+                    val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
                     MessageUtils.sendEmbed(event,
                             EmbedUtils.defaultEmbed()
                                     .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))

@@ -32,6 +32,8 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import me.duncte123.botCommons.config.Config;
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -71,13 +73,13 @@ public class AudioUtils {
      */
     protected final Map<Long, GuildMusicManager> musicManagers;
 
+    private Config config;
+
     /**
      * This will set everything up and get the player ready
      */
     private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-
-        initPlayerManager();
 
         musicManagers = new HashMap<>();
     }
@@ -100,17 +102,21 @@ public class AudioUtils {
         }
     }
 
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
     private void initPlayerManager() {
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
-            playerManager.enableGcMonitoring();
+//            playerManager.enableGcMonitoring();
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
             SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 
-            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
 
 
@@ -140,12 +146,14 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw, final boolean addPlayList) {
-        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, true);
+    public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester,
+                            final String trackUrlRaw, CommandManager commandManager, final boolean addPlayList) {
+        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, commandManager, true);
     }
 
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw,
+    public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw,
                             final boolean addPlayList,
+                            final CommandManager commandManager,
                             final boolean announce) {
         final String trackUrl;
 
@@ -156,12 +164,12 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
+        getPlayerManager().loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
                 if (track.getInfo().isStream) {
-                    Optional<RadioStream> stream = ((RadioCommand) Variables.COMMAND_MANAGER.getCommand("radio"))
+                    Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
                             .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();
