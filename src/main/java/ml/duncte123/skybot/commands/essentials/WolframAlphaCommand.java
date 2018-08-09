@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;

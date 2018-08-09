@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import me.duncte123.botCommons.config.Config;
-
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
