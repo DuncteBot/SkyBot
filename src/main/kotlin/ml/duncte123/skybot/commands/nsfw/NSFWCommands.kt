@@ -45,7 +45,7 @@ class NSFWCommands : Command() {
         }
         when (ctx.invoke) {
             "carsandhentai" -> {
-                WebUtils.ins.getText(String.format(ctx.variables.googleBaseUrl, "Cars and hentai")).async {
+                WebUtils.ins.getText(String.format(ctx.googleBaseUrl, "Cars and hentai")).async {
                     val jsonRaw = Ason(it)
                     val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                     val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))

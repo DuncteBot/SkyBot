@@ -44,7 +44,7 @@ class ImageCommand : Command() {
                 return
             }
             val keyword = StringUtils.join(ctx.args, "+")
-            WebUtils.ins.getText(String.format(ctx.variables.googleBaseUrl, keyword)).async {
+            WebUtils.ins.getText(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonRaw = Ason(it)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                 val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))

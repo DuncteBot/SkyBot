@@ -31,11 +31,13 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.util.EnumSet;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -57,12 +59,17 @@ public class SkyBot {
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
+        String configPrefix = config.getString("discord.prefix", "db!");
+        if (!Settings.PREFIX.equals(configPrefix)) {
+            Settings.PREFIX = configPrefix;
+        }
+
         //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = (t) -> {
         };
         RestAction.setPassContext(true);
 
-        if (!vars.isSql()) { //Don't try to connect if we don't want to
+        if (vars.isSql()) { //Don't try to connect if we don't want to
             if (!database.getConnManager().hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
@@ -114,6 +121,7 @@ public class SkyBot {
         EventManager eventManager = new EventManager(vars);
         this.shardManager = new DefaultShardManagerBuilder()
                 .setEventManager(eventManager)
+                .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE))
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.of(type,
                         name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
@@ -153,4 +161,21 @@ public class SkyBot {
     public ShardManager getShardManager() {
         return shardManager;
     }
+
+    /*private void changeSettingsField(final String fieldName, final Object newValue) {
+        System.out.println("Setting " + fieldName + " to " + newValue);
+        try {
+            Field field = Settings.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(null, newValue);
+            System.out.println(field.get(null));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

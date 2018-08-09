@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot;
 
+import me.duncte123.botCommons.config.Config;
+
 import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
@@ -61,9 +63,7 @@ public class Settings {
     /**
      * This is the prefix that your bot has, by default is the /
      */
-//    public static final String PREFIX = CONFIG.getString("discord.prefix", "db!");
-    public static final String PREFIX = "db!";
-//    public static final String PREFIX = "//";
+    public static String PREFIX = "db!";
     /**
      * This is another prefix because I can
      */

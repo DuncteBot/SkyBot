@@ -72,7 +72,7 @@ public class CommandManager {
 
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
-        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
+//        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
 
         loadCustomCommands();
     }
@@ -318,6 +318,7 @@ public class CommandManager {
                                     .put("user", event.getAuthor())
                                     .put("channel", event.getChannel())
                                     .put("guild", event.getGuild())
+                                    .put("random", variables.getRandom())
                                     .put("args", StringUtils.join(args, " "))
                                     .parse(cc.getMessage());
 

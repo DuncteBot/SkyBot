@@ -18,7 +18,9 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
@@ -65,7 +67,7 @@ class UserinfoCommand : Command() {
         val event = ctx.event
         val args = ctx.args
 
-        var u: User
+        var u: User? = null
         var m: Member? //this can be lateinit var m: Member //Nope, check line 61
 
         if (args.isEmpty()) {
@@ -90,6 +92,23 @@ class UserinfoCommand : Command() {
                     } catch (ignored: NumberFormatException) { /* ignored */
                     }
                 }
+
+            }
+        }
+
+        if(u == null && m == null) {
+            val users = FinderUtil.findUsers(ctx.rawArgs, ctx.jda)
+            if(users.isNotEmpty()) {
+                u = users[0]
+                m = ctx.guild.getMember(u)
+                if(m == null) {
+                    if (ctx.invoke == "avatar") {
+                        MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+                        return
+                    }
+                    renderUserEmbed(event, u, ctx)
+                    return
+                }
             }
         }
 
@@ -106,14 +125,49 @@ class UserinfoCommand : Command() {
         }
         //A feature that will be implemented soon
         /*AirUtils.getUserProfile(u.id).async ({
-            renderEmbed(event, m, it)
+            renderMemberEmbed(event, m, it)
         },{
-            renderEmbed(event, m, null)
+            renderMemberEmbed(event, m, null)
         })*/
-        renderEmbed(event, m, null, ctx)
+        renderMemberEmbed(event, m, null, ctx)
     }
 
-    private fun renderEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, ctx: CommandContext) {
+        val embed = EmbedUtils.defaultEmbed()
+                .setColor(Settings.defaultColour)
+                .setThumbnail(user.effectiveAvatarUrl)
+                .setDescription("""User info for ${user.asMention}
+                        |
+                        |**Username + Discriminator:** ${String.format("%#s", user)}
+                        |**User Id:** ${user.id}
+                        |**Display Name:** ${user.name}
+                        |**Account Created:** ${user.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
+                        |
+                        |_Use `${PREFIX}avatar [user]` to get a user's avatar_
+                    """.trimMargin())
+
+        if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
+                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            ctx.weebApi.generateDiscordStatus(StatusType.OFFLINE,
+                    user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
+
+                val targetFile = File("$folderName/user-avatar-${user.id}-${System.currentTimeMillis()}.png")
+
+                Files.copy(it, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+                event.channel.sendFile(targetFile, "stat.png",
+                        MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+                ).queue(null) { _ ->
+                    MessageUtils.sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
+                }
+            }
+        } else {
+            MessageUtils.sendEmbed(event, embed.build())
+        }
+    }
+
+    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
         var badgesString = ""
         if (p != null) {
             badgesString = "**Badges:** " + p.badges.joinToString()

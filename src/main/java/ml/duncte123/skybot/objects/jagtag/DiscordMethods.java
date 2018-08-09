@@ -22,7 +22,10 @@ import com.jagrosh.jagtag.Method;
 import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.MiscUtil;
 
 import java.time.format.DateTimeFormatter;
@@ -34,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class DiscordMethods {
 
-    public static Collection<Method> getMethods(Random rand) {
+    public static Collection<Method> getMethods() {
         return Arrays.asList(
                 new Method("user", (env) -> {
                     User u = env.get("user");
@@ -150,6 +153,7 @@ public class DiscordMethods {
                 new Method("randuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
+                    Random rand = env.get("random");
                     Member m = members.get(rand.nextInt(members.size()));
                     return m.getEffectiveName();
                 }),
@@ -157,6 +161,7 @@ public class DiscordMethods {
                 new Method("randatuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
+                    Random rand = env.get("random");
                     Member m = members.get(rand.nextInt(members.size()));
                     return m.getAsMention();
                 }),
@@ -171,6 +176,7 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getEffectiveName();
                     }
+                    Random rand = env.get("random");
                     Member m = members.get(rand.nextInt(members.size()));
                     return m.getEffectiveName();
                 }),
@@ -185,6 +191,7 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getAsMention();
                     }
+                    Random rand = env.get("random");
                     Member m = members.get(rand.nextInt(members.size()));
                     return m.getAsMention();
                 }),
@@ -198,19 +205,8 @@ public class DiscordMethods {
                     if (channels.size() == 1) {
                         return channels.get(0).getAsMention();
                     }
+                    Random rand = env.get("random");
                     return channels.get(rand.nextInt(channels.size())).getAsMention();
-                }),
-
-                new Method("randemote", (env) -> {
-                    Guild guild = env.get("guild");
-                    List<Emote> emotes = guild.getEmoteCache().asList();
-                    if (emotes.isEmpty()) {
-                        return "";
-                    }
-                    if (emotes.size() == 1) {
-                        return emotes.get(0).getAsMention();
-                    }
-                    return emotes.get(rand.nextInt(emotes.size())).getAsMention();
                 })
         );
     }
