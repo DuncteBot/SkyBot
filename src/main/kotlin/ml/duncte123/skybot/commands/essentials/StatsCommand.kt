@@ -45,6 +45,7 @@ class StatsCommand : Command() {
                     |**Total ram:**
                     |**Ram usage:**
                     |**System uptime:**
+                    |**Operating System:**
                 """.trimMargin(), false)
 
                 .addField("JVM stats",
