@@ -51,6 +51,8 @@ class StatsCommand : Command() {
                 .addField("JVM stats",
                           """**Total thread count:**
                             |**Active thread count:**
+                            |**Used ram:**
+                            |**Allocated ram:**
                         """.trimMargin(), false)
 
         sendEmbed(ctx.event, embed.build())
