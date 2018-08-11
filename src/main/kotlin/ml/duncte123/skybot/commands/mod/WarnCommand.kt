@@ -19,15 +19,15 @@
 package ml.duncte123.skybot.commands.mod
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
-import java.util.*
 
 class WarnCommand : Command() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command")
@@ -35,7 +35,7 @@ class WarnCommand : Command() {
             return
         }
 
-        if (args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
+        if (ctx.args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
             MessageUtils.sendMsg(event, "Must mention a member")
             MessageUtils.sendError(event.message)
             return
@@ -50,24 +50,24 @@ class WarnCommand : Command() {
             MessageUtils.sendError(event.message)
             return
         }
-        if (ModerationUtils.getWarningCountForUser(target.user, event.guild) >= 3) {
+        if (ModerationUtils.getWarningCountForUser(ctx.database, target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
             ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", event.guild)
             return
         }
         var reason = ""
-        if (args.size > 1)
-            reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.size), " ")
+        if (ctx.args.size > 1)
+            reason = ctx.rawArgs
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        ModerationUtils.addWarningToDb(event.author, target.user, reason, event.guild, event.jda)
+        ModerationUtils.addWarningToDb(ctx.database, event.author, target.user, reason, event.guild)
         ModerationUtils.modLog(event.author, target.user, "warned", reason, event.guild)
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console
-            it.sendMessage(dmMessage).queue(null, {})
+            it.sendMessage(dmMessage).queue(null) { _ -> }
         }
         MessageUtils.sendSuccess(event.message)
 

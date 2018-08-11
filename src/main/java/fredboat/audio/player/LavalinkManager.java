@@ -19,13 +19,13 @@
 package fredboat.audio.player;
 
 import com.afollestad.ason.Ason;
-import lavalink.client.io.Lavalink;
 import lavalink.client.io.Link;
+import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
+import me.duncte123.botCommons.config.Config;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.audio.LavalinkNode;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -47,24 +47,26 @@ import java.util.Objects;
 public class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
-    private Lavalink lavalink = null;
+    private JdaLavalink lavalink = null;
+    private Config config = null;
 
     private LavalinkManager() {
     }
 
-    public void start() {
+    public void start(Config c) {
+        this.config = c;
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(AirUtils.CONFIG.getString("discord.token"));
+        String userId = getIdFromToken(config.getString("discord.token"));
 
-        lavalink = new Lavalink(
+        lavalink = new JdaLavalink(
                 userId,
-                AirUtils.CONFIG.getInt("discord.totalShards", 1),
+                config.getInt("discord.totalShards", 1),
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
         List<LavalinkNode> defaultNodes = new ArrayList<>();
         defaultNodes.add(new LavalinkNode("ws://localhost", "youshallnotpass"));
-        List<Ason> nodes = AirUtils.CONFIG.getArray("lavalink.nodes", defaultNodes);
+        List<Ason> nodes = config.getArray("lavalink.nodes", defaultNodes);
         List<LavalinkNode> nodeList = new ArrayList<>();
 
         nodes.forEach(it -> nodeList.add(Ason.deserialize(it, LavalinkNode.class)));
@@ -75,12 +77,12 @@ public class LavalinkManager {
     }
 
     public boolean isEnabled() {
-        return AirUtils.CONFIG.getBoolean("lavalink.enable", false);
+        return config.getBoolean("lavalink.enable", false);
     }
 
-    public IPlayer createPlayer(String guildId) {
+    public IPlayer createPlayer(long guildId) {
         return isEnabled()
-                ? lavalink.getLink(guildId).getPlayer()
+                ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
                 : new LavaplayerPlayerWrapper(AudioUtils.ins.getPlayerManager().createPlayer());
     }
 
@@ -114,7 +116,7 @@ public class LavalinkManager {
         return guild.getSelfMember().getVoiceState().getChannel();
     }
 
-    public Lavalink getLavalink() {
+    public JdaLavalink getLavalink() {
         return lavalink;
     }
 

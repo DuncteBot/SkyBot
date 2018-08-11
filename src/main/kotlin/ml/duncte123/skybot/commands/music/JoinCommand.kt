@@ -21,11 +21,10 @@
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.Permission
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.exceptions.PermissionException
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -33,7 +32,9 @@ import net.dv8tion.jda.core.exceptions.PermissionException
 
 class JoinCommand : MusicCommand() {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
 
         if (!event.member.voiceState.inVoiceChannel()) {
             MessageUtils.sendMsg(event, "Please join a voice channel first.")
@@ -43,10 +44,9 @@ class JoinCommand : MusicCommand() {
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val mng = getMusicManager(guild)
-        mng.latestChannel = event.channel
+        mng.latestChannel = event.channel.idLong
 
-        @Suppress("DEPRECATION")
-        if (cooldowns.containsKey(guild.idLong) && cooldowns[guild.idLong] > 0 && !(Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID)) {
+        if (hasCoolDown(guild) && !isPatron(ctx.author, null)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)
@@ -68,8 +68,6 @@ class JoinCommand : MusicCommand() {
             } else {
                 MessageUtils.sendMsg(event, "Error while joining channel `${vc?.name}`: ${e.message}")
             }
-        } catch (e1: Exception) {
-            e1.printStackTrace()
         }
 
     }

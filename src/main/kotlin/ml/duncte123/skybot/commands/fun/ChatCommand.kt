@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
@@ -41,7 +41,8 @@ import javax.xml.xpath.XPathFactory
 class ChatCommand : Command() {
 
     private val botid = "b0dafd24ee35a477"
-    private val sessions = TreeMap<String, ChatSession>()
+    private val sessions = TreeMap<Long, ChatSession>()
+    private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
             "My prefix in this guild is *`{PREFIX}`*",
             "Thanks for asking, my prefix here is *`{PREFIX}`*",
@@ -54,9 +55,8 @@ class ChatCommand : Command() {
         this.category = CommandCategory.FUN
 
         commandService.scheduleAtFixedRate({
-            val temp = TreeMap<String, ChatSession>(sessions)
+            val temp = TreeMap<Long, ChatSession>(sessions)
             val now = Date()
-            val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
             var cleared = 0
             temp.forEach {
                 val duration = now.time - it.value.time.time
@@ -70,9 +70,12 @@ class ChatCommand : Command() {
     }
 
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (event.message.contentRaw.contains("prefix")) {
-            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[AirUtils.RAND.nextInt(responses.size)]
+            MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
                     .replace("{PREFIX}", getSettings(event.guild).customPrefix))
             return
         }
@@ -85,16 +88,57 @@ class ChatCommand : Command() {
 //            return
 //        }
 
-        if (args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
         val time = System.currentTimeMillis()
-        var message = event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
+        var message = ctx.rawArgs
         event.channel.sendTyping().queue()
 
+        message = replaceStuff(event, message)
+
+        if (!sessions.containsKey(event.author.idLong)) {
+            sessions[event.author.idLong] = ChatSession(botid, event.author.idLong)
+            //sessions[event.author.id]?.session =
+        }
+        logger.debug("Message: \"$message\"")
+        //Set the current date in the object
+        sessions[event.author.idLong]!!.time = Date()
+
+        sessions[event.author.idLong]!!.think(message) {
+            var response = it
+
+            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
+
+            response = parseATags(response, withAds)
+            if (withAds) {
+                response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
+                        "or becoming a patron [here](https://patreon.com/duncte123)."
+                MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
+            } else {
+                MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
+            }
+            logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
+        }
+
+    }
+
+    private fun parseATags(response: String, withAds: Boolean): String {
+        var response1 = response
+        for (element in Jsoup.parse(response1).getElementsByTag("a")) {
+            response1 = response1.replace(oldValue = element.toString(),
+                    newValue = if (withAds) "[${element.text()}](${element.attr("href")})" else
+                    //It's usefull to show the text
+                        "${element.text()}(<${element.attr("href")}>)")
+        }
+        return response1
+    }
+
+    private fun replaceStuff(event: GuildMessageReceivedEvent, m: String): String {
         //We don't need this because we are using contentDisplay instead of contentRaw
         //We need it since contentDisplay leaves # and @
+        var message = m
         for (it in event.message.mentionedChannels) {
             message = message.replace(it.asMention, it.name)
         }
@@ -108,44 +152,7 @@ class ChatCommand : Command() {
             message = message.replace(it.asMention, it.name)
         }
         message = message.replace("@here", "here").replace("@everyone", "everyone")
-
-        if (!sessions.containsKey(event.author.id)) {
-            sessions[event.author.id] = ChatSession(botid, event.author.id)
-            //sessions[event.author.id]?.session =
-        }
-        logger.debug("Message: \"$message\"")
-        //Set the current date in the object
-        sessions[event.author.id]?.time = Date()
-
-        sessions[event.author.id]?.think(message) {
-            var response = it
-
-            //Reset the ai if it dies
-            //But not for now to see how user separated sessions go
-            /*if (response == "" || response == "You have been banned from talking to me." ||
-                    response == "I am not talking to you any more.") {
-                sessions[event.author.id]?.session = builder.createSession()
-                response = sessions[event.author.id]?.session?.think(message)
-            }*/
-
-            val `with"Ads"` = AirUtils.RAND.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
-
-            for (element in Jsoup.parse(response).getElementsByTag("a")) {
-                response = response.replace(oldValue = element.toString(),
-                        newValue = if (`with"Ads"`) "[${element.text()}](${element.attr("href")})" else
-                            //It's usefull to show the text
-                            "${element.text()}(<${element.attr("href")}>)")
-            }
-            if (`with"Ads"`) {
-                response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
-                        "or becoming a patron [here](https://patreon.com/duncte123)."
-                MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
-            } else {
-                MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
-            }
-            logger.debug("New response: \"$response\", this took ${System.currentTimeMillis() - time}ms")
-        }
-
+        return message
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
@@ -157,7 +164,7 @@ class ChatCommand : Command() {
 /**
  * Little wrapper class to help us keep track of inactive sessions
  */
-class ChatSession(botid: String, userId: String) {
+class ChatSession(botid: String, userId: Long) {
     private val vars: MutableMap<String, Any>
 
     init {

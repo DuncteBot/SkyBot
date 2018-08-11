@@ -20,7 +20,7 @@ package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -35,7 +35,7 @@ public class GuildMusicManager {
      * This is the scheduler
      */
     public final TrackScheduler scheduler;
-    protected final GuildSettings guildSettings;
+    private final boolean announceTracks;
     /**
      * This is what actually sends the audio
      */
@@ -43,7 +43,7 @@ public class GuildMusicManager {
     /**
      * This is the text channel were we will announce our songs
      */
-    public TextChannel latestChannel = null;
+    public long latestChannel = -1;
 
     /**
      * Constructor
@@ -51,11 +51,11 @@ public class GuildMusicManager {
      * @param g The guild that we wannt the manager for
      */
     public GuildMusicManager(Guild g) {
-        player = LavalinkManager.ins.createPlayer(g.getId());
+        player = LavalinkManager.ins.createPlayer(g.getIdLong());
         scheduler = new TrackScheduler(player, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
-        this.guildSettings = GuildSettingsUtils.getGuild(g);
+        this.announceTracks = GuildSettingsUtils.getGuild(g).isAnnounceTracks();
     }
 
     /**
@@ -65,5 +65,15 @@ public class GuildMusicManager {
      */
     public AudioPlayerSenderHandler getSendHandler() {
         return sendHandler;
+    }
+
+    boolean isAnnounceTracks() {
+        return announceTracks;
+    }
+
+    TextChannel getLatestChannel() {
+        if (this.latestChannel == -1 || this.latestChannel == 0)
+            return null;
+        return SkyBot.getInstance().getShardManager().getTextChannelById(this.latestChannel);
     }
 }

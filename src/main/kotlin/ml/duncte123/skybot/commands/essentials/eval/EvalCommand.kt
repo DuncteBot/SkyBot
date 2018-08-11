@@ -27,11 +27,10 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -39,11 +38,8 @@ import net.dv8tion.jda.core.requests.RestAction
 import org.codehaus.groovy.control.CompilationFailedException
 import org.codehaus.groovy.control.CompilerConfiguration
 import org.kohsuke.groovy.sandbox.SandboxTransformer
-import java.util.*
 import java.util.concurrent.ExecutionException
-import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeoutException
-import java.util.function.Consumer
 import javax.script.ScriptEngine
 import javax.script.ScriptEngineManager
 import javax.script.ScriptException
@@ -56,10 +52,9 @@ class EvalCommand : Command() {
     private val packageImports: List<String>
     private val classImports: List<String>
     private val staticImports: List<String>
-    private val services = ArrayList<ScheduledExecutorService>()
     private val filter = EvalFilter()
 
-    private var runIfNotOwner = true
+//    private var runIfNotOwner = true
 
     /**
      * This initialises the engine
@@ -73,9 +68,9 @@ class EvalCommand : Command() {
             @Throws(CompilationFailedException::class)
             override fun evaluate(scriptText: String): Any {
                 if (filter.filterArrays(scriptText))
-                    throw VRCubeException("Arrays are not allowed")
+                    throw DoomedException("Arrays are not allowed")
                 if (filter.filterLoops(scriptText))
-                    throw VRCubeException("Loops are not allowed")
+                    throw DoomedException("Loops are not allowed")
                 return super.evaluate(scriptText)
             }
         }
@@ -95,8 +90,7 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.entities.delegate",
                 "ml.duncte123.skybot")
         classImports = listOf(
-                "ml.duncte123.skybot.objects.FakeInterface",
-                "ml.duncte123.skybot.exceptions.VRCubeException"
+                "ml.duncte123.skybot.exceptions.DoomedException"
         )
 
         staticImports = listOf(
@@ -105,43 +99,47 @@ class EvalCommand : Command() {
         )
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
-        val isRanByBotOwner = Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id) || event.author.id == Settings.OWNER_ID
-        if (!isRanByBotOwner && !runIfNotOwner)
-            return
+    override fun executeCommand(ctx: CommandContext) {
 
-        if (!isRanByBotOwner && !isPatron(event.author, event.channel)) return
+        val event = ctx.event
+
+        val isRanByBotOwner = isDev(event.author) || event.author.idLong == Settings.OWNER_ID
+        /*if (!isRanByBotOwner && !runIfNotOwner)
+            return*/
+
+        if (!isRanByBotOwner && !isUserOrGuildPatron(event)) return
 
         val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
                 classImports.joinToString(separator = "\nimport ", postfix = "\n") +
                 staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
 
-        val script = try {
-            importString + event.message.contentRaw.split("\\s+".toRegex(), 2)[1]
-        } catch (ex: ArrayIndexOutOfBoundsException) {
+        val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
+        if (userInput.size < 2) {
             MessageUtils.sendSuccess(event.message)
             return
         }
 
+        val script = importString + ctx.rawArgs
+
         var timeout = 5000L
 
-        if (isRanByBotOwner) {
+        if (isRanByBotOwner && ctx.invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
-            engine.put("commandManager", AirUtils.COMMAND_MANAGER)
+            engine.put("commandManager", ctx.commandManager)
 
-            engine.put("message", event.message)
-            engine.put("channel", event.message.textChannel)
-            engine.put("guild", event.guild)
-            engine.put("member", event.member)
-            engine.put("author", event.author)
-            engine.put("jda", event.jda)
-            engine.put("shardManager", event.jda.asBot().shardManager)
+            engine.put("message", ctx.message)
+            engine.put("channel", ctx.message.textChannel)
+            engine.put("guild", ctx.guild)
+            engine.put("member", ctx.member)
+            engine.put("author", ctx.author)
+            engine.put("jda", ctx.jda)
+            engine.put("shardManager", ctx.jda.asBot().shardManager)
             engine.put("event", event)
 
             engine.put("skraa", script)
-            engine.put("args", args)
+            engine.put("args", ctx.args)
+            engine.put("ctx", ctx)
 
             @SinceSkybot("3.58.0")
             launch(start = CoroutineStart.ATOMIC) {
@@ -160,17 +158,12 @@ class EvalCommand : Command() {
             @SinceSkybot("3.58.0")
             launch {
                 //            async {
-                return@launch eval(event, isRanByBotOwner, script, timeout)
+                return@launch eval(event, false, script, timeout)
             }
         }
 
         // Garbage collect
         System.gc()
-    }
-
-    fun shutdown() {
-        services.forEach(Consumer<ScheduledExecutorService> { it.shutdownNow() })
-        services.clear()
     }
 
     override fun help() = """Evaluate java code on the bot
@@ -180,10 +173,10 @@ class EvalCommand : Command() {
     override fun getName() = "eval"
 
     override fun getAliases(): Array<String> {
-        return arrayOf("eval™", "evaluate", "evan", "eva;")
+        return arrayOf("eval™", "evaluate", "evan", "eva;", "safeeval")
     }
 
-    fun toggleFilter(): Boolean {
+    /*fun toggleFilter(): Boolean {
         val ret = runIfNotOwner
         runIfNotOwner = !runIfNotOwner
         return ret
@@ -193,7 +186,7 @@ class EvalCommand : Command() {
         val ret = runIfNotOwner
         runIfNotOwner = status
         return ret
-    }
+    }*/
 
     @SinceSkybot("3.58.0")
     suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
@@ -207,7 +200,6 @@ class EvalCommand : Command() {
                         protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
-                    ComparatingUtils.checkEx(ex)
                     ex
                 } finally {
                     filter.unregister()
@@ -228,7 +220,7 @@ class EvalCommand : Command() {
                     out as Exception
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
-                is IllegalArgumentException, is VRCubeException -> {
+                is IllegalArgumentException, is DoomedException -> {
                     out as RuntimeException
                     MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }

@@ -20,14 +20,24 @@ package ml.duncte123.skybot.objects.command;
 
 public enum CommandCategory {
 
-    ANIMALS,
-    MAIN,
-    FUN,
-    MUSIC,
-    MOD_ADMIN,
-    NERD_STUFF,
-    PATRON,
-    WEEB,
-    NSFW,
-    UNLISTED
+    ANIMALS("animals"),
+    MAIN("main"),
+    FUN("fun"),
+    MUSIC("music"),
+    MOD_ADMIN("mod/admin"),
+    NERD_STUFF("nerd stuff"),
+    PATRON("patron"),
+    WEEB("weeb"),
+    NSFW("nsfw"),
+    UNLISTED("null");
+
+    private final String search;
+
+    CommandCategory(String search) {
+        this.search = search;
+    }
+
+    public String getSearch() {
+        return search;
+    }
 }

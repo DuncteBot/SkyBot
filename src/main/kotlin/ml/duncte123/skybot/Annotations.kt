@@ -34,18 +34,18 @@ import kotlin.annotation.AnnotationTarget.*
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-annotation class SinceSkybot(val version: String = BuildConfig.VERSION)
+annotation class SinceSkybot(val version: String = Settings.VERSION)
 
-/**
+/*
  * Specifies any part in any kind of files.
  *
  * @property specificPart is the exact part of any part which needs documentation
  */
-@Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
+/*@Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
 @Retention
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-annotation class DocumentationNeeded(vararg val specificPart: String = ["everything", "class"])
+annotation class DocumentationNeeded(vararg val specificPart: String = ["everything", "class"])*/
 
 /**
  * Specifies any part in any kind of files.

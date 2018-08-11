@@ -22,6 +22,7 @@ import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -30,6 +31,9 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class WolframAlphaCommand extends Command {
 
@@ -106,25 +110,29 @@ public class WolframAlphaCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (!isPatron(event.getAuthor(), event.getChannel())) return;
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (args.length == 0) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
+        if (!isUserOrGuildPatron(event)) return;
+
+        if (args.size() == 0) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
 
-        WAEngine engine = AirUtils.ALPHA_ENGINE;
+        WAEngine engine = ctx.getAlphaEngine();
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
         MessageUtils.sendMsg(event, "Calculating.....", message -> {
-            String queryString
-                    = event.getMessage().getContentRaw()
+            String queryString = ctx.getRawArgs();
+                    /*= event.getMessage().getContentRaw()
                     .substring(event.getMessage().getContentRaw()
-                            .split(" ")[0].length());
+                            .split(" ")[0].length());*/
 
             WAQuery query = engine.createQuery(queryString);
             WAQueryResult result;

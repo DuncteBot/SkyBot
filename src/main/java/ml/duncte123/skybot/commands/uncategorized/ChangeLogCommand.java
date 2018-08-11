@@ -18,34 +18,28 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import me.duncte123.botCommons.web.WebUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 public class ChangeLogCommand extends Command {
+
+    private MessageEmbed embed = null;
+
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
-            String date1 = json.getJSONObject(1).getString("published_at");
-            String date2 = json.getJSONObject(0).getString("published_at");
-            WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1
-            + "&until=" + date2).async(commits -> {
-                EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                        .setTitle("Changelog for DuncetBot", "https://github.com/duncte123/SkyBot");
-                commits.forEach(c -> {
-                    JSONObject j = (JSONObject) c;
-                    eb.appendDescription("**" +
-                            j.getJSONObject("commit").getString("message") + "** - " +
-                                    j.getJSONObject("committer").getString("login") + "\n");
-                });
-                MessageUtils.sendEmbed(event, eb.build());
-            });
-        });
+    public void executeCommand(@NotNull CommandContext ctx) {
+        if (embed != null) {
+            MessageUtils.sendEmbed(ctx.getEvent(), embed);
+        } else {
+            fetchLatetstGitHubCommits(ctx.getEvent());
+        }
     }
 
     @Override
@@ -56,5 +50,27 @@ public class ChangeLogCommand extends Command {
     @Override
     public String getName() {
         return "changelog";
+    }
+
+    private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
+        WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
+            String date1 = json.getJSONObject(1).getString("published_at");
+            String date2 = json.getJSONObject(0).getString("published_at");
+            WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1
+                    + "&until=" + date2).async(commits -> {
+                EmbedBuilder eb = EmbedUtils.defaultEmbed()
+                        .setTitle("Changelog for DuncetBot", "https://github.com/DuncteBot/SkyBot/commits/dev");
+                commits.forEach(c -> {
+                    JSONObject j = (JSONObject) c;
+                    JSONObject commit = j.getJSONObject("commit");
+                    eb.addField("Commit #" + j.getString("sha").substring(0, 8), "**[`" +
+                            commit.getString("message") + "`](" +
+                            j.getString("html_url") + ")** - " +
+                            j.getJSONObject("author").getString("login") + "\n", false);
+                });
+                embed = eb.build();
+                MessageUtils.sendEmbed(event, embed);
+            });
+        });
     }
 }

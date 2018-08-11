@@ -18,14 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals
 
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import me.duncte123.botCommons.web.WebUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.io.IOException
 
 class BirbCommand : Command() {
@@ -34,15 +33,15 @@ class BirbCommand : Command() {
         this.category = CommandCategory.ANIMALS
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
         try {
+            //https://random.birb.pw/
             WebUtils.ins.getJSONObject("https://birdsare.cool/bird.json").async {
-                sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
+                sendEmbed(ctx.event, EmbedUtils.embedImage(it.getString("url")))
             }
 
         } catch (e: IOException) {
-            sendMsg(event, "ERROR: " + e.message)
-            ComparatingUtils.checkEx(e)
+            sendMsg(ctx.event, "ERROR: " + e.message)
         }
     }
 

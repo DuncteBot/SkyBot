@@ -20,12 +20,17 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
+
+import java.util.List;
 
 public class UnbanCommand extends Command {
 
@@ -34,13 +39,16 @@ public class UnbanCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
         }
 
-        if (args.length < 1) {
+        if (args.size() < 1) {
             MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
             return;
         }
@@ -48,10 +56,11 @@ public class UnbanCommand extends Command {
         try {
             event.getGuild().getBanList().queue(list -> {
                 for (Guild.Ban ban : list) {
-                    if (ban.getUser().getName().equalsIgnoreCase(StringUtils.join(args, " "))) {
-                        event.getGuild().getController().unban(ban.getUser())
+                    User user = ban.getUser();
+                    if (user.getName().equalsIgnoreCase(StringUtils.join(args, " ")) || user.getId().equals(args.get(0))) {
+                        event.getGuild().getController().unban(user)
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
-                        MessageUtils.sendMsg(event, "User " + ban.getUser().getName() + " unbanned.");
+                        MessageUtils.sendMsg(event, "User " + user.getName() + " unbanned.");
                         ModerationUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", event.getGuild());
                         return;
                     }

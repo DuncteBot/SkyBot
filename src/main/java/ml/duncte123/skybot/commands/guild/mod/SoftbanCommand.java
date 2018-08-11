@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -27,8 +28,9 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
+import org.jetbrains.annotations.NotNull;
 
-import java.util.Arrays;
+import java.util.List;
 
 public class SoftbanCommand extends Command {
 
@@ -37,14 +39,17 @@ public class SoftbanCommand extends Command {
     }
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members permission for this command, please contact your server administrator about this");
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 1) {
+        if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 1) {
             MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }
@@ -56,7 +61,7 @@ public class SoftbanCommand extends Command {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            String reason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+            String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     nothing -> {
                         ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());

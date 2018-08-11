@@ -22,7 +22,7 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.entities.delegate.*;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
@@ -94,7 +94,10 @@ public class EvalFilter extends GroovyValueFilter {
             RoleDelegate.class,
             TextChannelDelegate.class,
             UserDelegate.class,
-            VoiceChannelDelegate.class
+            VoiceChannelDelegate.class/*,
+
+            //Statics?
+            Class.class*/
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
@@ -155,12 +158,13 @@ public class EvalFilter extends GroovyValueFilter {
             return new ScriptDelegate((Script) o);
         if (o instanceof Closure)
             throw new SecurityException("Closures are not allowed.");
-        throw new VRCubeException("Class not allowed: " + o.toString().split(" ")[1]);
+
+        throw new DoomedException("Class not allowed: " + o.toString().split(" ")[1]);
     }
 
     @Override
     public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) {
-        throw new VRCubeException(
+        throw new DoomedException(
                 String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
                         receiver.toString(),
                         receiver.getClass().getComponentType().getName(),

@@ -18,15 +18,23 @@
 
 package ml.duncte123.skybot;
 
-import ml.duncte123.skybot.utils.AirUtils;
-
 import java.awt.*;
+import java.util.List;
+
+import static java.awt.Color.decode;
+import static java.lang.System.getProperty;
+
 
 public class Settings {
+
+    /*private static final Config CONFIG = Variables
+            .ins
+            .getConfig();*/
+
     /**
      * The userID from the guy that is hosting the bot, in most cases that is just my id :D
      */
-    public static final String OWNER_ID = AirUtils.CONFIG.getString("discord.botOwnerId", BuildConfig.ownerId);
+    public static final long OWNER_ID = 191231307290771456L;
     // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
 
     /**
@@ -36,20 +44,23 @@ public class Settings {
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    public static final String[] wbkxwkZPaG4ni5lm8laY = {
-            new String(new byte[]{49, 57, 49, 50, 51, 49, 51, 48, 55, 50, 57, 48, 55, 55, 49, 52, 53, 54}),
-            new String(new byte[]{50, 56, 49, 54, 55, 51, 54, 53, 57, 56, 51, 52, 51, 48, 50, 52, 54, 52}),
-            new String(new byte[]{49, 57, 56, 49, 51, 55, 50, 56, 50, 48, 49, 56, 57, 51, 52, 55, 56, 52})
-    };
-
-    /**
-     * This is the base url from the custom api
-     */
-    public static final String API_BASE = "https://bot.duncte123.me/api";
+    /*public static final List<Long> wbkxwkZPaG4ni5lm8laY =
+            Collections.unmodifiableList(CONFIG.getArray("discord.constantSuperUserIds",
+                    Arrays.asList(
+                            191231307290771456L, //duncte123#1245
+                            281673659834302464L, //ramidzkh#4814
+                            198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
+                    )).stream().map(it -> Long.valueOf(it.toString()))
+                    .collect(Collectors.toList()));*/
+    public static final List<Long> wbkxwkZPaG4ni5lm8laY = List.of(
+            191231307290771456L, //duncte123#1245
+            281673659834302464L, //ramidzkh#4814
+            198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
+    );
     /**
      * This is the prefix that your bot has, by default is the /
      */
-    public static final String PREFIX = AirUtils.CONFIG.getString("discord.prefix", "db!");
+    public static String PREFIX = "db!";
     /**
      * This is another prefix because I can
      */
@@ -69,13 +80,13 @@ public class Settings {
     /**
      * The colour of the bar that your embed has
      */
-    public static final Color defaultColour = Color.decode(AirUtils.CONFIG.getString("discord.embedColour", "#0751c6"));
+    public static final Color defaultColour = decode("#0751c6");
     /**
      * This holds if we can use the updater
      */
-    public static final boolean enableUpdaterCommand = System.getProperty("updater") != null;
+    public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     /**
      * this tells the bot if we should send json errors
      */
-    public static boolean useJSON = false;
+    public static final boolean useJSON = false;
 }

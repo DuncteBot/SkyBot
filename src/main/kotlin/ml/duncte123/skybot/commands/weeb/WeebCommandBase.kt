@@ -18,11 +18,10 @@
 
 package ml.duncte123.skybot.commands.weeb
 
-import me.duncte123.weebJava.types.NSFWType
+import me.duncte123.weebJava.models.WeebApi
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.EmbedBuilder
@@ -50,22 +49,23 @@ abstract class WeebCommandBase : Command() {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    fun requestAndSend(type: String, thing: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        val nsfw = if(event.channel.isNSFW) NSFWType.TRUE else NSFWType.FALSE
-        val imageUrl = AirUtils.WEEB_API.getRandomImage(type, nsfw).url
-
-        if (args.isEmpty()) {
-            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${Settings.DEFAULT_NAME} $thing ${event.member.effectiveName}", imageUrl))
-        } else {
+    fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
+        weebApi.getRandomImage(type).async {
+            val imageUrl = it.url
+            if (args.isEmpty()) {
+                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                        "${Settings.DEFAULT_NAME} $thing ${event.member.asMention}", imageUrl))
+                return@async
+            }
             if (!event.message.mentionedMembers.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${event.member.effectiveName} $thing ${event.message.mentionedMembers[0].effectiveName}"
+                        "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
                         , imageUrl))
-            } else {
-                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${event.member.effectiveName} $thing ${StringUtils.join(args, " ")}", imageUrl))
+                return@async
             }
+            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                    "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
         }
+
     }
 }

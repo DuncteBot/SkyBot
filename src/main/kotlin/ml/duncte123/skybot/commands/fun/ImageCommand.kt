@@ -19,14 +19,13 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.afollestad.ason.Ason
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import me.duncte123.botCommons.web.WebUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class ImageCommand : Command() {
@@ -35,26 +34,20 @@ class ImageCommand : Command() {
         this.category = CommandCategory.PATRON
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        //This command is hidden and needs patreon :P
-        /* if(!hasUpvoted(event.author)) {
-             sendEmbed(event,
-                     EmbedUtils.embedMessage("This command is a hidden command, hidden commands are not available to users that have not upvoted the bot, " +
-                             "Please consider to give this bot an upvote over at " +
-                             "[https://discordbots.org/bot/210363111729790977](https://discordbots.org/bot/210363111729790977)\n" +
-                             "\uD83D\uDDD2: The check might be limited and would have a minimum cooldown of 20 seconds!"))
-             return
-         }*/
-        if (isPatron(event.author, event.channel)) {
-            if (args.isEmpty()) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
+        if (isUserOrGuildPatron(event)) {
+            if (ctx.args.isEmpty()) {
                 MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
                 return
             }
-            val keyword = StringUtils.join(args, "+")
-            WebUtils.ins.getText(String.format(AirUtils.GOOGLE_BASE_URL, keyword)).async {
+            val keyword = StringUtils.join(ctx.args, "+")
+            WebUtils.ins.getText(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonRaw = Ason(it)
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                val randomItem = jsonArray.getJsonObject(AirUtils.RAND.nextInt(jsonArray.size()))
+                val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
                 sendEmbed(event,
                         EmbedUtils.defaultEmbed()
                                 .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))

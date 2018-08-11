@@ -26,11 +26,11 @@ import kotlinx.coroutines.experimental.launch
 import ml.duncte123.skybot.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.concurrent.TimeUnit
+import kotlin.coroutines.experimental.coroutineContext
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -40,13 +40,15 @@ class RestartShardCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)) return
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
+        if (!isDev(event.author)) return
         val shardManager = event.jda.asBot().shardManager
 
         try {
-            when (args.size) {
+            when (ctx.args.size) {
                 0 -> {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
@@ -58,12 +60,12 @@ class RestartShardCommand : Command() {
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
                         val end = EndReached()
-                        this.coroutineContext.cancelChildren(end)
-                        this.coroutineContext.cancel(end)
+                        coroutineContext.cancelChildren(end)
+                        coroutineContext.cancel(end)
                     }
                 }
                 1 -> {
-                    val id = args[0].toInt()
+                    val id = ctx.args[0].toInt()
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, event.jda.asBot().shardManager)
@@ -73,9 +75,6 @@ class RestartShardCommand : Command() {
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                        val end = EndReached()
-                        this.coroutineContext.cancelChildren(end)
-                        this.coroutineContext.cancel(end)
                     }
                 }
                 else -> MessageUtils.sendError(event.message)
@@ -84,7 +83,6 @@ class RestartShardCommand : Command() {
             if (Settings.useJSON)
                 MessageUtils.sendErrorJSON(event.message, ex, false)
             else {
-                ComparatingUtils.checkEx(ex)
                 MessageUtils.sendError(event.message)
             }
         }

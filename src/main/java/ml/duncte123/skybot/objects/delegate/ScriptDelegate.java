@@ -20,10 +20,17 @@ package ml.duncte123.skybot.objects.delegate;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
-import ml.duncte123.skybot.exceptions.VRCubeException;
+import ml.duncte123.skybot.entities.delegate.GuildDelegate;
+import ml.duncte123.skybot.entities.delegate.RoleDelegate;
+import ml.duncte123.skybot.entities.delegate.TextChannelDelegate;
+import ml.duncte123.skybot.exceptions.DoomedException;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.codehaus.groovy.control.CompilationFailedException;
 
 import java.io.File;
+import java.util.List;
 
 @SuppressWarnings("unused")
 public class ScriptDelegate extends Script {
@@ -43,42 +50,42 @@ public class ScriptDelegate extends Script {
 
     @Override
     public void println() {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void print(Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void println(Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void printf(String format, Object value) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public void printf(String format, Object[] values) {
-        throw new VRCubeException("Hey, i like to keep my console clean");
+        throw new DoomedException("Hey, i like to keep my console clean");
     }
 
     @Override
     public Object evaluate(String expression) throws CompilationFailedException {
-        throw new VRCubeException("This method is blocked");
+        throw new DoomedException("This method is blocked");
     }
 
     @Override
     public Object evaluate(File file) throws CompilationFailedException {
-        throw new VRCubeException("How did you get access to the file class?");
+        throw new DoomedException("How did you get access to the file class?");
     }
 
     @Override
     public void run(File file, String[] arguments) throws CompilationFailedException {
-        throw new VRCubeException("I am a bot, I can't run");
+        throw new DoomedException("I am a bot, I can't run");
     }
 
     @Override
@@ -93,6 +100,7 @@ public class ScriptDelegate extends Script {
      */
     @Override
     public void setProperty(String property, Object newValue) {
+        //Nothing that we allow them to set
     }
 
     public Object dump() {
@@ -111,6 +119,22 @@ public class ScriptDelegate extends Script {
 
     public boolean isEven(int number) {
         return number % 2 == 0;
+    }
+
+    public int countPeopleWithRole(String name) {
+        GuildDelegate guild = (GuildDelegate) super.getBinding().getProperty("guild");
+        List<Role> roles = guild.getRolesByName(name, true);
+        if (roles.size() == 0)
+            return 0;
+        Role role = roles.get(0);
+        List<Member> members = guild.getMembersWithRoles(((RoleDelegate) role).getUA83D3Ax_ky());
+        return members.size();
+    }
+
+    public String pinnedMessageCheck() {
+        TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
+        int count = channel.getPinnedMessages().complete().size();
+        return count + "/50 messages pinned in this channel";
     }
 
     @Override

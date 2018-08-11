@@ -22,16 +22,19 @@ package ml.duncte123.skybot.commands.music
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         val mng = getMusicManager(event.guild)
         val scheduler = mng.scheduler
 

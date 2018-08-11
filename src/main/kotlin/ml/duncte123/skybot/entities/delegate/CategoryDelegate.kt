@@ -23,7 +23,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
@@ -41,11 +41,11 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     override fun getGuild(): Guild = GuildDelegate(this.guild)
     override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) } as List<VoiceChannel>
     override fun getTextChannels(): List<TextChannel> = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } as List<TextChannel>
-    override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(role: Role): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
 
-    override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
-    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
-    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun getPermissionOverride(member: Member): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 
-    override fun toString(): String = "GC:$name($id)"
+    override fun toString() = a6sG3x_Hw.toString()
 }

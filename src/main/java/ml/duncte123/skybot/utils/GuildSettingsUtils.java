@@ -19,6 +19,8 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.slf4j.Logger;
@@ -26,31 +28,31 @@ import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.Arrays;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
+    private static final Map<Long, GuildSettings> guildSettings = Variables.ins.getGuildSettings();
 
-    /**
-     * This runs both {@link #loadGuildSettings()} and {@link #loadFooterQuotes()}
-     */
-    public static void loadAllSettings() {
-        loadGuildSettings();
-        loadFooterQuotes();
+
+    public static void loadAllSettings(DBManager dbManager) {
+        loadGuildSettings(dbManager);
+        //loadFooterQuotes();
     }
 
-    /**
+    /*
      * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
      */
-    private static void loadFooterQuotes() {
+    /*private static void loadFooterQuotes() {
         if (!AirUtils.NONE_SQLITE) return;
         logger.debug("Loading footer quotes");
 
-        String dbName = AirUtils.DB.getName();
-        AirUtils.DB.run(() -> {
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        String dbName = AirUtils.DATABASE.getName();
+        AirUtils.DATABASE.run(() -> {
+            Connection database = AirUtils.DATABASE.getConnManager().getConnection();
             try {
                 Statement smt = database.createStatement();
 
@@ -73,51 +75,49 @@ public class GuildSettingsUtils {
                 }
             }
         });
-    }
+    }*/
 
-    /**
-     * This will get the settings from our database and store them in the {@link AirUtils#guildSettings settings}
-     */
-    private static void loadGuildSettings() {
+
+    private static void loadGuildSettings(DBManager database) {
         logger.debug("Loading Guild settings.");
 
-        String dbName = AirUtils.DB.getName();
-        AirUtils.DB.run(() -> {
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        String dbName = database.getName();
+        database.run(() -> {
+            Connection connection = database.getConnManager().getConnection();
             try {
-                Statement smt = database.createStatement();
+                Statement smt = connection.createStatement();
 
                 ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
 
                 while (res.next()) {
-                    String guildId = res.getString("guildId");
+                    long guildId = toLong(res.getString("guildId"));
 
-                    AirUtils.guildSettings.put(guildId, new GuildSettings(guildId)
+                    guildSettings.put(guildId, new GuildSettings(guildId)
                             .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
                             .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
                             .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
                             .setCustomPrefix(res.getString("prefix"))
-                            .setLogChannel(res.getString("logChannelId"))
-                            .setWelcomeLeaveChannel(res.getString("welcomeLeaveChannel"))
+                            .setLogChannel(toLong(res.getString("logChannelId")))
+                            .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
                             .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                            .setAutoroleRole(res.getString("autoRole"))
+                            .setAutoroleRole(toLong(res.getString("autoRole")))
                             .setServerDesc(replaceNewLines(res.getString("serverDesc")))
                             .setAnnounceTracks(res.getBoolean("announceNextTrack"))
                             .setAutoDeHoist(res.getBoolean("autoDeHoist"))
                             .setFilterInvites(res.getBoolean("filterInvites"))
-                            .setSpamFilterState(res.getBoolean("spamFilterState"))
-                            .setMuteRoleId(res.getString("muteRoleId"))
+                            .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                            .setMuteRoleId(toLong(res.getString("muteRoleId")))
                             .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                             .setKickState(res.getBoolean("kickInsteadState"))
                     );
                 }
 
-                logger.debug("Loaded settings for " + AirUtils.guildSettings.keySet().size() + " guilds.");
+                logger.debug("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 try {
-                    database.close();
+                    connection.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
@@ -133,11 +133,11 @@ public class GuildSettingsUtils {
      */
     public static GuildSettings getGuild(Guild guild) {
 
-        if (!AirUtils.guildSettings.containsKey(guild.getId())) {
-            return registerNewGuild(guild);
+        if (!guildSettings.containsKey(guild.getIdLong())) {
+            return registerNewGuild(guild, Variables.ins.getDatabase());
         }
 
-        return AirUtils.guildSettings.get(guild.getId());
+        return guildSettings.get(guild.getIdLong());
 
     }
 
@@ -147,17 +147,17 @@ public class GuildSettingsUtils {
      * @param guild    The guild to update it for
      * @param settings the new settings
      */
-    public static void updateGuildSettings(Guild guild, GuildSettings settings) {
-        if (!AirUtils.guildSettings.containsKey(settings.getGuildId())) {
-            registerNewGuild(guild);
+    public static void updateGuildSettings(Guild guild, GuildSettings settings, DBManager database) {
+        if (!guildSettings.containsKey(settings.getGuildId())) {
+            registerNewGuild(guild, database);
             return;
         }
-        AirUtils.DB.run(() -> {
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+        database.run(() -> {
+            String dbName = database.getName();
+            Connection connection = database.getConnManager().getConnection();
 
             try {
-                PreparedStatement smt = database.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
+                PreparedStatement smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
                         "enableJoinMessage= ? , " +
                         "enableSwearFilter= ? ," +
                         "customWelcomeMessage= ? ," +
@@ -177,18 +177,18 @@ public class GuildSettingsUtils {
                         "WHERE guildId='" + settings.getGuildId() + "'");
                 smt.setBoolean(1, settings.isEnableJoinMessage());
                 smt.setBoolean(2, settings.isEnableSwearFilter());
-                smt.setString(3, replaceUnicodeAndLines(settings.getCustomJoinMessage()));
+                smt.setString(3, fixUnicodeAndLines(settings.getCustomJoinMessage()));
                 smt.setString(4, replaceUnicode(settings.getCustomPrefix()));
-                smt.setString(5, settings.getAutoroleRole());
-                smt.setString(6, settings.getLogChannel());
-                smt.setString(7, settings.getWelcomeLeaveChannel());
-                smt.setString(8, replaceUnicodeAndLines(settings.getCustomLeaveMessage()));
-                smt.setString(9, replaceUnicodeAndLines(settings.getServerDesc()));
+                smt.setString(5, String.valueOf(settings.getAutoroleRole()));
+                smt.setString(6, String.valueOf(settings.getLogChannel()));
+                smt.setString(7, String.valueOf(settings.getWelcomeLeaveChannel()));
+                smt.setString(8, fixUnicodeAndLines(settings.getCustomLeaveMessage()));
+                smt.setString(9, fixUnicodeAndLines(settings.getServerDesc()));
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
-                smt.setBoolean(13, settings.getSpamFilterState());
-                smt.setString(14, settings.getMuteRoleId());
+                smt.setBoolean(13, settings.getEnableSpamFilter());
+                smt.setString(14, String.valueOf(settings.getMuteRoleId()));
                 smt.setString(15, convertJ2S(settings.getRatelimits()));
                 smt.setBoolean(16, settings.getKickState());
                 smt.executeUpdate();
@@ -200,7 +200,7 @@ public class GuildSettingsUtils {
                 e.printStackTrace();
             } finally {
                 try {
-                    database.close();
+                    connection.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
@@ -214,25 +214,25 @@ public class GuildSettingsUtils {
      * @param g The guild that we are joining
      * @return The new guild
      */
-    public static GuildSettings registerNewGuild(Guild g) {
-        if (AirUtils.guildSettings.containsKey(g.getId())) {
-            return AirUtils.guildSettings.get(g.getId());
+    public static GuildSettings registerNewGuild(Guild g, DBManager database) {
+        if (guildSettings.containsKey(g.getIdLong())) {
+            return guildSettings.get(g.getIdLong());
         }
-        GuildSettings newGuildSettings = new GuildSettings(g.getId());
-        AirUtils.DB.run(() -> {
+        GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
+        database.run(() -> {
 
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+            String dbName = database.getName();
+            Connection connection = database.getConnManager().getConnection();
 
             try {
-                ResultSet resultSet = database.createStatement()
+                ResultSet resultSet = connection.createStatement()
                         .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
                 while (resultSet.next())
                     rows++;
 
                 if (rows == 0) {
-                    PreparedStatement smt = database.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
+                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
                             "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
                             "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?)");
                     smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
@@ -245,15 +245,15 @@ public class GuildSettingsUtils {
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
-                if (database != null) {
+                if (connection != null) {
                     try {
-                        database.close();
+                        connection.close();
                     } catch (SQLException e2) {
                         e2.printStackTrace();
                     }
                 }
             }
-            AirUtils.guildSettings.put(g.getId(), newGuildSettings);
+            guildSettings.put(g.getIdLong(), newGuildSettings);
         });
         return newGuildSettings;
     }
@@ -263,20 +263,20 @@ public class GuildSettingsUtils {
      *
      * @param g the guild to remove from the database
      */
-    public static void deleteGuild(Guild g) {
-        AirUtils.guildSettings.remove(g.getId());
-        AirUtils.DB.run(() -> {
-            String dbName = AirUtils.DB.getName();
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+    public static void deleteGuild(Guild g, DBManager database) {
+        guildSettings.remove(g.getIdLong());
+        database.run(() -> {
+            String dbName = database.getName();
+            Connection connection = database.getConnManager().getConnection();
 
             try {
-                Statement smt = database.createStatement();
+                Statement smt = connection.createStatement();
                 smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
             } catch (Exception e) {
                 e.printStackTrace();
             } finally {
                 try {
-                    database.close();
+                    connection.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
@@ -290,14 +290,24 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\\\\n", "\n");
     }
 
+    private static String fixNewLines(String entery) {
+        if (entery == null || entery.isEmpty())
+            return null;
+        return entery.replaceAll("\n", "\\\\n");
+    }
+
     private static String replaceUnicode(String entery) {
         if (entery == null || entery.isEmpty())
             return null;
         return entery.replaceAll("\\P{Print}", "");
     }
 
-    private static String replaceUnicodeAndLines(String s) {
+    /*private static String replaceUnicodeAndLines(String s) {
         return replaceUnicode(replaceNewLines(s));
+    }*/
+
+    private static String fixUnicodeAndLines(String s) {
+        return replaceUnicode(fixNewLines(replaceNewLines(s)));
     }
 
     private static String convertJ2S(long[] in) {
@@ -305,15 +315,23 @@ public class GuildSettingsUtils {
     }
 
     private static long[] convertS2J(String in) {
-        if(in.isEmpty())
-            return new long[] {20, 45, 60, 120, 240, 2400};
+        if (in.isEmpty())
+            return new long[]{20, 45, 60, 120, 240, 2400};
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
     }
 
     public static long[] ratelimmitChecks(String fromDb) {
-        if(fromDb == null || fromDb.isEmpty())
-            return new long[] {20, 45, 60, 120, 240, 2400};
+        if (fromDb == null || fromDb.isEmpty())
+            return new long[]{20, 45, 60, 120, 240, 2400};
 
         return convertS2J(fromDb.replaceAll("\\P{Print}", ""));
+    }
+
+    public static long toLong(String s) {
+        try {
+            return Long.parseUnsignedLong(s);
+        } catch (NumberFormatException ignored) {
+            return 0L;
+        }
     }
 }

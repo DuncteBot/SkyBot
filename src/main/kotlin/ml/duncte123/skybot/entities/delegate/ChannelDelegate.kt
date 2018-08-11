@@ -23,7 +23,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.managers.ChannelManager
@@ -41,7 +41,7 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     private val jda: JDA = JDADelegate(channel.jda)
     private val guild: Guild = GuildDelegate(channel.guild)
-    private val parent: Category? = null
+    //private val parent: Category? = null
 
     override fun getParent(): Category? = CategoryDelegate(requireNotNull(channel.parent))
 
@@ -50,23 +50,23 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 
     override fun getMembers(): List<Member> = channel.members.map { MemberDelegate(it) } as List<Member>
-    override fun createCopy(): ChannelAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getInvites(): RestAction<List<Invite>> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getManager(): ChannelManager = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun delete(): AuditableRestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun createCopy(guild: Guild): ChannelAction = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun createInvite(): InviteAction = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun createCopy(): ChannelAction = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun getInvites(): RestAction<List<Invite>> = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun getManager(): ChannelManager = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun delete(): AuditableRestAction<Void> = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun createCopy(guild: Guild): ChannelAction = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun createInvite(): InviteAction = throw DoomedException("**\uD83D\uDD25 lit**")
 
-    override fun getMemberPermissionOverrides(): List<PermissionOverride> = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getMemberPermissionOverrides(): List<PermissionOverride> = throw DoomedException("**\uD83D\uDD25 lit**")
 
-    override fun getRolePermissionOverrides(): List<PermissionOverride> = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun getPermissionOverrides(): List<PermissionOverride> = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getRolePermissionOverrides(): List<PermissionOverride> = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun getPermissionOverrides(): List<PermissionOverride> = throw DoomedException("**\uD83D\uDD25 lit**")
 
-    override fun getPermissionOverride(role: Role): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun getPermissionOverride(role: Role): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
 
-    override fun getPermissionOverride(member: Member): PermissionOverride = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
-    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit role: ${role.name}**")
-    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw VRCubeException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun getPermissionOverride(member: Member): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
+    override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
+    override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
 
-    override fun toString(): String = "C:$name($id)"
+    override fun toString() = channel.toString()
 }

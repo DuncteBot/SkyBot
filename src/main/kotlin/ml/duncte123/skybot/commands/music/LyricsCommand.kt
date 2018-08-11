@@ -18,26 +18,27 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.config.Config
+import me.duncte123.botCommons.web.WebUtils
+import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import me.duncte123.botCommons.web.WebUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import okhttp3.Request
-import org.apache.commons.lang.StringUtils
+import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
-import org.jsoup.Jsoup
 import java.net.URLEncoder
-import java.util.function.Consumer
 
 class LyricsCommand : MusicCommand() {
 
     private var authToken: String = ""
     private val apiBase = "https://api.genius.com"
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!hasUpvoted(event.author)) {
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
                     "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
@@ -47,7 +48,7 @@ class LyricsCommand : MusicCommand() {
             val mng = getMusicManager(event.guild)
             val player = mng.player
             val search: String? = when {
-                !args.isEmpty() -> StringUtils.join(args, " ")
+                !ctx.args.isEmpty() -> ctx.rawArgs
                 player.playingTrack != null && !player.playingTrack.info.isStream ->
                     player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
                 else -> null
@@ -56,15 +57,16 @@ class LyricsCommand : MusicCommand() {
                 MessageUtils.sendMsg(event, "The player is not currently playing anything!")
                 return
             }
-            searchForSong(search) {
+            searchForSong(search, ctx.config) {
                 if (it.isNullOrBlank()) {
                     MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
-                            "Alternatively you can try `$PREFIX$name song name` to search for the lriccs on this soing.\n" +
+                            "Alternatively you can try `$PREFIX$name song name` to search for the lyrics on this soing.\n" +
                             "(sometimes the song names in the player are wrong)")
                 } else {
                     val url = "https://genius.com$it"
                     WebUtils.ins.scrapeWebPage(url).async { doc ->
-                        val text = doc.select("div.lyrics").first().child(0).html().replace("<br>", "\n")
+                        val text = doc.select("div.lyrics").first().child(0).wholeText()
+                                .replace("<br>", "\n")
                         MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
                                 .setTitle("Lyrics for $search", url)
                                 .setDescription(StringUtils.abbreviate(text, 1900))
@@ -81,11 +83,11 @@ class LyricsCommand : MusicCommand() {
 
     override fun getName() = "lyrics"
 
-    fun getAuthToken(): String {
+    private fun getAuthToken(config: Config): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
-            formData["client_id"] = AirUtils.CONFIG.getString("genius.client_id", "CLIENT_ID")
-            formData["client_secret"] = AirUtils.CONFIG.getString("genius.client_secret", "CLIENT_SECRET")
+            formData["client_id"] = config.getString("genius.client_id", "CLIENT_ID")
+            formData["client_secret"] = config.getString("genius.client_secret", "CLIENT_SECRET")
             formData["grant_type"] = "client_credentials"
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
             this.authToken = JSONObject(raw).optString("access_token")
@@ -93,14 +95,11 @@ class LyricsCommand : MusicCommand() {
         return "Bearer $authToken"
     }
 
-    fun searchForSong(t: String?, callback: (String?) -> Unit) {
-        WebUtils.ins.prepareRaw(
-                Request.Builder()
-                        .get()
-                        .header("Authorization", getAuthToken())
-                        .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                { it -> JSONObject(it.body()!!.string()) }
-        ).async {
+    private fun searchForSong(t: String?, config: Config, callback: (String?) -> Unit) {
+        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
+                .header("Authorization", getAuthToken(config))
+                .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
+                WebUtilsErrorUtils::toJSONObject).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
                 callback.invoke(null)

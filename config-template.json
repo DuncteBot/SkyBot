@@ -8,7 +8,9 @@
       // #{shardId} is the shard ID starting from 1.
       "name": "Danny Phantom on shard #{shardId}"
     },
-    "totalShards": 1
+    "totalShards": 1,
+    "constantSuperUserIds": [
+    ]
   },
   // If you set this to false the bot will attempt to use SQLite.
   "use_database": false,
@@ -29,7 +31,8 @@
     "discordbots_userToken": "",
     "weeb.sh": {
       "wolketoken": "INSERT_WEEB_WOLKETOKEN"
-    }
+    },
+    "github": "GitHub OAUTH2 token"
   },
   "lavalink": {
     "nodes": [

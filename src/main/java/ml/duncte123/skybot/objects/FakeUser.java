@@ -23,14 +23,17 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.PrivateChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.utils.MiscUtil;
 
+import java.util.FormattableFlags;
+import java.util.Formatter;
 import java.util.List;
 
 public class FakeUser implements User {
 
     private final String name;
-    private final String id;
-    private final String discrm;
+    private final long id;
+    private final short discrm;
 
     /**
      * This will create a user based on the things that we put in
@@ -39,7 +42,7 @@ public class FakeUser implements User {
      * @param id     The user id
      * @param discrm The discriminator that the user has
      */
-    public FakeUser(String name, String id, String discrm) {
+    public FakeUser(String name, long id, short discrm) {
         this.name = name;
         this.id = id;
         this.discrm = discrm;
@@ -52,12 +55,12 @@ public class FakeUser implements User {
 
     @Override
     public String getDiscriminator() {
-        return this.discrm;
+        return String.format("%04d", this.discrm);
     }
 
     @Override
     public String getId() {
-        return this.id;
+        return String.valueOf(this.id);
     }
 
     @Override
@@ -112,16 +115,33 @@ public class FakeUser implements User {
 
     @Override
     public boolean isFake() {
-        return false;
+        return true;
     }
 
     @Override
     public String getAsMention() {
-        return null;
+        return String.format("%s#%s", this.name, this.discrm);
     }
 
     @Override
     public long getIdLong() {
-        return Long.parseLong(this.id);
+        return this.id;
+    }
+
+    @Override
+    public void formatTo(Formatter formatter, int flags, int width, int precision) {
+        boolean alt = (flags & FormattableFlags.ALTERNATE) == FormattableFlags.ALTERNATE;
+        boolean upper = (flags & FormattableFlags.UPPERCASE) == FormattableFlags.UPPERCASE;
+        boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
+
+        String out;
+        if (!alt)
+            out = getAsMention();
+        else if (upper)
+            out = String.format(formatter.locale(), "%S#%s", getName(), getDiscriminator());
+        else
+            out = String.format(formatter.locale(), "%s#%s", getName(), getDiscriminator());
+
+        MiscUtil.appendTo(formatter, width, precision, leftJustified, out);
     }
 }

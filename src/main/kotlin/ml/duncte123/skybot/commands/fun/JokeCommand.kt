@@ -18,14 +18,15 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.BuildConfig.URL_ARRAY
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.*
-import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.json.JSONArray
-import org.json.JSONObject
 import java.util.*
 
 class JokeCommand : Command() {
@@ -40,35 +41,13 @@ class JokeCommand : Command() {
         this.jokeIndex = TreeMap()
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
 
-        WebUtils.ins.getJSONObject("https://www.reddit.com/r/Jokes/top/.json?sort=top&t=day&limit=400").async {
-            val posts = it.getJSONObject("data").getJSONArray("children").filter {it as JSONObject
-                (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
-                        it.getJSONObject("data").getString("selftext").length <= 550
-                        && it.getJSONObject("data").getString("title").length <= 256)
-            }
-            if (posts.isEmpty()) {
-                sendError(event.message)
-                sendMsg(event, """Whoops I could not find any jokes.
-                |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
-            } else {
-
-                if (!jokeIndex.containsKey(event.guild.id) || jokeIndex.getOrDefault(event.guild.id, 0) >= posts.size) {
-                    jokeIndex[event.guild.id] = 0
-                }
-
-                val jokeI = jokeIndex.getOrDefault(event.guild.id, 0)
-
-                val jokeData: JSONObject = JSONArray(posts).getJSONObject(jokeI).getJSONObject("data")
-                jokeIndex[event.guild.id] = jokeI + 1
-                val title: String = jokeData.getString("title")
-                val text: String = jokeData.getString("selftext")
-                val url: String = jokeData.getString("url")
-
-                sendEmbed(event, EmbedUtils.defaultEmbed().setTitle(title, url).setDescription(text).build())
-            }
+        when (ctx.random.nextInt(2)) {
+            0 -> sendRedditPost("Jokes", jokeIndex, ctx.event)
+            1 -> sendRanddomJoke(ctx.event)
         }
+
     }
 
     override fun help() = "See a funny joke. Dad's love them!\n" +
@@ -77,4 +56,10 @@ class JokeCommand : Command() {
     override fun getName() = "joke"
 
     override fun getAliases() = arrayOf("meme")
+
+    private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
+        WebUtils.ins.getJSONObject(URL_ARRAY[1]).async {
+            sendEmbed(event, EmbedUtils.embedMessage(it.getString("joke")))
+        }
+    }
 }

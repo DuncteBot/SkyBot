@@ -20,10 +20,9 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 class TextToBricksCommand : Command() {
 
@@ -31,15 +30,15 @@ class TextToBricksCommand : Command() {
         this.category = CommandCategory.FUN
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Correct usage: `$PREFIX$invoke <words>`")
+    override fun executeCommand(ctx: CommandContext) {
+        if (ctx.args.isEmpty()) {
+            MessageUtils.sendMsg(ctx.event, "Correct usage: `$PREFIX${ctx.invoke} <words>`")
             return
         }
 
-        MessageUtils.sendEmbed(event,
+        MessageUtils.sendEmbed(ctx.event,
                 EmbedUtils.embedMessage(
-                        StringUtils.join(args, " ")
+                        ctx.rawArgs
                                 .toLowerCase()
                                 .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
                                 .replace(Regex("([0-9])"), "\$1\u20E3")

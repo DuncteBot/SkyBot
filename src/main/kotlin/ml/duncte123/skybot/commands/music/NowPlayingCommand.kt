@@ -20,19 +20,21 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.ILoveStream
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import me.duncte123.botCommons.web.WebUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         if (!channelChecks(event))
             return
         val mng = getMusicManager(event.guild)
@@ -42,10 +44,10 @@ class NowPlayingCommand : MusicCommand() {
                 EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng))
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                val stream = (AirUtils.COMMAND_MANAGER.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
+                val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url})**")
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url}) by ${channeldata.getString("artist")}**")
                             .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")

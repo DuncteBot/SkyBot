@@ -18,15 +18,40 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.ICommand;
 import org.jetbrains.annotations.NotNull;
 
-public interface CustomCommand {
+public interface CustomCommand extends ICommand {
 
-    String getName();
     String getMessage();
+
     String getGuildId();
 
-    void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event);
+    @Override
+    default boolean isCustom() {
+        return true;
+    }
 
+    //Override some methods that are not needed
+    @Override
+    default void executeCommand(@NotNull CommandContext ctx) {
+        // Custom commands are executed in a different way
+    }
+
+    @Override
+    default String help() {
+        return null;
+    }
+
+    @Override
+    default CommandCategory getCategory() {
+        return null;
+    }
+
+    @Override
+    default boolean shouldDisplayAliasesInHelp() {
+        return false;
+    }
 }

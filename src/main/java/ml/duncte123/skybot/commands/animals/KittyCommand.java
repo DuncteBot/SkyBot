@@ -18,13 +18,12 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import me.duncte123.botCommons.web.WebUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -37,14 +36,15 @@ public class KittyCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        String apiKey = AirUtils.CONFIG.getString("apis.thecatapi", "");
+        String apiKey = ctx.getConfig().getString("apis.thecatapi", "");
         WebUtils.ins.getText("http://thecatapi.com/api/images/get?" +
                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
             Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
-            String fullUrl = doc.select("url").first().text();
-            MessageUtils.sendEmbed(event, EmbedUtils.embedImage(fullUrl));
+            String fullUrl = doc.selectFirst("url").text();
+            String sourceUrl = doc.selectFirst("source_url").text();
+            MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("source", sourceUrl, fullUrl));
         });
     }
 

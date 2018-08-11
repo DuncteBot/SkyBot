@@ -32,21 +32,24 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import me.duncte123.botCommons.config.Config;
+import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
-import java.util.function.Consumer;
+import java.util.*;
 import java.util.logging.Level;
+
+import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SinceSkybot(version = "3.5.1")
 public class AudioUtils {
@@ -68,15 +71,15 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    protected final Map<String, GuildMusicManager> musicManagers;
+    protected final Map<Long, GuildMusicManager> musicManagers;
+
+    private Config config;
 
     /**
      * This will set everything up and get the player ready
      */
     private AudioUtils() {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-
-        initPlayerManager();
 
         musicManagers = new HashMap<>();
     }
@@ -99,17 +102,21 @@ public class AudioUtils {
         }
     }
 
+    public void setConfig(Config config) {
+        this.config = config;
+    }
+
     private void initPlayerManager() {
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
-            playerManager.enableGcMonitoring();
+//            playerManager.enableGcMonitoring();
 
             //Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
             SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 
-            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager));
+            playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
 
 
@@ -139,12 +146,14 @@ public class AudioUtils {
      * @param trackUrlRaw The url from the track to play
      * @param addPlayList If the url is a playlist
      */
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw, final boolean addPlayList) {
-        loadAndPlay(mng, channel, trackUrlRaw, addPlayList, true);
+    public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester,
+                            final String trackUrlRaw, CommandManager commandManager, final boolean addPlayList) {
+        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, commandManager, true);
     }
 
-    public void loadAndPlay(GuildMusicManager mng, final TextChannel channel, final String trackUrlRaw,
+    public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw,
                             final boolean addPlayList,
+                            final CommandManager commandManager,
                             final boolean announce) {
         final String trackUrl;
 
@@ -155,48 +164,55 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        playerManager.loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
+        getPlayerManager().loadItemOrdered(mng, trackUrl, new AudioLoadResultHandler() {
             @Override
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
                 if (track.getInfo().isStream) {
-                    Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                    Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
                             .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();
                 }
 
+                track.setUserData(new TrackUserData(requester.getIdLong()));
+
                 mng.scheduler.queue(track);
 
-                if(announce) {
+                if (announce) {
                     String msg = "Adding to queue: " + title;
                     if (mng.player.getPlayingTrack() == null) {
                         msg += "\nand the Player has started playing;";
                     }
 
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                    sendEmbed(channel, embedField(embedTitle, msg));
                 }
             }
 
             @Override
             public void playlistLoaded(AudioPlaylist playlist) {
                 AudioTrack firstTrack = playlist.getSelectedTrack();
-                List<AudioTrack> tracks = playlist.getTracks();
+                List<AudioTrack> tracks = new ArrayList<>();
+
+                for (final AudioTrack track : playlist.getTracks()) {
+                    track.setUserData(new TrackUserData(requester.getIdLong()));
+                    tracks.add(track);
+                }
 
                 if (tracks.size() == 0) {
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Error: This playlist is empty."));
+                    sendEmbed(channel, embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
                 } else if (firstTrack == null) {
                     firstTrack = playlist.getTracks().get(0);
                 }
 
-                if(addPlayList)
+                if (addPlayList)
                     tracks.forEach(mng.scheduler::queue);
                 else
                     mng.scheduler.queue(firstTrack);
 
-                if(announce) {
+                if (announce) {
                     String msg;
 
                     if (addPlayList) {
@@ -205,27 +221,29 @@ public class AudioUtils {
                             msg += "\nand the Player has started playing;";
                         }
                     } else {
-                        msg = "Adding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                        String prefix = GuildSettingsUtils.getGuild(channel.getGuild()).getCustomPrefix();
+                        msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
+                                "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
                         if (mng.player.getPlayingTrack() == null) {
                             msg += "\nand the Player has started playing;";
                         }
                     }
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, msg));
+                    sendEmbed(channel, embedField(embedTitle, msg));
                 }
             }
 
 
             @Override
             public void noMatches() {
-                if(announce)
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
+                if (announce)
+                    sendEmbed(channel, embedField(embedTitle, "Nothing found by _" + trackUrl + "_"));
             }
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                if(announce)
-                    MessageUtils.sendEmbed(channel, EmbedUtils.embedField(embedTitle, "Could not play: " + exception.getMessage()
-                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+                if (announce)
+                    sendEmbed(channel, embedField(embedTitle, "Could not play: " + exception.getMessage()
+                            + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }
@@ -237,23 +255,28 @@ public class AudioUtils {
      * @return The music manager for that guild
      */
     public GuildMusicManager getMusicManager(Guild guild) {
-        String guildId = guild.getId();
+        GuildMusicManager mng = getMusicManager(guild, true);
+        guild.getAudioManager().setSendingHandler(mng.getSendHandler());
+        return mng;
+    }
+
+    public GuildMusicManager getMusicManager(Guild guild, boolean createIfNull) {
+        long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
         if (mng == null) {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
-                if (mng == null) {
+                if (mng == null && createIfNull) {
                     mng = new GuildMusicManager(guild);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);
                 }
             }
         }
-        guild.getAudioManager().setSendingHandler(mng.getSendHandler());
         return mng;
     }
 
-    public Map<String, GuildMusicManager> getMusicManagers() {
+    public Map<Long, GuildMusicManager> getMusicManagers() {
         return musicManagers;
     }
 }

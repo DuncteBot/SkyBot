@@ -138,3 +138,7 @@ config_old\.json
 !gradle/wrapper/*
 
 /user_avatars/*
+\.idea/
+!\.idea/copyright/*
+
+logs-for-minn/

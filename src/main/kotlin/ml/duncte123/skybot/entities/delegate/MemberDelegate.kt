@@ -40,4 +40,6 @@ class MemberDelegate(private val xH4z9a_Qe: Member) : Member by xH4z9a_Qe {
     override fun getJDA(): JDA = JDADelegate(this.jda)
     override fun getGuild(): Guild = GuildDelegate(this.guild)
     override fun getUser(): User = UserDelegate(this.user)
+
+    override fun toString() = xH4z9a_Qe.toString()
 }

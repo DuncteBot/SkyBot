@@ -18,33 +18,34 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import ml.duncte123.skybot.utils.AirUtils;
+import me.duncte123.botCommons.config.Config;
 
 import java.io.File;
 import java.sql.Connection;
-import java.util.concurrent.*;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 public class DBManager {
 
-    private final ScheduledExecutorService service = Executors.newScheduledThreadPool(1,
-            r -> new Thread(r, "SQL-thread"));
-
-    public final DBConnectionManager connManager;
-
+    private final DBConnectionManager connManager;
+    private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-thread"));
     /**
      * This is the database name
      */
     private final String name;
+
     /**
      * This will set our stuff up
      */
-    public DBManager() {
-        this.connManager = createDBManager();
+    public DBManager(boolean isSql, Config config) {
+        this.connManager = createDBManager(isSql, config);
         this.name = connManager.getName();
     }
 
-    private static DBConnectionManager createDBManager() {
-        if (AirUtils.NONE_SQLITE) return new MySQLConnectionManager();
+    private DBConnectionManager createDBManager(boolean isSql, Config config) {
+        if (isSql) return new MySQLConnectionManager(config);
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
 
@@ -70,9 +71,7 @@ public class DBManager {
      * This will get the connection for us
      *
      * @return the connection, will we null if we aren't connected
-     * @deprecated use {@link #getConnManager()} instead
      */
-    @Deprecated
     public Connection getConnection() {
         return connManager.getConnection();
     }
@@ -86,15 +85,15 @@ public class DBManager {
         return connManager;
     }
 
-    public <T>ScheduledFuture<T> run(Callable<T> c) {
-        return service.schedule(c, 0L, TimeUnit.MILLISECONDS);
+    public <T> Future<T> run(Callable<T> c) {
+        return service.submit(c);
     }
 
-    public ScheduledFuture<?> run(Runnable r) {
-        return service.schedule(r, 0L, TimeUnit.MILLISECONDS);
+    public Future<?> run(Runnable r) {
+        return service.submit(r);
     }
 
-    public ScheduledExecutorService getService() {
+    public ExecutorService getService() {
         return service;
     }
 }

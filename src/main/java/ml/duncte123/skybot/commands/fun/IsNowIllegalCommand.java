@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.fun;
 
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.utils.MessageUtils;
 import me.duncte123.botCommons.web.WebUtils;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
+import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.MessageUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -32,24 +32,24 @@ import java.util.concurrent.TimeUnit;
 public class IsNowIllegalCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
-        String input = StringUtils.join(args, " ")
-                .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
-        if (input.length() < 1) {
-            MessageUtils.sendMsg(event, "This command requires a text argument.");
+    public void executeCommand(@NotNull CommandContext ctx) {
+        if (ctx.getArgs().size() < 1) {
+            MessageUtils.sendMsg(ctx.getEvent(), "This command requires a text argument.");
             return;
         }
+        String input = ctx.getRawArgs()
+                .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() > 10)
             input = input.substring(0, 9);
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
-        MessageUtils.sendMsg(event, "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
+        MessageUtils.sendMsg(ctx.getEvent(), "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
                 WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData,
                         r -> Objects.requireNonNull(r.body()).string()).async(txt ->
                         commandService.schedule(() -> {
 
                             String rawJson = getFileJSON(jsonData.getString("word"));
 
-                            if (rawJson.equals("null")) {
+                            if ("null".equals(rawJson)) {
                                 success.editMessage(jsonData.getString("word") + " is legal").queue();
                             }
                             JSONObject j = new JSONObject(rawJson);
@@ -73,5 +73,10 @@ public class IsNowIllegalCommand extends Command {
 
     private String getFileJSON(String word) {
         return WebUtils.ins.getText("https://is-now-illegal.firebaseio.com/gifs/" + word + ".json").execute();
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.FUN;
     }
 }

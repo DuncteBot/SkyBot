@@ -1,12 +1,31 @@
+/*
+ * Skybot, a multipurpose discord bot
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package ml.duncte123.skybot.utils
 
 import me.duncte123.botCommons.text.TextColor
+import ml.duncte123.skybot.connections.database.DBManager
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
-class SpamFilter : HashMap<Long, SpamCache>() {
+class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
 
     private lateinit var rates: LongArray
 
@@ -72,15 +91,14 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             displayContent.isBlank() -> {
                 if (msg.embeds.isEmpty()) {
                     true
-                }
-                else {
+                } else {
                     return msg.embeds.map {
                         it.description.isBlank()
-                        && it.footer.text.isBlank()
-                        && it.title.isBlank()
-                        && it.thumbnail.url.isBlank()
-                        && it.image.url.isBlank()
-                    }.count {it} < 1
+                                && it.footer.text.isBlank()
+                                && it.title.isBlank()
+                                && it.thumbnail.url.isBlank()
+                                && it.image.url.isBlank()
+                    }.count { it } < 1
                 }
             }
             displayContent.matches("^.(?<![?!.])(?![wola])(?!(\\d|x|D|k|h|\\.{1,2}))".toRegex()) -> {
@@ -100,19 +118,19 @@ class SpamFilter : HashMap<Long, SpamCache>() {
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size > 10)
+                    if (msgs.size > 7)
                         shouldModerate = true
                 }
             }
 
             if (shouldModerate) {
-                val warnings = ModerationUtils.getWarningCountForUser(user, author.guild) + 1
+                val warnings = ModerationUtils.getWarningCountForUser(database, user, author.guild) + 1
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
-                ModerationUtils.addWarningToDb(jda.selfUser, user, "Spam", guild, jda)
+                ModerationUtils.addWarningToDb(database, jda.selfUser, user, "Spam", guild)
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {
-                    ModerationUtils.muteUser(jda, guild, author, msg.textChannel, "Spam", ratelimit)
+                    ModerationUtils.muteUser(guild, author, msg.textChannel, "Spam", ratelimit)
                 }
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
                 msg.textChannel.deleteMessages(clearable).queue {

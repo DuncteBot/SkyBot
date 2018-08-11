@@ -18,12 +18,15 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
@@ -51,7 +54,7 @@ class UserinfoCommand : Command() {
         val imgDir = File(folderName)
 
         //create the dir
-        if(!imgDir.exists())
+        if (!imgDir.exists())
             imgDir.mkdir()
 
         //clean the folder
@@ -59,8 +62,12 @@ class UserinfoCommand : Command() {
     }
 
 
-    override fun executeCommand(invoke: String, args: Array<String>, event: GuildMessageReceivedEvent) {
-        var u: User
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
+        var u: User? = null
         var m: Member? //this can be lateinit var m: Member //Nope, check line 61
 
         if (args.isEmpty()) {
@@ -85,6 +92,23 @@ class UserinfoCommand : Command() {
                     } catch (ignored: NumberFormatException) { /* ignored */
                     }
                 }
+
+            }
+        }
+
+        if(u == null && m == null) {
+            val users = FinderUtil.findUsers(ctx.rawArgs, ctx.jda)
+            if(users.isNotEmpty()) {
+                u = users[0]
+                m = ctx.guild.getMember(u)
+                if(m == null) {
+                    if (ctx.invoke == "avatar") {
+                        MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+                        return
+                    }
+                    renderUserEmbed(event, u, ctx)
+                    return
+                }
             }
         }
 
@@ -95,20 +119,55 @@ class UserinfoCommand : Command() {
 
         u = m.user
 
-        if (invoke == "avatar") {
+        if (ctx.invoke == "avatar") {
             MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
             return
         }
         //A feature that will be implemented soon
         /*AirUtils.getUserProfile(u.id).async ({
-            renderEmbed(event, m, it)
+            renderMemberEmbed(event, m, it)
         },{
-            renderEmbed(event, m, null)
+            renderMemberEmbed(event, m, null)
         })*/
-        renderEmbed(event, m, null)
+        renderMemberEmbed(event, m, null, ctx)
     }
 
-    private fun renderEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, ctx: CommandContext) {
+        val embed = EmbedUtils.defaultEmbed()
+                .setColor(Settings.defaultColour)
+                .setThumbnail(user.effectiveAvatarUrl)
+                .setDescription("""User info for ${user.asMention}
+                        |
+                        |**Username + Discriminator:** ${String.format("%#s", user)}
+                        |**User Id:** ${user.id}
+                        |**Display Name:** ${user.name}
+                        |**Account Created:** ${user.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
+                        |
+                        |_Use `${PREFIX}avatar [user]` to get a user's avatar_
+                    """.trimMargin())
+
+        if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
+                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            ctx.weebApi.generateDiscordStatus(StatusType.OFFLINE,
+                    user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
+
+                val targetFile = File("$folderName/user-avatar-${user.id}-${System.currentTimeMillis()}.png")
+
+                Files.copy(it, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
+
+                event.channel.sendFile(targetFile, "stat.png",
+                        MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+                ).queue(null) { _ ->
+                    MessageUtils.sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
+                }
+            }
+        } else {
+            MessageUtils.sendEmbed(event, embed.build())
+        }
+    }
+
+    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
         var badgesString = ""
         if (p != null) {
             badgesString = "**Badges:** " + p.badges.joinToString()
@@ -149,6 +208,7 @@ class UserinfoCommand : Command() {
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
                         |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
                         |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
@@ -158,9 +218,9 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                AirUtils.CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
-            AirUtils.WEEB_API.imageGenerator.generateDiscordStatus(toWeebshStatus(m),
-                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256") {
+                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+            ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
+                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 
                 val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
 
@@ -168,10 +228,9 @@ class UserinfoCommand : Command() {
 
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                ).queue({}, {
-                    ComparatingUtils.execCheck(it)
+                ).queue(null) { _ ->
                     MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
-                })
+                }
             }
         } else {
             MessageUtils.sendEmbed(event, embed.build())
@@ -182,7 +241,7 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i", "avatar")
+    override fun getAliases() = arrayOf("user", "i", "avatar", "whois")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING)

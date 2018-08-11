@@ -27,13 +27,13 @@ import java.io.File;
 
 public class ConfigUtils {
 
-    private final Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
     private Config config;
 
     /**
      * This will try to load the bot config and kill the program if it fails
      */
     public ConfigUtils() {
+        Logger logger = LoggerFactory.getLogger(ConfigUtils.class);
         try {
             logger.info("Loading config.json");
             this.config = ConfigLoader.getConfig(new File("config.json"));

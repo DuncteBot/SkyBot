@@ -20,16 +20,10 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.weebJava.WeebApiBuilder;
-import me.duncte123.weebJava.models.WeebApi;
-import me.duncte123.weebJava.types.TokenType;
-import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
@@ -37,30 +31,14 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.awt.*;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.Random;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
-
-
-    public static final Config CONFIG = new ConfigUtils().loadConfig();
-    public static final boolean NONE_SQLITE = CONFIG.getBoolean("use_database", false);
-    public static final Random RAND = new Random();
-    public static final DBManager DB = new DBManager();
-    public static final CommandManager COMMAND_MANAGER = new CommandManager();
-    public static final WeebApi WEEB_API = new WeebApiBuilder(TokenType.WOLKETOKENS, "DuncteBot(SkyBot)/" + Settings.VERSION)
-            .setToken(CONFIG.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
-            .build();
-    public static final String GOOGLE_BASE_URL = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-            "&hl=en&searchType=image&key=" + CONFIG.getString("apis.googl") + "&safe=off";
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
-    public static final WAEngine ALPHA_ENGINE = getWolframEngine();
-    protected static Map<String, GuildSettings> guildSettings = new HashMap<>();
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -71,14 +49,14 @@ public class AirUtils {
     public static String convertStatus(OnlineStatus status) {
         switch (status) {
             case ONLINE:
-                return "<:online:313956277808005120>";
+                return "<:online2:464520569975603200>";
             case IDLE:
-                return "<:away:313956277220802560>";
+                return "<:away2:464520569862357002>";
             case DO_NOT_DISTURB:
-                return "<:dnd:313956276893646850>";
+                return "<:dnd2:464520569560498197>";
 
             default:
-                return "<:offline:313956277237710868>";
+                return "<:offline2:464520569929334784>";
         }
     }
 
@@ -122,8 +100,10 @@ public class AirUtils {
                 break;
             case 3:
                 gameType = "Watching";
+                break;
             default:
                 gameType = "Playing";
+                break;
         }
 
         return gameType + " " + g.getName();
@@ -181,8 +161,8 @@ public class AirUtils {
      * @return A possibly-null {@link com.wolfram.alpha.WAEngine Wolfram|Alpha engine} instance configured with the
      * token
      */
-    private static WAEngine getWolframEngine() {
-        String appId = CONFIG.getString("apis.wolframalpha", "");
+    public static WAEngine getWolframEngine(String appId) {
+//        String appId = Variables.CONFIG.getString("apis.wolframalpha", "");
 
         if (appId == null || appId.isEmpty())
             return null;
@@ -202,9 +182,9 @@ public class AirUtils {
     /**
      * Stops everything
      */
-    public static void stop() {
+    public static void stop(DBManager database) {
         try {
-            DB.getConnManager().getConnection().close();
+            database.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -215,7 +195,11 @@ public class AirUtils {
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }
-        DB.getService().shutdown();
+        database.getService().shutdown();
+    }
+
+    public static TextChannel getLogChannel(long channel, Guild g) {
+        return getLogChannel(String.valueOf(channel), g);
     }
 
     /**
@@ -251,7 +235,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (RAND.nextFloat() * chars.length());
+            int index = (int) (Variables.ins.getRandom().nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -272,7 +256,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (RAND.nextInt(4)) {
+        switch (Variables.ins.getRandom().nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -288,14 +272,14 @@ public class AirUtils {
 
     public static PendingRequest<Profile> getUserProfile(String uid) {
         /*
-        * badges:
-        *
-        *   Discord dev: 1
-        *   Partner: 2
-        *   Nitro: (none, check for premium_since != null)
-        *   Hypesquad: 4
-        *   Bug Hunter: 8
-        */
+         * badges:
+         *
+         *   Discord dev: 1
+         *   Partner: 2
+         *   Nitro: (none, check for premium_since != null)
+         *   Hypesquad: 4
+         *   Bug Hunter: 8
+         */
        /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
         return WebUtils.ins.prepareRaw(
                 new Request.Builder()
@@ -317,10 +301,14 @@ public class AirUtils {
                     );
                 }
         );*/
-       return null;
+        return null;
     }
 
     public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, AirUtils.CONFIG.getString("apis.googl", "Google api key"));
+        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().getString("apis.googl", "Google api key"));
+    }
+
+    public static String colorToHex(Color color) {
+        return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 }

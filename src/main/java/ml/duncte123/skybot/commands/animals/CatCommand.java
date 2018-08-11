@@ -18,12 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
-import me.duncte123.botCommons.web.WebUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -40,22 +41,23 @@ public class CatCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull String invoke, @NotNull String[] args, @NotNull GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
         WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
-            String file = json.getString("file"),
-                    ext = FilenameUtils.getExtension(file);
-            try {
-                event.getChannel().sendFile(new URL(file).openStream(),
-                        "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
-            } catch (IOException e) {
-                MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
-                ComparatingUtils.execCheck(e);
-            }
-        },
-            (error) -> {
-                MessageUtils.sendMsg(event, "This command broke again *sigh*\nuse `" + PREFIX + "kitty` because it is more stable");
-                ComparatingUtils.execCheck(error);
-            }
+                    String file = json.getString("file"),
+                            ext = FilenameUtils.getExtension(file);
+                    try {
+                        ctx.getChannel().sendFile(new URL(file).openStream(),
+                                "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
+                    } catch (IOException e) {
+                        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+                        ComparatingUtils.execCheck(e);
+                    }
+                },
+                (error) -> {
+                    ctx.getCommandManager().dispatchCommand("kitty", ctx.getArgs(), event);
+                    ComparatingUtils.execCheck(error);
+                }
         );
     }
 

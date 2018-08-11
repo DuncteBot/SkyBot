@@ -22,11 +22,8 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-import org.apache.commons.lang3.StringUtils;
 
 import java.time.Instant;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * A simple class to help me build embeds
@@ -34,7 +31,7 @@ import java.util.Map;
 public class EmbedUtils {
 
     // Quote, User
-    public static Map<String, String> footerQuotes = new HashMap<>();
+//    public static Map<String, String> footerQuotes = new HashMap<>();
 
     /**
      * The default way to send a embedded message to the channel with a field in it
@@ -67,13 +64,17 @@ public class EmbedUtils {
         return defaultEmbed().setImage(imageURL).build();
     }
 
+    public static MessageEmbed embedImageWithTitle(String title, String url, String image) {
+        return defaultEmbed().setTitle(title, url).setImage(image).build();
+    }
+
     /**
      * The default embed layout that all of the embeds are based off
      *
      * @return The way that that the {@link EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed() {
-        EmbedBuilder eb = new EmbedBuilder()
+        /*EmbedBuilder eb = new EmbedBuilder()
                 .setColor(Settings.defaultColour);
         if (AirUtils.NONE_SQLITE) {
             //Get a random index from the quotes
@@ -87,8 +88,11 @@ public class EmbedUtils {
         } else {
             eb.setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
                     .setTimestamp(Instant.now());
-        }
-        return eb;
+        }*/
+        return new EmbedBuilder()
+                .setColor(Settings.defaultColour)
+                .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
+                .setTimestamp(Instant.now());
     }
 
     /**
@@ -110,7 +114,7 @@ public class EmbedUtils {
      * @param percent how far we are in the audio track
      * @return the progressbar
      */
-    public static String generateProgressBar(double percent) {
+    private static String generateProgressBar(double percent) {
         StringBuilder str = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             if (i == (int) (percent * 8)) {
@@ -128,7 +132,7 @@ public class EmbedUtils {
      * @param volume the volume of our player
      * @return the volume icon emote
      */
-    public static String getVolumeIcon(int volume) {
+    private static String getVolumeIcon(int volume) {
         if (volume == 0) {
             return "\uD83D\uDD07";
         }
@@ -147,7 +151,7 @@ public class EmbedUtils {
      * @param duration how far we are in the track
      * @return our formatted time
      */
-    public static String formatTime(long duration) {
+    private static String formatTime(long duration) {
         if (duration == Long.MAX_VALUE) {
             return "LIVE";
         }
@@ -165,7 +169,7 @@ public class EmbedUtils {
      * @param embed the {@link MessageEmbed} that we are trying to send
      * @return the converted embed
      */
-    public static String embedToMessage(MessageEmbed embed) {
+    static String embedToMessage(MessageEmbed embed) {
         StringBuilder msg = new StringBuilder();
 
         if (embed.getAuthor() != null) {
@@ -196,4 +200,8 @@ public class EmbedUtils {
 
         return msg.toString();
     }
+
+    /*public static Queue<Message> embedToCodeBlock(MessageEmbed embed) {
+        return new MessageBuilder().appendCodeBlock(embedToMessage(embed), "java").buildAll(SplitPolicy.NEWLINE);
+    }*/
 }

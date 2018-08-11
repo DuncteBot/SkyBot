@@ -21,11 +21,10 @@ package ml.duncte123.skybot.commands.weeb
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
 class WeebCommands : WeebCommandBase() {
@@ -36,18 +35,22 @@ class WeebCommands : WeebCommandBase() {
         this.category = CommandCategory.WEEB
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        when (invoke) {
-            "hug" -> requestAndSend("hug", "hugs", args, event)
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
+        when (ctx.invoke) {
+            "hug" -> requestAndSend("hug", "hugs", args, event, ctx.weebApi)
             "lewd" -> sendEmbed(event,
-                    getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("lewd").url))
-            "pat" -> requestAndSend("pat", "pats", args, event)
-            "punch" -> requestAndSend("punch", "punches", args, event)
+                    getWeebEmbedImage(ctx.weebApi.getRandomImage("lewd").execute().url))
+            "pat" -> requestAndSend("pat", "pats", args, event, ctx.weebApi)
+            "punch" -> requestAndSend("punch", "punches", args, event, ctx.weebApi)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
-                    AirUtils.WEEB_API.getRandomImage("shrug").url))
-            "lick" -> requestAndSend("lick", "licks", args, event)
-            "owo" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("owo").url))
-            "b1nzy" -> sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImageByTags("b1nzy").url))
+                    ctx.weebApi.getRandomImage("shrug").execute().url))
+            "lick" -> requestAndSend("lick", "licks", args, event, ctx.weebApi)
+            "owo" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage("owo").execute().url))
+            "b1nzy" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage(listOf("b1nzy")).execute().url))
             "megumin" -> {
                 WebUtils.ins.getJSONObject("https://megumin.torque.ink/api/explosion").async({
                     val chant = it.optString("chant")
@@ -55,8 +58,8 @@ class WeebCommands : WeebCommandBase() {
                     sendEmbed(event, getWeebEmbedImageAndDesc(chant, img))
                 }, {
                     //When the site is down or dies
-                    val img = AirUtils.WEEB_API.getRandomImage("megumin")
-                    sendEmbed(event, getWeebEmbedImage(img.url))
+                    val img = ctx.weebApi.getRandomImage("megumin")
+                    sendEmbed(event, getWeebEmbedImage(img.execute().url))
                 })
             }
             "weeb" -> {
@@ -64,8 +67,8 @@ class WeebCommands : WeebCommandBase() {
                     sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
                     return
                 }
-                if(weebTags.isEmpty()) {
-                    weebTags.addAll(AirUtils.WEEB_API.getTypes(HiddenMode.DEFAULT).types)
+                if (weebTags.isEmpty()) {
+                    weebTags.addAll(ctx.weebApi.getTypes(HiddenMode.DEFAULT).execute().types)
                 }
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
@@ -76,7 +79,7 @@ class WeebCommands : WeebCommandBase() {
                 }
                 val type = StringUtils.join(args, "")
                 if (weebTags.contains(type)) {
-                    val img = AirUtils.WEEB_API.getRandomImage(StringUtils.join(args, ""))
+                    val img = ctx.weebApi.getRandomImage(StringUtils.join(args, "")).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
                     sendMsg(event, "That category could not be found, Use `${PREFIX}weeb_image categories` for all categories")

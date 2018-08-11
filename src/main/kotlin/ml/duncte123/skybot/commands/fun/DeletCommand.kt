@@ -20,9 +20,8 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 class DeletCommand : WeebCommandBase() {
     init {
@@ -30,9 +29,11 @@ class DeletCommand : WeebCommandBase() {
         this.displayAliasesInHelp = false
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
         //delet_this
-        MessageUtils.sendEmbed(event, getWeebEmbedImage(AirUtils.WEEB_API.getRandomImage("delet_this").url))
+        ctx.weebApi.getRandomImage("delet_this").async {
+            MessageUtils.sendEmbed(ctx.event, getWeebEmbedImage(it.url))
+        }
     }
 
     override fun help() = """Delet this

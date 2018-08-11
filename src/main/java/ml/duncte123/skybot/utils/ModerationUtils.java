@@ -18,27 +18,22 @@
 
 package ml.duncte123.skybot.utils;
 
-import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
+import java.sql.*;
+import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+@SuppressWarnings("SqlDialectInspection")
 public class ModerationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ModerationUtils.class);
@@ -54,8 +49,8 @@ public class ModerationUtils {
      * @param g            A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
-        String chan = GuildSettingsUtils.getGuild(g).getLogChannel();
-        if(chan != null && !chan.isEmpty()) {
+        long chan = GuildSettingsUtils.getGuild(g).getLogChannel();
+        if (chan > 0) {
             TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
             if (time != null && !time.isEmpty()) {
@@ -107,20 +102,31 @@ public class ModerationUtils {
      * @param unbanDate         When we need to unban the user
      * @param guildId           What guild the user got banned in
      */
-    public static void addBannedUserToDb(String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-        Map<String, Object> postFields = new TreeMap<>();
-        postFields.put("modId", modID);
-        postFields.put("username", userName);
-        postFields.put("discriminator", userDiscriminator);
-        postFields.put("userId", userId);
-        postFields.put("unbanDate", unbanDate);
-        postFields.put("guildId", guildId);
+    public static void addBannedUserToDb(DBManager database, String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
 
-        try {
-            WebUtils.ins.preparePost(Settings.API_BASE + "/ban/json", postFields).async();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        database.run(() -> {
+            Connection conn = database.getConnManager().getConnection();
+            try {
+                PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
+                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
+
+                smt.setString(1, modID);
+                smt.setString(2, userName);
+                smt.setString(3, userDiscriminator);
+                smt.setString(4, userId);
+                smt.setString(5, unbanDate);
+                smt.setString(6, guildId);
+                smt.execute();
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
@@ -129,19 +135,11 @@ public class ModerationUtils {
      * @param u the {@link User User} to check the warnings for
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(User u, Guild g) {
+    public static int getWarningCountForUser(DBManager database, User u, Guild g) {
         if (u == null)
             throw new IllegalArgumentException("User to check can not be null");
-        try {
-            return WebUtils.ins.getJSONObject(String.format(
-                    "%s/getWarnsForUser/json?user_id=%s&guild_id=%s",
-                    Settings.API_BASE,
-                    u.getId(),
-                    g.getId())).execute().getJSONArray("warnings").length();
-        } catch (Exception e) {
-            e.printStackTrace();
-            return 0;
-        }
+
+        return ApiUtils.getWarnsForUser(database, u.getId(), g.getId()).getWarnings().size();
     }
 
     /**
@@ -150,62 +148,73 @@ public class ModerationUtils {
      * @param moderator The mod that executed the warning
      * @param target    The user to warn
      * @param reason    the reason for the warn
-     * @param jda       a jda instance because we need the token for auth
      */
-    public static void addWarningToDb(User moderator, User target, String reason, Guild guild, JDA jda) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("mod_id", moderator.getId());
-        postFields.put("user_id", target.getId());
-        postFields.put("guild_id", guild.getId());
-        postFields.put("reason", reason.isEmpty() ? "No Reason provided" : " for " + reason);
-        postFields.put("token", jda.getToken());
+    public static void addWarningToDb(DBManager database, User moderator, User target, String reason, Guild guild) {
 
-        try {
-            WebUtils.ins.preparePost(Settings.API_BASE + "/addWarning/json", postFields).async();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
-        }
+        database.run(() -> {
+            Connection conn = database.getConnManager().getConnection();
+            try {
+                PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
+                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
+                smt.setString(1, moderator.getId());
+                smt.setString(2, target.getId());
+                smt.setString(3, reason);
+                smt.setString(4, guild.getId());
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     /**
      * This will check if there are users that can be unbanned
-     *
-     * @param shardManager the current shard manager for this bot
      */
-    public static void checkUnbans(ShardManager shardManager) {
-        AirUtils.DB.run(() -> {logger.debug("Checking for users to unban");
+    public static void checkUnbans(DBManager database) {
+        database.run(() -> {
+            ShardManager shardManager = SkyBot.getInstance().getShardManager();
+            logger.debug("Checking for users to unban");
             int usersUnbanned = 0;
-            Connection database = AirUtils.DB.getConnManager().getConnection();
+            Connection connection = database.getConnManager().getConnection();
 
             try {
 
-                Statement smt = database.createStatement();
+                Statement smt = connection.createStatement();
 
-                ResultSet res = smt.executeQuery("SELECT * FROM " + AirUtils.DB.getName() + ".bans");
+                ResultSet res = smt.executeQuery("SELECT * FROM " + database.getName() + ".bans");
 
                 while (res.next()) {
-                    java.util.Date unbanDate = res.getTimestamp("unban_date");
-                    java.util.Date currDate = new java.util.Date();
+                    Date unbanDate = res.getTimestamp("unban_date");
+                    Date currDate = new Date();
 
                     if (currDate.after(unbanDate)) {
                         usersUnbanned++;
                         String username = res.getString("Username");
                         logger.debug("Unbanning " + username);
                         try {
-                            String guildid = res.getString("guildId");
+                            String guildId = res.getString("guildId");
                             String userID = res.getString("userId");
-                            shardManager.getGuildCache().getElementById(guildid).getController()
-                                    .unban(userID).reason("Ban expired").queue();
-                            modLog(new ConsoleUser(),
-                                    new FakeUser(username,
-                                            userID,
-                                            res.getString("discriminator")),
-                                    "unbanned",
-                                    shardManager.getGuildById(guildid)
-                            );
+                            Guild guild = shardManager.getGuildById(guildId);
+                            if (guild != null) {
+                                guild.getController()
+                                        .unban(userID).reason("Ban expired").queue();
+                                modLog(new ConsoleUser(),
+                                        new FakeUser(username,
+                                                Long.parseUnsignedLong(userID),
+                                                Short.valueOf(res.getString("discriminator"))),
+                                        "unbanned",
+                                        guild
+                                );
+                            }
                         } catch (NullPointerException ignored) {
                         }
-                        database.createStatement().executeUpdate("DELETE FROM " + AirUtils.DB.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                        connection.createStatement().executeUpdate("DELETE FROM " + database.getName() + ".bans WHERE id=" + res.getInt("id") + "");
                     }
                 }
                 logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
@@ -213,68 +222,86 @@ public class ModerationUtils {
                 e.printStackTrace();
             } finally {
                 try {
-                    database.close();
+                    connection.close();
                 } catch (SQLException e2) {
                     e2.printStackTrace();
                 }
-            }});
+            }
+        });
     }
 
-    public static void muteUser(JDA jda, Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+        muteUser(guild, member, channel, cause, minutesUntilUnMute, false);
+    }
+
+    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
         Member self = guild.getSelfMember();
         GuildSettings guildSettings = GuildSettingsUtils.getGuild(guild);
-        String muteRoleId = guildSettings.getMuteRoleId();
+        long muteRoleId = guildSettings.getMuteRoleId();
 
-        if (muteRoleId == null || muteRoleId.isEmpty()) {
-            MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
-                "We disabled your spam filter until you have set up a role.");
-            guildSettings.setSpamFilterState(false);
+        if (muteRoleId <= 0) {
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
+                        "We disabled your spam filter until you have set up a role.");
+
+            guildSettings.setEnableSpamFilter(false);
             return;
         }
 
         Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
-            MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
-            MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
-            MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
             return;
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
-        (success) -> {
-            guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute").queueAfter(minutesUntilUnMute, TimeUnit.MINUTES);
-        },
-        (failure) -> {
-            String chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
-            if(chan != null && !chan.isEmpty()) {
-                TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+                (success) ->
+                        guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
+                                .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
+                ,
+                (failure) -> {
+                    long chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
+                    if (chan > 0) {
+                        TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
-                String message = String.format("%#s bypassed the mute.", member.getUser());
+                        String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                MessageUtils.sendEmbed(logChannel, EmbedUtils.defaultEmbed().setDescription(message).build());
-            }
-        });
+                        if (sendMessages)
+                            MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
+                    }
+                });
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {
+        kickUser(guild, member, channel, cause, false);
+    }
+
+    public static void kickUser(Guild guild, Member member, TextChannel channel, String cause, boolean sendMessages) {
         Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
-            MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
             return;
         }
 
         if (!self.canInteract(member)) {
-            MessageUtils.sendMsg(channel, "I can not access the member.");
+            if (sendMessages)
+                MessageUtils.sendMsg(channel, "I can not access the member.");
             return;
         }
         String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);

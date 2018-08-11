@@ -24,12 +24,16 @@ import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.newSingleThreadContext
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.BotListener
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
@@ -40,11 +44,13 @@ class UpdateCommand : Command() {
         this.category = CommandCategory.UNLISTED
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        @Suppress("DEPRECATION")
-        if (!Settings.wbkxwkZPaG4ni5lm8laY.contains(event.author.id)
-                && Settings.OWNER_ID != event.author.id) {
-            MessageUtils.sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
+        if (!isDev(event.author)
+                && Settings.OWNER_ID != event.author.idLong) {
+            sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
             return
         }
@@ -56,27 +62,32 @@ class UpdateCommand : Command() {
             return
         }
 
-        when (args.size) {
+        /*
+         * Tell the bot that we are using the updater
+         */
+        BotListener.isUpdating = true
+
+        when (ctx.args.size) {
             0 -> {
-                MessageUtils.sendMsg(event, "✅ Updating", {
+                sendMsg(event, "✅ Updating") {
                     // This will also shutdown eval
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop()
+                    AirUtils.stop(ctx.database)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
-                })
+                }
             }
             1 -> {
-                if (args[0] != "gradle")
+                if (ctx.args[0] != "gradle")
                     return
-                MessageUtils.sendMsg(event, "✅ Updating", {
+                sendMsg(event, "✅ Updating") {
                     launch {
-                        initUpdate(event, it.id)
+                        initUpdate(event, it.id, ctx.database)
                     }
-                })
+                }
             }
         }
     }
@@ -85,62 +96,65 @@ class UpdateCommand : Command() {
 
     override fun getName() = "update"
 
-    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String) {
+    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String, database: DBManager) {
         lateinit var version: String
         lateinit var links: String
 
         val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
             val pull = getCommand("git pull")
-            val build = getCommand("gradlew build --refresh-dependencies")
-            val versioncmd = getCommand("gradlew printVersion")
+            //val build = getCommand("gradlew build --refresh-dependencies -x test")
+            //val versioncmd = getCommand("gradlew printVersion")
 
             links = buildString {
                 appendln(runProcess(Runtime.getRuntime().exec(pull)))
-                appendln(runProcess(Runtime.getRuntime().exec(build)))
+                //appendln(runProcess(Runtime.getRuntime().exec(build)))
             }
 
 
-            val process = Runtime.getRuntime().exec(versioncmd)
+            //val process = Runtime.getRuntime().exec(versioncmd)
 
-            val scanner = Scanner(process.inputStream)
-            while (scanner.hasNextLine()) {
+            // val scanner = Scanner(process.inputStream)
+            /*while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
+                    version = s
                     if (process.isAlive) process.destroy()
                     return@async true
                 }
             }
-            return@async false
+            return@async false*/
+            return@async true
         }
 
         val progress = updateprogress.await()
 
         if (progress) {
-            MessageUtils.sendMsg(event, "✅ Update built. Shutting running version down.", {
+            sendMsg(event, "✅ Update built. Shutting running version down.") {
                 event.channel.deleteMessageById(id).queue()
                 if (!version.isEmpty()) {
                     // This will also shutdown eval
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop()
+                    AirUtils.stop(database)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x64)
                 }
-            })
+            }
         } else {
-            MessageUtils.sendMsg(event, "❌ Update failed building. $links", {
+            sendMsg(event, "❌ Update failed building. $links") {
                 event.channel.deleteMessageById(id).queue()
-            })
+            }
         }
     }
 
     private fun getCommand(cmd: String): String {
-        return if (System.getProperty("os.name").contains("Windows", false))
-            "cmd /C $cmd"
-        else
-            if (cmd.startsWith("gradle", false)) "./$cmd" else cmd
+        return when {
+            System.getProperty("os.name").contains("Windows", false) -> "cmd /C $cmd"
+            cmd.startsWith("gradle", false) -> "./$cmd"
+            else -> cmd
+        }
     }
 
     private fun runProcess(process: Process): String {
@@ -150,6 +164,6 @@ class UpdateCommand : Command() {
                 appendln(scanner.nextLine())
             }
         }
-        return WebUtils.ins.leeks(out).execute()
+        return WebUtils.ins.hastebin(out).execute()
     }
 }

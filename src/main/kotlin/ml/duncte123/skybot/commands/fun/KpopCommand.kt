@@ -21,10 +21,11 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import me.duncte123.botCommons.web.WebUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import java.sql.SQLException
 
 class KpopCommand : Command() {
 
@@ -32,22 +33,19 @@ class KpopCommand : Command() {
         this.category = CommandCategory.FUN
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
 
-        val queryString = if(!args.isEmpty()) args.joinToString(separator = "%20", prefix= "?search=") else ""
-        val url = "${Settings.API_BASE}/kpop/json$queryString"
-        WebUtils.ins.getJSONObject(url).async {
-            if(!it.optString("name").isBlank()) {
-                val eb = EmbedUtils.defaultEmbed()
-                        .setDescription("Here is a kpop member from the group ${it.getString("band")}")
-                        .addField("Name of the member", it.getString("name"), false)
-                        .setImage(it.getString("image"))
-                        .setFooter("Query id: ${it.getString("id")}", Settings.DEFAULT_ICON)
-                MessageUtils.sendEmbed(event, eb.build())
-            } else {
-                // nothing found
-                MessageUtils.sendMsg(event, "Nothing found")
-            }
+        try {
+            val queryString = if (!ctx.args.isEmpty()) ctx.rawArgs else ""
+            val member = ApiUtils.getRandomKpopMember(ctx.database, queryString)
+            val eb = EmbedUtils.defaultEmbed()
+                    .setDescription("Here is a kpop member from the group ${member.band}")
+                    .addField("Name of the member", member.name, false)
+                    .setImage(member.image)
+                    .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
+            MessageUtils.sendEmbed(ctx.event, eb.build())
+        } catch (ignored: SQLException) {
+            MessageUtils.sendMsg(ctx.event, "Nothing found")
         }
     }
 

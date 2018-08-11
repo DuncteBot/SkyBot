@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
@@ -29,11 +30,12 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
+import org.jetbrains.annotations.NotNull;
 
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 public class BanCommand extends Command {
@@ -42,16 +44,18 @@ public class BanCommand extends Command {
         this.category = CommandCategory.MOD_ADMIN;
     }
 
-    @SuppressWarnings("NullableProblems")
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
+
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.length < 2) {
+        if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
             MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
             return;
         }
@@ -64,12 +68,12 @@ public class BanCommand extends Command {
                 return;
             }
             //noinspection ConstantConditions
-            if (args.length >= 2) {
-                String reason = StringUtils.join(Arrays.copyOfRange(args, 2, args.length), " ");
-                String[] timeParts = args[1].split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+            if (args.size() >= 2) {
+                String reason = StringUtils.join(args.subList(2, args.size()), " ");
+                String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
                 if (!AirUtils.isInt(timeParts[0])) {
-                    String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                    String newReason = ctx.getRawArgs();
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (m) -> {
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
@@ -86,11 +90,12 @@ public class BanCommand extends Command {
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                         (voidMethod) -> {
                             if (finalBanTime > 0) {
-                                ModerationUtils.addBannedUserToDb(event.getAuthor().getId(), toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                                ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
+                                        toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args[1], event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), event.getGuild());
                             } else {
-                                final String newReason = StringUtils.join(Arrays.copyOfRange(args, 1, args.length), " ");
+                                final String newReason = ctx.getRawArgs();
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
                             }
                         }

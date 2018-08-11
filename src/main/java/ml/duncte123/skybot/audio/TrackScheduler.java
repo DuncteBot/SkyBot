@@ -26,16 +26,23 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.text.TextColor;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.commands.music.RadioCommand;
+import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
+import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.*;
+
+import static ml.duncte123.skybot.SkyBot.getInstance;
 
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
@@ -89,27 +96,28 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Gets run when a track ends
      *
      * @param player    The {@link AudioPlayer AudioTrack} for that guild
-     * @param track     The {@link AudioTrack AudioTrack} that ended
+     * @param lastTrack The {@link AudioTrack AudioTrack} that ended
      * @param endReason Why did this track end?
      */
     @Override
-    public void onTrackEnd(AudioPlayer player, AudioTrack track, AudioTrackEndReason endReason) {
-        @SuppressWarnings("UnnecessaryLocalVariable") AudioTrack lastTrack = track;
+    public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
         if (endReason.mayStartNext) {
             logger.debug("can start");
             if (repeating) {
                 logger.debug("repeating");
                 if (!repeatPlayList) {
-                    this.player.playTrack(lastTrack.makeClone());
+                    AudioTrack clone = lastTrack.makeClone();
+                    clone.setUserData(lastTrack.getUserData());
+                    this.player.playTrack(clone);
                     announceNextTrack(lastTrack, true);
                 } else {
                     logger.debug("a playlist.....");
                     nextTrack();
                     //Offer it to the queue to prevent the player from playing it
-                    queue.offer(lastTrack.makeClone());
-
-                    MessageUtils.sendMsg(guildMusicManager.latestChannel, "Repeating the playlist");
+                    AudioTrack clone = lastTrack.makeClone();
+                    clone.setUserData(lastTrack.getUserData());
+                    queue.offer(clone);
                 }
             } else {
                 logger.debug("starting next track");
@@ -166,15 +174,18 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     }
 
     private void announceNextTrack(AudioTrack track, boolean repeated) {
-        if (guildMusicManager.guildSettings.isAnnounceTracks()) {
+        if (guildMusicManager.isAnnounceTracks()) {
             String title = track.getInfo().title;
+            TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
-                Optional<RadioStream> stream = ((RadioCommand) AirUtils.COMMAND_MANAGER.getCommand("radio"))
+                Optional<RadioStream> stream = ((RadioCommand) Variables.ins.getCommandManager().getCommand("radio"))
                         .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Now playing: " + title + (repeated ? " (repeated)" : ""));
+            User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
+            final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message);
         }
     }
 
@@ -182,13 +193,21 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            Guild g = this.guildMusicManager.latestChannel.getGuild();
-            AudioTrackInfo info = track.getInfo();
-            final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
-                    g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
-            logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            MessageUtils.sendMsg(guildMusicManager.latestChannel, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                    "Details: " + exception);
+            TextChannel tc = guildMusicManager.getLatestChannel();
+            Guild g = (tc == null) ? null : tc.getGuild();
+
+            try {
+                AudioTrackInfo info = track.getInfo();
+                @SuppressWarnings("ConstantConditions") final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                        g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
+                logger.error(TextColor.RED + error + TextColor.RESET, exception);
+            } catch (NullPointerException ignored) {
+            }
+
+            Throwable rootCause = ExceptionUtils.getRootCause(exception);
+            Throwable finalCause = rootCause != null ? rootCause : exception;
+            MessageUtils.sendMsg(tc, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                    "Details: " + finalCause);
         }
     }
 }

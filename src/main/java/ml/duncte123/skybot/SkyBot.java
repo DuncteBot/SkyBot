@@ -19,23 +19,25 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.config.Config;
 import me.duncte123.botCommons.text.TextColor;
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.utils.TagUtils;
+import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.RestAction;
+import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.security.auth.login.LoginException;
 import java.sql.Connection;
+import java.util.EnumSet;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -45,39 +47,35 @@ import java.sql.Connection;
 @Author
 public class SkyBot {
 
-    public static final Logger logger = LoggerFactory.getLogger(SkyBot.class);
-    private static final SkyBot instance = new SkyBot();
-    private static ShardManager shardManager = null;
+    private static SkyBot instance;
+    private final ShardManager shardManager;
 
-    private SkyBot() {
-    }
+    private SkyBot() throws Exception {
 
-    /**
-     * This is our main method
-     *
-     * @param args The args passed in while running the bot
-     * @throws Exception When you mess something up
-     * @deprecated Because I can lol
-     */
-    @Deprecated
-    public static void main(String... args) throws Exception {
+        Variables vars = Variables.ins;
+        Config config = vars.getConfig();
+        DBManager database = vars.getDatabase();
+        CommandManager commandManager = vars.getCommandManager();
+        Logger logger = LoggerFactory.getLogger(SkyBot.class);
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
+        String configPrefix = config.getString("discord.prefix", "db!");
+        if (!Settings.PREFIX.equals(configPrefix)) {
+            Settings.PREFIX = configPrefix;
+        }
+
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
+        RestAction.DEFAULT_FAILURE = (t) -> {
+        };
         RestAction.setPassContext(true);
 
-        //Set the logger to only info by default
-//        Logger l = (Logger) LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME);
-//        l.setLevel(INFO);
-
-        if (AirUtils.NONE_SQLITE) { //Don't try to connect if we don't want to
-            if (!AirUtils.DB.connManager.hasSettings()) {
+        if (vars.isSql()) { //Don't try to connect if we don't want to
+            if (!database.getConnManager().hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
-            Connection conn = AirUtils.DB.getConnManager().getConnection();
-            if (!AirUtils.DB.isConnected()) {
+            Connection conn = database.getConnection();
+            if (!database.isConnected() && vars.isSql()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             } else {
@@ -92,52 +90,68 @@ public class SkyBot {
             Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
         }
 
+        //2 seconds safe sleep for database
+        Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings();
-
-        //Load the tags
-        TagUtils.loadAllTags();
+        GuildSettingsUtils.loadAllSettings(database);
 
         //Set the token to a string
-        String token = AirUtils.CONFIG.getString("discord.token", "Your Bot Token");
+        String token = config.getString("discord.token", "Your Bot Token");
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = AirUtils.CONFIG.getInt("discord.totalShards", 1);
+        int TOTAL_SHARDS = config.getInt("discord.totalShards", 1);
 
         //Set the game from the config
-        int gameId = AirUtils.CONFIG.getInt("discord.game.type", 3);
-        String name = AirUtils.CONFIG.getString("discord.game.name", "over shard #{shardId}");
+        int gameId = config.getInt("discord.game.type", 3);
+        String name = config.getString("discord.game.name", "over shard #{shardId}");
         String url = "https://www.twitch.tv/duncte123";
 
 
         Game.GameType type = Game.GameType.fromKey(gameId);
         if (type.equals(Game.GameType.STREAMING)) {
-            url = AirUtils.CONFIG.getString("discord.game.streamUrl", url);
+            url = config.getString("discord.game.streamUrl", url);
         }
 
-        logger.info(AirUtils.COMMAND_MANAGER.getCommands().size() + " commands loaded.");
-        //logger.info(AirUtils.COMMAND_MANAGER.getCustomCommands().size() + " custom commands loaded.");
-        LavalinkManager.ins.start();
+        logger.info(commandManager.getCommands().size() + " commands loaded.");
+        LavalinkManager.ins.start(config);
         final String finalUrl = url;
-        try {
-            //Set up sharding for the bot
-            shardManager = new DefaultShardManagerBuilder()
-                    .setEventManager(new EventManager())
-                    .setShardsTotal(TOTAL_SHARDS)
-                    .setGameProvider(shardId -> Game.of(type,
-                            name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
-                    )
-                    .setToken(token)
-                    .build();
-        } catch (LoginException e) {
-            //Kill the system if we can't log in
-            logger.error(TextColor.RED + "Could not log in, check if your token is correct" + TextColor.RESET, e);
-            System.exit(-4);
-        }
+
+        //Set up sharding for the bot
+        EventManager eventManager = new EventManager(vars);
+        this.shardManager = new DefaultShardManagerBuilder()
+                .setEventManager(eventManager)
+                .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
+                .setShardsTotal(TOTAL_SHARDS)
+                .setGameProvider(shardId -> Game.of(type,
+                        name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
+                )
+                .setToken(token)
+                .build();
 
         //Load all the commands for the help embed last
-        HelpEmbeds.init();
+        HelpEmbeds.init(commandManager);
+
+        AudioUtils.ins.setConfig(config);
+        //Force the player to boot up because it has to load the config
+        AudioUtils.ins.getPlayerManager();
+
+        if (!config.getBoolean("discord.local", false)) {
+            // init web server
+            new WebServer(shardManager, config, commandManager, database);
+        }
+    }
+
+    /**
+     * This is our main method
+     *
+     * @param args The args passed in while running the bot
+     * @throws Exception When you mess something up
+     * @deprecated Because I can lol
+     */
+    @Deprecated
+    public static void main(String[] args) throws Exception {
+        instance = new SkyBot();
     }
 
     public static SkyBot getInstance() {
@@ -147,4 +161,21 @@ public class SkyBot {
     public ShardManager getShardManager() {
         return shardManager;
     }
+
+    /*private void changeSettingsField(final String fieldName, final Object newValue) {
+        System.out.println("Setting " + fieldName + " to " + newValue);
+        try {
+            Field field = Settings.class.getDeclaredField(fieldName);
+            field.setAccessible(true);
+
+            Field modifiersField = Field.class.getDeclaredField("modifiers");
+            modifiersField.setAccessible(true);
+            modifiersField.setInt(field, field.getModifiers() & ~Modifier.FINAL);
+
+            field.set(null, newValue);
+            System.out.println(field.get(null));
+        } catch (NoSuchFieldException | IllegalAccessException e) {
+            e.printStackTrace();
+        }
+    }*/
 }

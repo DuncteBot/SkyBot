@@ -20,9 +20,8 @@ package ml.duncte123.skybot.commands.`fun`
 
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 class FlipCommand : Command() {
 
@@ -30,14 +29,17 @@ class FlipCommand : Command() {
         this.category = CommandCategory.FUN
     }
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+
         var uname = event.member.effectiveName
         var output = ""
 
         if (event.message.mentionedUsers.size > 0) {
             uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
-        } else if (args.isNotEmpty()) {
-            uname = StringUtils.join(args, " ")
+        } else if (ctx.args.isNotEmpty()) {
+            uname = ctx.rawArgs
         }
 
         var normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'"

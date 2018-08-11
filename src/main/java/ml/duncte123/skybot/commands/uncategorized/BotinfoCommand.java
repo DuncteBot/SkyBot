@@ -23,17 +23,22 @@ import com.sun.management.OperatingSystemMXBean;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Time;
 import java.text.DecimalFormat;
+
+import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -41,35 +46,41 @@ import java.text.DecimalFormat;
 public class BotinfoCommand extends Command {
 
     @Override
-    public void executeCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
+    public void executeCommand(@NotNull CommandContext ctx) {
 
-        if ("support".equals(invoke)) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if ("support".equals(ctx.getInvoke())) {
             MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
             return;
         }
 
         User u = event.getJDA().getSelfUser();
 
-        String OS = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getName() +
-                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getArch() +
-                " " + ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getVersion();
-        String cpu0 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getProcessCpuLoad());
-        String cpu2 = new DecimalFormat("###.###%").format(ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class).getSystemCpuLoad());
+        OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        String OS = platformMXBean.getName() +
+                " " + platformMXBean.getArch() +
+                " " + platformMXBean.getVersion();
+        String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
+        String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
         long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
         long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
         long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
         Time uptimeTime = new Time(uptimeLong - 3600000);
 
+        String duncte = getDev(event, 191231307290771456L, "duncte123 (duncte123#1245)");
+        String sanduhr = getDev(event, 198137282018934784L, "Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)");
+        String ramid = getDev(event, 281673659834302464L, "ramidzkh (ramidzkh#4814)");
 
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
-                        "duncte123 (duncte123#1245), ramidzkh (ramidzkh#4814) and Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785).\n" +
+                        duncte + ", " + ramid + " and " + sanduhr + ".\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                        "\n[**Support server**](https://discord.gg/NKM9Xtk) \u2022 [**Website**](https://bot.duncte123.me) \u2022 " +
-                        "[**Invite me**](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)" +
+                        "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
+                        "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
                         "\n\u200B", true)
                 .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
                         "**Bot version:** " + Settings.VERSION + "\n"
@@ -77,7 +88,8 @@ public class BotinfoCommand extends Command {
                         "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
-                .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") + ") and Kotlin\n\n" +
+                .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
+                        ") and Kotlin (version " + KOTLIN_VERSION + ")\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
@@ -100,6 +112,16 @@ public class BotinfoCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"about", "info", "support"};
+    }
+
+    private String getDev(GuildMessageReceivedEvent event, long id, String defaultM) {
+        Member m = event.getGuild().getMemberById(id);
+
+        if (m != null) {
+            return m.getAsMention();
+        }
+
+        return defaultM;
     }
 
 }

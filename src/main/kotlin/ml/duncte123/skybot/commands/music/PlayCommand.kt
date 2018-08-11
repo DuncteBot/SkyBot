@@ -20,37 +20,32 @@
 
 package ml.duncte123.skybot.commands.music
 
-import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport
-import com.google.api.client.json.jackson2.JacksonFactory
-import com.google.api.services.youtube.YouTube
-import com.google.api.services.youtube.model.SearchResult
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
-import java.io.IOException
+import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand : MusicCommand() {
 
-    private val youtube: YouTube = YouTube.Builder(
-            GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance()) { _ -> }
-            .setApplicationName("SkyBot-youtube-search")
-            .build()
+    override fun executeCommand(ctx: CommandContext) {
 
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
+        val event = ctx.event
 
-        if (!channelChecks(event))
+        if (prejoinChecks(event)) {
+            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
+        } else if (!channelChecks(event)) {
             return
+        }
 
         val guild = event.guild
         val mng = getMusicManager(guild)
         val player = mng.player
         val scheduler = mng.scheduler
 
-        if (args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             when {
                 player.isPaused -> {
                     player.isPaused = false
@@ -61,12 +56,12 @@ open class PlayCommand : MusicCommand() {
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
-            var toPlay = StringUtils.join(args, " ")
+            var toPlay = ctx.rawArgs
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay
-                val res = searchYoutube(toPlay)
-                if(res.isEmpty()) {
+                val res = searchYoutube(toPlay, ctx.config.getString("apis.googl"))
+                if (res.isEmpty()) {
                     MessageUtils.sendError(event.message)
                     MessageUtils.sendMsg(event, "No tracks where found")
                     return
@@ -81,7 +76,7 @@ open class PlayCommand : MusicCommand() {
                 return
             }
 
-            audioUtils.loadAndPlay(mng, event.channel, toPlay, false)
+            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
         }
     }
 
@@ -89,16 +84,4 @@ open class PlayCommand : MusicCommand() {
             |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
 
     override fun getName(): String = "play"
-
-    @Throws(IOException::class)
-    private fun searchYoutube(query: String): List<SearchResult> {
-        return youtube.search().list("id,snippet")
-                .setKey(AirUtils.CONFIG.getString("apis.googl"))
-                .setQ(query)
-                .setType("video")
-                .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                .setMaxResults(1L)
-                .execute()
-                .items
-    }
 }

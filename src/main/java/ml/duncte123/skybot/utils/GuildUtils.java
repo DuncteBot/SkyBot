@@ -18,89 +18,20 @@
 
 package ml.duncte123.skybot.utils;
 
-import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Objects;
+import java.util.Comparator;
+import java.util.stream.Collectors;
 
 public class GuildUtils {
 
     private static Logger logger = LoggerFactory.getLogger(GuildUtils.class);
-
-    /**
-     * This sends a post request to the bot lists with the new guild count
-     *
-     * @param jda the jda instance for the token
-     * @return the response from the server
-     */
-    private static String updateGuildCount(JDA jda) {
-        Map<String, Object> postFields = new HashMap<>();
-        postFields.put("server_count", jda.asBot().getShardManager().getGuildCache().size());
-        postFields.put("auth", jda.getToken());
-        try {
-            return Objects.requireNonNull(
-                    WebUtils.ins.preparePost(Settings.API_BASE + "/postGuildCount/json", postFields).execute());
-        } catch (NullPointerException ignored) {
-            return new JSONObject().put("status", "failure").put("message", "ignored exception").toString();
-        } catch (Exception e) {
-            e.printStackTrace();
-            ComparatingUtils.execCheck(e);
-            return new JSONObject().put("status", "failure").put("message", e.toString()).toString();
-        }
-    }
-
-
-    /**
-     * This method updates the guild count and checks it on startup and every time we join or leave a guild.
-     *
-     * @param jda the jda
-     * @throws UnsupportedOperationException if the request failed.
-     */
-    public static void updateGuildCountAndCheck(JDA jda) {
-        JSONObject returnValue = new JSONObject(updateGuildCount(jda));
-        if (returnValue.getString("status").equalsIgnoreCase("failure")) {
-            String exceptionMessage = "%s";
-            try {
-                switch (returnValue.getInt("code")) {
-                    case 401: {
-                        exceptionMessage = "Unauthorized access! %s";
-                        break;
-                    }
-                    case 400: {
-                        exceptionMessage = "Bad request! %s";
-                        break;
-                    }
-
-                    default: {
-                        exceptionMessage = "Server responded with a unknown status message: %s";
-                        break;
-                    }
-                }
-            } catch (JSONException ex) {
-                String x = returnValue.getString("message");
-                if ("ignored exception".equals(x))
-                    return;
-                logger.error(String.format(exceptionMessage, x), ex);
-            }
-            String x = returnValue.getString("message");
-            if ("ignored exception".equals(x))
-                return;
-            logger.error(String.format(exceptionMessage, returnValue.getString("message")));
-        }
-    }
 
     /**
      * Returns an array with the member counts of the guild
@@ -193,5 +124,10 @@ public class GuildUtils {
             return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
         }
         return "None";
+    }
+
+    public static int getMemberJoinPosition(Member member) {
+        return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
+                .collect(Collectors.toList()).indexOf(member) + 1;
     }
 }

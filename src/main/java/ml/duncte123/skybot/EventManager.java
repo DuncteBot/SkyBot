@@ -19,7 +19,9 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
@@ -37,8 +39,13 @@ public class EventManager
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
-    private final BotListener botListener = new BotListener();
+    private final BotListener botListener;
     private final DeHoistListener deHoistListener = new DeHoistListener();
+
+    EventManager(Variables variables) {
+        this.botListener = new BotListener(variables);
+    }
+
 
     @Override
     public void register(Object listener) {
@@ -53,8 +60,13 @@ public class EventManager
     @Override
     public void handle(Event event) {
         try {
+            JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
             if (shouldFakeBlock) {
-                if (restartingShard == -1 || restartingShard == event.getJDA().getShardInfo().getShardId())
+                if (shardInfo == null) {
+                    logger.warn(TextColor.RED + "ShardInfo of a shard is null! Aborting." + TextColor.RESET);
+                    return;
+                }
+                if (restartingShard == -1 || restartingShard == shardInfo.getShardId())
                     return;
             }
             if (LavalinkManager.ins.isEnabled())
@@ -62,7 +74,7 @@ public class EventManager
             botListener.onEvent(event);
             deHoistListener.onEvent(event);
         } catch (Throwable thr) {
-            logger.warn("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
+            logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
     }
 

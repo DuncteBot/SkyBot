@@ -23,7 +23,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
-import ml.duncte123.skybot.exceptions.VRCubeException
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Member
@@ -44,7 +44,7 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     private val manager: GuildManager? = null
 
     override fun getJDA(): JDA = JDADelegate(this.jda)
-    override fun getManager(): GuildManager = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getManager(): GuildManager = throw DoomedException("**\uD83D\uDD25 lit**")
 
     override fun getMember(user: User): Member = MemberDelegate(z88Am1Alk.getMember(user)!!)
     override fun getSelfMember(): Member = MemberDelegate(z88Am1Alk.selfMember)
@@ -62,6 +62,8 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     override fun getRoles(): List<Role> = z88Am1Alk.roles.map { RoleDelegate(it) } as List<Role>
     override fun getRolesByName(name: String, ignoreCase: Boolean): List<Role> = z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) } as List<Role>
 
-    override fun getController(): GuildController = throw VRCubeException("**\uD83D\uDD25 lit**")
-    override fun leave(): RestAction<Void> = throw VRCubeException("**\uD83D\uDD25 lit**")
+    override fun getController(): GuildController = throw DoomedException("**\uD83D\uDD25 lit**")
+    override fun leave(): RestAction<Void> = throw DoomedException("**\uD83D\uDD25 lit**")
+
+    override fun toString() = z88Am1Alk.toString()
 }

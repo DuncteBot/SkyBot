@@ -18,15 +18,21 @@
 
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.MessageUtils
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 
 class VolumeCommand : MusicCommand() {
-    override fun executeCommand(invoke: String, args: Array<out String>, event: GuildMessageReceivedEvent) {
-        if (!isPatron(event.author, event.channel))
+    override fun executeCommand(ctx: CommandContext) {
+
+        val event = ctx.event
+        val args = ctx.args
+
+        if (!isUserOrGuildPatron(event))
+            return
+
+        if (!channelChecks(event))
             return
 
         val mng = getMusicManager(event.guild)
@@ -35,14 +41,13 @@ class VolumeCommand : MusicCommand() {
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
         } else {
-            val joined = StringUtils.join(args, "")
             try {
-                val newVolume = Math.max(10, Math.min(100, Integer.parseInt(joined)))
+                val newVolume = Math.max(10, Math.min(100, Integer.parseInt(args[0])))
                 val oldVolume = player.volume
                 player.volume = newVolume
                 MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
             } catch (e: NumberFormatException) {
-                MessageUtils.sendMsg(event, "**$joined** is not a valid integer. (10 - 100)")
+                MessageUtils.sendMsg(event, "**${args[0]}** is not a valid integer. (10 - 100)")
             }
         }
     }

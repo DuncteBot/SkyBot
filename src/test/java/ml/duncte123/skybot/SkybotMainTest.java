@@ -20,27 +20,16 @@ package ml.duncte123.skybot;
 
 import org.junit.Test;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
+import java.util.List;
+
+import static org.junit.Assert.assertNotEquals;
 
 public class SkybotMainTest {
 
+    @SuppressWarnings("deprecation")
     @Test
     public void testSettings() {
-        String[] actualValue = Settings.wbkxwkZPaG4ni5lm8laY;
-        assertEquals("Checks if the settings are set correct", actualValue.length, 3);
-    }
-
-    @Test
-    public void testContributorValues() {
-        String testValue1 = "191231307290771456";
-        String testValue2 = "281673659834302464";
-        String testValue3 = "198137282018934784";
-
-        String actualValue1 = Settings.wbkxwkZPaG4ni5lm8laY[0];
-        String actualValue2 = Settings.wbkxwkZPaG4ni5lm8laY[1];
-        String actualValue3 = Settings.wbkxwkZPaG4ni5lm8laY[2];
-
-        assertTrue("Checks if the weird array has the correct values", (testValue1.equals(actualValue1) && testValue2.equals(actualValue2) && testValue3.equals(actualValue3)));
+        List<Long> actualValue = Settings.wbkxwkZPaG4ni5lm8laY;
+        assertNotEquals("Checks if the settings are defined", actualValue.size(), 0);
     }
 }

@@ -19,46 +19,60 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
-import ml.duncte123.skybot.exceptions.VRCubeException;
-import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.AirUtils;
+import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+
+import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
+import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
 
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
     /**
      * This stores all our commands
      */
-    private final Set<Command> commands = ConcurrentHashMap.newKeySet();
+    private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
+    private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
+    private final DBManager database;
+
+    private final Variables variables;
 
     /**
      * This makes sure that all the commands are added
      */
-    public CommandManager() {
+    public CommandManager(Variables variables) {
+        this.variables = variables;
+        this.database = variables.getDatabase();
+
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
-        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
+//        registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.unstable.commands"));
 
         loadCustomCommands();
     }
@@ -68,8 +82,21 @@ public class CommandManager {
      *
      * @return A list of all the commands
      */
-    public Set<Command> getCommands() {
+    public Set<ICommand> getCommands() {
         return commands;
+    }
+
+    public List<ICommand> getSortedCommands() {
+        if (commandsSorted.isEmpty()) {
+            List<ICommand> commandSet = new ArrayList<>();
+            List<String> names = new ArrayList<>();
+            getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
+                    .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
+            Collections.sort(names);
+            names.forEach(n -> commandSet.add(getCommand(n)));
+            commandsSorted.addAll(commandSet);
+        }
+        return commandsSorted;
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -82,8 +109,8 @@ public class CommandManager {
      * @param name the name of the command
      * @return a possible null command for the name
      */
-    public Command getCommand(String name) {
-        Optional<Command> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
+    public ICommand getCommand(String name) {
+        Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
         if (!cmd.isPresent()) {
             cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
@@ -92,7 +119,7 @@ public class CommandManager {
         return cmd.orElse(null);
     }
 
-    public List<Command> getCommands(CommandCategory category) {
+    public List<ICommand> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
@@ -112,7 +139,7 @@ public class CommandManager {
 
     public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
-            throw new VRCubeException("Name can't have spaces!");
+            throw new DoomedException("Name can't have spaces!");
         }
 
         boolean commandFound = this.customCommands.stream()
@@ -125,8 +152,8 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                Triple<Boolean, Boolean, Boolean> res = AirUtils.DB.run(() -> {
-                    Connection conn = AirUtils.DB.getConnManager().getConnection();
+                Triple<Boolean, Boolean, Boolean> res = database.run(() -> {
+                    Connection conn = database.getConnManager().getConnection();
 
                     String sqlQuerry = (isEdit) ?
                             "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
@@ -151,7 +178,7 @@ public class CommandManager {
                     return null;
                 }).get();
 
-                if(res != null && !res.getFirst()) {
+                if (res != null && !res.getFirst()) {
                     return res;
                 }
             } catch (InterruptedException | ExecutionException e) {
@@ -178,12 +205,12 @@ public class CommandManager {
 
     public boolean removeCustomCommand(String name, String guildId) {
         CustomCommand cmd = getCustomCommand(name, guildId);
-        if(cmd == null)
+        if (cmd == null)
             return false;
 
         try {
-            return AirUtils.DB.run(() -> {
-                Connection con = AirUtils.DB.getConnManager().getConnection();
+            return database.run(() -> {
+                Connection con = database.getConnManager().getConnection();
 
                 try {
                     PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
@@ -217,15 +244,16 @@ public class CommandManager {
      * @param command The command to add
      * @return true if the command is added
      */
-    @SuppressWarnings("UnusedReturnValue")
-    public boolean addCommand(Command command) {
+    @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
+    public boolean addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
-            throw new VRCubeException("Name can't have spaces!");
+            throw new DoomedException("Name can't have spaces!");
         }
 
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
-            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName().equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
+                    .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
             for (String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;
@@ -247,44 +275,83 @@ public class CommandManager {
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
                 "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                         Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
-                "").split("\\s+");
+                "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 
-        dispatchCommand(invoke, Arrays.copyOfRange(split, 1, split.length), event);
+        List<String> args = new ArrayList<>();
+
+        if (split.length > 1) {
+            String raw = split[1];
+            Matcher m = COMMAND_PATTERN.matcher(raw);
+            while (m.find())
+                args.add(m.group(1).replace("\"", "")); // Add .replace("\"", "") to remove surrounding quotes.
+        }
+
+        dispatchCommand(invoke, args, event);
     }
 
-    public void dispatchCommand(String invoke, String[] args, GuildMessageReceivedEvent event) {
-        Command cmd = getCommand(invoke);
+    public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        ICommand cmd = getCommand(invoke);
         if (cmd == null) {
-            cmd = (Command) getCustomCommand(invoke, event.getGuild().getId());
+            cmd = getCustomCommand(invoke, event.getGuild().getId());
         }
         dispatchCommand(cmd, invoke, args, event);
     }
 
-    public void dispatchCommand(Command cmd, String invoke, String[] args, GuildMessageReceivedEvent event) {
-        if (cmd != null) {
-            try {
-                cmd.executeCommand(invoke, args, event);
-            } catch (Throwable ex) {
-                ComparatingUtils.execCheck(ex);
+    public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+        commandThread.submit(() -> {
+            if (cmd != null) {
+                try {
+                    if (!cmd.isCustom()) {
+                        cmd.executeCommand(
+                                new CommandContext(invoke, args, event, variables)
+                        );
+                    } else {
+
+                        CustomCommand cc = (CustomCommand) cmd;
+
+                        if (!cc.getGuildId().equals(event.getGuild().getId()))
+                            return;
+
+                        try {
+                            String message = CustomCommandUtils.PARSER.clear()
+                                    .put("user", event.getAuthor())
+                                    .put("channel", event.getChannel())
+                                    .put("guild", event.getGuild())
+                                    .put("random", variables.getRandom())
+                                    .put("args", StringUtils.join(args, " "))
+                                    .parse(cc.getMessage());
+
+                            sendMsg(event, "\u200B" + message);
+                            CustomCommandUtils.PARSER.clear();
+                        } catch (Exception e) {
+                            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+                            execCheck(e);
+                        }
+                    }
+                } catch (Throwable ex) {
+                    execCheck(ex);
+                }
             }
-        }
+        });
     }
 
     private void registerCommandsFromReflection(Reflections reflections) {
         //Loop over them commands
-        for (Class<? extends Command> cmd : reflections.getSubTypesOf(Command.class)) {
+        for (Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
             try {
+                ICommand command = cmd.getDeclaredConstructor().newInstance();
+//                System.out.println(command.getName());
                 //Add the command
-                this.addCommand(cmd.getDeclaredConstructor().newInstance());
+                this.addCommand(command);
             } catch (Exception ignored) {
             }
         }
     }
 
     private void loadCustomCommands() {
-        AirUtils.DB.run(() -> {
-            Connection con = AirUtils.DB.getConnManager().getConnection();
+        database.run(() -> {
+            Connection con = database.getConnManager().getConnection();
             try {
                 ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
                 while (res.next()) {
