@@ -321,19 +321,7 @@ public class AirUtils {
     public static long getSystemUptime() throws Exception {
         long uptime = -1;
         String os = System.getProperty("os.name").toLowerCase();
-        if (os.contains("win") && System.getProperty("user.language").startsWith("en")) {
-            Process uptimeProc = Runtime.getRuntime().exec("net stats srv");
-            BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
-            String line;
-            while ((line = in.readLine()) != null) {
-                if (line.startsWith("Statistics since")) {
-                    SimpleDateFormat format = new SimpleDateFormat("'Statistics since' MM/dd/yyyy hh:mm:ss a");
-                    Date boottime = format.parse(line);
-                    uptime = System.currentTimeMillis() - boottime.getTime();
-                    break;
-                }
-            }
-        } else if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+        if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
             Process uptimeProc = Runtime.getRuntime().exec("uptime");
             BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
             String line = in.readLine();

@@ -2,7 +2,7 @@
  * Skybot, a multipurpose discord bot
  *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
  *
- * This program is free software: you can redistribute it and/or modify
+ * This program is free software:** you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
  * by the Free Software Foundation, either version 3 of the License, or
  * (at your option) any later version.
@@ -54,29 +54,28 @@ class StatsCommand : Command() {
         val embed = defaultEmbed()
 
                 .addField("Discord/bot Stats",
-                  """**Guilds:**
-                    |**Users (unique): ${shardManager.userCache.size()}**
-                    |**Text channels: ${shardManager.textChannelCache.size()}**
-                    |**Voice channels: ${shardManager.voiceChannelCache.size()}**
-                    |~~**Emotes: @Deprecated("EmoteCache disabled") **~~
-                    |**Playing music count: $connectedVC**
-                    |**Uptime: ${AirUtils.getUptime(uptimeLong)} $uptimeTime**
+                  """**Guilds:** ${shardManager.guildCache.size()}
+                    |**Users (unique):** ${shardManager.userCache.size()}
+                    |**Text channels:** ${shardManager.textChannelCache.size()}
+                    |**Voice channels:** ${shardManager.voiceChannelCache.size()}
+                    |**Playing music count:** $connectedVC
+                    |**Uptime:** ${AirUtils.getUptime(uptimeLong)} $uptimeTime
                 """.trimMargin(), false)
 
                 .addField("Server stats",
-                  """**CPU's: $cores**
-                    |**CPU usage: $processUsage**
-                    |**Total ram: ${serverMem shr 20}**
-                    |**Ram usage: ${serverUsage shr 20}**
-                    |**System uptime: ${AirUtils.getUptime(serverUptimeLong)} $serverUptimeTime**
-                    |**Operating System: $OS**
+                  """**CPU's:** $cores
+                    |**CPU usage:** $processUsage
+                    |**Total ram:** ${serverMem shr 20}
+                    |**Ram usage:** ${serverUsage shr 20}
+                    |**System uptime:** ${AirUtils.getUptime(serverUptimeLong)} $serverUptimeTime
+                    |**Operating System:** $OS
                 """.trimMargin(), false)
 
                 .addField("JVM stats",
-                          """**Total thread count: ${Thread.getAllStackTraces().keys.size}**
-                            |**Active thread count: ${Thread.activeCount()}**
-                            |**Used ram: $jvmMem**
-                            |**Allocated ram: $jvmUsage**
+                          """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
+                            |**Active thread count:** ${Thread.activeCount()}
+                            |**Used ram:** $jvmMem
+                            |**Allocated ram:** $jvmUsage
                         """.trimMargin(), false)
 
         sendEmbed(ctx.event, embed.build())
