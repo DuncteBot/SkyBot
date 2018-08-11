@@ -41,6 +41,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.time.OffsetDateTime
 
+
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class EarthUtils {

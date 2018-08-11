@@ -27,6 +27,7 @@ import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -128,5 +129,17 @@ public class CommandContext {
 
     public JDA getJDA() {
         return this.event.getJDA();
+    }
+
+    public ShardManager getShardManager() {
+        return getJDA().asBot().getShardManager();
+    }
+
+    public User getSelfUser() {
+        return getJDA().getSelfUser();
+    }
+
+    public Member getSelfMember() {
+        return getGuild().getSelfMember();
     }
 }
