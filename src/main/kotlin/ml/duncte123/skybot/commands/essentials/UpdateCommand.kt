@@ -102,19 +102,19 @@ class UpdateCommand : Command() {
 
         val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
             val pull = getCommand("git pull")
-            //val build = getCommand("gradlew build --refresh-dependencies -x test")
-            //val versioncmd = getCommand("gradlew printVersion")
+            val build = getCommand("gradlew build --refresh-dependencies -x test")
+            val versioncmd = getCommand("gradlew printVersion")
 
             links = buildString {
                 appendln(runProcess(Runtime.getRuntime().exec(pull)))
-                //appendln(runProcess(Runtime.getRuntime().exec(build)))
+                appendln(runProcess(Runtime.getRuntime().exec(build)))
             }
 
 
-            //val process = Runtime.getRuntime().exec(versioncmd)
+            val process = Runtime.getRuntime().exec(versioncmd)
 
-            // val scanner = Scanner(process.inputStream)
-            /*while (scanner.hasNextLine()) {
+            val scanner = Scanner(process.inputStream)
+            while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
                     version = s
@@ -122,8 +122,8 @@ class UpdateCommand : Command() {
                     return@async true
                 }
             }
-            return@async false*/
-            return@async true
+            return@async false
+//            return@async true
         }
 
         val progress = updateprogress.await()
