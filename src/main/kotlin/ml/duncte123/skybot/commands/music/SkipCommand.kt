@@ -58,14 +58,18 @@ class SkipCommand : MusicCommand() {
         repeat(count) {
             scheduler.nextTrack()
         }
-        val userData = mng.player.playingTrack.userData as TrackUserData
-        val user = ctx.jda.getUserById(userData.userId)
-        MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
-                if (mng.player.playingTrack != null) {
-                    "\nNow playing: ${mng.player.playingTrack.info.title}\n" +
-                            "Requester: ${String.format("%#s", user)}"
-                } else "")
-        mng.latestChannel = event.channel.idLong
+        
+        if (mng.player.playingTrack != null) {
+            val userData = mng.player.playingTrack.userData as TrackUserData
+            val user = ctx.jda.getUserById(userData.userId)
+            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+                        "Now playing: ${mng.player.playingTrack.info.title}\n" +
+                        "Requester: ${String.format("%#s", user)}")
+            mng.latestChannel = event.channel.idLong
+        } else {
+            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+                                "Queue is now empty.")
+        }
     }
 
     override fun help(): String = "Skips the current track."
