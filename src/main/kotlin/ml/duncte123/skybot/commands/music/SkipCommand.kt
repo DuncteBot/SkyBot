@@ -65,11 +65,11 @@ class SkipCommand : MusicCommand() {
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
                         "Now playing: ${mng.player.playingTrack.info.title}\n" +
                         "Requester: ${String.format("%#s", user)}")
-            mng.latestChannel = event.channel.idLong
         } else {
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
                                 "Queue is now empty.")
         }
+        mng.latestChannel = event.channel.idLong
     }
 
     override fun help(): String = "Skips the current track."
