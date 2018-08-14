@@ -148,7 +148,7 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+                ctx.config.apis.weebSh.wolketoken != null) {
             ctx.weebApi.generateDiscordStatus(StatusType.OFFLINE,
                     user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 
@@ -218,7 +218,7 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                ctx.config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN") != "INSERT_WEEB_WOLKETOKEN") {
+                ctx.config.apis.weebSh.wolketoken != null) {
             ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
 

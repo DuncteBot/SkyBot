@@ -109,7 +109,7 @@ class ChatCommand : Command() {
         sessions[event.author.idLong]!!.think(message) {
             var response = it
 
-            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
+            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author, ctx.config)
 
             response = parseATags(response, withAds)
             if (withAds) {

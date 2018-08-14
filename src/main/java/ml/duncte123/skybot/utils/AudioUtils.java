@@ -32,7 +32,6 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
-import me.duncte123.botCommons.config.Config;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -41,6 +40,7 @@ import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -73,7 +73,7 @@ public class AudioUtils {
      */
     protected final Map<Long, GuildMusicManager> musicManagers;
 
-    private Config config;
+    private DunctebotConfig.Apis config;
 
     /**
      * This will set everything up and get the player ready
@@ -102,7 +102,7 @@ public class AudioUtils {
         }
     }
 
-    public void setConfig(Config config) {
+    public void setConfig(DunctebotConfig.Apis config) {
         this.config = config;
     }
 

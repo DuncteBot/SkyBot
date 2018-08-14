@@ -57,7 +57,7 @@ public class SeekCommand extends MusicCommand {
         }
         IPlayer player = getMusicManager(ctx.getGuild()).player;
 
-        if(player.getPlayingTrack() == null) {
+        if (player.getPlayingTrack() == null) {
             sendMsg(event, "The player is currently not playing anything");
             return;
         }

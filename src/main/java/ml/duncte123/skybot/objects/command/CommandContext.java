@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.objects.command;
 
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.botCommons.config.Config;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
@@ -59,7 +59,7 @@ public class CommandContext {
         return this.variables.getCommandManager();
     }
 
-    public Config getConfig() {
+    public DunctebotConfig getConfig() {
         return this.variables.getConfig();
     }
 
