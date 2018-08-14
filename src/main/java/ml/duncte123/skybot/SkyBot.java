@@ -158,7 +158,7 @@ public class SkyBot {
     @Deprecated
     public static void main(String[] args) throws Exception {
         for (String arg : args) {
-            if (arg.equals("--gen")) {
+            if ("--gen".equals(arg)) {
                 gen();
                 return;
             }
