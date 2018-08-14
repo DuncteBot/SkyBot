@@ -121,7 +121,7 @@ public abstract class Command implements ICommand {
         }
         Member m = supportGuild.getMember(u);
         if (m == null) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a ppatron only command and is locked for you because you " +
+            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                     "are not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
                     "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
