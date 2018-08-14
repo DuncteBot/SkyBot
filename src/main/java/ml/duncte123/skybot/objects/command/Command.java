@@ -22,7 +22,7 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -74,8 +74,8 @@ public abstract class Command implements ICommand {
     private String helpParsed = null;
 
 
-    private boolean checkVoteOnDBL(String userid) {
-        String token = Variables.ins.getConfig().getString("apis.discordbots_userToken", "");
+    private boolean checkVoteOnDBL(String userid, DunctebotConfig config) {
+        String token = config.apis.discordbots_userToken;
 
         if (token == null || token.isEmpty()) {
             logger.warn("Discord Bots token not found");
@@ -188,10 +188,10 @@ public abstract class Command implements ICommand {
     /**
      * Has this user upvoted the bot
      */
-    protected boolean hasUpvoted(User user) {
+    protected boolean hasUpvoted(User user, DunctebotConfig config) {
         boolean upvoteCheck = upvotedIds.contains(user.getIdLong());
         if (!upvoteCheck) {
-            boolean dblCheck = checkVoteOnDBL(user.getId());
+            boolean dblCheck = checkVoteOnDBL(user.getId(), config);
             if (dblCheck) {
                 upvoteCheck = true;
                 upvotedIds.add(user.getIdLong());

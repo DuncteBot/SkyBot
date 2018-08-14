@@ -58,10 +58,6 @@ public class Settings {
             198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
     );
     /**
-     * This is the prefix that your bot has, by default is the /
-     */
-    public static String PREFIX = "db!";
-    /**
      * This is another prefix because I can
      */
     public static final String OTHER_PREFIX = "db.";
@@ -89,4 +85,8 @@ public class Settings {
      * this tells the bot if we should send json errors
      */
     public static final boolean useJSON = false;
+    /**
+     * This is the prefix that your bot has, by default is the /
+     */
+    public static String PREFIX = "db!";
 }

@@ -38,7 +38,7 @@ public class KittyCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        String apiKey = ctx.getConfig().getString("apis.thecatapi", "");
+        String apiKey = ctx.getConfig().apis.thecatapi;
         WebUtils.ins.getText("http://thecatapi.com/api/images/get?" +
                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
             Document doc = Jsoup.parse(xml, "", Parser.xmlParser());

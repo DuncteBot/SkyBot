@@ -28,6 +28,7 @@ import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.AudioUtils
@@ -50,14 +51,14 @@ import java.sql.SQLException
 import java.util.*
 
 
-class WebServer(private val shardManager: ShardManager, private val config: Config,
+class WebServer(private val shardManager: ShardManager, private val config: DunctebotConfig,
                 private val commandManager: CommandManager, private val database: DBManager) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
-            .setClientId(config.getLong("discord.oauth.clientId", 210363111729790977))
-            .setClientSecret(config.getString("discord.oauth.clientSecret", "aaa"))
+            .setClientId(config.discord.oauth.clientId)
+            .setClientSecret(config.discord.oauth.clientSecret)
             .build()
 
     init {
@@ -90,7 +91,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
         }
 
         get("/suggest", WebVariables().put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.getString("apis.chapta.sitekey")), "suggest.twig")
+                .put("chapta_sitekey", config.apis.chapta.sitekey), "suggest.twig")
 
         post("/suggest") {
             val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
@@ -105,7 +106,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                 return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
             }
 
-            val cap = helpers.verifyCapcha(captcha, config)
+            val cap = helpers.verifyCapcha(captcha, config.apis.chapta.secret)
 
             if (!cap.getBoolean("success")) {
                 return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
@@ -114,7 +115,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
             val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
             val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
 
-            val url = helpers.addTrelloCard(suggestion.toString(), descText, config).getString("shortUrl")
+            val url = helpers.addTrelloCard(suggestion.toString(), descText, config.apis.trello).getString("shortUrl")
 
             renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
         }
@@ -125,7 +126,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
             before("") {
                 if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
-                            config.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
+                            config.discord.oauth.redirUrl,
                             Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
@@ -417,7 +418,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
 
     private fun renderSugPage(map: WebVariables): String {
         map.put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.getString("apis.chapta.sitekey"))
+                .put("chapta_sitekey", config.apis.chapta.sitekey)
 
         return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
