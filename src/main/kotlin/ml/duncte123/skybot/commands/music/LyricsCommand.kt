@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils
 import org.apache.commons.lang3.StringUtils
@@ -39,7 +39,7 @@ class LyricsCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!hasUpvoted(event.author)) {
+        if (!hasUpvoted(event.author, ctx.config)) {
             MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
                     "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
                             " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
@@ -57,7 +57,7 @@ class LyricsCommand : MusicCommand() {
                 MessageUtils.sendMsg(event, "The player is not currently playing anything!")
                 return
             }
-            searchForSong(search, ctx.config) {
+            searchForSong(search, ctx.config.genius) {
                 if (it.isNullOrBlank()) {
                     MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
                             "Alternatively you can try `$PREFIX$name song name` to search for the lyrics on this soing.\n" +
@@ -83,11 +83,11 @@ class LyricsCommand : MusicCommand() {
 
     override fun getName() = "lyrics"
 
-    private fun getAuthToken(config: Config): String {
+    private fun getAuthToken(config: DunctebotConfig.Genius): String {
         if (authToken.isBlank()) {
             val formData = HashMap<String, Any>()
-            formData["client_id"] = config.getString("genius.client_id", "CLIENT_ID")
-            formData["client_secret"] = config.getString("genius.client_secret", "CLIENT_SECRET")
+            formData["client_id"] = config.client_id
+            formData["client_secret"] = config.client_secret
             formData["grant_type"] = "client_credentials"
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
             this.authToken = JSONObject(raw).optString("access_token")
@@ -95,7 +95,7 @@ class LyricsCommand : MusicCommand() {
         return "Bearer $authToken"
     }
 
-    private fun searchForSong(t: String?, config: Config, callback: (String?) -> Unit) {
+    private fun searchForSong(t: String?, config: DunctebotConfig.Genius, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
                 .header("Authorization", getAuthToken(config))
                 .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),

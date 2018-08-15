@@ -35,8 +35,6 @@ import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
@@ -311,7 +309,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().getString("apis.googl", "Google api key"));
+        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().apis.googl);
     }
 
     public static String colorToHex(Color color) {

@@ -40,7 +40,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = "ml.duncte123.skybot"
-version "3.76.1_${getGitHash()}"
+version "3.77.0_${getGitHash()}"
 
 sourceCompatibility = JavaVersion.VERSION_1_9
 targetCompatibility = JavaVersion.VERSION_1_9
@@ -85,7 +85,7 @@ dependencies {
     compile 'com.github.duncte123:botCommons:b65ea97'
 
     //JDA (java discord api)
-    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '0f079a0') {
+    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '551bc08') {
 //    compile (group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382') {
         exclude module: 'opus-java'
     }

@@ -18,18 +18,18 @@
 
 package ml.duncte123.skybot.web
 
-import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
+import ml.duncte123.skybot.objects.config.DunctebotConfig
 import org.json.JSONObject
 import me.duncte123.botCommons.web.WebUtils.ins as web
 
 class ApiHelpers {
 
-    fun verifyCapcha(response: String, config: Config): JSONObject {
+    fun verifyCapcha(response: String, secret: String): JSONObject {
         val fields = HashMap<String, Any>()
-        fields["secret"] = config.getString("apis.chapta.secret", "-")
+        fields["secret"] = secret
         fields["response"] = response
         val req = web.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
                 WebUtils.EncodingType.APPLICATION_JSON)
@@ -38,7 +38,7 @@ class ApiHelpers {
         return req.execute()
     }
 
-    fun addTrelloCard(name: String, desc: String, config: Config): JSONObject {
+    fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello): JSONObject {
         val query = QueryBuilder()
                 .append("https://api.trello.com/1/cards")
                 .append("name", name)
@@ -46,8 +46,8 @@ class ApiHelpers {
                 .append("pos", "bottom")
                 .append("idList", "5ad2a228bef59be0aca289c9")
                 .append("keepFromSource", "all")
-                .append("key", config.getString("apis.trello.key", "-"))
-                .append("token", config.getString("apis.trello.token", "-"))
+                .append("key", config.key)
+                .append("token", config.token)
 
         val t = web.preparePost(query.build()).execute()
         return JSONObject(t)

@@ -60,7 +60,7 @@ open class PlayCommand : MusicCommand() {
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay
-                val res = searchYoutube(toPlay, ctx.config.getString("apis.googl"))
+                val res = searchYoutube(toPlay, ctx.config.apis.googl)
                 if (res.isEmpty()) {
                     MessageUtils.sendError(event.message)
                     MessageUtils.sendMsg(event, "No tracks where found")

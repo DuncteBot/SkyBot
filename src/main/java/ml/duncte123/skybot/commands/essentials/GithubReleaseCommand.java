@@ -86,7 +86,7 @@ public class GithubReleaseCommand extends Command {
         try {
             //You meant to post the json ramid?
             JSONObject releaseIn = WebUtils.ins.postJSON(String.format(CREATE_RELEASE,
-                    ctx.getConfig().getString("apis.github")), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
+                    ctx.getConfig().apis.googl), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
 
             if (releaseIn == null)
                 return;

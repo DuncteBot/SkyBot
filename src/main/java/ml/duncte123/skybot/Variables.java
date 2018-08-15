@@ -18,16 +18,20 @@
 
 package ml.duncte123.skybot;
 
+import com.google.common.base.Charsets;
+import com.google.common.io.Files;
+import com.google.gson.Gson;
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.botCommons.config.Config;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.apis.BlargBot;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.ConfigUtils;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -36,7 +40,7 @@ import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
 public class Variables {
 
-    private final Config config;
+    public static final Variables ins = new Variables();
     private final WAEngine alphaEngine;
     private final String googleBaseUrl;
     private final WeebApi weebApi;
@@ -46,25 +50,31 @@ public class Variables {
     private final CommandManager commandManager;
     private final BlargBot blargBot;
     private final Map<Long, GuildSettings> guildSettings;
+    private DunctebotConfig config;
+
 
     private Variables() {
-        final ConfigUtils configUtils = new ConfigUtils();
-        this.config = configUtils.loadConfig();
-        this.alphaEngine = getWolframEngine(config.getString("apis.wolframalpha", ""));
+        /*final ConfigUtils configUtils = new ConfigUtils();
+        this.config = configUtils.loadConfig();*/
+        try {
+            this.config = new Gson().fromJson(Files.asCharSource(new File("config.json"), Charsets.UTF_8).read(), DunctebotConfig.class);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-                "&hl=en&searchType=image&key=" + config.getString("apis.googl") + "&safe=off";
+                "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
-                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-                .setToken(config.getString("apis.weeb\\.sh.wolketoken", "INSERT_WEEB_WOLKETOKEN"))
+//                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
+                .setToken(config.apis.weebSh.wolketoken)
                 .build();
-        this.isSql = config.getBoolean("use_database", false);
+        this.isSql = config.use_database;
         this.random = new Random();
-        this.database = new DBManager(isSql, config);
+        this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);
-        this.blargBot = new BlargBot(config.getString("apis.blargbot", "aaaaa"));
+        this.blargBot = new BlargBot(config.apis.blargbot);
         this.guildSettings = new HashMap<>();
     }
-
 
     public BlargBot getBlargBot() {
         return blargBot;
@@ -74,7 +84,7 @@ public class Variables {
         return commandManager;
     }
 
-    public Config getConfig() {
+    public DunctebotConfig getConfig() {
         return config;
     }
 
@@ -105,6 +115,4 @@ public class Variables {
     boolean isSql() {
         return isSql;
     }
-
-    public static final Variables ins = new Variables();
 }

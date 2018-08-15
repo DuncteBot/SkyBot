@@ -47,7 +47,7 @@ class RadioCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!hasUpvoted(event.author)) {
+        if (!hasUpvoted(event.author, ctx.config)) {
             sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the radio command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +

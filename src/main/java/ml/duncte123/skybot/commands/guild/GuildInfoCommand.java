@@ -103,7 +103,7 @@ public class GuildInfoCommand extends Command {
                         inviteString, false)
                 .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                         "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
-                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
+                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
         MessageUtils.sendEmbed(event, eb.build());
     }

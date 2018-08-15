@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import me.duncte123.botCommons.config.Config;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -39,12 +39,12 @@ class MySQLConnectionManager implements DBConnectionManager {
     private final String pass;
     private Connection connection;
 
-    MySQLConnectionManager(Config config) {
-        this.dbHost = config.getString("sql.host", "sql.example.com");
-        this.port = config.getInt("sql.port", 3306);
-        this.user = config.getString("sql.username", "exampleUser");
-        this.pass = config.getString("sql.password", "Ex@mplePAss");
-        this.dbName = config.getString("sql.database", "Example_database");
+    MySQLConnectionManager(DunctebotConfig.Sql config) {
+        this.dbHost = config.host;
+        this.port = config.port;
+        this.user = config.username;
+        this.pass = config.password;
+        this.dbName = config.database;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(

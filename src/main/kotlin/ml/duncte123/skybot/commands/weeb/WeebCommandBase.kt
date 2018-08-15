@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.weebJava.models.WeebApi
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -35,9 +34,9 @@ abstract class WeebCommandBase : Command() {
         this.displayAliasesInHelp = true
     }
 
-    fun getDefaultWeebEmbed(): EmbedBuilder {
+    private fun getDefaultWeebEmbed(): EmbedBuilder {
         return EmbedUtils.defaultEmbed()
-                .setFooter("Powered by weeb.sh & weeb.java", null)
+                .setFooter("Powered by weeb.sh", null)
                 .setTimestamp(null)
     }
 
@@ -54,7 +53,7 @@ abstract class WeebCommandBase : Command() {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${Settings.DEFAULT_NAME} $thing ${event.member.asMention}", imageUrl))
+                        "<@210363111729790977> $thing ${event.member.asMention}", imageUrl))
                 return@async
             }
             if (!event.message.mentionedMembers.isEmpty()) {

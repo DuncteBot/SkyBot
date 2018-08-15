@@ -92,7 +92,7 @@ public class BotListener extends ListenerAdapter {
     /**
      * This is used to check if we should trigger a update for the guild count when we leave a guild
      */
-    private final List<Long> botLists = new ArrayList<>();
+    private final List<Long> botFamrs = new ArrayList<>();
     private final DBManager database;
     private final CommandManager commandManager;
     private final Variables variables;
@@ -105,6 +105,12 @@ public class BotListener extends ListenerAdapter {
      */
     private boolean isCacheCleanerActive = false;
     private short shardsReady = 0;
+
+    private final List<Long> botLists = List.of(
+            110373943822540800L,
+            264445053596991498L,
+            374071874222686211L
+    );
 
     BotListener(Variables variables) {
         this.variables = variables;
@@ -359,7 +365,7 @@ public class BotListener extends ListenerAdapter {
         //if 70 of a guild is bots, we'll leave it
         double[] botToUserRatio = GuildUtils.getBotRatio(guild);
         long[] counts = GuildUtils.getBotAndUserCount(guild);
-        if (botToUserRatio[1] >= 70) {
+        if (botToUserRatio[1] >= 70 && !botLists.contains(guild.getIdLong())) {
             MessageUtils.sendMsg(GuildUtils.getPublicChannel(guild),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
                             guild.getOwner().getAsMention(),
@@ -381,7 +387,7 @@ public class BotListener extends ListenerAdapter {
                     counts[1],
                     TextColor.RESET
             );
-            botLists.add(guild.getIdLong());
+            botFamrs.add(guild.getIdLong());
             return;
         }
         /*String message = String.format("Joining guild %s, ID: %s on shard %s.", guild.getName(), guild.getId(), guild.getJDA().getShardInfo()
@@ -401,11 +407,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         Guild guild = event.getGuild();
-        if (!botLists.contains(guild.getIdLong())) {
+        if (!botFamrs.contains(guild.getIdLong())) {
             logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
             GuildSettingsUtils.deleteGuild(guild, database);
         } else {
-            botLists.remove(guild.getIdLong());
+            botFamrs.remove(guild.getIdLong());
         }
     }
 

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
-import me.duncte123.botCommons.config.Config;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 
 import java.io.File;
 import java.sql.Connection;
@@ -39,12 +39,12 @@ public class DBManager {
     /**
      * This will set our stuff up
      */
-    public DBManager(boolean isSql, Config config) {
+    public DBManager(boolean isSql, DunctebotConfig.Sql config) {
         this.connManager = createDBManager(isSql, config);
         this.name = connManager.getName();
     }
 
-    private DBConnectionManager createDBManager(boolean isSql, Config config) {
+    private DBConnectionManager createDBManager(boolean isSql, DunctebotConfig.Sql config) {
         if (isSql) return new MySQLConnectionManager(config);
         return new SQLiteDatabaseConnectionManager(new File("database.db"));
     }
