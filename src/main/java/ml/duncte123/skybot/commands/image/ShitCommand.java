@@ -49,10 +49,10 @@ public class ShitCommand extends ImageCommandBase {
         }
 
         if("pluralshit".equals(ctx.getInvoke())) {
-            getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
+            ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
             return;
         }
-        getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getShit(text).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

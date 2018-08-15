@@ -50,7 +50,7 @@ public class PcCheckCommand extends ImageCommandBase {
             reason = reason.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 
-        getBlargbot().getPcCheck(reason).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getPcCheck(reason).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

@@ -50,7 +50,7 @@ public class DeleteCommand extends ImageCommandBase {
             text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 
-        getBlargbot().getDelete(text).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getDelete(text).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

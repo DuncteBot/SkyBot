@@ -50,7 +50,7 @@ public class ClintCommand extends ImageCommandBase {
             }
         }
 
-        getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

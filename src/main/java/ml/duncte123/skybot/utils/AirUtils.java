@@ -36,6 +36,7 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -239,7 +240,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (Variables.ins.getRandom().nextFloat() * chars.length());
+            int index = (int) (new Random().nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -260,7 +261,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (Variables.ins.getRandom().nextInt(4)) {
+        switch (new Random().nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -308,8 +309,8 @@ public class AirUtils {
         return null;
     }
 
-    public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().apis.googl);
+    public static PendingRequest<String> shortenUrl(String url, String googleKey) {
+        return WebUtils.ins.shortenUrl(url, googleKey);
     }
 
     public static String colorToHex(Color color) {

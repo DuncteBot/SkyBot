@@ -61,7 +61,11 @@ public class Variables {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        assert config != null;
+
+        if(config == null) {
+            System.exit(0);
+        }
+
         this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
                 "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";

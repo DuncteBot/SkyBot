@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.utils.MessageUtils;
@@ -77,10 +75,6 @@ public abstract class ImageCommandBase extends Command {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    BlargBot getBlargbot() {
-        return Variables.ins.getBlargBot();
     }
 
     @Override

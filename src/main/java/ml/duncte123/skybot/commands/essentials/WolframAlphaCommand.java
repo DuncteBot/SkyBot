@@ -58,7 +58,9 @@ public class WolframAlphaCommand extends Command {
      */
     private MessageEmbed generateEmbed(
             GuildMessageReceivedEvent event,
-            WAQueryResult result) {
+            WAQueryResult result,
+            String googleKey
+    ) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
@@ -80,7 +82,7 @@ public class WolframAlphaCommand extends Command {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getTitle()) + "](" + AirUtils.shortenUrl(i.getURL()).execute() + ")";
+                        d += "[" + a(i.getTitle()) + "](" + AirUtils.shortenUrl(i.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
                         d += a(i.getText());
@@ -88,13 +90,13 @@ public class WolframAlphaCommand extends Command {
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-                        d += "[" + a(l.getText()) + "](" + AirUtils.shortenUrl(l.getURL()).execute() + ")";
+                        d += "[" + a(l.getText()) + "](" + AirUtils.shortenUrl(l.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += AirUtils.shortenUrl(sound.getURL()).execute();
+                        d += AirUtils.shortenUrl(sound.getURL(), googleKey).execute();
                     }
 
                     e.append(d).append("\n\n");
@@ -145,7 +147,7 @@ public class WolframAlphaCommand extends Command {
                 return;
             }
             MessageUtils.editMsg(message, new MessageBuilder().append("Result:")
-                    .setEmbed(generateEmbed(event, result)).build());
+                    .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
         });
     }
 

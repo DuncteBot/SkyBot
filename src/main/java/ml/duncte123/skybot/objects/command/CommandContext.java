@@ -24,6 +24,7 @@ import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -81,6 +82,10 @@ public class CommandContext {
 
     public WAEngine getAlphaEngine() {
         return this.variables.getAlphaEngine();
+    }
+
+    public BlargBot getBlargbot() {
+        return this.variables.getBlargBot();
     }
 
     // --------------- Normal methods --------------- //

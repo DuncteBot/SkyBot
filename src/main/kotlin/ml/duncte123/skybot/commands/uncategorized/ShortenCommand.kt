@@ -54,7 +54,7 @@ class ShortenCommand : Command() {
             return
         }
 
-        AirUtils.shortenUrl(args[0]).async({
+        AirUtils.shortenUrl(args[0], ctx.config.apis.googl).async({
             sendMsg(event, "Here is your shortened url: <$it>")
         }, {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")

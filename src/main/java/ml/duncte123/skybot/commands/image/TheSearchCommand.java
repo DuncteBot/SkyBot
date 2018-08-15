@@ -50,7 +50,7 @@ public class TheSearchCommand extends ImageCommandBase {
             text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
         }
 
-        getBlargbot().getTheSearch(text).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getTheSearch(text).async((image) -> handleBasicImage(event, image));
     }
 
     @Override
