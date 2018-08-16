@@ -23,8 +23,8 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import java.io.IOException
 
 class BirbCommand : Command() {

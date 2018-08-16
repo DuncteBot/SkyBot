@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
@@ -33,6 +33,7 @@ import java.util.TreeMap;
 
 import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class CSShumorCommand extends Command {
 
@@ -68,7 +69,7 @@ public class CSShumorCommand extends Command {
                     .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
             Element link = doc.selectFirst(".funny h2 a");
-            MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
+            sendEmbed(event, EmbedUtils.defaultEmbed()
                     .setTitle(link.text(), link.attr("href"))
                     .setDescription(message)
                     .build());

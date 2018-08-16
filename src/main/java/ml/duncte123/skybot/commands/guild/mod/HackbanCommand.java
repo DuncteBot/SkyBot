@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class HackbanCommand extends Command {
 

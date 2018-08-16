@@ -244,8 +244,8 @@ class EarthUtils {
                             && it.getJSONObject("data").getString("title").length <= 256)
                 }
                 if (posts.isEmpty()) {
-                    MessageUtils.sendError(event.message)
-                    MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
+                    me.duncte123.botCommons.messaging.MessageUtils.sendError(event.message)
+                    me.duncte123.botCommons.messaging.MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
                     |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
                 } else {
 

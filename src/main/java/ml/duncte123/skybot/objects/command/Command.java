@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -41,6 +40,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class Command implements ICommand {
@@ -121,7 +122,7 @@ public abstract class Command implements ICommand {
         }
         Member m = supportGuild.getMember(u);
         if (m == null) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                     "are not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
                     "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
@@ -129,7 +130,7 @@ public abstract class Command implements ICommand {
         }
 
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                     "are not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;

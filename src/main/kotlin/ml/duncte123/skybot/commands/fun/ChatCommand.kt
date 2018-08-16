@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup

@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -39,6 +39,7 @@ import java.sql.Time;
 import java.text.DecimalFormat;
 
 import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -96,7 +97,7 @@ public class BotinfoCommand extends Command {
                 .addField("Donate", "If you want to help me out and support the bot please consider to " +
                         "[donate](https://paypal.me/duncte123) any amount.", false)
                 .build();
-        MessageUtils.sendEmbed(event, eb);
+        sendEmbed(event, eb);
     }
 
     @Override

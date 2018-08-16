@@ -24,13 +24,15 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class AnnounceCommand extends Command {
 
@@ -88,7 +90,7 @@ public class AnnounceCommand extends Command {
                         });
                     }
 
-                    MessageUtils.sendEmbed(targetChannel, embed.build());
+                    sendEmbed(targetChannel, embed.build());
                     MessageUtils.sendSuccess(event.getMessage());
                     break;
             }

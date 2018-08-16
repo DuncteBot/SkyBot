@@ -19,12 +19,13 @@
 package ml.duncte123.skybot.commands.nsfw
 
 import com.afollestad.ason.Ason
+import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
 class NSFWCommands : Command() {
 
@@ -49,7 +50,7 @@ class NSFWCommands : Command() {
                     val jsonRaw = Ason(it)
                     val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                     val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
-                    MessageUtils.sendEmbed(event,
+                    sendEmbed(event,
                             EmbedUtils.defaultEmbed()
                                     .setTitle(randomItem!!.getString("title"), randomItem.getString("image.contextLink"))
                                     .setImage(randomItem.getString("link")).build()
@@ -59,7 +60,7 @@ class NSFWCommands : Command() {
             }
             "lewdneko" -> {
                 WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
-                    MessageUtils.sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
+                    sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
                 }
 
             }

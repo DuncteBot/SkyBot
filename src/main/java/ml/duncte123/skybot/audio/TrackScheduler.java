@@ -32,7 +32,7 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;

@@ -24,7 +24,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")

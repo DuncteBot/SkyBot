@@ -22,6 +22,8 @@ import kotlinx.coroutines.experimental.Deferred
 import kotlinx.coroutines.experimental.async
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.newSingleThreadContext
+import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.BotListener
@@ -32,8 +34,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
@@ -58,7 +59,7 @@ class UpdateCommand : Command() {
         if (!Settings.enableUpdaterCommand) {
             val message = "The updater is not enabled. " +
                     "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(message))
+            sendEmbed(event, EmbedUtils.embedMessage(message))
             return
         }
 

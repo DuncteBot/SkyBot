@@ -16,34 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.music
+package ml.duncte123.skybot.extensions
 
-import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.botCommons.messaging.MessageUtils
+import java.util.*
 
-class RestartCommand : MusicCommand() {
-
-    override fun executeCommand(ctx: CommandContext) {
-
-        val event = ctx.event
-
-        if (!channelChecks(event))
-            return
-
-        val player = getMusicManager(event.guild).player
-
-        if (player.playingTrack == null) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "No track currently playing")
-            return
+fun Process.getString(): String {
+    val scanner = Scanner(inputStream)
+    return buildString {
+        while (scanner.hasNextLine()) {
+            appendln(scanner.nextLine())
         }
-
-        player.seekTo(0)
-        MessageUtils.sendSuccess(event.message)
     }
-
-    override fun help() = "Start the current track back to the beginning"
-
-    override fun getName() = "restart"
 }

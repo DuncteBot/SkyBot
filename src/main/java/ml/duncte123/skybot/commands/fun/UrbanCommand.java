@@ -29,7 +29,7 @@ import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class UrbanCommand extends Command {
 

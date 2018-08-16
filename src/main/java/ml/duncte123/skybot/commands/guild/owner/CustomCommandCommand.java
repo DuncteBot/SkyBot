@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.*;
+import static me.duncte123.botCommons.messaging.MessageUtils.*;
 
 public class CustomCommandCommand extends Command {
 

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Settings
@@ -25,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
@@ -40,7 +41,7 @@ class LyricsCommand : MusicCommand() {
         val event = ctx.event
 
         if (!hasUpvoted(event.author, ctx.config)) {
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(
+            sendEmbed(event, EmbedUtils.embedMessage(
                     "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
                             " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
                             ") or become a patreon [here](https://patreon.com/duncte123)"))
@@ -67,7 +68,7 @@ class LyricsCommand : MusicCommand() {
                     WebUtils.ins.scrapeWebPage(url).async { doc ->
                         val text = doc.select("div.lyrics").first().child(0).wholeText()
                                 .replace("<br>", "\n")
-                        MessageUtils.sendEmbed(event, EmbedUtils.defaultEmbed()
+                        sendEmbed(event, EmbedUtils.defaultEmbed()
                                 .setTitle("Lyrics for $search", url)
                                 .setDescription(StringUtils.abbreviate(text, 1900))
                                 .appendDescription("\n\n Full lyrics on [genius.com]($url)")

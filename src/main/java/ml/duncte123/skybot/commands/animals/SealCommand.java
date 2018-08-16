@@ -22,8 +22,10 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class SealCommand extends Command {
 
@@ -37,7 +39,7 @@ public class SealCommand extends Command {
         int sealID = (int) Math.floor(Math.random() * availableSeals) + 1;
         String idStr = ("0000" + String.valueOf(sealID)).substring(String.valueOf(sealID).length());
         String sealLoc = "https://raw.githubusercontent.com/TheBITLINK/randomse.al/master/seals/" + idStr + ".jpg";
-        MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(sealLoc));
+        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(sealLoc));
 
     }
 

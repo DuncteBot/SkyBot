@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import org.apache.commons.lang3.StringUtils
 

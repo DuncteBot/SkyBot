@@ -22,12 +22,13 @@ import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class ChangeLogCommand extends Command {
 
@@ -36,7 +37,7 @@ public class ChangeLogCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         if (embed != null) {
-            MessageUtils.sendEmbed(ctx.getEvent(), embed);
+            sendEmbed(ctx.getEvent(), embed);
         } else {
             fetchLatetstGitHubCommits(ctx.getEvent());
         }
@@ -69,7 +70,7 @@ public class ChangeLogCommand extends Command {
                             j.getJSONObject("author").getString("login") + "\n", false);
                 });
                 embed = eb.build();
-                MessageUtils.sendEmbed(event, embed);
+                sendEmbed(event, embed);
             });
         });
     }

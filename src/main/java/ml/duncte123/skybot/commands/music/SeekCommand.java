@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class SeekCommand extends MusicCommand {
 

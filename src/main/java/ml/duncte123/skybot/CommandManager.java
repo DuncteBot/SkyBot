@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {

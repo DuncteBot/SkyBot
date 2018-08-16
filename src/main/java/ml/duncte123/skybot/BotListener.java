@@ -59,6 +59,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+
 public class BotListener extends ListenerAdapter {
 
     private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(\\/\\/)?(discordapp|discord).(gg|io|me|com)\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!-/]))?");
@@ -206,7 +208,7 @@ public class BotListener extends ListenerAdapter {
                         //Check if the invite is for this guild, if it is not delete the message
                         if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                             event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
-                                    MessageUtils.sendMsg(event, event.getAuthor().getAsMention() +
+                                    sendMsg(event, event.getAuthor().getAsMention() +
                                             ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                             );
                         }
@@ -229,7 +231,7 @@ public class BotListener extends ListenerAdapter {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                             .queue(null, CUSTOM_QUEUE_ERROR);
 
-                    MessageUtils.sendMsg(event,
+                    sendMsg(event,
                             String.format("Hello there, %s please do not use cursive language within this Discord.",
                                     event.getAuthor().getAsMention()
                             ),
@@ -251,7 +253,7 @@ public class BotListener extends ListenerAdapter {
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
                 && rw.equals(guild.getSelfMember().getAsMention())) {
-            MessageUtils.sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+            sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                     event.getAuthor().getId(),
                     Settings.PREFIX)
             );
@@ -329,7 +331,7 @@ public class BotListener extends ListenerAdapter {
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
-                MessageUtils.sendMsg(welcomeLeaveChannel, msg);
+                sendMsg(welcomeLeaveChannel, msg);
         }
 
         if (settings.isAutoroleEnabled()
@@ -355,7 +357,7 @@ public class BotListener extends ListenerAdapter {
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
-                MessageUtils.sendMsg(welcomeLeaveChannel, msg);
+                sendMsg(welcomeLeaveChannel, msg);
         }
     }
 
@@ -366,7 +368,7 @@ public class BotListener extends ListenerAdapter {
         double[] botToUserRatio = GuildUtils.getBotRatio(guild);
         long[] counts = GuildUtils.getBotAndUserCount(guild);
         if (botToUserRatio[1] >= 70 && !botLists.contains(guild.getIdLong())) {
-            MessageUtils.sendMsg(GuildUtils.getPublicChannel(guild),
+            sendMsg(GuildUtils.getPublicChannel(guild),
                     String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
                             guild.getOwner().getAsMention(),
                             botToUserRatio[1],
@@ -510,7 +512,7 @@ public class BotListener extends ListenerAdapter {
             if (g.getAudioManager().getConnectionListener() != null)
                 g.getAudioManager().setConnectionListener(null);
 
-            MessageUtils.sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+            sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {
                 LavalinkManager.ins.closeConnection(g);
                 AudioUtils.ins.getMusicManagers().remove(g.getIdLong());

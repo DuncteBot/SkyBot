@@ -20,13 +20,13 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {

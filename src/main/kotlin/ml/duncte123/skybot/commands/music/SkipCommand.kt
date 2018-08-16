@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {

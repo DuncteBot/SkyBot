@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import java.util.*
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -41,7 +41,7 @@ class ListCommand : MusicCommand() {
         val queue: Queue<AudioTrack> = scheduler.queue
         synchronized(queue) {
             if (queue.isEmpty()) {
-                MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
+                sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
             } else {
                 var queueLength: Long = 0
                 val maxTracks = 10
@@ -56,7 +56,7 @@ class ListCommand : MusicCommand() {
                     sb.append(track.info.title).append("\n")
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                MessageUtils.sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
+                sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
             }
         }
     }

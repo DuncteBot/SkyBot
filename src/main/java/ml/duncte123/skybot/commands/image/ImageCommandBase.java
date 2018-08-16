@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
@@ -31,7 +31,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ImageCommandBase extends Command {
 

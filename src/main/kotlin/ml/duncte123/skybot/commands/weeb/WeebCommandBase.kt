@@ -19,11 +19,10 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.weebJava.models.WeebApi
-import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -53,17 +52,17 @@ abstract class WeebCommandBase : Command() {
         weebApi.getRandomImage(type).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
-                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                sendEmbed(event, getWeebEmbedImageAndDesc(
                         "<@210363111729790977> $thing ${event.member.asMention}", imageUrl))
                 return@async
             }
             if (!event.message.mentionedMembers.isEmpty()) {
-                MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+                sendEmbed(event, getWeebEmbedImageAndDesc(
                         "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
                         , imageUrl))
                 return@async
             }
-            MessageUtils.sendEmbed(event, getWeebEmbedImageAndDesc(
+            sendEmbed(event, getWeebEmbedImageAndDesc(
                     "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
         }
 

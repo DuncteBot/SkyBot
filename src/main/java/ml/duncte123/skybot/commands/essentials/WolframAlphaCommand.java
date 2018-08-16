@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -34,6 +34,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static ml.duncte123.skybot.utils.MessageUtils.editMsg;
 
 public class WolframAlphaCommand extends Command {
 
@@ -146,7 +148,7 @@ public class WolframAlphaCommand extends Command {
                 e.printStackTrace();
                 return;
             }
-            MessageUtils.editMsg(message, new MessageBuilder().append("Result:")
+            editMsg(message, new MessageBuilder().append("Result:")
                     .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
         });
     }

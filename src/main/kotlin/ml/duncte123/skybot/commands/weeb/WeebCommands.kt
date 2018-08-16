@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.weeb
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.MessageBuilder
 import org.apache.commons.lang3.StringUtils
 

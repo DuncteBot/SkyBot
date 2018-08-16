@@ -21,7 +21,7 @@ package ml.duncte123.skybot.commands.`fun`
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils
 
 class FlipCommand : Command() {
 

@@ -33,6 +33,8 @@ import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+
 @SuppressWarnings("SqlDialectInspection")
 public class ModerationUtils {
 
@@ -57,7 +59,7 @@ public class ModerationUtils {
                 length = " lasting " + time + "";
             }
 
-            MessageUtils.sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
+            sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
                     punishedUser,
                     punishment,
                     mod,
@@ -241,7 +243,7 @@ public class ModerationUtils {
 
         if (muteRoleId <= 0) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
+                sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                         "We disabled your spam filter until you have set up a role.");
 
             guildSettings.setEnableSpamFilter(false);
@@ -252,19 +254,19 @@ public class ModerationUtils {
 
         if (muteRole == null) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
+                sendMsg(channel, "The role for the punished people is inexistent.");
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+                sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
+                sendMsg(channel, "I can not access either the member or the role.");
             return;
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
@@ -295,13 +297,13 @@ public class ModerationUtils {
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+                sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
             return;
         }
 
         if (!self.canInteract(member)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I can not access the member.");
+                sendMsg(channel, "I can not access the member.");
             return;
         }
         String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);

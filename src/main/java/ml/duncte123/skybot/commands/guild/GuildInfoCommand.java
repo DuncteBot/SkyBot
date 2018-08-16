@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -32,6 +32,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 2-7-2017.
@@ -105,7 +107,7 @@ public class GuildInfoCommand extends Command {
                         "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
                         "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
-        MessageUtils.sendEmbed(event, eb.build());
+        sendEmbed(event, eb.build());
     }
 
 }

@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import java.util.concurrent.TimeUnit
 
 class CoinCommand : Command() {
@@ -41,7 +41,7 @@ class CoinCommand : Command() {
 
         event.channel.sendTyping().queue {
             event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) { _ ->
-                MessageUtils.sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
+                sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
                         + imagesArr[ctx.random.nextInt(2)]))
             }
         }

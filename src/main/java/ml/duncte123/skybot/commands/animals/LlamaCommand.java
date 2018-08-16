@@ -24,8 +24,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ApiUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import org.jetbrains.annotations.NotNull;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class LlamaCommand extends Command {
 
@@ -38,7 +39,7 @@ public class LlamaCommand extends Command {
 
         LlamaObject llama = ApiUtils.getRandomLlama(ctx.getDatabase());
 
-        MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
+        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
 
         /*WebUtils.ins.getJSONObject(Settings.OLD_API_BASE + "/llama/json").async(
                 (json) -> MessageUtils.sendEmbed(event, EmbedUtils.embedImage(json.getString("file")))
