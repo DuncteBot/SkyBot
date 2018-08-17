@@ -535,7 +535,6 @@ public class BotListener extends ListenerAdapter {
                 .put("guild", event.getGuild())
                 .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
                 .put("args", "")
-                .put("random", variables.getRandom())
                 .parse(message);
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())

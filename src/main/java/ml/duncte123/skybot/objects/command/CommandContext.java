@@ -38,7 +38,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class CommandContext {
 
@@ -68,7 +68,7 @@ public class CommandContext {
         return this.variables.getDatabase();
     }
 
-    public Random getRandom() {
+    public ThreadLocalRandom getRandom() {
         return this.variables.getRandom();
     }
 

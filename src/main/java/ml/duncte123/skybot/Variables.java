@@ -34,7 +34,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
@@ -45,7 +45,7 @@ public class Variables {
     private final String googleBaseUrl;
     private final WeebApi weebApi;
     private final boolean isSql;
-    private final Random random;
+    private final ThreadLocalRandom random;
     private final DBManager database;
     private final CommandManager commandManager;
     private final BlargBot blargBot;
@@ -62,7 +62,7 @@ public class Variables {
             e.printStackTrace();
         }
 
-        if(config == null) {
+        if (config == null) {
             System.exit(0);
         }
 
@@ -74,7 +74,7 @@ public class Variables {
                 .setToken(config.apis.weebSh.wolketoken)
                 .build();
         this.isSql = config.use_database;
-        this.random = new Random();
+        this.random = ThreadLocalRandom.current();
         this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
@@ -101,7 +101,7 @@ public class Variables {
         return guildSettings;
     }
 
-    public Random getRandom() {
+    public ThreadLocalRandom getRandom() {
         return random;
     }
 

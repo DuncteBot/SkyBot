@@ -45,8 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
@@ -318,7 +318,6 @@ public class CommandManager {
                                     .put("user", event.getAuthor())
                                     .put("channel", event.getChannel())
                                     .put("guild", event.getGuild())
-                                    .put("random", variables.getRandom())
                                     .put("args", StringUtils.join(args, " "))
                                     .parse(cc.getMessage());
 
