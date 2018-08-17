@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import me.duncte123.botCommons.messaging.MessageUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 

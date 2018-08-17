@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;

@@ -54,8 +54,6 @@ public class Variables {
 
 
     private Variables() {
-        /*final ConfigUtils configUtils = new ConfigUtils();
-        this.config = configUtils.loadConfig();*/
         try {
             this.config = new Gson().fromJson(Files.asCharSource(new File("config.json"), Charsets.UTF_8).read(), DunctebotConfig.class);
         } catch (IOException e) {

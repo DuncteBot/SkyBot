@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import net.dv8tion.jda.core.OnlineStatus;

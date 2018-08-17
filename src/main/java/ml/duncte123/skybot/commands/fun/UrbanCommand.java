@@ -28,8 +28,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class UrbanCommand extends Command {
 

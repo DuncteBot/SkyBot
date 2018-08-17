@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class HelpCommand extends Command {
 

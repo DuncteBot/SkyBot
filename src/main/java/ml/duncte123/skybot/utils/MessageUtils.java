@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.utils;
 
 import kotlin.Deprecated;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -27,13 +26,10 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.function.Consumer;
-
-import static me.duncte123.botCommons.messaging.MessageUtils.*;
+import static me.duncte123.botCommons.messaging.MessageUtils.CUSTOM_QUEUE_ERROR;
 import static ml.duncte123.skybot.utils.EmbedUtils.embedToMessage;
 
 @SuppressWarnings({"unused", "WeakerAccess"})

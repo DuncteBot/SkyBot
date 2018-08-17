@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import me.duncte123.botCommons.messaging.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
