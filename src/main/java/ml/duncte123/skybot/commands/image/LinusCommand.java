@@ -61,8 +61,8 @@ public class LinusCommand  extends ImageCommandBase {
 
     @Override
     public String help() {
-        return "Shows a picture of Clint staring at something on a monitor.\n" +
-                "Usage: `db!clint [image url]`";
+        return "Shows a picture of Linus pointing to something on a monitor.\n" +
+                "Usage: `db!linus [image url]`";
     }
 
     @Override
