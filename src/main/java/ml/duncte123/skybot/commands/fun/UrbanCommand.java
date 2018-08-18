@@ -34,7 +34,7 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 public class UrbanCommand extends Command {
 
     public UrbanCommand() {
-        this.category = CommandCategory.FUN;
+        this.category = CommandCategory.NSFW;
     }
 
     @Override
