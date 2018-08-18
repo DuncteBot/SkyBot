@@ -42,6 +42,10 @@ public class BlargBot {
         return makeRequest("image/clint", new JSONObject().put("image", imageUrl));
     }
 
+    public PendingRequest<InputStream> getLinus(String imageUrl) {
+        return makeRequest("image/linus", new JSONObject().put("image", imageUrl));
+    }
+
     public PendingRequest<InputStream> getDelete(String text) {
         return makeRequest("image/delete", new JSONObject().put("text", text));
     }

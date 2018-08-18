@@ -27,7 +27,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
 
-public class ClintCommand extends ImageCommandBase {
+public class LinusCommand  extends ImageCommandBase {
 
     @SuppressWarnings("Duplicates")
     @Override
@@ -56,7 +56,7 @@ public class ClintCommand extends ImageCommandBase {
                     .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
         }
 
-        ctx.getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
     }
 
     @Override
@@ -67,6 +67,6 @@ public class ClintCommand extends ImageCommandBase {
 
     @Override
     public String getName() {
-        return "clint";
+        return "linus";
     }
 }

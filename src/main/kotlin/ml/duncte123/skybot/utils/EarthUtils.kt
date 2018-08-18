@@ -267,7 +267,7 @@ class EarthUtils {
                         embed.setDescription(text)
 
                     val imagesO = post.optJSONObject("preview")
-                    println(imagesO)
+//                    println(imagesO)
                     val images = imagesO?.optJSONArray("images")
                     if (images != null) {
                         val image = images.getJSONObject(0).getJSONObject("source").getString("url")

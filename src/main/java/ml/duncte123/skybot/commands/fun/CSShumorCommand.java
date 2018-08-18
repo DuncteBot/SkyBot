@@ -64,7 +64,7 @@ public class CSShumorCommand extends Command {
             String text = code.text()
                     .replace("*/ ", "*/\n") // Newline + tab after comments
                     .replace("{ ", "{\n\t") // Newline + tab after {
-                    .replaceAll("; [^}]", ";\n\t") // Newline + tab after '; (not })'
+                    .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
                     .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
             Element link = doc.selectFirst(".funny h2 a");
