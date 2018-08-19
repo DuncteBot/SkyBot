@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -39,6 +40,10 @@ public class DeleteCommand extends ImageCommandBase {
         String text = ctx.getRawArgs();
 
         for (User user : event.getMessage().getMentionedUsers()) {
+            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
+        }
+
+        for (Member user : event.getMessage().getMentionedMembers()) {
             text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
         }
 

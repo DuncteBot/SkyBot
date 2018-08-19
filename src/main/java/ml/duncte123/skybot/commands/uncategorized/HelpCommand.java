@@ -61,7 +61,7 @@ public class HelpCommand extends Command {
 
             return;
         }
-        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()));
+        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(ctx.getGuildSettings().getCustomPrefix()));
     }
 
     @Override
@@ -99,9 +99,9 @@ public class HelpCommand extends Command {
                 pc -> pc.sendMessage(embed).queue(
                         msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                         //When sending fails, send to the channel
-                        err -> sendMsg(event, (new MessageBuilder())
-                                .append("Message could not be delivered to dm's and has been send in this channel.")
-                                .setEmbed(embed).build())
+                        err -> sendMsg(event,
+                                "You can check out my commands here:\nhttps://bot.duncte123.me/commands?server=" +
+                                        event.getGuild().getId())
                 ),
                 err -> sendMsg(event, "ERROR: " + err.getMessage())
         );

@@ -1,0 +1,43 @@
+{% extends '../templates/base.twig' %}
+
+{% block container %}
+    <style>
+        .valign-wrapper {
+            height: 66vh;
+        }
+
+        .btn-large {
+            height: 100px;
+            line-height: 100px;
+            font-size: 41px;
+            padding: 0 57px;
+        }
+
+        .valign-wrapper > div {
+            display: inline-block;
+            display: -moz-inline-box;
+            *display: inline; /* For IE7 */
+            zoom: 1; /* Trigger hasLayout */
+            width: 33%;
+            text-align: center;
+        }
+    </style>
+
+    <div class="valign-wrapper">
+        <div>
+            <a class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">button</a>
+        </div>
+        <div>
+            <a class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">button</a>
+        </div>
+        <div>
+            <a class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">button</a>
+        </div>
+        <div>
+            <a class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">button</a>
+        </div>
+    </div>
+
+{% endblock %}
+{% block script %}
+{% endblock %}

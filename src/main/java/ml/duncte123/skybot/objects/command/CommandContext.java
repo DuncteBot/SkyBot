@@ -99,7 +99,8 @@ public class CommandContext {
     }
 
     public String getRawArgs() {
-        return this.event.getMessage().getContentRaw().split("\\s+", 2)[1];
+//        return this.event.getMessage().getContentRaw().split("\\s+", 2)[1];
+        return String.join(" ", getArgs());
     }
 
     public GuildSettings getGuildSettings() {

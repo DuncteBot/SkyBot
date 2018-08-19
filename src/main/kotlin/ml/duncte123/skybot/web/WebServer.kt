@@ -22,7 +22,6 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
-import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
@@ -67,6 +66,10 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
         port(2000)
 
         staticFiles.location("/public")
+
+        get("/render/:template") {
+            engine.render(ModelAndView(WebVariables().put("title", "Home").map, "dashboard/${request.params("template")}"))
+        }
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
@@ -134,7 +137,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                 }
             }
 
-            get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
+            get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
 
             get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
