@@ -45,7 +45,8 @@ class ShortenCommand : Command() {
             sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the shorten command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)"))
+                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
+                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
             return
         }
 

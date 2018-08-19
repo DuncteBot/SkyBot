@@ -40,6 +40,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
@@ -53,7 +54,7 @@ public abstract class Command implements ICommand {
     public static final long patronsRole = 402497345721466892L;
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
-    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(4,
+    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(10,
             r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
@@ -63,6 +64,7 @@ public abstract class Command implements ICommand {
      * A list of users that have upvoted the bot
      */
     private static final Set<Long> upvotedIds = new HashSet<>();
+    private static final Set<Long> noneUpvoteIds = new HashSet<>();
     /**
      * This holds the category
      */
@@ -73,6 +75,16 @@ public abstract class Command implements ICommand {
     protected boolean displayAliasesInHelp = false;
 
     private String helpParsed = null;
+
+    static {
+        //clear the upvotes every hour
+        commandService.scheduleAtFixedRate(
+                noneUpvoteIds::clear,
+                1L,
+                1L,
+                TimeUnit.HOURS
+        );
+    }
 
 
     private boolean checkVoteOnDBL(String userid, DunctebotConfig config) {
@@ -191,11 +203,13 @@ public abstract class Command implements ICommand {
      */
     protected boolean hasUpvoted(User user, DunctebotConfig config) {
         boolean upvoteCheck = upvotedIds.contains(user.getIdLong());
-        if (!upvoteCheck) {
+        if (!upvoteCheck && !noneUpvoteIds.contains(user.getIdLong())) {
             boolean dblCheck = checkVoteOnDBL(user.getId(), config);
             if (dblCheck) {
                 upvoteCheck = true;
                 upvotedIds.add(user.getIdLong());
+            } else {
+                noneUpvoteIds.add(user.getIdLong());
             }
         }
 
