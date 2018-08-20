@@ -18,45 +18,24 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
+public class LinusCommand extends ImageCommandBase {
 
-public class LinusCommand  extends ImageCommandBase {
-
-    @SuppressWarnings("Duplicates")
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
 
         if (!doAllChecksButNotTheArgsBecauseWeDontNeedThem(event)) {
             return;
         }
 
-        String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
-
-        if (args.size() > 0 && ctx.getMessage().getMentionedUsers().size() < 1) {
-            try {
-                url = new URL(args.get(0)).toString();
-            } catch (MalformedURLException ignored) {
-                MessageUtils.sendMsg(event, "That does not look like a valid url");
-                return;
-            }
-        }
-
-        if(ctx.getMessage().getMentionedUsers().size() > 0) {
-            url = ctx.getMessage().getMentionedUsers().get(0)
-                    .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
-        }
-
-        ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+        String url = getImageFromCommand(ctx);
+        if (url != null)
+            ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

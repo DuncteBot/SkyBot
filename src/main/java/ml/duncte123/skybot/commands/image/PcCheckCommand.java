@@ -19,9 +19,6 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,21 +33,7 @@ public class PcCheckCommand extends ImageCommandBase {
             return;
         }
 
-        String reason = ctx.getRawArgs();
-
-        for (User user : event.getMessage().getMentionedUsers()) {
-            reason = reason.replaceAll(user.getAsMention(), String.format("%#s", user));
-        }
-
-        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
-            reason = reason.replaceAll(channel.getAsMention(), String.format("%#s", channel));
-        }
-
-        for (Role role : event.getMessage().getMentionedRoles()) {
-            reason = reason.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
-        }
-
-        ctx.getBlargbot().getPcCheck(reason).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getPcCheck(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

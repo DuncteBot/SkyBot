@@ -29,7 +29,8 @@ public class AchievementCommand extends ImageCommandBase {
         if (!hasArgs(ctx.getEvent(), ctx.getArgs())) return;
         if (!canSendFile(ctx.getEvent())) return;
 
-        ctx.getAlexFlipnote().getAchievement(ctx.getRawArgs()).async((image) -> handleBasicImage(ctx.getEvent(), image));
+        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImagae(ctx))
+                .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
