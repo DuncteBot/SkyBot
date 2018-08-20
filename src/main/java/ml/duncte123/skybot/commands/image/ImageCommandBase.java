@@ -120,7 +120,7 @@ public abstract class ImageCommandBase extends Command {
             }
             //mimetype should be something like "image/png"
 
-            if (mimetype != null && !mimetype.split("/")[0].equals("image")) {
+            if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
                 MessageUtils.sendMsg(event, "That file does not look like an image");
                 return null;
             }
