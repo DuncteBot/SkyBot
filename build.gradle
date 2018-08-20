@@ -42,8 +42,10 @@ apply plugin: 'kotlin'
 group = "ml.duncte123.skybot"
 version "3.77.1_${getGitHash()}"
 
-sourceCompatibility = JavaVersion.VERSION_1_9
-targetCompatibility = JavaVersion.VERSION_1_9
+def javaVersion = JavaVersion.VERSION_1_10
+
+sourceCompatibility = javaVersion
+targetCompatibility = javaVersion
 
 task wrapper(type: Wrapper) {
     gradleVersion = '4.9'

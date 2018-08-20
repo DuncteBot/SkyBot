@@ -22,6 +22,7 @@ import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeoutOrNull
+import me.duncte123.botCommons.messaging.MessageUtils.*
 import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
@@ -31,8 +32,6 @@ import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import me.duncte123.botCommons.messaging.MessageUtils
-import me.duncte123.botCommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.utils.MessageUtils.sendErrorJSON
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -123,6 +122,8 @@ class EvalCommand : Command() {
         }
 
         val script = importString + ctx.rawArgs
+                .replace("```(.*)\n".toRegex(), "")
+                .replace("\n?```".toRegex(), "")
 
         var timeout = 5000L
 
