@@ -37,7 +37,7 @@ public abstract class ImageCommandBase extends Command {
 
     private static final String dir = "user_avatars";
 
-    private boolean canSendFile(GuildMessageReceivedEvent event) {
+    boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
@@ -46,8 +46,8 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
-        if (args.size() == 0) {
+    boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+        if (args.isEmpty()) {
             sendMsg(event, "Too little arguments");
             return false;
         }

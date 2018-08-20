@@ -27,6 +27,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.apis.BlargBot;
+import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 
@@ -41,6 +42,7 @@ import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 public class Variables {
 
     public static final Variables ins = new Variables();
+    private final Alexflipnote alexflipnote;
     private final WAEngine alphaEngine;
     private final String googleBaseUrl;
     private final WeebApi weebApi;
@@ -77,6 +79,7 @@ public class Variables {
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
         this.guildSettings = new HashMap<>();
+        this.alexflipnote = new Alexflipnote();
     }
 
     public BlargBot getBlargBot() {
@@ -117,5 +120,9 @@ public class Variables {
 
     boolean isSql() {
         return isSql;
+    }
+
+    public Alexflipnote getAlexflipnote() {
+        return alexflipnote;
     }
 }

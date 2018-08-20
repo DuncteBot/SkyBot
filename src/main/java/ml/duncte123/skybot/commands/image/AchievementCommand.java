@@ -16,56 +16,31 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 
-import static java.awt.Color.decode;
-import static ml.duncte123.skybot.utils.EmbedUtils.defaultEmbed;
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
-
-public class ColorCommand extends Command {
-
+public class AchievementCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        ctx.getAlexFlipnote().getRandomColour().async((data) -> {
-            String hex = data.hex;
-            String image = data.image;
-            int integer = data.integer;
-            int brightness = data.brightness;
-            String name = data.name;
-            String rgb = data.rgb;
+        if (!hasArgs(ctx.getEvent(), ctx.getArgs())) return;
+        if (!canSendFile(ctx.getEvent())) return;
 
-            EmbedBuilder embed = defaultEmbed()
-                    .setColor(decode(hex))
-                    .setThumbnail(image);
-
-            String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
-                    name, hex, integer, rgb, brightness);
-            embed.setDescription(desc);
-
-            sendEmbed(ctx.getEvent(), embed.build());
-        });
-    }
-
-    @Override
-    public String help() {
-        return "Shows a random colour.";
+        ctx.getAlexFlipnote().getAchievement(ctx.getRawArgs()).async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
     public String getName() {
-        return "colour";
+        return "achievement";
     }
 
     @Override
-    public String[] getAliases() {
-        return new String[]{"color"};
+    public String help() {
+        return "You got an achievement!\n" +
+                "Usage: `" + PREFIX + getName() + " <text>`";
     }
 
     @Override

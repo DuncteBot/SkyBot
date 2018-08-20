@@ -16,28 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.command;
+package ml.duncte123.skybot.objects.apis.alexflipnote;
 
-public enum CommandCategory {
+public class FlipnoteColourObj {
 
-    ANIMALS("animals"),
-    MAIN("main"),
-    FUN("fun"),
-    MUSIC("music"),
-    MOD_ADMIN("mod/admin"),
-    NERD_STUFF("nerd stuff"),
-    PATRON("patron"),
-    WEEB("weeb"),
-    NSFW("nsfw"),
-    UNLISTED(null);
+    public final int brightness;
+    public final String hex;
+    public final String image;
+    public final int integer;
+    public final String name;
+    public final String rgb;
 
-    private final String search;
-
-    CommandCategory(String search) {
-        this.search = search;
-    }
-
-    public String getSearch() {
-        return search;
+    public FlipnoteColourObj(int brightness, String hex, String image, int integer, String name, String rgb) {
+        this.brightness = brightness;
+        this.hex = hex;
+        this.image = image;
+        this.integer = integer;
+        this.name = name;
+        this.rgb = rgb;
     }
 }
