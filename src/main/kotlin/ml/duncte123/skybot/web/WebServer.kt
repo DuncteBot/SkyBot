@@ -285,55 +285,8 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
             }
 
             post("/customcommands") {
-                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-                val params = toMap(pairs)
 
-                val prefix = params["prefix"]
-                val serverDescription = params["serverDescription"]
-                val welcomeChannel = params["welcomeChannel"]
-                val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
-                val autorole = params["autoRoleRole"]
-                //val autoRoleEnabled      = params["autoRoleRoleCB"]
-                val modLogChannel = params["modChannel"]
-                val announceTracks = paramToBoolean(params["announceTracks"])
-                val autoDeHoist = paramToBoolean(params["autoDeHoist"])
-                val filterInvites = paramToBoolean(params["filterInvites"])
-                val swearFilter = paramToBoolean(params["swearFilter"])
-                val welcomeMessage = params["welcomeMessage"]
-                val leaveMessage = params["leaveMessage"]
-                val muteRole = params["muteRole"]
-                val spamFilter = paramToBoolean(params["spamFilter"])
-                val kickMode = paramToBoolean(params["kickMode"])
-
-                val rateLimits = LongArray(6)
-
-                for (i in 0..5) {
-                    rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
-                }
-
-                val guild = getGuildFromRequest(request)
-
-                val newSettings = GuildSettingsUtils.getGuild(guild)
-                        .setCustomPrefix(prefix)
-                        .setServerDesc(serverDescription)
-                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
-                        .setCustomJoinMessage(welcomeMessage)
-                        .setCustomLeaveMessage(leaveMessage)
-                        .setEnableJoinMessage(welcomeLeaveEnabled)
-                        .setAutoroleRole(toLong(autorole))
-                        .setLogChannel(toLong(modLogChannel))
-                        .setAnnounceTracks(announceTracks)
-                        .setAutoDeHoist(autoDeHoist)
-                        .setFilterInvites(filterInvites)
-                        .setMuteRoleId(toLong(muteRole))
-                        .setKickState(kickMode)
-                        .setRatelimits(rateLimits)
-                        .setEnableSpamFilter(spamFilter)
-                        .setEnableSwearFilter(swearFilter)
-
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
-
-                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+                request.session().attribute(FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
 
                 response.redirect(request.url())
             }
@@ -512,7 +465,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
                     val goodRoles = guild.roles.filter {
-                        it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
+                        it.canInteract(guild.selfMember.roles[0]) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
