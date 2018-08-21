@@ -10,6 +10,7 @@
 
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
+        <a href="/server/{{ guild.getId() }}/">Go back</a>
     </div>
     <div class="row">
         <form class="col s12" method="post">
@@ -68,6 +69,7 @@
                 </div>
 
                 <br />
+                <br />
 
                 {# Mute role #}
                 <div class="input-field col s12 m3">
@@ -116,37 +118,19 @@
 
             <div class="row">
                 <h6>Ratelimits:</h6>
-                <small>The following values indicate the mutes duration for incrementing amount of violations</small>
+                <small>The following values indicate the mutes duration in minutes for incrementing amount of violations</small>
                 <br/>
                 {% for i,r in settings.getRateLimitsForTwig() %}
                     <div class="input-field col s12 m1">
-                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required/>
+                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required />
                     </div>
                 {% endfor %}
             </div>
 
-            {# Hidden fields #}
-            <input type="hidden" name="serverDescription" id="serverDescription"
-                   value="{{ settings.getServerDesc() }}"/>
-
             <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
-                Submit
+                Save
             </button>
         </form>
-    </div>
-
-    <!-- Modal Structure -->
-    <div id="serverDescModal" class="modal {#bottom-sheet#} {#modal-fixed-footer#}">
-        <div class="modal-content">
-            <h4>Modal Header</h4>
-            <textarea name="ServerDesc" id="serverDescText" cols="30" rows="10" class="materialize-textarea"></textarea>
-            <label for="serverDescText">Server Description</label>
-        </div>
-        <div class="modal-footer">
-            <a href="#!" onmouseup="_('serverDescription').value = _('serverDescText').value; modal.close();"
-               class="waves-effect waves-green btn-flat">Save</a>
-            <a href="#!" onmouseup="modal.close();" class="waves-effect waves-red btn-flat">Discard</a>
-        </div>
     </div>
 
 {% endblock %}
@@ -154,18 +138,5 @@
 {% block script %}
     <script>
         M.FormSelect.init(document.querySelectorAll('select'));
-        let modal = M.Modal.init(document.querySelectorAll('.modal'))[0];
-
-        function checkSelect(selectId, checkBox) {
-            let box = _(checkBox);
-            let select = _(selectId);
-            if (select.value) {
-                box.checked = true;
-                box.disabled = false;
-            } else {
-                box.checked = false;
-                box.disabled = true;
-            }
-        }
     </script>
 {% endblock %}

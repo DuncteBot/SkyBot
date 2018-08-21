@@ -61,6 +61,9 @@
                     div.innerHTML = `<h1 class="center">No servers found</h1>
                               <h5 class="center">Make sure that you have administrator permission in at least 1 server</h5>`;
                 }
-            });
+            })
+            .catch(() =>
+                document.getElementById("guilds").innerHTML = "Your session has expired, please refresh your browser"
+            );
     </script>
 {% endblock %}
