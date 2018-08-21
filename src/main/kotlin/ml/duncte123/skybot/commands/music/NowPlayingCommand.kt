@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.YoutubeUtils
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -47,7 +48,15 @@ class NowPlayingCommand : MusicCommand() {
                 val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url}) by ${channeldata.getString("artist")}**")
+                    val title = channeldata.getString("title")
+                    val artist = channeldata.getString("artist")
+                    val res = YoutubeUtils.searchYoutube("$title - $artist", ctx.config.apis.googl)
+                    val url = if (res.isEmpty()) {
+                        stream.url
+                    } else {
+                        "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+                    }
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [$title]($url) by $artist**")
                             .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
