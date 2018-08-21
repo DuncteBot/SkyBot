@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.web
 
-import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
