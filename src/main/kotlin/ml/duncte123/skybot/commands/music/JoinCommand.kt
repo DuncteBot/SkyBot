@@ -43,7 +43,7 @@ class JoinCommand : MusicCommand() {
 
         val vc = event.member.voiceState.channel
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         mng.latestChannel = event.channel.idLong
 
         if (hasCoolDown(guild) && !isPatron(ctx.author, null)) {

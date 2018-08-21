@@ -31,7 +31,7 @@ class LeaveCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
         val guild = event.guild
 
@@ -41,7 +41,7 @@ class LeaveCommand : MusicCommand() {
             MessageUtils.sendError(event.message)
             return
         }
-        val manager = getMusicManager(guild)
+        val manager = getMusicManager(guild, ctx.audioUtils)
 
         if (getLavalinkManager().isConnected(guild)) {
             manager.player.stopTrack()

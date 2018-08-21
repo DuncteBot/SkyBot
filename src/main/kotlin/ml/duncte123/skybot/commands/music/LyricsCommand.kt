@@ -46,8 +46,8 @@ class LyricsCommand : MusicCommand() {
                             " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
                             ") or become a patreon [here](https://patreon.com/duncte123)\n" +
                             "**Note:** it can take up to 1 hour before the bot sees your upvote"))
-        } else if (channelChecks(event)) {
-            val mng = getMusicManager(event.guild)
+        } else if (channelChecks(event, ctx.audioUtils)) {
+            val mng = getMusicManager(event.guild, ctx.audioUtils)
             val player = mng.player
             val search: String? = when {
                 !ctx.args.isEmpty() -> ctx.rawArgs

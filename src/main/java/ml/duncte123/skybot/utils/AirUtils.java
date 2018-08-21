@@ -186,14 +186,14 @@ public class AirUtils {
     /**
      * Stops everything
      */
-    public static void stop(DBManager database) {
+    public static void stop(DBManager database, AudioUtils audioUtils) {
         try {
             database.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try {
-            AudioUtils.ins.musicManagers.forEach((a, b) -> {
+            audioUtils.musicManagers.forEach((a, b) -> {
                 if (b.player.getPlayingTrack() != null)
                     b.player.stopTrack();
             });

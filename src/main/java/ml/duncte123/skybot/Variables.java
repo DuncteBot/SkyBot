@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
@@ -42,6 +43,7 @@ import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 public class Variables {
 
     public static final Variables ins = new Variables();
+    private final AudioUtils audioUtils;
     private final Alexflipnote alexflipnote;
     private final WAEngine alphaEngine;
     private final String googleBaseUrl;
@@ -66,6 +68,7 @@ public class Variables {
             System.exit(0);
         }
 
+        this.audioUtils = new AudioUtils(config.apis);
         this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
                 "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
@@ -124,5 +127,9 @@ public class Variables {
 
     public Alexflipnote getAlexflipnote() {
         return alexflipnote;
+    }
+
+    public AudioUtils getAudioUtils() {
+        return audioUtils;
     }
 }

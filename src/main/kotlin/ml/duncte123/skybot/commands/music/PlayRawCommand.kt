@@ -32,12 +32,12 @@ class PlayRawCommand : PlayCommand() {
 
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event)) {
+        } else if (!channelChecks(event, ctx.audioUtils)) {
             return
         }
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val scheduler = mng.scheduler
 
@@ -57,7 +57,7 @@ class PlayRawCommand : PlayCommand() {
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
-            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
+            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
         }
     }
 

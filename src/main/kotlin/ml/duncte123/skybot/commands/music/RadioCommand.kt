@@ -59,12 +59,12 @@ class RadioCommand : MusicCommand() {
         }
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event)) {
+        } else if (!channelChecks(event, ctx.audioUtils)) {
             return
         }
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
         when (ctx.args.size) {
@@ -87,7 +87,7 @@ class RadioCommand : MusicCommand() {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand
                         }
-                        audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, false)
+                        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, false)
                         scheduler.queue.forEach {
                             if (it.info.uri != radio.url)
                                 scheduler.nextTrack()

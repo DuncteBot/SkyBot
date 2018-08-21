@@ -45,12 +45,14 @@ public class LavalinkManager {
     public static final LavalinkManager ins = new LavalinkManager();
     private JdaLavalink lavalink = null;
     private DunctebotConfig config = null;
+    private AudioUtils audioUtils = null;
 
     private LavalinkManager() {
     }
 
-    public void start(DunctebotConfig c) {
+    public void start(DunctebotConfig c, AudioUtils a) {
         this.config = c;
+        this.audioUtils = a;
         if (!isEnabled()) return;
 
         String userId = getIdFromToken(config.discord.token);
@@ -73,7 +75,7 @@ public class LavalinkManager {
     public IPlayer createPlayer(long guildId) {
         return isEnabled()
                 ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
-                : new LavaplayerPlayerWrapper(AudioUtils.ins.getPlayerManager().createPlayer());
+                : new LavaplayerPlayerWrapper(audioUtils.getPlayerManager().createPlayer());
     }
 
     public void openConnection(VoiceChannel channel) {

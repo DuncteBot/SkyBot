@@ -33,10 +33,10 @@ class SkipCommand : MusicCommand() {
         val event = ctx.event
         val args = ctx.args
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
         mng.latestChannel = -1
 

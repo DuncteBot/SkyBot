@@ -35,13 +35,13 @@ class ListCommand : MusicCommand() {
 
         val event = ctx.event
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
         val queue: Queue<AudioTrack> = scheduler.queue
         synchronized(queue) {
             if (queue.isEmpty()) {
-                sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, "The queue is currently empty!"))
+                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, "The queue is currently empty!"))
             } else {
                 var queueLength: Long = 0
                 val maxTracks = 10
@@ -56,7 +56,7 @@ class ListCommand : MusicCommand() {
                     sb.append(track.info.title).append("\n")
                 }
                 sb.append("\n").append("Total Queue Time Length: ").append(AudioUtils.getTimestamp(queueLength))
-                sendEmbed(event, EmbedUtils.embedField(audioUtils.embedTitle, sb.toString()))
+                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, sb.toString()))
             }
         }
     }

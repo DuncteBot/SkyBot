@@ -31,11 +31,11 @@ class StopCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val scheduler = mng.scheduler
 

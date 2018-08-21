@@ -31,10 +31,10 @@ class PauseCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         if (player.playingTrack == null) {

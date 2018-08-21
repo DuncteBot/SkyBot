@@ -35,9 +35,9 @@ class NowPlayingCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
         val msg = when {
             player.playingTrack != null && !player.playingTrack.info.isStream ->

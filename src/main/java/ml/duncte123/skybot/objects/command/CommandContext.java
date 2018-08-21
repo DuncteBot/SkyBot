@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
@@ -93,6 +94,10 @@ public class CommandContext {
 
     public Alexflipnote getAlexFlipnote() {
         return this.variables.getAlexflipnote();
+    }
+
+    public AudioUtils getAudioUtils() {
+        return this.variables.getAudioUtils();
     }
 
     // --------------- Normal methods --------------- //
