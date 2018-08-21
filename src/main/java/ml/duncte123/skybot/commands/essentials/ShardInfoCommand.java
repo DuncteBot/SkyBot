@@ -47,7 +47,7 @@ public class ShardInfoCommand extends Command {
         headers.add("Status");
         headers.add("Ping");
         headers.add("Guild Count");
-        headers.add("Connected VCs");
+        headers.add("Connected VCs / Users Listening");
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
@@ -62,8 +62,17 @@ public class ShardInfoCommand extends Command {
             row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
-            row.add(String.valueOf(shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
-                    .getSelfMember())).count()));
+
+            String listening = shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
+                    .getSelfMember())).count() + " / " +
+                    shard.getVoiceChannels().stream().filter(vc ->
+                            vc.getMembers().contains(vc.getGuild().getSelfMember()))
+                            .mapToLong(it ->
+                                    it.getMembers().stream().filter(itt ->
+                                            !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
+                            ).sum();
+
+            row.add(listening);
             table.add(row);
             if (table.size() == 20) {
                 MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
@@ -133,7 +142,15 @@ public class ShardInfoCommand extends Command {
         long connectedVC = shardManager.getShards().stream().mapToLong(shard ->
                 shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
         ).sum();
-        sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, String.valueOf(connectedVC)));
+        long listeningVC = shardManager.getShards().stream().mapToLong(shard ->
+                shard.getVoiceChannels().stream().filter(vc ->
+                        vc.getMembers().contains(vc.getGuild().getSelfMember()))
+                        .mapToLong(it ->
+                                it.getMembers().stream().filter(itt ->
+                                        !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
+                        ).sum()
+        ).sum();
+        sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, connectedVC + " / " + listeningVC));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");
         return sb.toString();
