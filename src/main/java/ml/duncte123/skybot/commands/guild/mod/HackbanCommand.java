@@ -81,14 +81,14 @@ public class HackbanCommand extends Command {
             try {
                 event.getGuild().getController().ban(id, 0)
                         .reason(String.format("Hackban by %#s", ctx.getAuthor())).complete(); //Commands are being ran on a separate thread, this is safe
-                messages.add("User with id " + id + " has been banned!");
+                messages.add(id);
             } catch (Exception e) {
                 e.printStackTrace();
-                messages.add("ERROR: " + e.getMessage());
+                sendMsg(event, "ERROR: " + e.getMessage());
             }
         }
 
-        sendMsg(event, String.join("\n", messages));
+        sendMsg(event, String.format("Users with ids `%s` are banned", String.join("`, `", messages)));
         messages.clear();
     }
 

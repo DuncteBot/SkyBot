@@ -177,6 +177,17 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                             "invoke VARCHAR(10) NOT NULL," +
                             "message TEXT NOT NULL);"
             );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS warnings\n" +
+                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                            "  `mod_id` varchar(255) NOT NULL,\n" +
+                            "  `user_id` varchar(300) NOT NULL,\n" +
+                            "  `reason` text NOT NULL,\n" +
+                            "  `warn_date` date NOT NULL,\n" +
+                            "  `expire_date` date NOT NULL,\n" +
+                            "  `guild_id` varchar(266) DEFAULT NULL);"
+            );
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();

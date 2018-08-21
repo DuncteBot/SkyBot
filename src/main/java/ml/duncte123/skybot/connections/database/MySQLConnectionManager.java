@@ -130,7 +130,7 @@ class MySQLConnectionManager implements DBConnectionManager {
     private void innitDB(Connection connection) {
         try {
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `bans` (\n" +
-                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                    "`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
                     "  `modUserId` varchar(255) NOT NULL,\n" +
                     "  `userId` varchar(300) NOT NULL,\n" +
                     "  `Username` varchar(266) NOT NULL,\n" +
@@ -138,7 +138,7 @@ class MySQLConnectionManager implements DBConnectionManager {
                     "  `ban_date` datetime NOT NULL,\n" +
                     "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
                     "  `guildId` varchar(266) NOT NULL,\n" +
-                    "  PRIMARY KEY (`id`)\n" +
+                    "  PRIMARY KEY (`id`)" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (\n" +
                     "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
@@ -186,13 +186,24 @@ class MySQLConnectionManager implements DBConnectionManager {
                             "PRIMARY KEY (`id`));"
             );
 
-            ResultSet res = connection.createStatement().executeQuery("SELECT COUNT(*) AS items FROM footerQuotes");
-            while (res.next()) {
-                if (res.getInt("items") == 0) {
-                    connection.createStatement().execute("INSERT INTO footerQuotes " +
-                            "VALUES (DEFAULT, 'duncte123', 'FIRST')");
-                }
-            }
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS animal_apis\n" +
+                            "(`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                            "  `file` text NOT NULL,\n" +
+                            "  `api` varchar(255) NOT NULL,\n" +
+                            "  PRIMARY KEY (`id`));"
+            );
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS warnings\n" +
+                            "(`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
+                            "  `mod_id` varchar(255) NOT NULL,\n" +
+                            "  `user_id` varchar(300) NOT NULL,\n" +
+                            "  `reason` text NOT NULL,\n" +
+                            "  `warn_date` date NOT NULL,\n" +
+                            "  `expire_date` date NOT NULL,\n" +
+                            "  `guild_id` varchar(266) DEFAULT NULL,\n" +
+                            "  PRIMARY KEY (`id`));"
+            );
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();
