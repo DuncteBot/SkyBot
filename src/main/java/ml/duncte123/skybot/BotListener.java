@@ -98,6 +98,11 @@ public class BotListener extends ListenerAdapter {
     private final DBManager database;
     private final CommandManager commandManager;
     private final Variables variables;
+    private final List<Long> botLists = List.of(
+            110373943822540800L,
+            264445053596991498L,
+            374071874222686211L
+    );
     /**
      * This tells us if the {@link #systemPool} is running
      */
@@ -107,12 +112,6 @@ public class BotListener extends ListenerAdapter {
      */
     private boolean isCacheCleanerActive = false;
     private short shardsReady = 0;
-
-    private final List<Long> botLists = List.of(
-            110373943822540800L,
-            264445053596991498L,
-            374071874222686211L
-    );
 
     BotListener(Variables variables) {
         this.variables = variables;

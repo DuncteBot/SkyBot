@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;

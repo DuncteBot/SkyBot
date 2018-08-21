@@ -65,16 +65,6 @@ public abstract class Command implements ICommand {
      */
     private static final Set<Long> upvotedIds = new HashSet<>();
     private static final Set<Long> noneUpvoteIds = new HashSet<>();
-    /**
-     * This holds the category
-     */
-    protected CommandCategory category = CommandCategory.MAIN;
-    /**
-     * This tells the bot to display the aliases of the command in the help command
-     */
-    protected boolean displayAliasesInHelp = false;
-
-    private String helpParsed = null;
 
     static {
         //clear the upvotes every hour
@@ -86,6 +76,15 @@ public abstract class Command implements ICommand {
         );
     }
 
+    /**
+     * This holds the category
+     */
+    protected CommandCategory category = CommandCategory.MAIN;
+    /**
+     * This tells the bot to display the aliases of the command in the help command
+     */
+    protected boolean displayAliasesInHelp = false;
+    private String helpParsed = null;
 
     private boolean checkVoteOnDBL(String userid, DunctebotConfig config) {
         String token = config.apis.discordbots_userToken;
