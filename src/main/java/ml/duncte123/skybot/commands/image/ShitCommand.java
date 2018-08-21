@@ -19,9 +19,6 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -34,21 +31,9 @@ public class ShitCommand extends ImageCommandBase {
             return;
         }
 
-        String text = ctx.getRawArgs();
+        String text = parseTextArgsForImagae(ctx);
 
-        for (User user : event.getMessage().getMentionedUsers()) {
-            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
-        }
-
-        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
-            text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
-        }
-
-        for (Role role : event.getMessage().getMentionedRoles()) {
-            text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
-        }
-
-        if("pluralshit".equals(ctx.getInvoke())) {
+        if ("pluralshit".equals(ctx.getInvoke())) {
             ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
             return;
         }
@@ -62,7 +47,7 @@ public class ShitCommand extends ImageCommandBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"pluralshit"};
+        return new String[]{"pluralshit"};
     }
 
     @Override

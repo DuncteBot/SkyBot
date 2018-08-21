@@ -16,34 +16,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.image;
+package ml.duncte123.skybot.objects.apis.alexflipnote;
 
-import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+public class FlipnoteColourObj {
 
-public class PcCheckCommand extends ImageCommandBase {
+    public final int brightness;
+    public final String hex;
+    public final String image;
+    public final int integer;
+    public final String name;
+    public final String rgb;
 
-    @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-
-        GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!doAllChecks(event, ctx.getArgs())) {
-            return;
-        }
-
-        ctx.getBlargbot().getPcCheck(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
-    }
-
-    @Override
-    public String help() {
-        return "WHoops get your pc checked\n" +
-                "Usage: `db!pccheck <reason>`";
-    }
-
-    @Override
-    public String getName() {
-        return "pccheck";
+    public FlipnoteColourObj(int brightness, String hex, String image, int integer, String name, String rgb) {
+        this.brightness = brightness;
+        this.hex = hex;
+        this.image = image;
+        this.integer = integer;
+        this.name = name;
+        this.rgb = rgb;
     }
 }

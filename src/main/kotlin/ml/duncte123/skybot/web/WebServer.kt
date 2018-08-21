@@ -199,11 +199,23 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                 }
             }
 
-            //overview and editing
-            get("/", WebVariables()
-                    .put("title", "Dashboard"), "serverSettings.twig", true)
+            get("/") {
+                engine.render(ModelAndView(WebVariables()
+                        .put("title", "Dashboard").put("id", request.params(":guildid"))
+                        .put("name", getGuildFromRequest(request)?.name).map,
+                        "dashboard/panelSelection.twig"))
+            }
+            // Overview and editing
+            get("/basic", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
+            // Moderation
+            get("/moderation", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
+            // Moderation
+            get("/customcommands", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
 
-            post("/") {
+            post("/basic") {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
                 val params = toMap(pairs)
 
@@ -435,7 +447,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
     private fun getSession(request: Request, response: Response): Session {
         val session: String = request.session().attribute("sessionId")
-        if (session.isEmpty()) {
+        if (session == null || session.isBlank()) {
             response.redirect("/dashboard")
         }
         return oAuth2Client.sessionController.getSession(session)

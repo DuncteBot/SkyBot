@@ -18,32 +18,34 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-public class TheSearchCommand extends ImageCommandBase {
-
+public class AchievementCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        if (!hasArgs(ctx.getEvent(), ctx.getArgs())) return;
+        if (!canSendFile(ctx.getEvent())) return;
 
-        if (!doAllChecks(event, ctx.getArgs())) {
-            return;
-        }
-
-        ctx.getBlargbot().getTheSearch(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
-    }
-
-    @Override
-    public String help() {
-        return "Go on a journey to find intelligent life.\n" +
-                "Usage: `db!thesearch <message>`";
+        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImagae(ctx))
+                .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
     public String getName() {
-        return "thesearch";
+        return "achievement";
+    }
+
+    @Override
+    public String help() {
+        return "You got an achievement!\n" +
+                "Usage: `" + PREFIX + getName() + " <text>`";
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.FUN;
     }
 }

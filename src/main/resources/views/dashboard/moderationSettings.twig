@@ -1,0 +1,171 @@
+{% extends '../templates/base.twig' %}
+
+{% block container %}
+
+    {% if message %}
+        <div class="row col s5">
+            <div>{{ message | raw }}</div>
+        </div>
+    {% endif %}
+
+    <div class="row">
+        <h5>Selected guild: {{ guild.getName() }}</h5>
+    </div>
+    <div class="row">
+        <form class="col s12" method="post">
+            {# Spam filter #}
+            <div class="row section">
+                <h6>Moderation:</h6> <br/>
+
+                {# Modlog #}
+                <div class="input-field col s12 m2">
+                    <select id="modChannel" name="modChannel">
+                        <option value="" disabled selected>Select a channel</option>
+                        {% for textChannel in goodChannels %}
+                            {% if settings.getLogChannel() == textChannel.getIdLong() %}
+                                <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
+                            {% else %}
+                                <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    <label for="modChannel">ModLog Channel</label>
+                </div>
+
+                {# Other boolean flags #}
+
+                <div class="switch">
+                    Auto de-hoist:
+                    <label>
+                        Disabled
+                        <input type="checkbox" name="autoDeHoist" id=""
+                               {% if settings.isAutoDeHoist() %}checked="checked"{% endif %}>
+                        <span class="lever"></span>
+                        Enabled
+                    </label>
+                </div>
+
+                <div class="switch">
+                    Filter invites:
+                    <label>
+                        Disabled
+                        <input type="checkbox" name="filterInvites" id=""
+                               {% if settings.isFilterInvites() %}checked="checked"{% endif %}>
+                        <span class="lever"></span>
+                        Enabled
+                    </label>
+                </div>
+
+                <div class="switch">
+                    Swearword filter:
+                    <label>
+                        Disabled
+                        <input type="checkbox" name="swearFilter" id=""
+                               {% if settings.isEnableSwearFilter() %}checked="checked"{% endif %}>
+                        <span class="lever"></span>
+                        Enabled
+                    </label>
+                </div>
+
+                <br />
+
+                {# Mute role #}
+                <div class="input-field col s12 m3">
+                    <select id="muteRole" name="muteRole" {#onchange="checkSelect(this.id, 'autoRoleRoleCB');"#}>
+                        <option value="" selected disabled>Select a role</option>
+                        {% for role in goodRoles %}
+                            {% if settings.getMuteRoleId() == role.getIdLong() %}
+                                <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
+                            {% else %}
+                                <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="">Disable</option>
+                    </select>
+                    <label for="muteRole">Mute role</label>
+                </div>
+
+                {# Kick mode #}
+                <div class="input-field col s12 m4">
+
+                    <div class="switch">
+                        Toggle spam filter:
+                        <label>
+                            Disabled
+                            <input type="checkbox" name="spamFilter" id=""
+                                   {% if settings.getEnableSpamFilter() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Enabled
+                        </label>
+                    </div>
+
+                    <!-- Switch -->
+                    <div class="switch">
+                        Kick mode:
+                        <label>
+                            Mute members
+                            <input type="checkbox" name="kickMode" id="kickMode"
+                                   {% if settings.getKickState() %}checked="checked"{% endif %}>
+                            <span class="lever"></span>
+                            Kick members
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row">
+                <h6>Ratelimits:</h6>
+                <small>The following values indicate the mutes duration for incrementing amount of violations</small>
+                <br/>
+                {% for i,r in settings.getRateLimitsForTwig() %}
+                    <div class="input-field col s12 m1">
+                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required/>
+                    </div>
+                {% endfor %}
+            </div>
+
+            {# Hidden fields #}
+            <input type="hidden" name="serverDescription" id="serverDescription"
+                   value="{{ settings.getServerDesc() }}"/>
+
+            <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
+                Submit
+            </button>
+        </form>
+    </div>
+
+    <!-- Modal Structure -->
+    <div id="serverDescModal" class="modal {#bottom-sheet#} {#modal-fixed-footer#}">
+        <div class="modal-content">
+            <h4>Modal Header</h4>
+            <textarea name="ServerDesc" id="serverDescText" cols="30" rows="10" class="materialize-textarea"></textarea>
+            <label for="serverDescText">Server Description</label>
+        </div>
+        <div class="modal-footer">
+            <a href="#!" onmouseup="_('serverDescription').value = _('serverDescText').value; modal.close();"
+               class="waves-effect waves-green btn-flat">Save</a>
+            <a href="#!" onmouseup="modal.close();" class="waves-effect waves-red btn-flat">Discard</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        M.FormSelect.init(document.querySelectorAll('select'));
+        let modal = M.Modal.init(document.querySelectorAll('.modal'))[0];
+
+        function checkSelect(selectId, checkBox) {
+            let box = _(checkBox);
+            let select = _(selectId);
+            if (select.value) {
+                box.checked = true;
+                box.disabled = false;
+            } else {
+                box.checked = false;
+                box.disabled = true;
+            }
+        }
+    </script>
+{% endblock %}

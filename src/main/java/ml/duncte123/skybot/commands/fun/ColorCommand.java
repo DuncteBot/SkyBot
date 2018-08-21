@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.fun;
 
-import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -26,7 +25,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import static java.awt.Color.decode;
-import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
 import static ml.duncte123.skybot.utils.EmbedUtils.defaultEmbed;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
@@ -35,18 +33,20 @@ public class ColorCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        WebUtils.ins.getJSONObject(URL_ARRAY[2] + "/random").async((json) -> {
-            String hex = json.getString("hex");
-            String image = json.getString("image");
-            int integer = json.getInt("int");
-            String name = json.getString("name");
-            String rgb = json.getString("rgb");
+        ctx.getAlexFlipnote().getRandomColour().async((data) -> {
+            String hex = data.hex;
+            String image = data.image;
+            int integer = data.integer;
+            int brightness = data.brightness;
+            String name = data.name;
+            String rgb = data.rgb;
 
             EmbedBuilder embed = defaultEmbed()
                     .setColor(decode(hex))
                     .setThumbnail(image);
 
-            String desc = String.format("Name(s): %s%nHex: %s%nInt: %s%nRGB: %s", name, hex, integer, rgb);
+            String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
+                    name, hex, integer, rgb, brightness);
             embed.setDescription(desc);
 
             sendEmbed(ctx.getEvent(), embed.build());

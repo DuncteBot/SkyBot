@@ -95,7 +95,7 @@ public class BotinfoCommand extends Command {
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to " +
-                        "[donate](https://paypal.me/duncte123) any amount.", false)
+                        "[become a patron](https://www.patreon.com/DuncteBot) any amount.", false)
                 .build();
         sendEmbed(event, eb);
     }

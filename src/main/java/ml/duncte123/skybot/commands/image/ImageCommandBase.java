@@ -18,15 +18,18 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.List;
@@ -37,17 +40,17 @@ public abstract class ImageCommandBase extends Command {
 
     private static final String dir = "user_avatars";
 
-    private boolean canSendFile(GuildMessageReceivedEvent event) {
+    boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            MessageUtils.sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }
 
-    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
-        if (args.size() == 0) {
+    boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+        if (args.isEmpty()) {
             sendMsg(event, "Too little arguments");
             return false;
         }
@@ -80,5 +83,70 @@ public abstract class ImageCommandBase extends Command {
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.PATRON;
+    }
+
+    String getImageFromCommand(CommandContext ctx) {
+        GuildMessageReceivedEvent event = ctx.getEvent();
+        List<String> args = ctx.getArgs();
+
+        String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+
+        if (args.size() > 0 && ctx.getMessage().getMentionedUsers().size() < 1) {
+            try {
+                url = new URL(args.get(0)).toString();
+            } catch (MalformedURLException ignored) {
+                sendMsg(event, "That does not look like a valid url");
+                return null;
+            }
+        }
+
+        if (ctx.getMessage().getMentionedUsers().size() > 0) {
+            url = ctx.getMessage().getMentionedUsers().get(0)
+                    .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        }
+
+        if (!ctx.getMessage().getAttachments().isEmpty()) {
+            Message.Attachment attachment = ctx.getMessage().getAttachments().get(0);
+
+            File file = new File(attachment.getFileName());
+
+
+            String mimetype = null;
+            try {
+                mimetype = Files.probeContentType(file.toPath());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            //mimetype should be something like "image/png"
+
+            if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
+                sendMsg(event, "That file does not look like an image");
+                return null;
+            }
+            url = attachment.getUrl();
+        }
+        return url;
+    }
+
+    String parseTextArgsForImagae(CommandContext ctx) {
+        String text = ctx.getRawArgs();
+        GuildMessageReceivedEvent event = ctx.getEvent();
+
+        for (User user : event.getMessage().getMentionedUsers()) {
+            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
+        }
+
+        for (Member member : event.getMessage().getMentionedMembers()) {
+            text = text.replaceAll(member.getAsMention(), String.format("%#s", member.getUser()));
+        }
+
+        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
+            text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
+        }
+
+        for (Role role : event.getMessage().getMentionedRoles()) {
+            text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
+        }
+        return text;
     }
 }
