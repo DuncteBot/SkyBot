@@ -36,7 +36,7 @@ public class ForceDisconnectCommand extends MusicCommand {
 
         if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             Guild g = event.getGuild();
-            GuildMusicManager manager = getMusicManager(g);
+            GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
             manager.player.stopTrack();
             manager.scheduler.queue.clear();

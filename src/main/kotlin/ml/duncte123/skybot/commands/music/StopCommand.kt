@@ -20,10 +20,10 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.botCommons.messaging.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StopCommand : MusicCommand() {
@@ -31,11 +31,11 @@ class StopCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val scheduler = mng.scheduler
 

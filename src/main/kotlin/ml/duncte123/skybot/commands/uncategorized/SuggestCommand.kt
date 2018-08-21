@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import me.duncte123.botCommons.messaging.MessageUtils
 
 class SuggestCommand : Command() {
 

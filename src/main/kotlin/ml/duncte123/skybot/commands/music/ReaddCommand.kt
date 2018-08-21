@@ -21,7 +21,6 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
@@ -31,10 +30,10 @@ class ReaddCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val manager = getMusicManager(event.guild)
+        val manager = getMusicManager(event.guild, ctx.audioUtils)
         val t = manager.player.playingTrack
 
         if (t == null) {
@@ -60,7 +59,7 @@ class ReaddCommand : MusicCommand() {
 
         manager.scheduler.queue(track)
         MessageUtils.sendSuccess(event.message)
-        sendEmbed(event.channel, EmbedUtils.embedField(AudioUtils.ins.embedTitle, msg))
+        sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
     }
 
     override fun help() = "Readd the current track to the end of the queue"

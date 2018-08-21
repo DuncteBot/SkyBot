@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Guild
 import org.json.JSONArray
@@ -33,7 +34,7 @@ class SaveCommand : MusicCommand() {
         val event = ctx.event
 
         event.channel.sendFile(
-                toByteArray(event.guild),
+                toByteArray(event.guild, ctx.audioUtils),
                 "playlist.json",
                 MessageBuilder()
                         .append(event.author)
@@ -41,9 +42,9 @@ class SaveCommand : MusicCommand() {
                         .build()).queue()
     }
 
-    private fun toByteArray(guild: Guild?): ByteArray {
+    private fun toByteArray(guild: Guild?, audioUtils: AudioUtils): ByteArray {
         val array = JSONArray()
-        val manager = getMusicManager(guild)
+        val manager = getMusicManager(guild, audioUtils)
 
         val urls = manager.scheduler.queue
                 .map { it.identifier }

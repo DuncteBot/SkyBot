@@ -25,7 +25,6 @@ import me.duncte123.botCommons.text.TextColor;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebServer;
@@ -120,7 +119,7 @@ public class SkyBot {
         }
 
         logger.info(commandManager.getCommands().size() + " commands loaded.");
-        LavalinkManager.ins.start(config);
+        LavalinkManager.ins.start(config, vars.getAudioUtils());
         final String finalUrl = url;
 
         //Set up sharding for the bot
@@ -138,13 +137,9 @@ public class SkyBot {
         //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
 
-        AudioUtils.ins.setConfig(config.apis);
-        //Force the player to boot up because it has to load the config
-        AudioUtils.ins.getPlayerManager();
-
         if (!config.discord.local) {
             // init web server
-            new WebServer(shardManager, config, commandManager, database);
+            new WebServer(shardManager, config, commandManager, database, vars.getAudioUtils());
         }
     }
 

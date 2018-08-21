@@ -51,7 +51,7 @@ import java.util.*
 
 
 class WebServer(private val shardManager: ShardManager, private val config: DunctebotConfig,
-                private val commandManager: CommandManager, private val database: DBManager) {
+                private val commandManager: CommandManager, private val database: DBManager, private val audioUtils: AudioUtils) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
@@ -321,7 +321,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
             get("/music") {
                 val guild = getGuildFromRequest(request)
                 if (guild != null) {
-                    val mng = AudioUtils.ins.getMusicManager(guild, false)
+                    val mng = audioUtils.getMusicManager(guild, false)
 
                     if (mng != null) {
                         return@get """<p>Audio player details:</p>

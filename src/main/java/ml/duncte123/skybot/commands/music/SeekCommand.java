@@ -39,7 +39,7 @@ public class SeekCommand extends MusicCommand {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.getAudioUtils()))
             return;
 
         List<String> args = ctx.getArgs();
@@ -55,7 +55,7 @@ public class SeekCommand extends MusicCommand {
             sendMsg(event, "Invalid time format");
             return;
         }
-        IPlayer player = getMusicManager(ctx.getGuild()).player;
+        IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
 
         if (player.getPlayingTrack() == null) {
             sendMsg(event, "The player is currently not playing anything");

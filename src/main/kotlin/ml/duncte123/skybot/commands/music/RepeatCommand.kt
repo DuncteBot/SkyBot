@@ -20,10 +20,10 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import me.duncte123.botCommons.messaging.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
@@ -31,10 +31,10 @@ class RepeatCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
         if (ctx.args.size == 1 && ctx.args[0] == "playlist") {

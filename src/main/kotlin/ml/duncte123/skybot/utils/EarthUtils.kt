@@ -158,9 +158,9 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        fun audioJSON(): JSONObject {
+        fun audioJSON(audioUtils: AudioUtils): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
-            for ((key, value) in AudioUtils.ins.musicManagers.entries) {
+            for ((key, value) in audioUtils.musicManagers.entries) {
                 json.put(key.toString(), JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
             }
             return json

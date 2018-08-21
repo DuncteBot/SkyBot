@@ -33,6 +33,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
@@ -75,7 +76,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop(ctx.database)
+                    AirUtils.stop(ctx.database, ctx.audioUtils)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
@@ -86,7 +87,7 @@ class UpdateCommand : Command() {
                     return
                 sendMsg(event, "✅ Updating") {
                     launch {
-                        initUpdate(event, it.id, ctx.database)
+                        initUpdate(event, it.id, ctx.database, ctx.audioUtils)
                     }
                 }
             }
@@ -97,7 +98,7 @@ class UpdateCommand : Command() {
 
     override fun getName() = "update"
 
-    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String, database: DBManager) {
+    private suspend fun initUpdate(event: GuildMessageReceivedEvent, id: String, database: DBManager, audioUtils: AudioUtils) {
         lateinit var version: String
         lateinit var links: String
 
@@ -137,7 +138,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop(database)
+                    AirUtils.stop(database, audioUtils)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x64)

@@ -469,7 +469,7 @@ public class BotListener extends ListenerAdapter {
             e.printStackTrace();
         }
 
-        AirUtils.stop(database);
+        AirUtils.stop(database, variables.getAudioUtils());
         commandManager.commandThread.shutdown();
 
         /*
@@ -503,7 +503,7 @@ public class BotListener extends ListenerAdapter {
     private void channelCheckThing(Guild g, VoiceChannel vc) {
 
         if (vc.getMembers().stream().filter(m -> !m.getUser().isBot()).count() < 1) {
-            GuildMusicManager manager = AudioUtils.ins.getMusicManager(g);
+            GuildMusicManager manager = variables.getAudioUtils().getMusicManager(g);
             manager.player.stopTrack();
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
@@ -515,7 +515,7 @@ public class BotListener extends ListenerAdapter {
             sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
             if (LavalinkManager.ins.isConnected(g)) {
                 LavalinkManager.ins.closeConnection(g);
-                AudioUtils.ins.getMusicManagers().remove(g.getIdLong());
+                variables.getAudioUtils().getMusicManagers().remove(g.getIdLong());
             }
         }
     }
