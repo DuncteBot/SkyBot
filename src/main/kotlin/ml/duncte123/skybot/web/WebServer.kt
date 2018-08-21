@@ -474,7 +474,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)
-                    if (message != null && message.isNotEmpty()) {
+                    if (!message.isNullOrEmpty()) {
                         session.attribute(FLASH_MESSAGE, null)
                         map.put("message", message)
                     } else {
