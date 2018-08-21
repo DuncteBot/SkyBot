@@ -61,7 +61,7 @@ public class HelpCommand extends Command {
 
             return;
         }
-        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()));
+        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(ctx.getGuildSettings().getCustomPrefix()));
     }
 
     @Override

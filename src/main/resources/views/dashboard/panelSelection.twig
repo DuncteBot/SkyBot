@@ -1,0 +1,54 @@
+{% extends '../templates/base.twig' %}
+
+{% block container %}
+    <style>
+        .valign-wrapper {
+            height: 36vh;
+        }
+
+        .valign-wrapper > div {
+            display: inline-block;
+            display: -moz-inline-box;
+            *display: inline; /* For IE7 */
+            zoom: 1; /* Trigger hasLayout */
+            width: 33%;
+            text-align: center;
+        }
+    </style>
+
+    <div class="row">
+        <div class="col s12">
+            <div class="row">
+                <h5>Selected guild: {{ name }}</h5>
+                <h4>Please select an option below</h4>
+            </div>
+
+            {# desktop stuff #}
+            <div class="valign-wrapper hide-on-med-and-down">
+                {% block btns %}
+                <div>
+                    <a href="/server/{{ id }}/basic"
+                            class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">Basic settings</a>
+                </div>
+                <div>
+                    <a href="/server/{{ id }}/moderation"
+                       class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">Moderation settings</a>
+                </div>
+                {#<div>
+                    <a href="/server/{{ id }}/customcommands"
+                       class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">Custom commands</a>
+                </div>#}
+                <div>
+                    <a href="/server/{{ id }}/messages"
+                       class="btn btn-large waves-effect waves-light waves-ripple blue darken-4 bg">Welcome/leave</a>
+                </div>
+                {% endblock %}
+            </div>
+
+            {# mobile stuff #}
+            <div class="show-on-medium-and-down hide-on-med-and-up">
+                {{ block("btns") }}
+            </div>
+        </div>
+    </div>
+{% endblock %}

@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -45,7 +44,7 @@ public abstract class ImageCommandBase extends Command {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
-            MessageUtils.sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
+            sendMsg(event, "I need permission to upload files in this channel in order for this command to work");
             return false;
         }
     }
@@ -96,7 +95,7 @@ public abstract class ImageCommandBase extends Command {
             try {
                 url = new URL(args.get(0)).toString();
             } catch (MalformedURLException ignored) {
-                MessageUtils.sendMsg(event, "That does not look like a valid url");
+                sendMsg(event, "That does not look like a valid url");
                 return null;
             }
         }
@@ -121,7 +120,7 @@ public abstract class ImageCommandBase extends Command {
             //mimetype should be something like "image/png"
 
             if (mimetype == null || !mimetype.split("/")[0].equals("image")) {
-                MessageUtils.sendMsg(event, "That file does not look like an image");
+                sendMsg(event, "That file does not look like an image");
                 return null;
             }
             url = attachment.getUrl();
