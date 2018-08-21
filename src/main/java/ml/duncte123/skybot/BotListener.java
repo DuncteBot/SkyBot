@@ -410,7 +410,7 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
         if (!botFamrs.contains(guild.getIdLong())) {
             logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
-            GuildSettingsUtils.deleteGuild(guild, database);
+            //GuildSettingsUtils.deleteGuild(guild, database);
         } else {
             botFamrs.remove(guild.getIdLong());
         }
