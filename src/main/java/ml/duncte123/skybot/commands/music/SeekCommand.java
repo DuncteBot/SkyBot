@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class SeekCommand extends MusicCommand {
 
@@ -39,7 +39,7 @@ public class SeekCommand extends MusicCommand {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.getAudioUtils()))
             return;
 
         List<String> args = ctx.getArgs();
@@ -55,7 +55,7 @@ public class SeekCommand extends MusicCommand {
             sendMsg(event, "Invalid time format");
             return;
         }
-        IPlayer player = getMusicManager(ctx.getGuild()).player;
+        IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
 
         if (player.getPlayingTrack() == null) {
             sendMsg(event, "The player is currently not playing anything");
@@ -68,6 +68,11 @@ public class SeekCommand extends MusicCommand {
         long finalTime = minutes + seconds;
 
         player.seekTo(finalTime);
+
+        try {
+            Thread.sleep(500);
+        } catch (InterruptedException ignored) {
+        }
 
         ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);
 

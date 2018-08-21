@@ -24,13 +24,14 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
 import java.net.URL;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class CatCommand extends Command {
 
@@ -50,7 +51,7 @@ public class CatCommand extends Command {
                         ctx.getChannel().sendFile(new URL(file).openStream(),
                                 "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
                     } catch (IOException e) {
-                        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+                        sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
                         ComparatingUtils.execCheck(e);
                     }
                 },

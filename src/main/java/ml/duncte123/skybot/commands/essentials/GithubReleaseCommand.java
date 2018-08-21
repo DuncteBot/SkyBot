@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import com.github.natanbc.reliqua.request.RequestException;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
@@ -86,7 +86,7 @@ public class GithubReleaseCommand extends Command {
         try {
             //You meant to post the json ramid?
             JSONObject releaseIn = WebUtils.ins.postJSON(String.format(CREATE_RELEASE,
-                    ctx.getConfig().apis.googl), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
+                    ctx.getConfig().apis.github), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
 
             if (releaseIn == null)
                 return;

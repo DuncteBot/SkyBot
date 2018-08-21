@@ -27,25 +27,29 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.apis.BlargBot;
+import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
 public class Variables {
 
     public static final Variables ins = new Variables();
+    private final AudioUtils audioUtils;
+    private final Alexflipnote alexflipnote;
     private final WAEngine alphaEngine;
     private final String googleBaseUrl;
     private final WeebApi weebApi;
     private final boolean isSql;
-    private final Random random;
+    private final ThreadLocalRandom random;
     private final DBManager database;
     private final CommandManager commandManager;
     private final BlargBot blargBot;
@@ -54,26 +58,31 @@ public class Variables {
 
 
     private Variables() {
-        /*final ConfigUtils configUtils = new ConfigUtils();
-        this.config = configUtils.loadConfig();*/
         try {
             this.config = new Gson().fromJson(Files.asCharSource(new File("config.json"), Charsets.UTF_8).read(), DunctebotConfig.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (config == null) {
+            System.exit(0);
+        }
+
+        this.audioUtils = new AudioUtils(config.apis);
         this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
                 "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
-//                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
+                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
                 .setToken(config.apis.weebSh.wolketoken)
                 .build();
         this.isSql = config.use_database;
-        this.random = new Random();
+        this.random = ThreadLocalRandom.current();
         this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
         this.guildSettings = new HashMap<>();
+        this.alexflipnote = new Alexflipnote();
     }
 
     public BlargBot getBlargBot() {
@@ -96,7 +105,7 @@ public class Variables {
         return guildSettings;
     }
 
-    public Random getRandom() {
+    public ThreadLocalRandom getRandom() {
         return random;
     }
 
@@ -114,5 +123,13 @@ public class Variables {
 
     boolean isSql() {
         return isSql;
+    }
+
+    public Alexflipnote getAlexflipnote() {
+        return alexflipnote;
+    }
+
+    public AudioUtils getAudioUtils() {
+        return audioUtils;
     }
 }

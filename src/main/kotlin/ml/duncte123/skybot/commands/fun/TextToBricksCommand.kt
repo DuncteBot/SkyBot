@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
 class TextToBricksCommand : Command() {
 
@@ -36,7 +37,7 @@ class TextToBricksCommand : Command() {
             return
         }
 
-        MessageUtils.sendEmbed(ctx.event,
+        sendEmbed(ctx.event,
                 EmbedUtils.embedMessage(
                         ctx.rawArgs
                                 .toLowerCase()

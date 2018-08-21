@@ -3,7 +3,8 @@
 SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
-If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
+If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) 
+[![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 
 # How to invite the bot to a server?
@@ -31,6 +32,9 @@ The following libraries are used:
 - [_groovy-sandbox_](https://github.com/jenkinsci/groovy-sandbox)
 - [_spotify-web-api-java_](https://github.com/thelinmichael/spotify-web-api-java)
 - [_logback-classic_](https://logback.qos.ch/)
+
+# Support
+[![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://discord.gg/NKM9Xtk)
 
 # ToDo list
 - [x] ~~SQLite as a fail over database~~

@@ -53,8 +53,6 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SinceSkybot(version = "3.5.1")
 public class AudioUtils {
-
-    public static final AudioUtils ins = new AudioUtils();
     /**
      * This is the default volume that the player will play at
      * I've set it to 100 to save some resources
@@ -73,14 +71,15 @@ public class AudioUtils {
      */
     protected final Map<Long, GuildMusicManager> musicManagers;
 
-    private DunctebotConfig.Apis config;
+    private final DunctebotConfig.Apis config;
 
     /**
      * This will set everything up and get the player ready
      */
-    private AudioUtils() {
+    public AudioUtils(DunctebotConfig.Apis config) {
         java.util.logging.Logger.getLogger("org.apache.http.client.protocol.ResponseProcessCookies").setLevel(Level.OFF);
-
+        this.config = config;
+        initPlayerManager();
         musicManagers = new HashMap<>();
     }
 
@@ -100,10 +99,6 @@ public class AudioUtils {
         } else {
             return String.format("%02d:%02d", minutes, seconds);
         }
-    }
-
-    public void setConfig(DunctebotConfig.Apis config) {
-        this.config = config;
     }
 
     private void initPlayerManager() {

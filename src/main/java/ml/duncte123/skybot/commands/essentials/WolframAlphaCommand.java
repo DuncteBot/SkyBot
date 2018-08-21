@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -34,6 +34,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static ml.duncte123.skybot.utils.MessageUtils.editMsg;
 
 public class WolframAlphaCommand extends Command {
 
@@ -58,7 +60,9 @@ public class WolframAlphaCommand extends Command {
      */
     private MessageEmbed generateEmbed(
             GuildMessageReceivedEvent event,
-            WAQueryResult result) {
+            WAQueryResult result,
+            String googleKey
+    ) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
@@ -80,7 +84,7 @@ public class WolframAlphaCommand extends Command {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getTitle()) + "](" + AirUtils.shortenUrl(i.getURL()).execute() + ")";
+                        d += "[" + a(i.getTitle()) + "](" + AirUtils.shortenUrl(i.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
                         d += a(i.getText());
@@ -88,13 +92,13 @@ public class WolframAlphaCommand extends Command {
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-                        d += "[" + a(l.getText()) + "](" + AirUtils.shortenUrl(l.getURL()).execute() + ")";
+                        d += "[" + a(l.getText()) + "](" + AirUtils.shortenUrl(l.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += AirUtils.shortenUrl(sound.getURL()).execute();
+                        d += AirUtils.shortenUrl(sound.getURL(), googleKey).execute();
                     }
 
                     e.append(d).append("\n\n");
@@ -144,8 +148,8 @@ public class WolframAlphaCommand extends Command {
                 e.printStackTrace();
                 return;
             }
-            MessageUtils.editMsg(message, new MessageBuilder().append("Result:")
-                    .setEmbed(generateEmbed(event, result)).build());
+            editMsg(message, new MessageBuilder().append("Result:")
+                    .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
         });
     }
 

@@ -20,13 +20,13 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
@@ -45,7 +45,8 @@ class ShortenCommand : Command() {
             sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the shorten command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)"))
+                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
+                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
             return
         }
 
@@ -54,7 +55,7 @@ class ShortenCommand : Command() {
             return
         }
 
-        AirUtils.shortenUrl(args[0]).async({
+        AirUtils.shortenUrl(args[0], ctx.config.apis.googl).async({
             sendMsg(event, "Here is your shortened url: <$it>")
         }, {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")

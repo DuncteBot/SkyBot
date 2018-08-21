@@ -24,9 +24,10 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class DogCommand extends Command {
 
@@ -43,15 +44,15 @@ public class DogCommand extends Command {
                 String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {
-                    MessageUtils.sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
+                    sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
                 } else {
-                    MessageUtils.sendEmbed(event, EmbedUtils.embedImage(finalS));
+                    sendEmbed(event, EmbedUtils.embedImage(finalS));
                 }
             });
 
         } catch (Exception e) {
             //e.printStackTrace();
-            MessageUtils.sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
+            sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
             ComparatingUtils.execCheck(e);
         }
 

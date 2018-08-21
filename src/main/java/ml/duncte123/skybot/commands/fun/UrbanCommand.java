@@ -28,13 +28,13 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class UrbanCommand extends Command {
 
     public UrbanCommand() {
-        this.category = CommandCategory.FUN;
+        this.category = CommandCategory.NSFW;
     }
 
     @Override

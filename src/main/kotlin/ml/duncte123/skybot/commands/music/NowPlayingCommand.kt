@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -35,9 +35,9 @@ class NowPlayingCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
         val msg = when {
             player.playingTrack != null && !player.playingTrack.info.isStream ->
@@ -55,7 +55,7 @@ class NowPlayingCommand : MusicCommand() {
             }
             else -> EmbedUtils.embedMessage("The player is not currently playing anything!")
         }
-        MessageUtils.sendEmbed(event, msg)
+        sendEmbed(event, msg)
     }
 
     override fun help(): String = "Prints information about the currently playing song (title, current time)"

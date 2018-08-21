@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class ForceDisconnectCommand extends MusicCommand {
     @Override
@@ -36,7 +36,7 @@ public class ForceDisconnectCommand extends MusicCommand {
 
         if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             Guild g = event.getGuild();
-            GuildMusicManager manager = getMusicManager(g);
+            GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
             manager.player.stopTrack();
             manager.scheduler.queue.clear();

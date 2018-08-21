@@ -20,10 +20,10 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShuffleCommand : MusicCommand() {
@@ -31,10 +31,10 @@ class ShuffleCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
         if (scheduler.queue.isEmpty()) {
             MessageUtils.sendMsg(event, "There are no songs to shuffle")

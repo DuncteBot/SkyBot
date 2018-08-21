@@ -20,9 +20,9 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PlayRawCommand : PlayCommand() {
@@ -32,12 +32,12 @@ class PlayRawCommand : PlayCommand() {
 
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event)) {
+        } else if (!channelChecks(event, ctx.audioUtils)) {
             return
         }
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val scheduler = mng.scheduler
 
@@ -57,7 +57,7 @@ class PlayRawCommand : PlayCommand() {
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
-            audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
+            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, false)
         }
     }
 

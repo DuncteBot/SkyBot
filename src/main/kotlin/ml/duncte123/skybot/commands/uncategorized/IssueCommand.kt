@@ -20,11 +20,12 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import org.json.JSONException
 import org.json.JSONObject
 
@@ -66,7 +67,7 @@ class IssueCommand : Command() {
                             """.trimMargin())
                             .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
-                    MessageUtils.sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
+                    sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
                 } catch (ex: JSONException) {
                     val msg =
                             """You malformed the JSON.

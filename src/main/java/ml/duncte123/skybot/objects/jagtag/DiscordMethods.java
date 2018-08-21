@@ -32,7 +32,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Random;
 import java.util.stream.Collectors;
 
 public class DiscordMethods {
@@ -153,16 +152,16 @@ public class DiscordMethods {
                 new Method("randuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
-                    Random rand = env.get("random");
-                    Member m = members.get(rand.nextInt(members.size()));
+                    int randNum = (int) Math.round(Math.random() * members.size()) + 1;
+                    Member m = members.get(randNum);
                     return m.getEffectiveName();
                 }),
 
                 new Method("randatuser", (env) -> {
                     Guild guild = env.get("guild");
                     List<Member> members = guild.getMemberCache().asList();
-                    Random rand = env.get("random");
-                    Member m = members.get(rand.nextInt(members.size()));
+                    int randNum = (int) Math.round(Math.random() * members.size()) + 1;
+                    Member m = members.get(randNum);
                     return m.getAsMention();
                 }),
 
@@ -176,8 +175,8 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getEffectiveName();
                     }
-                    Random rand = env.get("random");
-                    Member m = members.get(rand.nextInt(members.size()));
+                    int randNum = (int) Math.round(Math.random() * members.size()) + 1;
+                    Member m = members.get(randNum);
                     return m.getEffectiveName();
                 }),
 
@@ -191,8 +190,8 @@ public class DiscordMethods {
                     if (members.size() == 1) {
                         return members.get(0).getAsMention();
                     }
-                    Random rand = env.get("random");
-                    Member m = members.get(rand.nextInt(members.size()));
+                    int randNum = (int) Math.round(Math.random() * members.size()) + 1;
+                    Member m = members.get(randNum);
                     return m.getAsMention();
                 }),
 
@@ -205,8 +204,8 @@ public class DiscordMethods {
                     if (channels.size() == 1) {
                         return channels.get(0).getAsMention();
                     }
-                    Random rand = env.get("random");
-                    return channels.get(rand.nextInt(channels.size())).getAsMention();
+                    int randNum = (int) Math.round(Math.random() * channels.size()) + 1;
+                    return channels.get(randNum).getAsMention();
                 })
         );
     }

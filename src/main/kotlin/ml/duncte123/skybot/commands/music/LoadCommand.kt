@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONTokener
@@ -34,7 +34,7 @@ class LoadCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
         val attachments = event.message.attachments
@@ -62,7 +62,7 @@ class LoadCommand : MusicCommand() {
                 array.filter(Objects::nonNull)
                         .forEach { obj ->
                             // This probably announces it to the channel
-                            AudioUtils.ins.loadAndPlay(getMusicManager(event.guild),
+                            ctx.audioUtils.loadAndPlay(getMusicManager(event.guild, ctx.audioUtils),
                                     event.channel,
                                     event.author,
                                     obj.toString(),
@@ -71,7 +71,7 @@ class LoadCommand : MusicCommand() {
                                     false)
                         }
 
-                MessageUtils.sendEmbed(event, EmbedUtils.embedField(AudioUtils.ins.embedTitle,
+                sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,
                         "Added ${array.length()} requested tracks."))
             } catch (exception: JSONException) {
                 MessageUtils.sendError(event.message)

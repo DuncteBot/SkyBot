@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
+import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
@@ -27,7 +28,7 @@ import ml.duncte123.skybot.objects.discord.user.Profile
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.GuildUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission
@@ -96,12 +97,12 @@ class UserinfoCommand : Command() {
             }
         }
 
-        if(u == null && m == null) {
+        if (u == null && m == null) {
             val users = FinderUtil.findUsers(ctx.rawArgs, ctx.jda)
-            if(users.isNotEmpty()) {
+            if (users.isNotEmpty()) {
                 u = users[0]
                 m = ctx.guild.getMember(u)
-                if(m == null) {
+                if (m == null) {
                     if (ctx.invoke == "avatar") {
                         MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
                         return
@@ -159,11 +160,11 @@ class UserinfoCommand : Command() {
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue(null) { _ ->
-                    MessageUtils.sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
+                    sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
                 }
             }
         } else {
-            MessageUtils.sendEmbed(event, embed.build())
+            sendEmbed(event, embed.build())
         }
     }
 
@@ -229,11 +230,11 @@ class UserinfoCommand : Command() {
                 event.channel.sendFile(targetFile, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue(null) { _ ->
-                    MessageUtils.sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+                    sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
                 }
             }
         } else {
-            MessageUtils.sendEmbed(event, embed.build())
+            sendEmbed(event, embed.build())
         }
     }
 

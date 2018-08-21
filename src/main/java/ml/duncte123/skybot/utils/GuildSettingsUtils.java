@@ -232,14 +232,13 @@ public class GuildSettingsUtils {
                     rows++;
 
                 if (rows == 0) {
-                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
+                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId," +
                             "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
-                            "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?)");
-                    smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
-                    smt.setString(2, newGuildSettings.getCustomJoinMessage());
-                    smt.setString(3, Settings.PREFIX);
-                    smt.setString(4, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
-                    smt.setString(5, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
+                            "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
+                    smt.setString(1, newGuildSettings.getCustomJoinMessage());
+                    smt.setString(2, Settings.PREFIX);
+                    smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
+                    smt.setString(4, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
                     smt.execute();
                 }
             } catch (Exception e) {

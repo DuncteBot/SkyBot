@@ -131,7 +131,6 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                     "CREATE TABLE IF NOT EXISTS guildSettings " +
                             "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                             "guildId TEXT NOT NULL," +
-                            "guildName TEXT NOT NULL," +
                             "logChannelId TEXT NULL," +
                             "welcomeLeaveChannel TEXT NULL," +
                             "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
@@ -177,6 +176,17 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                             "guildId VARCHAR(255) NOT NULL," +
                             "invoke VARCHAR(10) NOT NULL," +
                             "message TEXT NOT NULL);"
+            );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS warnings\n" +
+                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
+                            "  `mod_id` varchar(255) NOT NULL,\n" +
+                            "  `user_id` varchar(300) NOT NULL,\n" +
+                            "  `reason` text NOT NULL,\n" +
+                            "  `warn_date` date NOT NULL,\n" +
+                            "  `expire_date` date NOT NULL,\n" +
+                            "  `guild_id` varchar(266) DEFAULT NULL);"
             );
             close();
         } catch (SQLException | IOException e) {

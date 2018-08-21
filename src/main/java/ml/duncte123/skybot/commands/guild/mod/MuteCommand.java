@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.utils.MessageUtils.sendSuccess;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendSuccess;
 
 public class MuteCommand extends Command {
 

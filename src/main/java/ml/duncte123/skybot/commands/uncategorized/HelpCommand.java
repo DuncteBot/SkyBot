@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -37,8 +36,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 public class HelpCommand extends Command {
 
@@ -61,7 +60,7 @@ public class HelpCommand extends Command {
 
             return;
         }
-        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()));
+        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(ctx.getGuildSettings().getCustomPrefix()));
     }
 
     @Override
@@ -99,9 +98,9 @@ public class HelpCommand extends Command {
                 pc -> pc.sendMessage(embed).queue(
                         msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                         //When sending fails, send to the channel
-                        err -> sendMsg(event, (new MessageBuilder())
-                                .append("Message could not be delivered to dm's and has been send in this channel.")
-                                .setEmbed(embed).build())
+                        err -> sendMsg(event,
+                                "You can check out my commands here:\nhttps://bot.duncte123.me/commands?server=" +
+                                        event.getGuild().getId())
                 ),
                 err -> sendMsg(event, "ERROR: " + err.getMessage())
         );

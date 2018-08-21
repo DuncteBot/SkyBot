@@ -22,6 +22,7 @@ import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.CoroutineStart
 import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeoutOrNull
+import me.duncte123.botCommons.messaging.MessageUtils.*
 import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
@@ -31,7 +32,7 @@ import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendErrorJSON
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
@@ -95,6 +96,7 @@ class EvalCommand : Command() {
 
         staticImports = listOf(
                 "ml.duncte123.skybot.objects.EvalFunctions.*",
+                "me.duncte123.botCommons.messaging.MessageUtils.*",
                 "ml.duncte123.skybot.utils.MessageUtils.*"
         )
     }
@@ -115,11 +117,13 @@ class EvalCommand : Command() {
 
         val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
         if (userInput.size < 2) {
-            MessageUtils.sendSuccess(event.message)
+            sendSuccess(event.message)
             return
         }
 
         val script = importString + ctx.rawArgs
+                .replace("```(.*)\n".toRegex(), "")
+                .replace("\n?```".toRegex(), "")
 
         var timeout = 5000L
 
@@ -207,50 +211,50 @@ class EvalCommand : Command() {
             }
             when (out) {
                 null -> {
-                    MessageUtils.sendSuccess(event.message)
+                    sendSuccess(event.message)
                 }
                 is ArrayIndexOutOfBoundsException -> {
-                    MessageUtils.sendSuccess(event.message)
+                    sendSuccess(event.message)
                 }
                 is ExecutionException, is ScriptException -> {
                     out as Exception
-                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
+                    sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
                 }
                 is TimeoutException, is InterruptedException, is IllegalStateException -> {
                     out as Exception
-                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+                    sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is IllegalArgumentException, is DoomedException -> {
                     out as RuntimeException
-                    MessageUtils.sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+                    sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is Throwable -> {
                     if (Settings.useJSON)
-                        MessageUtils.sendErrorJSON(event.message, out, true)
+                        sendErrorJSON(event.message, out, true)
                     else {
-                        MessageUtils.sendMsg(event, "ERROR: " + out.toString())
+                        sendMsg(event, "ERROR: " + out.toString())
                         // out.printStackTrace()
                     }
                 }
                 is RestAction<*> -> {
                     out.queue()
-                    MessageUtils.sendSuccess(event.message)
+                    sendSuccess(event.message)
                 }
                 else -> {
                     if (out.toString().isEmpty() || out.toString().isBlank()) {
-                        MessageUtils.sendSuccess(event.message)
+                        sendSuccess(event.message)
                         return
                     }
                     if (isRanByBotOwner) {
                         MessageBuilder()
                                 .append(out.toString())
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                                .forEach { it -> MessageUtils.sendMsg(event, it) }
+                                .forEach { it -> sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
-                            MessageUtils.sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
+                            sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
                         } else {
-                            MessageUtils.sendMsg(event, "**" + event.author.name
+                            sendMsg(event, "**" + event.author.name
                                     + ":** " + out.toString()
                                     .replace("@here".toRegex(), "@h\u0435re")
                                     .replace("@everyone".toRegex(), "@\u0435veryone"))

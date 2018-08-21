@@ -21,6 +21,8 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendErrorWithMessage
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.ILoveStream
@@ -28,7 +30,7 @@ import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.*
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
@@ -51,17 +53,18 @@ class RadioCommand : MusicCommand() {
             sendEmbed(event, EmbedUtils.embedMessage(
                     "You cannot use the radio command as you haven't up-voted the bot." +
                             " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)"))
+                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
+                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
             return
         }
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event)) {
+        } else if (!channelChecks(event, ctx.audioUtils)) {
             return
         }
 
         val guild = event.guild
-        val mng = getMusicManager(guild)
+        val mng = getMusicManager(guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
         when (ctx.args.size) {
@@ -84,7 +87,7 @@ class RadioCommand : MusicCommand() {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand
                         }
-                        audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, false)
+                        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, false)
                         scheduler.queue.forEach {
                             if (it.info.uri != radio.url)
                                 scheduler.nextTrack()

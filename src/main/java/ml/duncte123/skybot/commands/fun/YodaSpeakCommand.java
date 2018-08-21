@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class YodaSpeakCommand extends Command {
     @Override

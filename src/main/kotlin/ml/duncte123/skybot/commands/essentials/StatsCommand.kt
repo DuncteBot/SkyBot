@@ -33,9 +33,9 @@ class StatsCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
 
         val shardManager = ctx.shardManager
-        val connectedVC = shardManager.shards.map {
-            shard -> shard.voiceChannelCache.filter {
-                vc -> vc.members.contains(vc.guild.selfMember)
+        val connectedVC = shardManager.shards.map { shard ->
+            shard.voiceChannelCache.filter { vc ->
+                vc.members.contains(vc.guild.selfMember)
             }.count()
         }.sum()
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
@@ -54,7 +54,7 @@ class StatsCommand : Command() {
         val embed = defaultEmbed()
 
                 .addField("Discord/bot Stats",
-                  """**Guilds:** ${shardManager.guildCache.size()}
+                        """**Guilds:** ${shardManager.guildCache.size()}
                     |**Users (unique):** ${shardManager.userCache.size()}
                     |**Text channels:** ${shardManager.textChannelCache.size()}
                     |**Voice channels:** ${shardManager.voiceChannelCache.size()}
@@ -63,7 +63,7 @@ class StatsCommand : Command() {
                 """.trimMargin(), false)
 
                 .addField("Server stats",
-                  """**CPU's:** $cores
+                        """**CPU's:** $cores
                     |**CPU usage:** $processUsage
                     |**Total ram:** ${serverMem shr 20}
                     |**Ram usage:** ${serverUsage shr 20}
@@ -72,7 +72,7 @@ class StatsCommand : Command() {
                 """.trimMargin(), false)
 
                 .addField("JVM stats",
-                          """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
+                        """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
                             |**Active thread count:** ${Thread.activeCount()}
                             |**Used ram:** $jvmMem
                             |**Allocated ram:** $jvmUsage

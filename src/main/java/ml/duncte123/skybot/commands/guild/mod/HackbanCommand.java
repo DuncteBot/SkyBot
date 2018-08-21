@@ -30,7 +30,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class HackbanCommand extends Command {
 
@@ -81,14 +81,14 @@ public class HackbanCommand extends Command {
             try {
                 event.getGuild().getController().ban(id, 0)
                         .reason(String.format("Hackban by %#s", ctx.getAuthor())).complete(); //Commands are being ran on a separate thread, this is safe
-                messages.add("User with id " + id + " has been banned!");
+                messages.add(id);
             } catch (Exception e) {
                 e.printStackTrace();
-                messages.add("ERROR: " + e.getMessage());
+                sendMsg(event, "ERROR: " + e.getMessage());
             }
         }
 
-        sendMsg(event, String.join("\n", messages));
+        sendMsg(event, String.format("Users with ids `%s` are banned", String.join("`, `", messages)));
         messages.clear();
     }
 

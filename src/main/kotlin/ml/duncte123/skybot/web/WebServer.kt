@@ -51,7 +51,7 @@ import java.util.*
 
 
 class WebServer(private val shardManager: ShardManager, private val config: DunctebotConfig,
-                private val commandManager: CommandManager, private val database: DBManager) {
+                private val commandManager: CommandManager, private val database: DBManager, private val audioUtils: AudioUtils) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
@@ -60,12 +60,18 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
             .setClientSecret(config.discord.oauth.clientSecret)
             .build()
 
+    private val FLASH_MESSAGE = "FLASH_MESSAGE"
+
     init {
 
         //Port has to be 2000 because of the apache proxy on the vps
         port(2000)
 
         staticFiles.location("/public")
+
+        get("/render/:template") {
+            engine.render(ModelAndView(WebVariables().put("title", "Home").map, "dashboard/${request.params("template")}"))
+        }
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
@@ -133,7 +139,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                 }
             }
 
-            get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
+            get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
 
             get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
@@ -195,49 +201,74 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                 }
             }
 
-            //overview and editing
-            get("/", WebVariables()
-                    .put("title", "Dashboard"), "serverSettings.twig", true)
+            get("/") {
+                engine.render(ModelAndView(WebVariables()
+                        .put("title", "Dashboard").put("id", request.params(":guildid"))
+                        .put("name", getGuildFromRequest(request)?.name).map,
+                        "dashboard/panelSelection.twig"))
+            }
+            // Overview and editing
+            get("/basic", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
+            // Moderation
+            get("/moderation", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
+            // Custom commands
+            get("/customcommands", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
+            // Messages
+            get("/messages", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/welcomeLeaveDesc.twig", true)
 
-            post("/") {
+            post("/basic") {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
                 val params = toMap(pairs)
 
                 val prefix = params["prefix"]
-                val serverDescription = params["serverDescription"]
                 val welcomeChannel = params["welcomeChannel"]
                 val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
                 val autorole = params["autoRoleRole"]
                 //val autoRoleEnabled      = params["autoRoleRoleCB"]
-                val modLogChannel = params["modChannel"]
                 val announceTracks = paramToBoolean(params["announceTracks"])
+
+                val guild = getGuildFromRequest(request)
+
+                val newSettings = GuildSettingsUtils.getGuild(guild)
+                        .setCustomPrefix(prefix)
+                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                        .setEnableJoinMessage(welcomeLeaveEnabled)
+                        .setAutoroleRole(toLong(autorole))
+                        .setAnnounceTracks(announceTracks)
+
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/moderation") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
+
+                val modLogChannel = params["modChannel"]
                 val autoDeHoist = paramToBoolean(params["autoDeHoist"])
                 val filterInvites = paramToBoolean(params["filterInvites"])
                 val swearFilter = paramToBoolean(params["swearFilter"])
-                val welcomeMessage = params["welcomeMessage"]
-                val leaveMessage = params["leaveMessage"]
                 val muteRole = params["muteRole"]
                 val spamFilter = paramToBoolean(params["spamFilter"])
                 val kickMode = paramToBoolean(params["kickMode"])
-
                 val rateLimits = LongArray(6)
 
                 for (i in 0..5) {
                     rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
                 }
 
+
                 val guild = getGuildFromRequest(request)
 
                 val newSettings = GuildSettingsUtils.getGuild(guild)
-                        .setCustomPrefix(prefix)
-                        .setServerDesc(serverDescription)
-                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
-                        .setCustomJoinMessage(welcomeMessage)
-                        .setCustomLeaveMessage(leaveMessage)
-                        .setEnableJoinMessage(welcomeLeaveEnabled)
-                        .setAutoroleRole(toLong(autorole))
                         .setLogChannel(toLong(modLogChannel))
-                        .setAnnounceTracks(announceTracks)
                         .setAutoDeHoist(autoDeHoist)
                         .setFilterInvites(filterInvites)
                         .setMuteRoleId(toLong(muteRole))
@@ -248,14 +279,49 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
 
-                response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/customcommands") {
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/messages") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
+
+                val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
+                val welcomeMessage = params["welcomeMessage"]
+                val leaveMessage = params["leaveMessage"]
+                val serverDescription = params["serverDescription"]
+                val welcomeChannel = params["welcomeChannel"]
+
+                val guild = getGuildFromRequest(request)
+
+                val newSettings = GuildSettingsUtils.getGuild(guild)
+                        .setServerDesc(serverDescription)
+                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                        .setCustomJoinMessage(welcomeMessage)
+                        .setCustomLeaveMessage(leaveMessage)
+                        .setEnableJoinMessage(welcomeLeaveEnabled)
+
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
             }
 
             //audio stuff
             get("/music") {
                 val guild = getGuildFromRequest(request)
                 if (guild != null) {
-                    val mng = AudioUtils.ins.getMusicManager(guild, false)
+                    val mng = audioUtils.getMusicManager(guild, false)
 
                     if (mng != null) {
                         return@get """<p>Audio player details:</p>
@@ -399,15 +465,21 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
                     val goodRoles = guild.roles.filter {
-                        it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
+                        it.canInteract(guild.selfMember.roles[0]) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
                     map.put("settings", GuildSettingsUtils.getGuild(guild))
                     map.put("guild", guild)
 
-                    if (queryMap().hasKey("message"))
-                        map.put("message", queryParams("message"))
+                    val session = request.session()
+                    val message: String? = session.attribute(FLASH_MESSAGE)
+                    if (!message.isNullOrEmpty()) {
+                        session.attribute(FLASH_MESSAGE, null)
+                        map.put("message", message)
+                    } else {
+                        map.put("message", false)
+                    }
                 }
             }
             map.put("color", colorToHex(Settings.defaultColour))
@@ -430,8 +502,8 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
     }
 
     private fun getSession(request: Request, response: Response): Session {
-        val session: String = request.session().attribute("sessionId")
-        if (session.isEmpty()) {
+        val session: String? = request.session().attribute("sessionId")
+        if (session.isNullOrEmpty()) {
             response.redirect("/dashboard")
         }
         return oAuth2Client.sessionController.getSession(session)
