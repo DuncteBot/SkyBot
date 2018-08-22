@@ -139,7 +139,7 @@ public class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebServer(shardManager, config, commandManager, database, variables.getAudioUtils(), variables);
+            new WebServer(shardManager, variables);
         }
     }
 

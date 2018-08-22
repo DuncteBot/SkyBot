@@ -23,15 +23,11 @@ import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
-import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.WebVariables
-import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
 import net.dv8tion.jda.bot.sharding.ShardManager
@@ -51,9 +47,12 @@ import java.sql.SQLException
 import java.util.*
 
 
-class WebServer(private val shardManager: ShardManager, private val config: DunctebotConfig,
-                private val commandManager: CommandManager, private val database: DBManager,
-                private val audioUtils: AudioUtils, private val variables: Variables) {
+class WebServer(private val shardManager: ShardManager, private val variables: Variables) {
+
+    private val config = variables.config
+    private val commandManager = variables.commandManager
+    private val database = variables.database
+    private val audioUtils = variables.audioUtils
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
