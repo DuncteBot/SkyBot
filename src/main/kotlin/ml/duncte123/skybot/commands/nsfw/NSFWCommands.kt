@@ -29,9 +29,11 @@ import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
 class NSFWCommands : Command() {
 
+    private val nekkobotBase = "https://nekobot.xyz/api/image?type="
+
     init {
         this.category = CommandCategory.NSFW
-        this.displayAliasesInHelp = true;
+        this.displayAliasesInHelp = true
     }
 
     override fun executeCommand(ctx: CommandContext) {
@@ -46,8 +48,7 @@ class NSFWCommands : Command() {
         }
         when (ctx.invoke) {
             "carsandhentai" -> {
-                WebUtils.ins.getText(String.format(ctx.googleBaseUrl, "Cars and hentai")).async {
-                    val jsonRaw = Ason(it)
+                WebUtils.ins.getAson(String.format(ctx.googleBaseUrl, "Cars and hentai")).async { jsonRaw ->
                     val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                     val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
                     sendEmbed(event,
@@ -62,7 +63,17 @@ class NSFWCommands : Command() {
                 WebUtils.ins.getJSONObject("https://nekos.life/api/v2/img/lewd").async {
                     sendEmbed(event, EmbedUtils.embedImage(it.getString("url")))
                 }
-
+            }
+            "lewdkitsune" -> {
+                WebUtils.ins.getJSONObject("${nekkobotBase}lewdkitsune").async {
+                    sendEmbed(event, EmbedUtils.embedImage(it.getString("message")))
+                }
+            }
+            "hentai" -> {
+                val t = if (ctx.random.nextInt(2) == 1) "hentai" else "hentai_anal"
+                WebUtils.ins.getJSONObject("$nekkobotBase$t").async {
+                    sendEmbed(event, EmbedUtils.embedImage(it.getString("message")))
+                }
             }
         }
     }
@@ -89,5 +100,5 @@ class NSFWCommands : Command() {
 
     override fun getName() = "lewdneko"
 
-    override fun getAliases() = arrayOf("carsandhentai")
+    override fun getAliases() = arrayOf("carsandhentai", "lewdkitsune", "hentai")
 }

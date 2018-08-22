@@ -26,7 +26,6 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONObject;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
@@ -54,24 +53,13 @@ public class ChangeLogCommand extends Command {
     }
 
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
-        WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/releases").async(json -> {
-            String date1 = json.getJSONObject(1).getString("published_at");
-            String date2 = json.getJSONObject(0).getString("published_at");
-            WebUtils.ins.getJSONArray("https://api.github.com/repos/duncte123/SkyBot/commits?since=" + date1
-                    + "&until=" + date2).async(commits -> {
-                EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                        .setTitle("Changelog for DuncetBot", "https://github.com/DuncteBot/SkyBot/commits/dev");
-                commits.forEach(c -> {
-                    JSONObject j = (JSONObject) c;
-                    JSONObject commit = j.getJSONObject("commit");
-                    eb.addField("Commit #" + j.getString("sha").substring(0, 8), "**[`" +
-                            commit.getString("message") + "`](" +
-                            j.getString("html_url") + ")** - " +
-                            j.getJSONObject("author").getString("login") + "\n", false);
-                });
-                embed = eb.build();
-                sendEmbed(event, embed);
-            });
+        WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
+            String body = json.getString("body");
+            EmbedBuilder eb = EmbedUtils.defaultEmbed()
+                    .setTitle("Changelog for DuncteBot", json.getString("html_url"))
+                    .setDescription(body);
+            embed = eb.build();
+            sendEmbed(event, embed);
         });
     }
 }

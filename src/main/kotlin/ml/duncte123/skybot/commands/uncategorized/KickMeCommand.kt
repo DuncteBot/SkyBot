@@ -62,7 +62,7 @@ class KickMeCommand : Command() {
     }
 
     override fun help() = """Kickes you off the server
-                    |Usage: `$PREFIX$$name`
+                    |Usage: `$PREFIX$name`
                 """.trimMargin()
 
     override fun getName() = "kickme"
