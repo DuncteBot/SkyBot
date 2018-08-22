@@ -121,9 +121,15 @@ class EvalCommand : Command() {
             return
         }
 
-        val script = importString + ctx.rawArgs
-                .replace("```(.*)\n".toRegex(), "")
-                .replace("\n?```".toRegex(), "")
+        var userIn = ctx.rawArgs
+
+        if(userIn.startsWith("```") && userIn.endsWith("```"))
+            userIn = userIn
+                    .replace("```(.*)\n".toRegex(), "")
+                    .replace("\n?```".toRegex(), "")
+
+        val script = importString + userIn
+
 
         var timeout = 5000L
 

@@ -19,6 +19,9 @@
 package ml.duncte123.skybot.objects.guild;
 
 import ml.duncte123.skybot.Settings;
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
 
 /**
  * This class will hold the settings for a guild
@@ -354,4 +357,18 @@ public class GuildSettings {
         return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, customPrefix,
                 (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
     }
+
+    //A utility method that might come in handy in the future
+    /*public JSONObject toJson() {
+        GuildSettings obj = this;
+        JSONObject j = new JSONObject();
+        for (Field field : obj.getClass().getDeclaredFields()) {
+            try {
+                j.put(field.getName(), field.get(obj));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return j;
+    }*/
 }

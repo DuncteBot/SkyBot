@@ -57,10 +57,10 @@ public class SkyBot {
 
     private SkyBot() throws Exception {
 
-        Variables vars = new Variables();
-        DunctebotConfig config = vars.getConfig();
-        DBManager database = vars.getDatabase();
-        CommandManager commandManager = vars.getCommandManager();
+        Variables variables = new Variables();
+        DunctebotConfig config = variables.getConfig();
+        DBManager database = variables.getDatabase();
+        CommandManager commandManager = variables.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
 
@@ -74,13 +74,13 @@ public class SkyBot {
         };
         RestAction.setPassContext(true);
 
-        if (vars.isSql()) { //Don't try to connect if we don't want to
+        if (variables.isSql()) { //Don't try to connect if we don't want to
             if (!database.getConnManager().hasSettings()) {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
             Connection conn = database.getConnection();
-            if (!database.isConnected() && vars.isSql()) {
+            if (!database.isConnected() && variables.isSql()) {
                 logger.error("Can't connect to database. ABORTING!!!!!");
                 System.exit(-3);
             } else {
@@ -99,7 +99,7 @@ public class SkyBot {
         Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings(vars);
+        GuildSettingsUtils.loadAllSettings(variables);
 
         //Set the token to a string
         String token = config.discord.token;
@@ -119,11 +119,11 @@ public class SkyBot {
         }
 
         logger.info(commandManager.getCommands().size() + " commands loaded.");
-        LavalinkManager.ins.start(config, vars.getAudioUtils());
+        LavalinkManager.ins.start(config, variables.getAudioUtils());
         final String finalUrl = url;
 
         //Set up sharding for the bot
-        EventManager eventManager = new EventManager(vars);
+        EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
                 .setEventManager(eventManager)
                 .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
@@ -139,7 +139,7 @@ public class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebServer(shardManager, config, commandManager, database, vars.getAudioUtils(), vars);
+            new WebServer(shardManager, config, commandManager, database, variables.getAudioUtils(), variables);
         }
     }
 
