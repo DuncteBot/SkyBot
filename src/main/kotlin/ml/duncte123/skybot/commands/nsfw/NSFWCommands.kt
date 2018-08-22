@@ -80,6 +80,8 @@ class NSFWCommands : Command() {
 
     override fun help() = """`${PREFIX}lewdneko` => Gives a very lewd neko
         |`${PREFIX}carsandhentai` => Delet this
+        |`${PREFIX}lewdkitsune` => Shows you a lewd kitsune
+        |`${PREFIX}hentai` => Just some hentai
     """.trimMargin()
 
     override fun help(invoke: String?): String {
@@ -91,6 +93,16 @@ class NSFWCommands : Command() {
             }
             "carsandhentai" -> {
                 """Delet this
+                    |Usage `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "lewdkitsune" -> {
+                """Shows you a lewd kitsune
+                    |Usage `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "hentai" -> {
+                """Just some hentai
                     |Usage `$PREFIX$invoke`
                 """.trimMargin()
             }
