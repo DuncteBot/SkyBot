@@ -76,7 +76,7 @@ open class PlayCommand : MusicCommand() {
                 return
             }
 
-            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx.commandManager, ctx, false)
+            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
         }
     }
 

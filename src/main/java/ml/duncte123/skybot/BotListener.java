@@ -245,7 +245,7 @@ public class BotListener extends ListenerAdapter {
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
                 DunctebotGuild g = new DunctebotGuild(guild, variables);
-                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()), g)) {
+                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
                             settings.getKickState() ? "kicked" : "muted", "spam", g);
                 }

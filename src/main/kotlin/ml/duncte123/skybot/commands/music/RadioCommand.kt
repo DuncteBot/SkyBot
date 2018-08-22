@@ -87,7 +87,7 @@ class RadioCommand : MusicCommand() {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return@executeCommand
                         }
-                        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx.commandManager, ctx, false)
+                        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx, false)
                         scheduler.queue.forEach {
                             if (it.info.uri != radio.url)
                                 scheduler.nextTrack()

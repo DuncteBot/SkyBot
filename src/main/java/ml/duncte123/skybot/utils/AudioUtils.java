@@ -147,14 +147,13 @@ public class AudioUtils {
      * @param addPlayList If the url is a playlist
      */
     public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester,
-                            final String trackUrlRaw, CommandManager commandManager, final CommandContext ctx,
+                            final String trackUrlRaw, final CommandContext ctx,
                             final boolean addPlayList) {
-        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, commandManager, ctx, true);
+        loadAndPlay(mng, channel, requester, trackUrlRaw, addPlayList, ctx, true);
     }
 
     public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester, final String trackUrlRaw,
                             final boolean addPlayList,
-                            final CommandManager commandManager,
                             final CommandContext ctx,
                             final boolean announce) {
         final String trackUrl;
@@ -171,7 +170,7 @@ public class AudioUtils {
             public void trackLoaded(AudioTrack track) {
                 String title = track.getInfo().title;
                 if (track.getInfo().isStream) {
-                    Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
+                    Optional<RadioStream> stream = ((RadioCommand) ctx.getCommandManager().getCommand("radio"))
                             .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();

@@ -56,15 +56,14 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
             }
             is Triple<*, *, *> -> {
                 if (any.first is Member && any.second is Message && any.third is Boolean) {
-                    return check(any as Triple<Member, Message, Boolean>, DunctebotGuild(any.first.guild, variables))
+                    return check(any as Triple<Member, Message, Boolean>)
                 }
                 this
             }
             is Pair<*, *> -> {
                 if (any.first is Member && any.second is Message) {
                     val member = any.first as Member
-                    return check(Triple(member, any.second as Message, false),
-                            DunctebotGuild(member.guild, variables))
+                    return check(Triple(member, any.second as Message, false))
                 }
                 this
             }
@@ -83,9 +82,9 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
     /**
      * @return {@code true} when the message is spam.
      */
-    fun check(data: Triple<Member, Message, Boolean>, guild: DunctebotGuild): Boolean {
+    infix fun check(data: Triple<Member, Message, Boolean>): Boolean {
         val author = data.first
-//        val guild = author.guild
+        val guild = DunctebotGuild(author.guild, variables)
         val user = author.user
         val msg = data.second
         val jda = msg.jda
