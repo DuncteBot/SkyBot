@@ -24,6 +24,7 @@ import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.*;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.*;
@@ -118,7 +119,7 @@ public class BotListener extends ListenerAdapter {
         this.database = variables.getDatabase();
         this.commandManager = variables.getCommandManager();
 
-        this.spamFilter = new SpamFilter(database);
+        this.spamFilter = new SpamFilter(database, variables);
     }
 
     @Override
@@ -129,7 +130,7 @@ public class BotListener extends ListenerAdapter {
         if (!unbanTimerRunning/* && Variables.NONE_SQLITE*/) {
             logger.info("Starting the unban timer.");
             //Register the timer for the auto unbans
-            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(database), 5, 5, TimeUnit.MINUTES);
+            systemPool.scheduleAtFixedRate(() -> ModerationUtils.checkUnbans(variables), 5, 5, TimeUnit.MINUTES);
             unbanTimerRunning = true;
         }
 
@@ -190,7 +191,7 @@ public class BotListener extends ListenerAdapter {
         }
 
         Guild guild = event.getGuild();
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
         String rw = event.getMessage().getContentRaw();
 
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
@@ -243,9 +244,10 @@ public class BotListener extends ListenerAdapter {
                 Message messageToCheck = event.getMessage();
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
-                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
+                DunctebotGuild g = new DunctebotGuild(guild, variables);
+                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()), g)) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                            settings.getKickState() ? "kicked" : "muted", "spam", guild);
+                            settings.getKickState() ? "kicked" : "muted", "spam", g);
                 }
             }
         }
@@ -322,7 +324,7 @@ public class BotListener extends ListenerAdapter {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
@@ -347,7 +349,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
         if (event.getMember().equals(guild.getSelfMember())) return;
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild);
+        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId =
@@ -402,7 +404,7 @@ public class BotListener extends ListenerAdapter {
                 guild.getJDA().getShardInfo().getShardId(),
                 TextColor.RESET
         );
-        GuildSettingsUtils.registerNewGuild(guild, database);
+        GuildSettingsUtils.registerNewGuild(guild, variables);
     }
 
     @Override
@@ -525,7 +527,7 @@ public class BotListener extends ListenerAdapter {
             return "NOPE";
 
         Guild guild = event.getGuild();
-        GuildSettings s = GuildSettingsUtils.getGuild(guild);
+        GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
         long autoRoleId = s.getAutoroleRole();
 

@@ -50,6 +50,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public final Queue<AudioTrack> queue;
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
+    private final Variables variables;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -59,9 +60,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      *
      * @param player Our audio player
      */
-    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player, Variables variables, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
+        this.variables = variables;
         this.guildMusicManager = guildMusicManager;
     }
 
@@ -178,7 +180,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             String title = track.getInfo().title;
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
-                Optional<RadioStream> stream = ((RadioCommand) Variables.ins.getCommandManager().getCommand("radio"))
+                Optional<RadioStream> stream = ((RadioCommand) variables.getCommandManager().getCommand("radio"))
                         .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();

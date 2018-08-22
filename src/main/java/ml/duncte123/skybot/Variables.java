@@ -42,7 +42,6 @@ import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
 public class Variables {
 
-    public static final Variables ins = new Variables();
     private final AudioUtils audioUtils;
     private final Alexflipnote alexflipnote;
     private final WAEngine alphaEngine;
@@ -57,7 +56,7 @@ public class Variables {
     private DunctebotConfig config;
 
 
-    private Variables() {
+    public Variables() {
         try {
             this.config = new Gson().fromJson(Files.asCharSource(new File("config.json"), Charsets.UTF_8).read(), DunctebotConfig.class);
         } catch (IOException e) {
@@ -68,7 +67,7 @@ public class Variables {
             System.exit(0);
         }
 
-        this.audioUtils = new AudioUtils(config.apis);
+        this.audioUtils = new AudioUtils(config.apis, this);
         this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
                 "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";

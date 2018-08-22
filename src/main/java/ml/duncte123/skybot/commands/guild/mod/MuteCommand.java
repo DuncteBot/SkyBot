@@ -56,7 +56,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        GuildSettings settings = getSettings(event.getGuild());
+        GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
@@ -69,7 +69,7 @@ public class MuteCommand extends Command {
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
                 .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
-                    ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", event.getGuild());
+                    ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                     sendSuccess(event.getMessage());
                 }
         );

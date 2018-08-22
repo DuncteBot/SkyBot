@@ -19,18 +19,20 @@
 package ml.duncte123.skybot.utils
 
 import me.duncte123.botCommons.text.TextColor
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
-class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
+class SpamFilter(private val database: DBManager, private val variables: Variables) : HashMap<Long, SpamCache>() {
 
     private lateinit var rates: LongArray
 
     @Throws(IllegalArgumentException::class)
-    public fun update(longs: LongArray, updateMode: Int = 0) {
+    fun update(longs: LongArray, updateMode: Int = 0) {
         if (this.containsKey(longs[0]))
             this[longs[0]]!!.update(longs.copyOfRange(1, 3), updateMode)
         else {
@@ -38,7 +40,7 @@ class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
         }
     }
 
-    public fun clearMessages() {
+    fun clearMessages() {
         for (guildsSpamCache in this.values) {
             for (memberId in guildsSpamCache.keys) {
                 guildsSpamCache[memberId] = ArrayList()
@@ -54,13 +56,15 @@ class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
             }
             is Triple<*, *, *> -> {
                 if (any.first is Member && any.second is Message && any.third is Boolean) {
-                    return check(any as Triple<Member, Message, Boolean>)
+                    return check(any as Triple<Member, Message, Boolean>, DunctebotGuild(any.first.guild, variables))
                 }
                 this
             }
             is Pair<*, *> -> {
                 if (any.first is Member && any.second is Message) {
-                    return check(Triple(any.first as Member, any.second as Message, false))
+                    val member = any.first as Member
+                    return check(Triple(member, any.second as Message, false),
+                            DunctebotGuild(member.guild, variables))
                 }
                 this
             }
@@ -79,9 +83,9 @@ class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
     /**
      * @return {@code true} when the message is spam.
      */
-    public infix fun check(data: Triple<Member, Message, Boolean>): Boolean {
+    fun check(data: Triple<Member, Message, Boolean>, guild: DunctebotGuild): Boolean {
         val author = data.first
-        val guild = author.guild
+//        val guild = author.guild
         val user = author.user
         val msg = data.second
         val jda = msg.jda
@@ -144,12 +148,12 @@ class SpamFilter(private val database: DBManager) : HashMap<Long, SpamCache>() {
         return false
     }
 
-    public fun applyRates(newRates: LongArray): SpamFilter {
+    fun applyRates(newRates: LongArray): SpamFilter {
         rates = newRates
         return this
     }
 
-    public fun applyRates(newRates: List<Long>): SpamFilter {
+    fun applyRates(newRates: List<Long>): SpamFilter {
         rates = newRates.toLongArray()
         return this
     }

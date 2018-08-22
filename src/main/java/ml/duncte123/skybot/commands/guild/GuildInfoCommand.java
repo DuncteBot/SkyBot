@@ -54,16 +54,16 @@ public class GuildInfoCommand extends Command {
                 if (!g.getFeatures().contains("VANITY_URL")) {
                     g.getInvites().queue(invites ->
                             invites.stream().findFirst().ifPresent(invite ->
-                                    sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
+                                    sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
                             )
                     );
                 } else {
                     g.getVanityUrl().queue(invite ->
-                            sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite))
+                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
             } else {
-                sendGuildInfoEmbed(event, "");
+                sendGuildInfoEmbed(event, ctx, "");
             }
 
         } catch (Exception e) {
@@ -87,11 +87,11 @@ public class GuildInfoCommand extends Command {
         return new String[]{"serverinfo", "server", "guild"};
     }
 
-    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, String inviteString) {
+    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {
         Guild g = event.getGuild();
         double[] ratio = GuildUtils.getBotRatio(g);
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
-        GuildSettings settings = GuildSettingsUtils.getGuild(g);
+        GuildSettings settings = ctx.getGuildSettings();
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }

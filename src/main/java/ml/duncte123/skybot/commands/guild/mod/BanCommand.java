@@ -76,7 +76,7 @@ public class BanCommand extends Command {
                     String newReason = ctx.getRawArgs();
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (m) -> {
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
                                 MessageUtils.sendSuccess(event.getMessage());
                             }
                     );
@@ -93,17 +93,17 @@ public class BanCommand extends Command {
                                 ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
                                         toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
                             } else {
                                 final String newReason = ctx.getRawArgs();
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, event.getGuild());
+                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
                             }
                         }
                 );
                 MessageUtils.sendSuccess(event.getMessage());
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", event.getGuild())
+                        (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
                 );
             }
         } catch (HierarchyException e) {

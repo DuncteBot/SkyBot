@@ -54,7 +54,7 @@ public class CustomCommandCommand extends Command {
 
         switch (args.size()) {
             case 1:
-                invokeCustomCommand(args.get(0), event, manager);
+                invokeCustomCommand(args.get(0), event, manager, ctx);
                 break;
 
             case 2:
@@ -68,9 +68,9 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private void invokeCustomCommand(String arg, GuildMessageReceivedEvent event, CommandManager manager) {
+    private void invokeCustomCommand(String arg, GuildMessageReceivedEvent event, CommandManager manager, CommandContext ctx) {
         if (arg.equalsIgnoreCase("list")) {
-            GuildSettings s = getSettings(event.getGuild());
+            GuildSettings s = ctx.getGuildSettings();
             StringBuilder sb = new StringBuilder();
             manager.getCustomCommands().stream()
                     .filter(c -> c.getGuildId().equals(event.getGuild().getId()))

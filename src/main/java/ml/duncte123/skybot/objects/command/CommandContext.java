@@ -60,6 +60,11 @@ public class CommandContext {
 
     // --------------- Methods from the Variables class --------------- //
 
+
+    public Variables getVariables() {
+        return variables;
+    }
+
     public CommandManager getCommandManager() {
         return this.variables.getCommandManager();
     }
@@ -122,7 +127,7 @@ public class CommandContext {
     }
 
     public GuildSettings getGuildSettings() {
-        return GuildSettingsUtils.getGuild(this.event.getGuild());
+        return GuildSettingsUtils.getGuild(this.event.getGuild(), this.variables);
     }
 
     public GuildMessageReceivedEvent getEvent() {
@@ -148,7 +153,7 @@ public class CommandContext {
     }
 
     public DunctebotGuild getGuild() {
-        return new DunctebotGuild(this.event.getGuild(), this.getDatabase());
+        return new DunctebotGuild(this.event.getGuild(), this.variables);
     }
 
     public JDA getJDA() {

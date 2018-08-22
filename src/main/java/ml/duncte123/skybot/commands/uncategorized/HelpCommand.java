@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -54,7 +53,7 @@ public class HelpCommand extends Command {
                             Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch))
-                sendCategoryHelp(event, toSearch.toUpperCase());
+                sendCategoryHelp(event, ctx.getGuild().getSettings().getCustomPrefix(), toSearch.toUpperCase());
             else
                 sendCommandHelp(event, toSearch, ctx.getCommandManager());
 
@@ -130,9 +129,9 @@ public class HelpCommand extends Command {
         sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
     }
 
-    private void sendCategoryHelp(GuildMessageReceivedEvent event, String toSearch) {
+    private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {
         CommandCategory cat = getCategory(toSearch);
-        MessageEmbed embed = HelpEmbeds.getCommandListWithPrefix(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix(), cat);
+        MessageEmbed embed = HelpEmbeds.getCommandListWithPrefix(prefix, cat);
         sendEmbed(event, embed);
     }
 

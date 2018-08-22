@@ -25,6 +25,7 @@ import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
@@ -51,7 +52,8 @@ import java.util.*
 
 
 class WebServer(private val shardManager: ShardManager, private val config: DunctebotConfig,
-                private val commandManager: CommandManager, private val database: DBManager, private val audioUtils: AudioUtils) {
+                private val commandManager: CommandManager, private val database: DBManager,
+                private val audioUtils: AudioUtils, private val variables: Variables) {
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
@@ -84,7 +86,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                 if (serverId.isNotEmpty()) {
                     val guild = shardManager.getGuildById(serverId)
                     if (guild != null) {
-                        val settings = GuildSettingsUtils.getGuild(guild)
+                        val settings = GuildSettingsUtils.getGuild(guild, variables)
                         map.put("prefix", settings.customPrefix)
                     }
                 }
@@ -233,14 +235,14 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
                 val guild = getGuildFromRequest(request)
 
-                val newSettings = GuildSettingsUtils.getGuild(guild)
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
                         .setCustomPrefix(prefix)
                         .setWelcomeLeaveChannel(toLong(welcomeChannel))
                         .setEnableJoinMessage(welcomeLeaveEnabled)
                         .setAutoroleRole(toLong(autorole))
                         .setAnnounceTracks(announceTracks)
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
                 request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
@@ -267,7 +269,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
                 val guild = getGuildFromRequest(request)
 
-                val newSettings = GuildSettingsUtils.getGuild(guild)
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
                         .setLogChannel(toLong(modLogChannel))
                         .setAutoDeHoist(autoDeHoist)
                         .setFilterInvites(filterInvites)
@@ -277,7 +279,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                         .setEnableSpamFilter(spamFilter)
                         .setEnableSwearFilter(swearFilter)
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
                 request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
@@ -303,14 +305,14 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
 
                 val guild = getGuildFromRequest(request)
 
-                val newSettings = GuildSettingsUtils.getGuild(guild)
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
                         .setServerDesc(serverDescription)
                         .setWelcomeLeaveChannel(toLong(welcomeChannel))
                         .setCustomJoinMessage(welcomeMessage)
                         .setCustomLeaveMessage(leaveMessage)
                         .setEnableJoinMessage(welcomeLeaveEnabled)
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
                 request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
@@ -469,7 +471,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Dunc
                     }.toList()
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
-                    map.put("settings", GuildSettingsUtils.getGuild(guild))
+                    map.put("settings", GuildSettingsUtils.getGuild(guild, variables))
                     map.put("guild", guild)
 
                     val session = request.session()

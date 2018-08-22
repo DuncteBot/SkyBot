@@ -64,7 +64,7 @@ public class SoftbanCommand extends Command {
             String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     nothing -> {
-                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
+                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
                         MessageUtils.sendSuccess(event.getMessage());
                         event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
                     }

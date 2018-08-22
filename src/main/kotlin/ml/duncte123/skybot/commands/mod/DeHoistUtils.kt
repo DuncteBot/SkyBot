@@ -22,6 +22,7 @@ package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.messaging.MessageUtils.sendSuccess
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildSettingsUtils
@@ -66,7 +67,7 @@ class DeHoistCommand : Command() {
     override fun getName() = "dehoist"
 }
 
-class DeHoistListener : ListenerAdapter() {
+class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
 
     private val badNameChars = "[\\[\\]*_\\-=+!@#\$%^&()]"
     private val regex = Pattern.compile(badNameChars)
@@ -95,6 +96,6 @@ class DeHoistListener : ListenerAdapter() {
         val memberName = member.effectiveName
         return (!memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
                 member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
-                GuildSettingsUtils.getGuild(member.guild).isAutoDeHoist)
+                GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
     }
 }

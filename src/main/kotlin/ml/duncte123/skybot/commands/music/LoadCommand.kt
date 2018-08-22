@@ -68,6 +68,7 @@ class LoadCommand : MusicCommand() {
                                     obj.toString(),
                                     false,
                                     ctx.commandManager,
+                                    ctx,
                                     false)
                         }
 

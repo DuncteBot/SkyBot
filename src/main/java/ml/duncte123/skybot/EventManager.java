@@ -40,10 +40,11 @@ public class EventManager
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
     private final BotListener botListener;
-    private final DeHoistListener deHoistListener = new DeHoistListener();
+    private final DeHoistListener deHoistListener;
 
     EventManager(Variables variables) {
         this.botListener = new BotListener(variables);
+        this.deHoistListener = new DeHoistListener(variables);
     }
 
 

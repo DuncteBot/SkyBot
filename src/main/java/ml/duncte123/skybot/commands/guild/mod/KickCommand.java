@@ -66,7 +66,7 @@ public class KickCommand extends Command {
             String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     (noting) -> {
-                        ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, event.getGuild());
+                        ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());
                         MessageUtils.sendSuccess(event.getMessage());
                     }
             );

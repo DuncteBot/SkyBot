@@ -76,7 +76,7 @@ class ChatCommand : Command() {
 
         if (event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                    .replace("{PREFIX}", getSettings(event.guild).customPrefix))
+                    .replace("{PREFIX}", ctx.guildSettings.customPrefix))
             return
         }
 

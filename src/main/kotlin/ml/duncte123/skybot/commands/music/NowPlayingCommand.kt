@@ -48,16 +48,10 @@ class NowPlayingCommand : MusicCommand() {
                 val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    val title = channeldata.getString("title")
-                    val artist = channeldata.getString("artist")
-                    val res = YoutubeUtils.searchYoutube("$title - $artist", ctx.config.apis.googl)
-                    val url = if (res.isEmpty()) {
-                        stream.url
-                    } else {
-                        "https://www.youtube.com/watch?v=${res[0].id.videoId}"
-                    }
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [$title]($url) by $artist**")
-                            .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}]" +
+                            "(${stream.url}) by ${channeldata.getString("artist")}**")
+                            .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}")
+                            .setColor(Color.decode(channeldata.getString("color"))).build()
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
                 }

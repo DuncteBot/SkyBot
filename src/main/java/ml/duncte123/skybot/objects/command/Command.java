@@ -23,9 +23,7 @@ import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -244,16 +242,6 @@ public abstract class Command implements ICommand {
             helpParsed = s;
         }
         return helpParsed;
-    }
-
-    /**
-     * This returns the settings for the given guild
-     *
-     * @param guild the guild that we need the settings for
-     * @return the {@link GuildSettings GuildSettings} for the given guild
-     */
-    protected GuildSettings getSettings(Guild guild) {
-        return GuildSettingsUtils.getGuild(guild);
     }
 
     @Override

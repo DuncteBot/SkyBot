@@ -272,9 +272,10 @@ public class CommandManager {
      * @param event the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
+        String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
                 "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
+                        Pattern.quote(customPrefix),
                 "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 

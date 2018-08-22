@@ -57,7 +57,7 @@ public class SkyBot {
 
     private SkyBot() throws Exception {
 
-        Variables vars = Variables.ins;
+        Variables vars = new Variables();
         DunctebotConfig config = vars.getConfig();
         DBManager database = vars.getDatabase();
         CommandManager commandManager = vars.getCommandManager();
@@ -99,7 +99,7 @@ public class SkyBot {
         Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
-        GuildSettingsUtils.loadAllSettings(database);
+        GuildSettingsUtils.loadAllSettings(vars);
 
         //Set the token to a string
         String token = config.discord.token;
@@ -139,7 +139,7 @@ public class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebServer(shardManager, config, commandManager, database, vars.getAudioUtils());
+            new WebServer(shardManager, config, commandManager, database, vars.getAudioUtils(), vars);
         }
     }
 

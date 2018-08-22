@@ -21,6 +21,7 @@ package ml.duncte123.skybot.audio;
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
@@ -51,12 +52,12 @@ public class GuildMusicManager {
      *
      * @param g The guild that we wannt the manager for
      */
-    public GuildMusicManager(Guild g) {
+    public GuildMusicManager(Guild g, Variables variables) {
         player = LavalinkManager.ins.createPlayer(g.getIdLong());
-        scheduler = new TrackScheduler(player, this);
+        scheduler = new TrackScheduler(player, variables, this);
         sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
-        this.settings = GuildSettingsUtils.getGuild(g);
+        this.settings = GuildSettingsUtils.getGuild(g, variables);
     }
 
     /**
