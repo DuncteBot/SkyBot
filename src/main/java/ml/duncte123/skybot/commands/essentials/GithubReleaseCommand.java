@@ -35,13 +35,6 @@ public class GithubReleaseCommand extends Command {
     private static final String REPO_PART = "/repos/DuncteBot/SkyBot";
 
     private static final String CREATE_RELEASE = GITHUB_API + REPO_PART + "/releases?access_token=%s";
-//            + Variables.CONFIG.getString("apis.github");
-
-    /*private static final String UPDATE_RELEASE = GITHUB_API + REPO_PART + "/releases/%s?access_token="
-            + AirUtils.CONFIG.getString("apis.github");
-
-    private static final String UPLOAD_ASSET = "https://uploads.github.com" + REPO_PART + "/releases/%s/assets?name=%s&access_token="
-            + AirUtils.CONFIG.getString("apis.github");*/
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -78,7 +71,7 @@ public class GithubReleaseCommand extends Command {
         JSONObject releaseOut = new JSONObject()
                 .put("tag_name", name)
                 .put("name", name)
-                .put("target_commitish", "dev")
+                .put("target_commitish", "master")
                 .put("body", message)
                 .put("draft", false)
                 .put("prerelease", false);
