@@ -47,7 +47,7 @@ public class ShardInfoCommand extends Command {
         headers.add("Status");
         headers.add("Ping");
         headers.add("Guild Count");
-        headers.add("Connected VCs / Users Listening");
+        headers.add("Connected VCs");
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
