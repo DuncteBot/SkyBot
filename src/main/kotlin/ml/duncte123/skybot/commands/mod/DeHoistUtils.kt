@@ -55,7 +55,7 @@ class DeHoistCommand : Command() {
             return
         }
 
-        event.guild.controller.setNickname(toDehoist, "\uD82F\uDCA2" + toDehoist.effectiveName)
+        event.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
                 .reason("de-hoist by ${String.format("%#s", event.author)}").queue()
         sendSuccess(event.message)
     }
@@ -75,7 +75,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
-            event.guild.controller.setNickname(event.member, "\uD82F\uDCA2" + event.member.effectiveName)
+            event.guild.controller.setNickname(event.member, "\u25AA" + event.member.effectiveName)
                     .reason("auto de-hoist").queue()
         }
     }
