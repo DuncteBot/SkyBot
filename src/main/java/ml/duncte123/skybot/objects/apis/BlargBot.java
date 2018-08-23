@@ -42,6 +42,10 @@ public class BlargBot {
         return makeRequest("image/clint", new JSONObject().put("image", imageUrl));
     }
 
+    public PendingRequest<InputStream> getLinus(String imageUrl) {
+        return makeRequest("image/linus", new JSONObject().put("image", imageUrl));
+    }
+
     public PendingRequest<InputStream> getDelete(String text) {
         return makeRequest("image/delete", new JSONObject().put("text", text));
     }
@@ -50,13 +54,13 @@ public class BlargBot {
         return makeRequest("image/pccheck", new JSONObject().put("text", text));
     }
 
-    /*public PendingRequest<InputStream> getShit(String text) {
+    public PendingRequest<InputStream> getShit(String text) {
         return getShit(text, false);
     }
 
     public PendingRequest<InputStream> getShit(String text, boolean plural) {
-        return makeRequest("image/thesearch", new JSONObject().put("text", text).put("plural", plural));
-    }*/
+        return makeRequest("image/shit", new JSONObject().put("text", text).put("plural", plural));
+    }
 
     public PendingRequest<InputStream> getTheSearch(String text) {
         return makeRequest("image/thesearch", new JSONObject().put("text", text));

@@ -18,13 +18,14 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import java.sql.SQLException
 
 class KpopCommand : Command() {
@@ -43,7 +44,7 @@ class KpopCommand : Command() {
                     .addField("Name of the member", member.name, false)
                     .setImage(member.image)
                     .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
-            MessageUtils.sendEmbed(ctx.event, eb.build())
+            sendEmbed(ctx.event, eb.build())
         } catch (ignored: SQLException) {
             MessageUtils.sendMsg(ctx.event, "Nothing found")
         }

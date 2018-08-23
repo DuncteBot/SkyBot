@@ -18,14 +18,12 @@
 
 package fredboat.audio.player;
 
-import com.afollestad.ason.Ason;
 import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
-import me.duncte123.botCommons.config.Config;
 import ml.duncte123.skybot.SkyBot;
-import ml.duncte123.skybot.audio.LavalinkNode;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
@@ -33,9 +31,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Base64;
-import java.util.List;
 import java.util.Objects;
 
 
@@ -48,42 +44,38 @@ public class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
     private JdaLavalink lavalink = null;
-    private Config config = null;
+    private DunctebotConfig config = null;
+    private AudioUtils audioUtils = null;
 
     private LavalinkManager() {
     }
 
-    public void start(Config c) {
+    public void start(DunctebotConfig c, AudioUtils a) {
         this.config = c;
+        this.audioUtils = a;
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(config.getString("discord.token"));
+        String userId = getIdFromToken(config.discord.token);
 
         lavalink = new JdaLavalink(
                 userId,
-                config.getInt("discord.totalShards", 1),
+                config.discord.totalShards,
                 shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
-        List<LavalinkNode> defaultNodes = new ArrayList<>();
-        defaultNodes.add(new LavalinkNode("ws://localhost", "youshallnotpass"));
-        List<Ason> nodes = config.getArray("lavalink.nodes", defaultNodes);
-        List<LavalinkNode> nodeList = new ArrayList<>();
 
-        nodes.forEach(it -> nodeList.add(Ason.deserialize(it, LavalinkNode.class)));
-
-        nodeList.forEach(it ->
-                lavalink.addNode(Objects.requireNonNull(toURI(it.wsurl)), it.pass)
-        );
+        for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
+            lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass);
+        }
     }
 
     public boolean isEnabled() {
-        return config.getBoolean("lavalink.enable", false);
+        return config.lavalink.enable;
     }
 
     public IPlayer createPlayer(long guildId) {
         return isEnabled()
                 ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
-                : new LavaplayerPlayerWrapper(AudioUtils.ins.getPlayerManager().createPlayer());
+                : new LavaplayerPlayerWrapper(audioUtils.getPlayerManager().createPlayer());
     }
 
     public void openConnection(VoiceChannel channel) {

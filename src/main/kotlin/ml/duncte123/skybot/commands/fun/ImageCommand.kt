@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import com.afollestad.ason.Ason
+import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import org.apache.commons.lang3.StringUtils
 

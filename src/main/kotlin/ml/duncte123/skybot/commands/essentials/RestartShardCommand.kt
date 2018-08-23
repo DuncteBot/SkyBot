@@ -23,11 +23,11 @@ import kotlinx.coroutines.experimental.cancel
 import kotlinx.coroutines.experimental.cancelChildren
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.*
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 import kotlin.coroutines.experimental.coroutineContext
@@ -81,7 +81,7 @@ class RestartShardCommand : Command() {
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON)
-                MessageUtils.sendErrorJSON(event.message, ex, false)
+                ml.duncte123.skybot.utils.MessageUtils.sendErrorJSON(event.message, ex, false)
             else {
                 MessageUtils.sendError(event.message)
             }

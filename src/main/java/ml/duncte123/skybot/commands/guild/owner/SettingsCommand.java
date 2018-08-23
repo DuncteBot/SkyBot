@@ -37,7 +37,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.utils.MessageUtils.*;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendError;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class SettingsCommand extends Command {
 

@@ -25,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -32,7 +33,6 @@ import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -50,6 +50,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public final Queue<AudioTrack> queue;
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
+    private final Variables variables;
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -59,9 +60,10 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      *
      * @param player Our audio player
      */
-    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player, Variables variables, GuildMusicManager guildMusicManager) {
         this.player = player;
         this.queue = new LinkedList<>();
+        this.variables = variables;
         this.guildMusicManager = guildMusicManager;
     }
 
@@ -178,7 +180,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             String title = track.getInfo().title;
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
-                Optional<RadioStream> stream = ((RadioCommand) Variables.ins.getCommandManager().getCommand("radio"))
+                Optional<RadioStream> stream = ((RadioCommand) variables.getCommandManager().getCommand("radio"))
                         .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();

@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.mod
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botCommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
-import ml.duncte123.skybot.utils.MessageUtils.sendSuccess
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.VoiceChannel
 

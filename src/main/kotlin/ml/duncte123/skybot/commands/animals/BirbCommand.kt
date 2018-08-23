@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import java.io.IOException
 
 class BirbCommand : Command() {

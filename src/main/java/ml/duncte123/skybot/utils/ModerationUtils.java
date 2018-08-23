@@ -19,7 +19,9 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.SkyBot;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -32,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
+
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 @SuppressWarnings("SqlDialectInspection")
 public class ModerationUtils {
@@ -48,8 +52,8 @@ public class ModerationUtils {
      * @param time         How long it takes for the punishment to get removed
      * @param g            A instance of the {@link Guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, Guild g) {
-        long chan = GuildSettingsUtils.getGuild(g).getLogChannel();
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
+        long chan = g.getSettings().getLogChannel();
         if (chan > 0) {
             TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
@@ -57,7 +61,7 @@ public class ModerationUtils {
                 length = " lasting " + time + "";
             }
 
-            MessageUtils.sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
+            sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
                     punishedUser,
                     punishment,
                     mod,
@@ -68,7 +72,7 @@ public class ModerationUtils {
     }
 
     /**
-     * A version of {@link #modLog(User, User, String, String, String, Guild)} but without the time
+     * A version of {@link #modLog(User, User, String, String, String, DunctebotGuild)} but without the time
      *
      * @param mod          The mod that performed the punishment
      * @param punishedUser The user that got punished
@@ -76,7 +80,7 @@ public class ModerationUtils {
      * @param reason       The reason of the punishment
      * @param g            A instance of the {@link Guild}
      */
-    public static void modLog(User mod, User punishedUser, String punishment, String reason, Guild g) {
+    public static void modLog(User mod, User punishedUser, String punishment, String reason, DunctebotGuild g) {
         modLog(mod, punishedUser, punishment, reason, "", g);
     }
 
@@ -88,7 +92,7 @@ public class ModerationUtils {
      * @param punishment   The type of punishment that got removed
      * @param g            A instance of the {@link Guild}
      */
-    public static void modLog(User mod, User unbannedUser, String punishment, Guild g) {
+    public static void modLog(User mod, User unbannedUser, String punishment, DunctebotGuild g) {
         modLog(mod, unbannedUser, punishment, "", g);
     }
 
@@ -176,7 +180,8 @@ public class ModerationUtils {
     /**
      * This will check if there are users that can be unbanned
      */
-    public static void checkUnbans(DBManager database) {
+    public static void checkUnbans(Variables variables) {
+        DBManager database = variables.getDatabase();
         database.run(() -> {
             ShardManager shardManager = SkyBot.getInstance().getShardManager();
             logger.debug("Checking for users to unban");
@@ -209,7 +214,7 @@ public class ModerationUtils {
                                                 Long.parseUnsignedLong(userID),
                                                 Short.valueOf(res.getString("discriminator"))),
                                         "unbanned",
-                                        guild
+                                        new DunctebotGuild(guild, variables)
                                 );
                             }
                         } catch (NullPointerException ignored) {
@@ -230,18 +235,18 @@ public class ModerationUtils {
         });
     }
 
-    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
+    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
         muteUser(guild, member, channel, cause, minutesUntilUnMute, false);
     }
 
-    public static void muteUser(Guild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
+    public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
         Member self = guild.getSelfMember();
-        GuildSettings guildSettings = GuildSettingsUtils.getGuild(guild);
+        GuildSettings guildSettings = guild.getSettings();
         long muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
+                sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                         "We disabled your spam filter until you have set up a role.");
 
             guildSettings.setEnableSpamFilter(false);
@@ -252,19 +257,19 @@ public class ModerationUtils {
 
         if (muteRole == null) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "The role for the punished people is inexistent.");
+                sendMsg(channel, "The role for the punished people is inexistent.");
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+                sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I can not access either the member or the role.");
+                sendMsg(channel, "I can not access either the member or the role.");
             return;
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
@@ -274,7 +279,7 @@ public class ModerationUtils {
                                 .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
                 ,
                 (failure) -> {
-                    long chan = GuildSettingsUtils.getGuild(guild).getLogChannel();
+                    long chan = guildSettings.getLogChannel();
                     if (chan > 0) {
                         TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
@@ -295,13 +300,13 @@ public class ModerationUtils {
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+                sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
             return;
         }
 
         if (!self.canInteract(member)) {
             if (sendMessages)
-                MessageUtils.sendMsg(channel, "I can not access the member.");
+                sendMsg(channel, "I can not access the member.");
             return;
         }
         String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);

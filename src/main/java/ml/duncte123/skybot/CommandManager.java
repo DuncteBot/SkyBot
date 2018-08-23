@@ -45,8 +45,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
 
 @SuppressWarnings("WeakerAccess")
 public class CommandManager {
@@ -272,9 +272,10 @@ public class CommandManager {
      * @param event the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
+        String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
                 "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                        Pattern.quote(GuildSettingsUtils.getGuild(event.getGuild()).getCustomPrefix()),
+                        Pattern.quote(customPrefix),
                 "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 
@@ -318,7 +319,6 @@ public class CommandManager {
                                     .put("user", event.getAuthor())
                                     .put("channel", event.getChannel())
                                     .put("guild", event.getGuild())
-                                    .put("random", variables.getRandom())
                                     .put("args", StringUtils.join(args, " "))
                                     .parse(cc.getMessage());
 

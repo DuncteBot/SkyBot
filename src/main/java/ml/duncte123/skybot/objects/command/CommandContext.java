@@ -19,14 +19,19 @@
 package ml.duncte123.skybot.objects.command;
 
 import com.wolfram.alpha.WAEngine;
-import me.duncte123.botCommons.config.Config;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.apis.BlargBot;
+import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AudioUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
@@ -36,7 +41,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
+import java.util.regex.Pattern;
 
 public class CommandContext {
 
@@ -54,11 +60,16 @@ public class CommandContext {
 
     // --------------- Methods from the Variables class --------------- //
 
+
+    public Variables getVariables() {
+        return variables;
+    }
+
     public CommandManager getCommandManager() {
         return this.variables.getCommandManager();
     }
 
-    public Config getConfig() {
+    public DunctebotConfig getConfig() {
         return this.variables.getConfig();
     }
 
@@ -66,7 +77,7 @@ public class CommandContext {
         return this.variables.getDatabase();
     }
 
-    public Random getRandom() {
+    public ThreadLocalRandom getRandom() {
         return this.variables.getRandom();
     }
 
@@ -82,6 +93,18 @@ public class CommandContext {
         return this.variables.getAlphaEngine();
     }
 
+    public BlargBot getBlargbot() {
+        return this.variables.getBlargBot();
+    }
+
+    public Alexflipnote getAlexFlipnote() {
+        return this.variables.getAlexflipnote();
+    }
+
+    public AudioUtils getAudioUtils() {
+        return this.variables.getAudioUtils();
+    }
+
     // --------------- Normal methods --------------- //
 
     public String getInvoke() {
@@ -93,11 +116,18 @@ public class CommandContext {
     }
 
     public String getRawArgs() {
-        return this.event.getMessage().getContentRaw().split("\\s+", 2)[1];
+        return this.event.getMessage().getContentRaw()
+                .replaceFirst(
+                        "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
+                                Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                                Pattern.quote(getGuildSettings().getCustomPrefix()),
+                        "")
+                .split("\\s+", 2)[1];
+//        return String.join(" ", getArgs());
     }
 
     public GuildSettings getGuildSettings() {
-        return GuildSettingsUtils.getGuild(this.event.getGuild());
+        return GuildSettingsUtils.getGuild(this.event.getGuild(), this.variables);
     }
 
     public GuildMessageReceivedEvent getEvent() {
@@ -123,10 +153,22 @@ public class CommandContext {
     }
 
     public DunctebotGuild getGuild() {
-        return new DunctebotGuild(this.event.getGuild(), this.getDatabase());
+        return new DunctebotGuild(this.event.getGuild(), this.variables);
     }
 
     public JDA getJDA() {
         return this.event.getJDA();
+    }
+
+    public ShardManager getShardManager() {
+        return getJDA().asBot().getShardManager();
+    }
+
+    public User getSelfUser() {
+        return getJDA().getSelfUser();
+    }
+
+    public Member getSelfMember() {
+        return getGuild().getSelfMember();
     }
 }

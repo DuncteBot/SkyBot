@@ -21,7 +21,6 @@ package ml.duncte123.skybot.utils;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.wolfram.alpha.WAEngine;
 import me.duncte123.botCommons.web.WebUtils;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.discord.user.Profile;
 import net.dv8tion.jda.core.OnlineStatus;
@@ -32,8 +31,13 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.awt.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Random;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
@@ -182,14 +186,14 @@ public class AirUtils {
     /**
      * Stops everything
      */
-    public static void stop(DBManager database) {
+    public static void stop(DBManager database, AudioUtils audioUtils) {
         try {
             database.getConnManager().getConnection().close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
         try {
-            AudioUtils.ins.musicManagers.forEach((a, b) -> {
+            audioUtils.musicManagers.forEach((a, b) -> {
                 if (b.player.getPlayingTrack() != null)
                     b.player.stopTrack();
             });
@@ -235,7 +239,7 @@ public class AirUtils {
         String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
         StringBuilder output = new StringBuilder();
         while (output.length() < length) { // length of the random string.
-            int index = (int) (Variables.ins.getRandom().nextFloat() * chars.length());
+            int index = (int) (new Random().nextFloat() * chars.length());
             output.append(chars.charAt(index));
         }
         return output.toString();
@@ -256,7 +260,7 @@ public class AirUtils {
      * @return a flipped table
      */
     public static String flipTable() {
-        switch (Variables.ins.getRandom().nextInt(4)) {
+        switch (new Random().nextInt(4)) {
             case 0:
                 return "(╯°□°)╯︵┻━┻";
             case 1:
@@ -304,11 +308,37 @@ public class AirUtils {
         return null;
     }
 
-    public static PendingRequest<String> shortenUrl(String url) {
-        return WebUtils.ins.shortenUrl(url, Variables.ins.getConfig().getString("apis.googl", "Google api key"));
+    public static PendingRequest<String> shortenUrl(String url, String googleKey) {
+        return WebUtils.ins.shortenUrl(url, googleKey);
     }
 
     public static String colorToHex(Color color) {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
+    }
+
+    public static long getSystemUptime() throws Exception {
+        long uptime = -1;
+        String os = System.getProperty("os.name").toLowerCase();
+        if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
+            Process uptimeProc = Runtime.getRuntime().exec("uptime");
+            BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
+            String line = in.readLine();
+            if (line != null) {
+                Pattern parse = Pattern.compile("((\\d+) days,)? (\\d+):(\\d+)");
+                Matcher matcher = parse.matcher(line);
+                if (matcher.find()) {
+                    String _days = matcher.group(2);
+                    String _hours = matcher.group(3);
+                    String _minutes = matcher.group(4);
+                    int days = _days != null ? Integer.parseInt(_days) : 0;
+                    int hours = _hours != null ? Integer.parseInt(_hours) : 0;
+                    int minutes = _minutes != null ? Integer.parseInt(_minutes) : 0;
+                    uptime = TimeUnit.MILLISECONDS.convert(days, TimeUnit.DAYS) +
+                            TimeUnit.MILLISECONDS.convert(hours, TimeUnit.HOURS) +
+                            TimeUnit.MILLISECONDS.convert(minutes, TimeUnit.MINUTES);
+                }
+            }
+        }
+        return uptime;
     }
 }

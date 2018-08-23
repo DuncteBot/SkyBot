@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
@@ -64,7 +64,7 @@ public class SoftbanCommand extends Command {
             String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                     nothing -> {
-                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, event.getGuild());
+                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
                         MessageUtils.sendSuccess(event.getMessage());
                         event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
                     }

@@ -1,9 +1,10 @@
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/8ed5b37f438d4dbc894b618a5b6f76a6)](https://app.codacy.com/app/duncte123/SkyBot?utm_source=github.com&utm_medium=referral&utm_content=duncte123/SkyBot&utm_campaign=badger)
 # SkyBot [![Build Status](https://circleci.com/gh/duncte123/SkyBot/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/duncte123/SkyBot) [![DiscordBots](https://discordbots.org/api/widget/status/210363111729790977.png)](https://discordbots.org/bot/210363111729790977)
-SkyBot is a discord bot with music and mod commands
+SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
-If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
+If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) 
+[![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 
 # How to invite the bot to a server?
@@ -12,7 +13,8 @@ Go to `https://discordapp.com/oauth2/authorize?&client_id=210363111729790977scop
 
 
 # How to setup? / Self hosting
-We don't support self hosting of the bot. If you try to host this bot yourself and it fails please do not come to us for support.
+We don't support self hosting of the bot anymore.
+If you try to host this bot yourself and it fails please do not contact us for support.
 
 # Libs
 The following libraries are used:
@@ -30,6 +32,9 @@ The following libraries are used:
 - [_groovy-sandbox_](https://github.com/jenkinsci/groovy-sandbox)
 - [_spotify-web-api-java_](https://github.com/thelinmichael/spotify-web-api-java)
 - [_logback-classic_](https://logback.qos.ch/)
+
+# Support
+[![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://discord.gg/NKM9Xtk)
 
 # ToDo list
 - [x] ~~SQLite as a fail over database~~

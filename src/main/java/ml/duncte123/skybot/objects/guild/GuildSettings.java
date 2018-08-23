@@ -354,4 +354,18 @@ public class GuildSettings {
         return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, customPrefix,
                 (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
     }
+
+    //A utility method that might come in handy in the future
+    /*public org.json.JSONObject toJson() {
+        GuildSettings obj = this;
+        org.json.JSONObject j = new JSONObject();
+        for (java.lang.reflect.Field field : obj.getClass().getDeclaredFields()) {
+            try {
+                j.put(field.getName(), field.get(obj));
+            } catch (IllegalAccessException e) {
+                e.printStackTrace();
+            }
+        }
+        return j;
+    }*/
 }

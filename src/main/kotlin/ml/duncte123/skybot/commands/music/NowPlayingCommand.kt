@@ -26,7 +26,8 @@ import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.YoutubeUtils
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -35,9 +36,9 @@ class NowPlayingCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
         val msg = when {
             player.playingTrack != null && !player.playingTrack.info.isStream ->
@@ -47,15 +48,17 @@ class NowPlayingCommand : MusicCommand() {
                 val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
                 if (stream is ILoveStream) {
                     val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}](${stream.url}) by ${channeldata.getString("artist")}**")
-                            .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}").setColor(Color.decode(channeldata.getString("color"))).build()
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}]" +
+                            "(${stream.url}) by ${channeldata.getString("artist")}**")
+                            .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}")
+                            .setColor(Color.decode(channeldata.getString("color"))).build()
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
                 }
             }
             else -> EmbedUtils.embedMessage("The player is not currently playing anything!")
         }
-        MessageUtils.sendEmbed(event, msg)
+        sendEmbed(event, msg)
     }
 
     override fun help(): String = "Prints information about the currently playing song (title, current time)"

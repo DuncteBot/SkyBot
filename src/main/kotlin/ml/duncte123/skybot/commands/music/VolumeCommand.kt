@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.MessageUtils
 
 
 class VolumeCommand : MusicCommand() {
@@ -32,10 +32,10 @@ class VolumeCommand : MusicCommand() {
         if (!isUserOrGuildPatron(event))
             return
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         if (args.isEmpty()) {

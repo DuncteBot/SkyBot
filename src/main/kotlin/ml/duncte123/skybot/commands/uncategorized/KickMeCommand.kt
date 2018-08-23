@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 import java.util.concurrent.TimeUnit
@@ -46,9 +46,9 @@ class KickMeCommand : Command() {
                 MessageUtils.sendMsg(event, "Your kick will commerce in 20 seconds") {
                     it.guild.controller.kick(event.member)
                             .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
-                            .queueAfter(20L, TimeUnit.SECONDS) {
+                            .queueAfter(20L, TimeUnit.SECONDS) {_ ->
                                 ModerationUtils.modLog(event.jda.selfUser,
-                                        event.author, "kicked", "Used the kickme command", event.guild)
+                                        event.author, "kicked", "Used the kickme command", ctx.guild)
                             }
                 }
             } else {
@@ -62,7 +62,7 @@ class KickMeCommand : Command() {
     }
 
     override fun help() = """Kickes you off the server
-                    |Usage: `$PREFIX$$name`
+                    |Usage: `$PREFIX$name`
                 """.trimMargin()
 
     override fun getName() = "kickme"

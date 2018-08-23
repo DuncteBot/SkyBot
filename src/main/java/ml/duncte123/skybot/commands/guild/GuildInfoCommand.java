@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild;
 
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -32,6 +32,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 2-7-2017.
@@ -52,16 +54,16 @@ public class GuildInfoCommand extends Command {
                 if (!g.getFeatures().contains("VANITY_URL")) {
                     g.getInvites().queue(invites ->
                             invites.stream().findFirst().ifPresent(invite ->
-                                    sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
+                                    sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
                             )
                     );
                 } else {
                     g.getVanityUrl().queue(invite ->
-                            sendGuildInfoEmbed(event, String.format(INVITE_STRING_TEMPLATE, invite))
+                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
             } else {
-                sendGuildInfoEmbed(event, "");
+                sendGuildInfoEmbed(event, ctx, "");
             }
 
         } catch (Exception e) {
@@ -85,11 +87,11 @@ public class GuildInfoCommand extends Command {
         return new String[]{"serverinfo", "server", "guild"};
     }
 
-    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, String inviteString) {
+    private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {
         Guild g = event.getGuild();
         double[] ratio = GuildUtils.getBotRatio(g);
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
-        GuildSettings settings = GuildSettingsUtils.getGuild(g);
+        GuildSettings settings = ctx.getGuildSettings();
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }
@@ -103,9 +105,9 @@ public class GuildInfoCommand extends Command {
                         inviteString, false)
                 .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                         "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
-                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user (total users " + g.getMemberCache().size() + ")", false);
+                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
-        MessageUtils.sendEmbed(event, eb.build());
+        sendEmbed(event, eb.build());
     }
 
 }

@@ -22,11 +22,8 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -41,6 +38,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SuppressWarnings("SameParameterValue")
 public abstract class Command implements ICommand {
@@ -52,7 +52,7 @@ public abstract class Command implements ICommand {
     public static final long patronsRole = 402497345721466892L;
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
-    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(4,
+    protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(10,
             r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
@@ -62,6 +62,18 @@ public abstract class Command implements ICommand {
      * A list of users that have upvoted the bot
      */
     private static final Set<Long> upvotedIds = new HashSet<>();
+    private static final Set<Long> noneUpvoteIds = new HashSet<>();
+
+    static {
+        //clear the upvotes every hour
+        commandService.scheduleAtFixedRate(
+                noneUpvoteIds::clear,
+                1L,
+                1L,
+                TimeUnit.HOURS
+        );
+    }
+
     /**
      * This holds the category
      */
@@ -70,12 +82,10 @@ public abstract class Command implements ICommand {
      * This tells the bot to display the aliases of the command in the help command
      */
     protected boolean displayAliasesInHelp = false;
-
     private String helpParsed = null;
 
-
-    private boolean checkVoteOnDBL(String userid) {
-        String token = Variables.ins.getConfig().getString("apis.discordbots_userToken", "");
+    private boolean checkVoteOnDBL(String userid, DunctebotConfig config) {
+        String token = config.apis.discordbots_userToken;
 
         if (token == null || token.isEmpty()) {
             logger.warn("Discord Bots token not found");
@@ -121,7 +131,7 @@ public abstract class Command implements ICommand {
         }
         Member m = supportGuild.getMember(u);
         if (m == null) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a ppatron only command and is locked for you because you " +
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                     "are not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
                     "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
@@ -129,7 +139,7 @@ public abstract class Command implements ICommand {
         }
 
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
-            MessageUtils.sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
+            sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                     "are not one of our patrons.\n" +
                     "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;
@@ -188,13 +198,15 @@ public abstract class Command implements ICommand {
     /**
      * Has this user upvoted the bot
      */
-    protected boolean hasUpvoted(User user) {
+    protected boolean hasUpvoted(User user, DunctebotConfig config) {
         boolean upvoteCheck = upvotedIds.contains(user.getIdLong());
-        if (!upvoteCheck) {
-            boolean dblCheck = checkVoteOnDBL(user.getId());
+        if (!upvoteCheck && !noneUpvoteIds.contains(user.getIdLong())) {
+            boolean dblCheck = checkVoteOnDBL(user.getId(), config);
             if (dblCheck) {
                 upvoteCheck = true;
                 upvotedIds.add(user.getIdLong());
+            } else {
+                noneUpvoteIds.add(user.getIdLong());
             }
         }
 
@@ -230,16 +242,6 @@ public abstract class Command implements ICommand {
             helpParsed = s;
         }
         return helpParsed;
-    }
-
-    /**
-     * This returns the settings for the given guild
-     *
-     * @param guild the guild that we need the settings for
-     * @return the {@link GuildSettings GuildSettings} for the given guild
-     */
-    protected GuildSettings getSettings(Guild guild) {
-        return GuildSettingsUtils.getGuild(guild);
     }
 
     @Override

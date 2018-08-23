@@ -18,9 +18,9 @@
 
 package ml.duncte123.skybot.commands.mod
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 
@@ -52,7 +52,7 @@ class WarnCommand : Command() {
         }
         if (ModerationUtils.getWarningCountForUser(ctx.database, target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
-            ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", event.guild)
+            ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
             return
         }
         var reason = ""
@@ -64,7 +64,7 @@ class WarnCommand : Command() {
         """.trimMargin()
 
         ModerationUtils.addWarningToDb(ctx.database, event.author, target.user, reason, event.guild)
-        ModerationUtils.modLog(event.author, target.user, "warned", reason, event.guild)
+        ModerationUtils.modLog(event.author, target.user, "warned", reason, ctx.guild)
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console
             it.sendMessage(dmMessage).queue(null) { _ -> }

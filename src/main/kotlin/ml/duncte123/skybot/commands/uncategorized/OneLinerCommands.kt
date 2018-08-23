@@ -18,13 +18,14 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.extensions.getString
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.MessageUtils.sendMsg
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
@@ -48,7 +49,10 @@ class OneLinerCommands : Command() {
 
             "trigger" -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif"))
 
-            "wam" -> sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
+            "spam" -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/191245668617158656/216896372727742464/spam.jpg"))
+
+//            "wam" -> sendEmbed(event, EmbedUtils.embedField("GET YOUR WAM NOW!!!!", "[http://downloadmorewam.com/](http://downloadmorewam.com/)"))
+            "wam" -> sendMsg(event, "http://downloadmorewam.com/wam.mp4")
 
             "mineh" -> sendMsg(event, MessageBuilder().setTTS(true).append("Insert creepy music here").build()) {
                 sendEmbed(event,
@@ -70,9 +74,9 @@ class OneLinerCommands : Command() {
 
             "donate" -> donateCommand(args, event)
 
-            //"screenfetch" -> {
-            //db!eval "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
-            //}
+            "screenfetch" -> sendMsg(event, "```\n${screenFetchCommand()}```")
+            //val test =  "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+
             "insta" -> instaCommand(args, event)
 
             "xkcd" -> {
@@ -140,6 +144,12 @@ class OneLinerCommands : Command() {
         }
     }
 
+    private fun screenFetchCommand(): String {
+        val command = Runtime.getRuntime().exec("screenfetch -N").getString()
+//        val command = Runtime.getRuntime().exec("help").getString()
+        return command.replace("`", "​'").replace("\u001B\\[[;\\d]*m", "")
+    }
+
     override fun help(invoke: String?): String {
 
         return when (invoke) {
@@ -155,6 +165,11 @@ class OneLinerCommands : Command() {
             }
             "trigger" -> {
                 """Use when you are triggered.
+                    |Usage: `$PREFIX$invoke`
+                """.trimMargin()
+            }
+            "spam" -> {
+                """What do you think 😏
                     |Usage: `$PREFIX$invoke`
                 """.trimMargin()
             }
@@ -211,6 +226,7 @@ class OneLinerCommands : Command() {
     override fun help() = """`${PREFIX}ping` => Shows the delay from the bot to the discord servers.
             |`${PREFIX}cookie` => blobnomcookie.
             |`${PREFIX}trigger` => Use when you are triggered.
+            |`${PREFIX}spam` => What do you think 😏
             |`${PREFIX}wam` => You need more WAM!.
             |`${PREFIX}mineh` => HERE COMES MINEH!
             |`${PREFIX}invite` => Gives you the bot invite
@@ -225,6 +241,6 @@ class OneLinerCommands : Command() {
 
     override fun getName() = "ping"
 
-    override fun getAliases() = arrayOf("cookie", "trigger", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-            "insta", "donate", "insta", "xkcd", "reverse")
+    override fun getAliases() = arrayOf("cookie", "trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "yesno",
+            "insta", "donate", "insta", "xkcd", "reverse", "screenfetch")
 }

@@ -30,13 +30,12 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
     public static TLongLongMap cooldowns = new TLongLongHashMap();
-    private static AudioUtils audioUtils = AudioUtils.ins;
 
     static {
         commandService.scheduleWithFixedDelay(() ->
@@ -83,14 +82,6 @@ public abstract class MusicCommand extends Command {
         commandService.shutdown();
     }
 
-    /**
-     * Returns the autio utils
-     *
-     * @return the audio utils
-     */
-    protected AudioUtils getAudioUtils() {
-        return audioUtils;
-    }
 
     /**
      * This is a shortcut for getting the music manager
@@ -99,8 +90,8 @@ public abstract class MusicCommand extends Command {
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
     //@Deprecated(message = "Use #getLavalinkManager(guild)")
-    protected GuildMusicManager getMusicManager(Guild guild) {
-        return getAudioUtils().getMusicManager(guild);
+    protected GuildMusicManager getMusicManager(Guild guild, AudioUtils audioUtils) {
+        return audioUtils.getMusicManager(guild);
     }
 
     /**
@@ -110,7 +101,7 @@ public abstract class MusicCommand extends Command {
      * @param reply whether the bot replies that you should make it join first
      * @return true if the checks pass
      */
-    protected boolean channelChecks(GuildMessageReceivedEvent event, boolean reply) {
+    protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply) {
 
         if (!event.getMember().getVoiceState().inVoiceChannel()) {
             sendMsg(event, "Please join a voice channel first");
@@ -133,7 +124,7 @@ public abstract class MusicCommand extends Command {
             }
             return false;
         }
-        getMusicManager(event.getGuild()).latestChannel = event.getChannel().getIdLong();
+        getMusicManager(event.getGuild(), audioUtils).latestChannel = event.getChannel().getIdLong();
         return true;
     }
 
@@ -143,8 +134,8 @@ public abstract class MusicCommand extends Command {
      * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
      * @return true if the checks pass
      */
-    protected boolean channelChecks(GuildMessageReceivedEvent event) {
-        return channelChecks(event, true);
+    protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils) {
+        return channelChecks(event, audioUtils, true);
     }
 
     protected boolean prejoinChecks(GuildMessageReceivedEvent event) {

@@ -32,8 +32,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.utils.MessageUtils.sendSuccess;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botCommons.messaging.MessageUtils.sendSuccess;
 
 public class MuteCommand extends Command {
 
@@ -56,7 +56,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        GuildSettings settings = getSettings(event.getGuild());
+        GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
@@ -69,7 +69,7 @@ public class MuteCommand extends Command {
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
                 .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
-                    ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", event.getGuild());
+                    ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                     sendSuccess(event.getMessage());
                 }
         );

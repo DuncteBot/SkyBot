@@ -23,11 +23,12 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.parser.Parser;
+
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 public class KittyCommand extends Command {
 
@@ -38,13 +39,13 @@ public class KittyCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        String apiKey = ctx.getConfig().getString("apis.thecatapi", "");
+        String apiKey = ctx.getConfig().apis.thecatapi;
         WebUtils.ins.getText("http://thecatapi.com/api/images/get?" +
                 (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
             Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
             String fullUrl = doc.selectFirst("url").text();
             String sourceUrl = doc.selectFirst("source_url").text();
-            MessageUtils.sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("source", sourceUrl, fullUrl));
+            sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("source", sourceUrl, fullUrl));
         });
     }
 

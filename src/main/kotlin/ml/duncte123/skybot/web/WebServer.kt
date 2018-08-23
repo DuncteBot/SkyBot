@@ -22,15 +22,12 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
-import me.duncte123.botCommons.config.Config
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
-import ml.duncte123.skybot.CommandManager
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
-import ml.duncte123.skybot.utils.AudioUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
 import net.dv8tion.jda.bot.sharding.ShardManager
@@ -50,15 +47,21 @@ import java.sql.SQLException
 import java.util.*
 
 
-class WebServer(private val shardManager: ShardManager, private val config: Config,
-                private val commandManager: CommandManager, private val database: DBManager) {
+class WebServer(private val shardManager: ShardManager, private val variables: Variables) {
+
+    private val config = variables.config
+    private val commandManager = variables.commandManager
+    private val database = variables.database
+    private val audioUtils = variables.audioUtils
 
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
-            .setClientId(config.getLong("discord.oauth.clientId", 210363111729790977))
-            .setClientSecret(config.getString("discord.oauth.clientSecret", "aaa"))
+            .setClientId(config.discord.oauth.clientId)
+            .setClientSecret(config.discord.oauth.clientSecret)
             .build()
+
+    private val FLASH_MESSAGE = "FLASH_MESSAGE"
 
     init {
 
@@ -66,6 +69,10 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
         port(2000)
 
         staticFiles.location("/public")
+
+        get("/render/:template") {
+            engine.render(ModelAndView(WebVariables().put("title", "Home").map, "dashboard/${request.params("template")}"))
+        }
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
@@ -78,7 +85,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                 if (serverId.isNotEmpty()) {
                     val guild = shardManager.getGuildById(serverId)
                     if (guild != null) {
-                        val settings = GuildSettingsUtils.getGuild(guild)
+                        val settings = GuildSettingsUtils.getGuild(guild, variables)
                         map.put("prefix", settings.customPrefix)
                     }
                 }
@@ -90,7 +97,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
         }
 
         get("/suggest", WebVariables().put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.getString("apis.chapta.sitekey")), "suggest.twig")
+                .put("chapta_sitekey", config.apis.chapta.sitekey), "suggest.twig")
 
         post("/suggest") {
             val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
@@ -105,7 +112,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                 return@post renderSugPage(WebVariables().put("message", "Please fill in all the fields."))
             }
 
-            val cap = helpers.verifyCapcha(captcha, config)
+            val cap = helpers.verifyCapcha(captcha, config.apis.chapta.secret)
 
             if (!cap.getBoolean("success")) {
                 return@post renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"))
@@ -114,7 +121,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
             val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
             val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
 
-            val url = helpers.addTrelloCard(suggestion.toString(), descText, config).getString("shortUrl")
+            val url = helpers.addTrelloCard(suggestion.toString(), descText, config.apis.trello).getString("shortUrl")
 
             renderSugPage(WebVariables().put("message", "Thanks for submitting, you can view your suggestion <a target='_blank' href='$url'>here</a>"))
         }
@@ -125,7 +132,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
             before("") {
                 if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
-                            config.getString("discord.oauth.redirUrl", "http://localhost:2000/callback"),
+                            config.discord.oauth.redirUrl,
                             Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
@@ -133,7 +140,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                 }
             }
 
-            get("", WebVariables().put("title", "Dashboard"), "dashboard.twig")
+            get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
 
             get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
@@ -195,49 +202,74 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                 }
             }
 
-            //overview and editing
-            get("/", WebVariables()
-                    .put("title", "Dashboard"), "serverSettings.twig", true)
+            get("/") {
+                engine.render(ModelAndView(WebVariables()
+                        .put("title", "Dashboard").put("id", request.params(":guildid"))
+                        .put("name", getGuildFromRequest(request)?.name).map,
+                        "dashboard/panelSelection.twig"))
+            }
+            // Overview and editing
+            get("/basic", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
+            // Moderation
+            get("/moderation", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
+            // Custom commands
+            get("/customcommands", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
+            // Messages
+            get("/messages", WebVariables()
+                    .put("title", "Dashboard"), "dashboard/welcomeLeaveDesc.twig", true)
 
-            post("/") {
+            post("/basic") {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
                 val params = toMap(pairs)
 
                 val prefix = params["prefix"]
-                val serverDescription = params["serverDescription"]
                 val welcomeChannel = params["welcomeChannel"]
                 val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
                 val autorole = params["autoRoleRole"]
                 //val autoRoleEnabled      = params["autoRoleRoleCB"]
-                val modLogChannel = params["modChannel"]
                 val announceTracks = paramToBoolean(params["announceTracks"])
+
+                val guild = getGuildFromRequest(request)
+
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+                        .setCustomPrefix(prefix)
+                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                        .setEnableJoinMessage(welcomeLeaveEnabled)
+                        .setAutoroleRole(toLong(autorole))
+                        .setAnnounceTracks(announceTracks)
+
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/moderation") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
+
+                val modLogChannel = params["modChannel"]
                 val autoDeHoist = paramToBoolean(params["autoDeHoist"])
                 val filterInvites = paramToBoolean(params["filterInvites"])
                 val swearFilter = paramToBoolean(params["swearFilter"])
-                val welcomeMessage = params["welcomeMessage"]
-                val leaveMessage = params["leaveMessage"]
                 val muteRole = params["muteRole"]
                 val spamFilter = paramToBoolean(params["spamFilter"])
                 val kickMode = paramToBoolean(params["kickMode"])
-
                 val rateLimits = LongArray(6)
 
                 for (i in 0..5) {
                     rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
                 }
 
+
                 val guild = getGuildFromRequest(request)
 
-                val newSettings = GuildSettingsUtils.getGuild(guild)
-                        .setCustomPrefix(prefix)
-                        .setServerDesc(serverDescription)
-                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
-                        .setCustomJoinMessage(welcomeMessage)
-                        .setCustomLeaveMessage(leaveMessage)
-                        .setEnableJoinMessage(welcomeLeaveEnabled)
-                        .setAutoroleRole(toLong(autorole))
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
                         .setLogChannel(toLong(modLogChannel))
-                        .setAnnounceTracks(announceTracks)
                         .setAutoDeHoist(autoDeHoist)
                         .setFilterInvites(filterInvites)
                         .setMuteRoleId(toLong(muteRole))
@@ -246,16 +278,51 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                         .setEnableSpamFilter(spamFilter)
                         .setEnableSwearFilter(swearFilter)
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, database)
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
-                response.redirect(request.url() + "?message=<h4>Settings updated</h4>")
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/customcommands") {
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
+
+                response.redirect(request.url())
+            }
+
+            post("/messages") {
+                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
+                val params = toMap(pairs)
+
+                val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
+                val welcomeMessage = params["welcomeMessage"]
+                val leaveMessage = params["leaveMessage"]
+                val serverDescription = params["serverDescription"]
+                val welcomeChannel = params["welcomeChannel"]
+
+                val guild = getGuildFromRequest(request)
+
+                val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+                        .setServerDesc(serverDescription)
+                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                        .setCustomJoinMessage(welcomeMessage)
+                        .setCustomLeaveMessage(leaveMessage)
+                        .setEnableJoinMessage(welcomeLeaveEnabled)
+
+                GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+
+                request.session().attribute(FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+                response.redirect(request.url())
             }
 
             //audio stuff
             get("/music") {
                 val guild = getGuildFromRequest(request)
                 if (guild != null) {
-                    val mng = AudioUtils.ins.getMusicManager(guild, false)
+                    val mng = audioUtils.getMusicManager(guild, false)
 
                     if (mng != null) {
                         return@get """<p>Audio player details:</p>
@@ -399,15 +466,21 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
                     val goodRoles = guild.roles.filter {
-                        it.position < guild.selfMember.roles[0].position && it.name != "@everyone" && it.name != "@here"
+                        it.canInteract(guild.selfMember.roles[0]) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
-                    map.put("settings", GuildSettingsUtils.getGuild(guild))
+                    map.put("settings", GuildSettingsUtils.getGuild(guild, variables))
                     map.put("guild", guild)
 
-                    if (queryMap().hasKey("message"))
-                        map.put("message", queryParams("message"))
+                    val session = request.session()
+                    val message: String? = session.attribute(FLASH_MESSAGE)
+                    if (!message.isNullOrEmpty()) {
+                        session.attribute(FLASH_MESSAGE, null)
+                        map.put("message", message)
+                    } else {
+                        map.put("message", false)
+                    }
                 }
             }
             map.put("color", colorToHex(Settings.defaultColour))
@@ -417,7 +490,7 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
 
     private fun renderSugPage(map: WebVariables): String {
         map.put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.getString("apis.chapta.sitekey"))
+                .put("chapta_sitekey", config.apis.chapta.sitekey)
 
         return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
@@ -430,8 +503,8 @@ class WebServer(private val shardManager: ShardManager, private val config: Conf
     }
 
     private fun getSession(request: Request, response: Response): Session {
-        val session: String = request.session().attribute("sessionId")
-        if (session.isEmpty()) {
+        val session: String? = request.session().attribute("sessionId")
+        if (session.isNullOrEmpty()) {
             response.redirect("/dashboard")
         }
         return oAuth2Client.sessionController.getSession(session)

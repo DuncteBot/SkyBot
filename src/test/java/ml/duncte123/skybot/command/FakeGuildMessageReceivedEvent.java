@@ -638,7 +638,25 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
 
                                     @Nonnull
                                     @Override
+                                    public RestAction<List<ListedEmote>> retrieveEmotes() {
+                                        return null;
+                                    }
+
+                                    @Nonnull
+                                    @Override
+                                    public RestAction<ListedEmote> retrieveEmoteById(@Nonnull String id) {
+                                        return null;
+                                    }
+
+                                    @Nonnull
+                                    @Override
                                     public RestAction<List<Ban>> getBanList() {
+                                        return null;
+                                    }
+
+                                    @Nonnull
+                                    @Override
+                                    public RestAction<Ban> getBanById(@Nonnull String userId) {
                                         return null;
                                     }
 

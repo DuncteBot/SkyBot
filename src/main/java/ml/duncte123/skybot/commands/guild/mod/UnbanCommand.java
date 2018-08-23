@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.MessageUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -61,7 +61,7 @@ public class UnbanCommand extends Command {
                         event.getGuild().getController().unban(user)
                                 .reason("Unbanned by " + event.getAuthor().getName()).queue();
                         MessageUtils.sendMsg(event, "User " + user.getName() + " unbanned.");
-                        ModerationUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", event.getGuild());
+                        ModerationUtils.modLog(event.getAuthor(), ban.getUser(), "unbanned", ctx.getGuild());
                         return;
                     }
                 }

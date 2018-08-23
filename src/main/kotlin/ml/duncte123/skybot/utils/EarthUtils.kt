@@ -41,6 +41,7 @@ import java.io.File
 import java.io.FileOutputStream
 import java.time.OffsetDateTime
 
+
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class EarthUtils {
@@ -157,9 +158,9 @@ class EarthUtils {
          * @see [EarthUtils.trackToJSON]
          */
         @JvmStatic
-        fun audioJSON(): JSONObject {
+        fun audioJSON(audioUtils: AudioUtils): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
-            for ((key, value) in AudioUtils.ins.musicManagers.entries) {
+            for ((key, value) in audioUtils.musicManagers.entries) {
                 json.put(key.toString(), JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
             }
             return json
@@ -243,8 +244,8 @@ class EarthUtils {
                             && it.getJSONObject("data").getString("title").length <= 256)
                 }
                 if (posts.isEmpty()) {
-                    MessageUtils.sendError(event.message)
-                    MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
+                    me.duncte123.botCommons.messaging.MessageUtils.sendError(event.message)
+                    me.duncte123.botCommons.messaging.MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
                     |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
                 } else {
 
@@ -266,7 +267,7 @@ class EarthUtils {
                         embed.setDescription(text)
 
                     val imagesO = post.optJSONObject("preview")
-                    println(imagesO)
+//                    println(imagesO)
                     val images = imagesO?.optJSONArray("images")
                     if (images != null) {
                         val image = images.getJSONObject(0).getJSONObject("source").getString("url")

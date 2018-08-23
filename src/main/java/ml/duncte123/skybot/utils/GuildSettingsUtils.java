@@ -35,50 +35,14 @@ import java.util.stream.Collectors;
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
-    private static final Map<Long, GuildSettings> guildSettings = Variables.ins.getGuildSettings();
 
 
-    public static void loadAllSettings(DBManager dbManager) {
-        loadGuildSettings(dbManager);
-        //loadFooterQuotes();
+    public static void loadAllSettings(Variables variables) {
+        loadGuildSettings(variables.getDatabase(), variables.getGuildSettings());
     }
 
-    /*
-     * This will load all the footer quotes from the database and store them in the {@link  EmbedUtils#footerQuotes}
-     */
-    /*private static void loadFooterQuotes() {
-        if (!AirUtils.NONE_SQLITE) return;
-        logger.debug("Loading footer quotes");
 
-        String dbName = AirUtils.DATABASE.getName();
-        AirUtils.DATABASE.run(() -> {
-            Connection database = AirUtils.DATABASE.getConnManager().getConnection();
-            try {
-                Statement smt = database.createStatement();
-
-                ResultSet resSettings = smt.executeQuery("SELECT * FROM " + dbName + ".footerQuotes");
-
-                while (resSettings.next()) {
-                    String quote = resSettings.getString("quote");
-                    String user = resSettings.getString("name");
-                    EmbedUtils.footerQuotes.put(quote, user);
-                }
-
-                logger.debug("Loaded " + EmbedUtils.footerQuotes.size() + " quotes.");
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    database.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
-            }
-        });
-    }*/
-
-
-    private static void loadGuildSettings(DBManager database) {
+    private static void loadGuildSettings(DBManager database, Map<Long, GuildSettings> guildSettings) {
         logger.debug("Loading Guild settings.");
 
         String dbName = database.getName();
@@ -131,10 +95,11 @@ public class GuildSettingsUtils {
      * @param guild the guild to get
      * @return the guild
      */
-    public static GuildSettings getGuild(Guild guild) {
+    public static GuildSettings getGuild(Guild guild, Variables variables) {
 
+        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
         if (!guildSettings.containsKey(guild.getIdLong())) {
-            return registerNewGuild(guild, Variables.ins.getDatabase());
+            return registerNewGuild(guild, variables);
         }
 
         return guildSettings.get(guild.getIdLong());
@@ -147,9 +112,11 @@ public class GuildSettingsUtils {
      * @param guild    The guild to update it for
      * @param settings the new settings
      */
-    public static void updateGuildSettings(Guild guild, GuildSettings settings, DBManager database) {
+    public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
+        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        DBManager database = variables.getDatabase();
         if (!guildSettings.containsKey(settings.getGuildId())) {
-            registerNewGuild(guild, database);
+            registerNewGuild(guild, variables);
             return;
         }
         database.run(() -> {
@@ -214,7 +181,9 @@ public class GuildSettingsUtils {
      * @param g The guild that we are joining
      * @return The new guild
      */
-    public static GuildSettings registerNewGuild(Guild g, DBManager database) {
+    public static GuildSettings registerNewGuild(Guild g, Variables variables) {
+        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        DBManager database = variables.getDatabase();
         if (guildSettings.containsKey(g.getIdLong())) {
             return guildSettings.get(g.getIdLong());
         }
@@ -232,14 +201,13 @@ public class GuildSettingsUtils {
                     rows++;
 
                 if (rows == 0) {
-                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId, guildName," +
+                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId," +
                             "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
-                            "VALUES('" + g.getId() + "',  ? , ? , ? , ? , ?)");
-                    smt.setString(1, g.getName().replaceAll("\\P{Print}", ""));
-                    smt.setString(2, newGuildSettings.getCustomJoinMessage());
-                    smt.setString(3, Settings.PREFIX);
-                    smt.setString(4, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
-                    smt.setString(5, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
+                            "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
+                    smt.setString(1, newGuildSettings.getCustomJoinMessage());
+                    smt.setString(2, Settings.PREFIX);
+                    smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
+                    smt.setString(4, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
                     smt.execute();
                 }
             } catch (Exception e) {
@@ -263,7 +231,9 @@ public class GuildSettingsUtils {
      *
      * @param g the guild to remove from the database
      */
-    public static void deleteGuild(Guild g, DBManager database) {
+    public static void deleteGuild(Guild g, Variables variables) {
+        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        DBManager database = variables.getDatabase();
         guildSettings.remove(g.getIdLong());
         database.run(() -> {
             String dbName = database.getName();

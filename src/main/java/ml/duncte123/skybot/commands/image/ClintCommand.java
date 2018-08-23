@@ -19,13 +19,8 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.List;
 
 public class ClintCommand extends ImageCommandBase {
 
@@ -33,24 +28,14 @@ public class ClintCommand extends ImageCommandBase {
     public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
 
         if (!doAllChecksButNotTheArgsBecauseWeDontNeedThem(event)) {
             return;
         }
 
-        String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
-
-        if (args.size() > 0) {
-            try {
-                url = new URL(args.get(0)).toString();
-            } catch (MalformedURLException ignored) {
-                MessageUtils.sendMsg(event, "That does not look like valid url");
-                return;
-            }
-        }
-
-        getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
+        String url = getImageFromCommand(ctx);
+        if (url != null)
+            ctx.getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

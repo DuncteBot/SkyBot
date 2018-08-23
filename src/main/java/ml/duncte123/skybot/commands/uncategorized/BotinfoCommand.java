@@ -20,13 +20,13 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
-import ml.duncte123.skybot.utils.MessageUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -39,6 +39,7 @@ import java.sql.Time;
 import java.text.DecimalFormat;
 
 import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
+import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -94,9 +95,9 @@ public class BotinfoCommand extends Command {
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
                 .addField("Donate", "If you want to help me out and support the bot please consider to " +
-                        "[donate](https://paypal.me/duncte123) any amount.", false)
+                        "[become a patron](https://www.patreon.com/DuncteBot) any amount.", false)
                 .build();
-        MessageUtils.sendEmbed(event, eb);
+        sendEmbed(event, eb);
     }
 
     @Override

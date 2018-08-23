@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.jsoup.Jsoup
@@ -76,7 +76,7 @@ class ChatCommand : Command() {
 
         if (event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                    .replace("{PREFIX}", getSettings(event.guild).customPrefix))
+                    .replace("{PREFIX}", ctx.guildSettings.customPrefix))
             return
         }
 
@@ -109,7 +109,7 @@ class ChatCommand : Command() {
         sessions[event.author.idLong]!!.think(message) {
             var response = it
 
-            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author)
+            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author, ctx.config)
 
             response = parseATags(response, withAds)
             if (withAds) {

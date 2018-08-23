@@ -20,12 +20,11 @@
 
 package ml.duncte123.skybot.commands.music
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.MessageUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {
@@ -34,10 +33,10 @@ class SkipCommand : MusicCommand() {
         val event = ctx.event
         val args = ctx.args
 
-        if (!channelChecks(event))
+        if (!channelChecks(event, ctx.audioUtils))
             return
 
-        val mng = getMusicManager(event.guild)
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
         mng.latestChannel = -1
 
@@ -58,13 +57,17 @@ class SkipCommand : MusicCommand() {
         repeat(count) {
             scheduler.nextTrack()
         }
-        val userData = mng.player.playingTrack.userData as TrackUserData
-        val user = ctx.jda.getUserById(userData.userId)
-        MessageUtils.sendMsg(event, "Successfully skipped $count tracks." +
-                if (mng.player.playingTrack != null) {
-                    "\nNow playing: ${mng.player.playingTrack.info.title}\n" +
-                            "Requester: ${String.format("%#s", user)}"
-                } else "")
+
+        if (mng.player.playingTrack != null) {
+            val userData = mng.player.playingTrack.userData as TrackUserData
+            val user = ctx.jda.getUserById(userData.userId)
+            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+                    "Now playing: ${mng.player.playingTrack.info.title}\n" +
+                    "Requester: ${String.format("%#s", user)}")
+        } else {
+            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+                    "Queue is now empty.")
+        }
         mng.latestChannel = event.channel.idLong
     }
 
