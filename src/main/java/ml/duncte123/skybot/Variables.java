@@ -36,7 +36,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ThreadLocalRandom;
 
 import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
 
@@ -48,7 +47,6 @@ public class Variables {
     private final String googleBaseUrl;
     private final WeebApi weebApi;
     private final boolean isSql;
-    private final ThreadLocalRandom random;
     private final DBManager database;
     private final CommandManager commandManager;
     private final BlargBot blargBot;
@@ -58,7 +56,8 @@ public class Variables {
 
     public Variables() {
         try {
-            this.config = new Gson().fromJson(Files.asCharSource(new File("config.json"), Charsets.UTF_8).read(), DunctebotConfig.class);
+            String json = Files.asCharSource(new File("config.json"), Charsets.UTF_8).read();
+            this.config = new Gson().fromJson(json, DunctebotConfig.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -76,7 +75,6 @@ public class Variables {
                 .setToken(config.apis.weebSh.wolketoken)
                 .build();
         this.isSql = config.use_database;
-        this.random = ThreadLocalRandom.current();
         this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
@@ -102,10 +100,6 @@ public class Variables {
 
     public Map<Long, GuildSettings> getGuildSettings() {
         return guildSettings;
-    }
-
-    public ThreadLocalRandom getRandom() {
-        return random;
     }
 
     public String getGoogleBaseUrl() {

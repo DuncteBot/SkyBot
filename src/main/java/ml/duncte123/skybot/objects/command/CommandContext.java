@@ -60,7 +60,6 @@ public class CommandContext {
 
     // --------------- Methods from the Variables class --------------- //
 
-
     public Variables getVariables() {
         return variables;
     }
@@ -78,7 +77,7 @@ public class CommandContext {
     }
 
     public ThreadLocalRandom getRandom() {
-        return this.variables.getRandom();
+        return ThreadLocalRandom.current();
     }
 
     public WeebApi getWeebApi() {

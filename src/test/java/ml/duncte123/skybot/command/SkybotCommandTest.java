@@ -24,7 +24,7 @@ import ml.duncte123.skybot.commands.essentials.eval.EvalCommand;
 import ml.duncte123.skybot.commands.uncategorized.HelpCommand;
 import org.junit.Test;
 
-import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 import static org.junit.Assert.*;
 
@@ -52,7 +52,7 @@ public class SkybotCommandTest {
 
     @Test
     public void testCommandGetterForNullCommand() {
-        String key = "This_SHould_Allways_return_null_for_a_command" + new Random().nextInt();
+        String key = "This_SHould_Allways_return_null_for_a_command" + ThreadLocalRandom.current().nextInt();
 
         assertNull(String.format("Command getter should return null for this name (%s)", key), manager.getCommand(key));
     }
