@@ -152,12 +152,7 @@ class UserinfoCommand : Command() {
                 ctx.config.apis.weebSh.wolketoken != null) {
             ctx.weebApi.generateDiscordStatus(StatusType.OFFLINE,
                     user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
-
-                val targetFile = File("$folderName/user-avatar-${user.id}-${System.currentTimeMillis()}.png")
-
-                Files.copy(it, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
-                event.channel.sendFile(targetFile, "stat.png",
+                event.channel.sendFile(it, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue(null) { _ ->
                     sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
@@ -222,12 +217,7 @@ class UserinfoCommand : Command() {
                 ctx.config.apis.weebSh.wolketoken != null) {
             ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
                     u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
-
-                val targetFile = File("$folderName/user-avatar-${u.id}-${System.currentTimeMillis()}.png")
-
-                Files.copy(it, targetFile.toPath(), StandardCopyOption.REPLACE_EXISTING)
-
-                event.channel.sendFile(targetFile, "stat.png",
+                event.channel.sendFile(it, "stat.png",
                         MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue(null) { _ ->
                     sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
