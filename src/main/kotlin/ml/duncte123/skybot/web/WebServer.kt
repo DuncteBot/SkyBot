@@ -466,7 +466,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
                     val goodRoles = guild.roles.filter {
-                        it.canInteract(guild.selfMember.roles[0]) && it.name != "@everyone" && it.name != "@here"
+                        guild.selfMember.roles[0].canInteract(it) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)

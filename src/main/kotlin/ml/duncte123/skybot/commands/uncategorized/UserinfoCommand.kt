@@ -40,8 +40,6 @@ import net.dv8tion.jda.core.utils.MiscUtil
 import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
 import java.io.File
-import java.nio.file.Files
-import java.nio.file.StandardCopyOption
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
