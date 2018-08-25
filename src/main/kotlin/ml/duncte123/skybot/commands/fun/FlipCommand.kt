@@ -39,7 +39,7 @@ class FlipCommand : Command() {
         if (event.message.mentionedUsers.size > 0) {
             uname = event.guild.getMember(event.message.mentionedUsers[0])!!.effectiveName
         } else if (ctx.args.isNotEmpty()) {
-            uname = ctx.rawArgs
+            uname = ctx.argsJoined
         }
 
         var normal = "abcdefghijklmnopqrstuvwxyz_,;.?!/\\'"

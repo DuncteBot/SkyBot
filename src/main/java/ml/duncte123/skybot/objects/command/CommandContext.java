@@ -114,6 +114,10 @@ public class CommandContext {
         return this.args;
     }
 
+    public String getArgsJoined() {
+        return String.join(" ", this.args);
+    }
+
     public String getRawArgs() {
         return this.event.getMessage().getContentRaw()
                 .replaceFirst(

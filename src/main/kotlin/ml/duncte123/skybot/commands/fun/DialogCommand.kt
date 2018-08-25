@@ -37,7 +37,7 @@ class DialogCommand : Command() {
         }
 
         val lines = WordUtils.wrap(
-                ctx.rawArgs.replace("`", "")
+                ctx.argsJoined.replace("`", "")
                 , 25, null, true).split("\n")
 
         val sb = StringBuilder()

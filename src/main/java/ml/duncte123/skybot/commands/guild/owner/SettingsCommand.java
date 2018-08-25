@@ -96,7 +96,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
                     return;
                 }
-                String newPrefix = ctx.getRawArgs();
+                String newPrefix = ctx.getArgsJoined();
                 guild.setSettings(settings.setCustomPrefix(newPrefix));
                 sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
                 break;
@@ -107,7 +107,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newJoinMessage = ctx.getArgsJoined().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
@@ -117,7 +117,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
-                String newLeaveMessage = ctx.getRawArgs().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newLeaveMessage = ctx.getArgsJoined().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;

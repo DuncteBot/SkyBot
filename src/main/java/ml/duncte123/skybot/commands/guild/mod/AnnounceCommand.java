@@ -69,7 +69,7 @@ public class AnnounceCommand extends Command {
             }
 
             @SinceSkybot(version = "3.68.0")
-            String msg = ctx.getRawArgs();
+            String msg = ctx.getArgsJoined();
 
             switch (invoke) {
                 case "announce1":
