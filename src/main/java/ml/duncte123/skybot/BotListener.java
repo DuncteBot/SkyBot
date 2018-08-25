@@ -279,7 +279,7 @@ public class BotListener extends ListenerAdapter {
                             return;
                         }
                     } else {
-                        if (startsWithPrefix(settings, rw, s))
+                        if (!startsWithPrefix(settings, rw, s))
                             return;
                     }
                 } else {
@@ -477,15 +477,15 @@ public class BotListener extends ListenerAdapter {
      * Needs a better name
      */
     private boolean startsWithPrefix(GuildSettings settings, String rw, String s) {
-        return s.equalsIgnoreCase(rw.replaceFirst(Settings.OTHER_PREFIX, Pattern.quote(Settings.PREFIX))
+        return s.equalsIgnoreCase(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
     }
-
+    //                                    raw,    category?
     private boolean shouldBlockCommand(String rw, String s) {
-        return commandManager.getCommands(CommandCategory.valueOf(s.toUpperCase()))
-                .contains(commandManager.getCommand(rw.replaceFirst(Settings.OTHER_PREFIX, Settings.PREFIX)
-                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()));
+        return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase())
+                .getCategory() == CommandCategory.valueOf(s.toUpperCase());
     }
 
     /**
