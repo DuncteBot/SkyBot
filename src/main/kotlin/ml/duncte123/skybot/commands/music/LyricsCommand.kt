@@ -50,7 +50,7 @@ class LyricsCommand : MusicCommand() {
             val mng = getMusicManager(event.guild, ctx.audioUtils)
             val player = mng.player
             val search: String? = when {
-                !ctx.args.isEmpty() -> ctx.rawArgs
+                !ctx.args.isEmpty() -> ctx.argsRaw
                 player.playingTrack != null && !player.playingTrack.info.isStream ->
                     player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
                 else -> null

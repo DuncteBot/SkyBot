@@ -46,7 +46,7 @@ class PPlayCommand : MusicCommand() {
             return
         }
 
-        var toPlay = ctx.rawArgs
+        var toPlay = ctx.argsRaw
         if (!AirUtils.isURL(toPlay)) {
             toPlay = "ytsearch:$toPlay"
         }

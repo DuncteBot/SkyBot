@@ -37,7 +37,7 @@ public class IsNowIllegalCommand extends Command {
             MessageUtils.sendMsg(ctx.getEvent(), "This command requires a text argument.");
             return;
         }
-        String input = ctx.getRawArgs()
+        String input = ctx.getArgsRaw()
                 .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() > 10)
             input = input.substring(0, 9);

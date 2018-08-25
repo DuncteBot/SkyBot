@@ -121,24 +121,6 @@ public abstract class ImageCommandBase extends Command {
     }
 
     String parseTextArgsForImagae(CommandContext ctx) {
-        String text = ctx.getRawArgs();
-        GuildMessageReceivedEvent event = ctx.getEvent();
-
-        for (User user : event.getMessage().getMentionedUsers()) {
-            text = text.replaceAll(user.getAsMention(), String.format("%#s", user));
-        }
-
-        for (Member member : event.getMessage().getMentionedMembers()) {
-            text = text.replaceAll(member.getAsMention(), String.format("%#s", member.getUser()));
-        }
-
-        for (TextChannel channel : event.getMessage().getMentionedChannels()) {
-            text = text.replaceAll(channel.getAsMention(), String.format("%#s", channel));
-        }
-
-        for (Role role : event.getMessage().getMentionedRoles()) {
-            text = text.replaceAll(role.getAsMention(), String.format("@%s", role.getName()));
-        }
-        return text;
+        return ctx.getArgsDisplay();
     }
 }

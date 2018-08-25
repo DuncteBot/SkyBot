@@ -90,7 +90,7 @@ class OneLinerCommands : Command() {
                     sendMsg(event, "Missing arguments")
                     return
                 }
-                sendMsg(event, ctx.rawArgs.reversed())
+                sendMsg(event, ctx.argsRaw.reversed())
             }
 
             else -> println("Invoke was invalid: ${ctx.invoke}")

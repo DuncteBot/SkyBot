@@ -133,7 +133,7 @@ public class WolframAlphaCommand extends Command {
         }
 
         MessageUtils.sendMsg(event, "Calculating.....", message -> {
-            String queryString = ctx.getRawArgs();
+            String queryString = ctx.getArgsRaw();
                     /*= event.getMessage().getContentRaw()
                     .substring(event.getMessage().getContentRaw()
                             .split(" ")[0].length());*/

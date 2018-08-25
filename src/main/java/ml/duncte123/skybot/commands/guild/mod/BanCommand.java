@@ -73,7 +73,7 @@ public class BanCommand extends Command {
                 String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
                 if (!AirUtils.isInt(timeParts[0])) {
-                    String newReason = ctx.getRawArgs();
+                    String newReason = ctx.getArgsRaw();
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                             (m) -> {
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
@@ -95,7 +95,7 @@ public class BanCommand extends Command {
 
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
                             } else {
-                                final String newReason = ctx.getRawArgs();
+                                final String newReason = ctx.getArgsRaw();
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
                             }
                         }

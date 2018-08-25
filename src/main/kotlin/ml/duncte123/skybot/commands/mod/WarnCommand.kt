@@ -57,7 +57,7 @@ class WarnCommand : Command() {
         }
         var reason = ""
         if (ctx.args.size > 1)
-            reason = ctx.rawArgs.replace(target.asMention + " ", "")
+            reason = ctx.argsRaw.replace(target.asMention + " ", "")
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}

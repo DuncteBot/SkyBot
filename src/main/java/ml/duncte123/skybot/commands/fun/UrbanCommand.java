@@ -45,7 +45,7 @@ public class UrbanCommand extends Command {
             return;
         }
 
-        String term = ctx.getRawArgs();
+        String term = ctx.getArgsRaw();
         String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
         WebUtils.ins.getJSONObject(url).async(json -> {

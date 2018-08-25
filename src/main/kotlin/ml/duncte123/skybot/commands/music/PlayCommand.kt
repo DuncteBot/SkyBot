@@ -56,7 +56,7 @@ open class PlayCommand : MusicCommand() {
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
-            var toPlay = ctx.rawArgs
+            var toPlay = ctx.argsRaw
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
                 //toPlay = "scsearch:" + toPlay

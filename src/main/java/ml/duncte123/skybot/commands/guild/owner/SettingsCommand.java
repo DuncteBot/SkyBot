@@ -107,7 +107,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
                     return;
                 }
-                String newJoinMessage = ctx.getArgsJoined().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newJoinMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
                 sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
                 break;
@@ -117,7 +117,7 @@ public class SettingsCommand extends Command {
                     sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
                     return;
                 }
-                String newLeaveMessage = ctx.getArgsJoined().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+                String newLeaveMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
                 guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
                 sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
                 break;
@@ -155,7 +155,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                TextChannel tc = AirUtils.getLogChannel(ctx.getRawArgs(), guild);
+                TextChannel tc = AirUtils.getLogChannel(ctx.getArgsRaw(), guild);
                 if (tc == null) {
                     sendMsg(event, "This channel could not be found.");
                     return;
@@ -181,7 +181,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                TextChannel welcomeChannel = AirUtils.getLogChannel(ctx.getRawArgs(), guild);
+                TextChannel welcomeChannel = AirUtils.getLogChannel(ctx.getArgsRaw(), guild);
                 if (welcomeChannel == null) {
                     sendMsg(event, "This channel could not be found.");
                     return;
@@ -208,7 +208,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                List<Role> rolesFound = guild.getRolesByName(ctx.getRawArgs(), true);
+                List<Role> rolesFound = guild.getRolesByName(ctx.getArgsRaw(), true);
 
                 if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {
@@ -294,7 +294,7 @@ public class SettingsCommand extends Command {
                     return;
                 }
 
-                List<Role> rolesFound = guild.getRolesByName(ctx.getRawArgs(), true);
+                List<Role> rolesFound = guild.getRolesByName(ctx.getArgsRaw(), true);
 
                 if (!roleCheck(event, rolesFound)) return;
                 if (rolesFound.get(0).getPosition() >= guild.getSelfMember().getRoles().get(0).getPosition()) {

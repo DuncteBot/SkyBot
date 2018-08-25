@@ -118,15 +118,12 @@ public class CommandContext {
         return String.join(" ", this.args);
     }
 
-    public String getRawArgs() {
-        return this.event.getMessage().getContentRaw()
-                .replaceFirst(
-                        "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
-                                Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                                Pattern.quote(getGuildSettings().getCustomPrefix()),
-                        "")
-                .split("\\s+", 2)[1];
-//        return String.join(" ", getArgs());
+    public String getArgsRaw() {
+        return parseRawArgs(this.event.getMessage().getContentRaw());
+    }
+
+    public String getArgsDisplay() {
+        return parseRawArgs(this.event.getMessage().getContentDisplay());
     }
 
     public GuildSettings getGuildSettings() {
@@ -173,5 +170,16 @@ public class CommandContext {
 
     public Member getSelfMember() {
         return getGuild().getSelfMember();
+    }
+
+    // --------------- Private methods --------------- //
+
+    private String parseRawArgs(String in) {
+        return in.replaceFirst(
+                "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
+                        Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                        Pattern.quote(getGuildSettings().getCustomPrefix()),
+                "")
+                .split("\\s+", 2)[1];
     }
 }

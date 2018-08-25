@@ -51,7 +51,7 @@ class PlayRawCommand : PlayCommand() {
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
             }
         } else {
-            val toPlay = ctx.rawArgs
+            val toPlay = ctx.argsRaw
             if (toPlay.length > 1024) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")

@@ -39,7 +39,7 @@ class TextToBricksCommand : Command() {
 
         sendEmbed(ctx.event,
                 EmbedUtils.embedMessage(
-                        ctx.rawArgs
+                        ctx.argsRaw
                                 .toLowerCase()
                                 .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
                                 .replace(Regex("([0-9])"), "\$1\u20E3")

@@ -53,7 +53,7 @@ class VoiceKickCommand : Command() {
             return
         }
 
-        val channels = ctx.guild.getVoiceChannelsByName(ctx.rawArgs, true)
+        val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
         val controller = ctx.guild.controller
 
         if (channels.isNotEmpty()) {

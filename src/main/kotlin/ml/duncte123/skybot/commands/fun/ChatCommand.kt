@@ -93,7 +93,7 @@ class ChatCommand : Command() {
             return
         }
         val time = System.currentTimeMillis()
-        var message = ctx.rawArgs
+        var message = ctx.argsRaw
         event.channel.sendTyping().queue()
 
         message = replaceStuff(event, message)

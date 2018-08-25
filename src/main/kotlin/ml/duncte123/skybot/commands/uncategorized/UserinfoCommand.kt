@@ -80,7 +80,7 @@ class UserinfoCommand : Command() {
         }
 
         if (u == null && m == null) {
-            val users = FinderUtil.findUsers(ctx.rawArgs, ctx.jda)
+            val users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
             if (users.isNotEmpty()) {
                 u = users[0]
                 m = ctx.guild.getMember(u)

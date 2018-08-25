@@ -47,7 +47,7 @@ public class HelpCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().size() > 0) {
-            String toSearch = ctx.getRawArgs().toLowerCase()
+            String toSearch = ctx.getArgsRaw().toLowerCase()
                     .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
                             Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                             Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
