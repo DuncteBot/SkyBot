@@ -21,12 +21,10 @@ package ml.duncte123.skybot.objects.apis;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtils.EncodingType;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
+import me.duncte123.weebJava.helpers.IOHelper;
 import okhttp3.RequestBody;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 import static me.duncte123.botCommons.web.WebUtils.defaultRequest;
 
@@ -38,43 +36,43 @@ public class BlargBot {
         this.token = token;
     }
 
-    public PendingRequest<InputStream> getClint(String imageUrl) {
+    public PendingRequest<byte[]> getClint(String imageUrl) {
         return makeRequest("image/clint", new JSONObject().put("image", imageUrl));
     }
 
-    public PendingRequest<InputStream> getLinus(String imageUrl) {
+    public PendingRequest<byte[]> getLinus(String imageUrl) {
         return makeRequest("image/linus", new JSONObject().put("image", imageUrl));
     }
 
-    public PendingRequest<InputStream> getDelete(String text) {
+    public PendingRequest<byte[]> getDelete(String text) {
         return makeRequest("image/delete", new JSONObject().put("text", text));
     }
 
-    public PendingRequest<InputStream> getPcCheck(String text) {
+    public PendingRequest<byte[]> getPcCheck(String text) {
         return makeRequest("image/pccheck", new JSONObject().put("text", text));
     }
 
-    public PendingRequest<InputStream> getShit(String text) {
+    public PendingRequest<byte[]> getShit(String text) {
         return getShit(text, false);
     }
 
-    public PendingRequest<InputStream> getShit(String text, boolean plural) {
+    public PendingRequest<byte[]> getShit(String text, boolean plural) {
         return makeRequest("image/shit", new JSONObject().put("text", text).put("plural", plural));
     }
 
-    public PendingRequest<InputStream> getTheSearch(String text) {
+    public PendingRequest<byte[]> getTheSearch(String text) {
         return makeRequest("image/thesearch", new JSONObject().put("text", text));
     }
 
 
-    private PendingRequest<InputStream> makeRequest(String path, JSONObject body) {
+    private PendingRequest<byte[]> makeRequest(String path, JSONObject body) {
         return WebUtils.ins.prepareRaw(
                 defaultRequest()
                         .url("https://api.blargbot.xyz/api/v1/" + path)
                         .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), body.toString()))
                         .addHeader("Authorization", token)
                         .build(),
-                WebUtilsErrorUtils::getInputStream
+                IOHelper::read
         );
     }
 

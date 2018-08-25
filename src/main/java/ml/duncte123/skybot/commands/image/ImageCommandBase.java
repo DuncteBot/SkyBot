@@ -27,11 +27,9 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
@@ -66,18 +64,12 @@ public abstract class ImageCommandBase extends Command {
         return canSendFile(event) && isUserOrGuildPatron(event);
     }
 
-    File getFile() {
-        return new File(dir + "/" + getName() + "_" + System.currentTimeMillis() + ".png");
+    private String getFileName() {
+        return getName() + "_" + System.currentTimeMillis() + ".png";
     }
 
-    void handleBasicImage(GuildMessageReceivedEvent event, InputStream image) {
-        try {
-            File img = getFile();
-            Files.copy(image, img.toPath(), StandardCopyOption.REPLACE_EXISTING);
-            event.getChannel().sendFile(img).queue();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
+        event.getChannel().sendFile(image, getFileName()).queue();
     }
 
     @Override

@@ -37,29 +37,13 @@ import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.utils.MiscUtil
-import org.apache.commons.io.FileUtils
 import org.apache.commons.lang3.StringUtils
-import java.io.File
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.stream.Collectors
 
 class UserinfoCommand : Command() {
-
-    val folderName = "user_avatars"
-
-    init {
-        val imgDir = File(folderName)
-
-        //create the dir
-        if (!imgDir.exists())
-            imgDir.mkdir()
-
-        //clean the folder
-        FileUtils.cleanDirectory(imgDir)
-    }
-
 
     override fun executeCommand(ctx: CommandContext) {
 
@@ -102,7 +86,8 @@ class UserinfoCommand : Command() {
                 m = ctx.guild.getMember(u)
                 if (m == null) {
                     if (ctx.invoke == "avatar") {
-                        MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+                        MessageUtils.sendMsg(event,
+                                "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
                         return
                     }
                     renderUserEmbed(event, u, ctx)

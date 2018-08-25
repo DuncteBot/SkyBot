@@ -22,11 +22,10 @@ import com.github.natanbc.reliqua.request.PendingRequest;
 import com.google.gson.Gson;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
+import me.duncte123.weebJava.helpers.IOHelper;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import okhttp3.Request;
 import org.json.JSONObject;
-
-import java.io.InputStream;
 
 import static me.duncte123.botCommons.web.WebUtils.defaultRequest;
 
@@ -46,11 +45,11 @@ public class Alexflipnote {
         );
     }
 
-    public PendingRequest<InputStream> getAchievement(String text) {
+    public PendingRequest<byte[]> getAchievement(String text) {
         QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(
                 makeRequest("achievement" + builder.build()),
-                WebUtilsErrorUtils::getInputStream
+                IOHelper::read
         );
     }
 

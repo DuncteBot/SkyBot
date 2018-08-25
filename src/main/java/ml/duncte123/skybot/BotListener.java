@@ -463,14 +463,6 @@ public class BotListener extends ListenerAdapter {
         if (unbanTimerRunning && isCacheCleanerActive)
             this.systemPool.shutdown();
 
-        //clear the userinfo folder on shutdown as well
-        String imgDir = ((UserinfoCommand) commandManager.getCommand("userinfo")).getFolderName();
-        try {
-            FileUtils.cleanDirectory(new File(imgDir));
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
         AirUtils.stop(database, variables.getAudioUtils());
         commandManager.commandThread.shutdown();
 
