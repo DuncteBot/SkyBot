@@ -63,3 +63,80 @@ main {
 .delay-3 {
     animation-delay: 900ms;
 }
+
+/* checkboxes */
+.valuebox3 {
+    width: 20px;
+    height: 20px;
+    border: 2px solid #5a5a5a;
+    border-radius: 2px;
+    margin: 0 2px;
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+}
+
+.valuebox3.state1 {
+    background-color: #43b581;
+    border-color: #43b581;
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+}
+
+.valuebox3.state1::before {
+    content: '';
+    width: 8px;
+    height: 12px;
+    margin-left: 4px;
+    display: block;
+    border: solid #fff;
+    border-width: 0 2px 2px 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+}
+
+.valuebox3.state2 {
+    background-color: #f04747;
+    border-color: #f04747;
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+}
+
+.valuebox3.state2::before {
+    content: '';
+    width: 0px;
+    height: 16px;
+    margin-left: 7px;
+    display: block;
+    border: solid #fff;
+    border-width: 0 2px 0px 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+}
+
+.valuebox3.state2::after {
+    content: '';
+    width: 16px;
+    height: 16px;
+    margin-left: 5px;
+    margin-top: -21px;
+    display: block;
+    border: solid #fff;
+    border-width: 0 0px 2px 0;
+    -webkit-transform: rotate(45deg);
+    transform: rotate(45deg);
+    transition: 0.2s;
+    -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+    z-index: 1;
+}
