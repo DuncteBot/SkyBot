@@ -32,7 +32,7 @@ object ApiUtils {
     @JvmStatic
     fun getRandomLlama(database: DBManager): LlamaObject {
 
-        val conn = database.getConnManager().connection
+        val conn = database.connManager.connection
 
         val resultSet = conn.createStatement()
                 .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
@@ -46,16 +46,16 @@ object ApiUtils {
     @JvmStatic
     fun getRandomKpopMember(database: DBManager, search: String = ""): KpopObject {
 
-        val conn = database.getConnManager().connection
+        val conn = database.connManager.connection
 
         lateinit var resultSet: ResultSet
-        if (!search.isEmpty()) {
+        resultSet = if (!search.isEmpty()) {
             val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
             stmt.setString(1, "%$search%")
             stmt.setString(2, search)
-            resultSet = stmt.executeQuery()
+            stmt.executeQuery()
         } else {
-            resultSet = conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
+            conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
         }
         resultSet.next()
         val obj = KpopObject(
@@ -71,7 +71,7 @@ object ApiUtils {
 
     @JvmStatic
     fun getWarnsForUser(database: DBManager, userId: String, guildId: String): WarnObject {
-        val conn = database.getConnManager().connection
+        val conn = database.connManager.connection
         try {
             val smt = conn.prepareStatement(
                     "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")

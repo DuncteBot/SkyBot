@@ -51,6 +51,7 @@ import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
 import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube;
 
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
+
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
     private static final String PROTOCOL_REGEX = "?:spotify:(track:)|(http://|https://)[a-z]+\\.";

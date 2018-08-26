@@ -172,11 +172,16 @@ task printVersion {
 }
 
 def getGitHash() {
-    def stdout = new ByteArrayOutputStream()
-    exec {
-        commandLine 'git', 'rev-parse', '--short', 'HEAD'
-        standardOutput = stdout
+    try {
+        def stdout = new ByteArrayOutputStream()
+        exec {
+            commandLine 'git', 'rev-parse', '--short', 'HEAD'
+            standardOutput = stdout
+        }
+        return stdout.toString().trim()
+    } catch (Throwable ignored) {
+        // Probably ramidzkh's problem
+        return 'unknown'
     }
-    return stdout.toString().trim()
 }
 

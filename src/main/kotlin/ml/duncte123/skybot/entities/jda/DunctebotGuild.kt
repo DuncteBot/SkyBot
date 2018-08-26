@@ -19,14 +19,13 @@
 package ml.duncte123.skybot.entities.jda
 
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
 
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
 
-    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)
+    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)!!
 
     fun setSettings(settings: GuildSettings) {
         GuildSettingsUtils.updateGuildSettings(this.guild, settings, variables)

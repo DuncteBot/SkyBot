@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
-import ml.duncte123.skybot.utils.YoutubeUtils
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")

@@ -53,10 +53,11 @@ public class JtwigTemplateEngine extends TemplateEngine {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     public String render(ModelAndView modelAndView) {
         String viewName = templatesDirectory + "/" + modelAndView.getViewName();
         JtwigTemplate template = JtwigTemplate.classpathTemplate(viewName);
-        JtwigModel model = JtwigModel.newModel((Map) modelAndView.getModel());
+        JtwigModel model = JtwigModel.newModel((Map<String, Object>) modelAndView.getModel());
         return template.render(model);
     }
 }

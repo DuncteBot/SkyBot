@@ -22,7 +22,6 @@ import fredboat.audio.player.LavalinkManager;
 import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.commands.uncategorized.UserinfoCommand;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.*;
@@ -43,12 +42,9 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -64,7 +60,7 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(\\/\\/)?(discordapp|discord).(gg|io|me|com)\\/(\\w+:{0,1}\\w*@)?(\\S+)(:[0-9]+)?(\\/|\\/([\\w#!:.?+=&%@!-/]))?");
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     /**
      * Check if we are updating
      */

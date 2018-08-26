@@ -32,7 +32,8 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public class SeekCommand extends MusicCommand {
 
-    private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2})\\:(\\d{2})");
+    private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2})" +
+            ":(\\d{2})");
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {

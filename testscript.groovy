@@ -17,7 +17,7 @@
  */
 import ml.duncte123.skybot.utils.EmbedUtils
 
-def quick_mafs(int x) {
+static def quick_mafs(int x) {
    def the_thing = x + 2 -1 
    return the_thing
 }

@@ -71,7 +71,7 @@ public class AirUtils {
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
-        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&//=]*)").matcher(url).find();
+        return Pattern.compile("[-a-zA-Z0-9@:%._+~#=]{2,256}\\.[a-z]{2,6}\\b([-a-zA-Z0-9@:%_+.~#?&/=]*)").matcher(url).find();
     }
 
     /**

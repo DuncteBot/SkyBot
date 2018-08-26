@@ -50,7 +50,7 @@ public class GuildMusicManager {
     /**
      * Constructor
      *
-     * @param g The guild that we wannt the manager for
+     * @param g The guild that we want the manager for
      */
     public GuildMusicManager(Guild g, Variables variables) {
         player = LavalinkManager.ins.createPlayer(g.getIdLong());
@@ -61,7 +61,7 @@ public class GuildMusicManager {
     }
 
     /**
-     * This will get our sendings handler
+     * This will get our sending handler
      *
      * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
      */
