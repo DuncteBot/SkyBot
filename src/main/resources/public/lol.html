@@ -1,0 +1,307 @@
+<!--
+  ~ Skybot, a multipurpose discord bot
+  ~      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<html>
+
+<head>
+    <title>Chacon config</title>
+
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="css/materialize.min.css">
+
+    <!-- Compiled and minified JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+    <style>
+        * {
+            color: #fff;
+        }
+
+        body {
+            margin: 10px;
+            background-color: #36393f;
+        }
+
+        #save-btn {
+            float: right;
+        }
+
+        td label:nth-child(4),
+        td label:nth-child(8),
+        td label:nth-child(12) {
+            margin-right: 4px;
+        }
+
+        td label:nth-child(4)::before,
+        td label:nth-child(8)::before,
+        td label:nth-child(12)::before {
+            content: '';
+            position: absolute;
+            margin-left: 26px;
+            height: 20px;
+            border-right: 1px solid rgba(255, 255, 255, 0.438);
+        }
+
+        .valuebox3 {
+            width: 20px;
+            height: 20px;
+            border: 2px solid #5a5a5a;
+            border-radius: 2px;
+            margin: 0 2px;
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+        }
+
+        .valuebox3.state1 {
+            background-color: #43b581;
+            border-color: #43b581;
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+        }
+
+        .valuebox3.state1::before {
+            content: '';
+            width: 8px;
+            height: 12px;
+            margin-left: 4px;
+            display: block;
+            border: solid #fff;
+            border-width: 0 2px 2px 0;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            z-index: 1;
+        }
+
+        .valuebox3.state2 {
+            background-color: #f04747;
+            border-color: #f04747;
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+        }
+
+        .valuebox3.state2::before {
+            content: '';
+            width: 0px;
+            height: 16px;
+            margin-left: 7px;
+            display: block;
+            border: solid #fff;
+            border-width: 0 2px 0px 0;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            z-index: 1;
+        }
+
+        .valuebox3.state2::after {
+            content: '';
+            content: '';
+            width: 16;
+            height: 16;
+            margin-left: 4.5px;
+            margin-top: -20.5px;
+            display: block;
+            border: solid #fff;
+            border-width: 0 0px 2px 0;
+            -webkit-transform: rotate(45deg);
+            transform: rotate(45deg);
+            transition: 0.2s;
+            -webkit-transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            transition: border .25s, background-color .25s, width .20s .1s, height .20s .1s, top .20s .1s, left .20s .1s;
+            z-index: 1;
+        }
+
+        .valuebox3:hover {
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+<h1>Chacon configuration</h1>
+<button onclick="refreshContents()" id="refresh-btn" class="waves-effect waves-light btn">refresh</button>
+<button onclick="saveContents()" id="save-btn" class="waves-effect waves-light btn disabled">Save</button>
+<form action="#">
+    <table class="striped">
+        <thead>
+        <tr>
+            <th>ID</th>
+            <th>Lights</th>
+            <th>Days</th>
+            <th>Times</th>
+            <th>Enabled</th>
+        </tr>
+        </thead>
+
+        <tbody id="rows">
+        <tr>
+            <td>Loading...</td>
+            <td>Loading...</td>
+            <td>Loading...</td>
+            <td>Loading...</td>
+            <td>Loading...</td>
+            <!--<td>
+            <div class="switch">
+                <label>
+                    Off
+                    <input type="checkbox">
+                    <span class="lever"></span>
+                    On
+                </label>
+            </div>
+        </td>-->
+        </tr>
+        </tbody>
+    </table>
+</form>
+<script>
+    const lights = {
+        "1.1": 1381717,
+        "1.2": 1394005,
+        "1.3": 1397077,
+        "1.4": 1397845,
+
+        "2.1": 4527445,
+        "2.2": 4539733,
+        "2.3": 4542805,
+        "2.4": 4543573,
+
+        "3.1": 5313877,
+        "3.2": 5326165,
+        "3.3": 5329237,
+        "3.4": 5330005,
+
+        "4.1": 5510485,
+        "4.2": 5522773,
+        "4.3": 5525845,
+        "4.4": 5526613,
+    };
+
+    function refreshContents() {
+        var rows = [];
+        var mysql = require('mysql');
+        var con = mysql.createConnection({
+            host: "hihi",
+            user: "move along",
+            password: "Neen",
+            database: "woef"
+        });
+
+        con.connect(function (err) {
+            if (err) throw err;
+            con.query("SELECT * FROM chacon_info", function (err, result, fields) {
+                if (err) throw err;
+                for (i = 0; i < result.length; i++) {
+                    rows.push({
+                        id: result[i]["triggerId"],
+                        lights: result[i]["codes"],
+                        days: result[i]["days"],
+                        time: result[i]["time"],
+                        enabled: result[i]["enabled"]
+                    });
+                }
+                var html = "";
+                for (var i = 0; i < rows.length; i++) {
+                    html += "<tr>";
+                    html += "<td>" + rows[i].id + "</td>";
+                    html += "<td style='display: flex'>"
+                    Object.values(lights).forEach(value => {
+                        var extra = contains.call(rows[i].lights.split(", "), value.toString()) ?
+                            "state1" : "state0";
+                        if (extra == "state0")
+                            extra = contains.call(rows[i].lights.split(", "), (value - 1).toString()) ?
+                                "state2" : "state0";
+                        html += "<label><div id='" + rows[i].id + value +
+                            "' onclick='customCheckBoxClick(this)' class='valuebox3 " +
+                            extra + "'></div><span></span></label>"
+                    });
+                    html += "</td>";
+                    html += "<td>" + rows[i].days + "</td>";
+                    html += "<td>" + rows[i].time + "</td>"
+                    html += "<td>";
+                    if (rows[i].enabled == 1) {
+                        html +=
+                            "<div class='switch'><label>Off<input type='checkbox' checked><span class='lever'></span>On</label></div>";
+                    } else {
+                        html +=
+                            "<div class='switch'><label>Off<input type='checkbox'><span class='lever'></span>On</label></div>"
+                    }
+                    html += "</td>";
+                    html += "</tr>";
+                }
+                document.getElementById("rows").innerHTML = html;
+            });
+        });
+    }
+    refreshContents();
+
+    function customCheckBoxClick(clicked) {
+        id = parseInt(clicked.id.toString().charAt(0));
+        code = parseInt(clicked.id.toString().substr(1));
+        if (clicked.classList.contains("state0")) {
+            clicked.classList.remove("state0");
+            clicked.classList.add("state1");
+        } else if (clicked.classList.contains("state1")) {
+            clicked.classList.remove("state1");
+            clicked.classList.add("state2");
+        } else if (clicked.classList.contains("state2")) {
+            clicked.classList.remove("state2");
+            clicked.classList.add("state0");
+        }
+    }
+
+
+    var contains = function (needle) {
+        // Per spec, the way to identify NaN is that it is not equal to itself
+        var findNaN = needle !== needle;
+        var indexOf;
+
+        if (!findNaN && typeof Array.prototype.indexOf === 'function') {
+            indexOf = Array.prototype.indexOf;
+        } else {
+            indexOf = function (needle) {
+                var i = -1,
+                    index = -1;
+
+                for (i = 0; i < this.length; i++) {
+                    var item = this[i];
+
+                    if ((findNaN && item !== item) || item === needle) {
+                        index = i;
+                        break;
+                    }
+                }
+
+                return index;
+            };
+        }
+
+        return indexOf.call(this, needle) > -1;
+    };
+</script>
+</body>
+
+</html>
