@@ -85,7 +85,7 @@ dependencies {
     compile 'com.github.duncte123:botCommons:127d594'
 
     //JDA (java discord api) latest exp = 40cf438 but I downgrade for stability & compatibility
-    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'be10c0b') {
+    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: '40cf438') {
 //    compile (group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382') {
         exclude module: 'opus-java'
     }
@@ -93,7 +93,7 @@ dependencies {
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.7'
 //    compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: '3.0'
-    compile group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: 'a30e63b'
+    compile group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: '08a9bb9'
 
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.1'
