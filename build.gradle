@@ -84,8 +84,8 @@ dependencies {
     //My little utils
     compile 'com.github.duncte123:botCommons:127d594'
 
-    //JDA (java discord api) latest exp = 40cf438 but I downgrade for stability & compatibility
-    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
+    //JDA (java discord api)
+    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a3de205') {
 //    compile (group: 'net.dv8tion', name: 'JDA', version: '3.7.0_382') {
         exclude module: 'opus-java'
     }
