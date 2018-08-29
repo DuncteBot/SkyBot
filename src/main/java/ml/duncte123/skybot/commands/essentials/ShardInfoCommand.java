@@ -63,9 +63,9 @@ public class ShardInfoCommand extends Command {
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
 
-            String listening = shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
+            String listening = shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
                     .getSelfMember())).count() + " / " +
-                    shard.getVoiceChannels().stream().filter(vc ->
+                    shard.getVoiceChannelCache().stream().filter(vc ->
                             vc.getMembers().contains(vc.getGuild().getSelfMember()))
                             .mapToLong(it ->
                                     it.getMembers().stream().filter(itt ->
@@ -139,11 +139,11 @@ public class ShardInfoCommand extends Command {
         String connectedShards = String.valueOf(shardManager.getShards().stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         String guilds = String.valueOf(shardManager.getGuildCache().size());
-        long connectedVC = shardManager.getShards().stream().mapToLong(shard ->
-                shard.getVoiceChannels().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
+        long connectedVC = shardManager.getShardCache().stream().mapToLong(shard ->
+                shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
         ).sum();
-        long listeningVC = shardManager.getShards().stream().mapToLong(shard ->
-                shard.getVoiceChannels().stream().filter(vc ->
+        long listeningVC = shardManager.getShardCache().stream().mapToLong(shard ->
+                shard.getVoiceChannelCache().stream().filter(vc ->
                         vc.getMembers().contains(vc.getGuild().getSelfMember()))
                         .mapToLong(it ->
                                 it.getMembers().stream().filter(itt ->

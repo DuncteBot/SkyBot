@@ -342,6 +342,11 @@ class FakeGuildMessageReceivedEvent extends GuildMessageReceivedEvent {
                         return null;
                     }
 
+                    @Override
+                    public String getJumpUrl() {
+                        return null;
+                    }
+
                     @Nonnull
                     @Override
                     public String getContentDisplay() {
