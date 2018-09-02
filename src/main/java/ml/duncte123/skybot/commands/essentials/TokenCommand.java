@@ -87,7 +87,7 @@ public class TokenCommand extends Command {
                     String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
                     message.editMessage(newMessage).queue();
                 }
-            } catch (NumberFormatException e) {
+            } catch (IllegalArgumentException e) {
                 String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
                 String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
                 message.editMessage(newMessage).queue();
