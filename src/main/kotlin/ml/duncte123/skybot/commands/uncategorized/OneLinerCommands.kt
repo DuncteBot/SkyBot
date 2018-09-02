@@ -102,7 +102,7 @@ class OneLinerCommands : Command() {
         sendMsg(event, """Hey there thank you for your interest in supporting the bot.
                         |You can use one of the following methods to donate:
                         |**PayPal:** <https://paypal.me/duncte123$amount>
-                        |**Patreon:** <https://patreon.com/duncte123>
+                        |**Patreon:** <https://patreon.com/DuncteBot>
                         |
                         |All donations are going directly into development of the bot ❤
                     """.trimMargin())
