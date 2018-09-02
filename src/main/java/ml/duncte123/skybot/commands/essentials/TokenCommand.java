@@ -72,15 +72,21 @@ public class TokenCommand extends Command {
 
         sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
-                event.getJDA().retrieveUserById(id).queue((user) -> {
-                    String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
-                    String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, userinfo);
-                    message.editMessage(newMessage).queue();
-                }, (error) -> {
-                    String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
+                if(isLong(id)) {
+                    event.getJDA().retrieveUserById(id).queue((user) -> {
+                        String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
+                        String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, userinfo);
+                        message.editMessage(newMessage).queue();
+                    }, (error) -> {
+                        String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
+                        String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
+                        message.editMessage(newMessage).queue();
+                    });
+                } else {
+                    String info = String.format("%n%n%s is not a valid long id", id);
                     String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
                     message.editMessage(newMessage).queue();
-                });
+                }
             } catch (NumberFormatException e) {
                 String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
                 String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, info);
@@ -101,7 +107,7 @@ public class TokenCommand extends Command {
     }
 
     private byte[] decodeBase64(String input) {
-        return Base64.getDecoder().decode(input);
+        return Base64.getMimeDecoder().decode(input);
     }
 
     private String decodeBase64ToString(String input) {
@@ -110,7 +116,7 @@ public class TokenCommand extends Command {
 
     private OffsetDateTime toTimeStamp(String input) {
         BigInteger decoded = new BigInteger(decodeBase64(input));
-        long receivedTime = Long.valueOf(decoded.toString());
+        long receivedTime = decoded.longValue();
 
         long timestamp = TOKEN_EPOCH + receivedTime;
 
@@ -119,5 +125,13 @@ public class TokenCommand extends Command {
         gmt.setTimeInMillis(millis);
 
         return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
+    }
+
+    private boolean isLong(String input) {
+        try {
+            return Long.parseUnsignedLong(input) > -1L;
+        } catch (NumberFormatException ignored) {
+            return false;
+        }
     }
 }
