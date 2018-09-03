@@ -18,7 +18,6 @@
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 
-//def logToFile = false
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -30,28 +29,16 @@ appender("STDOUT", ConsoleAppender) {
 }
 root(INFO, ["STDOUT"])
 
-/*if (logToFile) {
-    def bySecond = timestamp("yyyyMMdd'T'HHmmss")
-
-    appender("FILE", FileAppender) {
-        file = "log-${bySecond}-debug.txt"
-        encoder(PatternLayoutEncoder) {
-            pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
-        }
-    }
-    root(DEBUG, ["FILE", "STDOUT"])
-}*/
-
-def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
+/*def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
 
 appender("FILE", FileAppender) {
-    file = "logs-for-minn/log-${bySecond}.txt"
+    file = "logs/log-${bySecond}.txt"
     encoder(PatternLayoutEncoder) {
         pattern = "[%d{dd-MM-yyyy HH:mm:ss}][%logger{35}] [%level] - %msg%n"
     }
 }
 
 logger("net.dv8tion.jda.core.handle.GuildSetupController", TRACE, ["FILE"])
-logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE"])
+logger("net.dv8tion.jda.core.handle.EventCache", TRACE, ["FILE"])*/
 
 
