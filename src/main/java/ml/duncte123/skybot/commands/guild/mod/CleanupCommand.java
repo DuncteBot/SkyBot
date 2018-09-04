@@ -23,11 +23,11 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.OffsetDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -69,41 +69,38 @@ public class CleanupCommand extends Command {
                     MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
                     return;
                 }
-                if (total < 2 || total > 100) {
-                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 100");
+                if (total < 1 || total > 1000) {
+                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
                     return;
                 }
             }
         }
 
-        try {
-            final boolean keepPinnedFinal = keepPinned;
-            event.getChannel().getHistory().retrievePast(total).queue(msgLst -> {
-                if (keepPinnedFinal)
-                    msgLst = msgLst.stream().filter(message -> !message.isPinned()).collect(Collectors.toList());
-
-                List<Message> failed = msgLst.stream()
-                        .filter(message -> message.getCreationTime().isBefore(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
-
-                msgLst = msgLst.stream()
-                        .filter(message -> message.getCreationTime().isAfter(OffsetDateTime.now().minusWeeks(2))).collect(Collectors.toList());
-
-                if (msgLst.size() < 3) {
-                    failed.addAll(msgLst);
-                    msgLst.clear();
-                } else {
-                    event.getChannel().deleteMessages(msgLst).queue(null, ignored -> {
-                    });
-                }
-
-                MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
-                        "Removed %d messages!\nIt failed for %d messages!", msgLst.size(), failed.size());
-                logger.debug(msgLst.size() + " messages removed in channel " +
-                        event.getChannel().getName() + " on guild " + event.getGuild().getName());
-            }, error -> MessageUtils.sendMsg(event, "ERROR: " + error.getMessage()));
-        } catch (Exception e) {
-            MessageUtils.sendMsg(event, "ERROR: " + e.getMessage());
-        }
+        final boolean keepPinnedFinal = keepPinned;
+        final int totalFinal = total;
+        TextChannel channel = event.getChannel();
+        channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
+            if (keepPinnedFinal)
+                return channel.purgeMessages(msgs.stream().filter(it -> !it.isPinned()).collect(Collectors.toList()));
+            else
+                return channel.purgeMessages(msgs);
+        }).whenCompleteAsync((aVoid, thr) -> {
+            if (thr != null) {
+                String cause = "";
+                if (thr.getCause() != null)
+                    cause = " caused by: " + thr.getCause().getMessage();
+                MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+                return;
+            }
+            MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
+                    "Removed %d messages!", totalFinal);
+        }).exceptionally((thr) -> {
+            String cause = "";
+            if (thr.getCause() != null)
+                cause = " caused by: " + thr.getCause().getMessage();
+            MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+            return Collections.emptyList();
+        });
     }
 
     @Override
