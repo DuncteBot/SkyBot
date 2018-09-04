@@ -81,10 +81,13 @@ public class Profile {
     }
 
     public enum Badge {
-        DISCORD_BUGHUNTER(5, 3),
-        DISCORD_PARTNER(3, 1),
-        DISCORD_STAFF(4, 0),
-        HYPESQUAD(2, 2),
+        HYPESQUAD_BALANCE(2, 8),
+        HYPESQUAD_BRILLIANCE(2, 7),
+        HYPESQUAD_BRAVERY(2, 6),
+        DISCORD_BUGHUNTER(3, 1),
+        DISCORD_PARTNER(2, 0),
+        DISCORD_STAFF(1, 0),
+        HYPESQUAD(2, 1),
         NITRO(1, -1),
 
         UNKNOWN(0, -1);
