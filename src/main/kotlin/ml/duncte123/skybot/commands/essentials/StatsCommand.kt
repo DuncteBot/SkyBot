@@ -40,8 +40,7 @@ class StatsCommand : Command() {
         }.sum()
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
         val uptimeTime = Time(uptimeLong - 3600000)
-        val serverUptimeLong = AirUtils.getSystemUptime()
-        val serverUptimeTime = Time(serverUptimeLong - 3600000)
+        val serverUptimeString = AirUtils.getSystemUptime()
         val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
         val processUsage = DecimalFormat("###.###%").format(platformMXBean.processCpuLoad)
@@ -65,17 +64,17 @@ class StatsCommand : Command() {
                 .addField("Server stats",
                         """**CPU's:** $cores
                     |**CPU usage:** $processUsage
-                    |**Total ram:** ${serverMem shr 20}
-                    |**Ram usage:** ${serverUsage shr 20}
-                    |**System uptime:** ${AirUtils.getUptime(serverUptimeLong)} $serverUptimeTime
+                    |**Ram usage:** ${serverUsage shr 20}MB
+                    |**Total ram:** ${serverMem shr 20}MB
+                    |**System uptime:** $serverUptimeString
                     |**Operating System:** $OS
                 """.trimMargin(), false)
 
                 .addField("JVM stats",
                         """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
                             |**Active thread count:** ${Thread.activeCount()}
-                            |**Used ram:** $jvmMem
-                            |**Allocated ram:** $jvmUsage
+                            |**Used ram:** ${jvmMem}MB
+                            |**Allocated ram:** ${jvmUsage}MB
                         """.trimMargin(), false)
 
         sendEmbed(ctx.event, embed.build())
