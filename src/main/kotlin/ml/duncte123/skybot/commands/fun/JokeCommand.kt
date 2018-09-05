@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botCommons.web.WebUtils
-import ml.duncte123.skybot.BuildConfig.URL_ARRAY
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -58,7 +57,7 @@ class JokeCommand : Command() {
     override fun getAliases() = arrayOf("meme")
 
     private fun sendRanddomJoke(event: GuildMessageReceivedEvent) {
-        WebUtils.ins.getJSONObject(URL_ARRAY[1]).async {
+        WebUtils.ins.getJSONObject("https://icanhazdadjoke.com/").async {
             sendEmbed(event, EmbedUtils.embedMessage(it.getString("joke")))
         }
     }

@@ -30,7 +30,6 @@ import org.jsoup.nodes.Element;
 import java.util.Map;
 import java.util.TreeMap;
 
-import static ml.duncte123.skybot.BuildConfig.URL_ARRAY;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
@@ -59,7 +58,7 @@ public class CSShumorCommand extends Command {
     }
 
     private void sendCssJoke(GuildMessageReceivedEvent event) {
-        WebUtils.ins.scrapeWebPage(URL_ARRAY[0]).async((doc) -> {
+        WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
             Element code = doc.selectFirst(".crayon-pre");
             String text = code.text()
                     .replace("*/ ", "*/\n") // Newline + tab after comments

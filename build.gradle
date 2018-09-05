@@ -75,7 +75,6 @@ buildConfig {
     buildConfigField("String", "OWNER_ID", "191231307290771456")
     buildConfigField("String", "KOTLIN_VERSION", kotlin_version)
     buildConfigField("boolean", "UNSTABLE", "false")
-    buildConfigField("String[]", "URL_ARRAY", '{"https://csshumor.com/", "https://icanhazdadjoke.com/"}')
 }
 
 dependencies {
