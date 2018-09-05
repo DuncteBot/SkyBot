@@ -75,12 +75,13 @@ public class HackbanCommand extends Command {
             } else if (arg0.matches("\\d{17,20}")) {
                 id = arg0;
             } else {
-                messages.add("id `" + arg0 + "` does not match anything valid");
+                sendMsg(event, "id `" + arg0 + "` does not match anything valid");
+                return;
             }
 
             try {
                 event.getGuild().getController().ban(id, 0)
-                        .reason(String.format("Hackban by %#s", ctx.getAuthor())).complete(); //Commands are being ran on a separate thread, this is safe
+                        .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue(); //Commands are being ran on a separate thread, this is safe
                 messages.add(id);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -88,8 +89,7 @@ public class HackbanCommand extends Command {
             }
         }
 
-        sendMsg(event, String.format("Users with ids `%s` are banned", String.join("`, `", messages)));
-        messages.clear();
+        sendMsg(event, String.format("Users with ids `%s` are now banned", String.join("`, `", messages)));
     }
 
     @Override

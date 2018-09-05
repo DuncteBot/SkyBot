@@ -20,6 +20,7 @@ package ml.duncte123.skybot.objects.delegate;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
+import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;
 import ml.duncte123.skybot.entities.delegate.RoleDelegate;
 import ml.duncte123.skybot.entities.delegate.TextChannelDelegate;
@@ -131,10 +132,12 @@ public class ScriptDelegate extends Script {
         return members.size();
     }
 
-    public String pinnedMessageCheck() {
+    public void pinnedMessageCheck() {
         TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
-        int count = channel.getPinnedMessages().complete().size();
-        return count + "/50 messages pinned in this channel";
+
+        channel.getPinnedMessages().queue(it ->
+                MessageUtils.sendMsg(channel, it.size() + "/50 messages pinned in this channel")
+        );
     }
 
     @Override

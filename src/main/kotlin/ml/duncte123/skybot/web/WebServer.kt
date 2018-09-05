@@ -390,14 +390,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             }
 
             get("/joinGuild") {
-                try {
-                    val session = getSession(request, response)
-                    shardManager.getGuildById("191245668617158656")
-                            .addMember(session.accessToken, oAuth2Client.getUser(session).complete().id).complete()
-                    response.redirect("/dashboard")
-                } catch (e: IllegalStateException) {
-                    response.redirect("https://discord.gg/NKM9Xtk")
-                }
+                response.redirect("https://discord.gg/NKM9Xtk")
             }
 
             get("/llama") {

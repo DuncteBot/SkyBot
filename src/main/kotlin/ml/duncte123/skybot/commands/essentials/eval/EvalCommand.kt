@@ -67,11 +67,13 @@ class EvalCommand : Command() {
                 CompilerConfiguration()
                         .addCompilationCustomizers(SandboxTransformer())) {
             @Throws(CompilationFailedException::class)
-            override fun evaluate(scriptText: String): Any {
+            override fun evaluate(scriptText: String): Any? {
                 if (filter.filterArrays(scriptText))
                     throw DoomedException("Arrays are not allowed")
                 if (filter.filterLoops(scriptText))
                     throw DoomedException("Loops are not allowed")
+                if(scriptText.isEmpty())
+                    return null
                 return super.evaluate(scriptText)
             }
         }
@@ -239,7 +241,7 @@ class EvalCommand : Command() {
                         sendErrorJSON(event.message, out, true)
                     else {
                         sendMsg(event, "ERROR: " + out.toString())
-                        // out.printStackTrace()
+//                        out.printStackTrace()
                     }
                 }
                 is RestAction<*> -> {

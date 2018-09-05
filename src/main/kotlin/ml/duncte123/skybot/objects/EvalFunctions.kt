@@ -18,12 +18,14 @@
 
 package ml.duncte123.skybot.objects
 
+import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
 import net.dv8tion.jda.core.entities.MessageChannel
+import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
 
@@ -73,8 +75,10 @@ class EvalFunctions {
         }
 
         @JvmStatic
-        fun pinnedMessageCheck(channel: MessageChannel): String {
-            return "${channel.pinnedMessages.complete().size}/50 messages pinned in this channel"
+        fun pinnedMessageCheck(channel: TextChannel) {
+            channel.pinnedMessages.queue {
+                MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
+            }
         }
     }
 }
