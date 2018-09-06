@@ -346,6 +346,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         }
 
         get("/callback") {
+            if(!request.queryParams().contains("code")) {
+                return@get response.redirect("/")
+            }
+
             oAuth2Client.startSession(
                     request.queryParams("code"),
                     request.queryParams("state"),
