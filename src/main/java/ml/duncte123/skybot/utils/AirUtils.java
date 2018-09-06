@@ -42,6 +42,7 @@ import java.util.regex.Pattern;
 @SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
     private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
+    private static final Pattern UNIX_UPTIME_PATTERN = Pattern.compile("(?:.*)up(.*)[0-9] users(?:.*)");
 
     /**
      * This converts the online status of a user to a fancy emote
@@ -318,12 +319,12 @@ public class AirUtils {
     public static String getSystemUptime() throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
-            Process uptimeProc = Runtime.getRuntime().exec("uptime | awk -F'( |,|:)+' '{print $6,$7\",\",$8,\"hours,\",$9,\"minutes\"}'");
+//            Process uptimeProc = Runtime.getRuntime().exec("uptime | awk -F'( |,|:)+' '{print $6,$7\",\",$8,\"hours,\",$9,\"minutes\"}'");
+            Process uptimeProc = Runtime.getRuntime().exec("uptime");
             BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
             String line = in.readLine();
             if (line != null) {
-                Pattern parse = Pattern.compile("((\\d+) days),\\s?((\\d+) hours),\\s?((\\d+) minutes)");
-                Matcher matcher = parse.matcher(line);
+                Matcher matcher = UNIX_UPTIME_PATTERN.matcher(line);
                 if (matcher.find()) {
                     return line;
                 }
