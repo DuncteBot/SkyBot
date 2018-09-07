@@ -22,5 +22,10 @@ public class ComparatingUtils {
     // Needs to be fixed
     public static void execCheck(Throwable t) {
         t.printStackTrace();
+        Throwable cause = t.getCause();
+        while (cause != null) {
+            cause.printStackTrace();
+            cause = cause.getCause();
+        }
     }
 }
