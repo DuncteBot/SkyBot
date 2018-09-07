@@ -326,7 +326,7 @@ public class AirUtils {
             if (line != null) {
                 Matcher matcher = UNIX_UPTIME_PATTERN.matcher(line);
                 if (matcher.find()) {
-                    return line;
+                    return matcher.group(matcher.groupCount());
                 }
             }
         }
