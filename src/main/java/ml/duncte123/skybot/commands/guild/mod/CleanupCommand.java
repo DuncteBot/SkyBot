@@ -28,7 +28,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -57,63 +56,34 @@ public class CleanupCommand extends Command {
         boolean keepPinned = false;
         boolean clearBots = false;
 
-        if (args.size() > 0) {
+        if (args.size() > 3) {
+            MessageUtils.sendErrorWithMessage(event.getMessage(), "You provided more than three arguments.");
+            return;
+        }
 
-            switch (args.size()) {
-                case 1: {
-                    String arg = args.get(0);
-                    if (arg.equalsIgnoreCase("keep-pinned")) {
-                        keepPinned = true;
-                    } else if (arg.equalsIgnoreCase("bots-only")) {
-                        clearBots = true;
-                    } else if (isInteger(arg)) {
-                        try {
-                            total = Integer.parseInt(args.get(0));
-                        } catch (NumberFormatException e) {
-                            MessageUtils.sendError(event.getMessage());
-                            MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
-                            return;
-                        }
-                        if (total < 1 || total > 1000) {
-                            MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
-                            return;
-                        }
-                    }
-                    break;
+        // if size == 0 then this will just be skipped
+        for (String arg : args) {
+            if (arg.equalsIgnoreCase("keep-pinned")) {
+                keepPinned = true;
+            } else if (arg.equalsIgnoreCase("bots-only")) {
+                clearBots = true;
+            } else if (isInteger(arg)) {
+                try {
+                    total = Integer.parseInt(args.get(0));
+                } catch (NumberFormatException e) {
+                    MessageUtils.sendError(event.getMessage());
+                    MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
+                    return;
                 }
-                default: {
-                    if (args.size() > 3) {
-                        MessageUtils.sendErrorWithMessage(event.getMessage(), "You provided more than three arguments.");
-                        return;
-                    }
-
-                    for (String arg : args) {
-                        if (arg.equalsIgnoreCase("keep-pinned")) {
-                            keepPinned = true;
-                        } else if (arg.equalsIgnoreCase("bots-only")) {
-                            clearBots = true;
-                        } else if (isInteger(arg)) {
-                            try {
-                                total = Integer.parseInt(args.get(0));
-                            } catch (NumberFormatException e) {
-                                MessageUtils.sendError(event.getMessage());
-                                MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
-                                return;
-                            }
-                            if (total < 1 || total > 1000) {
-                                MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
-                                return;
-                            }
-                        }
-                    }
-                    break;
+                if (total < 1 || total > 1000) {
+                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
+                    return;
                 }
             }
         }
 
         final boolean keepPinnedFinal = keepPinned;
         final boolean clearBotsFinal = clearBots;
-        final int totalFinal = total;
         TextChannel channel = event.getChannel();
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();
@@ -122,9 +92,10 @@ public class CleanupCommand extends Command {
                 msgStream = msgStream.filter(msg -> !msg.isPinned());
             if (clearBotsFinal)
                 msgStream = msgStream.filter(msg -> msg.getAuthor().isBot());
-
-            return channel.purgeMessages(msgStream.collect(Collectors.toList()));
-        }).whenCompleteAsync((aVoid, thr) -> {
+            List<Message> msgList = msgStream.collect(Collectors.toList());
+            channel.purgeMessages(msgList);
+            return msgList.size();
+        }).whenCompleteAsync((count, thr) -> {
             if (thr != null) {
                 String cause = "";
                 if (thr.getCause() != null)
@@ -133,14 +104,8 @@ public class CleanupCommand extends Command {
                 return;
             }
             MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
-                    "Removed %d messages!", totalFinal);
-        }).exceptionally((thr) -> {
-            String cause = "";
-            if (thr.getCause() != null)
-                cause = " caused by: " + thr.getCause().getMessage();
-            MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
-            return Collections.emptyList();
-        });
+                    "Removed %d messages!", count);
+        }).exceptionally((thr) -> -1);
     }
 
     @Override
