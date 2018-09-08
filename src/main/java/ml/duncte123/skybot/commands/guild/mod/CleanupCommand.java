@@ -54,7 +54,6 @@ public class CleanupCommand extends Command {
         }
 
         int total = 5;
-        //Little hack for lambda
         boolean keepPinned = false;
         boolean clearBots = false;
 
@@ -67,6 +66,18 @@ public class CleanupCommand extends Command {
                         keepPinned = true;
                     } else if (arg.equalsIgnoreCase("bots-only")) {
                         clearBots = true;
+                    } else if (isInteger(arg)) {
+                        try {
+                            total = Integer.parseInt(args.get(0));
+                        } catch (NumberFormatException e) {
+                            MessageUtils.sendError(event.getMessage());
+                            MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
+                            return;
+                        }
+                        if (total < 1 || total > 1000) {
+                            MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
+                            return;
+                        }
                     }
                     break;
                 }
