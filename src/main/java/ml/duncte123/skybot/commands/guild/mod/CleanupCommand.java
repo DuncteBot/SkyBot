@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botCommons.messaging.MessageUtils;
+import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -34,8 +35,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class CleanupCommand extends Command {
-
-    public final static String help = "performs a cleanup in the channel where the command is run.";
 
     public CleanupCommand() {
         this.category = CommandCategory.MOD_ADMIN;
@@ -82,9 +81,11 @@ public class CleanupCommand extends Command {
             }
         }
 
+        @SinceSkybot(version = "3.78.2_e89e53a5")
         final boolean keepPinnedFinal = keepPinned;
         final boolean clearBotsFinal = clearBots;
         TextChannel channel = event.getChannel();
+        // Start of the annotation
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();
 
@@ -92,26 +93,28 @@ public class CleanupCommand extends Command {
                 msgStream = msgStream.filter(msg -> !msg.isPinned());
             if (clearBotsFinal)
                 msgStream = msgStream.filter(msg -> msg.getAuthor().isBot());
+
             List<Message> msgList = msgStream.collect(Collectors.toList());
+
             channel.purgeMessages(msgList);
             return msgList.size();
+        }).exceptionally((thr) -> {
+            String cause = "";
+            if (thr.getCause() != null)
+                cause = " caused by: " + thr.getCause().getMessage();
+            MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+            return 0;
         }).whenCompleteAsync((count, thr) -> {
-            if (thr != null) {
-                String cause = "";
-                if (thr.getCause() != null)
-                    cause = " caused by: " + thr.getCause().getMessage();
-                MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
-                return;
-            }
             MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
                     "Removed %d messages!", count);
-        }).exceptionally((thr) -> -1);
+        });
+        // End of the annotation
     }
 
     @Override
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
-                "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned]`";
+                "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
     }
 
     @Override
@@ -121,6 +124,6 @@ public class CleanupCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"clear", "purge"};
+        return new String[]{"clear", "purge", "wipe"};
     }
 }
