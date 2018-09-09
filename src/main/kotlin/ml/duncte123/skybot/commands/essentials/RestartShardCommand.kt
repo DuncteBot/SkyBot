@@ -92,6 +92,8 @@ class RestartShardCommand : Command() {
 
     override fun getName() = "restartshard"
 
+    override fun getAliases() = arrayOf("shardrestart")
+
     fun terminate(shard: Int, shardManager: ShardManager) {
         for (jda in shardManager.shardCache) {
             if (jda.shardInfo.shardId != shard && shard != -1)

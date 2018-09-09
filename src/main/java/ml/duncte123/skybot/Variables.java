@@ -34,6 +34,7 @@ import ml.duncte123.skybot.utils.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -64,6 +65,11 @@ public class Variables {
 
         if (config == null) {
             System.exit(0);
+        }
+
+        //set the adminds
+        for (long id : config.discord.constantSuperUserIds) {
+            Settings.wbkxwkZPaG4ni5lm8laY.add(id);
         }
 
         this.audioUtils = new AudioUtils(config.apis, this);

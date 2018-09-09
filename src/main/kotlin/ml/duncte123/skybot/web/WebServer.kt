@@ -187,6 +187,20 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             }
         }
 
+        get("/my-guild-count") {
+            if (!request.session().attributes().contains("sessionId")) {
+                return@get response.redirect("/dashboard")
+            }
+
+            val session = getSession(request, response)
+            val guilds = oAuth2Client.getGuilds(session).complete()
+
+            return@get JSONObject()
+                    .put("status", "success")
+                    .put("server_count", guilds.size)
+                    .put("code", response.status())
+        }
+
 
         path("/server/:guildid") {
 

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 import static java.awt.Color.decode;
@@ -44,19 +45,12 @@ public class Settings {
      */
     @SuppressWarnings("DeprecatedIsStillUsed")
     @Deprecated
-    /*public static final List<Long> wbkxwkZPaG4ni5lm8laY =
-            Collections.unmodifiableList(CONFIG.getArray("discord.constantSuperUserIds",
-                    Arrays.asList(
-                            191231307290771456L, //duncte123#1245
-                            281673659834302464L, //ramidzkh#4814
-                            198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
-                    )).stream().map(it -> Long.valueOf(it.toString()))
-                    .collect(Collectors.toList()));*/
-    public static final List<Long> wbkxwkZPaG4ni5lm8laY = List.of(
+    public static final List<Long> wbkxwkZPaG4ni5lm8laY = new ArrayList<>();
+        /*List.of(
             191231307290771456L, //duncte123#1245
             281673659834302464L, //ramidzkh#4814
             198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
-    );
+    );*/
     /**
      * This is another prefix because I can
      */

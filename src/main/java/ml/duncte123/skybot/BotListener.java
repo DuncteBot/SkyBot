@@ -65,6 +65,10 @@ public class BotListener extends ListenerAdapter {
      * Check if we are updating
      */
     public static boolean isUpdating = false;
+    /**
+     * Make sure that we don't exit when we don't want to
+     */
+    private boolean shuttingDown = false;
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -177,6 +181,7 @@ public class BotListener extends ListenerAdapter {
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
                 && Settings.wbkxwkZPaG4ni5lm8laY.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
+            shuttingDown = true;
 
             event.getMessage().addReaction("✅").queue(
                     success -> killAllShards(event.getJDA().asBot().getShardManager()),
@@ -452,6 +457,8 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onShutdown(ShutdownEvent event) {
+        if(!shuttingDown) return;
+
         MusicCommand.shutdown();
 
         //Kill other things
