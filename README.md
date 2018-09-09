@@ -1,5 +1,5 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8ed5b37f438d4dbc894b618a5b6f76a6)](https://app.codacy.com/app/duncte123/SkyBot?utm_source=github.com&utm_medium=referral&utm_content=duncte123/SkyBot&utm_campaign=badger)
-# SkyBot [![Build Status](https://circleci.com/gh/duncte123/SkyBot/tree/master.svg?style=shield&circle-token=:circle-token)](https://circleci.com/gh/duncte123/SkyBot) [![DiscordBots](https://discordbots.org/api/widget/status/210363111729790977.png)](https://discordbots.org/bot/210363111729790977)
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8ed5b37f438d4dbc894b618a5b6f76a6)](https://app.codacy.com/app/DuncteBot/SkyBot?utm_source=github.com&utm_medium=referral&utm_content=DuncteBpt/SkyBot&utm_campaign=badger)
+# SkyBot [![Build Status](https://circleci.com/gh/DuncteBot/SkyBot/tree/master.svg?style=shield)](https://circleci.com/gh/duncte123/SkyBot) [![DiscordBots](https://discordbots.org/api/widget/status/210363111729790977.png)](https://discordbots.org/bot/210363111729790977)
 SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
