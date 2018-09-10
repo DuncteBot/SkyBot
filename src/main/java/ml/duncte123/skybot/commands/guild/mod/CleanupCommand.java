@@ -81,7 +81,7 @@ public class CleanupCommand extends Command {
             }
         }
 
-        @SinceSkybot(version = "3.78.2_e89e53a5")
+        @SinceSkybot(version = "3.78.2")
         final boolean keepPinnedFinal = keepPinned;
         final boolean clearBotsFinal = clearBots;
         TextChannel channel = event.getChannel();
