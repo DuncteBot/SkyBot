@@ -57,8 +57,8 @@ public class ShardInfoCommand extends Command {
         Collections.reverse(shards);
         for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
-            row.add((shard.getShardInfo().getShardId() + 1) +
-                    (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
+            row.add(shard.getShardInfo().getShardId() +
+                        (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
             row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
