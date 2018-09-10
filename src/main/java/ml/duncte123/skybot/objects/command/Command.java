@@ -190,9 +190,9 @@ public abstract class Command implements ICommand {
         return isUserOrGuildPatron(e, true);
     }
 
-    @SuppressWarnings("deprecation")
+
     protected boolean isDev(User u) {
-        return Settings.wbkxwkZPaG4ni5lm8laY.contains(u.getIdLong());
+        return Settings.developers.contains(u.getIdLong());
     }
 
     /**

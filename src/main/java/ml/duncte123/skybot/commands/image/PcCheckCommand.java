@@ -29,7 +29,7 @@ public class PcCheckCommand extends ImageCommandBase {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!doAllChecks(event, ctx.getArgs())) {
+        if (!passes(event, ctx.getArgs())) {
             return;
         }
 

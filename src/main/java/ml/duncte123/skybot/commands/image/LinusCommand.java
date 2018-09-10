@@ -29,7 +29,7 @@ public class LinusCommand extends ImageCommandBase {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!doAllChecksButNotTheArgsBecauseWeDontNeedThem(event)) {
+        if (!passesNoArgs(event)) {
             return;
         }
 

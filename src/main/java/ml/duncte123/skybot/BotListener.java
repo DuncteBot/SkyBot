@@ -177,9 +177,9 @@ public class BotListener extends ListenerAdapter {
         //We only want to respond to members/users
         if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null)
             return;
-        //noinspection deprecation
+
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
-                && Settings.wbkxwkZPaG4ni5lm8laY.contains(event.getAuthor().getIdLong())) {
+                && Settings.developers.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
@@ -195,63 +195,7 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
         String rw = event.getMessage().getContentRaw();
 
-        if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
-                && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
-
-            if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
-                if (matcher.find()) {
-                    //Get the invite Id from the message
-                    String inviteID = matcher.group(matcher.groupCount());
-
-                    //Prohibiting failure because the bot is currently banned from the other guild.
-                    guild.getInvites().queue((invites) -> {
-                        //Check if the invite is for this guild, if it is not delete the message
-                        if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
-                            event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
-                                    sendMsg(event, event.getAuthor().getAsMention() +
-                                            ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
-                            );
-                        }
-                    }, (__) -> {
-                    }/*, (thr) -> {
-                    try {
-                        throw new SkybotContextException(thr.getMessage(), thr);
-                    } catch (SkybotContextException e) {
-                        MessageUtils.sendMsg(event, "I can not read the guild invites due to a lack of permissions.\n" +
-                                "Grant the permission `MANAGE_SERVER` for me.\n" +
-                                "Error: " +  e.getMessage());
-                    }
-                }*/);
-                }
-            }
-
-            if (settings.isEnableSwearFilter()) {
-                Message messageToCheck = event.getMessage();
-                if (wordFilter.filterText(rw)) {
-                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
-                            .queue(null, CUSTOM_QUEUE_ERROR);
-
-                    sendMsg(event,
-                            String.format("Hello there, %s please do not use cursive language within this Discord.",
-                                    event.getAuthor().getAsMention()
-                            ),
-                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
-                    return;
-                }
-            }
-
-            if (settings.getEnableSpamFilter()) {
-                Message messageToCheck = event.getMessage();
-                long[] rates = settings.getRatelimits();
-                spamFilter.applyRates(rates);
-                DunctebotGuild g = new DunctebotGuild(guild, variables);
-                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
-                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                            settings.getKickState() ? "kicked" : "muted", "spam", g);
-                }
-            }
-        }
+        if (doAutoModChecks(event, settings, rw)) return;
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
                 && rw.equals(guild.getSelfMember().getAsMention())) {
@@ -260,56 +204,34 @@ public class BotListener extends ListenerAdapter {
                     Settings.PREFIX)
             );
             return;
-        } else if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
+        }
+
+        if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
                 !rw.startsWith(settings.getCustomPrefix())
                 && !rw.startsWith(guild.getSelfMember().getAsMention())
                 && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return;
         }
 
-        //If the topic contains -commands ignore it
-        if (event.getChannel().getTopic() != null) {
-            String[] blocked = event.getChannel().getTopic().split("-");
-            if (event.getChannel().getTopic().contains("-commands"))
-                return;
-            for (String s : blocked) {
-                if (s.startsWith("!")) {
-                    s = s.split("!")[1];
-                    if (isCategory(s.toUpperCase())) {
-                        if (!shouldBlockCommand(rw, s)) {
-                            return;
-                        }
-                    } else {
-                        if (!startsWithPrefix(settings, rw, s))
-                            return;
-                    }
-                } else {
-                    if (isCategory(s.toUpperCase())) {
-                        if (shouldBlockCommand(rw, s)) {
-                            return;
-                        }
-                    } else {
-                        if (startsWithPrefix(settings, rw, s))
-                            return;
-                    }
-                }
-            }
-        }
-        if (rw.startsWith(guild.getSelfMember().getAsMention())) {
-            final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-            //Handle the chat command
-            ICommand cmd = commandManager.getCommand("chat");
-            if (cmd != null)
-                cmd.executeCommand(new CommandContext(
-                        "chat",
-                        Arrays.asList(split).subList(1, split.length),
-                        event,
-                        variables
-                ));
+        if (!canRunCommands(rw, settings, event))
+            return;
+
+        if (!rw.startsWith(guild.getSelfMember().getAsMention())) {
+            //Handle the command
+            commandManager.runCommand(event);
             return;
         }
-        //Handle the command
-        commandManager.runCommand(event);
+
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+        //Handle the chat command
+        ICommand cmd = commandManager.getCommand("chat");
+        if (cmd != null)
+            cmd.executeCommand(new CommandContext(
+                    "chat",
+                    Arrays.asList(split).subList(1, split.length),
+                    event,
+                    variables
+            ));
     }
 
     @Override
@@ -330,19 +252,23 @@ public class BotListener extends ListenerAdapter {
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                     ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
+
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
                 sendMsg(welcomeLeaveChannel, msg);
         }
 
-        if (settings.isAutoroleEnabled()
-                && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
+        if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             Role r = guild.getRoleById(settings.getAutoroleRole());
-            if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r))
+
+            if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
                 guild.getController()
                         .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
                 });
+            }
+
         }
     }
 
@@ -353,13 +279,15 @@ public class BotListener extends ListenerAdapter {
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
-            long welcomeLeaveChannelId =
-                    (settings.getWelcomeLeaveChannel() <= 0)
+            long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                             ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
-            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
+
+            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
+            }
         }
     }
 
@@ -457,7 +385,7 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onShutdown(ShutdownEvent event) {
-        if(!shuttingDown) return;
+        if (!shuttingDown) return;
 
         MusicCommand.shutdown();
 
@@ -484,6 +412,7 @@ public class BotListener extends ListenerAdapter {
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
     }
+
     //                                    raw,    category?
     private boolean shouldBlockCommand(String rw, String s) {
         return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
@@ -562,6 +491,96 @@ public class BotListener extends ListenerAdapter {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
             jda.shutdown();
         });*/
+    }
+
+    private boolean canRunCommands(String rw, GuildSettings settings, GuildMessageReceivedEvent event) {
+        //If the topic contains -commands ignore it
+        if (event.getChannel().getTopic() != null) {
+            String[] blocked = event.getChannel().getTopic().split("-");
+
+            if (event.getChannel().getTopic().contains("-commands"))
+                return false;
+
+            for (String s : blocked) {
+                if (s.startsWith("!")) {
+                    s = s.split("!")[1];
+
+                    if (isCategory(s.toUpperCase())) {
+                        if (!shouldBlockCommand(rw, s)) {
+                            return false;
+                        }
+                    }
+
+                    if (!startsWithPrefix(settings, rw, s))
+                        return false;
+
+                }
+
+                if (isCategory(s.toUpperCase())) {
+                    if (shouldBlockCommand(rw, s)) {
+                        return false;
+                    }
+                }
+
+                if (startsWithPrefix(settings, rw, s))
+                    return false;
+
+            }
+        }
+        return true;
+    }
+
+    private boolean doAutoModChecks(GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+        Guild guild = event.getGuild();
+        if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
+                && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+
+            if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+                Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
+                if (matcher.find()) {
+                    //Get the invite Id from the message
+                    String inviteID = matcher.group(matcher.groupCount());
+
+                    //Prohibiting failure because the bot is currently banned from the other guild.
+                    guild.getInvites().queue((invites) -> {
+                        //Check if the invite is for this guild, if it is not delete the message
+                        if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
+                            event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
+                                    sendMsg(event, event.getAuthor().getAsMention() +
+                                            ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                            );
+                        }
+                    });
+                }
+            }
+
+            if (settings.isEnableSwearFilter()) {
+                Message messageToCheck = event.getMessage();
+                if (wordFilter.filterText(rw)) {
+                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+                            .queue(null, CUSTOM_QUEUE_ERROR);
+
+                    sendMsg(event,
+                            String.format("Hello there, %s please do not use cursive language within this Discord.",
+                                    event.getAuthor().getAsMention()
+                            ),
+                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
+                    return true;
+                }
+            }
+
+            if (settings.getEnableSpamFilter()) {
+                Message messageToCheck = event.getMessage();
+                long[] rates = settings.getRatelimits();
+                spamFilter.applyRates(rates);
+                DunctebotGuild g = new DunctebotGuild(guild, variables);
+                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
+                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
+                            settings.getKickState() ? "kicked" : "muted", "spam", g);
+                }
+            }
+        }
+        return false;
     }
 
 }

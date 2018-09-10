@@ -36,9 +36,7 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ImageCommandBase extends Command {
 
-    private static final String dir = "user_avatars";
-
-    boolean canSendFile(GuildMessageReceivedEvent event) {
+    private boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
@@ -47,7 +45,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
         if (args.isEmpty()) {
             sendMsg(event, "Too little arguments");
             return false;
@@ -55,11 +53,11 @@ public abstract class ImageCommandBase extends Command {
         return true;
     }
 
-    boolean doAllChecks(GuildMessageReceivedEvent event, List<String> args) {
-        return doAllChecksButNotTheArgsBecauseWeDontNeedThem(event) && hasArgs(event, args);
+    protected boolean passes(GuildMessageReceivedEvent event, List<String> args) {
+        return passesNoArgs(event) && hasArgs(event, args);
     }
 
-    boolean doAllChecksButNotTheArgsBecauseWeDontNeedThem(GuildMessageReceivedEvent event) {
+    protected boolean passesNoArgs(GuildMessageReceivedEvent event) {
         event.getChannel().sendTyping().queue();
         return canSendFile(event) && isUserOrGuildPatron(event);
     }
@@ -68,7 +66,7 @@ public abstract class ImageCommandBase extends Command {
         return getName() + "_" + System.currentTimeMillis() + ".png";
     }
 
-    void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
+    protected void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
         event.getChannel().sendFile(image, getFileName()).queue();
     }
 
@@ -77,7 +75,7 @@ public abstract class ImageCommandBase extends Command {
         return CommandCategory.PATRON;
     }
 
-    String getImageFromCommand(CommandContext ctx) {
+    protected String getImageFromCommand(CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();
 
@@ -120,7 +118,7 @@ public abstract class ImageCommandBase extends Command {
         return url;
     }
 
-    String parseTextArgsForImagae(CommandContext ctx) {
+    protected String parseTextArgsForImagae(CommandContext ctx) {
         return ctx.getArgsDisplay();
     }
 }

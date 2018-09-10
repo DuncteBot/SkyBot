@@ -27,7 +27,7 @@ public class ShitCommand extends ImageCommandBase {
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!doAllChecks(event, ctx.getArgs())) {
+        if (!passes(event, ctx.getArgs())) {
             return;
         }
 

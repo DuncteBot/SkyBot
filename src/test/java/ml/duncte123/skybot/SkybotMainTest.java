@@ -26,10 +26,9 @@ import static org.junit.Assert.assertNotEquals;
 
 public class SkybotMainTest {
 
-    @SuppressWarnings("deprecation")
     @Test
     public void testSettings() {
-        List<Long> actualValue = Settings.wbkxwkZPaG4ni5lm8laY;
+        List<Long> actualValue = Settings.developers;
         assertNotEquals("Checks if the settings are defined", actualValue.size(), 0);
     }
 }

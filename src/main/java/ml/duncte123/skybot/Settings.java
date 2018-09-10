@@ -40,12 +40,8 @@ public class Settings {
 
     /**
      * This contains a list of different id's
-     *
-     * @deprecated because the bot will break if you mess with this.
      */
-    @SuppressWarnings("DeprecatedIsStillUsed")
-    @Deprecated
-    public static final List<Long> wbkxwkZPaG4ni5lm8laY = new ArrayList<>();
+    public static final List<Long> developers = new ArrayList<>();
         /*List.of(
             191231307290771456L, //duncte123#1245
             281673659834302464L, //ramidzkh#4814

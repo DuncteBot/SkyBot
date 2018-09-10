@@ -16,10 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-let _ = (el) => document.getElementById(el);
+function _(el) { return document.getElementById(el) };
 
 document.addEventListener("DOMContentLoaded", () => {
     _("year").innerHTML = new Date().getFullYear();
-    M.Sidenav.init(document.querySelectorAll('.sidenav'));
+    M.Sidenav.init(document.querySelectorAll(".sidenav"));
 });
 
