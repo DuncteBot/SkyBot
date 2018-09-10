@@ -25,8 +25,14 @@ import net.dv8tion.jda.core.entities.Guild
 
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
 
+    /**
+     * Gets the settings for a guild
+     */
     fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)!!
 
+    /**
+     * Sets the settings for a guild
+     */
     fun setSettings(settings: GuildSettings) {
         GuildSettingsUtils.updateGuildSettings(this.guild, settings, variables)
     }

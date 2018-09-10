@@ -279,7 +279,7 @@ public class BotListener extends ListenerAdapter {
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
-                            ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+                    ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
@@ -367,12 +367,12 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
         try {
             if (LavalinkManager.ins.isConnected(guild)) {
-                if (event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild))
-                        && !event.getMember().equals(guild.getSelfMember())) {
-                    return;
-                } else {
+                if (!event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild)) && event.getMember().equals(guild.getSelfMember())) {
                     channelCheckThing(guild, LavalinkManager.ins.getConnectedChannel(guild));
+
+                    return;
                 }
+
                 if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(guild))) {
                     channelCheckThing(guild, event.getChannelLeft());
                     //return;
@@ -445,7 +445,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private String parseGuildVars(String message, GenericGuildMemberEvent event) {
+    private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent))
             return "NOPE";
@@ -455,12 +455,12 @@ public class BotListener extends ListenerAdapter {
         long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
         long autoRoleId = s.getAutoroleRole();
 
-        message = CustomCommandUtils.PARSER.clear()
+        String message = CustomCommandUtils.PARSER.clear()
                 .put("user", event.getUser())
                 .put("guild", event.getGuild())
                 .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
                 .put("args", "")
-                .parse(message);
+                .parse(rawMessage);
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
                 .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
@@ -504,10 +504,9 @@ public class BotListener extends ListenerAdapter {
                 if (s.startsWith("!")) {
                     s = s.split("!")[1];
 
-                    if (isCategory(s.toUpperCase())) {
-                        if (!shouldBlockCommand(rw, s)) {
-                            return false;
-                        }
+                    if (isCategory(s.toUpperCase()) && !shouldBlockCommand(rw, s)) {
+                        return false;
+
                     }
 
                     if (!startsWithPrefix(settings, rw, s))
@@ -515,10 +514,8 @@ public class BotListener extends ListenerAdapter {
 
                 }
 
-                if (isCategory(s.toUpperCase())) {
-                    if (shouldBlockCommand(rw, s)) {
-                        return false;
-                    }
+                if (isCategory(s.toUpperCase()) && shouldBlockCommand(rw, s)) {
+                    return false;
                 }
 
                 if (startsWithPrefix(settings, rw, s))
@@ -526,6 +523,7 @@ public class BotListener extends ListenerAdapter {
 
             }
         }
+
         return true;
     }
 

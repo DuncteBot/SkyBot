@@ -16,7 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-function _(el) { return document.getElementById(el) };
+function _(el) {
+    return document.getElementById(el);
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     _("year").innerHTML = new Date().getFullYear();

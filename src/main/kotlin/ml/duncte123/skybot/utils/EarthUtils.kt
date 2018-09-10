@@ -237,46 +237,51 @@ class EarthUtils {
         fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
             val stort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$stort").async {
-                val posts = it.getJSONObject("data").getJSONArray("children").filter {
-                    it as JSONObject
-                    (if (event.channel.isNSFW) true else !it.getJSONObject("data").getBoolean("over_18") &&
-                            it.getJSONObject("data").getString("selftext").length <= 550
-                            && it.getJSONObject("data").getString("title").length <= 256)
+                val posts = it.getJSONObject("data").getJSONArray("children").filter { filter -> filter as JSONObject
+
+                    (if (event.channel.isNSFW) true else !filter.getJSONObject("data").getBoolean("over_18") &&
+                            filter.getJSONObject("data").getString("selftext").length <= 550
+                            && filter.getJSONObject("data").getString("title").length <= 256)
                 }
+
                 if (posts.isEmpty()) {
                     me.duncte123.botCommons.messaging.MessageUtils.sendError(event.message)
                     me.duncte123.botCommons.messaging.MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
                     |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
-                } else {
-
-                    if (!index.containsKey(event.guild.id) || index.getOrDefault(event.guild.id, 0) >= posts.size) {
-                        index[event.guild.id] = 0
-                    }
-
-                    val postI = index.getOrDefault(event.guild.id, 0)
-
-                    val post: JSONObject = JSONArray(posts).getJSONObject(postI).getJSONObject("data")
-                    index[event.guild.id] = postI + 1
-                    val title: String = post.getString("title")
-                    val text: String = post.optString("selftext", "")
-                    val url: String = post.getString("url")
-
-                    val embed = EmbedUtils.defaultEmbed().setTitle(title, url)
-
-                    if (text.isNotEmpty())
-                        embed.setDescription(text)
-
-                    val imagesO = post.optJSONObject("preview")
-//                    println(imagesO)
-                    val images = imagesO?.optJSONArray("images")
-                    if (images != null) {
-                        val image = images.getJSONObject(0).getJSONObject("source").getString("url")
-                        embed.setImage(image)
-                    }
-
-                    MessageUtils.sendEmbed(event, embed.build())
+                    return@async
                 }
+
+                if (!index.containsKey(event.guild.id) || index.getOrDefault(event.guild.id, 0) >= posts.size) {
+                    index[event.guild.id] = 0
+                }
+
+                val postI = index.getOrDefault(event.guild.id, 0)
+
+                val post: JSONObject = JSONArray(posts).getJSONObject(postI).getJSONObject("data")
+
+                index[event.guild.id] = postI + 1
+
+                val title: String = post.getString("title")
+                val text: String = post.optString("selftext", "")
+                val url: String = post.getString("url")
+
+                val embed = EmbedUtils.defaultEmbed().setTitle(title, url)
+
+                if (text.isNotEmpty())
+                    embed.setDescription(text)
+
+                val imagesO = post.optJSONObject("preview")
+
+                val images = imagesO?.optJSONArray("images")
+
+                if (images != null) {
+                    val image = images.getJSONObject(0).getJSONObject("source").getString("url")
+                    embed.setImage(image)
+                }
+
+                MessageUtils.sendEmbed(event, embed.build())
             }
+
         }
     }
 }

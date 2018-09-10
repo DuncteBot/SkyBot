@@ -201,7 +201,7 @@ class EvalCommand : Command() {
     }*/
 
     @SinceSkybot("3.58.0")
-    suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
+    private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
             val out = withTimeoutOrNull(millis) {
                 engine.put("scope", this)

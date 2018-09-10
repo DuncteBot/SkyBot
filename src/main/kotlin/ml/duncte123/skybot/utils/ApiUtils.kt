@@ -72,14 +72,14 @@ object ApiUtils {
     @JvmStatic
     fun getWarnsForUser(database: DBManager, userId: String, guildId: String): WarnObject {
         val conn = database.connManager.connection
+        val warnings = ArrayList<Warning>()
+
         try {
             val smt = conn.prepareStatement(
                     "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
             smt.setString(1, userId)
             smt.setString(2, guildId)
             val result = smt.executeQuery()
-
-            val warnings = ArrayList<Warning>()
 
             while (result.next()) {
                 warnings.add(Warning(
@@ -96,7 +96,7 @@ object ApiUtils {
             return WarnObject(userId, warnings)
         } catch (e: SQLException) {
             conn.close()
-            throw e
+            return WarnObject(userId, warnings)
         }
     }
 

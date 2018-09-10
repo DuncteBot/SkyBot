@@ -166,29 +166,37 @@ public class CustomCommandCommand extends Command {
         String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
         String guildId = event.getGuild().getId();
         if (commandExists(commandName, guildId, manager)) {
+
             if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
                 sendMsg(event, "A command already exists for this server.");
-            } else {
-                if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager))
-                    sendMsg(event, "The command has been updated.");
+
+                return;
             }
+            if (editCustomCommand(manager.getCustomCommand(commandName, guildId), commandAction, manager)) {
+                sendMsg(event, "The command has been updated.");
+                return;
+            }
+
             return;
         }
         Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
+
         if (result.getFirst()) {
             sendMsg(event, "Command added.");
-        } else {
-            String error = "Failed to add custom command. \n Reason(s): %s";
-            String reason = "";
-            if (result.getSecond()) {
-                reason += "The command was already found.\n";
-            } else if (result.getThird()) {
-                reason += "You reached the limit of 50 custom commands on this server.\n";
-            } else if (!result.getSecond() && !result.getThird()) {
-                reason += "We have an database issue.";
-            }
-            sendMsg(event, String.format(error, reason));
+
+            return;
         }
+        String error = "Failed to add custom command. \n Reason(s): %s";
+        String reason = "";
+        if (result.getSecond()) {
+            reason += "The command was already found.\n";
+        } else if (result.getThird()) {
+            reason += "You reached the limit of 50 custom commands on this server.\n";
+        } else if (!result.getSecond() && !result.getThird()) {
+            reason += "We have an database issue.";
+        }
+        sendMsg(event, String.format(error, reason));
+
     }
 
     private boolean commandExists(String name, String guild, CommandManager manager) {

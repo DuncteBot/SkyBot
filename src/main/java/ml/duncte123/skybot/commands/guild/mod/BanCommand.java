@@ -84,7 +84,8 @@ public class BanCommand extends Command {
                 }
 
                 CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
-                if (calculateBanTime.is()) return;
+                if (calculateBanTime.hasError()) return;
+
                 String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
                 int finalBanTime = calculateBanTime.getFinalBanTime();
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
@@ -124,47 +125,47 @@ public class BanCommand extends Command {
     }
 
     private class CalculateBanTime {
-        private boolean myResult;
+        private boolean error;
         private GuildMessageReceivedEvent event;
         private String[] timeParts;
         private String finalUnbanDate;
         private int finalBanTime;
 
-        CalculateBanTime(GuildMessageReceivedEvent event, String... timeParts) {
+        private CalculateBanTime(GuildMessageReceivedEvent event, String... timeParts) {
             this.event = event;
             this.timeParts = timeParts;
         }
 
-        boolean is() {
-            return myResult;
+        private boolean hasError() {
+            return error;
         }
 
-        String getFinalUnbanDate() {
+        private String getFinalUnbanDate() {
             return finalUnbanDate;
         }
 
-        int getFinalBanTime() {
+        private int getFinalBanTime() {
             return finalBanTime;
         }
 
-        public CalculateBanTime invoke() {
+        private CalculateBanTime invoke() {
             String unbanDate = "";
             int banTime; // initial value is always 0
             try {
                 banTime = Integer.parseInt(timeParts[0]);
             } catch (NumberFormatException e) {
                 MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
-                myResult = true;
+                error = true;
                 return this;
             } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
                 MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                myResult = true;
+                error = true;
                 return this;
             }
             if (banTime > 0) {
                 if (timeParts.length != 2) {
                     MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                    myResult = true;
+                    error = true;
                     return this;
                 }
 
@@ -175,7 +176,7 @@ public class BanCommand extends Command {
                     case "m":
                         if (Integer.parseInt(timeParts[0]) < 10) {
                             MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
-                            myResult = true;
+                            error = true;
                             return this;
                         }
                         dt = DateUtils.addMinutes(dt, banTime);
@@ -198,7 +199,7 @@ public class BanCommand extends Command {
 
                     default:
                         MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
-                        myResult = true;
+                        error = true;
                         return this;
                 }
                 unbanDate = df.format(dt);
@@ -206,7 +207,7 @@ public class BanCommand extends Command {
 
             finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
             finalBanTime = banTime;
-            myResult = false;
+            error = false;
             return this;
         }
     }

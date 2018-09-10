@@ -92,6 +92,7 @@ class ChatCommand : Command() {
             MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
             return
         }
+
         val time = System.currentTimeMillis()
         var message = ctx.argsRaw
         event.channel.sendTyping().queue()
@@ -102,11 +103,15 @@ class ChatCommand : Command() {
             sessions[event.author.idLong] = ChatSession(botid, event.author.idLong)
             //sessions[event.author.id]?.session =
         }
-        logger.debug("Message: \"$message\"")
-        //Set the current date in the object
-        sessions[event.author.idLong]!!.time = Date()
 
-        sessions[event.author.idLong]!!.think(message) {
+        val session = sessions[event.author.idLong] ?: return
+
+        logger.debug("Message: \"$message\"")
+
+        //Set the current date in the object
+        session.time = Date()
+
+        session.think(message) {
             var response = it
 
             val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author, ctx.config)
@@ -136,8 +141,6 @@ class ChatCommand : Command() {
     }
 
     private fun replaceStuff(event: GuildMessageReceivedEvent, m: String): String {
-        //We don't need this because we are using contentDisplay instead of contentRaw
-        //We need it since contentDisplay leaves # and @
         var message = m
         for (it in event.message.mentionedChannels) {
             message = message.replace(it.asMention, it.name)

@@ -40,15 +40,15 @@ abstract class WeebCommandBase : Command() {
                 .setTimestamp(null)
     }
 
-    fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {
+    protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {
         return getDefaultWeebEmbed().setDescription(description).setImage(imageUrl).build()
     }
 
-    fun getWeebEmbedImage(imageUrl: String): MessageEmbed {
+    protected fun getWeebEmbedImage(imageUrl: String): MessageEmbed {
         return getDefaultWeebEmbed().setImage(imageUrl).build()
     }
 
-    fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
+    protected fun requestAndSend(type: String, thing: String, args: List<String>, event: GuildMessageReceivedEvent, weebApi: WeebApi) {
         weebApi.getRandomImage(type).async {
             val imageUrl = it.url
             if (args.isEmpty()) {
