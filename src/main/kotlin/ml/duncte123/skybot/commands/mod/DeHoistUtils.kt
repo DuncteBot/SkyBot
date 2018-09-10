@@ -88,7 +88,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
         }
     }
 
-    /**
+    /*
      * This checks if we should change the nickname of a member to de-hoist it
      * @return [Boolean] true if we should change the nickname
      */

@@ -190,8 +190,11 @@ class ChatSession(botid: String, userId: Long) {
         val xPath = XPathFactory.newInstance().newXPath()
         val xPathExpression = xPath.compile(expression)
         val document = documentBuilder.parse(ByteArrayInputStream(input.toByteArray(charset("UTF-8"))))
-        val output = xPathExpression.evaluate(document, XPathConstants.STRING) as String
-        return output.trim { it <= ' ' }
+        val output = xPathExpression.evaluate(document, XPathConstants.STRING)
+
+        val outputString = (output as? String) ?: "Error on xpath, this should never be shown"
+
+        return outputString.trim { it <= ' ' }
     }
 
 }

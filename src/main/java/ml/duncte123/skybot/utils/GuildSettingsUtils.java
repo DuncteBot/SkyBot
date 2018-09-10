@@ -23,6 +23,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -95,7 +96,7 @@ public class GuildSettingsUtils {
      * @param guild the guild to get
      * @return the guild
      */
-    public static GuildSettings getGuild(Guild guild, Variables variables) {
+    @NotNull public static GuildSettings getGuild(Guild guild, Variables variables) {
 
         Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
         if (!guildSettings.containsKey(guild.getIdLong())) {

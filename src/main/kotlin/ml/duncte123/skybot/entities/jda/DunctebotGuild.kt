@@ -28,7 +28,7 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
     /**
      * Gets the settings for a guild
      */
-    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)!!
+    fun getSettings() = GuildSettingsUtils.getGuild(this.guild, variables)
 
     /**
      * Sets the settings for a guild

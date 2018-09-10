@@ -69,11 +69,11 @@ public class GuildMusicManager {
         return sendHandler;
     }
 
-    boolean isAnnounceTracks() {
+    protected boolean isAnnounceTracks() {
         return settings.isAnnounceTracks();
     }
 
-    TextChannel getLatestChannel() {
+    protected TextChannel getLatestChannel() {
         if (this.latestChannel == -1 || this.latestChannel == 0)
             return null;
         return SkyBot.getInstance().getShardManager().getTextChannelById(this.latestChannel);

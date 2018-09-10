@@ -237,7 +237,9 @@ class EarthUtils {
         fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
             val stort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
             WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$stort").async {
-                val posts = it.getJSONObject("data").getJSONArray("children").filter { filter -> filter as JSONObject
+                val posts = it.getJSONObject("data").getJSONArray("children").filter { filter ->
+
+                    filter as JSONObject
 
                     (if (event.channel.isNSFW) true else !filter.getJSONObject("data").getBoolean("over_18") &&
                             filter.getJSONObject("data").getString("selftext").length <= 550
