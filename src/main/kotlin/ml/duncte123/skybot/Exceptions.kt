@@ -33,9 +33,6 @@ open class TableFlipException(override val message: String?, override val cause:
     override fun getLocalizedMessage(): String = "${getMeme()} $message"
 }*/
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-open class EndReached : Throwable()
-
 /*
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class SkybotContextException(override val message: String?, override val cause: Throwable?) : Throwable(message, cause) {

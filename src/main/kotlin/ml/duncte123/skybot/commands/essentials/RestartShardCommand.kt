@@ -19,18 +19,18 @@
 package ml.duncte123.skybot.commands.essentials
 
 import fredboat.audio.player.LavalinkManager
-import kotlinx.coroutines.experimental.cancel
-import kotlinx.coroutines.experimental.cancelChildren
 import kotlinx.coroutines.experimental.delay
 import kotlinx.coroutines.experimental.launch
 import me.duncte123.botCommons.messaging.MessageUtils
-import ml.duncte123.skybot.*
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.EventManager
+import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
-import kotlin.coroutines.experimental.coroutineContext
 
 @SinceSkybot("3.50.X")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -59,9 +59,6 @@ class RestartShardCommand : Command() {
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                        val end = EndReached()
-                        coroutineContext.cancelChildren(end)
-                        coroutineContext.cancel(end)
                     }
                 }
                 1 -> {

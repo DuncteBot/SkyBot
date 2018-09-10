@@ -22,7 +22,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.File;
@@ -36,7 +36,7 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ImageCommandBase extends Command {
 
-    private boolean canSendFile(GuildMessageReceivedEvent event) {
+    protected boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
@@ -45,7 +45,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    private boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+    protected boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
         if (args.isEmpty()) {
             sendMsg(event, "Too little arguments");
             return false;

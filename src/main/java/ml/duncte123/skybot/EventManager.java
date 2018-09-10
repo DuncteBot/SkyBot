@@ -64,7 +64,7 @@ public class EventManager
             JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
             if (shouldFakeBlock) {
                 if (shardInfo == null) {
-                    logger.warn(TextColor.RED + "ShardInfo of a shard is null! Aborting." + TextColor.RESET);
+                    logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
                     return;
                 }
                 if (restartingShard == -1 || restartingShard == shardInfo.getShardId())

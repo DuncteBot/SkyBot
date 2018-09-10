@@ -268,7 +268,6 @@ public class BotListener extends ListenerAdapter {
                         .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
                 });
             }
-
         }
     }
 
