@@ -131,20 +131,9 @@ class UserinfoCommand : Command() {
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
-        if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                ctx.config.apis.weebSh.wolketoken != null) {
-            ctx.weebApi.generateDiscordStatus(StatusType.OFFLINE,
-                    user.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
-                event.channel.sendFile(it, "stat.png",
-                        MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                ).queue(null) { _ ->
-                    sendEmbed(event, embed.setThumbnail(user.effectiveAvatarUrl).build())
-                }
-            }
-        } else {
-            sendEmbed(event, embed.build())
-        }
+        sendEmbed(event, embed.build())
     }
+
 
     private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
         var badgesString = ""
