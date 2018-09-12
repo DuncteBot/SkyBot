@@ -90,7 +90,7 @@ class UserinfoCommand : Command() {
                                 "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
                         return
                     }
-                    renderUserEmbed(event, u, ctx)
+                    renderUserEmbed(event, u)
                     return
                 }
             }
@@ -116,7 +116,7 @@ class UserinfoCommand : Command() {
         renderMemberEmbed(event, m, null, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, ctx: CommandContext) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User) {
         val embed = EmbedUtils.defaultEmbed()
                 .setColor(Settings.defaultColour)
                 .setThumbnail(user.effectiveAvatarUrl)
