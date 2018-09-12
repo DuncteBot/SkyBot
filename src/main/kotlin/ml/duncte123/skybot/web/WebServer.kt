@@ -55,7 +55,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
     private val audioUtils = variables.audioUtils
 
     private val helpers = ApiHelpers()
-    private val engine = JtwigTemplateEngine("views")
+    private val engine = JtwigTemplateEngine()
     private val oAuth2Client = OAuth2Client.Builder()
             .setClientId(config.discord.oauth.clientId)
             .setClientSecret(config.discord.oauth.clientSecret)
@@ -69,10 +69,6 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         port(2000)
 
         staticFiles.location("/public")
-
-        get("/render/:template") {
-            engine.render(ModelAndView(WebVariables().put("title", "Home").map, "dashboard/${request.params("template")}"))
-        }
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 

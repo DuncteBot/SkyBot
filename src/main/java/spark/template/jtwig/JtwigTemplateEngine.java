@@ -34,23 +34,8 @@ public class JtwigTemplateEngine extends TemplateEngine {
     /**
      * Templates directory in resources
      */
-    private String templatesDirectory;
-
-    /**
-     * Setup default templates directory
-     */
-    public JtwigTemplateEngine() {
-        this.templatesDirectory = "templates";
-    }
-
-    /**
-     * Setup custom templates directory
-     *
-     * @param customTemplatesDirectory The custom templates directory
-     */
-    public JtwigTemplateEngine(String customTemplatesDirectory) {
-        this.templatesDirectory = customTemplatesDirectory;
-    }
+    @SuppressWarnings("FieldCanBeLocal") // Because fuck you
+    private final String templatesDirectory = "views";
 
     @Override
     @SuppressWarnings("unchecked")
