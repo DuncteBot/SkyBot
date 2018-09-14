@@ -28,7 +28,9 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class PlayCommand : MusicCommand() {
+open class PlayCommand : MusicCommand() {
+
+    protected var skipParsing: Boolean = false
 
     override fun executeCommand(ctx: CommandContext) {
 
@@ -59,16 +61,18 @@ class PlayCommand : MusicCommand() {
 
             var toPlay = ctx.argsRaw
 
-            if (!AirUtils.isURL(toPlay)) {
+            if (!skipParsing) {
+                if (!AirUtils.isURL(toPlay)) {
 
-                val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
+                    val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
 
-                if (res.isEmpty()) {
-                    MessageUtils.sendError(event.message)
-                    MessageUtils.sendMsg(event, "No tracks where found")
-                    return
-                } else {
-                    toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+                    if (res.isEmpty()) {
+                        MessageUtils.sendError(event.message)
+                        MessageUtils.sendMsg(event, "No tracks where found")
+                        return
+                    } else {
+                        toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+                    }
                 }
             }
 

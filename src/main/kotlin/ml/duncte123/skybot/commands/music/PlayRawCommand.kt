@@ -20,50 +20,14 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class PlayRawCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
+class PlayRawCommand : PlayCommand() {
 
-        val event = ctx.event
-
-        if (prejoinChecks(event)) {
-            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
-        val guild = event.guild
-        val mng = getMusicManager(guild, ctx.audioUtils)
-        val player = mng.player
-        val scheduler = mng.scheduler
-
-        if (ctx.args.isEmpty()) {
-            when {
-                player.isPaused -> {
-                    player.isPaused = false
-                    MessageUtils.sendMsg(event, "Playback has been resumed.")
-                }
-                player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
-                scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!")
-            }
-        } else {
-            val toPlay = ctx.argsRaw
-            if (toPlay.length > 1024) {
-                MessageUtils.sendError(event.message)
-                MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
-                return
-            }
-            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
-        }
+    init {
+        this.skipParsing = true
     }
 
     override fun getName(): String = "playrw"
-
-    override fun help(): String = """Make the bot play song.
-            |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
 }
