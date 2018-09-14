@@ -37,6 +37,7 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -60,6 +61,9 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.objects.command.Command.guildPatronsRole;
+import static ml.duncte123.skybot.objects.command.Command.patronsRole;
+import static ml.duncte123.skybot.objects.command.Command.supportGuildId;
 
 public class BotListener extends ListenerAdapter {
 
@@ -153,14 +157,14 @@ public class BotListener extends ListenerAdapter {
 
     private void loadPatrons(ShardManager manager) {
         logger.info("Collecting patrons");
-        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-        List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+        Guild supportGuild = manager.getGuildById(supportGuildId);
+        List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
                 .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
         Command.patrons.addAll(patrons);
 
         logger.info("Found {} normal patrons", patrons.size());
 
-        List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
+        List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
                 .stream().map(Member::getUser).collect(Collectors.toList());
 
         List<Long> patronGuilds = new ArrayList<>();
@@ -186,7 +190,7 @@ public class BotListener extends ListenerAdapter {
             try {
                 ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
 
-                while(resultSet.next()) {
+                while (resultSet.next()) {
 
                     long userId = Long.parseLong(resultSet.getString("user_id"));
                     long guildId = Long.parseLong(resultSet.getString("guild_id"));
@@ -306,10 +310,8 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
 
-        if(guild.getIdLong() == Command.supportGuildId) {
-
-            // TODO: Handle possible patron leave
-
+        if (guild.getIdLong() == supportGuildId) {
+            handlePatronRemoveal(event.getUser().getIdLong());
         }
 
         if (event.getMember().equals(guild.getSelfMember())) return;
@@ -417,6 +419,21 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         } catch (NullPointerException ignored) {
+        }
+    }
+
+    @Override
+    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
+
+        if (event.getGuild().getIdLong() == supportGuildId) {
+
+            for (Role role : event.getRoles()) {
+                long roleId = role.getIdLong();
+                if(!( roleId == patronsRole || roleId == guildPatronsRole )) continue;
+
+                handlePatronRemoveal(event.getUser().getIdLong());
+            }
+
         }
     }
 
@@ -618,4 +635,13 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
+    private void handlePatronRemoveal(long userId) {
+        // Remove the user from the patrons list
+        Command.patrons.remove(userId);
+
+        // Remove the user from the one guld patrons
+        Command.oneGuildPatrons.remove(userId);
+
+        // TODO: Handle full guild case
+    }
 }
