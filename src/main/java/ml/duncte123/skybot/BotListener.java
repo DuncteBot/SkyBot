@@ -424,7 +424,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() == supportGuildId) return;
+        if (event.getGuild().getIdLong() != supportGuildId) return;
 
         for (Role role : event.getRoles()) {
             long roleId = role.getIdLong();
