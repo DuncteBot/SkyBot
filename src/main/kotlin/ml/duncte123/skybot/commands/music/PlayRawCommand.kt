@@ -23,9 +23,10 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class PlayRawCommand : PlayCommand() {
+class PlayRawCommand : MusicCommand() {
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
@@ -62,4 +63,7 @@ class PlayRawCommand : PlayCommand() {
     }
 
     override fun getName(): String = "playrw"
+
+    override fun help(): String = """Make the bot play song.
+            |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
 }

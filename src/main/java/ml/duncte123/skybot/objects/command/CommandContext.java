@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.command;
 import com.wolfram.alpha.WAEngine;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.ReactionHandler;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -38,6 +39,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 
 import java.util.Collections;
 import java.util.List;
@@ -50,6 +52,8 @@ public class CommandContext {
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
+    private GuildMessageReactionAddEvent reactionAddEvent = null;
+    private long replyId = 0L;
 
     public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
         this.invoke = invoke;
@@ -132,6 +136,39 @@ public class CommandContext {
 
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
+    }
+
+    // --------------- Reaction processing methods --------------- //
+
+    public ReactionHandler getReactionHandler() {
+        List<Object> listeners = this.event.getJDA().getRegisteredListeners();
+        return (ReactionHandler) listeners.get(listeners.size() - 1);
+    }
+
+    public CommandContext applyReactionEvent(GuildMessageReactionAddEvent event) {
+        this.reactionAddEvent = event;
+        return this;
+    }
+
+    public CommandContext applySentId(long id) {
+        this.replyId = id;
+        return this;
+    }
+
+    public boolean replyIsSet() {
+        return this.replyId != 0L;
+    }
+
+    public boolean reactionEventIsSet() {
+        return this.reactionAddEvent != null;
+    }
+
+    public GuildMessageReactionAddEvent getReactionEvent() {
+        return this.reactionAddEvent;
+    }
+
+    public long getReplyId() {
+        return replyId;
     }
 
     // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //

@@ -54,13 +54,13 @@ public class YoutubeUtils {
     }
 
 
-    public static List<SearchResult> searchYoutube(String query, String apiKey) throws IOException {
+    public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
         return youtube.search().list("id,snippet")
                 .setKey(apiKey)
                 .setQ(query)
                 .setType("video")
                 .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                .setMaxResults(1L)
+                .setMaxResults(size)
                 .execute()
                 .getItems();
     }

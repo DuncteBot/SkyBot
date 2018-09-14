@@ -25,10 +25,12 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
+import java.util.concurrent.TimeUnit
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-open class PlayCommand : MusicCommand() {
+class PlayCommand : MusicCommand() {
 
     override fun executeCommand(ctx: CommandContext) {
 
@@ -56,26 +58,53 @@ open class PlayCommand : MusicCommand() {
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
+            val handler = ctx.reactionHandler
+
+            val timeout = when {
+                isDev(event.author) -> 120L
+                isUserOrGuildPatron(event, false) -> 90L
+                else -> 60L
+            }
+
             var toPlay = ctx.argsRaw
+            var usingSearch = false
             if (!AirUtils.isURL(toPlay)) {
 //                toPlay = "ytsearch:" + toPlay
-                //toPlay = "scsearch:" + toPlay
-                val res = searchYoutube(toPlay, ctx.config.apis.googl)
-                if (res.isEmpty()) {
-                    MessageUtils.sendError(event.message)
-                    MessageUtils.sendMsg(event, "No tracks where found")
-                    return
+//                toPlay = "scsearch:" + toPlay
+                if (ctx.invoke == "search") {
+                    usingSearch = true
+                    val res = searchYoutube(toPlay, ctx.config.apis.googl, 10L)
+
+                    val string = buildString {
+                        res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
+                            append(index + 1).append(". ").append(s).append("\n")
+                        }
+                    }
+
+                    event.channel.sendMessage(EmbedUtils.defaultEmbed().appendDescription(string).build()).queue {
+                        handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
+                    }
                 } else {
-                    toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+                    val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
+
+                    if (res.isEmpty()) {
+                        MessageUtils.sendError(event.message)
+                        MessageUtils.sendMsg(event, "No tracks where found")
+                        return
+                    } else {
+                        toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+                    }
                 }
             }
+
+                if (usingSearch)
+                return
 
             if (toPlay.length > 1024) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
                 return
             }
-
             ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
         }
     }
@@ -84,4 +113,6 @@ open class PlayCommand : MusicCommand() {
             |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
 
     override fun getName(): String = "play"
+
+    override fun getAliases(): Array<String> = arrayOf("search")
 }

@@ -124,7 +124,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Album album = albumFuture.get();
 
                     for (TrackSimplified t : album.getTracks().getItems()) {
-                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(), config.googl);
+                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(), config.googl, 1L);
                         playList.addAll(doThingWithPlaylist(results));
                     }
 
@@ -147,7 +147,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
                     for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
                         List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
-                                + " - " + playlistTrack.getTrack().getName(), config.googl);
+                                + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
                         finalPlaylist.addAll(doThingWithPlaylist(results));
                     }
 
@@ -167,7 +167,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
                     final Track track = trackFuture.get();
 
-                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(), config.googl);
+                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(), config.googl, 1L);
 
                     Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
                     return audioTrackFromVideo(v);
@@ -197,7 +197,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
-        return new SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
+        return new ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
     }
 
     @Override
