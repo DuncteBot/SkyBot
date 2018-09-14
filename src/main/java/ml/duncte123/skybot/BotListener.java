@@ -43,6 +43,7 @@ import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -461,17 +462,17 @@ public class BotListener extends ListenerAdapter {
     /*
      * Needs a better name
      */
-    private boolean startsWithPrefix(GuildSettings settings, String rw, String s) {
+    private boolean startsWithPrefix(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
         return s.equalsIgnoreCase(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
     }
 
     //                                    raw,    category?
-    private boolean shouldBlockCommand(String rw, String s) {
+    private boolean shouldBlockCommand(@NotNull String rw, @NotNull String categoryName) {
         return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase())
-                .getCategory() == CommandCategory.valueOf(s.toUpperCase());
+                .getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
     }
 
     /**
@@ -480,7 +481,7 @@ public class BotListener extends ListenerAdapter {
      * @param g  the guild
      * @param vc the voice channel
      */
-    private void channelCheckThing(Guild g, VoiceChannel vc) {
+    private void channelCheckThing(Guild g, @NotNull VoiceChannel vc) {
 
         if (vc.getMembers().stream().filter(m -> !m.getUser().isBot()).count() < 1) {
             GuildMusicManager manager = variables.getAudioUtils().getMusicManager(g);
@@ -500,6 +501,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
+    @NotNull
     private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent))
@@ -531,7 +533,7 @@ public class BotListener extends ListenerAdapter {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private boolean isCategory(String name) {
+    private boolean isCategory(@NotNull String name) {
         try {
             return CommandCategory.valueOf(name.toUpperCase()) != null;
         } catch (IllegalArgumentException ignored) {
@@ -539,7 +541,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private void killAllShards(ShardManager manager) {
+    private void killAllShards(@NotNull ShardManager manager) {
         manager.shutdown();
         /*manager.getShards().forEach(jda -> {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
@@ -547,7 +549,7 @@ public class BotListener extends ListenerAdapter {
         });*/
     }
 
-    private boolean canRunCommands(String rw, GuildSettings settings, GuildMessageReceivedEvent event) {
+    private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
         //If the topic contains -commands ignore it
         if (event.getChannel().getTopic() != null) {
             String[] blocked = event.getChannel().getTopic().split("-");
@@ -582,7 +584,7 @@ public class BotListener extends ListenerAdapter {
         return true;
     }
 
-    private boolean doAutoModChecks(GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
                 && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
@@ -639,7 +641,7 @@ public class BotListener extends ListenerAdapter {
         // Remove the user from the patrons list
         Command.patrons.remove(userId);
 
-        // Remove the user from the one guld patrons
+        // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);
 
         // TODO: Handle full guild case
