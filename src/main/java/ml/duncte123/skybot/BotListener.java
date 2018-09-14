@@ -241,7 +241,12 @@ public class BotListener extends ListenerAdapter {
         if (event.getReactionEmote().isEmote() && !event.getReactionEmote().getName().equalsIgnoreCase("\uD83D\uDD02"))
             return;
 
-        Command cmd = (Command) commandManager.getCommand("ping");
+        ICommand val = commandManager.getCommand("ping");
+
+        if (val == null)
+            return;
+
+        Command cmd = (Command) val;
 
         if (!cmd.isUserOrGuildPatron(event.getUser(), event.getGuild(), false))
             return;
