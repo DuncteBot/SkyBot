@@ -22,10 +22,12 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 open class PlayCommand : MusicCommand() {
@@ -51,39 +53,49 @@ open class PlayCommand : MusicCommand() {
             when {
                 player.isPaused -> {
                     player.isPaused = false
+
                     MessageUtils.sendMsg(event, "Playback has been resumed.")
                 }
+
                 player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
-        } else {
+            return
+        }
 
-            var toPlay = ctx.argsRaw
+        var toPlay = ctx.argsRaw
 
-            if (!skipParsing) {
-                if (!AirUtils.isURL(toPlay)) {
+        if (skipParsing) {
+            handlePlay(toPlay, event, ctx, mng)
+            return
+        }
 
-                    val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
+        if (!AirUtils.isURL(toPlay)) {
 
-                    if (res.isEmpty()) {
-                        MessageUtils.sendError(event.message)
-                        MessageUtils.sendMsg(event, "No tracks where found")
-                        return
-                    } else {
-                        toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
-                    }
-                }
-            }
+            val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
 
-            if (toPlay.length > 1024) {
+            if (res.isEmpty()) {
                 MessageUtils.sendError(event.message)
-                MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
+                MessageUtils.sendMsg(event, "No tracks where found")
                 return
             }
-            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
+
+            toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
         }
+
+        handlePlay(toPlay, event, ctx, mng)
     }
+
+    private fun handlePlay(toPlay: String, event: GuildMessageReceivedEvent, ctx: CommandContext, mng: GuildMusicManager?) {
+        if (toPlay.length > 1024) {
+            MessageUtils.sendError(event.message)
+            MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
+            return
+        }
+        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
+    }
+
 
     override fun help(): String = """Make the bot play song.
             |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
