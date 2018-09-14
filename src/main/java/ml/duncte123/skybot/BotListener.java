@@ -45,6 +45,9 @@ import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -144,32 +147,60 @@ public class BotListener extends ListenerAdapter {
         ShardManager manager = event.getJDA().asBot().getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
 
-            logger.info("Collecting patrons");
-            Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-            List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
-                    .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
-            Command.patrons.addAll(patrons);
-
-            logger.info("Found {} normal patrons", patrons.size());
-
-            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
-                    .stream().map(Member::getUser).collect(Collectors.toList());
-
-            List<Long> patronGuilds = new ArrayList<>();
-
-            guildPatrons.forEach((patron) -> {
-                List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                        .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
-                                it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
-                        .map(Guild::getIdLong)
-                        .collect(Collectors.toList());
-
-                patronGuilds.addAll(guilds);
-            });
-            Command.guildPatrons.addAll(patronGuilds);
-
-            logger.info("Found {} guild patrons", patronGuilds.size());
+            loadPatrons(manager);
         }
+    }
+
+    private void loadPatrons(ShardManager manager) {
+        logger.info("Collecting patrons");
+        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+                .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
+        Command.patrons.addAll(patrons);
+
+        logger.info("Found {} normal patrons", patrons.size());
+
+        List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
+                .stream().map(Member::getUser).collect(Collectors.toList());
+
+        List<Long> patronGuilds = new ArrayList<>();
+
+        guildPatrons.forEach((patron) -> {
+            List<Long> guilds = manager.getMutualGuilds(patron).stream()
+                    .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
+                            it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
+                    .map(Guild::getIdLong)
+                    .collect(Collectors.toList());
+
+            patronGuilds.addAll(guilds);
+        });
+        Command.guildPatrons.addAll(patronGuilds);
+
+        logger.info("Found {} guild patrons", patronGuilds.size());
+
+        String dbName = database.getName();
+        Connection connection = database.getConnection();
+
+        database.run(() -> {
+
+            try {
+                ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
+
+                while(resultSet.next()) {
+
+                    long userId = Long.parseLong(resultSet.getString("user_id"));
+                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
+
+                    Command.oneGuildPatrons.put(userId, guildId);
+                }
+
+                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 
     @Override
@@ -274,6 +305,13 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
+
+        if(guild.getIdLong() == Command.supportGuildId) {
+
+            // TODO: Handle possible patron leave
+
+        }
+
         if (event.getMember().equals(guild.getSelfMember())) return;
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
