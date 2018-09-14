@@ -62,9 +62,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.objects.command.Command.guildPatronsRole;
-import static ml.duncte123.skybot.objects.command.Command.patronsRole;
-import static ml.duncte123.skybot.objects.command.Command.supportGuildId;
+import static ml.duncte123.skybot.objects.command.Command.*;
 
 public class BotListener extends ListenerAdapter {
 
@@ -426,15 +424,13 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() == supportGuildId) {
+        if (event.getGuild().getIdLong() == supportGuildId) return;
 
-            for (Role role : event.getRoles()) {
-                long roleId = role.getIdLong();
-                if(!( roleId == patronsRole || roleId == guildPatronsRole )) continue;
+        for (Role role : event.getRoles()) {
+            long roleId = role.getIdLong();
+            if (!(roleId == patronsRole || roleId == guildPatronsRole)) continue;
 
-                handlePatronRemoveal(event.getUser().getIdLong());
-            }
-
+            handlePatronRemoveal(event.getUser().getIdLong());
         }
     }
 
