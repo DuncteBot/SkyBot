@@ -16,23 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.messaging.MessageUtils
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
-import ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.YoutubeUtils
+import java.util.concurrent.TimeUnit
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-class PlayCommand : MusicCommand() {
-
+class SearchCommand : MusicCommand() {
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
+
+        if (!isUserOrGuildPatron(event))
+            return
 
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
@@ -56,33 +55,31 @@ class PlayCommand : MusicCommand() {
                         "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
         } else {
+            val handler = ctx.reactionHandler
 
-            var toPlay = ctx.argsRaw
+            val timeout = when {
+                isDev(event.author) -> 60L
+                isUserOrGuildPatron(event, false) -> 30L
+                else -> 15L
+            }
 
-            if (!AirUtils.isURL(toPlay)) {
+            val toPlay = ctx.argsRaw
+            val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, 10L)
 
-                val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
-
-                if (res.isEmpty()) {
-                    MessageUtils.sendError(event.message)
-                    MessageUtils.sendMsg(event, "No tracks where found")
-                    return
-                } else {
-                    toPlay = "https://www.youtube.com/watch?v=${res[0].id.videoId}"
+            val string = buildString {
+                res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
+                    append(index + 1).append(". ").append(s).append("\n")
                 }
             }
 
-            if (toPlay.length > 1024) {
-                MessageUtils.sendError(event.message)
-                MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
-                return
+            event.channel.sendMessage(EmbedUtils.defaultEmbed().appendDescription(string).build()).queue {
+                handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
             }
-            ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
         }
     }
 
-    override fun help(): String = """Make the bot play song.
-            |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
+    override fun getName(): String = "search"
 
-    override fun getName(): String = "play"
+    override fun help(): String = """Make the bot play song.
+            |Usage: `$PREFIX$name [search term]`""".trimMargin()
 }
