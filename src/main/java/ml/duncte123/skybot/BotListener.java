@@ -40,6 +40,7 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -232,6 +233,20 @@ public class BotListener extends ListenerAdapter {
                     event,
                     variables
             ));
+    }
+
+    @Override
+    public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
+
+        if (event.getReactionEmote().isEmote() && !event.getReactionEmote().getName().equalsIgnoreCase("\uD83D\uDD02"))
+            return;
+
+        Command cmd = (Command) commandManager.getCommand("ping");
+
+        if (!cmd.isUserOrGuildPatron(event.getUser(), event.getGuild(), false))
+            return;
+
+        event.getChannel().getMessageById(event.getMessageIdLong()).queue((message -> handleRetrievedMessage(message, event)));
     }
 
     @Override
@@ -580,4 +595,8 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
+    private void handleRetrievedMessage(Message message, GuildMessageReactionAddEvent event) {
+        event.getReaction().removeReaction(event.getUser()).queue();
+        this.onGuildMessageReceived(new GuildMessageReceivedEvent(message.getJDA(), event.getResponseNumber(), message));
+    }
 }

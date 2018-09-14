@@ -81,6 +81,7 @@ class EvalCommand : Command() {
         packageImports = listOf(
                 "java.io",
                 "java.lang",
+                "java.math",
                 "java.util",
                 "net.dv8tion.jda.core",
                 "net.dv8tion.jda.core.entities",

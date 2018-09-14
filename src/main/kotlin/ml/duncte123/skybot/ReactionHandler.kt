@@ -87,7 +87,7 @@ class ReactionHandler : ListenerAdapter() {
         val msgId = event.messageIdLong
         if (!consumerCache.containsKey(msgId) && !reactions.plus("\u274C").contains(event.reactionEmote.name))
             return
-        val pair = consumerCache[msgId]!!
+        val pair = consumerCache[msgId] ?: return
         val ctx = pair.first.applyReactionEvent(event)
 
         event.channel.getMessageById(msgId).queue { msg ->
