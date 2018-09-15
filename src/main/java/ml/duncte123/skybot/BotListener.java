@@ -238,7 +238,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
 
-        if (event.getReactionEmote().isEmote() && !event.getReactionEmote().getName().equalsIgnoreCase("\uD83D\uDD02"))
+        if (event.getReactionEmote().isEmote() && !event.getReactionEmote().getName().equalsIgnoreCase(Emojis.REPEAT_ONE.getUnicode()))
             return;
 
         ICommand val = commandManager.getCommand("ping");

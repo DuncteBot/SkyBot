@@ -23,7 +23,8 @@ enum class Emojis private constructor(private val unicode: String) {
     // other key caps
     KEYCAP_TEN("\uD83D\uDD1F"),
     MAGNIFICATION_GLASS_RIGHT("\uD83D\uDD0E"),
-    RED_CROSS_MARK("\u274C");
+    RED_CROSS_MARK("\u274C"),
+    REPEAT_ONE("\uD83D\uDD02");
 
     override fun toString(): String = this.unicode
 
