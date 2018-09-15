@@ -85,7 +85,7 @@ class ReactionHandler : ListenerAdapter() {
 
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
         val msgId = event.messageIdLong
-        if (!consumerCache.containsKey(msgId) && !reactions.plus(Emojis.RED_CROSS_MARK.getUnicode()).contains(event.reactionEmote.name))
+        if (!reactions.plus(Emojis.RED_CROSS_MARK.getUnicode()).contains(event.reactionEmote.name))
             return
         val pair = consumerCache[msgId] ?: return
         val ctx = pair.first.applyReactionEvent(event)
