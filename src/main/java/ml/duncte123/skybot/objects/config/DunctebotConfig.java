@@ -100,6 +100,7 @@ public class DunctebotConfig {
         public String database;
         public String username;
         public String password;
+        public String timezone;
     }
 
     public static class Genius {

@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.entities.MessageChannel
 import net.dv8tion.jda.core.entities.TextChannel
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
+import java.math.BigInteger
 
 @Suppress("unused")
 class EvalFunctions {
@@ -80,5 +81,8 @@ class EvalFunctions {
                 MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
             }
         }
+
+        @JvmStatic
+        fun pow(base: Int, expo: Int): String = BigInteger(base.toString()).pow(expo).toString(10)
     }
 }

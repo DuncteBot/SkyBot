@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import com.mysql.cj.exceptions.InvalidConnectionAttributeException;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 
 import java.io.IOException;
@@ -35,6 +36,7 @@ class MySQLConnectionManager implements DBConnectionManager {
     private final String user;
     private final int port;
     private final String dbName;
+    private final String timezone;
     private final String pass;
     private Connection connection;
 
@@ -44,12 +46,22 @@ class MySQLConnectionManager implements DBConnectionManager {
         this.user = config.username;
         this.pass = config.password;
         this.dbName = config.database;
+        this.timezone = config.timezone;
         try {
             Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(
                     String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
                     user, pass);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException | InvalidConnectionAttributeException e) {
+            // Try again if the time zones conflict with the DB like "Mitteleuropäische Sommerzeit"
+            try {
+                this.connection = DriverManager.getConnection(
+                        String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8&serverTimezone=%s", dbHost, port, dbName, timezone),
+                        user, pass);
+            } catch (SQLException e1) {
+                e1.printStackTrace();
+            }
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
         }
 
@@ -68,7 +80,16 @@ class MySQLConnectionManager implements DBConnectionManager {
                 this.connection = DriverManager.getConnection(
                         String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
                         user, pass);
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException | InvalidConnectionAttributeException e) {
+                // Try again if the time zones conflict with the DB like "Mitteleuropäische Sommerzeit"
+                try {
+                    this.connection = DriverManager.getConnection(
+                            String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8&serverTimezone=%s", dbHost, port, dbName, timezone),
+                            user, pass);
+                } catch (SQLException e1) {
+                    e1.printStackTrace();
+                }
+            } catch (ClassNotFoundException e) {
                 e.printStackTrace();
             }
         }
