@@ -34,7 +34,9 @@ import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,6 +49,7 @@ public abstract class Command implements ICommand {
 
     public static final Set<Long> patrons = new HashSet<>();
     public static final Set<Long> guildPatrons = new HashSet<>();
+    public static final Map<Long, Long> oneGuildPatrons = new HashMap<>();
     public static final long supportGuildId = 191245668617158656L;
     public static final long guildPatronsRole = 470581447196147733L;
     public static final long patronsRole = 402497345721466892L;
@@ -157,7 +160,7 @@ public abstract class Command implements ICommand {
 
     private boolean isGuildPatron(User u, Guild g) {
 
-        if (guildPatrons.contains(g.getIdLong())) {
+        if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 

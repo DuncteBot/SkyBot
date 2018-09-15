@@ -33,7 +33,6 @@ import java.util.regex.Pattern;
  *
  * @author ramidzkh
  */
-@SuppressWarnings("SqlDialectInspection")
 class SQLiteDatabaseConnectionManager implements DBConnectionManager {
 
     /**
@@ -179,15 +178,22 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS warnings\n" +
-                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT,\n" +
-                            "  `mod_id` varchar(255) NOT NULL,\n" +
-                            "  `user_id` varchar(300) NOT NULL,\n" +
-                            "  `reason` text NOT NULL,\n" +
-                            "  `warn_date` date NOT NULL,\n" +
-                            "  `expire_date` date NOT NULL,\n" +
+                    "CREATE TABLE IF NOT EXISTS warnings" +
+                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                            "  `mod_id` varchar(255) NOT NULL," +
+                            "  `user_id` varchar(300) NOT NULL," +
+                            "  `reason` text NOT NULL," +
+                            "  `warn_date` date NOT NULL," +
+                            "  `expire_date` date NOT NULL," +
                             "  `guild_id` varchar(266) DEFAULT NULL);"
             );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
+                            "(user_id VARCHAR(255) NOT NULL," +
+                            "guild_id VARCHAR(255) NOT NULL);"
+            );
+
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();

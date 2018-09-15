@@ -37,14 +37,19 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
 import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
+import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -57,6 +62,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.objects.command.Command.*;
 
 public class BotListener extends ListenerAdapter {
 
@@ -144,32 +150,60 @@ public class BotListener extends ListenerAdapter {
         ShardManager manager = event.getJDA().asBot().getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
 
-            logger.info("Collecting patrons");
-            Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-            List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
-                    .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
-            Command.patrons.addAll(patrons);
-
-            logger.info("Found {} normal patrons", patrons.size());
-
-            List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
-                    .stream().map(Member::getUser).collect(Collectors.toList());
-
-            List<Long> patronGuilds = new ArrayList<>();
-
-            guildPatrons.forEach((patron) -> {
-                List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                        .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
-                                it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
-                        .map(Guild::getIdLong)
-                        .collect(Collectors.toList());
-
-                patronGuilds.addAll(guilds);
-            });
-            Command.guildPatrons.addAll(patronGuilds);
-
-            logger.info("Found {} guild patrons", patronGuilds.size());
+            loadPatrons(manager);
         }
+    }
+
+    private void loadPatrons(ShardManager manager) {
+        logger.info("Collecting patrons");
+        Guild supportGuild = manager.getGuildById(supportGuildId);
+        List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
+                .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
+        Command.patrons.addAll(patrons);
+
+        logger.info("Found {} normal patrons", patrons.size());
+
+        List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
+                .stream().map(Member::getUser).collect(Collectors.toList());
+
+        List<Long> patronGuilds = new ArrayList<>();
+
+        guildPatrons.forEach((patron) -> {
+            List<Long> guilds = manager.getMutualGuilds(patron).stream()
+                    .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
+                            it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
+                    .map(Guild::getIdLong)
+                    .collect(Collectors.toList());
+
+            patronGuilds.addAll(guilds);
+        });
+        Command.guildPatrons.addAll(patronGuilds);
+
+        logger.info("Found {} guild patrons", patronGuilds.size());
+
+        String dbName = database.getName();
+        Connection connection = database.getConnection();
+
+        database.run(() -> {
+
+            try {
+                ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
+
+                while (resultSet.next()) {
+
+                    long userId = Long.parseLong(resultSet.getString("user_id"));
+                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
+
+                    Command.oneGuildPatrons.put(userId, guildId);
+                }
+
+                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 
     @Override
@@ -274,6 +308,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
+
+        if (guild.getIdLong() == supportGuildId) {
+            handlePatronRemoveal(event.getUser().getIdLong());
+        }
+
         if (event.getMember().equals(guild.getSelfMember())) return;
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
@@ -383,6 +422,19 @@ public class BotListener extends ListenerAdapter {
     }
 
     @Override
+    public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
+
+        if (event.getGuild().getIdLong() != supportGuildId) return;
+
+        for (Role role : event.getRoles()) {
+            long roleId = role.getIdLong();
+            if (!(roleId == patronsRole || roleId == guildPatronsRole)) continue;
+
+            handlePatronRemoveal(event.getUser().getIdLong());
+        }
+    }
+
+    @Override
     public void onShutdown(ShutdownEvent event) {
         if (!shuttingDown) return;
 
@@ -403,20 +455,17 @@ public class BotListener extends ListenerAdapter {
             System.exit(0);
     }
 
-    /*
-     * Needs a better name
-     */
-    private boolean startsWithPrefix(GuildSettings settings, String rw, String s) {
+    private boolean startsWithPrefix(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
         return s.equalsIgnoreCase(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
     }
 
     //                                    raw,    category?
-    private boolean shouldBlockCommand(String rw, String s) {
+    private boolean shouldBlockCommand(@NotNull String rw, @NotNull String categoryName) {
         return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase())
-                .getCategory() == CommandCategory.valueOf(s.toUpperCase());
+                .getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
     }
 
     /**
@@ -425,7 +474,7 @@ public class BotListener extends ListenerAdapter {
      * @param g  the guild
      * @param vc the voice channel
      */
-    private void channelCheckThing(Guild g, VoiceChannel vc) {
+    private void channelCheckThing(Guild g, @NotNull VoiceChannel vc) {
 
         if (vc.getMembers().stream().filter(m -> !m.getUser().isBot()).count() < 1) {
             GuildMusicManager manager = variables.getAudioUtils().getMusicManager(g);
@@ -445,6 +494,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
+    @NotNull
     private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent))
@@ -476,7 +526,7 @@ public class BotListener extends ListenerAdapter {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private boolean isCategory(String name) {
+    private boolean isCategory(@NotNull String name) {
         try {
             return CommandCategory.valueOf(name.toUpperCase()) != null;
         } catch (IllegalArgumentException ignored) {
@@ -484,7 +534,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private void killAllShards(ShardManager manager) {
+    private void killAllShards(@NotNull ShardManager manager) {
         manager.shutdown();
         /*manager.getShards().forEach(jda -> {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));
@@ -492,7 +542,7 @@ public class BotListener extends ListenerAdapter {
         });*/
     }
 
-    private boolean canRunCommands(String rw, GuildSettings settings, GuildMessageReceivedEvent event) {
+    private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
         //If the topic contains -commands ignore it
         if (event.getChannel().getTopic() != null) {
             String[] blocked = event.getChannel().getTopic().split("-");
@@ -527,7 +577,7 @@ public class BotListener extends ListenerAdapter {
         return true;
     }
 
-    private boolean doAutoModChecks(GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
                 && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
@@ -580,4 +630,14 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
+    private void handlePatronRemoveal(long userId) {
+        // Remove the user from the patrons list
+        Command.patrons.remove(userId);
+
+        // Remove the user from the one guild patrons
+        Command.oneGuildPatrons.remove(userId);
+
+        // TODO: Handle full guild case
+        // But hey, who cares right now
+    }
 }
