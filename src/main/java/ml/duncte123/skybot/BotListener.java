@@ -455,9 +455,6 @@ public class BotListener extends ListenerAdapter {
             System.exit(0);
     }
 
-    /*
-     * Needs a better name
-     */
     private boolean startsWithPrefix(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
         return s.equalsIgnoreCase(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
@@ -641,5 +638,6 @@ public class BotListener extends ListenerAdapter {
         Command.oneGuildPatrons.remove(userId);
 
         // TODO: Handle full guild case
+        // But hey, who cares right now
     }
 }
