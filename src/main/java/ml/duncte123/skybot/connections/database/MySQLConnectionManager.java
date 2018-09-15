@@ -149,81 +149,90 @@ class MySQLConnectionManager implements DBConnectionManager {
 
     private void innitDB(Connection connection) {
         try {
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `bans` (\n" +
-                    "`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `modUserId` varchar(255) NOT NULL,\n" +
-                    "  `userId` varchar(300) NOT NULL,\n" +
-                    "  `Username` varchar(266) NOT NULL,\n" +
-                    "  `discriminator` varchar(4) NOT NULL,\n" +
-                    "  `ban_date` datetime NOT NULL,\n" +
-                    "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,\n" +
-                    "  `guildId` varchar(266) NOT NULL,\n" +
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `bans` (" +
+                    "`id` int(11) NOT NULL AUTO_INCREMENT," +
+                    "  `modUserId` varchar(255) NOT NULL," +
+                    "  `userId` varchar(300) NOT NULL," +
+                    "  `Username` varchar(266) NOT NULL," +
+                    "  `discriminator` varchar(4) NOT NULL," +
+                    "  `ban_date` datetime NOT NULL," +
+                    "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                    "  `guildId` varchar(266) NOT NULL," +
                     "  PRIMARY KEY (`id`)" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (\n" +
-                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `name` varchar(200) NOT NULL COMMENT 'Username',\n" +
-                    "  `quote` text NOT NULL COMMENT 'Quote',\n" +
-                    "  PRIMARY KEY (`id`)\n" +
+
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT," +
+                    "  `name` varchar(200) NOT NULL COMMENT 'Username'," +
+                    "  `quote` text NOT NULL COMMENT 'Quote'," +
+                    "  PRIMARY KEY (`id`)" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags` (\n" +
-                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `author` varchar(255) NOT NULL,\n" +
-                    "  `authorId` varchar(255) NOT NULL,\n" +
-                    "  `tagName` varchar(10) NOT NULL,\n" +
-                    "  `tagText` text NOT NULL,\n" +
-                    "  PRIMARY KEY (`id`)\n" +
+
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags` (" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT," +
+                    "  `author` varchar(255) NOT NULL," +
+                    "  `authorId` varchar(255) NOT NULL," +
+                    "  `tagName` varchar(10) NOT NULL," +
+                    "  `tagText` text NOT NULL," +
+                    "  PRIMARY KEY (`id`)" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (\n" +
-                    "  `id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                    "  `guildId` text NOT NULL,\n" +
-                    "  `guildName` text CHARACTER SET utf8mb4,\n" +
-                    "  `prefix` varchar(255) NOT NULL DEFAULT '/',\n" +
-                    "  `autoRole` varchar(255) DEFAULT NULL,\n" +
-                    "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `autoDeHoist` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `filterInvites` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `announceNextTrack` tinyint(1) NOT NULL DEFAULT '1',\n" +
-                    "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
-                    "  `customLeaveMessage` text DEFAULT NULL,\n" +
-                    "  `serverDesc` text DEFAULT NULL,\n" +
-                    "  `logChannelId` varchar(255) DEFAULT NULL,\n" +
-                    "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL,\n" +
-                    "  `spamFilterState` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `kickInsteadState` tinyint(1) NOT NULL DEFAULT '0',\n" +
-                    "  `muteRoleId` varchar(255) DEFAULT NULL,\n" +
-                    "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL,\n" +
-                    "PRIMARY KEY (`id`)\n" +
+
+            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (" +
+                    "  `id` int(11) NOT NULL AUTO_INCREMENT," +
+                    "  `guildId` text NOT NULL," +
+                    "  `prefix` varchar(255) NOT NULL DEFAULT '/'," +
+                    "  `autoRole` varchar(255) DEFAULT NULL," +
+                    "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `autoDeHoist` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `filterInvites` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `announceNextTrack` tinyint(1) NOT NULL DEFAULT '1'," +
+                    "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL," +
+                    "  `customLeaveMessage` text DEFAULT NULL," +
+                    "  `serverDesc` text DEFAULT NULL," +
+                    "  `logChannelId` varchar(255) DEFAULT NULL," +
+                    "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL," +
+                    "  `spamFilterState` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `kickInsteadState` tinyint(1) NOT NULL DEFAULT '0'," +
+                    "  `muteRoleId` varchar(255) DEFAULT NULL," +
+                    "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL," +
+                    "PRIMARY KEY (`id`)" +
                     ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS customCommands\n" +
-                            "(id int(11) AUTO_INCREMENT,\n" +
-                            "guildId VARCHAR(255) NOT NULL,\n" +
-                            "invoke VARCHAR(10) NOT NULL,\n" +
-                            "message TEXT NOT NULL,\n" +
+                    "CREATE TABLE IF NOT EXISTS customCommands" +
+                            "(id int(11) AUTO_INCREMENT," +
+                            "guildId VARCHAR(255) NOT NULL," +
+                            "invoke VARCHAR(10) NOT NULL," +
+                            "message TEXT NOT NULL," +
                             "PRIMARY KEY (`id`));"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS animal_apis\n" +
-                            "(`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                            "  `file` text NOT NULL,\n" +
-                            "  `api` varchar(255) NOT NULL,\n" +
+                    "CREATE TABLE IF NOT EXISTS animal_apis" +
+                            "(`id` int(11) NOT NULL AUTO_INCREMENT," +
+                            "  `file` text NOT NULL," +
+                            "  `api` varchar(255) NOT NULL," +
                             "  PRIMARY KEY (`id`));"
             );
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS warnings\n" +
-                            "(`id` int(11) NOT NULL AUTO_INCREMENT,\n" +
-                            "  `mod_id` varchar(255) NOT NULL,\n" +
-                            "  `user_id` varchar(300) NOT NULL,\n" +
-                            "  `reason` text NOT NULL,\n" +
-                            "  `warn_date` date NOT NULL,\n" +
-                            "  `expire_date` date NOT NULL,\n" +
-                            "  `guild_id` varchar(266) DEFAULT NULL,\n" +
+                    "CREATE TABLE IF NOT EXISTS warnings" +
+                            "(`id` int(11) NOT NULL AUTO_INCREMENT," +
+                            "  `mod_id` varchar(255) NOT NULL," +
+                            "  `user_id` varchar(300) NOT NULL," +
+                            "  `reason` text NOT NULL," +
+                            "  `warn_date` date NOT NULL," +
+                            "  `expire_date` date NOT NULL," +
+                            "  `guild_id` varchar(266) DEFAULT NULL," +
                             "  PRIMARY KEY (`id`));"
             );
+
+            connection.createStatement().execute(
+                    "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
+                            "(user_id VARCHAR(255) NOT NULL," +
+                            "guild_id VARCHAR(255) NOT NULL);"
+            );
+
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();
