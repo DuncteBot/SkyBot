@@ -32,7 +32,6 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@SuppressWarnings({"SqlDialectInspection", "SqlNoDataSourceInspection"})
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);
@@ -96,7 +95,8 @@ public class GuildSettingsUtils {
      * @param guild the guild to get
      * @return the guild
      */
-    @NotNull public static GuildSettings getGuild(Guild guild, Variables variables) {
+    @NotNull
+    public static GuildSettings getGuild(Guild guild, Variables variables) {
 
         Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
         if (!guildSettings.containsKey(guild.getIdLong())) {
