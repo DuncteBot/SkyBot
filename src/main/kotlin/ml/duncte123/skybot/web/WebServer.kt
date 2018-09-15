@@ -38,7 +38,6 @@ import org.apache.http.client.utils.URLEncodedUtils
 import org.json.JSONObject
 import spark.ModelAndView
 import spark.Request
-import spark.Response
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
@@ -188,7 +187,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 return@get response.redirect("/dashboard")
             }
 
-            val session = getSession(request, response)
+            val session = getSession(request)
             val guilds = oAuth2Client.getGuilds(session).complete()
 
             return@get JSONObject()
@@ -205,10 +204,18 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     return@before response.redirect("/dashboard")
                 }
                 val guild = getGuildFromRequest(request)
-                if (guild == null && !request.uri().contains("invalid")) {
+                if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
                     return@before response.redirect("/server/${request.params(":guildid")}/invalid")
-                } else if (guild != null && request.uri().contains("invalid")) {
+                } else if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
                     return@before response.redirect("/server/${request.params(":guildid")}/")
+                }
+
+                val user = oAuth2Client.getUser(getSession(request)).complete()
+                val member = guild?.getMember(user.getJDAUser(guild.jda))
+                val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
+
+                if(!hasPermission && !request.url().contains("noperms")) {
+                    return@before response.redirect("/server/${request.params(":guildid")}/noperms")
                 }
             }
 
@@ -353,6 +360,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
                         "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
+
+            get("/noperms") {
+                "<h1>You don't have permission to edit this server</h1>"
+            }
         }
 
         get("/callback") {
@@ -392,7 +403,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
             get("/getUserGuilds") {
                 val guilds = ArrayList<JSONObject>()
-                oAuth2Client.getGuilds(getSession(request, response)).complete().forEach {
+                oAuth2Client.getGuilds(getSession(request)).complete().forEach {
                     if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
                         guilds.add(guildToJson(it))
                     }
@@ -509,10 +520,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         return shardManager.getGuildById(guildId) ?: null
     }
 
-    private fun getSession(request: Request, response: Response): Session {
+    private fun getSession(request: Request): Session? {
         val session: String? = request.session().attribute("sessionId")
         if (session.isNullOrEmpty()) {
-            response.redirect("/dashboard")
+            return null
         }
         return oAuth2Client.sessionController.getSession(session)
     }
