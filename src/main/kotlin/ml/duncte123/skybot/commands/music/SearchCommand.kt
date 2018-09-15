@@ -30,9 +30,6 @@ class SearchCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!isUserOrGuildPatron(event))
-            return
-
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event, ctx.audioUtils)) {
@@ -63,8 +60,10 @@ class SearchCommand : MusicCommand() {
                 else -> 15L
             }
 
+            val searchLimit = if(isUserOrGuildPatron(event, false)) 10L else 5L
+
             val toPlay = ctx.argsRaw
-            val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, 10L)
+            val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
 
             val string = buildString {
                 res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
