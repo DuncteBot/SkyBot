@@ -25,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
+import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.wrapper.spotify.SpotifyApi;
@@ -131,7 +132,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
                 }
             }
         } else if (isSpotifyPlaylist(reference.identifier)) {
@@ -153,10 +154,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
                     return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
                 } catch (IllegalArgumentException ex) {
-                    throw new FriendlyException("This playlist could not be loaded, make sure that it's public", FriendlyException.Severity.FAULT, ex);
+                    throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
                 }
             }
         } else if (isSpotyfyTrack(reference.identifier)) {
@@ -176,7 +177,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     return audioTrackFromVideo(v);
                 } catch (Exception e) {
                     //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), FriendlyException.Severity.FAULT, e);
+                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
                 }
             }
         }
