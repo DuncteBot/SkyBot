@@ -189,17 +189,12 @@ public abstract class Command implements ICommand {
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
-    public boolean isUserOrGuildPatron(User user, Guild guild, boolean reply) {
-        boolean isGuild = isGuildPatron(user, guild);
-        return isGuild || isPatron(user, null, reply);
-    }
-
     protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent e) {
         return isUserOrGuildPatron(e, true);
     }
 
 
-    public boolean isDev(User u) {
+    protected boolean isDev(User u) {
         return Settings.developers.contains(u.getIdLong());
     }
 

@@ -51,7 +51,7 @@ class ReactionHandler : ListenerAdapter() {
         if (cacheElement.equals(ctx.reactionEvent)) {
             val index = parseReaction(ctx.reactionEvent.reactionEmote.name)
             if (index == -1) {
-                ctx.channel.editMessageById(ctx.replyId, "${Emojis.MAGNIFICATION_GLASS_RIGHT} Search canceled").override(true  ).queue {
+                ctx.channel.editMessageById(ctx.replyId, "\uD83D\uDD0E Search canceled").override(true  ).queue {
                 it.clearReactions().queueAfter(15, TimeUnit.SECONDS)
             }
                 return@BiConsumer
@@ -66,7 +66,7 @@ class ReactionHandler : ListenerAdapter() {
 
     public fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, context: CommandContext, resultSet: List<SearchResult>) {
         val msgId = msg.idLong
-        val reacs = reactions.subList(0, resultSet.size).plus(Emojis.RED_CROSS_MARK.getUnicode())
+        val reacs = reactions.subList(0, resultSet.size).plus("\u274C")
         for (s in reacs)
             msg.addReaction(s).queue()
         val cacheElement = ReactionCacheElement(msgId, userId, reacs)
@@ -77,7 +77,7 @@ class ReactionHandler : ListenerAdapter() {
         executor.schedule({
             requirementsCache -= cacheElement
             consumerCache -= msgId
-            context.channel.editMessageById(msgId, "${Emojis.MAGNIFICATION_GLASS_RIGHT} Search canceled").override(true).queue {
+            context.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue {
                 it.clearReactions().queueAfter(15, TimeUnit.SECONDS)
             }
         }, timeoutInMillis, TimeUnit.MILLISECONDS)
@@ -85,9 +85,9 @@ class ReactionHandler : ListenerAdapter() {
 
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
         val msgId = event.messageIdLong
-        if (!reactions.plus(Emojis.RED_CROSS_MARK.getUnicode()).contains(event.reactionEmote.name))
+        if (!consumerCache.containsKey(msgId) && !reactions.plus("\u274C").contains(event.reactionEmote.name))
             return
-        val pair = consumerCache[msgId] ?: return
+        val pair = consumerCache[msgId]!!
         val ctx = pair.first.applyReactionEvent(event)
 
         event.channel.getMessageById(msgId).queue { msg ->

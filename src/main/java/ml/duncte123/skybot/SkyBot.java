@@ -234,7 +234,6 @@ public class SkyBot {
         sql.port = 12334;
         sql.username = "root";
         sql.password = "root";
-        sql.timezone = "Etc/Universal";
         config.sql = sql;
 
         GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting();

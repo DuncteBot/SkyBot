@@ -41,7 +41,6 @@ import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 import net.dv8tion.jda.core.exceptions.ErrorResponseException;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.jetbrains.annotations.NotNull;
@@ -267,25 +266,6 @@ public class BotListener extends ListenerAdapter {
                     event,
                     variables
             ));
-    }
-
-    @Override
-    public void onGuildMessageReactionAdd(GuildMessageReactionAddEvent event) {
-
-        if (event.getReactionEmote().isEmote() && !event.getReactionEmote().getName().equalsIgnoreCase(Emojis.REPEAT_ONE.getUnicode()))
-            return;
-
-        ICommand val = commandManager.getCommand("ping");
-
-        if (val == null)
-            return;
-
-        Command cmd = (Command) val;
-
-        if (!cmd.isUserOrGuildPatron(event.getUser(), event.getGuild(), false))
-            return;
-
-        event.getChannel().getMessageById(event.getMessageIdLong()).queue((message -> handleRetrievedMessage(message, event)));
     }
 
     @Override
@@ -650,11 +630,6 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
-    private void handleRetrievedMessage(Message message, GuildMessageReactionAddEvent event) {
-        event.getReaction().removeReaction(event.getUser()).queue();
-        this.onGuildMessageReceived(new GuildMessageReceivedEvent(message.getJDA(), event.getResponseNumber(), message));
-    }
-  
     private void handlePatronRemoveal(long userId) {
         // Remove the user from the patrons list
         Command.patrons.remove(userId);
