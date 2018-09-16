@@ -84,6 +84,7 @@ class ReactionHandler : ListenerAdapter() {
     }
 
     override fun onGuildMessageReactionAdd(event: GuildMessageReactionAddEvent) {
+        throw IllegalStateException("Waiting for review")
         val msgId = event.messageIdLong
         if (!consumerCache.containsKey(msgId) && !reactions.plus("\u274C").contains(event.reactionEmote.name))
             return
