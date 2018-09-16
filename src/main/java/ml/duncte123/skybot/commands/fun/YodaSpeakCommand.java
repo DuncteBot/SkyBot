@@ -26,7 +26,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import okhttp3.Response;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -49,7 +48,7 @@ public class YodaSpeakCommand extends Command {
 
         QueryBuilder builder = new QueryBuilder()
                 .append("https://apis.duncte123.me/yoda")
-                .append("sentence", StringUtils.join(args, " "))
+                .append("sentence", String.join(" ", args))
                 .append("token", event.getJDA().getToken());
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()

@@ -29,7 +29,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
@@ -319,7 +318,7 @@ public class CommandManager {
                                     .put("user", event.getAuthor())
                                     .put("channel", event.getChannel())
                                     .put("guild", event.getGuild())
-                                    .put("args", StringUtils.join(args, " "))
+                                    .put("args", String.join(" ", args))
                                     .parse(cc.getMessage());
 
                             sendMsg(event, "\u200B" + message);

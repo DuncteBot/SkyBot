@@ -41,12 +41,11 @@ public class EventManager
     public static boolean shouldFakeBlock;
     private final BotListener botListener;
     private final DeHoistListener deHoistListener;
-    private final ReactionHandler reactionHandler;
+//    private final ReactionHandler reactionHandler = new ReactionHandler();
 
     EventManager(Variables variables) {
         this.botListener = new BotListener(variables);
         this.deHoistListener = new DeHoistListener(variables);
-        this.reactionHandler = new ReactionHandler();
     }
 
 
@@ -76,7 +75,6 @@ public class EventManager
                 LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
             deHoistListener.onEvent(event);
-            reactionHandler.onEvent(event);
         } catch (Throwable thr) {
             logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
@@ -85,8 +83,8 @@ public class EventManager
     @Override
     public List<Object> getRegisteredListeners() {
         if (LavalinkManager.ins.isEnabled())
-            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener, reactionHandler);
+            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener);
         else
-            return Arrays.asList(botListener, deHoistListener, reactionHandler);
+            return Arrays.asList(botListener, deHoistListener);
     }
 }

@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
@@ -54,7 +53,7 @@ public class UrbanCommand extends Command {
                 sendMsg(ctx.getEvent(), "Nothing found");
                 return;
             }
-            String tags = "`" + StringUtils.join(json.optJSONArray("tags"), "`, `") + "`";
+
             JSONObject item = json.getJSONArray("list").getJSONObject(0);
             String permaLink = item.getString("permalink");
 
@@ -67,8 +66,7 @@ public class UrbanCommand extends Command {
                     .addField("Example", item.getString("example"), false)
                     .addField("Upvotes:", item.getInt("thumbs_up") + "", true)
                     .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
-                    .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false)
-                    .addField("Tags:", tags, false);
+                    .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
             sendEmbed(ctx.getEvent(), eb.build());
         });
 

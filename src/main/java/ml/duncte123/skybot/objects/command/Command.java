@@ -29,7 +29,6 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,7 +239,7 @@ public abstract class Command implements ICommand {
                     .replaceAll("\\n", "<br />")
                     .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
             if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
-                s += "<br />Aliases: " + PREFIX + StringUtils.join(getAliases(), ", " + PREFIX);
+                s += "<br />Aliases: " + PREFIX + String.join(", " + PREFIX, getAliases());
             }
             helpParsed = s;
         }

@@ -126,7 +126,7 @@ public class HelpCommand extends Command {
             }
         }
 
-        sendMsg(event, "That command could not be found, try " + PREFIX + "help for a list of commands");
+        sendMsg(event, "That command could not be found, try `" + PREFIX + "help` for a list of commands");
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {

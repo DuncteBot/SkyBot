@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.jagtag;
 
+import com.jagrosh.jagtag.Environment;
 import com.jagrosh.jagtag.Method;
 import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
@@ -27,6 +28,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.MiscUtil;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -104,7 +106,7 @@ public class DiscordMethods {
                     try {
                         id = Long.parseUnsignedLong(in[0]);
                     } catch (NumberFormatException ignored) {
-                        throw new ParseException(String.format("Your input `%s` is not a valid long", in[0]));
+                        throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]));
                     }
                     return MiscUtil.getCreationTime(id).format(DateTimeFormatter.RFC_1123_DATE_TIME);
                 }),
@@ -142,11 +144,21 @@ public class DiscordMethods {
                 new Method("channel", (env) -> {
                     TextChannel tc = env.get("channel");
                     return tc.getAsMention();
+                }, (env, in) -> {
+                    if (in[0].equals(""))
+                        return "";
+
+                    return getFirstTextChannel(env, in).getAsMention();
                 }),
 
                 new Method("channelid", (env) -> {
                     TextChannel tc = env.get("channel");
                     return tc.getId();
+                }, (env, in) -> {
+                    if (in[0].equals(""))
+                        return "";
+
+                    return getFirstTextChannel(env, in).getId();
                 }),
 
                 new Method("randuser", (env) -> {
@@ -210,4 +222,14 @@ public class DiscordMethods {
         );
     }
 
+    @NotNull
+    private static TextChannel getFirstTextChannel(Environment env, String[] in) throws ParseException {
+        List<TextChannel> channels = null;
+        Guild g = env.get("guild");
+        if (g != null)
+            channels = FinderUtil.findTextChannels(in[0], g);
+        if (channels == null || channels.isEmpty())
+            throw new ParseException(String.format("Your input `%s` returned no channels", in[0]));
+        return channels.get(0);
+    }
 }

@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
-import org.apache.commons.lang3.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -198,7 +197,7 @@ public class HelpEmbeds {
      * @return a concatenated string of the commands that we entered
      */
     private static String generateCommandsWithPrefix(String prefix, String... cmdNames) {
-        return "`" + prefix + StringUtils.join(cmdNames, "`, `" + prefix) + "`";
+        return "`" + prefix + String.join("`, `" + prefix, cmdNames) + "`";
     }
 
     /**

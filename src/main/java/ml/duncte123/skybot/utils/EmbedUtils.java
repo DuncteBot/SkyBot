@@ -74,21 +74,6 @@ public class EmbedUtils {
      * @return The way that that the {@link EmbedBuilder embed} will look like
      */
     public static EmbedBuilder defaultEmbed() {
-        /*EmbedBuilder eb = new EmbedBuilder()
-                .setColor(Settings.defaultColour);
-        if (AirUtils.NONE_SQLITE) {
-            //Get a random index from the quotes
-            int randomIndex = AirUtils.RAND.nextInt(footerQuotes.size());
-            //Get the quote as a string
-            String quote = String.valueOf(footerQuotes.keySet().toArray()[randomIndex]);
-            String user = String.valueOf(footerQuotes.values().toArray()[randomIndex]);
-            String finalQuote = StringUtils.abbreviate(quote, 100) + " - " + user;
-            //Set the quote in the footer
-            eb.setFooter(finalQuote, Settings.DEFAULT_ICON);
-        } else {
-            eb.setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
-                    .setTimestamp(Instant.now());
-        }*/
         return new EmbedBuilder()
                 .setColor(Settings.defaultColour)
                 .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)

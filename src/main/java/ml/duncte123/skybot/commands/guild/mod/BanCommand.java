@@ -28,7 +28,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -69,7 +68,7 @@ public class BanCommand extends Command {
             }
             //noinspection ConstantConditions
             if (args.size() >= 2) {
-                String reason = StringUtils.join(args.subList(2, args.size()), " ");
+                String reason = String.join(" ", args.subList(2, args.size()));
                 String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
                 if (!AirUtils.isInt(timeParts[0])) {

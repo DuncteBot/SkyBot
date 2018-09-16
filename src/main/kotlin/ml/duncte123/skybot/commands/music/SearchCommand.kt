@@ -21,14 +21,13 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.YoutubeUtils
-import java.util.concurrent.TimeUnit
 
 class SearchCommand : MusicCommand() {
     override fun executeCommand(ctx: CommandContext) {
 
-        val event = ctx.event
+        MessageUtils.sendMsg(ctx.event, "This command is a WIP")
+
+        /*val event = ctx.event
 
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
@@ -74,7 +73,7 @@ class SearchCommand : MusicCommand() {
             event.channel.sendMessage(EmbedUtils.defaultEmbed().appendDescription(string).build()).queue {
                 handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
             }
-        }
+        }*/
     }
 
     override fun getName(): String = "search"
