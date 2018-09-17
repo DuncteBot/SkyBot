@@ -46,7 +46,7 @@ class SearchCommand : MusicCommand() {
         val handler = ctx.reactionHandler
 
         val timeout = when {
-            isDev(event.author) -> 60L
+            isDev(event.author) -> 10L
             isUserOrGuildPatron(event, false) -> 30L
             else -> 15L
         }

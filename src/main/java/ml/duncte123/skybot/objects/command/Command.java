@@ -264,14 +264,4 @@ public abstract class Command implements ICommand {
 
         return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }
-
-    @SuppressWarnings("ResultOfMethodCallIgnored")
-    protected boolean isInteger(String arg) {
-        try {
-            Integer.valueOf(arg);
-        } catch (NumberFormatException ex) {
-            return false;
-        }
-        return true;
-    }
 }

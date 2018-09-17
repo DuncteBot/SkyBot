@@ -23,6 +23,7 @@ import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -66,7 +67,7 @@ public class CleanupCommand extends Command {
                 keepPinned = true;
             } else if (arg.equalsIgnoreCase("bots-only")) {
                 clearBots = true;
-            } else if (isInteger(arg)) {
+            } else if (AirUtils.isInt(arg)) {
                 try {
                     total = Integer.parseInt(args.get(0));
                 } catch (NumberFormatException e) {
@@ -81,8 +82,7 @@ public class CleanupCommand extends Command {
             }
         }
 
-        @SinceSkybot(version = "3.78.2")
-        final boolean keepPinnedFinal = keepPinned;
+        @SinceSkybot(version = "3.78.2") final boolean keepPinnedFinal = keepPinned;
         final boolean clearBotsFinal = clearBots;
         TextChannel channel = event.getChannel();
         // Start of the annotation

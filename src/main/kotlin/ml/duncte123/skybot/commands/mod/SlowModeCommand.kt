@@ -80,6 +80,7 @@ class SlowModeCommand : Command() {
     override fun getName() = "slowmode"
 
     override fun help() = """Enable slowmode on in the current channel.
-        |Usage: `$PREFIX$name [seconds (1-120)]`
+        |Usage: `$PREFIX$name <seconds (1-120)>`
+        |Use `$PREFIX$name off` to turn slowmode off
     """.trimMargin()
 }

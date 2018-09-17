@@ -57,6 +57,7 @@ class ReactionHandler : ListenerAdapter() {
 
             if (content == "cancel") {
                 ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue()
+                requirementsCache -= cacheElement
                 return@BiConsumer
             }
 
@@ -93,18 +94,20 @@ class ReactionHandler : ListenerAdapter() {
 
         executor.schedule({
 
-            requirementsCache -= cacheElement
-            consumerCache -= checkId
-            context.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue()
+            if(requirementsCache.contains(cacheElement)) {
+                requirementsCache -= cacheElement
+                consumerCache -= checkId
+                context.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue()
+            }
 
         }, timeoutInMillis, TimeUnit.MILLISECONDS)
     }
 
     override fun onGuildMessageReceived(event: GuildMessageReceivedEvent) {
         val checkId = event.author.idLong
-        val intCheck = AirUtils.isInt(event.message.contentRaw)
+        val intCheck = AirUtils.isInt(event.message.contentRaw) || event.message.contentRaw.toLowerCase() == "cancel"
 
-        if (!consumerCache.containsKey(checkId) || !intCheck)
+        if (!consumerCache.containsKey(checkId) && !intCheck)
             return
 
         val pair = consumerCache[checkId] ?: return
