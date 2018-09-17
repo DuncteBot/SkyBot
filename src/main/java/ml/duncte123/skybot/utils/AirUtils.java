@@ -274,40 +274,6 @@ public class AirUtils {
         }
     }
 
-    public static PendingRequest<Profile> getUserProfile(String uid) {
-        /*
-         * badges:
-         *
-         *   Discord dev: 1
-         *   Partner: 2
-         *   Nitro: (none, check for premium_since != null)
-         *   Hypesquad: 4
-         *   Bug Hunter: 8
-         */
-       /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
-        return WebUtils.ins.prepareRaw(
-                new Request.Builder()
-                        .get()
-                        .header("authorization", "")
-                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36 OPR/52.0.2871.40")
-                        .url(url)
-                        .build()
-                , b -> {
-                    JSONObject json = new JSONObject(Objects.requireNonNull(b).string());
-                    JSONObject userObj = json.optJSONObject("user");
-                    return new Profile(
-                            json.optString("premium_since", null),
-                            userObj.optInt("flags"),
-                            userObj.optString("id"),
-                            userObj.optString("avatar"),
-                            userObj.optString("username"),
-                            userObj.optString("discriminator")
-                    );
-                }
-        );*/
-        return null;
-    }
-
     public static PendingRequest<String> shortenUrl(String url, String googleKey) {
         return WebUtils.ins.shortenUrl(url, googleKey);
     }
