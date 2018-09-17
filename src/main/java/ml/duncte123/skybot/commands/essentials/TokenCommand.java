@@ -55,7 +55,7 @@ public class TokenCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();
 
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             sendMsg(event, "Missing arguments");
             return;
         }

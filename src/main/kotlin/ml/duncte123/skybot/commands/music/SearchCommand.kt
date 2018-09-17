@@ -27,6 +27,7 @@ import ml.duncte123.skybot.utils.YoutubeUtils
 import java.util.concurrent.TimeUnit
 
 class SearchCommand : MusicCommand() {
+
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
