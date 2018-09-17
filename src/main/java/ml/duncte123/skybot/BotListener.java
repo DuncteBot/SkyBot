@@ -454,19 +454,24 @@ public class BotListener extends ListenerAdapter {
             System.exit(0);
     }
 
-    private boolean startsWithPrefix(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
+    private boolean shouldBlockCommand(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
         return s.equalsIgnoreCase(
                 rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
+                        .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
         );
     }
 
     //                                    raw,    category?
     private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName) {
-        return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase())
-                .getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
+
+        ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+
+        if(command == null)
+            return false;
+
+        return command.getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
     }
 
     /**
@@ -545,33 +550,37 @@ public class BotListener extends ListenerAdapter {
 
     private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
         //If the topic contains -commands ignore it
-        if (event.getChannel().getTopic() != null) {
-            String[] blocked = event.getChannel().getTopic().split("-");
+        if (event.getChannel().getTopic() == null) {
+            return true;
+        }
 
-            if (event.getChannel().getTopic().contains("-commands"))
+        String[] blocked = event.getChannel().getTopic().split("-");
+
+        if (event.getChannel().getTopic().contains("-commands"))
+            return false;
+
+        for (String s : blocked) {
+            if (s.startsWith("!")) {
+                s = s.split("!")[1];
+
+                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s)) {
+                    return false;
+                }
+
+                /*if (shouldBlockCommand(settings, rw, s))
+                    return false;
+
+                return true;*/
+                return !shouldBlockCommand(settings, rw, s);
+            }
+
+            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s)) {
+                return false;
+            }
+
+            if (shouldBlockCommand(settings, rw, s))
                 return false;
 
-            for (String s : blocked) {
-                if (s.startsWith("!")) {
-                    s = s.split("!")[1];
-
-                    if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s)) {
-                        return false;
-                    }
-
-                    if (startsWithPrefix(settings, rw, s))
-                        return false;
-
-                }
-
-                if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s)) {
-                    return false;
-                }
-
-                if (startsWithPrefix(settings, rw, s))
-                    return false;
-
-            }
         }
 
         return true;
