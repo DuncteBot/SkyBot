@@ -43,6 +43,7 @@ import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEv
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
@@ -52,7 +53,7 @@ public class CommandContext {
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
-    private GuildMessageReactionAddEvent reactionAddEvent = null;
+    private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
     public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
@@ -142,10 +143,19 @@ public class CommandContext {
 
     public ReactionHandler getReactionHandler() {
         List<Object> listeners = this.event.getJDA().getRegisteredListeners();
-        return (ReactionHandler) listeners.get(listeners.size() - 1);
+        Optional<Object> handler = listeners.stream().filter(
+                listener -> listener instanceof ReactionHandler
+        ).findFirst();
+
+        return handler.map(
+                o -> (ReactionHandler) o
+        ).orElseGet(() ->
+                (ReactionHandler) listeners.get(listeners.size() - 1)
+        );
+
     }
 
-    public CommandContext applyReactionEvent(GuildMessageReactionAddEvent event) {
+    public CommandContext applyReactionEvent(GuildMessageReceivedEvent event) {
         this.reactionAddEvent = event;
         return this;
     }
@@ -163,11 +173,11 @@ public class CommandContext {
         return this.reactionAddEvent != null;
     }
 
-    public GuildMessageReactionAddEvent getReactionEvent() {
+    public GuildMessageReceivedEvent getReactionEvent() {
         return this.reactionAddEvent;
     }
 
-    public long getReplyId() {
+    public long getSendId() {
         return replyId;
     }
 

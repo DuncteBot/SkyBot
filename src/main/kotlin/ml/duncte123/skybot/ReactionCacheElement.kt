@@ -18,14 +18,10 @@
 
 package ml.duncte123.skybot
 
-import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
-data class ReactionCacheElement(public val msgID: Long, public val authorId: Long, public val reactions: List<String>) {
-    fun equals(other: GuildMessageReactionAddEvent): Boolean {
-        val id = if (other.reactionEmote.isEmote)
-                    other.reactionEmote.emote.id
-                 else
-                    other.reactionEmote.name
-        return other.messageIdLong == msgID && other.user.idLong == authorId && reactions.contains(id)
+data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
+    fun equals(other: GuildMessageReceivedEvent): Boolean {
+        return other.author.idLong == authorId
     }
 }
