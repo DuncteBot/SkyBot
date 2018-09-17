@@ -247,8 +247,7 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        if (!canRunCommands(rw, settings, event))
-            return;
+        if (!canRunCommands(rw, settings, event)) return;
 
         if (!rw.startsWith(guild.getSelfMember().getAsMention())) {
             //Handle the command
@@ -456,13 +455,15 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean startsWithPrefix(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
-        return s.equalsIgnoreCase(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
+        return s.equalsIgnoreCase(
+                rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
+        );
     }
 
     //                                    raw,    category?
-    private boolean shouldBlockCommand(@NotNull String rw, @NotNull String categoryName) {
+    private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName) {
         return commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase())
                 .getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());
@@ -554,17 +555,16 @@ public class BotListener extends ListenerAdapter {
                 if (s.startsWith("!")) {
                     s = s.split("!")[1];
 
-                    if (isCategory(s.toUpperCase()) && !shouldBlockCommand(rw, s)) {
+                    if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s)) {
                         return false;
-
                     }
 
-                    if (!startsWithPrefix(settings, rw, s))
+                    if (startsWithPrefix(settings, rw, s))
                         return false;
 
                 }
 
-                if (isCategory(s.toUpperCase()) && shouldBlockCommand(rw, s)) {
+                if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s)) {
                     return false;
                 }
 

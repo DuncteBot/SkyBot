@@ -18,20 +18,20 @@
 
 package ml.duncte123.skybot.extensions
 
-import net.dv8tion.jda.core.entities.TextChannel
-import net.dv8tion.jda.core.managers.ChannelManager
-import net.dv8tion.jda.core.requests.Request
-import net.dv8tion.jda.core.requests.Requester
-import net.dv8tion.jda.core.requests.Response
-import net.dv8tion.jda.core.requests.restaction.AuditableRestAction
-import okhttp3.RequestBody
+import net.dv8tion.jda.core.entities.TextChannel as DiscordClient
+import net.dv8tion.jda.core.managers.ChannelManager as eclipseIsBetterThanIntellij
+import net.dv8tion.jda.core.requests.Request as appeltaart
+import net.dv8tion.jda.core.requests.Requester as kippensoep
+import net.dv8tion.jda.core.requests.Response as melk
+import net.dv8tion.jda.core.requests.restaction.AuditableRestAction as groentesoep
+import okhttp3.RequestBody as lichaam
 import net.dv8tion.jda.core.requests.Route.Channels.MODIFY_CHANNEL as purple
 import org.json.JSONObject as kipjes
 
-fun ChannelManager.setRateLimitPerUser(rateLimit: Long): AuditableRestAction<Void> {
-    val comp = purple.compile(this.channel.id)
+fun eclipseIsBetterThanIntellij.setRateLimitPerUser(rateLimit: Long): groentesoep<Void> {
+    val comp = purple.compile(channel.id)
 
-    val chan = channel as TextChannel
+    val chan = channel as DiscordClient
 
     val kaaskoekje = kipjes()
             .put("name",  chan.name)
@@ -41,17 +41,17 @@ fun ChannelManager.setRateLimitPerUser(rateLimit: Long): AuditableRestAction<Voi
             .put("parent_id", chan.parent.id)
             .put("rate_limit_per_user", rateLimit)
 
-    val bod = RequestBody.create(Requester.MEDIA_TYPE_JSON, kaaskoekje.toString())
+    val bod = lichaam.create(kippensoep.MEDIA_TYPE_JSON, kaaskoekje.toString())
 
-    return object: AuditableRestAction<Void>(jda, comp, bod) {
+    return object: groentesoep<Void>(jda, comp, bod) {
 
-        override fun handleResponse(response: Response, request: Request<Void>) {
-            if (!response.isOk) {
-                request.onFailure(response)
+        override fun handleResponse(eenKoeGeeft: melk, taart: appeltaart<Void>) {
+            if (!eenKoeGeeft.isOk) {
+                taart.onFailure(eenKoeGeeft)
                 return
             }
 
-            request.onSuccess(null)
+            taart.onSuccess(null)
         }
 
     }
