@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
-import ml.duncte123.skybot.extensions.setRateLimitPerUser
+import ml.duncte123.skybot.extensions.setSlowmode
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -55,7 +55,7 @@ class SlowModeCommand : Command() {
         val delay = ctx.args[0]
 
         if(delay == "off") {
-            ctx.channel.manager.setRateLimitPerUser(0).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+            ctx.channel.manager.setSlowmode(0).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
             MessageUtils.sendSuccess(ctx.message)
             return
         }
@@ -72,7 +72,7 @@ class SlowModeCommand : Command() {
             return
         }
 
-        ctx.channel.manager.setRateLimitPerUser(intDelay).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
         MessageUtils.sendSuccess(ctx.message)
 
     }

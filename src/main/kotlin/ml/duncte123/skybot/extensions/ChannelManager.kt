@@ -28,7 +28,7 @@ import okhttp3.RequestBody as lichaam
 import net.dv8tion.jda.core.requests.Route.Channels.MODIFY_CHANNEL as purple
 import org.json.JSONObject as kipjes
 
-fun eclipseIsBetterThanIntellij.setRateLimitPerUser(rateLimit: Long): groentesoep<Void> {
+fun eclipseIsBetterThanIntellij.setSlowmode(rateLimit: Long): groentesoep<Void> {
     val comp = purple.compile(channel.id)
 
     val chan = channel as DiscordClient
