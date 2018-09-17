@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan & Maurice R S "Sanduhr32"
+ *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -71,14 +71,13 @@ public class BotinfoCommand extends Command {
         Time uptimeTime = new Time(uptimeLong - 3600000);
 
         String duncte = getDev(event, 191231307290771456L, "duncte123 (duncte123#1245)");
-        String sanduhr = getDev(event, 198137282018934784L, "Sanduhr32 (\u231b.exe ¯\\\\_(ツ)\\_/¯#5785)");
         String ramid = getDev(event, 281673659834302464L, "ramidzkh (ramidzkh#4814)");
 
         MessageEmbed eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is some information about me \uD83D\uDE09")
                 .setThumbnail(u.getEffectiveAvatarUrl())
                 .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
-                        duncte + ", " + ramid + " and " + sanduhr + ".\n" +
+                        duncte + " and " + ramid + ".\n" +
                         "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                         "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
                         "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
