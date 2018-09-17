@@ -33,9 +33,6 @@ import java.util.function.BiConsumer
 class ReactionHandler : ListenerAdapter() {
     private val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(2) { r -> Thread(r, "ReactionAwaiter") }
     private var requirementsCache: List<ReactionCacheElement> = ArrayList()
-    /**
-     * Holds the user id and the search results
-     */
     private var consumerCache: Map<Long, Pair<CommandContext, List<SearchResult>>> = HashMap()
 
     private val defaultConsumer: BiConsumer<CommandContext, List<SearchResult>> = BiConsumer { ctx, resSet ->
@@ -110,7 +107,7 @@ class ReactionHandler : ListenerAdapter() {
         if (!consumerCache.containsKey(checkId) || !intCheck)
             return
 
-        val pair = consumerCache[checkId]!!
+        val pair = consumerCache[checkId] ?: return
 
         val ctx = pair.first.applyReactionEvent(event)
 
