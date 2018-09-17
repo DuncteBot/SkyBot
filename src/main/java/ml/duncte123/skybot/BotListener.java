@@ -154,7 +154,7 @@ public class BotListener extends ListenerAdapter {
         }
     }
 
-    private void loadPatrons(ShardManager manager) {
+    private void loadPatrons(@NotNull ShardManager manager) {
         logger.info("Collecting patrons");
         Guild supportGuild = manager.getGuildById(supportGuildId);
         List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))

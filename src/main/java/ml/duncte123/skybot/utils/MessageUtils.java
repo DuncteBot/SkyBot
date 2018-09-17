@@ -29,6 +29,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.function.Consumer;
+
 import static me.duncte123.botCommons.messaging.MessageUtils.CUSTOM_QUEUE_ERROR;
 import static ml.duncte123.skybot.utils.EmbedUtils.embedToMessage;
 
@@ -72,7 +74,15 @@ public class MessageUtils {
      * @param embed The embed to send
      */
     public static void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed) {
-        sendEmbed(event.getChannel(), embed);
+        sendEmbed(event.getChannel(), embed, null);
+    }
+
+    public static void sendEmbed(GuildMessageReceivedEvent event, MessageEmbed embed, Consumer<Message> success) {
+        sendEmbed(event.getChannel(), embed, success);
+    }
+
+    public static void sendEmbed(TextChannel channel, MessageEmbed embed) {
+        sendEmbed(channel, embed, null);
     }
 
     /**
@@ -81,17 +91,17 @@ public class MessageUtils {
      * @param channel the {@link TextChannel TextChannel} that we want to send the embed to
      * @param embed   The embed to send
      */
-    public static void sendEmbed(TextChannel channel, MessageEmbed embed) {
+    public static void sendEmbed(TextChannel channel, MessageEmbed embed, Consumer<Message> success) {
         if (channel != null) {
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
                 (new MessageBuilder()).append(embedToMessage(embed))
                         .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
-                        .forEach(it -> me.duncte123.botCommons.messaging.MessageUtils.sendMsg(channel, it));
+                        .forEach(it -> me.duncte123.botCommons.messaging.MessageUtils.sendMsg(channel, it, success));
 //                sendMsg(channel, EmbedUtils.embedToMessage(embed));
                 return;
             }
             //noinspection deprecation
-            sendMsg(channel, embed);
+            sendMsg(channel, embed, success);
         }
     }
 
@@ -118,17 +128,17 @@ public class MessageUtils {
      *
      * @param channel he {@link TextChannel TextChannel} that we want to send our message to
      * @param msg     the message to send
-     * @deprecated Use {@link #sendEmbed(TextChannel, MessageEmbed)}
+     * @deprecated Use {@link #sendEmbed(TextChannel, MessageEmbed, Consumer)}
      */
     @Deprecated(message = "use #sendEmbed")
     @java.lang.Deprecated
-    public static void sendMsg(TextChannel channel, MessageEmbed msg) {
+    public static void sendMsg(TextChannel channel, MessageEmbed msg, Consumer<Message> success) {
         //Check if the channel exists
         if ((channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) &&
                 channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             Message m = new MessageBuilder().setEmbed(msg).build();
             //Only send a message if we can talk
-            channel.sendMessage(m).queue(null, CUSTOM_QUEUE_ERROR);
+            channel.sendMessage(m).queue(success, CUSTOM_QUEUE_ERROR);
         }
     }
 }
