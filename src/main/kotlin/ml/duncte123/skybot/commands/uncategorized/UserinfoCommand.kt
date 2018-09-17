@@ -25,7 +25,6 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.discord.user.Profile
-import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
@@ -172,13 +171,12 @@ class UserinfoCommand : Command() {
                         |
                         |**Username + Discriminator:** ${String.format("%#s", u)}
                         |**User Id:** ${u.id}
-                        |**Status:** ${AirUtils.gameToString(m.game)}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
                         |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
-                        |**Online Status:** ${AirUtils.convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
+                        |**Online Status:** ${convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                         |$badgesString
                         |
@@ -216,6 +214,16 @@ class UserinfoCommand : Command() {
             OnlineStatus.IDLE -> StatusType.IDLE
             OnlineStatus.INVISIBLE -> StatusType.OFFLINE
             else -> StatusType.ONLINE
+        }
+    }
+
+    private fun convertStatus(status: OnlineStatus): String {
+        return when (status) {
+            OnlineStatus.ONLINE -> "<:online2:464520569975603200>"
+            OnlineStatus.IDLE -> "<:away2:464520569862357002>"
+            OnlineStatus.DO_NOT_DISTURB -> "<:dnd2:464520569560498197>"
+
+            else -> "<:offline2:464520569929334784>"
         }
     }
 

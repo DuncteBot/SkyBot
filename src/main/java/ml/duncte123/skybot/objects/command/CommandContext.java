@@ -92,10 +92,6 @@ public class CommandContext {
         return this.variables.getGoogleBaseUrl();
     }
 
-    public WAEngine getAlphaEngine() {
-        return this.variables.getAlphaEngine();
-    }
-
     public BlargBot getBlargbot() {
         return this.variables.getBlargBot();
     }

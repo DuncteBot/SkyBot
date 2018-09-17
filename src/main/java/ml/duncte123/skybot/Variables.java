@@ -21,7 +21,6 @@ package ml.duncte123.skybot;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
-import com.wolfram.alpha.WAEngine;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
@@ -37,13 +36,10 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import static ml.duncte123.skybot.utils.AirUtils.getWolframEngine;
-
 public class Variables {
 
     private final AudioUtils audioUtils;
     private final Alexflipnote alexflipnote;
-    private final WAEngine alphaEngine;
     private final String googleBaseUrl;
     private final WeebApi weebApi;
     private final boolean isSql;
@@ -72,7 +68,6 @@ public class Variables {
         }
 
         this.audioUtils = new AudioUtils(config.apis, this);
-        this.alphaEngine = getWolframEngine(config.apis.wolframalpha);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
                 "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
@@ -109,10 +104,6 @@ public class Variables {
 
     public String getGoogleBaseUrl() {
         return googleBaseUrl;
-    }
-
-    public WAEngine getAlphaEngine() {
-        return alphaEngine;
     }
 
     public WeebApi getWeebApi() {

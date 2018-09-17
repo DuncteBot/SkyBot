@@ -24,7 +24,8 @@ import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.AirUtils
+import ml.duncte123.skybot.utils.AirUtils.shortenUrl
+import ml.duncte123.skybot.utils.AirUtils.isURL
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
@@ -50,12 +51,12 @@ class ShortenCommand : Command() {
             return
         }
 
-        if (!AirUtils.isURL(args[0])) {
+        if (!isURL(args[0])) {
             sendMsg(event, "That does not look like a valid url")
             return
         }
 
-        AirUtils.shortenUrl(args[0], ctx.config.apis.googl).async({
+        shortenUrl(args[0], ctx.config.apis.googl).async({
             sendMsg(event, "Here is your shortened url: <$it>")
         }, {
             sendMsg(event, "Something went wrong, please make sure that your url to shorten is valid")
