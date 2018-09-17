@@ -39,30 +39,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-@SuppressWarnings({"ReturnInsideFinallyBlock", "WeakerAccess", "unused"})
 public class AirUtils {
-    private static final Logger logger = LoggerFactory.getLogger(AirUtils.class);
     private static final Pattern UNIX_UPTIME_PATTERN = Pattern.compile("(?:.*)up(.*)[0-9] users(?:.*)");
-
-    /**
-     * This converts the online status of a user to a fancy emote
-     *
-     * @param status The {@link OnlineStatus} to convert
-     * @return The fancy converted emote as a mention
-     */
-    public static String convertStatus(OnlineStatus status) {
-        switch (status) {
-            case ONLINE:
-                return "<:online2:464520569975603200>";
-            case IDLE:
-                return "<:away2:464520569862357002>";
-            case DO_NOT_DISTURB:
-                return "<:dnd2:464520569560498197>";
-
-            default:
-                return "<:offline2:464520569929334784>";
-        }
-    }
 
     /**
      * This will validate a link
@@ -84,6 +62,7 @@ public class AirUtils {
         return integer.matches("^\\d{1,11}$");
     }
 
+
     public static int parseIntSafe(String integer) {
         if(isInt(integer))
             return Integer.parseInt(integer);
@@ -91,13 +70,7 @@ public class AirUtils {
         return -1;
     }
 
-    /**
-     * This converts the game that a user is playing into a nice and readable format
-     *
-     * @param g the {@link net.dv8tion.jda.core.entities.Game Game} that the {@link net.dv8tion.jda.core.entities.Member Member} has
-     * @return a nicely formatted game string
-     */
-    public static String gameToString(Game g) {
+    /*public static String gameToString(Game g) {
         if (g == null) return "no game";
 
         String gameType;
@@ -118,7 +91,7 @@ public class AirUtils {
         }
 
         return gameType + " " + g.getName();
-    }
+    }*/
 
     /**
      * This will generate the uptime for us based on the time that we pass in
@@ -164,30 +137,6 @@ public class AirUtils {
         }
 
         return uptimeString.startsWith(", ") ? uptimeString.replaceFirst(", ", "") : uptimeString;
-    }
-
-    /**
-     * Gets a Wolfram|Alpha engine for creating and processing queries
-     *
-     * @return A possibly-null {@link com.wolfram.alpha.WAEngine Wolfram|Alpha engine} instance configured with the
-     * token
-     */
-    public static WAEngine getWolframEngine(String appId) {
-//        String appId = Variables.CONFIG.getString("apis.wolframalpha", "");
-
-        if (appId == null || appId.isEmpty())
-            return null;
-
-        WAEngine engine = new WAEngine();
-
-        engine.setAppID(appId);
-
-        engine.setIP("0.0.0.0");
-        engine.setLocation("San Francisco");
-        engine.setMetric(true);
-        engine.setCountryCode("USA");
-
-        return engine;
     }
 
     /**
@@ -237,31 +186,6 @@ public class AirUtils {
     }
 
     /**
-     * This generates a random string withe the specified length
-     *
-     * @param length the length that the string should be
-     * @return the generated string
-     */
-    public static String generateRandomString(int length) {
-        String chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890abcdefghijklmnpqrstuvwxyz";
-        StringBuilder output = new StringBuilder();
-        while (output.length() < length) { // length of the random string.
-            int index = (int) (ThreadLocalRandom.current().nextFloat() * chars.length());
-            output.append(chars.charAt(index));
-        }
-        return output.toString();
-    }
-
-    /**
-     * Returns a random string that has 10 chars
-     *
-     * @return a random string that has 10 chars
-     */
-    public static String generateRandomString() {
-        return generateRandomString(10);
-    }
-
-    /**
      * Returns a flipped table
      *
      * @return a flipped table
@@ -279,40 +203,6 @@ public class AirUtils {
             default:
                 return "I CAN'T FLIP THIS TABLE";
         }
-    }
-
-    public static PendingRequest<Profile> getUserProfile(String uid) {
-        /*
-         * badges:
-         *
-         *   Discord dev: 1
-         *   Partner: 2
-         *   Nitro: (none, check for premium_since != null)
-         *   Hypesquad: 4
-         *   Bug Hunter: 8
-         */
-       /* String url = String.format("%susers/%s/profile", Requester.DISCORD_API_PREFIX, uid);
-        return WebUtils.ins.prepareRaw(
-                new Request.Builder()
-                        .get()
-                        .header("authorization", "")
-                        .addHeader("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/65.0.3325.181 Safari/537.36 OPR/52.0.2871.40")
-                        .url(url)
-                        .build()
-                , b -> {
-                    JSONObject json = new JSONObject(Objects.requireNonNull(b).string());
-                    JSONObject userObj = json.optJSONObject("user");
-                    return new Profile(
-                            json.optString("premium_since", null),
-                            userObj.optInt("flags"),
-                            userObj.optString("id"),
-                            userObj.optString("avatar"),
-                            userObj.optString("username"),
-                            userObj.optString("discriminator")
-                    );
-                }
-        );*/
-        return null;
     }
 
     public static PendingRequest<String> shortenUrl(String url, String googleKey) {

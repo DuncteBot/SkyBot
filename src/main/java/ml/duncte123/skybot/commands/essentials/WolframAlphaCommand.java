@@ -35,9 +35,12 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 import static ml.duncte123.skybot.utils.MessageUtils.editMsg;
 
 public class WolframAlphaCommand extends Command {
+
+    private WAEngine waEngine = null;
 
     public WolframAlphaCommand() {
         this.category = CommandCategory.NERD_STUFF;
@@ -84,7 +87,7 @@ public class WolframAlphaCommand extends Command {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getTitle()) + "](" + AirUtils.shortenUrl(i.getURL(), googleKey).execute() + ")";
+                        d += "[" + a(i.getTitle()) + "](" + shortenUrl(i.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
                         d += a(i.getText());
@@ -92,13 +95,13 @@ public class WolframAlphaCommand extends Command {
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-                        d += "[" + a(l.getText()) + "](" + AirUtils.shortenUrl(l.getURL(), googleKey).execute() + ")";
+                        d += "[" + a(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
                         d += a(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
-                        d += AirUtils.shortenUrl(sound.getURL(), googleKey).execute();
+                        d += shortenUrl(sound.getURL(), googleKey).execute();
                     }
 
                     e.append(d).append("\n\n");
@@ -126,7 +129,7 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        WAEngine engine = ctx.getAlphaEngine();
+        WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
@@ -166,5 +169,28 @@ public class WolframAlphaCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"wolfram", "wa", "wolframalpha"};
+    }
+
+    private WAEngine getWolframEngine(String appId) {
+
+        if(waEngine != null) {
+            return waEngine;
+        }
+
+        if (appId == null || appId.isEmpty())
+            return null;
+
+        WAEngine engine = new WAEngine();
+
+        engine.setAppID(appId);
+
+        engine.setIP("0.0.0.0");
+        engine.setLocation("San Francisco");
+        engine.setMetric(true);
+        engine.setCountryCode("USA");
+
+        waEngine = engine;
+
+        return engine;
     }
 }
