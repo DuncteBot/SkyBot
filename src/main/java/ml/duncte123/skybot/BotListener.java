@@ -549,15 +549,17 @@ public class BotListener extends ListenerAdapter {
     }
 
     private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
-        //If the topic contains -commands ignore it
-        if (event.getChannel().getTopic() == null) {
+
+        String topic = event.getChannel().getTopic();
+
+        if (topic == null || topic.isEmpty()) {
             return true;
         }
 
-        String[] blocked = event.getChannel().getTopic().split("-");
-
-        if (event.getChannel().getTopic().contains("-commands"))
+        if (topic.contains("-commands"))
             return false;
+
+        String[] blocked = topic.split("-");
 
         for (String s : blocked) {
             if (s.startsWith("!")) {
