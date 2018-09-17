@@ -126,6 +126,7 @@ public class SkyBot {
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
                 .setEventManager(eventManager)
+                .setBulkDeleteSplittingEnabled(false)
                 .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
                 .setShardsTotal(TOTAL_SHARDS)
                 .setGameProvider(shardId -> Game.of(type,
