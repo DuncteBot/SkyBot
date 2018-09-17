@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
-import kotlin.Deprecated;
+import net.dv8tion.jda.annotations.ReplaceWith;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.ChannelType;
@@ -130,8 +130,8 @@ public class MessageUtils {
      * @param msg     the message to send
      * @deprecated Use {@link #sendEmbed(TextChannel, MessageEmbed, Consumer)}
      */
-    @Deprecated(message = "use #sendEmbed")
-    @java.lang.Deprecated
+    @Deprecated
+    @ReplaceWith("#sendEmbed")
     public static void sendMsg(TextChannel channel, MessageEmbed msg, Consumer<Message> success) {
         //Check if the channel exists
         if ((channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) &&
