@@ -18,16 +18,18 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
+import ml.duncte123.skybot.utils.EmbedUtils
+import ml.duncte123.skybot.utils.MessageUtils
+import ml.duncte123.skybot.utils.YoutubeUtils
+import java.util.concurrent.TimeUnit
 
 class SearchCommand : MusicCommand() {
     override fun executeCommand(ctx: CommandContext) {
 
-        MessageUtils.sendMsg(ctx.event, "This command is a WIP")
-
-        /*val event = ctx.event
+        val event = ctx.event
 
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
@@ -35,45 +37,36 @@ class SearchCommand : MusicCommand() {
             return
         }
 
-        val guild = event.guild
-        val mng = getMusicManager(guild, ctx.audioUtils)
-        val player = mng.player
-        val scheduler = mng.scheduler
-
         if (ctx.args.isEmpty()) {
-            when {
-                player.isPaused -> {
-                    player.isPaused = false
-                    MessageUtils.sendMsg(event, "Playback has been resumed.")
-                }
-                player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
-                scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                        "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
+            sendMsg(event, "Correct usage: `$PREFIX$name [search term]`")
+            return
+        }
+
+        val handler = ctx.reactionHandler
+
+        val timeout = when {
+            isDev(event.author) -> 60L
+            isUserOrGuildPatron(event, false) -> 30L
+            else -> 15L
+        }
+
+        val searchLimit = if (isUserOrGuildPatron(event, false)) 10L else 5L
+
+        val toPlay = ctx.argsRaw
+        val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
+
+        val string = buildString {
+            res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
+                append(index + 1).append(". ").append(s).append("\n")
             }
-        } else {
-            val handler = ctx.reactionHandler
+            append("\n\n")
+            append("Type the number of the song that you want to play or type `cancel` to cancel your serach")
+        }
 
-            val timeout = when {
-                isDev(event.author) -> 60L
-                isUserOrGuildPatron(event, false) -> 30L
-                else -> 15L
-            }
+        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(string)) {
+            handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
+        }
 
-            val searchLimit = if(isUserOrGuildPatron(event, false)) 10L else 5L
-
-            val toPlay = ctx.argsRaw
-            val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
-
-            val string = buildString {
-                res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
-                    append(index + 1).append(". ").append(s).append("\n")
-                }
-            }
-
-            event.channel.sendMessage(EmbedUtils.defaultEmbed().appendDescription(string).build()).queue {
-                handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
-            }
-        }*/
     }
 
     override fun getName(): String = "search"

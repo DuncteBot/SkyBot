@@ -62,6 +62,14 @@ public class AirUtils {
         return integer.matches("^\\d{1,11}$");
     }
 
+
+    public static int parseIntSafe(String integer) {
+        if(isInt(integer))
+            return Integer.parseInt(integer);
+
+        return -1;
+    }
+
     /*public static String gameToString(Game g) {
         if (g == null) return "no game";
 

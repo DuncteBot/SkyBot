@@ -23,6 +23,7 @@ import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
+import net.dv8tion.jda.core.hooks.EventListener;
 import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +42,7 @@ public class EventManager
     public static boolean shouldFakeBlock;
     private final BotListener botListener;
     private final DeHoistListener deHoistListener;
-//    private final ReactionHandler reactionHandler = new ReactionHandler();
+    private final ReactionHandler reactionHandler = new ReactionHandler();
 
     EventManager(Variables variables) {
         this.botListener = new BotListener(variables);
@@ -71,10 +72,18 @@ public class EventManager
                 if (restartingShard == -1 || restartingShard == shardInfo.getShardId())
                     return;
             }
-            if (LavalinkManager.ins.isEnabled())
+
+            for (Object listener : getRegisteredListeners()) {
+                if(listener instanceof EventListener)
+                    ((EventListener) listener).onEvent(event);
+            }
+
+            /*if (LavalinkManager.ins.isEnabled())
                 LavalinkManager.ins.getLavalink().onEvent(event);
             botListener.onEvent(event);
             deHoistListener.onEvent(event);
+            reactionHandler.onEvent(event);*/
+
         } catch (Throwable thr) {
             logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
@@ -83,8 +92,8 @@ public class EventManager
     @Override
     public List<Object> getRegisteredListeners() {
         if (LavalinkManager.ins.isEnabled())
-            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener);
+            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener, reactionHandler);
         else
-            return Arrays.asList(botListener, deHoistListener);
+            return Arrays.asList(botListener, deHoistListener, reactionHandler);
     }
 }

@@ -175,7 +175,7 @@ public class SkyBot {
         game.streamUrl = "https://twitch.tv/duncte123";
         game.type = 3;
         discord.game = game;
-        discord.token = "ABCDE";
+        discord.token = "Your bot token";
         discord.totalShards = 1;
         discord.prefix = "/";
         discord.botOwnerId = "191231307290771456";
@@ -185,55 +185,61 @@ public class SkyBot {
         discord.embedColour = "#FFFFFF";
         DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
         oauth.clientId = 215011992275124225L;
-        oauth.clientSecret = "I'm hot";
-        oauth.redirUrl = "https://bot.duncte123.me/";
+        oauth.clientSecret = "";
+        oauth.redirUrl = "";
         discord.oauth = oauth;
         config.discord = discord;
 
         DunctebotConfig.Apis apis = new DunctebotConfig.Apis();
+
         DunctebotConfig.Apis.Trello trello = new DunctebotConfig.Apis.Trello();
-        trello.key = "key";
-        trello.token = "token";
+        trello.key = "";
+        trello.token = "";
         apis.trello = trello;
-        apis.github = "github.com";
-        apis.googl = "goo.gl";
+
+        apis.github = "";
+        apis.googl = "";
+
         DunctebotConfig.Apis.WeebSh weebSh = new DunctebotConfig.Apis.WeebSh();
-        weebSh.wolketoken = "TOKEN HERE";
+        weebSh.wolketoken = "";
         apis.weebSh = weebSh;
+
         DunctebotConfig.Apis.Chapta chapta = new DunctebotConfig.Apis.Chapta();
-        chapta.secret = "Wanna know a secret?";
-        chapta.sitekey = "https://bot.duncte123.me/wp-admin.php";
+        chapta.secret = "";
+        chapta.sitekey = "";
         apis.chapta = chapta;
+
         DunctebotConfig.Apis.Spotify spotify = new DunctebotConfig.Apis.Spotify();
-        spotify.clientId = "Something here";
-        spotify.clientSecret = "My secret is that I have no secrets";
+        spotify.clientId = "";
+        spotify.clientSecret = "";
         apis.spotify = spotify;
-        apis.blargbot = "SMH you don't even generate the images yourself";
-        apis.wolframalpha = "OwO what's this?";
-        apis.thecatapi = "Meow";
-        apis.discordbots_userToken = "bots.discord.pw";
+
+        apis.blargbot = "";
+        apis.wolframalpha = "";
+        apis.thecatapi = "";
+        apis.discordbots_userToken = "";
         config.apis = apis;
 
         DunctebotConfig.Genius genius = new DunctebotConfig.Genius();
-        genius.client_id = "Another id?";
-        genius.client_secret = "I'm all out of secrets";
+        genius.client_id = null;
+        genius.client_secret = null;
         config.genius = genius;
 
         DunctebotConfig.Lavalink lavalink = new DunctebotConfig.Lavalink();
         lavalink.enable = true;
         DunctebotConfig.Lavalink.LavalinkNode node = new DunctebotConfig.Lavalink.LavalinkNode();
         node.wsurl = "ws://localhost";
-        node.pass = "YOU SHALL NOT PASS";
+        node.pass = "YOUSHALLNOTPASS";
         lavalink.nodes = new DunctebotConfig.Lavalink.LavalinkNode[]{node};
         config.lavalink = lavalink;
 
-        config.use_database = true;
+        config.use_database = false;
         DunctebotConfig.Sql sql = new DunctebotConfig.Sql();
-        sql.database = "bot";
-        sql.host = "localhost";
+        sql.database = "";
+        sql.host = "";
         sql.port = 12334;
-        sql.username = "root";
-        sql.password = "root";
+        sql.username = "";
+        sql.password = "";
         config.sql = sql;
 
         GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting();
