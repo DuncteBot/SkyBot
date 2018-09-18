@@ -43,7 +43,7 @@ class SlowModeCommand : Command() {
         }
 
         if (!ctx.selfMember.hasPermission(ctx.channel, Permission.MANAGE_CHANNEL)) {
-            MessageUtils.sendMsg(event, "I need the `mange channel` permission for this channel in order for this command to work")
+            MessageUtils.sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
             return
         }
 
