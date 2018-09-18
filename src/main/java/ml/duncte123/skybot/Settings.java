@@ -28,55 +28,16 @@ import static java.lang.System.getProperty;
 
 public class Settings {
 
-    /*private static final Config CONFIG = Variables
-            .ins
-            .getConfig();*/
-
-    /**
-     * The userID from the guy that is hosting the bot, in most cases that is just my id :D
-     */
     public static final long OWNER_ID = 191231307290771456L;
-    // we may do jda.asBot().getApplicationInfo().complete().getOwner().getId()
-
-    /**
-     * This contains a list of different id's
-     */
     public static final List<Long> developers = new ArrayList<>();
-        /*List.of(
-            191231307290771456L, //duncte123#1245
-            281673659834302464L, //ramidzkh#4814
-            198137282018934784L  //⌛.exe ¯\_(ツ)_/¯#5785
-    );*/
-    /**
-     * This is another prefix because I can
-     */
-    public static final String OTHER_PREFIX = "db.";
-    /**
-     * This is the version of the bot
-     */
-    public static final String VERSION = BuildConfig.VERSION;
-    /**
-     * This is the name that your bot has
-     */
-    public static final String DEFAULT_NAME = "DuncteBot";
-    /**
-     * The icon url for the embeds
-     */
-    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
-    /**
-     * The colour of the bar that your embed has
-     */
-    public static final Color defaultColour = decode("#0751c6");
-    /**
-     * This holds if we can use the updater
-     */
-    public static final boolean enableUpdaterCommand = getProperty("updater") != null;
-    /**
-     * this tells the bot if we should send json errors
-     */
-    public static final boolean useJSON = false;
-    /**
-     * This is the prefix that your bot has, by default is the /
-     */
     public static String PREFIX = "db!";
+    public static final String OTHER_PREFIX = "db.";
+    public static final String VERSION = "@versionObj@";
+    public static final String KOTLIN_VERSION = "@kotlinVersion@";
+    public static final String DEFAULT_NAME = "DuncteBot";
+    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
+    public static final Color defaultColour = decode("#0751c6");
+    public static final boolean enableUpdaterCommand = getProperty("updater") != null;
+    public static final boolean useJSON = false;
+
 }

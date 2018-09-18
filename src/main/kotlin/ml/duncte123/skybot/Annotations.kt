@@ -31,7 +31,7 @@ import kotlin.annotation.AnnotationTarget.*
  * are non-negative integer numbers without leading zeros.
  */
 @Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, LOCAL_VARIABLE)
-@Retention
+@Retention(AnnotationRetention.SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 annotation class SinceSkybot(val version: String = Settings.VERSION)
@@ -54,7 +54,7 @@ annotation class DocumentationNeeded(vararg val specificPart: String = ["everyth
  * @property nickname is the nickname of the author
  */
 @Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
-@Retention
+@Retention(AnnotationRetention.SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
