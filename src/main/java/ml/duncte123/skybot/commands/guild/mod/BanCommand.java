@@ -24,7 +24,9 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
@@ -95,7 +97,8 @@ public class BanCommand extends Command {
 
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
                             } else {
-                                final String newReason = ctx.getArgsRaw();
+                                final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
+
                                 ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
                             }
                         }

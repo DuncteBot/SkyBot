@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.wolfram.alpha.WAEngine;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.ReactionHandler;
@@ -39,7 +38,6 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.events.message.guild.react.GuildMessageReactionAddEvent;
 
 import java.util.Collections;
 import java.util.List;

@@ -38,7 +38,6 @@ import java.lang.management.ManagementFactory;
 import java.sql.Time;
 import java.text.DecimalFormat;
 
-import static ml.duncte123.skybot.BuildConfig.KOTLIN_VERSION;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 /**
@@ -89,7 +88,7 @@ public class BotinfoCommand extends Command {
                         "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                         "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
                 .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
-                        ") and Kotlin (version " + KOTLIN_VERSION + ")\n\n" +
+                        ") and Kotlin (version " + Settings.KOTLIN_VERSION + ")\n\n" +
                         "**JDA version:** " + JDAInfo.VERSION + "" +
                         "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                         "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
