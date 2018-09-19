@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.EmbedUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.io.FilenameUtils;
 import org.jetbrains.annotations.NotNull;
@@ -47,6 +48,12 @@ public class CatCommand extends Command {
         WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
                     String file = json.getString("file"),
                             ext = FilenameUtils.getExtension(file);
+
+                    if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+                        sendEmbed(event, EmbedUtils.embedImage(file));
+                        return;
+                    }
+
                     try {
                         ctx.getChannel().sendFile(new URL(file).openStream(),
                                 "cat_" + System.currentTimeMillis() + "." + ext, null).queue();

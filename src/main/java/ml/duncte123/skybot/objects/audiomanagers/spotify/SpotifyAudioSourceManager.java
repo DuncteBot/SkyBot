@@ -170,7 +170,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
                     List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(), config.googl, 1L);
 
-                    if(results.isEmpty())
+                    if (results.isEmpty())
                         return null;
 
                     Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);

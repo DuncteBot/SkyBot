@@ -44,7 +44,7 @@ public class DogCommand extends Command {
                 String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {
-                    sendEmbed(event, EmbedUtils.embedField("A video", "[OMG LOOK AT THIS CUTE VIDEO](" + finalS + ")"));
+                    sendEmbed(event, EmbedUtils.embedField("A video", "[Click for video](" + finalS + ")"));
                 } else {
                     sendEmbed(event, EmbedUtils.embedImage(finalS));
                 }

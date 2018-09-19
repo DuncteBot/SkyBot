@@ -32,6 +32,7 @@ import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
@@ -94,10 +95,10 @@ public class EvalFilter extends GroovyValueFilter {
             RoleDelegate.class,
             TextChannelDelegate.class,
             UserDelegate.class,
-            VoiceChannelDelegate.class/*,
+            VoiceChannelDelegate.class,
 
-            //Statics?
-            Class.class*/
+            Random.class,
+            ThreadLocalRandom.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());

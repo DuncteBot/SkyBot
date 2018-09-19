@@ -47,7 +47,7 @@ public class TestTagCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
         String input = ctx.getArgsRaw();
 
-        if(input.length() > 1000) {
+        if (input.length() > 1000) {
             sendMsg(event, "Pleas limit your input to 1000 characters.");
             return;
         }

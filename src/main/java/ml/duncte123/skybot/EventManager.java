@@ -30,6 +30,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * A single event listener container
@@ -73,16 +74,9 @@ public class EventManager
                     return;
             }
 
-            for (Object listener : getRegisteredListeners()) {
-                if(listener instanceof EventListener)
-                    ((EventListener) listener).onEvent(event);
+            for (EventListener listener : getRegisteredListenersClass()) {
+                listener.onEvent(event);
             }
-
-            /*if (LavalinkManager.ins.isEnabled())
-                LavalinkManager.ins.getLavalink().onEvent(event);
-            botListener.onEvent(event);
-            deHoistListener.onEvent(event);
-            reactionHandler.onEvent(event);*/
 
         } catch (Throwable thr) {
             logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
@@ -91,9 +85,15 @@ public class EventManager
 
     @Override
     public List<Object> getRegisteredListeners() {
+        return getRegisteredListenersClass()
+                .stream().map(it -> (Object) it).collect(Collectors.toList());
+    }
+
+    private List<EventListener> getRegisteredListenersClass() {
         if (LavalinkManager.ins.isEnabled())
             return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener, reactionHandler);
         else
             return Arrays.asList(botListener, deHoistListener, reactionHandler);
     }
+
 }

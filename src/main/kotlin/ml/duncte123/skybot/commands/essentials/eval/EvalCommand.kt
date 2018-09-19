@@ -82,6 +82,7 @@ class EvalCommand : Command() {
                 "java.io",
                 "java.lang",
                 "java.util",
+                "java.util.concurrent",
                 "net.dv8tion.jda.core",
                 "net.dv8tion.jda.core.entities",
                 "net.dv8tion.jda.core.entities.impl",
@@ -255,7 +256,7 @@ class EvalCommand : Command() {
                     }
                     if (isRanByBotOwner) {
                         MessageBuilder()
-                                .append(out.toString())
+                                .appendCodeBlock(out.toString(), "")
                                 .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
                                 .forEach { it -> sendMsg(event, it) }
                     } else {

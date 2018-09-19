@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils
 
 import me.duncte123.botCommons.text.TextColor
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
@@ -27,6 +28,7 @@ import net.dv8tion.jda.core.entities.Message
 import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SpamFilter(private val database: DBManager, private val variables: Variables) : HashMap<Long, SpamCache>() {
 
     private lateinit var rates: LongArray

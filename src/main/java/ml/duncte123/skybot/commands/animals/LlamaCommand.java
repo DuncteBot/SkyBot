@@ -40,10 +40,6 @@ public class LlamaCommand extends Command {
         LlamaObject llama = ApiUtils.getRandomLlama(ctx.getDatabase());
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
-
-        /*WebUtils.ins.getJSONObject(Settings.OLD_API_BASE + "/llama/json").async(
-                (json) -> MessageUtils.sendEmbed(event, EmbedUtils.embedImage(json.getString("file")))
-        );*/
     }
 
     @Override

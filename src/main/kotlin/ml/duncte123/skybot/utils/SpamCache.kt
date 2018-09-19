@@ -18,10 +18,13 @@
 
 package ml.duncte123.skybot.utils
 
+import ml.duncte123.skybot.Author
+
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SpamCache : HashMap<Long, List<Long>>() {
 
     @Throws(IllegalArgumentException::class)
-    public fun update(longs: LongArray, updateMode: Int = 0): SpamCache {
+    fun update(longs: LongArray, updateMode: Int = 0): SpamCache {
         when {
             updateMode == -1 && longs.size == 1 -> {
                 this - longs[0]

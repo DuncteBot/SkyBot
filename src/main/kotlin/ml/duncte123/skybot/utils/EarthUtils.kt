@@ -18,8 +18,6 @@
 
 @file:Author(nickname = "Sanduhr32", author = "Maurice R S")
 
-//@file:Suppress("UNCHECKED_CAST")
-
 package ml.duncte123.skybot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
@@ -30,11 +28,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.audio.TrackScheduler
-import ml.duncte123.skybot.entities.delegate.*
-import net.dv8tion.jda.core.JDA
-import net.dv8tion.jda.core.entities.*
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.core.managers.Presence
 import org.json.JSONArray
 import org.json.JSONObject
 import java.io.File
@@ -115,34 +109,6 @@ class EarthUtils {
                 file.createNewFile()
 
             FileOutputStream(file).write(content.toByteArray())
-        }
-
-        /**
-         *
-         * This function wraps any [JDA] object in a delegate of it.
-         * It also takes the highest possible delegate.
-         *
-         * @param jdaObject is any possible [JDA] object
-         * @returns a possibly null delegate of any [JDA] object we have implemented
-         */
-        @JvmStatic
-        @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.HIDDEN)
-        fun delegateOf(jdaObject: Any): Any? {
-            return when (jdaObject) {
-                is Category -> CategoryDelegate(jdaObject)
-                is TextChannel -> TextChannelDelegate(jdaObject)
-                is VoiceChannel -> VoiceChannelDelegate(jdaObject)
-                is Channel -> ChannelDelegate(jdaObject)
-                is Guild -> GuildDelegate(jdaObject)
-                is JDA -> JDADelegate(jdaObject)
-                is Member -> MemberDelegate(jdaObject)
-                is Presence -> PresenceDelegate(jdaObject)
-                is Role -> RoleDelegate(jdaObject)
-                is User -> UserDelegate(jdaObject)
-                else -> {
-                    null
-                }
-            }
         }
 
         /**

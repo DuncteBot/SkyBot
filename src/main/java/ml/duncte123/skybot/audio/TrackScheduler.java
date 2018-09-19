@@ -84,14 +84,20 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Starts the next track
      */
     public void nextTrack() {
-        if (queue.peek() != null) {
-            AudioTrack nextTrack = queue.poll();
-            if (nextTrack != null) {
-                player.playTrack(nextTrack);
-                announceNextTrack(nextTrack);
-            }
-        } else if (player.getPlayingTrack() != null)
+
+        if (queue.peek() == null) return;
+
+        AudioTrack nextTrack = queue.poll();
+
+        if (nextTrack != null) {
+            player.playTrack(nextTrack);
+            announceNextTrack(nextTrack);
+            return;
+        }
+
+        if (player.getPlayingTrack() != null) {
             player.stopTrack();
+        }
     }
 
     /**
@@ -104,28 +110,34 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
-        if (endReason.mayStartNext) {
-            logger.debug("can start");
-            if (repeating) {
-                logger.debug("repeating");
-                if (!repeatPlayList) {
-                    AudioTrack clone = lastTrack.makeClone();
-                    clone.setUserData(lastTrack.getUserData());
-                    this.player.playTrack(clone);
-                    announceNextTrack(lastTrack, true);
-                } else {
-                    logger.debug("a playlist.....");
-                    nextTrack();
-                    //Offer it to the queue to prevent the player from playing it
-                    AudioTrack clone = lastTrack.makeClone();
-                    clone.setUserData(lastTrack.getUserData());
-                    queue.offer(clone);
-                }
-            } else {
-                logger.debug("starting next track");
-                nextTrack();
-            }
+
+        if (!endReason.mayStartNext) return;
+
+        logger.debug("can start");
+
+        if (!repeating) {
+            logger.debug("starting next track");
+            nextTrack();
+            return;
         }
+
+        logger.debug("repeating");
+
+        if (repeatPlayList) {
+            logger.debug("a playlist.....");
+            nextTrack();
+            //Offer it to the queue to prevent the player from playing it
+            AudioTrack clone = lastTrack.makeClone();
+            clone.setUserData(lastTrack.getUserData());
+            queue.offer(clone);
+            return;
+        }
+
+        AudioTrack clone = lastTrack.makeClone();
+        clone.setUserData(lastTrack.getUserData());
+        this.player.playTrack(clone);
+        announceNextTrack(lastTrack, true);
+
     }
 
     /**
@@ -196,20 +208,29 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
             TextChannel tc = guildMusicManager.getLatestChannel();
-            Guild g = (tc == null) ? null : tc.getGuild();
 
-            try {
+            Guild g = tc == null ? null : tc.getGuild();
+
+            if (g != null) {
                 AudioTrackInfo info = track.getInfo();
-                @SuppressWarnings("ConstantConditions") final String error = String.format("Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
-                        g.getName(), g.getId(), info.title, info.author, track.getSourceManager().getSourceName());
+                final String error = String.format(
+                        "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                        g.getName(),
+                        g.getId(),
+                        info.title,
+                        info.author,
+                        track.getSourceManager().getSourceName()
+                );
+
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
-            } catch (NullPointerException ignored) {
             }
 
             Throwable rootCause = ExceptionUtils.getRootCause(exception);
             Throwable finalCause = rootCause != null ? rootCause : exception;
-            MessageUtils.sendMsg(tc, "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                    "Details: " + finalCause);
+
+            MessageUtils.sendMsg(tc,
+                    "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                            "Details: " + finalCause);
         }
     }
 }

@@ -71,10 +71,6 @@ public class BotListener extends ListenerAdapter {
      * Check if we are updating
      */
     public static boolean isUpdating = false;
-    /**
-     * Make sure that we don't exit when we don't want to
-     */
-    private boolean shuttingDown = false;
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -110,6 +106,10 @@ public class BotListener extends ListenerAdapter {
             264445053596991498L,
             374071874222686211L
     );
+    /**
+     * Make sure that we don't exit when we don't want to
+     */
+    private boolean shuttingDown = false;
     /**
      * This tells us if the {@link #systemPool} is running
      */
@@ -468,7 +468,7 @@ public class BotListener extends ListenerAdapter {
         ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
                 .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
-        if(command == null)
+        if (command == null)
             return false;
 
         return command.getCategory() == CommandCategory.valueOf(categoryName.toUpperCase());

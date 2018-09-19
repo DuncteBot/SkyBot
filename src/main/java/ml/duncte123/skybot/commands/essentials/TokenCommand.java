@@ -72,7 +72,7 @@ public class TokenCommand extends Command {
 
         sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
-                if(isLong(id)) {
+                if (isLong(id)) {
                     event.getJDA().retrieveUserById(id).queue((user) -> {
                         String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
                         String newMessage = String.format(STRING_FORMAT, args.get(0), id, timestamp, userinfo);

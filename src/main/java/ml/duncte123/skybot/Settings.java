@@ -30,7 +30,6 @@ public class Settings {
 
     public static final long OWNER_ID = 191231307290771456L;
     public static final List<Long> developers = new ArrayList<>();
-    public static String PREFIX = "db!";
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final String KOTLIN_VERSION = "@kotlinVersion@";
@@ -39,5 +38,6 @@ public class Settings {
     public static final Color defaultColour = decode("#0751c6");
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     public static final boolean useJSON = false;
+    public static String PREFIX = "db!";
 
 }

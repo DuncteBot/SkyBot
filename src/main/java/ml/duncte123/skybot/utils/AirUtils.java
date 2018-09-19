@@ -19,16 +19,10 @@
 package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
-import com.wolfram.alpha.WAEngine;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
-import ml.duncte123.skybot.objects.discord.user.Profile;
-import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -64,7 +58,7 @@ public class AirUtils {
 
 
     public static int parseIntSafe(String integer) {
-        if(isInt(integer))
+        if (isInt(integer))
             return Integer.parseInt(integer);
 
         return -1;
