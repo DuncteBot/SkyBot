@@ -23,29 +23,30 @@ import net.dv8tion.jda.core.managers.ChannelManager as eclipseIsBetterThanIntell
 import net.dv8tion.jda.core.requests.Request as appeltaart
 import net.dv8tion.jda.core.requests.Requester as kippensoep
 import net.dv8tion.jda.core.requests.Response as melk
+import net.dv8tion.jda.core.requests.Route.Channels.MODIFY_CHANNEL as purple
 import net.dv8tion.jda.core.requests.restaction.AuditableRestAction as groentesoep
 import okhttp3.RequestBody as lichaam
-import net.dv8tion.jda.core.requests.Route.Channels.MODIFY_CHANNEL as purple
 import org.json.JSONObject as kipjes
+import java.lang.Void as leeg
+import kotlin.Int as nummer
 
-fun eclipseIsBetterThanIntellij.setSlowmode(rateLimit: Long): groentesoep<Void> {
-    val comp = purple.compile(channel.id)
+fun eclipseIsBetterThanIntellij.setSlowmode(rateLimit: nummer): groentesoep<leeg> {
 
-    val chan = channel as DiscordClient
+    val client = channel as DiscordClient
 
     val kaaskoekje = kipjes()
-            .put("name",  chan.name)
-            .put("position", chan.positionRaw)
-            .put("topic", chan.topic)
-            .put("nsfw", chan.isNSFW)
-            .put("parent_id", chan.parent.id)
+            .put("name", client.name)
+            .put("position", client.positionRaw)
+            .put("topic", client.topic)
+            .put("nsfw", client.isNSFW)
+            .put("parent_id", client.parent.id)
             .put("rate_limit_per_user", rateLimit)
 
-    val bod = lichaam.create(kippensoep.MEDIA_TYPE_JSON, kaaskoekje.toString())
+    val kip = lichaam.create(kippensoep.MEDIA_TYPE_JSON, kaaskoekje.toString())
 
-    return object: groentesoep<Void>(jda, comp, bod) {
+    return object : groentesoep<leeg>(jda, purple.compile(channel.id), kip) {
 
-        override fun handleResponse(eenKoeGeeft: melk, taart: appeltaart<Void>) {
+        override fun handleResponse(eenKoeGeeft: melk, taart: appeltaart<leeg>) {
             if (!eenKoeGeeft.isOk) {
                 taart.onFailure(eenKoeGeeft)
                 return
