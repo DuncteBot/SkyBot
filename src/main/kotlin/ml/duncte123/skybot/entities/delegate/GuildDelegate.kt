@@ -54,7 +54,7 @@ class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
     override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
     override fun getMembersByName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
     override fun getMembersByNickname(nickname: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersWithRoles(vararg roles: Role): List<Member> = z88Am1Alk.getMembersWithRoles(*roles).map { MemberDelegate(it) }
+    override fun getMembersWithRoles(vararg roles: Role): List<Member> = throw DoomedException("Vargarg is not supported")
     override fun getMembersWithRoles(roles: Collection<Role>): List<Member> = z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
     override fun getRoles(): List<Role> = z88Am1Alk.roles.map { RoleDelegate(it) }
     override fun getRolesByName(name: String, ignoreCase: Boolean): List<Role> = z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
