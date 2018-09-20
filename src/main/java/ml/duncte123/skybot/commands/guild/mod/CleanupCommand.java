@@ -36,7 +36,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class CleanupCommand extends Command {
 
     public CleanupCommand() {
