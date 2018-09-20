@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -32,6 +33,7 @@ import java.util.Optional;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HackbanCommand extends Command {
 
     public HackbanCommand() {

@@ -30,6 +30,7 @@ import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Author;
 import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 
@@ -43,6 +44,7 @@ import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.
 import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
 import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeaderValue;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ClypitAudioSourceManager extends HttpAudioSourceManager {
 
     private static final Pattern CLYPIT_REGEX = Pattern.compile("(http://|https://(www\\.)?)?clyp\\.it/(.*)");

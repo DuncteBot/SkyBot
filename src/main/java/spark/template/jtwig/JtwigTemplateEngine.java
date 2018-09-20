@@ -17,6 +17,7 @@
  */
 package spark.template.jtwig;
 
+import ml.duncte123.skybot.Author;
 import org.jtwig.JtwigModel;
 import org.jtwig.JtwigTemplate;
 import spark.ModelAndView;
@@ -29,6 +30,7 @@ import java.util.Map;
  *
  * @author Sam Pullara https://github.com/spullara
  */
+@Author(nickname = "spullara", author = "Sam Pullara")
 public class JtwigTemplateEngine extends TemplateEngine {
 
     /**

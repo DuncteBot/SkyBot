@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import org.sqlite.JDBC;
 
@@ -33,6 +34,7 @@ import java.util.regex.Pattern;
  *
  * @author ramidzkh
  */
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SQLiteDatabaseConnectionManager implements DBConnectionManager {
 
     /**

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.exceptions;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.utils.AirUtils;
 
 /**
@@ -25,6 +26,7 @@ import ml.duncte123.skybot.utils.AirUtils;
  *
  * @author Duncan "duncte123" Sterken
  */
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class DoomedException extends SecurityException {
 
     public DoomedException() {

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.annotations.ReplaceWith;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -35,6 +37,10 @@ import static me.duncte123.botCommons.messaging.MessageUtils.CUSTOM_QUEUE_ERROR;
 import static ml.duncte123.skybot.utils.EmbedUtils.embedToMessage;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class MessageUtils {
 
     /////

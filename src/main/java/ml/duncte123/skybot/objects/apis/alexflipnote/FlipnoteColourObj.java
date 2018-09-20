@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.objects.apis.alexflipnote;
 
+import ml.duncte123.skybot.Author;
+
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class FlipnoteColourObj {
 
     public final int brightness;

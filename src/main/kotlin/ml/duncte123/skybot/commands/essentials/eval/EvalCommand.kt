@@ -24,6 +24,8 @@ import kotlinx.coroutines.experimental.launch
 import kotlinx.coroutines.experimental.withTimeoutOrNull
 import me.duncte123.botCommons.messaging.MessageUtils.*
 import me.duncte123.botCommons.text.TextColor
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
@@ -46,6 +48,11 @@ import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 
+@Authors(authors = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken"),
+    Author(nickname = "ramidzkh", author = "Ramid Khan")
+])
 class EvalCommand : Command() {
 
     private val protectedShell: GroovyShell

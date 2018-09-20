@@ -32,6 +32,7 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -53,6 +54,7 @@ import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SinceSkybot(version = "3.5.1")
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
     /**
      * This is the default volume that the player will play at

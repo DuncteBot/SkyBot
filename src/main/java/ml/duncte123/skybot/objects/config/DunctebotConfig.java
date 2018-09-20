@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.objects.config;
 
+import ml.duncte123.skybot.Author;
+
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class DunctebotConfig {
 
     public Discord discord;

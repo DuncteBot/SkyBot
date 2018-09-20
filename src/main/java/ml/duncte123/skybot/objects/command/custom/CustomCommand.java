@@ -18,16 +18,18 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import org.jetbrains.annotations.NotNull;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface CustomCommand extends ICommand {
 
     String getMessage();
 
-    String getGuildId();
+    long getGuildId();
 
     @Override
     default boolean isCustom() {

@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService
 import java.util.concurrent.TimeUnit
 import java.util.function.BiConsumer
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ReactionHandler : ListenerAdapter() {
     private val executor: ScheduledExecutorService = Executors.newScheduledThreadPool(2) { r -> Thread(r, "ReactionAwaiter") }
     private var requirementsCache: List<ReactionCacheElement> = ArrayList()

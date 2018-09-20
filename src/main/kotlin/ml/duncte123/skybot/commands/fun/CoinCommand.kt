@@ -16,10 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Suppress("MemberVisibilityCanPrivate")
-
 package ml.duncte123.skybot.commands.`fun`
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -27,6 +26,7 @@ import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 import java.util.concurrent.TimeUnit
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class CoinCommand : Command() {
 
     private val imagesArr = arrayOf("heads.png", "tails.png")

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.audio;
 
 import fredboat.audio.player.LavalinkManager;
 import lavalink.client.player.IPlayer;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -27,6 +28,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
 
     /**

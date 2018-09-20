@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.messaging.MessageUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -28,6 +29,7 @@ import org.json.JSONException
 import org.json.JSONTokener
 import java.util.*
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class LoadCommand : MusicCommand() {
 
     override fun executeCommand(ctx: CommandContext) {

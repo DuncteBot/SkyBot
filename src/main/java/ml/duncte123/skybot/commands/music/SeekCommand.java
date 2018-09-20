@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music;
 
 import lavalink.client.player.IPlayer;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -30,6 +31,7 @@ import java.util.regex.Pattern;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SeekCommand extends MusicCommand {
 
     private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2})" +

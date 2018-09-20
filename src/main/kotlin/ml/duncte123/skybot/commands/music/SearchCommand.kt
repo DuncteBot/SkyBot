@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -26,6 +27,7 @@ import ml.duncte123.skybot.utils.MessageUtils
 import ml.duncte123.skybot.utils.YoutubeUtils
 import java.util.concurrent.TimeUnit
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SearchCommand : MusicCommand() {
 
     override fun executeCommand(ctx: CommandContext) {

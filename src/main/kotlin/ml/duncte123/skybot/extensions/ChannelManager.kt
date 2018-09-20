@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.extensions
 
+import ml.duncte123.skybot.Author
 import net.dv8tion.jda.core.entities.TextChannel as DiscordClient
 import net.dv8tion.jda.core.managers.ChannelManager as eclipseIsBetterThanIntellij
 import net.dv8tion.jda.core.requests.Request as appeltaart
@@ -30,6 +31,7 @@ import org.json.JSONObject as kipjes
 import java.lang.Void as leeg
 import kotlin.Int as nummer
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 fun eclipseIsBetterThanIntellij.setSlowmode(rateLimit: nummer): groentesoep<leeg> {
 
     val client = channel as DiscordClient

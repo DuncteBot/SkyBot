@@ -48,6 +48,7 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
 @SuppressWarnings("WeakerAccess")
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
@@ -118,13 +119,13 @@ public class CommandManager {
         return cmd.orElse(null);
     }
 
-    public List<ICommand> getCommands(CommandCategory category) {
+    /*public List<ICommand> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
-    }
+    }*/
 
 
-    public CustomCommand getCustomCommand(String invoke, String guildId) {
-        return customCommands.stream().filter(c -> c.getGuildId().equals(guildId))
+    public CustomCommand getCustomCommand(String invoke, long guildId) {
+        return customCommands.stream().filter(c -> c.getGuildId() == guildId)
                 .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
@@ -142,8 +143,8 @@ public class CommandManager {
         }
 
         boolean commandFound = this.customCommands.stream()
-                .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId().equals(command.getGuildId())) && !isEdit;
-        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId().equals(command.getGuildId())).count() >= 50 && !isEdit;
+                .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
+        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
 
         if (commandFound || limitReached) {
             return new Triple<>(false, commandFound, limitReached);
@@ -160,7 +161,7 @@ public class CommandManager {
 
                     try {
                         PreparedStatement stm = conn.prepareStatement(sqlQuerry);
-                        stm.setString((isEdit) ? 2 : 1, command.getGuildId());
+                        stm.setString((isEdit) ? 2 : 1, Long.toString(command.getGuildId()));
                         stm.setString((isEdit) ? 3 : 2, command.getName());
                         stm.setString((isEdit) ? 1 : 3, command.getMessage());
                         stm.execute();
@@ -192,17 +193,17 @@ public class CommandManager {
         return new Triple<>(true, false, false);
     }
 
-    /**
+    /*
      * This removes a command from the commands
      *
      * @param command the command to remove
      * @return {@code true} on success
      */
-    public boolean removeCommand(String command) {
+    /*public boolean removeCommand(String command) {
         return commands.remove(getCommand(command));
-    }
+    }*/
 
-    public boolean removeCustomCommand(String name, String guildId) {
+    public boolean removeCustomCommand(String name, long guildId) {
         CustomCommand cmd = getCustomCommand(name, guildId);
         if (cmd == null)
             return false;
@@ -214,7 +215,7 @@ public class CommandManager {
                 try {
                     PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
                     stm.setString(1, name);
-                    stm.setString(2, guildId);
+                    stm.setString(2, Long.toString(guildId));
                     stm.execute();
                 } catch (SQLException e) {
                     e.printStackTrace();
@@ -293,7 +294,7 @@ public class CommandManager {
     public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
         if (cmd == null) {
-            cmd = getCustomCommand(invoke, event.getGuild().getId());
+            cmd = getCustomCommand(invoke, event.getGuild().getIdLong());
         }
         dispatchCommand(cmd, invoke, args, event);
     }
@@ -310,7 +311,7 @@ public class CommandManager {
 
                         CustomCommand cc = (CustomCommand) cmd;
 
-                        if (!cc.getGuildId().equals(event.getGuild().getId()))
+                        if (cc.getGuildId() != event.getGuild().getIdLong())
                             return;
 
                         try {
@@ -357,7 +358,7 @@ public class CommandManager {
                     addCustomCommand(new CustomCommandImpl(
                             res.getString("invoke"),
                             res.getString("message"),
-                            res.getString("guildId")
+                            Long.parseUnsignedLong(res.getString("guildId"))
                     ), false, false);
                 }
             } catch (SQLException e) {

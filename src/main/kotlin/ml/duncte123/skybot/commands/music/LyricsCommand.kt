@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -31,6 +32,7 @@ import org.apache.commons.lang3.StringUtils
 import org.json.JSONObject
 import java.net.URLEncoder
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class LyricsCommand : MusicCommand() {
 
     private var authToken: String = ""

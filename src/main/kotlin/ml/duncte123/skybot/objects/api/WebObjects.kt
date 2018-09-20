@@ -16,13 +16,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@file:Author(nickname = "duncte123", author = "Duncan Sterken")
+
 package ml.duncte123.skybot.objects.api
 
+import ml.duncte123.skybot.Author
 import org.json.JSONObject
 import java.sql.Date
 import kotlin.reflect.KVisibility
 import kotlin.reflect.full.memberProperties
-
 
 data class LlamaObject(val id: Int, val file: String) : ApiObject()
 

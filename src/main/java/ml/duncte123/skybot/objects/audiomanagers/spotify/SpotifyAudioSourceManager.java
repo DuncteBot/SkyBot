@@ -32,6 +32,7 @@ import com.wrapper.spotify.SpotifyApi;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
@@ -51,6 +52,7 @@ import java.util.regex.Pattern;
 import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
 import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);

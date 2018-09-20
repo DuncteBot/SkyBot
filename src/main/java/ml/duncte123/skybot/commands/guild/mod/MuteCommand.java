@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -35,6 +36,7 @@ import java.util.List;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendSuccess;
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends Command {
 
     public MuteCommand() {
@@ -78,7 +80,8 @@ public class MuteCommand extends Command {
 
     @Override
     public String help() {
-        return "";
+        return "Mute a user.\n" +
+                "Usage: `" + PREFIX + getName() + " <@user> <reason>`";
     }
 
     @Override

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ChangeLogCommand extends Command {
 
     private MessageEmbed embed = null;

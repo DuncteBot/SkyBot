@@ -36,6 +36,7 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Variables {
 
     private final AudioUtils audioUtils;

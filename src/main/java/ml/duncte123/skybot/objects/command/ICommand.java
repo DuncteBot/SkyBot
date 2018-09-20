@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import ml.duncte123.skybot.Author;
 import org.jetbrains.annotations.NotNull;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface ICommand {
 
     void executeCommand(@NotNull CommandContext ctx);

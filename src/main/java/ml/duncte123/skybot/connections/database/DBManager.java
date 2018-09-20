@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 
 import java.io.File;
@@ -27,6 +28,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class DBManager {
 
     private final DBConnectionManager connManager;

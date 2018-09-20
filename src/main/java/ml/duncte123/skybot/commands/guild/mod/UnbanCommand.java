@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botCommons.messaging.MessageUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -32,6 +33,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class UnbanCommand extends Command {
 
     public UnbanCommand() {

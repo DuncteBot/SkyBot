@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -37,7 +39,10 @@ import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
-@SuppressWarnings("SqlDialectInspection")
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class ModerationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ModerationUtils.class);

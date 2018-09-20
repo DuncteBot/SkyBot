@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AudioUtils
@@ -27,6 +28,7 @@ import org.json.JSONArray
 
 import java.nio.charset.StandardCharsets.UTF_8
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
 
     override fun executeCommand(ctx: CommandContext) {

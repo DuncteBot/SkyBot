@@ -18,9 +18,12 @@
 
 package ml.duncte123.skybot.objects;
 
+import ml.duncte123.skybot.Author;
+
 import java.util.HashMap;
 import java.util.Map;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class WebVariables {
 
     private final Map<String, Object> map;

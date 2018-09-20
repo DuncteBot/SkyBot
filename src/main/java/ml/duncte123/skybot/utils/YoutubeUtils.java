@@ -23,11 +23,13 @@ import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.services.youtube.YouTube;
 import com.google.api.services.youtube.model.SearchResult;
 import com.google.api.services.youtube.model.Video;
+import ml.duncte123.skybot.Author;
 
 import java.io.IOException;
 import java.security.GeneralSecurityException;
 import java.util.List;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YoutubeUtils {
 
     private static YouTube youtube;

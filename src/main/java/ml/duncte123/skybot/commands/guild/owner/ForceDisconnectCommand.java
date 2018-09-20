@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
@@ -28,6 +29,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ForceDisconnectCommand extends MusicCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 
 import java.io.IOException;
@@ -28,7 +29,8 @@ import java.sql.SQLException;
 /**
  * Represents a server database
  */
-@SuppressWarnings("SqlDialectInspection")
+
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class MySQLConnectionManager implements DBConnectionManager {
 
     private final String dbHost;

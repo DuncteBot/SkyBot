@@ -35,6 +35,11 @@ import java.util.stream.Collectors;
 /**
  * A single event listener container
  */
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public class EventManager
         implements IEventManager {
 

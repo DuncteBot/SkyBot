@@ -27,6 +27,7 @@ import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
 import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.botCommons.text.TextColor;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -44,6 +45,7 @@ import java.util.*;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);

@@ -18,13 +18,16 @@
 
 package ml.duncte123.skybot.objects.command.custom;
 
+import ml.duncte123.skybot.Author;
+
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandImpl implements CustomCommand {
 
     private final String invoke;
     private final String message;
-    private final String guildId;
+    private final long guildId;
 
-    public CustomCommandImpl(String invoke, String message, String guildId) {
+    public CustomCommandImpl(String invoke, String message, long guildId) {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
@@ -36,7 +39,7 @@ public class CustomCommandImpl implements CustomCommand {
     }
 
     @Override
-    public String getGuildId() {
+    public long getGuildId() {
         return guildId;
     }
 

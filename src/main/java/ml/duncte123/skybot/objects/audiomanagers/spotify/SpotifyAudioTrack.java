@@ -22,10 +22,12 @@ package ml.duncte123.skybot.objects.audiomanagers.spotify;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import ml.duncte123.skybot.Author;
 
-public class SpotifyAudioTrack extends YoutubeAudioTrack {
+@Author(nickname = "duncte123", author = "Duncan Sterken")
+class SpotifyAudioTrack extends YoutubeAudioTrack {
 
-    public SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
+    SpotifyAudioTrack(AudioTrackInfo trackInfo, YoutubeAudioSourceManager sourceManager) {
         super(trackInfo, sourceManager);
     }
 }

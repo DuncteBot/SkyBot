@@ -28,6 +28,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * This class probably came from the internet
+ */
 public class BadWordFilter {
 
     private int largestWordLength = 0;

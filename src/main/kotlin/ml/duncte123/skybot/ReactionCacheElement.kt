@@ -20,6 +20,7 @@ package ml.duncte123.skybot
 
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
     fun equals(other: GuildMessageReceivedEvent): Boolean {
         return other.author.idLong == authorId

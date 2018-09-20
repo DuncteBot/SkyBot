@@ -21,10 +21,12 @@ package ml.duncte123.skybot.web
 import me.duncte123.botCommons.web.WebUtils
 import me.duncte123.botCommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import org.json.JSONObject
 import me.duncte123.botCommons.web.WebUtils.ins as web
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class ApiHelpers {
 
     fun verifyCapcha(response: String, secret: String): JSONObject {

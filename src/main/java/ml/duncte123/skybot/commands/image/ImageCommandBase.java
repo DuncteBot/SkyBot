@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -34,9 +35,10 @@ import java.util.List;
 
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public abstract class ImageCommandBase extends Command {
 
-    protected boolean canSendFile(GuildMessageReceivedEvent event) {
+    boolean canSendFile(GuildMessageReceivedEvent event) {
         if (event.getGuild().getSelfMember().hasPermission(event.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
             return true;
         } else {
@@ -45,7 +47,7 @@ public abstract class ImageCommandBase extends Command {
         }
     }
 
-    protected boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
+    boolean hasArgs(GuildMessageReceivedEvent event, List<String> args) {
         if (args.isEmpty()) {
             sendMsg(event, "Too little arguments");
             return false;
@@ -53,11 +55,11 @@ public abstract class ImageCommandBase extends Command {
         return true;
     }
 
-    protected boolean passes(GuildMessageReceivedEvent event, List<String> args) {
+    boolean passes(GuildMessageReceivedEvent event, List<String> args) {
         return passesNoArgs(event) && hasArgs(event, args);
     }
 
-    protected boolean passesNoArgs(GuildMessageReceivedEvent event) {
+    boolean passesNoArgs(GuildMessageReceivedEvent event) {
         event.getChannel().sendTyping().queue();
         return canSendFile(event) && isUserOrGuildPatron(event);
     }
@@ -66,7 +68,7 @@ public abstract class ImageCommandBase extends Command {
         return getName() + "_" + System.currentTimeMillis() + ".png";
     }
 
-    protected void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
+    void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
         event.getChannel().sendFile(image, getFileName()).queue();
     }
 
@@ -75,7 +77,7 @@ public abstract class ImageCommandBase extends Command {
         return CommandCategory.PATRON;
     }
 
-    protected String getImageFromCommand(CommandContext ctx) {
+    String getImageFromCommand(CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();
 
@@ -118,7 +120,7 @@ public abstract class ImageCommandBase extends Command {
         return url;
     }
 
-    protected String parseTextArgsForImagae(CommandContext ctx) {
+    String parseTextArgsForImagae(CommandContext ctx) {
         return ctx.getArgsDisplay();
     }
 }

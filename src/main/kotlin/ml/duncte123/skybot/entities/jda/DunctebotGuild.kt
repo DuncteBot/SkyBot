@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.entities.jda
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import net.dv8tion.jda.core.entities.Guild
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class DunctebotGuild(private val guild: Guild, private val variables: Variables) : Guild by guild {
 
     /**

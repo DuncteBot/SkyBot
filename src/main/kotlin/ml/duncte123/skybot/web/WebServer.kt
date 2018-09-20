@@ -23,6 +23,7 @@ import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
@@ -45,7 +46,7 @@ import java.nio.charset.Charset
 import java.sql.SQLException
 import java.util.*
 
-
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebServer(private val shardManager: ShardManager, private val variables: Variables) {
 
     private val config = variables.config

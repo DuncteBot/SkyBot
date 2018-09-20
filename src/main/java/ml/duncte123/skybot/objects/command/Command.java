@@ -21,6 +21,8 @@ package ml.duncte123.skybot.objects.command;
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.EmbedUtils;
@@ -44,6 +46,11 @@ import java.util.concurrent.TimeUnit;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SuppressWarnings("SameParameterValue")
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public abstract class Command implements ICommand {
 
     public static final Set<Long> patrons = new HashSet<>();

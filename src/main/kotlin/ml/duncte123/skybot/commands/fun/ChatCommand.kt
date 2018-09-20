@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -37,7 +38,7 @@ import javax.xml.parsers.DocumentBuilderFactory
 import javax.xml.xpath.XPathConstants
 import javax.xml.xpath.XPathFactory
 
-
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatCommand : Command() {
 
     private val botid = "b0dafd24ee35a477"
@@ -167,6 +168,7 @@ class ChatCommand : Command() {
 /**
  * Little wrapper class to help us keep track of inactive sessions
  */
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatSession(botid: String, userId: Long) {
     private val vars: MutableMap<String, Any>
 

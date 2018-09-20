@@ -22,6 +22,8 @@ import com.jagrosh.jagtag.Environment;
 import com.jagrosh.jagtag.Method;
 import com.jagrosh.jagtag.ParseException;
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -36,6 +38,10 @@ import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class DiscordMethods {
 
     public static Collection<Method> getMethods() {

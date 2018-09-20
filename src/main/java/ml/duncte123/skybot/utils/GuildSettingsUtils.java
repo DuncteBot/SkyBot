@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -32,6 +34,10 @@ import java.util.Arrays;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class GuildSettingsUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(GuildSettingsUtils.class);

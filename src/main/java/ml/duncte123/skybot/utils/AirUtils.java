@@ -20,6 +20,8 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.connections.database.DBManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -33,6 +35,11 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public class AirUtils {
     private static final Pattern UNIX_UPTIME_PATTERN = Pattern.compile("(?:.*)up(.*)[0-9] users(?:.*)");
 
