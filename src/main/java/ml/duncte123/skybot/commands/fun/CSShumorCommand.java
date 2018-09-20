@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -33,6 +34,7 @@ import java.util.TreeMap;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CSShumorCommand extends Command {
 
     private final Map<String, Integer> cssIndex;
@@ -57,6 +59,7 @@ public class CSShumorCommand extends Command {
 
     }
 
+    @Author(nickname = "ramidzkh", author = "Ramid Khan") // Thanks for the regex bud
     private void sendCssJoke(GuildMessageReceivedEvent event) {
         WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
             Element code = doc.selectFirst(".crayon-pre");

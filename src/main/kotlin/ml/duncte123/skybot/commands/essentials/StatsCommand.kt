@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import com.sun.management.OperatingSystemMXBean
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -29,6 +30,7 @@ import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
 

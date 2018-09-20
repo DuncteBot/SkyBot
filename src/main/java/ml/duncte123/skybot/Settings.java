@@ -25,7 +25,7 @@ import java.util.List;
 import static java.awt.Color.decode;
 import static java.lang.System.getProperty;
 
-
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Settings {
 
     public static final long OWNER_ID = 191231307290771456L;

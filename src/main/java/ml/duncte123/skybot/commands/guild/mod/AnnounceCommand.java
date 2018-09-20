@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botCommons.messaging.MessageUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -34,6 +35,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class AnnounceCommand extends Command {
 
     public AnnounceCommand() {

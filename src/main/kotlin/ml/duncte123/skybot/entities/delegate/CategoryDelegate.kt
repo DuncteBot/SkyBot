@@ -16,9 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-@file:Suppress("USELESS_CAST")
-
 package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
@@ -39,8 +36,8 @@ class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw,
     override fun getParent(): Category? = null
     override fun getJDA(): JDA = JDADelegate(this.jda)
     override fun getGuild(): Guild = GuildDelegate(this.guild)
-    override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) } as List<VoiceChannel>
-    override fun getTextChannels(): List<TextChannel> = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } as List<TextChannel>
+    override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) }
+    override fun getTextChannels(): List<TextChannel> = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) }
     override fun getPermissionOverride(role: Role): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
 
     override fun getPermissionOverride(member: Member): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")

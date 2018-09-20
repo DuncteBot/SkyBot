@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -28,6 +29,7 @@ import java.time.Instant;
 /**
  * A simple class to help me build embeds
  */
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class EmbedUtils {
 
     // Quote, User

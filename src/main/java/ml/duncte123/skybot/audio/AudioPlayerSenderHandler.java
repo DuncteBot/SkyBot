@@ -21,8 +21,11 @@ package ml.duncte123.skybot.audio;
 import com.sedmelluq.discord.lavaplayer.track.playback.AudioFrame;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.LavaplayerPlayerWrapper;
+import ml.duncte123.skybot.Author;
 import net.dv8tion.jda.core.audio.AudioSendHandler;
 
+
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioPlayerSenderHandler implements AudioSendHandler {
 
     /**

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botCommons.web.WebUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,6 +31,7 @@ import org.json.JSONObject;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class UrbanCommand extends Command {
 
     public UrbanCommand() {

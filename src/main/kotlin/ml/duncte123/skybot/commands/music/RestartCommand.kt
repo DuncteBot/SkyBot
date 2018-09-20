@@ -19,9 +19,11 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botCommons.messaging.MessageUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 class RestartCommand : MusicCommand() {
 
     override fun executeCommand(ctx: CommandContext) {

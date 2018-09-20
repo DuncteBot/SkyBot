@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.api.KpopObject
 import ml.duncte123.skybot.objects.api.LlamaObject
@@ -26,8 +27,8 @@ import ml.duncte123.skybot.objects.api.Warning
 import java.sql.ResultSet
 import java.sql.SQLException
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 object ApiUtils {
-
 
     @JvmStatic
     fun getRandomLlama(database: DBManager): LlamaObject {

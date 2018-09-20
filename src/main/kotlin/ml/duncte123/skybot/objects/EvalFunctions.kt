@@ -19,6 +19,8 @@
 package ml.duncte123.skybot.objects
 
 import me.duncte123.botCommons.messaging.MessageUtils
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
@@ -30,6 +32,10 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
 
 @Suppress("unused")
+@Authors(authors = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken")
+])
 class EvalFunctions {
 
     companion object {

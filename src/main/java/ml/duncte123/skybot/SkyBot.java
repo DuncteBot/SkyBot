@@ -49,7 +49,11 @@ import java.util.EnumSet;
  */
 //Skybot version 1.0 and 2.0 where written in php
 @SinceSkybot(version = "3.0.0")
-@Author
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public class SkyBot {
 
     private static SkyBot instance;

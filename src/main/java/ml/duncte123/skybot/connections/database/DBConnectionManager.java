@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.connections.database;
 
+import ml.duncte123.skybot.Author;
+
 import java.io.Closeable;
 import java.sql.Connection;
 
@@ -27,6 +29,7 @@ import java.sql.Connection;
  *
  * @author ramidzkh
  */
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 public interface DBConnectionManager extends Closeable {
 
     /**

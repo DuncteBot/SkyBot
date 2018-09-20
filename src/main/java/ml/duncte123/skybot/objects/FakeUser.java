@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects;
 
+import ml.duncte123.skybot.Author;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.PrivateChannel;
@@ -29,6 +30,7 @@ import java.util.FormattableFlags;
 import java.util.Formatter;
 import java.util.List;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class FakeUser implements User {
 
     private final String name;

@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.unstable.utils;
 
+import ml.duncte123.skybot.Author;
+
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class ComparatingUtils {
     // Needs to be fixed
     public static void execCheck(Throwable t) {

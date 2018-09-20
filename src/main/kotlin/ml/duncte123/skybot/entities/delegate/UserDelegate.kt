@@ -16,9 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-@file:Suppress("USELESS_CAST")
-
 package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
@@ -39,7 +36,7 @@ class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
     private val jda: JDA = JDADelegate(yBGyt8Kduo.jda)
     override fun getJDA(): JDA = JDADelegate(this.jda)
 
-    override fun getMutualGuilds(): List<Guild> = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) } as List<Guild>
+    override fun getMutualGuilds(): List<Guild> = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) }
     override fun openPrivateChannel(): RestAction<PrivateChannel> = throw DoomedException("**\uD83D\uDD25 lit**")
 
     override fun toString() = yBGyt8Kduo.toString()

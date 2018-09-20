@@ -24,11 +24,13 @@ import me.duncte123.botCommons.web.WebUtils;
 import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
 import me.duncte123.weebJava.helpers.QueryBuilder;
+import ml.duncte123.skybot.Author;
 import okhttp3.Request;
 import org.json.JSONObject;
 
 import static me.duncte123.botCommons.web.WebUtils.defaultRequest;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Alexflipnote {
 
     private final Gson gson = new Gson();

@@ -18,11 +18,17 @@
 
 package ml.duncte123.skybot.objects.guild;
 
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 
 /**
  * This class will hold the settings for a guild
  */
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class GuildSettings {
 
     private final long guildId;
@@ -330,6 +336,8 @@ public class GuildSettings {
         return this;
     }
 
+    @SuppressWarnings("unused") // This is used in twig but not detected by your ide
+    // because for some reason twig can't handle long[]
     public Long[] getRateLimitsForTwig() {
         Long[] temp = new Long[ratelimits.length];
         for (int i = 0; i < ratelimits.length; i++)

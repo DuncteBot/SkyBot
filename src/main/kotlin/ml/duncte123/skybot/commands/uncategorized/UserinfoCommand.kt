@@ -21,10 +21,11 @@ package ml.duncte123.skybot.commands.uncategorized
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.weebJava.types.StatusType
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.objects.discord.user.Profile
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
@@ -42,6 +43,10 @@ import java.time.format.DateTimeFormatter
 import java.util.*
 import java.util.stream.Collectors
 
+@Authors(authors = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken")
+])
 class UserinfoCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
@@ -106,13 +111,8 @@ class UserinfoCommand : Command() {
             MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
             return
         }
-        //A feature that will be implemented soon
-        /*AirUtils.getUserProfile(u.id).async ({
-            renderMemberEmbed(event, m, it)
-        },{
-            renderMemberEmbed(event, m, null)
-        })*/
-        renderMemberEmbed(event, m, null, ctx)
+
+        renderMemberEmbed(event, m, ctx)
     }
 
     private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User) {
@@ -134,11 +134,7 @@ class UserinfoCommand : Command() {
     }
 
 
-    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, p: Profile?, ctx: CommandContext) {
-        var badgesString = ""
-        if (p != null) {
-            badgesString = "**Badges:** " + p.badges.joinToString()
-        }
+    private fun renderMemberEmbed(event: GuildMessageReceivedEvent, m: Member, ctx: CommandContext) {
 
         val u = m.user
         val joinOrder = StringBuilder()
@@ -178,7 +174,6 @@ class UserinfoCommand : Command() {
                         |**Join Order:** $joinOrder
                         |**Online Status:** ${convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
-                        |$badgesString
                         |
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())

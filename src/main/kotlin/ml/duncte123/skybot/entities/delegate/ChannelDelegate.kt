@@ -16,9 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-@file:Suppress("USELESS_CAST")
-
 package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
@@ -49,7 +46,7 @@ open class ChannelDelegate(private val channel: Channel) : Channel by channel {
 
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 
-    override fun getMembers(): List<Member> = channel.members.map { MemberDelegate(it) } as List<Member>
+    override fun getMembers(): List<Member> = channel.members.map { MemberDelegate(it) }
     override fun createCopy(): ChannelAction = throw DoomedException("**\uD83D\uDD25 lit**")
     override fun getInvites(): RestAction<List<Invite>> = throw DoomedException("**\uD83D\uDD25 lit**")
     override fun getManager(): ChannelManager = throw DoomedException("**\uD83D\uDD25 lit**")

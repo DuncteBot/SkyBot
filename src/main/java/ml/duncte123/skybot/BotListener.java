@@ -64,6 +64,11 @@ import java.util.stream.Collectors;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.objects.command.Command.*;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public class BotListener extends ListenerAdapter {
 
     private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");

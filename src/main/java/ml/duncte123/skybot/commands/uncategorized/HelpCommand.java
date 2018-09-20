@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.uncategorized;
 
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
@@ -38,9 +40,12 @@ import java.util.stream.Collectors;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class HelpCommand extends Command {
 
-    @SuppressWarnings("NullableProblems")
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 

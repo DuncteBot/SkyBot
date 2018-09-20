@@ -22,6 +22,8 @@ import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
 import me.duncte123.botCommons.messaging.MessageUtils;
 import me.duncte123.weebJava.models.WeebApi;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -43,6 +45,11 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 /**
  * Created by Duncan on 11-7-2017.
  */
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken"),
+        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+})
 public class BotinfoCommand extends Command {
 
     @Override

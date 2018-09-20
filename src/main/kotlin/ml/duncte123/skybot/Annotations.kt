@@ -17,10 +17,14 @@
  */
 
 @file:JvmName("SkyBotAnnotationsKt")
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
+@file:Authors(authors = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken")
+])
 
 package ml.duncte123.skybot
 
+import kotlin.annotation.AnnotationRetention.SOURCE
 import kotlin.annotation.AnnotationTarget.*
 
 /**
@@ -31,7 +35,7 @@ import kotlin.annotation.AnnotationTarget.*
  * are non-negative integer numbers without leading zeros.
  */
 @Target(CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, LOCAL_VARIABLE)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 annotation class SinceSkybot(val version: String = Settings.VERSION)
@@ -54,7 +58,16 @@ annotation class DocumentationNeeded(vararg val specificPart: String = ["everyth
  * @property nickname is the nickname of the author
  */
 @Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
-@Retention(AnnotationRetention.SOURCE)
+@Retention(SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
+
+@Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
+@Retention(SOURCE)
+@SinceSkybot("3.79.0")
+@Author(nickname = "duncte123", author = "Duncan Sterken")
+annotation class Authors(vararg val authors: Author = [
+    Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    Author(nickname = "duncte123", author = "Duncan Sterken")
+])

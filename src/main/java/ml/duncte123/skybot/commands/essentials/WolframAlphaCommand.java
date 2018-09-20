@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.essentials;
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
 import me.duncte123.botCommons.messaging.MessageUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -37,6 +38,7 @@ import java.util.List;
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
 import static ml.duncte123.skybot.utils.MessageUtils.editMsg;
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class WolframAlphaCommand extends Command {
 
     private WAEngine waEngine = null;

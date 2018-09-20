@@ -16,8 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@file:Author(nickname = "Sanduhr32", author = "Maurice R S")
-
 package ml.duncte123.skybot.commands.music
 
 import ml.duncte123.skybot.Author

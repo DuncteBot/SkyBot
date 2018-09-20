@@ -20,12 +20,14 @@ package ml.duncte123.skybot.commands.mod
 
 import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.messaging.MessageUtils.sendSuccess
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.VoiceChannel
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class VoiceKickCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {

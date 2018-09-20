@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
@@ -36,6 +37,7 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
+@Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class EvalFilter extends GroovyValueFilter {
 
     /**

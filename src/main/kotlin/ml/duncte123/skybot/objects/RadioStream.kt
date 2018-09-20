@@ -23,7 +23,6 @@ package ml.duncte123.skybot.objects
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot("3.52.2")
 open class RadioStream(var name: String, val url: String, val website: String?, val public: Boolean = true) {
     fun hasWebsite() = !website.isNullOrBlank()

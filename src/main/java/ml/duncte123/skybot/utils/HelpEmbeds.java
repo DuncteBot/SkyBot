@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -28,6 +29,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import java.util.ArrayList;
 import java.util.List;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
 
     /**

@@ -19,11 +19,13 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botCommons.messaging.MessageUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import org.apache.commons.text.WordUtils
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
 class DialogCommand : Command() {
 
     init {

@@ -20,8 +20,10 @@ package ml.duncte123.skybot.utils;
 
 import com.jagrosh.jagtag.JagTag;
 import com.jagrosh.jagtag.Parser;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CustomCommandUtils {
 
     public static final Parser PARSER = JagTag.newDefaultBuilder()

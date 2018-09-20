@@ -19,10 +19,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import me.duncte123.weebJava.models.WeebApi;
-import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.ReactionHandler;
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.apis.BlargBot;
@@ -45,6 +42,10 @@ import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
+@Authors(authors = {
+        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+        @Author(nickname = "duncte123", author = "Duncan Sterken")
+})
 public class CommandContext {
 
     private final String invoke;

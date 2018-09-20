@@ -21,12 +21,14 @@ package ml.duncte123.skybot.commands.nsfw
 import com.afollestad.ason.Ason
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.web.WebUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EmbedUtils
 import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class NSFWCommands : Command() {
 
     private val nekkobotBase = "https://nekobot.xyz/api/image?type="

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.weebJava.models.WeebApi
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.utils.EmbedUtils
@@ -28,6 +29,7 @@ import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import org.apache.commons.lang3.StringUtils
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
     init {
         this.category = CommandCategory.WEEB
