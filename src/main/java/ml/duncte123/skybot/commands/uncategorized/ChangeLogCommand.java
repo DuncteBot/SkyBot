@@ -25,23 +25,31 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ChangeLogCommand extends Command {
 
-    private MessageEmbed embed = null;
+    private String embedJson = null;
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        if (embed != null) {
-            sendEmbed(ctx.getEvent(), embed);
-        } else {
+
+        if (embedJson == null || embedJson.isEmpty()) {
             fetchLatetstGitHubCommits(ctx.getEvent());
+            return;
         }
+
+        JDAImpl jda = (JDAImpl) ctx.getJDA();
+
+        MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(new JSONObject(embedJson));
+
+        sendEmbed(ctx.getEvent(), embed);
     }
 
     @Override
@@ -60,7 +68,10 @@ public class ChangeLogCommand extends Command {
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
                     .setTitle("Changelog for DuncteBot", json.getString("html_url"))
                     .setDescription(body);
-            embed = eb.build();
+            MessageEmbed embed = eb.build();
+            embedJson = embed.toJSONObject()
+                    .put("type", "rich")
+                    .toString();
             sendEmbed(event, embed);
         });
     }

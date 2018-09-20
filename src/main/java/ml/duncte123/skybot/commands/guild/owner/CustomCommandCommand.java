@@ -79,7 +79,7 @@ public class CustomCommandCommand extends Command {
             GuildSettings s = ctx.getGuildSettings();
             StringBuilder sb = new StringBuilder();
             manager.getCustomCommands().stream()
-                    .filter(c -> c.getGuildId().equals(event.getGuild().getId()))
+                    .filter(c -> c.getGuildId() == event.getGuild().getIdLong())
                     .forEach(cmd -> sb.append(s.getCustomPrefix())
                             .append(cmd.getName())
                             .append("\n")
@@ -89,7 +89,7 @@ public class CustomCommandCommand extends Command {
                     .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
-            CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getId());
+            CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
             if (cmd != null)
                 //Run the custom command?
                 manager.dispatchCommand(cmd, arg, List.of(), event);
@@ -102,7 +102,7 @@ public class CustomCommandCommand extends Command {
         //Check for deleting
         if (args.get(0).equalsIgnoreCase("raw")) {
             final String commandName = args.get(1);
-            final String guildid = event.getGuild().getId();
+            final long guildid = event.getGuild().getIdLong();
 
             if (!commandExists(commandName, guildid, manager)) {
                 sendMsg(event, "No command was found for this name");
@@ -118,7 +118,7 @@ public class CustomCommandCommand extends Command {
             }
 
             final String commandName = args.get(1);
-            final String guildid = event.getGuild().getId();
+            final long guildid = event.getGuild().getIdLong();
 
             if (!commandExists(commandName, guildid, manager)) {
                 sendMsg(event, "No command was found for this name");
@@ -143,7 +143,7 @@ public class CustomCommandCommand extends Command {
 
 
             //fetch a custom command
-            CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getId());
+            CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getIdLong());
             if (cmd != null)
                 //Run the custom command?
                 manager.dispatchCommand(cmd, args.get(0), args.subList(1, args.size()), event);
@@ -170,7 +170,7 @@ public class CustomCommandCommand extends Command {
         }
 
         String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
-        String guildId = event.getGuild().getId();
+        long guildId = event.getGuild().getIdLong();
         if (commandExists(commandName, guildId, manager)) {
 
             if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
@@ -205,11 +205,11 @@ public class CustomCommandCommand extends Command {
 
     }
 
-    private boolean commandExists(String name, String guild, CommandManager manager) {
+    private boolean commandExists(String name, long guild, CommandManager manager) {
         return manager.getCustomCommand(name, guild) != null;
     }
 
-    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, String guildId, CommandManager manager) {
+    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
         return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
     }
 
