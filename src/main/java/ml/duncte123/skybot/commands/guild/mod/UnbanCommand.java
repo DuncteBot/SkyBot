@@ -85,4 +85,9 @@ public class UnbanCommand extends Command {
     public String getName() {
         return "unban";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"ban't"};
+    }
 }
