@@ -118,6 +118,10 @@ dependencies {
 
     //Wolfaram alpha
     implementation group: 'com.github.DuncteBot', name: 'wolfram-alpha-java-binding', version: '5c123ae'
+    
+    // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
+    compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.2.Final'
+
 }
 
 task sourcesForRelease(type: Copy) {
