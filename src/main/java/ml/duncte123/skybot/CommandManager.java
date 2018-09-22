@@ -19,7 +19,6 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
-import me.duncte123.botCommons.messaging.MessageUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -308,7 +307,7 @@ public class CommandManager {
                     if (!cmd.isCustom()) {
 
                         if(cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
-                            MessageUtils.sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
+                            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
                                     "Please mark this channel as NSFW to use this command");
                             return;
                         }
