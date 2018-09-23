@@ -115,12 +115,11 @@ class ChatCommand : Command() {
         session.think(message) {
             var response = it
 
-            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !hasUpvoted(event.author, ctx.config)
+            val withAds = ctx.random.nextInt(1000) in 211 until 268 && !isPatron(event.author, null)
 
             response = parseATags(response, withAds)
             if (withAds) {
-                response += "\n\nHelp supporting our bot by upvoting [here](https://discordbots.org/bot/210363111729790977) " +
-                        "or becoming a patron [here](https://patreon.com/duncte123)."
+                response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/duncte123)."
                 MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
             } else {
                 MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
