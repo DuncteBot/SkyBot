@@ -18,20 +18,16 @@
 
 package ml.duncte123.skybot.objects.command;
 
-import com.github.natanbc.reliqua.request.PendingRequest;
-import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +37,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
@@ -67,21 +62,6 @@ public abstract class Command implements ICommand {
      * This holds the prefix for us
      */
     protected static final String PREFIX = Settings.PREFIX;
-    /**
-     * A list of users that have upvoted the bot
-     */
-    private static final Set<Long> upvotedIds = new HashSet<>();
-    private static final Set<Long> noneUpvoteIds = new HashSet<>();
-
-    static {
-        //clear the upvotes every hour
-        commandService.scheduleAtFixedRate(
-                noneUpvoteIds::clear,
-                1L,
-                1L,
-                TimeUnit.HOURS
-        );
-    }
 
     /**
      * This holds the category
@@ -92,21 +72,6 @@ public abstract class Command implements ICommand {
      */
     protected boolean displayAliasesInHelp = false;
     private String helpParsed = null;
-
-    private boolean checkVoteOnDBL(String userid, DunctebotConfig config) {
-        String token = config.apis.discordbots_userToken;
-
-        if (token == null || token.isEmpty()) {
-            logger.warn("Discord Bots token not found");
-            return false;
-        }
-        PendingRequest<JSONObject> json = WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .url("https://discordbots.org/api/bots/210363111729790977/check?userId=" + userid)
-                .addHeader("Authorization", token)
-                .build(), WebUtilsErrorUtils::toJSONObject);
-
-        return 1 == json.execute().optInt("voted", 0);
-    }
 
     /**
      * Returns if the bot should take up the aliases in the help command
@@ -126,7 +91,7 @@ public abstract class Command implements ICommand {
      * @param tc the channel to send the message to, if the text channel is null it wont send a message
      * @return true if the user is a patron
      */
-    protected boolean isPatron(User u, TextChannel tc) {
+    protected boolean isPatron(@NotNull User u, TextChannel tc) {
         //noinspection deprecation
         if (isDev(u)) {
             return true;
@@ -202,24 +167,6 @@ public abstract class Command implements ICommand {
 
     protected boolean isDev(User u) {
         return Settings.developers.contains(u.getIdLong());
-    }
-
-    /**
-     * Has this user upvoted the bot
-     */
-    protected boolean hasUpvoted(User user, DunctebotConfig config) {
-        boolean upvoteCheck = upvotedIds.contains(user.getIdLong());
-        if (!upvoteCheck && !noneUpvoteIds.contains(user.getIdLong())) {
-            boolean dblCheck = checkVoteOnDBL(user.getId(), config);
-            if (dblCheck) {
-                upvoteCheck = true;
-                upvotedIds.add(user.getIdLong());
-            } else {
-                noneUpvoteIds.add(user.getIdLong());
-            }
-        }
-
-        return isPatron(user, null) || upvoteCheck;
     }
 
     /**
