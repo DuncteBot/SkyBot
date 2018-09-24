@@ -222,7 +222,6 @@ public class SkyBot {
         apis.blargbot = "";
         apis.wolframalpha = "";
         apis.thecatapi = "";
-        apis.discordbots_userToken = "";
         config.apis = apis;
 
         DunctebotConfig.Genius genius = new DunctebotConfig.Genius();
