@@ -115,9 +115,9 @@ public class AudioUtils {
             // Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
+            playerManager.registerSourceManager(new SpeechAudioSourceManager(100, "en-AU"));
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
-            playerManager.registerSourceManager(new SpeechAudioSourceManager(100, "en-AU"));
 
             playerManager.registerSourceManager(youtubeAudioSourceManager);
             playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
