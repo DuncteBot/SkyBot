@@ -20,7 +20,6 @@ package ml.duncte123.skybot.objects.audiomanagers.speech;
 
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
 import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
 import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
@@ -28,19 +27,18 @@ import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
+import ml.duncte123.skybot.Author;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
-
-import ml.duncte123.skybot.Author;
+import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class SpeechAudioSourceManager implements AudioSourceManager {
 
     private static final String PREFIX = "speak:";
-    private static final String GOOGLE_TRANSLATE_URL = "https://translate.google.com/translate_Speech" +
+    private static final String GOOGLE_TRANSLATE_URL = "https://translate.google.com/translate_tts" +
             "?tl=%language%" +
             "&q=%query%" +
             "&ie=UTF-8&total=1&idx=0" +
@@ -78,15 +76,9 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
                     // Remove whitespaces at the front
                     .replaceAll("^\\s+", "")
                     // Limit the length
-                    .substring(0, Math.min(data.length(), limit));
+                    /*.substring(0, Math.min(data.length() - 1, limit))*/;
 
-            String encoded;
-
-            try {
-                encoded = URLEncoder.encode(data, "UTF-8");
-            } catch (UnsupportedEncodingException e) {
-                throw new FriendlyException("Could not encode data", FriendlyException.Severity.FAULT, e);
-            }
+            String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
 
             String mp3URL = templateURL
                     .replace("%length%", Integer.toString(data.length()))
