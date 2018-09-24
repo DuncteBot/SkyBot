@@ -105,7 +105,9 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
     }
 
     @Override
-    public void encodeTrack(AudioTrack track, DataOutput output) {}
+    public void encodeTrack(AudioTrack track, DataOutput output) {
+        // empty because we don't need them
+    }
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
@@ -113,7 +115,9 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
     }
 
     @Override
-    public void shutdown() {}
+    public void shutdown() {
+        // empty because we don't need them
+    }
 
     HttpInterface getHttpInterface() {
         return httpInterfaceManager.getInterface();
