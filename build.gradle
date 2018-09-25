@@ -75,8 +75,9 @@ dependencies {
 
     //Lavaplayer/Lavalink
     compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.7'
-    compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: '125b074'
-//    compile group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: '08a9bb9'
+//    compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: '125b074'
+    compile group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: '7d04cf0'
+//    compile project(':Lavalink-Client')
 
     //Commons text, because UnicodeUnescaper
     compile group: 'org.apache.commons', name: 'commons-text', version: '1.4'
