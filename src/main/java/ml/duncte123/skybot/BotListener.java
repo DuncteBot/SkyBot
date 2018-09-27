@@ -106,10 +106,18 @@ public class BotListener extends ListenerAdapter {
     private final DBManager database;
     private final CommandManager commandManager;
     private final Variables variables;
+    // A list of servers that list bots
     private final List<Long> botLists = List.of(
-            110373943822540800L,
-            264445053596991498L,
-            374071874222686211L
+            110373943822540800L, // Dbots
+            264445053596991498L, // Dbl
+            374071874222686211L, // Bots for discord
+            112319935652298752L, // Carbon
+            439866052684283905L, // Discord Boats
+            387812458661937152L, // Botlist.space
+            483344253963993113L, // AutomaCord
+            454933217666007052L, // Divine Discord Bot List
+            446682534135201793L  // Discords best bots
+
     );
     /**
      * Make sure that we don't exit when we don't want to
