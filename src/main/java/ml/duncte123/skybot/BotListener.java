@@ -116,8 +116,8 @@ public class BotListener extends ListenerAdapter {
             387812458661937152L, // Botlist.space
             483344253963993113L, // AutomaCord
             454933217666007052L, // Divine Discord Bot List
-            446682534135201793L  // Discords best bots
-
+            446682534135201793L, // Discords best bots
+            477792727577395210L  // discordbotlist.xyz
     );
     /**
      * Make sure that we don't exit when we don't want to
