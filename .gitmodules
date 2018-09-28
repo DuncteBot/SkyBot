@@ -1,0 +1,4 @@
+[submodule "Lavalink-Client"]
+	path = "../Lavalink-Client"
+	url = https://github.com/DuncteBot/Lavalink-Client.git
+	branch = dunctebot-changes
