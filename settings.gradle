@@ -17,10 +17,3 @@
  */
 
 rootProject.name = 'skybot'
-
-def localLavalinkProject = new File('../Lavalink-Client')
-
-if(localLavalinkProject.exists()) {
-    include ':Lavalink-Client'
-    project(':Lavalink-Client').projectDir = localLavalinkProject
-}
