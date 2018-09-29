@@ -19,7 +19,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
-    ext.kotlin_version = '1.2.70'
+    ext.kotlin_version = '1.2.71'
 
     repositories {
         mavenCentral()
@@ -105,14 +105,14 @@ dependencies {
     //Add kotlin
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
     compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.25.3'
+    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '0.30.0'
 
     //Spark for website
     compile 'com.sparkjava:spark-kotlin:1.0.0-alpha'
     compile 'com.sparkjava:spark-core:2.7.2' // Override spark to the latest version
     compile 'org.jtwig:jtwig-core:5.87.0.RELEASE'
     // Oauth
-    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: '8e11e6d'
+    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'b98962c'
 
     compile group: 'com.jagrosh', name: 'JagTag', version: '0.5'
 
