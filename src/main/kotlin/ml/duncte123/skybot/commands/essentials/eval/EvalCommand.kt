@@ -19,9 +19,7 @@
 package ml.duncte123.skybot.commands.essentials.eval
 
 import groovy.lang.GroovyShell
-import kotlinx.coroutines.experimental.CoroutineStart
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.withTimeoutOrNull
+import kotlinx.coroutines.experimental.*
 import me.duncte123.botCommons.messaging.MessageUtils.*
 import me.duncte123.botCommons.text.TextColor
 import ml.duncte123.skybot.Author
@@ -57,9 +55,10 @@ class EvalCommand : Command() {
 
     private val protectedShell: GroovyShell
     private val engine: ScriptEngine
-    private val packageImports: List<String>
+    /*private val packageImports: List<String>
     private val classImports: List<String>
-    private val staticImports: List<String>
+    private val staticImports: List<String>*/
+    private val importString: String
     private val filter = EvalFilter()
 
 //    private var runIfNotOwner = true
@@ -79,13 +78,13 @@ class EvalCommand : Command() {
                     throw DoomedException("Arrays are not allowed")
                 if (filter.filterLoops(scriptText))
                     throw DoomedException("Loops are not allowed")
-                if(scriptText.isEmpty())
+                if (scriptText.isEmpty())
                     return null
                 return super.evaluate(scriptText)
             }
         }
         engine = ScriptEngineManager().getEngineByName("groovy")
-        packageImports = listOf(
+        val packageImports = listOf(
                 "java.io",
                 "java.lang",
                 "java.util",
@@ -100,15 +99,19 @@ class EvalCommand : Command() {
                 "ml.duncte123.skybot.entities",
                 "ml.duncte123.skybot.entities.delegate",
                 "ml.duncte123.skybot")
-        classImports = listOf(
+        val classImports = listOf(
                 "ml.duncte123.skybot.exceptions.DoomedException"
         )
 
-        staticImports = listOf(
+        val staticImports = listOf(
                 "ml.duncte123.skybot.objects.EvalFunctions.*",
                 "me.duncte123.botCommons.messaging.MessageUtils.*",
                 "ml.duncte123.skybot.utils.MessageUtils.*"
         )
+
+        importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
+                classImports.joinToString(separator = "\nimport ", postfix = "\n") +
+                staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
 
     override fun executeCommand(ctx: CommandContext) {
@@ -121,10 +124,6 @@ class EvalCommand : Command() {
 
         if (!isRanByBotOwner && !isUserOrGuildPatron(event)) return
 
-        val importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
-                classImports.joinToString(separator = "\nimport ", postfix = "\n") +
-                staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
-
         val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
         if (userInput.size < 2) {
             sendSuccess(event.message)
@@ -133,7 +132,7 @@ class EvalCommand : Command() {
 
         var userIn = ctx.argsRaw
 
-        if(userIn.startsWith("```") && userIn.endsWith("```"))
+        if (userIn.startsWith("```") && userIn.endsWith("```"))
             userIn = userIn
                     .replace("```(.*)\n".toRegex(), "")
                     .replace("\n?```".toRegex(), "")
@@ -162,10 +161,9 @@ class EvalCommand : Command() {
             engine.put("ctx", ctx)
 
             @SinceSkybot("3.58.0")
-            launch(start = CoroutineStart.ATOMIC) {
-                //            async(start = CoroutineStart.ATOMIC) {
+            (GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
                 return@launch eval(event, isRanByBotOwner, script, timeout)
-            }
+            }))
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
             protectedShell.setVariable("guild", GuildDelegate(event.guild))
@@ -176,10 +174,9 @@ class EvalCommand : Command() {
                 protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
 
             @SinceSkybot("3.58.0")
-            launch {
-                //            async {
+            (GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
                 return@launch eval(event, false, script, timeout)
-            }
+            }))
         }
 
         // Garbage collect

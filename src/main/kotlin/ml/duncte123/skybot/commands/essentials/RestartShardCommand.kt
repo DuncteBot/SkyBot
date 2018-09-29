@@ -19,8 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import fredboat.audio.player.LavalinkManager
-import kotlinx.coroutines.experimental.delay
-import kotlinx.coroutines.experimental.launch
+import kotlinx.coroutines.experimental.*
 import me.duncte123.botCommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.EventManager
@@ -54,13 +53,13 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, event.jda.asBot().shardManager)
-                    launch {
-                        delay(15, TimeUnit.SECONDS)
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+                        delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart()
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                    }
+                    })
                 }
                 1 -> {
                     val id = ctx.args[0].toInt()
@@ -74,13 +73,13 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, event.jda.asBot().shardManager)
-                    launch {
-                        delay(15, TimeUnit.SECONDS)
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+                        delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart(id)
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                    }
+                    })
                 }
                 else -> MessageUtils.sendError(event.message)
             }
