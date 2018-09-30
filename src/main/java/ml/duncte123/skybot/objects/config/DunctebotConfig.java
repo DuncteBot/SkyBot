@@ -93,6 +93,7 @@ public class DunctebotConfig {
         public static class LavalinkNode {
             public String wsurl;
             public String pass;
+            public String region;
         }
     }
 
