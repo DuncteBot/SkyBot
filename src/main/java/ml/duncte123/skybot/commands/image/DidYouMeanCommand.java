@@ -18,31 +18,39 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends ImageCommandBase {
+import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+
+public class DidYouMeanCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) return;
 
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
+        String[] split = ctx.getArgsDisplay().split("\\|", 2);
+
+        if(split.length < 2) {
+            sendMsg(ctx.getEvent(), "Missing arguments, check `" + PREFIX + "help " + getName() + "`");
+            return;
+        }
+
+        ctx.getAlexFlipnote().getDidYouMean(split[0], split[1])
                 .async((image) -> handleBasicImage(ctx.getEvent(), image));
+
     }
 
     @Override
     public String getName() {
-        return "achievement";
+        return "didyoumean";
     }
 
     @Override
     public String help() {
-        return "You got an achievement!\n" +
-                "Usage: `" + PREFIX + getName() + " <text>`";
+        return "Did you type your search wrong?\n" +
+                "Usage: `" + PREFIX + getName() + " <Top text>|<Bottom text>`";
     }
 
     @Override

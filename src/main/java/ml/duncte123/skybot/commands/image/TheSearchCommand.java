@@ -35,7 +35,7 @@ public class TheSearchCommand extends ImageCommandBase {
             return;
         }
 
-        ctx.getBlargbot().getTheSearch(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getTheSearch(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

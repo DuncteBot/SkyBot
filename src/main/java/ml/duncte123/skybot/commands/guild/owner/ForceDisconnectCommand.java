@@ -36,17 +36,20 @@ public class ForceDisconnectCommand extends MusicCommand {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            Guild g = event.getGuild();
-            GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
-
-            manager.player.stopTrack();
-            manager.scheduler.queue.clear();
-            getLavalinkManager().closeConnection(g);
-            sendMsg(event, "Successfully send the disconnect signal to the server");
-        } else {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(event.getAuthor())) {
             sendMsg(event, "You need administrator perms to run this command.");
+            return;
         }
+
+        Guild g = event.getGuild();
+        GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
+
+        manager.player.stopTrack();
+        manager.scheduler.queue.clear();
+        getLavalinkManager().closeConnection(g);
+
+        sendMsg(event, "Successfully send the disconnect signal to the server");
+
     }
 
     @Override

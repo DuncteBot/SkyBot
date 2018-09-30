@@ -61,7 +61,8 @@ annotation class DocumentationNeeded(vararg val specificPart: String = ["everyth
 @Retention(SOURCE)
 @SinceSkybot("3.51.10")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
+//annotation class Author(val author: String = "Duncan Sterken", val nickname: String = "duncte123")
+annotation class Author(val author: String, val nickname: String)
 
 @Target(ANNOTATION_CLASS, CLASS, PROPERTY, FIELD, CONSTRUCTOR, FUNCTION, PROPERTY_GETTER, PROPERTY_SETTER, TYPEALIAS, EXPRESSION, FILE, TYPE, VALUE_PARAMETER, TYPE_PARAMETER)
 @Retention(SOURCE)

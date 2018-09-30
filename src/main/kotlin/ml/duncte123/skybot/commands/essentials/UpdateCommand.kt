@@ -18,10 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials
 
-import kotlinx.coroutines.experimental.Deferred
-import kotlinx.coroutines.experimental.async
-import kotlinx.coroutines.experimental.launch
-import kotlinx.coroutines.experimental.newSingleThreadContext
+import kotlinx.coroutines.experimental.*
 import me.duncte123.botCommons.messaging.MessageUtils
 import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botCommons.web.WebUtils
@@ -86,9 +83,9 @@ class UpdateCommand : Command() {
                 if (ctx.args[0] != "gradle")
                     return
                 sendMsg(event, "✅ Updating") {
-                    launch {
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
                         initUpdate(event, it.id, ctx.database, ctx.audioUtils)
-                    }
+                    })
                 }
             }
         }
@@ -102,7 +99,7 @@ class UpdateCommand : Command() {
         lateinit var version: String
         lateinit var links: String
 
-        val updateprogress: Deferred<Boolean> = async(newSingleThreadContext("Update-Coroutine")) {
+        val updateprogress: Deferred<Boolean> = GlobalScope.async(newSingleThreadContext("Update-Coroutine"), CoroutineStart.DEFAULT, {
             val pull = getCommand("git pull")
             val build = getCommand("gradlew build --refresh-dependencies -x test")
             val versioncmd = getCommand("gradlew printVersion")
@@ -126,7 +123,7 @@ class UpdateCommand : Command() {
             }
             return@async false
 //            return@async true
-        }
+        })
 
         val progress = updateprogress.await()
 
