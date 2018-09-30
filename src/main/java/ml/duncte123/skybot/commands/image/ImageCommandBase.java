@@ -56,12 +56,20 @@ public abstract class ImageCommandBase extends Command {
     }
 
     boolean passes(GuildMessageReceivedEvent event, List<String> args) {
-        return passesNoArgs(event) && hasArgs(event, args);
+        return passes(event, args, true);
+    }
+
+    boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
+        return passesNoArgs(event, patron) && hasArgs(event, args);
     }
 
     boolean passesNoArgs(GuildMessageReceivedEvent event) {
+        return passesNoArgs(event, true);
+    }
+
+    boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
         event.getChannel().sendTyping().queue();
-        return canSendFile(event) && isUserOrGuildPatron(event);
+        return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
     }
 
     private String getFileName() {
@@ -120,7 +128,7 @@ public abstract class ImageCommandBase extends Command {
         return url;
     }
 
-    String parseTextArgsForImagae(CommandContext ctx) {
+    String parseTextArgsForImage(CommandContext ctx) {
         return ctx.getArgsDisplay();
     }
 }
