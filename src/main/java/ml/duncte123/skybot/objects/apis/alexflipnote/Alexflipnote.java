@@ -55,6 +55,14 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getDidYouMean(String input, String correction) {
+        QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
+        return WebUtils.ins.prepareRaw(
+                makeRequest("didyoumean" + builder.build()),
+                IOHelper::read
+        );
+    }
+
 
     private Request makeRequest(String path) {
         return defaultRequest()

@@ -35,7 +35,7 @@ public class PcCheckCommand extends ImageCommandBase {
             return;
         }
 
-        ctx.getBlargbot().getPcCheck(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getPcCheck(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
     @Override

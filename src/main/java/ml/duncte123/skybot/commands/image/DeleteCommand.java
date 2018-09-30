@@ -35,7 +35,7 @@ public class DeleteCommand extends ImageCommandBase {
             return;
         }
 
-        ctx.getBlargbot().getDelete(parseTextArgsForImagae(ctx)).async((image) -> handleBasicImage(event, image));
+        ctx.getBlargbot().getDelete(parseTextArgsForImage(ctx)).async((image) -> handleBasicImage(event, image));
     }
 
     @Override
