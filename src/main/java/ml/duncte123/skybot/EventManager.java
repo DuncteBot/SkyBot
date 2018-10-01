@@ -94,6 +94,14 @@ public class EventManager
                 .stream().map(it -> (Object) it).collect(Collectors.toList());
     }
 
+    /**
+     * Returns our reaction handler
+     * @return our reaction handler
+     */
+    public ReactionHandler getReactionHandler() {
+        return reactionHandler;
+    }
+
     private List<EventListener> getRegisteredListenersClass() {
         if (LavalinkManager.ins.isEnabled())
             return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener, reactionHandler);
