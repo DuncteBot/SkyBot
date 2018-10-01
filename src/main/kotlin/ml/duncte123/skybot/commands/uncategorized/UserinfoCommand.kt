@@ -38,6 +38,7 @@ import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.utils.MiscUtil
 import org.apache.commons.lang3.StringUtils
+import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
@@ -49,13 +50,15 @@ import java.util.stream.Collectors
 ])
 class UserinfoCommand : Command() {
 
+    private val prettyTime = PrettyTime()
+
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
         val args = ctx.args
 
         var u: User? = null
-        var m: Member? //this can be lateinit var m: Member //Nope, check line 61
+        var m: Member?
 
         if (args.isEmpty()) {
             u = event.author
@@ -116,6 +119,12 @@ class UserinfoCommand : Command() {
     }
 
     private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User) {
+
+        val createTime = user.creationTime
+        val createTimeDate = Date.from(createTime.toInstant())
+        val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+        val createTimeHuman = prettyTime.format(createTimeDate)
+
         val embed = EmbedUtils.defaultEmbed()
                 .setColor(Settings.defaultColour)
                 .setThumbnail(user.effectiveAvatarUrl)
@@ -124,7 +133,7 @@ class UserinfoCommand : Command() {
                         |**Username + Discriminator:** ${String.format("%#s", user)}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name}
-                        |**Account Created:** ${user.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Account Created:** $createTimeFormat ($createTimeHuman)
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
@@ -160,6 +169,16 @@ class UserinfoCommand : Command() {
             joinOrder.append(" > ").append(usrName)
         }
 
+        val createTime = u.creationTime
+        val createTimeDate = Date.from(createTime.toInstant())
+        val createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+        val createTimeHuman = prettyTime.format(createTimeDate)
+
+        val joinTime = m.joinDate
+        val joinTimeDate = Date.from(joinTime.toInstant())
+        val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
+        val joinTimeHuman = prettyTime.format(joinTimeDate)
+
         val embed = EmbedUtils.defaultEmbed()
                 .setColor(m.color)
                 .setThumbnail(u.effectiveAvatarUrl)
@@ -168,8 +187,8 @@ class UserinfoCommand : Command() {
                         |**Username + Discriminator:** ${String.format("%#s", u)}
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
-                        |**Account Created:** ${u.creationTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
-                        |**Joined Server:** ${m.joinDate.format(DateTimeFormatter.RFC_1123_DATE_TIME)}
+                        |**Account Created:** $createTimeFormat ($createTimeHuman)
+                        |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
                         |**Online Status:** ${convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
