@@ -129,7 +129,7 @@ public class SkyBot {
         //Set up sharding for the bot
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
-                .setEventManager(eventManager)
+                .setEventManagerProvider((id) -> eventManager)
                 .setBulkDeleteSplittingEnabled(false)
                 .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
                 .setShardsTotal(TOTAL_SHARDS)
