@@ -399,6 +399,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 return@get JSONObject()
                         .put("status", "success")
                         .put("server_count", shardManager.guildCache.size())
+                        .put("shard_count", shardManager.shardsTotal)
                         .put("code", response.status())
             }
 
