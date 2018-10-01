@@ -18,56 +18,20 @@
 
 package ml.duncte123.skybot.objects.audiomanagers.clypit;
 
-import com.sedmelluq.discord.lavaplayer.container.mp3.Mp3AudioTrack;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
-import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
-import com.sedmelluq.discord.lavaplayer.track.DelegatedAudioTrack;
-import com.sedmelluq.discord.lavaplayer.track.playback.LocalAudioTrackExecutor;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioTrack;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import java.net.URI;
+import ml.duncte123.skybot.objects.audiomanagers.Mp3Track;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class ClypitAudioTrack extends DelegatedAudioTrack {
-
-    private static final Logger log = LoggerFactory.getLogger(SpeechAudioTrack.class);
-
-    private final ClypitAudioSourceManager manager;
+public class ClypitAudioTrack extends Mp3Track {
 
     ClypitAudioTrack(AudioTrackInfo trackInfo, ClypitAudioSourceManager manager) {
-        super(trackInfo);
-        this.manager = manager;
-    }
-
-    @Override
-    public void process(LocalAudioTrackExecutor executor) throws Exception {
-        try (HttpInterface httpInterface = manager.getHttpInterface()) {
-            loadStream(executor, httpInterface);
-        }
-    }
-
-    private void loadStream(LocalAudioTrackExecutor localExecutor, HttpInterface httpInterface) throws Exception {
-        String trackUrl = trackInfo.identifier;
-        log.debug("Starting clyp.it track from URL: {}", trackUrl);
-
-        try (PersistentHttpStream stream = new PersistentHttpStream(httpInterface, new URI(trackUrl), null)) {
-            processDelegate(new Mp3AudioTrack(trackInfo, stream), localExecutor);
-        }
+        super(trackInfo, manager);
     }
 
     @Override
     public AudioTrack makeClone() {
-        return new ClypitAudioTrack(trackInfo, manager);
-    }
-
-    @Override
-    public AudioSourceManager getSourceManager() {
-        return manager;
+        return new ClypitAudioTrack(trackInfo, (ClypitAudioSourceManager) getSourceManager());
     }
 }
