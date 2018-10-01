@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import net.dv8tion.jda.core.entities.User
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {
@@ -58,9 +57,9 @@ class SkipCommand : MusicCommand() {
         }
 
         if (mng.player.playingTrack != null) {
-            val trackUserData =  mng.player.playingTrack.userData
+            val trackUserData = mng.player.playingTrack.userData
 
-            val user = if(trackUserData != null) {
+            val user = if (trackUserData != null) {
                 val userData = trackUserData as TrackUserData
                 ctx.jda.getUserById(userData.userId)
             } else {
