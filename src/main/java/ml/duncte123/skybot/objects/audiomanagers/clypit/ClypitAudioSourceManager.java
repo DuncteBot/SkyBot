@@ -18,31 +18,21 @@
 
 package ml.duncte123.skybot.objects.audiomanagers.clypit;
 
-import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetection;
-import com.sedmelluq.discord.lavaplayer.container.MediaContainerDetectionResult;
-import com.sedmelluq.discord.lavaplayer.container.MediaContainerHints;
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
+import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
-import com.sedmelluq.discord.lavaplayer.tools.io.PersistentHttpStream;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
-import org.apache.http.HttpStatus;
 import org.json.JSONObject;
 
-import java.io.IOException;
-import java.net.URI;
-import java.net.URISyntaxException;
+import java.io.DataInput;
+import java.io.DataOutput;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.COMMON;
-import static com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity.SUSPICIOUS;
-import static com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools.getHeaderValue;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ClypitAudioSourceManager extends HttpAudioSourceManager {
@@ -57,58 +47,31 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
-        if (m.matches()) {
-            try {
-                String clypitId = m.group(m.groupCount());
-                JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
-                AudioReference httpReference = getAsHttpReference(new AudioReference(json.getString("Mp3Url"), json.getString("Title")));
-                return handleLoadResult(detectContainer(httpReference));
-            } catch (Exception e) {
-                return null;
-            }
+        if (!m.matches()) {
+            return null;
         }
 
-        return null;
+        try {
+            String clypitId = m.group(m.groupCount());
+            JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
+            return new AudioReference(json.getString("SecureMp3Url"), json.getString("Title"));
+        } catch (Exception e) {
+            return null;
+        }
     }
 
-    private AudioReference getAsHttpReference(AudioReference reference) {
-        if (reference.identifier.startsWith("https://") || reference.identifier.startsWith("http://")) {
-            return reference;
-        } else if (reference.identifier.startsWith("icy://")) {
-            return new AudioReference("http://" + reference.identifier.substring(6), reference.title);
-        }
-        return null;
+    @Override
+    public boolean isTrackEncodable(AudioTrack track) {
+        return true;
     }
 
-    private MediaContainerDetectionResult detectContainer(AudioReference reference) {
-        MediaContainerDetectionResult result;
-
-        try (HttpInterface httpInterface = getHttpInterface()) {
-            result = detectContainerWithClient(httpInterface, reference);
-        } catch (IOException e) {
-            throw new FriendlyException("Connecting to the URL failed.", SUSPICIOUS, e);
-        }
-
-        return result;
+    @Override
+    public void encodeTrack(AudioTrack track, DataOutput output) {
+        // empty because we don't need them
     }
 
-    private MediaContainerDetectionResult detectContainerWithClient(HttpInterface httpInterface, AudioReference reference) throws IOException {
-        try (PersistentHttpStream inputStream = new PersistentHttpStream(httpInterface, new URI(reference.identifier), Long.MAX_VALUE)) {
-            int statusCode = inputStream.checkStatusCode();
-            String redirectUrl = HttpClientTools.getRedirectLocation(reference.identifier, inputStream.getCurrentResponse());
-
-            if (redirectUrl != null) {
-                return new MediaContainerDetectionResult(null, new AudioReference(redirectUrl, null));
-            } else if (statusCode == HttpStatus.SC_NOT_FOUND) {
-                return null;
-            } else if (!HttpClientTools.isSuccessWithContent(statusCode)) {
-                throw new FriendlyException("That URL is not playable.", COMMON, new IllegalStateException("Status code " + statusCode));
-            }
-
-            MediaContainerHints hints = MediaContainerHints.from(getHeaderValue(inputStream.getCurrentResponse(), "Content-Type"), null);
-            return MediaContainerDetection.detectContainer(reference, inputStream, hints);
-        } catch (URISyntaxException e) {
-            throw new FriendlyException("Not a valid URL.", COMMON, e);
-        }
+    @Override
+    public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
+        return new ClypitAudioTrack(trackInfo, this);
     }
 }

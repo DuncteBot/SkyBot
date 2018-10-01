@@ -117,7 +117,7 @@ public class AudioUtils {
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
-            playerManager.registerSourceManager(new SpeechAudioSourceManager(200, "en-AU"));
+            playerManager.registerSourceManager(new SpeechAudioSourceManager("en-AU"));
 
             playerManager.registerSourceManager(youtubeAudioSourceManager);
             playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
