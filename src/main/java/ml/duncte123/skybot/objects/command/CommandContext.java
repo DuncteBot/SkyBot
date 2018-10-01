@@ -38,7 +38,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
@@ -137,17 +136,9 @@ public class CommandContext {
     // --------------- Reaction processing methods --------------- //
 
     public ReactionHandler getReactionHandler() {
-        List<Object> listeners = this.event.getJDA().getRegisteredListeners();
-        Optional<Object> handler = listeners.stream().filter(
-                listener -> listener instanceof ReactionHandler
-        ).findFirst();
+        EventManager manager = (EventManager) this.event.getJDA().getEventManager();
 
-        return handler.map(
-                o -> (ReactionHandler) o
-        ).orElseGet(() ->
-                (ReactionHandler) listeners.get(listeners.size() - 1)
-        );
-
+        return manager.getReactionHandler();
     }
 
     public CommandContext applyReactionEvent(GuildMessageReceivedEvent event) {
