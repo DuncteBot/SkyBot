@@ -40,6 +40,7 @@ import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.audiomanagers.clypit.ClypitAudioSourceManager;
+import ml.duncte123.skybot.objects.audiomanagers.speech.SpeechAudioSourceManager;
 import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManager;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -109,25 +110,22 @@ public class AudioUtils {
     private void initPlayerManager() {
         if (playerManager == null) {
             playerManager = new DefaultAudioPlayerManager();
-//            playerManager.enableGcMonitoring();
+            //playerManager.enableGcMonitoring();
 
-            //Disable cookies for youtube
+            // Disable cookies for youtube
             YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
-
-            SoundCloudAudioSourceManager soundcloud = new SoundCloudAudioSourceManager();
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
-
+            playerManager.registerSourceManager(new SpeechAudioSourceManager(200, "en-AU"));
 
             playerManager.registerSourceManager(youtubeAudioSourceManager);
-            playerManager.registerSourceManager(soundcloud);
+            playerManager.registerSourceManager(new SoundCloudAudioSourceManager());
             playerManager.registerSourceManager(new BandcampAudioSourceManager());
             playerManager.registerSourceManager(new VimeoAudioSourceManager());
             playerManager.registerSourceManager(new TwitchStreamAudioSourceManager());
             playerManager.registerSourceManager(new BeamAudioSourceManager());
             playerManager.registerSourceManager(new HttpAudioSourceManager());
-
 
             AudioSourceManagers.registerLocalSource(playerManager);
         }

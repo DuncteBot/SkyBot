@@ -129,7 +129,7 @@ public class SkyBot {
         //Set up sharding for the bot
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
-                .setEventManager(eventManager)
+                .setEventManagerProvider((id) -> eventManager)
                 .setBulkDeleteSplittingEnabled(false)
                 .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
                 .setShardsTotal(TOTAL_SHARDS)
@@ -177,77 +177,40 @@ public class SkyBot {
         discord.local = false;
         DunctebotConfig.Discord.Game game = new DunctebotConfig.Discord.Game();
         game.name = "Danny Phantom on shard #{shardId}";
-        game.streamUrl = "https://twitch.tv/duncte123";
         game.type = 3;
         discord.game = game;
-        discord.token = "Your bot token";
-        discord.totalShards = 1;
-        discord.prefix = "/";
         discord.botOwnerId = "191231307290771456";
         discord.constantSuperUserIds = new long[]{
                 191231307290771456L
         };
-        discord.embedColour = "#FFFFFF";
         DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
         oauth.clientId = 215011992275124225L;
-        oauth.clientSecret = "";
-        oauth.redirUrl = "";
         discord.oauth = oauth;
         config.discord = discord;
 
         DunctebotConfig.Apis apis = new DunctebotConfig.Apis();
 
-        DunctebotConfig.Apis.Trello trello = new DunctebotConfig.Apis.Trello();
-        trello.key = "";
-        trello.token = "";
-        apis.trello = trello;
+        apis.trello = new DunctebotConfig.Apis.Trello();
 
-        apis.github = "";
-        apis.googl = "";
+        apis.weebSh = new DunctebotConfig.Apis.WeebSh();
 
-        DunctebotConfig.Apis.WeebSh weebSh = new DunctebotConfig.Apis.WeebSh();
-        weebSh.wolketoken = "";
-        apis.weebSh = weebSh;
+        apis.chapta = new DunctebotConfig.Apis.Chapta();
 
-        DunctebotConfig.Apis.Chapta chapta = new DunctebotConfig.Apis.Chapta();
-        chapta.secret = "";
-        chapta.sitekey = "";
-        apis.chapta = chapta;
-
-        DunctebotConfig.Apis.Spotify spotify = new DunctebotConfig.Apis.Spotify();
-        spotify.clientId = "";
-        spotify.clientSecret = "";
-        apis.spotify = spotify;
-
-        apis.blargbot = "";
-        apis.wolframalpha = "";
-        apis.thecatapi = "";
-        apis.discordbots_userToken = "";
+        apis.spotify = new DunctebotConfig.Apis.Spotify();
         config.apis = apis;
 
-        DunctebotConfig.Genius genius = new DunctebotConfig.Genius();
-        genius.client_id = null;
-        genius.client_secret = null;
-        config.genius = genius;
+        config.genius = new DunctebotConfig.Genius();
 
         DunctebotConfig.Lavalink lavalink = new DunctebotConfig.Lavalink();
         lavalink.enable = true;
         DunctebotConfig.Lavalink.LavalinkNode node = new DunctebotConfig.Lavalink.LavalinkNode();
-        node.wsurl = "ws://localhost";
-        node.pass = "YOUSHALLNOTPASS";
         lavalink.nodes = new DunctebotConfig.Lavalink.LavalinkNode[]{node};
         config.lavalink = lavalink;
 
-        config.use_database = false;
-        DunctebotConfig.Sql sql = new DunctebotConfig.Sql();
-        sql.database = "";
-        sql.host = "";
-        sql.port = 12334;
-        sql.username = "";
-        sql.password = "";
-        config.sql = sql;
+        config.use_database = true;
+        config.sql = new DunctebotConfig.Sql();
 
-        GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting();
+        GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
         String json = builder.create().toJson(config);
         try {
             FileUtils.writeStringToFile(new File("config-empty.json"), json, Charset.forName("UTF-8"));

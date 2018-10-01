@@ -35,49 +35,45 @@ import java.net.URLEncoder
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class LyricsCommand : MusicCommand() {
 
-    private var authToken: String = ""
+    private var authToken = ""
     private val apiBase = "https://api.genius.com"
 
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
 
-        if (!hasUpvoted(event.author, ctx.config)) {
-            sendEmbed(event, EmbedUtils.embedMessage(
-                    "I'm sorry but you can't use this feature because you haven't up-voted the bot." +
-                            " You can up-vote the bot and get access to this feature [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
-                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
-        } else if (channelChecks(event, ctx.audioUtils)) {
-            val mng = getMusicManager(event.guild, ctx.audioUtils)
-            val player = mng.player
-            val search: String? = when {
-                !ctx.args.isEmpty() -> ctx.argsRaw
-                player.playingTrack != null && !player.playingTrack.info.isStream ->
-                    player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
-                else -> null
-            }
-            if (search.isNullOrBlank()) {
-                MessageUtils.sendMsg(event, "The player is not currently playing anything!")
-                return
-            }
-            searchForSong(search, ctx.config.genius) {
-                if (it.isNullOrBlank()) {
-                    MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
-                            "Alternatively you can try `$PREFIX$name song name` to search for the lyrics on this soing.\n" +
-                            "(sometimes the song names in the player are wrong)")
-                } else {
-                    val url = "https://genius.com$it"
-                    WebUtils.ins.scrapeWebPage(url).async { doc ->
-                        val text = doc.select("div.lyrics").first().child(0).wholeText()
-                                .replace("<br>", "\n")
-                        sendEmbed(event, EmbedUtils.defaultEmbed()
-                                .setTitle("Lyrics for $search", url)
-                                .setDescription(StringUtils.abbreviate(text, 1900))
-                                .appendDescription("\n\n Full lyrics on [genius.com]($url)")
-                                .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
-                                .build())
-                    }
+        if (!channelChecks(event, ctx.audioUtils)) {
+            return
+        }
+
+        val mng = getMusicManager(event.guild, ctx.audioUtils)
+        val player = mng.player
+        val search: String? = when {
+            !ctx.args.isEmpty() -> ctx.argsRaw
+            player.playingTrack != null && !player.playingTrack.info.isStream ->
+                player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
+            else -> null
+        }
+        if (search.isNullOrBlank()) {
+            MessageUtils.sendMsg(event, "The player is not currently playing anything!")
+            return
+        }
+        searchForSong(search, ctx.config.genius) {
+            if (it.isNullOrBlank()) {
+                MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
+                        "Alternatively you can try `$PREFIX$name <song name>` to search for the lyrics on this song.\n" +
+                        "(sometimes the song names in the player are wrong)")
+            } else {
+                val url = "https://genius.com$it"
+                WebUtils.ins.scrapeWebPage(url).async { doc ->
+                    val text = doc.select("div.lyrics").first().child(0).wholeText()
+                            .replace("<br>", "\n")
+                    sendEmbed(event, EmbedUtils.defaultEmbed()
+                            .setTitle("Lyrics for $search", url)
+                            .setDescription(StringUtils.abbreviate(text, 1900))
+                            .appendDescription("\n\n Full lyrics on [genius.com]($url)")
+                            .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
+                            .build())
                 }
             }
         }

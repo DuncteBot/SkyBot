@@ -46,14 +46,6 @@ class RadioCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!hasUpvoted(event.author, ctx.config)) {
-            sendEmbed(event, EmbedUtils.embedMessage(
-                    "You cannot use the radio command as you haven't up-voted the bot." +
-                            " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
-                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
-            return
-        }
         if (prejoinChecks(event)) {
             ctx.commandManager.getCommand("join")?.executeCommand(ctx)
         } else if (!channelChecks(event, ctx.audioUtils)) {
@@ -72,17 +64,17 @@ class RadioCommand : MusicCommand() {
                 when (ctx.args[0]) {
                     "list" -> {
                         sendRadioSender(event = event)
-                        return@executeCommand
+                        return
                     }
                     "fulllist" -> {
                         sendRadioSender(event = event, full = true)
-                        return@executeCommand
+                        return
                     }
                     else -> {
                         val radio = radioStreams.firstOrNull { it.name == ctx.args[0].replace(oldValue = "❤", newValue = "love") }
                         if (radio == null) {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
-                            return@executeCommand
+                            return
                         }
                         ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx, false)
                         scheduler.queue.forEach {

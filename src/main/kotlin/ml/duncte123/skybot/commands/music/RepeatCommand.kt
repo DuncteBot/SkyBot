@@ -39,8 +39,11 @@ class RepeatCommand : MusicCommand() {
             scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
             scheduler.isRepeating = scheduler.isRepeatingPlaylists
         } else {
+            // turn off all repeats if they are on
+            if (scheduler.isRepeatingPlaylists) scheduler.isRepeatingPlaylists = false
             scheduler.isRepeating = !scheduler.isRepeating
         }
+
         MessageUtils.sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
                 "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }

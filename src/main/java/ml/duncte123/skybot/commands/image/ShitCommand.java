@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -29,11 +30,11 @@ public class ShitCommand extends ImageCommandBase {
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passes(event, ctx.getArgs())) {
+        if (!passes(event, ctx.getArgs(), false)) {
             return;
         }
 
-        String text = parseTextArgsForImagae(ctx);
+        String text = parseTextArgsForImage(ctx);
 
         if ("pluralshit".equals(ctx.getInvoke())) {
             ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));
@@ -73,5 +74,10 @@ public class ShitCommand extends ImageCommandBase {
         }
 
         return null;
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.FUN;
     }
 }

@@ -18,6 +18,7 @@
 
 package fredboat.audio.player;
 
+import lavalink.client.io.LavalinkRegion;
 import lavalink.client.io.Link;
 import lavalink.client.io.jda.JdaLavalink;
 import lavalink.client.player.IPlayer;
@@ -64,7 +65,7 @@ public class LavalinkManager {
         );
 
         for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
-            lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass);
+            lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass, LavalinkRegion.valueOf(node.region));
         }
     }
 

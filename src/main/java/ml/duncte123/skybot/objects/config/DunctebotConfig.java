@@ -65,7 +65,6 @@ public class DunctebotConfig {
         public String blargbot;
         public String wolframalpha;
         public String thecatapi;
-        public String discordbots_userToken;
 
         public static class Trello {
             public String key;
@@ -94,6 +93,7 @@ public class DunctebotConfig {
         public static class LavalinkNode {
             public String wsurl;
             public String pass;
+            public String region;
         }
     }
 

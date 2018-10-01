@@ -303,32 +303,42 @@ public class CommandManager {
         commandThread.submit(() -> {
             if (cmd != null) {
                 try {
+
                     if (!cmd.isCustom()) {
+
+                        if(cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+                            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
+                                    "Please mark this channel as NSFW to use this command");
+                            return;
+                        }
+
                         cmd.executeCommand(
                                 new CommandContext(invoke, args, event, variables)
                         );
-                    } else {
 
-                        CustomCommand cc = (CustomCommand) cmd;
-
-                        if (cc.getGuildId() != event.getGuild().getIdLong())
-                            return;
-
-                        try {
-                            String message = CustomCommandUtils.PARSER.clear()
-                                    .put("user", event.getAuthor())
-                                    .put("channel", event.getChannel())
-                                    .put("guild", event.getGuild())
-                                    .put("args", String.join(" ", args))
-                                    .parse(cc.getMessage());
-
-                            sendMsg(event, "\u200B" + message);
-                            CustomCommandUtils.PARSER.clear();
-                        } catch (Exception e) {
-                            sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-                            execCheck(e);
-                        }
+                        return;
                     }
+
+                    CustomCommand cc = (CustomCommand) cmd;
+
+                    if (cc.getGuildId() != event.getGuild().getIdLong())
+                        return;
+
+                    try {
+                        String message = CustomCommandUtils.PARSER.clear()
+                                .put("user", event.getAuthor())
+                                .put("channel", event.getChannel())
+                                .put("guild", event.getGuild())
+                                .put("args", String.join(" ", args))
+                                .parse(cc.getMessage());
+
+                        sendMsg(event, "\u200B" + message);
+                        CustomCommandUtils.PARSER.clear();
+                    } catch (Exception e) {
+                        sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+                        execCheck(e);
+                    }
+
                 } catch (Throwable ex) {
                     execCheck(ex);
                 }

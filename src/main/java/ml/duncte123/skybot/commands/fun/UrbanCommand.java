@@ -84,9 +84,4 @@ public class UrbanCommand extends Command {
     public String getName() {
         return "urban";
     }
-
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
-    }
 }

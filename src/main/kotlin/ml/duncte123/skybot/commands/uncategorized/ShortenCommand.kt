@@ -22,10 +22,8 @@ import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 import ml.duncte123.skybot.utils.AirUtils.isURL
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.AirUtils.shortenUrl
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShortenCommand : Command() {
@@ -37,15 +35,6 @@ class ShortenCommand : Command() {
 
         if (args.isEmpty() || args[0].isEmpty()) {
             sendMsg(event, "Incorrect usage: `$PREFIX$name <link to shorten>`")
-            return
-        }
-
-        if (!hasUpvoted(event.author, ctx.config)) {
-            sendEmbed(event, EmbedUtils.embedMessage(
-                    "You cannot use the shorten command as you haven't up-voted the bot." +
-                            " You can upvote the bot [here](https://discordbots.org/bot/210363111729790977" +
-                            ") or become a patreon [here](https://patreon.com/duncte123)\n" +
-                            "**Note:** it can take up to 1 hour before the bot sees your upvote"))
             return
         }
 
