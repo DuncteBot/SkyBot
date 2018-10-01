@@ -59,26 +59,25 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         // We check if it's larger so we don't send requests of nothing
-        if (reference.identifier.startsWith(PREFIX)
-                && reference.identifier.length() > PREFIX.length()) {
-            String data = reference.identifier.substring(PREFIX.length());
-            data = data
-                    // Remove whitespaces at the end
-                    .trim()
-                    // Remove whitespaces at the front
-                    .replaceAll("^\\s+", "");
-
-            String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
-
-            String mp3URL = templateURL
-                    .replace("%length%", Integer.toString(data.length()))
-                    .replace("%query%", encoded);
-
-            // Redirect to somewhere else
-            return new AudioReference(mp3URL, "Speaking " + data);
+        if (!reference.identifier.startsWith(PREFIX) || reference.identifier.length() <= PREFIX.length()) {
+            return null;
         }
 
-        return null;
+        String data = reference.identifier.substring(PREFIX.length());
+        data = data
+                // Remove whitespaces at the end
+                .trim()
+                // Remove whitespaces at the front
+                .replaceAll("^\\s+", "");
+
+        String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
+
+        String mp3URL = templateURL
+                .replace("%length%", Integer.toString(data.length()))
+                .replace("%query%", encoded);
+
+        // Redirect to somewhere else
+        return new AudioReference(mp3URL, "Speaking " + data);
     }
 
     @Override
