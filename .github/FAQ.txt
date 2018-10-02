@@ -1,0 +1,28 @@
+Q: How can I add the bot to my server?
+A: You can add the bot to your server by following the instructions on this page <https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1>
+
+Q: Is the bot open source?
+A: Yes, you can find the source at <https://github.com/DuncteBot>
+
+Q: ARE YOU CRAZY OPENING UP EVAL TO PATRONS?!?!?!?!
+A: Nope, the so called "patreon eval" is highly sandboxed and only has access to 5% of all the java classes
+
+Q: can I support development of the bot?
+A: Yes you can, you can become a patron (<https://www.patreon.com/DuncteBot>) or donate via paypal (<https://paypal.me/duncte123>)
+
+Q: Why don't commands work in <#191245668617158656>?
+A: Read :clap: The :clap: Channel :clap: Topics :clap:
+
+Q: Why does the bot shutdown?
+A: Maintenance or an update
+
+Q: How can I help?
+A: By suggesting our bot but never advertise it!
+If the bot responds with an error you can try looking it up in the source code and send us a fix using githubs Pull-Requests. (from and to branch master only)
+
+Q: I need help with command / module xxx can you help me?
+A: Yes I am sure. We have a playlist of YouTube-Tutorials. Try checking it out. Maybe we covered your topic previously. Otherwise we are still here for helping you. :D
+Tutorials: <https://www.youtube.com/playlist?list=PLZZ8fxucrdsotYOSbNfGGTJaBSAxrTPk4>
+
+Q: Can the bot do rainbow roles?
+A: No it can't, rainbow roles are against the discord terms of service

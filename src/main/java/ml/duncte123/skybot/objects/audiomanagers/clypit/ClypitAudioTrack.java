@@ -16,22 +16,22 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.objects.audiomanagers.speech;
+package ml.duncte123.skybot.objects.audiomanagers.clypit;
 
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.audiomanagers.Mp3Track;
 
-@Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class SpeechAudioTrack extends Mp3Track {
+@Author(nickname = "duncte123", author = "Duncan Sterken")
+public class ClypitAudioTrack extends Mp3Track {
 
-    SpeechAudioTrack(AudioTrackInfo trackInfo, SpeechAudioSourceManager manager) {
+    ClypitAudioTrack(AudioTrackInfo trackInfo, ClypitAudioSourceManager manager) {
         super(trackInfo, manager);
     }
 
     @Override
     public AudioTrack makeClone() {
-        return new SpeechAudioTrack(trackInfo, (SpeechAudioSourceManager) getSourceManager());
+        return new ClypitAudioTrack(trackInfo, (ClypitAudioSourceManager) getSourceManager());
     }
 }

@@ -19,10 +19,7 @@
 package ml.duncte123.skybot.objects.audiomanagers.speech;
 
 import com.sedmelluq.discord.lavaplayer.player.DefaultAudioPlayerManager;
-import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpClientTools;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterface;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpInterfaceManager;
+import com.sedmelluq.discord.lavaplayer.source.http.HttpAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.track.AudioItem;
 import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
@@ -35,7 +32,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
-public class SpeechAudioSourceManager implements AudioSourceManager {
+public class SpeechAudioSourceManager extends HttpAudioSourceManager {
 
     private static final String PREFIX = "speak:";
     private static final String GOOGLE_TRANSLATE_URL = "https://translate.google.com/translate_tts" +
@@ -45,18 +42,13 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
             "&text" + "len=%length%" +
             "&client=tw-ob";
 
-    private final int limit;
     private final String templateURL;
-    private final HttpInterfaceManager httpInterfaceManager;
 
     /**
-     * @param limit The character limit of the text, not including prepended or trailing whitespaces
      * @param language The language and accent code to play back audio in
      */
-    public SpeechAudioSourceManager(int limit, String language) {
-        this.limit = limit;
+    public SpeechAudioSourceManager(String language) {
         this.templateURL = GOOGLE_TRANSLATE_URL.replace("%language%", language);
-        httpInterfaceManager = HttpClientTools.createDefaultThreadLocalManager();
     }
 
     @Override
@@ -67,28 +59,25 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         // We check if it's larger so we don't send requests of nothing
-        if(reference.identifier.startsWith(PREFIX)
-                && reference.identifier.length() > PREFIX.length()) {
-            String data = reference.identifier.substring(PREFIX.length());
-            data = data
-                    // Remove whitespaces at the end
-                    .trim()
-                    // Remove whitespaces at the front
-                    .replaceAll("^\\s+", "")
-                    // Limit the length
-                    /*.substring(0, Math.min(data.length() - 1, limit))*/;
-
-            String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
-
-            String mp3URL = templateURL
-                    .replace("%length%", Integer.toString(data.length()))
-                    .replace("%query%", encoded);
-
-            // Redirect to somewhere else
-            return new AudioReference(mp3URL, "Speaking " + data);
+        if (!reference.identifier.startsWith(PREFIX) || reference.identifier.length() <= PREFIX.length()) {
+            return null;
         }
 
-        return null;
+        String data = reference.identifier.substring(PREFIX.length());
+        data = data
+                // Remove whitespaces at the end
+                .trim()
+                // Remove whitespaces at the front
+                .replaceAll("^\\s+", "");
+
+        String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
+
+        String mp3URL = templateURL
+                .replace("%length%", Integer.toString(data.length()))
+                .replace("%query%", encoded);
+
+        // Redirect to somewhere else
+        return new AudioReference(mp3URL, "Speaking " + data);
     }
 
     @Override
@@ -104,14 +93,5 @@ public class SpeechAudioSourceManager implements AudioSourceManager {
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
         return new SpeechAudioTrack(trackInfo, this);
-    }
-
-    @Override
-    public void shutdown() {
-        // empty because we don't need them
-    }
-
-    HttpInterface getHttpInterface() {
-        return httpInterfaceManager.getInterface();
     }
 }

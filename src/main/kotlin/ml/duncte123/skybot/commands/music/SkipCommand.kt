@@ -57,8 +57,16 @@ class SkipCommand : MusicCommand() {
         }
 
         if (mng.player.playingTrack != null) {
-            val userData = mng.player.playingTrack.userData as TrackUserData
-            val user = ctx.jda.getUserById(userData.userId)
+            val trackUserData = mng.player.playingTrack.userData
+
+            val user = if (trackUserData != null) {
+                val userData = trackUserData as TrackUserData
+                ctx.jda.getUserById(userData.userId)
+            } else {
+                ctx.author
+            }
+
+
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
                     "Now playing: ${mng.player.playingTrack.info.title}\n" +
                     "Requester: ${String.format("%#s", user)}")
