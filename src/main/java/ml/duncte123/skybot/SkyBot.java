@@ -214,7 +214,7 @@ public class SkyBot {
         GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
         String json = builder.create().toJson(config);
         try {
-            FileUtils.writeStringToFile(new File("config-empty.json"), json, StandardCharsets.UTF_8);
+            FileUtils.writeStringToFile(new File("config-empty.json"), json,StandardCharsets.UTF_8);
         } catch (IOException e) {
             e.printStackTrace();
         }
