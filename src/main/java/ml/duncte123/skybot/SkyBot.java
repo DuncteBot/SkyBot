@@ -43,6 +43,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.util.EnumSet;
+import java.nio.charset.StandardCharsets;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
