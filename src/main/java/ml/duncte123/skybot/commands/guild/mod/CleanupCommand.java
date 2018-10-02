@@ -108,7 +108,7 @@ public class CleanupCommand extends Command {
             return 0;
         }).whenCompleteAsync((count, thr) -> {
             MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
-                    "Removed %d messages!", count);
+                "Removed %d messages!", count);
         });
         // End of the annotation
     }
@@ -116,7 +116,7 @@ public class CleanupCommand extends Command {
     @Override
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
-                "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
+            "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
     }
 
     @Override

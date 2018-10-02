@@ -66,7 +66,7 @@ class FlipCommand : Command() {
     }
 
     override fun help() = "Flips a user.\n" +
-            "Usage: `$PREFIX$name [@user]`"
+        "Usage: `$PREFIX$name [@user]`"
 
     override fun getName() = "flip"
 }

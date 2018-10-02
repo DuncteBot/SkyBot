@@ -54,8 +54,8 @@ class StatsCommand : Command() {
 
         val embed = defaultEmbed()
 
-                .addField("Discord/bot Stats",
-                        """**Guilds:** ${shardManager.guildCache.size()}
+            .addField("Discord/bot Stats",
+                """**Guilds:** ${shardManager.guildCache.size()}
                     |**Users (unique):** ${shardManager.userCache.size()}
                     |**Text channels:** ${shardManager.textChannelCache.size()}
                     |**Voice channels:** ${shardManager.voiceChannelCache.size()}
@@ -63,8 +63,8 @@ class StatsCommand : Command() {
                     |**Uptime:** ${AirUtils.getUptime(uptimeLong)} $uptimeTime
                 """.trimMargin(), false)
 
-                .addField("Server stats",
-                        """**CPU's:** $cores
+            .addField("Server stats",
+                """**CPU's:** $cores
                     |**CPU usage:** $processUsage
                     |**Ram usage:** ${serverUsage shr 20}MB
                     |**Total ram:** ${serverMem shr 20}MB
@@ -72,8 +72,8 @@ class StatsCommand : Command() {
                     |**Operating System:** $OS
                 """.trimMargin(), false)
 
-                .addField("JVM stats",
-                        """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
+            .addField("JVM stats",
+                """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
                             |**Active thread count:** ${Thread.activeCount()}
                             |**Used ram:** ${jvmMem}MB
                             |**Allocated ram:** ${jvmUsage}MB

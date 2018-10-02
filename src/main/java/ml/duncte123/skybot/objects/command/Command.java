@@ -42,9 +42,9 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @SuppressWarnings("SameParameterValue")
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public abstract class Command implements ICommand {
 
@@ -57,7 +57,7 @@ public abstract class Command implements ICommand {
     protected static final Logger logger = LoggerFactory.getLogger(Command.class);
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(10,
-            r -> new Thread(r, "Command-Thread"));
+        r -> new Thread(r, "Command-Thread"));
     /**
      * This holds the prefix for us
      */
@@ -106,16 +106,16 @@ public abstract class Command implements ICommand {
         Member m = supportGuild.getMember(u);
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                    "are not one of our patrons.\n" +
-                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
-                    "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
+                "are not one of our patrons.\n" +
+                "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
+                "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
             return false;
         }
 
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
-                    "are not one of our patrons.\n" +
-                    "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
+                "are not one of our patrons.\n" +
+                "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
             return false;
         }
 
@@ -187,11 +187,11 @@ public abstract class Command implements ICommand {
     public String helpParsed() {
         if (helpParsed == null) {
             String s = help()
-                    .replaceAll("<", "&lt;")
-                    .replaceAll(">", "&gt;")
-                    .replaceAll("`(.*)`", "<code>$1</code>")
-                    .replaceAll("\\n", "<br />")
-                    .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll("`(.*)`", "<code>$1</code>")
+                .replaceAll("\\n", "<br />")
+                .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
             if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
                 s += "<br />Aliases: " + PREFIX + String.join(", " + PREFIX, getAliases());
             }

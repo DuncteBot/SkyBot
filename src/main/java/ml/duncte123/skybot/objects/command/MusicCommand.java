@@ -34,8 +34,8 @@ import java.util.concurrent.TimeUnit;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public abstract class MusicCommand extends Command {
 
@@ -44,16 +44,16 @@ public abstract class MusicCommand extends Command {
 
     static {
         commandService.scheduleWithFixedDelay(() ->
-                        cooldowns.forEachEntry((a, b) -> {
-                            if (b > 0) {
-                                cooldowns.put(a, (b - 200));
-                                return true;
-                            } else if (b == 0) {
-                                cooldowns.remove(a);
-                            }
-                            return true;
-                        })
-                , 0, 200, TimeUnit.MILLISECONDS);
+                cooldowns.forEachEntry((a, b) -> {
+                    if (b > 0) {
+                        cooldowns.put(a, (b - 200));
+                        return true;
+                    } else if (b == 0) {
+                        cooldowns.remove(a);
+                    }
+                    return true;
+                })
+            , 0, 200, TimeUnit.MILLISECONDS);
     }
 
     public MusicCommand() {
@@ -117,13 +117,13 @@ public abstract class MusicCommand extends Command {
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply) {
                 sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
-                        "Want to have the bot automatically join your channel? Consider becoming a patron.");
+                    "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
             return false;
         }
 
         if (lavalinkManager.getConnectedChannel(event.getGuild()) != null &&
-                !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
+            !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
             if (reply) {
                 sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             }

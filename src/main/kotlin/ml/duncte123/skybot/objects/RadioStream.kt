@@ -31,14 +31,14 @@ open class RadioStream(var name: String, val url: String, val website: String?, 
 }
 
 class ILoveStream(
-        stationName: String,
-        val channel: Int,
-        val npChannel: Int = channel,
-        internal: Boolean = true,
-        public: Boolean = true
+    stationName: String,
+    val channel: Int,
+    val npChannel: Int = channel,
+    internal: Boolean = true,
+    public: Boolean = true
 ) : RadioStream(
-        name = stationName,
-        url = if (internal) "http://stream01.iloveradio.de/iloveradio$channel.mp3" else "http://streams.bigfm.de/${stationName.replace("ilove", "")}ilr-128-mp3",
-        website = "http://www.iloveradio.de/streams/",
-        public = public
+    name = stationName,
+    url = if (internal) "http://stream01.iloveradio.de/iloveradio$channel.mp3" else "http://streams.bigfm.de/${stationName.replace("ilove", "")}ilr-128-mp3",
+    website = "http://www.iloveradio.de/streams/",
+    public = public
 )

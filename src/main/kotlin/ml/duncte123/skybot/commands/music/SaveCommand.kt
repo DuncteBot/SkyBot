@@ -36,12 +36,12 @@ class SaveCommand : MusicCommand() {
         val event = ctx.event
 
         event.channel.sendFile(
-                toByteArray(event.guild, ctx.audioUtils),
-                "playlist.json",
-                MessageBuilder()
-                        .append(event.author)
-                        .append(", here is the queue which can be re-imported")
-                        .build()).queue()
+            toByteArray(event.guild, ctx.audioUtils),
+            "playlist.json",
+            MessageBuilder()
+                .append(event.author)
+                .append(", here is the queue which can be re-imported")
+                .build()).queue()
     }
 
     private fun toByteArray(guild: Guild?, audioUtils: AudioUtils): ByteArray {
@@ -49,8 +49,8 @@ class SaveCommand : MusicCommand() {
         val manager = getMusicManager(guild, audioUtils)
 
         val urls = manager.scheduler.queue
-                .map { it.identifier }
-                .toMutableList()
+            .map { it.identifier }
+            .toMutableList()
 
         urls.add(0, manager.player.playingTrack.identifier)
 

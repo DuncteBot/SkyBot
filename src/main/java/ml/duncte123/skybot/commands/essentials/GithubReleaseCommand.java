@@ -43,7 +43,7 @@ public class GithubReleaseCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!isDev(ctx.getAuthor())
-                && Settings.OWNER_ID != ctx.getAuthor().getIdLong()) {
+            && Settings.OWNER_ID != ctx.getAuthor().getIdLong()) {
             MessageUtils.sendError(ctx.getMessage());
             MessageUtils.sendMsg(event, "You must be the bot owner to run this command!");
 
@@ -66,22 +66,22 @@ public class GithubReleaseCommand extends Command {
          * <given message>
          */
         message = String.format("SkyBot %s, release authored by %#s%n%n%s",
-                name,
-                ctx.getAuthor(),
-                message);
+            name,
+            ctx.getAuthor(),
+            message);
 
         JSONObject releaseOut = new JSONObject()
-                .put("tag_name", name)
-                .put("name", name)
-                .put("target_commitish", "master")
-                .put("body", message)
-                .put("draft", false)
-                .put("prerelease", false);
+            .put("tag_name", name)
+            .put("name", name)
+            .put("target_commitish", "master")
+            .put("body", message)
+            .put("draft", false)
+            .put("prerelease", false);
 
         try {
             //You meant to post the json ramid?
             JSONObject releaseIn = WebUtils.ins.postJSON(String.format(CREATE_RELEASE,
-                    ctx.getConfig().apis.github), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
+                ctx.getConfig().apis.github), releaseOut, WebUtilsErrorUtils::toJSONObject).execute();
 
             if (releaseIn == null)
                 return;

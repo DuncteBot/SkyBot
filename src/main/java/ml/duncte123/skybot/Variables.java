@@ -70,11 +70,11 @@ public class Variables {
 
         this.audioUtils = new AudioUtils(config.apis, this);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
-                "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
+            "&hl=en&searchType=image&key=" + config.apis.googl + "&safe=off";
         this.weebApi = new WeebApiBuilder(TokenType.WOLKETOKENS)
-                .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
-                .setToken(config.apis.weebSh.wolketoken)
-                .build();
+            .setBotInfo("DuncteBot(SkyBot)", Settings.VERSION, "Production")
+            .setToken(config.apis.weebSh.wolketoken)
+            .build();
         this.isSql = config.use_database;
         this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);

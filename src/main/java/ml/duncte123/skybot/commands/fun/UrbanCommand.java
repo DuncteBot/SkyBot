@@ -61,14 +61,14 @@ public class UrbanCommand extends Command {
 
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
 //                    .setTitle("term", webUrl)
-                    .setAuthor("Author: " + item.getString("author"))
-                    .setDescription("_TOP DEFINITION:_\n\n")
-                    .appendDescription(item.getString("definition"))
-                    .appendDescription("\n\n")
-                    .addField("Example", item.getString("example"), false)
-                    .addField("Upvotes:", item.getInt("thumbs_up") + "", true)
-                    .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
-                    .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
+                .setAuthor("Author: " + item.getString("author"))
+                .setDescription("_TOP DEFINITION:_\n\n")
+                .appendDescription(item.getString("definition"))
+                .appendDescription("\n\n")
+                .addField("Example", item.getString("example"), false)
+                .addField("Upvotes:", item.getInt("thumbs_up") + "", true)
+                .addField("Downvotes:", item.getInt("thumbs_down") + "", true)
+                .addField("Link:", "[" + permaLink + "](" + permaLink + ")", false);
             sendEmbed(ctx.getEvent(), eb.build());
         });
 
@@ -77,7 +77,7 @@ public class UrbanCommand extends Command {
     @Override
     public String help() {
         return "Search the urban dictionary.\n" +
-                "Usage: `" + PREFIX + getName() + " <search term>`";
+            "Usage: `" + PREFIX + getName() + " <search term>`";
     }
 
     @Override

@@ -32,13 +32,13 @@ public class DidYouMeanCommand extends ImageCommandBase {
 
         String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
-        if(split.length < 2) {
+        if (split.length < 2) {
             sendMsg(ctx.getEvent(), "Missing arguments, check `" + PREFIX + "help " + getName() + "`");
             return;
         }
 
         ctx.getAlexFlipnote().getDidYouMean(split[0], split[1])
-                .async((image) -> handleBasicImage(ctx.getEvent(), image));
+            .async((image) -> handleBasicImage(ctx.getEvent(), image));
 
     }
 
@@ -50,7 +50,7 @@ public class DidYouMeanCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Did you type your search wrong?\n" +
-                "Usage: `" + PREFIX + getName() + " <Top text>|<Bottom text>`";
+            "Usage: `" + PREFIX + getName() + " <Top text>|<Bottom text>`";
     }
 
     @Override

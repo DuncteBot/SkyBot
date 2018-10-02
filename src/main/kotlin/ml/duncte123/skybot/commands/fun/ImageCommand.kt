@@ -51,9 +51,9 @@ class ImageCommand : Command() {
                 val jsonArray = jsonRaw.getJsonArray<Ason>("items")
                 val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
                 sendEmbed(event,
-                        EmbedUtils.defaultEmbed()
-                                .setTitle(randomItem?.getString("title"), randomItem?.getString("image.contextLink"))
-                                .setImage(randomItem?.getString("link")).build()
+                    EmbedUtils.defaultEmbed()
+                        .setTitle(randomItem?.getString("title"), randomItem?.getString("image.contextLink"))
+                        .setImage(randomItem?.getString("link")).build()
                 )
             }
 

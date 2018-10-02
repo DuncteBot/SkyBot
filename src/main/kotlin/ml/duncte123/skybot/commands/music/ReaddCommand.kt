@@ -51,7 +51,7 @@ class ReaddCommand : MusicCommand() {
         var title = track.info.title
         if (track.info.isStream) {
             val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
-                    .radioStreams.stream().filter { s -> s.url == track.info.uri }.findFirst()
+                .radioStreams.stream().filter { s -> s.url == track.info.uri }.findFirst()
             if (stream.isPresent)
                 title = stream.get().name
         }

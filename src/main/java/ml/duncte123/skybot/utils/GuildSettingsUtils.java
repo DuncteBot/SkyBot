@@ -35,8 +35,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildSettingsUtils {
 
@@ -63,22 +63,22 @@ public class GuildSettingsUtils {
                     long guildId = toLong(res.getString("guildId"));
 
                     guildSettings.put(guildId, new GuildSettings(guildId)
-                            .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
-                            .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
-                            .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
-                            .setCustomPrefix(res.getString("prefix"))
-                            .setLogChannel(toLong(res.getString("logChannelId")))
-                            .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
-                            .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                            .setAutoroleRole(toLong(res.getString("autoRole")))
-                            .setServerDesc(replaceNewLines(res.getString("serverDesc")))
-                            .setAnnounceTracks(res.getBoolean("announceNextTrack"))
-                            .setAutoDeHoist(res.getBoolean("autoDeHoist"))
-                            .setFilterInvites(res.getBoolean("filterInvites"))
-                            .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                            .setMuteRoleId(toLong(res.getString("muteRoleId")))
-                            .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
-                            .setKickState(res.getBoolean("kickInsteadState"))
+                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                        .setCustomPrefix(res.getString("prefix"))
+                        .setLogChannel(toLong(res.getString("logChannelId")))
+                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                        .setAutoroleRole(toLong(res.getString("autoRole")))
+                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                        .setFilterInvites(res.getBoolean("filterInvites"))
+                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                        .setKickState(res.getBoolean("kickInsteadState"))
                     );
                 }
 
@@ -132,23 +132,23 @@ public class GuildSettingsUtils {
 
             try {
                 PreparedStatement smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                        "enableJoinMessage= ? , " +
-                        "enableSwearFilter= ? ," +
-                        "customWelcomeMessage= ? ," +
-                        "prefix= ? ," +
-                        "autoRole= ? ," +
-                        "logChannelId= ? ," +
-                        "welcomeLeaveChannel= ? ," +
-                        "customLeaveMessage = ? ," +
-                        "serverDesc = ? ," +
-                        "announceNextTrack = ? ," +
-                        "autoDeHoist = ? ," +
-                        "filterInvites = ? ," +
-                        "spamFilterState = ? ," +
-                        "muteRoleId = ? ," +
-                        "ratelimits = ? ," +
-                        "kickInsteadState = ? " +
-                        "WHERE guildId='" + settings.getGuildId() + "'");
+                    "enableJoinMessage= ? , " +
+                    "enableSwearFilter= ? ," +
+                    "customWelcomeMessage= ? ," +
+                    "prefix= ? ," +
+                    "autoRole= ? ," +
+                    "logChannelId= ? ," +
+                    "welcomeLeaveChannel= ? ," +
+                    "customLeaveMessage = ? ," +
+                    "serverDesc = ? ," +
+                    "announceNextTrack = ? ," +
+                    "autoDeHoist = ? ," +
+                    "filterInvites = ? ," +
+                    "spamFilterState = ? ," +
+                    "muteRoleId = ? ," +
+                    "ratelimits = ? ," +
+                    "kickInsteadState = ? " +
+                    "WHERE guildId='" + settings.getGuildId() + "'");
                 smt.setBoolean(1, settings.isEnableJoinMessage());
                 smt.setBoolean(2, settings.isEnableSwearFilter());
                 smt.setString(3, fixUnicodeAndLines(settings.getCustomJoinMessage()));
@@ -202,15 +202,15 @@ public class GuildSettingsUtils {
 
             try {
                 ResultSet resultSet = connection.createStatement()
-                        .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
+                    .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
                 while (resultSet.next())
                     rows++;
 
                 if (rows == 0) {
                     PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId," +
-                            "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
-                            "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
+                        "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
+                        "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
                     smt.setString(1, newGuildSettings.getCustomJoinMessage());
                     smt.setString(2, Settings.PREFIX);
                     smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));

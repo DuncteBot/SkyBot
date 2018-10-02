@@ -54,10 +54,10 @@ class EvalFunctions {
         @JvmStatic
         fun stats(shardManager: ShardManager, channel: MessageChannel): RestAction<Message> {
             val embed = EmbedUtils.defaultEmbed()
-                    .addField("Guilds", shardManager.guildCache.size().toString(), true)
-                    .addField("Users", shardManager.userCache.size().toString(), true)
-                    .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
-                    .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
+                .addField("Guilds", shardManager.guildCache.size().toString(), true)
+                .addField("Users", shardManager.userCache.size().toString(), true)
+                .addField("Channels", (shardManager.textChannelCache.size() + shardManager.privateChannelCache.size()).toString(), true)
+                .addField("Socket-Ping", shardManager.averagePing.toString(), false).build()
             return channel.sendMessage(embed)
         }
 

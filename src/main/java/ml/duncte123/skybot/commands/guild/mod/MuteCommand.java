@@ -70,10 +70,10 @@ public class MuteCommand extends Command {
         Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-                .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
-                    ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
-                    sendSuccess(event.getMessage());
-                }
+            .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
+                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+                sendSuccess(event.getMessage());
+            }
         );
 
     }
@@ -81,7 +81,7 @@ public class MuteCommand extends Command {
     @Override
     public String help() {
         return "Mute a user.\n" +
-                "Usage: `" + PREFIX + getName() + " <@user> <reason>`";
+            "Usage: `" + PREFIX + getName() + " <@user> <reason>`";
     }
 
     @Override

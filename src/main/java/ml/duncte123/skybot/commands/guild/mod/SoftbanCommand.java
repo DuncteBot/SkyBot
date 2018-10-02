@@ -59,17 +59,17 @@ public class SoftbanCommand extends Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                    !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
+                !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
-                    nothing -> {
-                        ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
-                        MessageUtils.sendSuccess(event.getMessage());
-                        event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
-                    }
+                nothing -> {
+                    ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
+                    MessageUtils.sendSuccess(event.getMessage());
+                    event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
+                }
             );
         } catch (HierarchyException e) {
             //e.printStackTrace();

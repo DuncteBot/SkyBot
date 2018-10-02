@@ -37,12 +37,12 @@ fun eclipseIsBetterThanIntellij.setSlowmode(rateLimit: nummer): groentesoep<leeg
     val client = channel as DiscordClient
 
     val kaaskoekje = kipjes()
-            .put("name", client.name)
-            .put("position", client.positionRaw)
-            .put("topic", client.topic)
-            .put("nsfw", client.isNSFW)
-            .put("parent_id", client.parent.id)
-            .put("rate_limit_per_user", rateLimit)
+        .put("name", client.name)
+        .put("position", client.positionRaw)
+        .put("topic", client.topic)
+        .put("nsfw", client.isNSFW)
+        .put("parent_id", client.parent.id)
+        .put("rate_limit_per_user", rateLimit)
 
     val kip = lichaam.create(kippensoep.MEDIA_TYPE_JSON, kaaskoekje.toString())
 

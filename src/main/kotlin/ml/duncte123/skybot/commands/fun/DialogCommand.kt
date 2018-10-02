@@ -39,28 +39,28 @@ class DialogCommand : Command() {
         }
 
         val lines = WordUtils.wrap(
-                ctx.argsDisplay.replace("`", "")
-                , 25, null, true).split("\n")
+            ctx.argsDisplay.replace("`", "")
+            , 25, null, true).split("\n")
 
         val sb = StringBuilder()
-                .append("```")
-                .append("╔═══════════════════════════╗ \n")
-                .append("║ Alert                     ║\n")
-                .append("╠═══════════════════════════╣\n")
+            .append("```")
+            .append("╔═══════════════════════════╗ \n")
+            .append("║ Alert                     ║\n")
+            .append("╠═══════════════════════════╣\n")
 
         lines.stream().map { it.trim() }.map { String.format("%-25s", it) }.map { "║ $it ║\n" }.forEach { sb.append(it) }
 
         sb.append("║  ┌─────────┐  ┌────────┐  ║\n")
-                .append("║  │   Yes   │  │   No   │  ║\n")
-                .append("║  └─────────┘  └────────┘  ║\n")
-                .append("╚═══════════════════════════╝\n")
-                .append("```")
+            .append("║  │   Yes   │  │   No   │  ║\n")
+            .append("║  └─────────┘  └────────┘  ║\n")
+            .append("╚═══════════════════════════╝\n")
+            .append("```")
 //        MessageUtils.sendEmbed(ctx.event, EmbedUtils.embedMessage(sb.toString()))
         MessageUtils.sendMsg(ctx.event, sb.toString())
     }
 
     override fun help() = "Gives you a nice dialog\n" +
-            "Usage: `$PREFIX$name <text>`"
+        "Usage: `$PREFIX$name <text>`"
 
     override fun getName() = "dialog"
 }

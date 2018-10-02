@@ -66,12 +66,12 @@ public class ChangeLogCommand extends Command {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
             String body = json.getString("body");
             EmbedBuilder eb = EmbedUtils.defaultEmbed()
-                    .setTitle("Changelog for DuncteBot", json.getString("html_url"))
-                    .setDescription(body);
+                .setTitle("Changelog for DuncteBot", json.getString("html_url"))
+                .setDescription(body);
             MessageEmbed embed = eb.build();
             embedJson = embed.toJSONObject()
-                    .put("type", "rich")
-                    .toString();
+                .put("type", "rich")
+                .toString();
             sendEmbed(event, embed);
         });
     }

@@ -57,18 +57,18 @@ class IssueCommand : Command() {
                     val embed = EmbedUtils.defaultEmbed()
 
                     embed.setTitle("Issue by ${String.format("%#s / %s", event.author, event.author.id)}")
-                            .setFooter(null, null)
-                            .setDescription("""
+                        .setFooter(null, null)
+                        .setDescription("""
                             |Description: ${data.getString("description")}
                             |Detailed report: ${data.getString("detailedReport")}
                             |List of recent run commands: $cmds
                             """.trimMargin())
-                            .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
+                        .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
                     sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
                 } catch (ex: JSONException) {
                     val msg =
-                            """You malformed the JSON.
+                        """You malformed the JSON.
                             | Expected pattern: {"lastCommands": ["help", "join"],"description": "","detailedReport": "", "inv": "discord.gg/abcdefh"}"""
                     MessageUtils.sendErrorWithMessage(event.message, msg.trimMargin())
                 }

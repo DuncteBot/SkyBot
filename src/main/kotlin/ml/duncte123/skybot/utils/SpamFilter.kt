@@ -99,10 +99,10 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
                 } else {
                     return msg.embeds.map {
                         it.description.isBlank()
-                                && it.footer.text.isBlank()
-                                && it.title.isBlank()
-                                && it.thumbnail.url.isBlank()
-                                && it.image.url.isBlank()
+                            && it.footer.text.isBlank()
+                            && it.title.isBlank()
+                            && it.thumbnail.url.isBlank()
+                            && it.image.url.isBlank()
                     }.count { it } < 1
                 }
             }

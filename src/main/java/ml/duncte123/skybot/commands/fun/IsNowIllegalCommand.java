@@ -40,32 +40,32 @@ public class IsNowIllegalCommand extends Command {
             return;
         }
         String input = ctx.getArgsRaw()
-                .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
+            .replaceAll("([^a-zA-Z0-9 ]+)", "").toUpperCase();
         if (input.length() > 10)
             input = input.substring(0, 9);
         JSONObject jsonData = new JSONObject().put("task", "gif").put("word", input.replaceAll(" ", "%20"));
         MessageUtils.sendMsg(ctx.getEvent(), "Checking if \"" + input + "\" is illegal....... (might take up to 1 minute)", success ->
-                WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData,
-                        r -> Objects.requireNonNull(r.body()).string()).async(txt ->
-                        commandService.schedule(() -> {
+            WebUtils.ins.postJSON("https://is-now-illegal.firebaseio.com/queue/tasks.json", jsonData,
+                r -> Objects.requireNonNull(r.body()).string()).async(txt ->
+                commandService.schedule(() -> {
 
-                            String rawJson = getFileJSON(jsonData.getString("word"));
+                    String rawJson = getFileJSON(jsonData.getString("word"));
 
-                            if ("null".equals(rawJson)) {
-                                success.editMessage(jsonData.getString("word") + " is legal").queue();
-                            }
-                            JSONObject j = new JSONObject(rawJson);
-                            success.editMessage(j.getString("url").replaceAll(" ", "%20")).queue();
+                    if ("null".equals(rawJson)) {
+                        success.editMessage(jsonData.getString("word") + " is legal").queue();
+                    }
+                    JSONObject j = new JSONObject(rawJson);
+                    success.editMessage(j.getString("url").replaceAll(" ", "%20")).queue();
 
-                        }, 10L, TimeUnit.SECONDS)
-                )
+                }, 10L, TimeUnit.SECONDS)
+            )
         );
     }
 
     @Override
     public String help() {
         return "Makes sure that things are illegal.\n" +
-                "Usage: `" + PREFIX + getName() + " <words>`";
+            "Usage: `" + PREFIX + getName() + " <words>`";
     }
 
     @Override

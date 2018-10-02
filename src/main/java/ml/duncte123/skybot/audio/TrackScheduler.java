@@ -195,7 +195,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             TrackUserData userData = (TrackUserData) track.getUserData();
             if (track.getInfo().isStream) {
                 Optional<RadioStream> stream = ((RadioCommand) variables.getCommandManager().getCommand("radio"))
-                        .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                    .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                 if (stream.isPresent())
                     title = stream.get().getName();
             }
@@ -216,12 +216,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             if (g != null) {
                 AudioTrackInfo info = track.getInfo();
                 final String error = String.format(
-                        "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
-                        g.getName(),
-                        g.getId(),
-                        info.title,
-                        info.author,
-                        track.getSourceManager().getSourceName()
+                    "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                    g.getName(),
+                    g.getId(),
+                    info.title,
+                    info.author,
+                    track.getSourceManager().getSourceName()
                 );
 
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
@@ -231,8 +231,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             Throwable finalCause = rootCause != null ? rootCause : exception;
 
             MessageUtils.sendMsg(tc,
-                    "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                            "Details: " + finalCause);
+                "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                    "Details: " + finalCause);
         }
     }
 }

@@ -65,9 +65,9 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class BotListener extends ListenerAdapter {
 
@@ -90,7 +90,7 @@ public class BotListener extends ListenerAdapter {
      * This timer is for clearing our caches
      */
     private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
-            r -> new Thread(r, "Bot-Service-Thread"));
+        r -> new Thread(r, "Bot-Service-Thread"));
     /**
      * A custom consumer that cancels the stupid unknown message error
      */
@@ -108,16 +108,16 @@ public class BotListener extends ListenerAdapter {
     private final Variables variables;
     // A list of servers that list bots
     private final List<Long> botLists = List.of(
-            110373943822540800L, // Dbots
-            264445053596991498L, // Dbl
-            374071874222686211L, // Bots for discord
-            112319935652298752L, // Carbon
-            439866052684283905L, // Discord Boats
-            387812458661937152L, // Botlist.space
-            483344253963993113L, // AutomaCord
-            454933217666007052L, // Divine Discord Bot List
-            446682534135201793L, // Discords best bots
-            477792727577395210L  // discordbotlist.xyz
+        110373943822540800L, // Dbots
+        264445053596991498L, // Dbl
+        374071874222686211L, // Bots for discord
+        112319935652298752L, // Carbon
+        439866052684283905L, // Discord Boats
+        387812458661937152L, // Botlist.space
+        483344253963993113L, // AutomaCord
+        454933217666007052L, // Divine Discord Bot List
+        446682534135201793L, // Discords best bots
+        477792727577395210L  // discordbotlist.xyz
     );
     /**
      * Make sure that we don't exit when we don't want to
@@ -171,22 +171,22 @@ public class BotListener extends ListenerAdapter {
         logger.info("Collecting patrons");
         Guild supportGuild = manager.getGuildById(supportGuildId);
         List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
-                .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
+            .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
         Command.patrons.addAll(patrons);
 
         logger.info("Found {} normal patrons", patrons.size());
 
         List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
-                .stream().map(Member::getUser).collect(Collectors.toList());
+            .stream().map(Member::getUser).collect(Collectors.toList());
 
         List<Long> patronGuilds = new ArrayList<>();
 
         guildPatrons.forEach((patron) -> {
             List<Long> guilds = manager.getMutualGuilds(patron).stream()
-                    .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
-                            it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
-                    .map(Guild::getIdLong)
-                    .collect(Collectors.toList());
+                .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
+                    it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
+                .map(Guild::getIdLong)
+                .collect(Collectors.toList());
 
             patronGuilds.addAll(guilds);
         });
@@ -226,13 +226,13 @@ public class BotListener extends ListenerAdapter {
             return;
 
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
-                && Settings.developers.contains(event.getAuthor().getIdLong())) {
+            && Settings.developers.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
             event.getMessage().addReaction("✅").queue(
-                    success -> killAllShards(event.getJDA().asBot().getShardManager()),
-                    failure -> killAllShards(event.getJDA().asBot().getShardManager())
+                success -> killAllShards(event.getJDA().asBot().getShardManager()),
+                failure -> killAllShards(event.getJDA().asBot().getShardManager())
             );
 
             return;
@@ -245,18 +245,18 @@ public class BotListener extends ListenerAdapter {
         if (doAutoModChecks(event, settings, rw)) return;
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
-                && rw.equals(guild.getSelfMember().getAsMention())) {
+            && rw.equals(guild.getSelfMember().getAsMention())) {
             sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                    event.getAuthor().getId(),
-                    Settings.PREFIX)
+                event.getAuthor().getId(),
+                Settings.PREFIX)
             );
             return;
         }
 
         if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
-                !rw.startsWith(settings.getCustomPrefix())
-                && !rw.startsWith(guild.getSelfMember().getAsMention())
-                && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
+            !rw.startsWith(settings.getCustomPrefix())
+            && !rw.startsWith(guild.getSelfMember().getAsMention())
+            && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return;
         }
 
@@ -273,10 +273,10 @@ public class BotListener extends ListenerAdapter {
         ICommand cmd = commandManager.getCommand("chat");
         if (cmd != null)
             cmd.executeCommand(new CommandContext(
-                    "chat",
-                    Arrays.asList(split).subList(1, split.length),
-                    event,
-                    variables
+                "chat",
+                Arrays.asList(split).subList(1, split.length),
+                event,
+                variables
             ));
     }
 
@@ -297,7 +297,7 @@ public class BotListener extends ListenerAdapter {
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
-                    ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+                ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
@@ -311,7 +311,7 @@ public class BotListener extends ListenerAdapter {
 
             if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
                 guild.getController()
-                        .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
+                    .addSingleRoleToMember(event.getMember(), r).queue(null, it -> {
                 });
             }
         }
@@ -330,7 +330,7 @@ public class BotListener extends ListenerAdapter {
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
-                    ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+                ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
             TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
@@ -350,25 +350,25 @@ public class BotListener extends ListenerAdapter {
         long members = guild.getMemberCache().size();
         if (botToUserRatio[1] >= 70 && !botLists.contains(guild.getIdLong()) && members > 30) {
             sendMsg(GuildUtils.getPublicChannel(guild),
-                    String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
-                            guild.getOwner().getAsMention(),
-                            botToUserRatio[1],
-                            "%",
-                            guild.getMemberCache().size()
-                    ),
-                    message -> message.getGuild().leave().queue(),
-                    er -> guild.leave().queue()
+                String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
+                    guild.getOwner().getAsMention(),
+                    botToUserRatio[1],
+                    "%",
+                    guild.getMemberCache().size()
+                ),
+                message -> message.getGuild().leave().queue(),
+                er -> guild.leave().queue()
             );
             /*logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
                     guild.getName(),
                     counts[0],
                     counts[1]) + TextColor.RESET);*/
             logger.info("{}Joining guild: {}, and leaving it after. BOT ALTER ({}/{}){}",
-                    TextColor.RED,
-                    guild.getName(),
-                    counts[0],
-                    counts[1],
-                    TextColor.RESET
+                TextColor.RED,
+                guild.getName(),
+                counts[0],
+                counts[1],
+                TextColor.RESET
             );
             botFamrs.add(guild.getIdLong());
             return;
@@ -378,11 +378,11 @@ public class BotListener extends ListenerAdapter {
         logger.info(TextColor.GREEN + message + TextColor.RESET);*/
 
         logger.info("{}Joining guild {}, ID: {} on shard {}{}",
-                TextColor.GREEN,
-                guild.getName(),
-                guild.getId(),
-                guild.getJDA().getShardInfo().getShardId(),
-                TextColor.RESET
+            TextColor.GREEN,
+            guild.getName(),
+            guild.getId(),
+            guild.getJDA().getShardInfo().getShardId(),
+            TextColor.RESET
         );
         GuildSettingsUtils.registerNewGuild(guild, variables);
     }
@@ -402,7 +402,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         Guild guild = event.getGuild();
         if (LavalinkManager.ins.isConnected(guild)
-                && !event.getVoiceState().getMember().equals(guild.getSelfMember())) {
+            && !event.getVoiceState().getMember().equals(guild.getSelfMember())) {
             VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(guild);
             if (vc != null) {
                 if (!event.getChannelLeft().equals(vc)) {
@@ -469,9 +469,9 @@ public class BotListener extends ListenerAdapter {
 
     private boolean shouldBlockCommand(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
         return s.equalsIgnoreCase(
-                rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
-                        .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
-                        .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
+            rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase()
         );
     }
 
@@ -479,7 +479,7 @@ public class BotListener extends ListenerAdapter {
     private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName) {
 
         ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
-                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+            .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
         if (command == null)
             return false;
@@ -525,23 +525,23 @@ public class BotListener extends ListenerAdapter {
         long autoRoleId = s.getAutoroleRole();
 
         String message = CustomCommandUtils.PARSER.clear()
-                .put("user", event.getUser())
-                .put("guild", event.getGuild())
-                .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
-                .put("args", "")
-                .parse(rawMessage);
+            .put("user", event.getUser())
+            .put("guild", event.getGuild())
+            .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
+            .put("args", "")
+            .parse(rawMessage);
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
-                .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-                .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
-                .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
-                .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
-                .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
+            .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
+            .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
+            .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
+            .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
+            .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
 
-                //This one can be kept a secret :P
-                .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId <= 0 ?
-                        "Not set" : guild.getRoleById(autoRoleId).getName())
-                .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
+            //This one can be kept a secret :P
+            .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId <= 0 ?
+                "Not set" : guild.getRoleById(autoRoleId).getName())
+            .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -604,7 +604,7 @@ public class BotListener extends ListenerAdapter {
     private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
-                && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
+            && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
             if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
@@ -617,8 +617,8 @@ public class BotListener extends ListenerAdapter {
                         //Check if the invite is for this guild, if it is not delete the message
                         if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                             event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
-                                    sendMsg(event, event.getAuthor().getAsMention() +
-                                            ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                                sendMsg(event, event.getAuthor().getAsMention() +
+                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
                             );
                         }
                     });
@@ -629,13 +629,13 @@ public class BotListener extends ListenerAdapter {
                 Message messageToCheck = event.getMessage();
                 if (wordFilter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
-                            .queue(null, CUSTOM_QUEUE_ERROR);
+                        .queue(null, CUSTOM_QUEUE_ERROR);
 
                     sendMsg(event,
-                            String.format("Hello there, %s please do not use cursive language within this Discord.",
-                                    event.getAuthor().getAsMention()
-                            ),
-                            m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
+                        String.format("Hello there, %s please do not use cursive language within this Discord.",
+                            event.getAuthor().getAsMention()
+                        ),
+                        m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return true;
                 }
             }
@@ -647,7 +647,7 @@ public class BotListener extends ListenerAdapter {
                 DunctebotGuild g = new DunctebotGuild(guild, variables);
                 if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                            settings.getKickState() ? "kicked" : "muted", "spam", g);
+                        settings.getKickState() ? "kicked" : "muted", "spam", g);
                 }
             }
         }

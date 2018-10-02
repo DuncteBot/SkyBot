@@ -27,6 +27,6 @@ import ml.duncte123.skybot.objects.jagtag.DiscordMethods;
 public class CustomCommandUtils {
 
     public static final Parser PARSER = JagTag.newDefaultBuilder()
-            .addMethods(DiscordMethods.getMethods())
-            .build();
+        .addMethods(DiscordMethods.getMethods())
+        .build();
 }

@@ -169,7 +169,7 @@ public class AudioUtils {
                 String title = track.getInfo().title;
                 if (track.getInfo().isStream) {
                     Optional<RadioStream> stream = ((RadioCommand) ctx.getCommandManager().getCommand("radio"))
-                            .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+                        .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
                     if (stream.isPresent())
                         title = stream.get().getName();
                 }
@@ -222,7 +222,7 @@ public class AudioUtils {
                     } else {
                         String prefix = GuildSettingsUtils.getGuild(channel.getGuild(), ctx.getVariables()).getCustomPrefix();
                         msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
-                                "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
+                            "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
                         if (mng.player.getPlayingTrack() == null) {
                             msg += "\nand the Player has started playing;";
                         }
@@ -242,7 +242,7 @@ public class AudioUtils {
             public void loadFailed(FriendlyException exception) {
                 if (announce)
                     sendEmbed(channel, embedField(embedTitle, "Could not play: " + exception.getMessage()
-                            + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
             }
         });
     }

@@ -55,19 +55,19 @@ public class TestTagCommand extends Command {
         }
 
         String output = CustomCommandUtils.PARSER.clear()
-                .put("user", event.getAuthor())
-                .put("channel", event.getChannel())
-                .put("guild", event.getGuild())
-                .put("args", ctx.getArgsJoined())
-                .parse(input);
+            .put("user", event.getAuthor())
+            .put("channel", event.getChannel())
+            .put("guild", event.getGuild())
+            .put("args", ctx.getArgsJoined())
+            .parse(input);
 
         String message = new MessageBuilder()
-                .append("**Input:**")
-                .appendCodeBlock(input, "perl")
-                .append('\n')
-                .append("**Output:**\n")
-                .append(output)
-                .getStringBuilder().toString();
+            .append("**Input:**")
+            .appendCodeBlock(input, "perl")
+            .append('\n')
+            .append("**Output:**\n")
+            .append(output)
+            .getStringBuilder().toString();
 
         sendEmbed(event, EmbedUtils.embedMessage(message));
 
@@ -81,6 +81,6 @@ public class TestTagCommand extends Command {
     @Override
     public String help() {
         return "Test your jagtag format before you save it as custom command etc.\n" +
-                "Usage: `" + PREFIX + getName() + " <JagTag syntax>`";
+            "Usage: `" + PREFIX + getName() + " <JagTag syntax>`";
     }
 }

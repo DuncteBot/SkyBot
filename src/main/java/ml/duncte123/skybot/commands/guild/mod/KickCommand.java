@@ -60,17 +60,17 @@ public class KickCommand extends Command {
 
             User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) ||
-                    !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
+                !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             //Arrays.copyOfRange(Array, From, to)
             String reason = StringUtils.join(args.subList(1, args.size()), " ");
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
-                    (noting) -> {
-                        ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());
-                        MessageUtils.sendSuccess(event.getMessage());
-                    }
+                (noting) -> {
+                    ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());
+                    MessageUtils.sendSuccess(event.getMessage());
+                }
             );
         } catch (HierarchyException ignored) { // if we don't do anything with it and just catch it we should name it "ignored"
             //e.printStackTrace();

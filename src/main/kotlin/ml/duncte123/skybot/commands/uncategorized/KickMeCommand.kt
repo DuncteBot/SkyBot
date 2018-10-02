@@ -47,11 +47,11 @@ class KickMeCommand : Command() {
                 //Kick the user
                 MessageUtils.sendMsg(event, "Your kick will commerce in 20 seconds") {
                     it.guild.controller.kick(event.member)
-                            .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
-                            .queueAfter(20L, TimeUnit.SECONDS) {_ ->
-                                ModerationUtils.modLog(event.jda.selfUser,
-                                        event.author, "kicked", "Used the kickme command", ctx.guild)
-                            }
+                        .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
+                        .queueAfter(20L, TimeUnit.SECONDS) { _ ->
+                            ModerationUtils.modLog(event.jda.selfUser,
+                                event.author, "kicked", "Used the kickme command", ctx.guild)
+                        }
                 }
             } else {
                 MessageUtils.sendMsg(event, """I'm missing the permission to kick you.

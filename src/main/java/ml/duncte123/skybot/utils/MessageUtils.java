@@ -38,8 +38,8 @@ import static ml.duncte123.skybot.utils.EmbedUtils.embedToMessage;
 
 @SuppressWarnings({"unused", "WeakerAccess"})
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class MessageUtils {
 
@@ -60,7 +60,7 @@ public class MessageUtils {
         if (message.getChannelType() == ChannelType.TEXT) {
             TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_READ,
-                    Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
+                Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
                 return;
             }
         }
@@ -68,8 +68,8 @@ public class MessageUtils {
         message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
 
         message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
-                new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
-                        error.getClass().getSimpleName())).build()).build()
+            new MessageBuilder().setEmbed(EmbedUtils.defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
+                error.getClass().getSimpleName())).build()).build()
         ).queue();
     }
 
@@ -101,8 +101,8 @@ public class MessageUtils {
         if (channel != null) {
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_EMBED_LINKS)) {
                 (new MessageBuilder()).append(embedToMessage(embed))
-                        .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
-                        .forEach(it -> me.duncte123.botCommons.messaging.MessageUtils.sendMsg(channel, it, success));
+                    .buildAll(MessageBuilder.SplitPolicy.NEWLINE)
+                    .forEach(it -> me.duncte123.botCommons.messaging.MessageUtils.sendMsg(channel, it, success));
 //                sendMsg(channel, EmbedUtils.embedToMessage(embed));
                 return;
             }
@@ -115,12 +115,12 @@ public class MessageUtils {
         if (message == null || newContent == null) return;
         if (newContent.getEmbeds().size() > 0) {
             if (!message.getGuild().getSelfMember().hasPermission(message.getTextChannel(),
-                    Permission.MESSAGE_EMBED_LINKS)) {
+                Permission.MESSAGE_EMBED_LINKS)) {
                 MessageBuilder mb = new MessageBuilder()
-                        .append(newContent.getContentRaw())
-                        .append('\n');
+                    .append(newContent.getContentRaw())
+                    .append('\n');
                 newContent.getEmbeds().forEach(
-                        messageEmbed -> mb.append(embedToMessage(messageEmbed))
+                    messageEmbed -> mb.append(embedToMessage(messageEmbed))
                 );
                 message.editMessage(mb.build()).queue();
                 return;
@@ -141,7 +141,7 @@ public class MessageUtils {
     public static void sendMsg(TextChannel channel, MessageEmbed msg, Consumer<Message> success) {
         //Check if the channel exists
         if ((channel != null && channel.getGuild().getTextChannelById(channel.getId()) != null) &&
-                channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+            channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
             Message m = new MessageBuilder().setEmbed(msg).build();
             //Only send a message if we can talk
             channel.sendMessage(m).queue(success, CUSTOM_QUEUE_ERROR);

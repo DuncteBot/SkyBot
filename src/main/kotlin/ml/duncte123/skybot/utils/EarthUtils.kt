@@ -54,11 +54,11 @@ class EarthUtils {
         @JvmStatic
         fun throwableToJSONObject(throwable: Throwable): JSONObject {
             return JSONObject().put("className", throwable::class.java.name)
-                    .put("message", throwable.message)
-                    .put("localiziedMessage", throwable.localizedMessage)
-                    .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
-                    .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
-                    .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
+                .put("message", throwable.message)
+                .put("localiziedMessage", throwable.localizedMessage)
+                .put("cause", throwable.cause?.let { throwableToJSONObject(it) })
+                .put("supressed", throwableArrayToJSONArray(throwable.suppressed))
+                .put("stacktraces", stacktraceArrayToJSONArray(throwable.stackTrace))
         }
 
         /**
@@ -71,7 +71,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun throwableArrayToJSONArray(throwables: Array<Throwable>) =
-                JSONArray(throwables.map { throwableToJSONObject(it) })
+            JSONArray(throwables.map { throwableToJSONObject(it) })
 
         /**
          * This tiny function wraps [List]<[JSONObject]> into an [JSONArray]
@@ -82,7 +82,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun stacktraceArrayToJSONArray(stackTraces: Array<StackTraceElement>): JSONArray =
-                JSONArray(stackTraces.map { stackTraceToJSONObject(it) })
+            JSONArray(stackTraces.map { stackTraceToJSONObject(it) })
 
         /**
          * This is just a smaller function that converts [StackTraceElement]s into [JSONObject] that we use in the see tag
@@ -93,10 +93,10 @@ class EarthUtils {
          */
         @JvmStatic
         private fun stackTraceToJSONObject(stackTraceElement: StackTraceElement) =
-                JSONObject().put("className", stackTraceElement.className)
-                        .put("methodName", stackTraceElement.methodName)
-                        .put("lineNumber", stackTraceElement.lineNumber)
-                        .put("isNative", stackTraceElement.isNativeMethod)
+            JSONObject().put("className", stackTraceElement.className)
+                .put("methodName", stackTraceElement.methodName)
+                .put("lineNumber", stackTraceElement.lineNumber)
+                .put("isNative", stackTraceElement.isNativeMethod)
 
         @JvmStatic
         @Deprecated(message = "The following code may be removed!", level = DeprecationLevel.WARNING)
@@ -144,7 +144,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun gMMtoJSON(manager: GuildMusicManager): JSONObject =
-                JSONObject().put("fredboat/audio/player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
+            JSONObject().put("fredboat/audio/player", playerToJSON(manager.player)).put("scheduler", schedulerToJSON(manager.scheduler))
 
         /**
          * This is a little function that converts a [AudioPlayer] into a [JSONObject]
@@ -160,8 +160,8 @@ class EarthUtils {
          */
         @JvmStatic
         private fun playerToJSON(player: IPlayer): JSONObject =
-                JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused", player.isPaused)
-                        .put("volume", player.volume)
+            JSONObject().put("currentTrack", player.playingTrack?.let { trackToJSON(it) }).put("paused", player.isPaused)
+                .put("volume", player.volume)
 
         /**
          * This smaller function converts a [TrackScheduler] into a [JSONObject]
@@ -177,7 +177,7 @@ class EarthUtils {
          */
         @JvmStatic
         private fun schedulerToJSON(scheduler: TrackScheduler): JSONObject =
-                JSONObject().put("repeating", scheduler.isRepeating).put("queue_size", scheduler.queue.size)
+            JSONObject().put("repeating", scheduler.isRepeating).put("queue_size", scheduler.queue.size)
 
         /**
          * This small function that converts a [AudioTrack] into a [JSONObject]
@@ -193,9 +193,9 @@ class EarthUtils {
          */
         @JvmStatic
         private fun trackToJSON(track: AudioTrack): JSONObject =
-                JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
-                        .put("stream", track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
-                        .put("title", track.info.title)
+            JSONObject().put("source", track.sourceManager.sourceName).put("position", track.position)
+                .put("stream", track.info.isStream).put("uri", track.info.uri).put("length", track.info.length)
+                .put("title", track.info.title)
 
         @JvmStatic
         fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
@@ -206,8 +206,8 @@ class EarthUtils {
                     filter as JSONObject
 
                     (if (event.channel.isNSFW) true else !filter.getJSONObject("data").getBoolean("over_18") &&
-                            filter.getJSONObject("data").getString("selftext").length <= 550
-                            && filter.getJSONObject("data").getString("title").length <= 256)
+                        filter.getJSONObject("data").getString("selftext").length <= 550
+                        && filter.getJSONObject("data").getString("title").length <= 256)
                 }
 
                 if (posts.isEmpty()) {

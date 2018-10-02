@@ -56,7 +56,7 @@ public class ShitCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "`" + PREFIX + "shit <message>` => Exclaim that something is shit." +
-                "`" + PREFIX + "pluralshit <message>` => Exclaim that things are shit.";
+            "`" + PREFIX + "pluralshit <message>` => Exclaim that things are shit.";
     }
 
     @Override
@@ -65,11 +65,11 @@ public class ShitCommand extends ImageCommandBase {
         switch (invoke) {
             case "shit": {
                 return "Exclaim that something is shit.\n" +
-                        "Usage: `" + PREFIX + "shit <message>`";
+                    "Usage: `" + PREFIX + "shit <message>`";
             }
             case "pluralshit": {
                 return "Exclaim that things are shit.\n" +
-                        "Usage: `" + PREFIX + "pluralshit <message>`";
+                    "Usage: `" + PREFIX + "pluralshit <message>`";
             }
         }
 

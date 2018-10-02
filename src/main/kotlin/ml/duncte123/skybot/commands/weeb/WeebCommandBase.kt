@@ -38,8 +38,8 @@ abstract class WeebCommandBase : Command() {
 
     private fun getDefaultWeebEmbed(): EmbedBuilder {
         return EmbedUtils.defaultEmbed()
-                .setFooter("Powered by weeb.sh", null)
-                .setTimestamp(null)
+            .setFooter("Powered by weeb.sh", null)
+            .setTimestamp(null)
     }
 
     protected fun getWeebEmbedImageAndDesc(description: String, imageUrl: String): MessageEmbed {
@@ -55,17 +55,17 @@ abstract class WeebCommandBase : Command() {
             val imageUrl = it.url
             if (args.isEmpty()) {
                 sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "<@210363111729790977> $thing ${event.member.asMention}", imageUrl))
+                    "<@210363111729790977> $thing ${event.member.asMention}", imageUrl))
                 return@async
             }
             if (!event.message.mentionedMembers.isEmpty()) {
                 sendEmbed(event, getWeebEmbedImageAndDesc(
-                        "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
-                        , imageUrl))
+                    "${event.member.asMention} $thing ${event.message.mentionedMembers[0].asMention}"
+                    , imageUrl))
                 return@async
             }
             sendEmbed(event, getWeebEmbedImageAndDesc(
-                    "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
+                "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
         }
 
     }

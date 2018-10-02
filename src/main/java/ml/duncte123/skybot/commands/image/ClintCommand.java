@@ -43,7 +43,7 @@ public class ClintCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Shows a picture of Clint staring at something on a monitor.\n" +
-                "Usage: `db!clint [image url]`";
+            "Usage: `db!clint [image url]`";
     }
 
     @Override

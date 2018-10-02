@@ -44,8 +44,8 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class SettingsCommand extends Command {
 
@@ -76,22 +76,22 @@ public class SettingsCommand extends Command {
                 TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
                 TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
                 MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                        "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
-                        "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
-                        "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
-                        "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
-                        "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
-                        "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
-                        "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
-                        "**MuteRole:** " + (settings.getMuteRoleId() <= 0
-                        ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +
-                        "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-                        "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
-                        "**AutoRole:** " + (settings.getAutoroleRole() <= 0
-                        ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
-                        "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
-                        "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
-                        "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
+                    "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
+                    "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
+                    "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
+                    "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
+                    "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
+                    "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
+                    "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
+                    "**MuteRole:** " + (settings.getMuteRoleId() <= 0
+                    ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +
+                    "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
+                    "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
+                    "**AutoRole:** " + (settings.getAutoroleRole() <= 0
+                    ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
+                    "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
+                    "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
+                    "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
                 );
                 sendEmbed(event, message);
                 break;
@@ -232,7 +232,7 @@ public class SettingsCommand extends Command {
                 if (args.size() < 1) {
                     sendError(event.getMessage());
                     sendMsg(event, "Incorrect usage\n" +
-                            "Correct usage : `" + PREFIX + ctx.getInvoke() + " <description>`");
+                        "Correct usage : `" + PREFIX + ctx.getInvoke() + " <description>`");
                     return;
                 } else if ("null".equals(args.get(0))) {
                     guild.setSettings(settings.setServerDesc(null));
@@ -248,21 +248,21 @@ public class SettingsCommand extends Command {
                 boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
                 guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
                 sendMsg(event, "Announcing the next track has been **"
-                        + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
+                    + (shouldAnnounceTracks ? "enabled" : "disabled") + "**");
                 break;
 
             case "togglefilterinvites":
                 boolean shouldFilterInvites = !settings.isFilterInvites();
                 guild.setSettings(settings.setFilterInvites(shouldFilterInvites));
                 sendMsg(event, "Filtering discord invites has been **"
-                        + (shouldFilterInvites ? "enabled" : "disabled") + "**");
+                    + (shouldFilterInvites ? "enabled" : "disabled") + "**");
                 break;
 
             case "toggleautodehoist":
                 boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
                 guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
                 sendMsg(event, "Auto de-hoisting has been **"
-                        + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
+                    + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
                 break;
 
             case "togglespamfilter":
@@ -361,63 +361,63 @@ public class SettingsCommand extends Command {
             case "settings":
             case "options":
                 return "Shows the current settings\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "setprefix":
                 return "Sets the new prefix\n" +
-                        "Usage: `" + PREFIX + invoke + " <prefix>`";
+                    "Usage: `" + PREFIX + invoke + " <prefix>`";
             case "setjoinmessage":
             case "setwelcomenmessage":
                 return "Sets the message that the bot shows when a new member joins\n" +
-                        "Usage: `" + PREFIX + invoke + " <join message>`";
+                    "Usage: `" + PREFIX + invoke + " <join message>`";
             case "setleavemessage":
                 return "Sets the message that the bot shows when a member leaves\n" +
-                        "Usage: `" + PREFIX + invoke + " <leave message>`";
+                    "Usage: `" + PREFIX + invoke + " <leave message>`";
             case "enablejoinmessage":
             case "disablejoinmessage":
             case "togglejoinmessage":
                 return "Turns the join message on or off\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "enableswearfilter":
             case "disableswearfilter":
             case "toggleswearfilter":
                 return "Turns the swearword filter on or off\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "setlogchannel":
                 return "Sets the channel to log messages in\n" +
-                        "Usage: `" + PREFIX + invoke + " <text channel>`";
+                    "Usage: `" + PREFIX + invoke + " <text channel>`";
             case "setwelcomechannel":
             case "setleavechannel":
                 return "Sets the channel that displays the welcome and leave messages\n" +
-                        "Usage: `" + PREFIX + invoke + " <channel>`";
+                    "Usage: `" + PREFIX + invoke + " <channel>`";
             case "autorole":
                 return "Gives members a role when they join\n" +
-                        "Usage: `" + PREFIX + invoke + " <role>`";
+                    "Usage: `" + PREFIX + invoke + " <role>`";
             case "setdescription":
                 return "Set a custom description in " + PREFIX + "guildinfo\n" +
-                        "Usage: `" + PREFIX + invoke + " <desc>`";
+                    "Usage: `" + PREFIX + invoke + " <desc>`";
             case "toggleannouncetracks":
                 return "Toggles if the player should announce the next playing track\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "togglefilterinvites":
                 return "Toggles if the bot should delete messages that contain invites\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "toggleautodehoist":
                 return "Toggles if if the bot should auto de-hoist users\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "togglespamfilter":
                 return "Toggles whether we should handle your incoming spam.\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
             case "spamrole":
             case "muterole":
                 return "Gives members a role when they spam.\n" +
-                        "Usage: `" + PREFIX + invoke + " <role>`";
+                    "Usage: `" + PREFIX + invoke + " <role>`";
             case "setratelimits":
                 return "Sets our cooldown for un-muting your spammer of choice.\n" +
-                        "Usage: `" + PREFIX + invoke + " <1|2|3|4|5|6>`\n" +
-                        "Example: " + PREFIX + invoke + "20|45|60|120|240|2400";
+                    "Usage: `" + PREFIX + invoke + " <1|2|3|4|5|6>`\n" +
+                    "Example: " + PREFIX + invoke + "20|45|60|120|240|2400";
             case "togglekickmode":
                 return "Toggles whether we should kick or assign a role for spammers.\n" +
-                        "Usage: `" + PREFIX + invoke + "`";
+                    "Usage: `" + PREFIX + invoke + "`";
 
             default:
                 return "invalid invoke";
@@ -427,24 +427,24 @@ public class SettingsCommand extends Command {
     @Override
     public String help() {
         return "Modify the settings on the bot.\n" +
-                "`" + PREFIX + "settings` => Shows the current settings.\n" +
-                "`" + PREFIX + "setPrefix <prefix>` => Sets the new prefix.\n" +
-                "`" + PREFIX + "setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins.\n" +
-                "`" + PREFIX + "setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves.\n" +
-                "`" + PREFIX + "toggleJoinMessage` => Turns the join message on or off.\n" +
-                "`" + PREFIX + "toggleSwearFilter` => Turns the swearword filter on or off.\n" +
-                "`" + PREFIX + "setLogChannel <text channel>` => Sets the channel to log messages in.\n" +
-                "`" + PREFIX + "setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages.\n" +
-                "`" + PREFIX + "autorole <role>` => Gives members a role when they join.\n" +
-                "`" + PREFIX + "setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo.\n" +
-                "`" + PREFIX + "toggleannouncetracks` => Toggles if the player should announce the next playing track.\n" +
-                "`" + PREFIX + "togglefilterinvites` => Toggles if the bot should delete messages that contain invites.\n" +
-                "`" + PREFIX + "toggleautodehoist` => Toggles if if the bot should auto de-hoist users.\n" +
-                "`" + PREFIX + "togglespamfilter` => Toggles whether we should handle your incoming spam.\n" +
-                "`" + PREFIX + "spamrole <role>` => Gives members a role when they spam.\n" +
-                "`" + PREFIX + "setratelimits <1|2|3|4|5|6>` => Sets our cooldown for un-muting your spammer of choice.\n" +
-                "`" + PREFIX + "togglekickmode` => Toggles whether we should kick or assign a role for spammers.\n"
-                ;
+            "`" + PREFIX + "settings` => Shows the current settings.\n" +
+            "`" + PREFIX + "setPrefix <prefix>` => Sets the new prefix.\n" +
+            "`" + PREFIX + "setJoinMessage <join message>` => Sets the message that the bot shows when a new member joins.\n" +
+            "`" + PREFIX + "setLeaveMessage <leave message>` => Sets the message that the bot shows when a member leaves.\n" +
+            "`" + PREFIX + "toggleJoinMessage` => Turns the join message on or off.\n" +
+            "`" + PREFIX + "toggleSwearFilter` => Turns the swearword filter on or off.\n" +
+            "`" + PREFIX + "setLogChannel <text channel>` => Sets the channel to log messages in.\n" +
+            "`" + PREFIX + "setWelcomeChannel <channel>` => Sets the channel that displays the welcome and leave messages.\n" +
+            "`" + PREFIX + "autorole <role>` => Gives members a role when they join.\n" +
+            "`" + PREFIX + "setdescription <desc>` => Set a custom description in " + PREFIX + "guildinfo.\n" +
+            "`" + PREFIX + "toggleannouncetracks` => Toggles if the player should announce the next playing track.\n" +
+            "`" + PREFIX + "togglefilterinvites` => Toggles if the bot should delete messages that contain invites.\n" +
+            "`" + PREFIX + "toggleautodehoist` => Toggles if if the bot should auto de-hoist users.\n" +
+            "`" + PREFIX + "togglespamfilter` => Toggles whether we should handle your incoming spam.\n" +
+            "`" + PREFIX + "spamrole <role>` => Gives members a role when they spam.\n" +
+            "`" + PREFIX + "setratelimits <1|2|3|4|5|6>` => Sets our cooldown for un-muting your spammer of choice.\n" +
+            "`" + PREFIX + "togglekickmode` => Toggles whether we should kick or assign a role for spammers.\n"
+            ;
     }
 
     @Override
@@ -455,29 +455,29 @@ public class SettingsCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"options",
-                "enablejoinmessage",
-                "togglejoinmessage",
-                "disablejoinmessage",
-                "setjoinmessage",
-                "setwelcomenmessage",
-                "enableswearfilter",
-                "disableswearfilter",
-                "toggleswearfilter",
-                "setprefix",
-                "setlogchannel",
-                "setwelcomechannel",
-                "setleavechannel",
-                "setleavemessage",
-                "autorole",
-                "setdescription",
-                "toggleannouncetracks",
-                "togglefilterinvites",
-                "toggleautodehoist",
-                "togglespamfilter",
-                "spamrole",
-                "muterole",
-                "setratelimits",
-                "togglekickmode"
+            "enablejoinmessage",
+            "togglejoinmessage",
+            "disablejoinmessage",
+            "setjoinmessage",
+            "setwelcomenmessage",
+            "enableswearfilter",
+            "disableswearfilter",
+            "toggleswearfilter",
+            "setprefix",
+            "setlogchannel",
+            "setwelcomechannel",
+            "setleavechannel",
+            "setleavemessage",
+            "autorole",
+            "setdescription",
+            "toggleannouncetracks",
+            "togglefilterinvites",
+            "toggleautodehoist",
+            "togglespamfilter",
+            "spamrole",
+            "muterole",
+            "setratelimits",
+            "togglekickmode"
         };
     }
 

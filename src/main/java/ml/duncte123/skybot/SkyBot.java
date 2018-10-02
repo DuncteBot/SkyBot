@@ -50,9 +50,9 @@ import java.util.EnumSet;
 //Skybot version 1.0 and 2.0 where written in php
 @SinceSkybot(version = "3.0.0")
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class SkyBot {
 
@@ -129,15 +129,15 @@ public class SkyBot {
         //Set up sharding for the bot
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
-                .setEventManagerProvider((id) -> eventManager)
-                .setBulkDeleteSplittingEnabled(false)
-                .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
-                .setShardsTotal(TOTAL_SHARDS)
-                .setGameProvider(shardId -> Game.of(type,
-                        name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
-                )
-                .setToken(token)
-                .build();
+            .setEventManagerProvider((id) -> eventManager)
+            .setBulkDeleteSplittingEnabled(false)
+            .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
+            .setShardsTotal(TOTAL_SHARDS)
+            .setGameProvider(shardId -> Game.of(type,
+                name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
+            )
+            .setToken(token)
+            .build();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
@@ -181,7 +181,7 @@ public class SkyBot {
         discord.game = game;
         discord.botOwnerId = "191231307290771456";
         discord.constantSuperUserIds = new long[]{
-                191231307290771456L
+            191231307290771456L
         };
         DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
         oauth.clientId = 215011992275124225L;

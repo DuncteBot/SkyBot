@@ -31,10 +31,10 @@ class SpamCache : HashMap<Long, List<Long>>() {
             }
             longs.size == 2 -> {
                 val msgIds: List<Long> =
-                        if (!this.containsKey(longs[0]))
-                            ArrayList()
-                        else
-                            this[longs[0]] as ArrayList
+                    if (!this.containsKey(longs[0]))
+                        ArrayList()
+                    else
+                        this[longs[0]] as ArrayList
 
                 if (updateMode == 0) {
                     this[longs[0]] = msgIds.plus(longs[1])

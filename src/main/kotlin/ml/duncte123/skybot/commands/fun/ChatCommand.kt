@@ -45,11 +45,11 @@ class ChatCommand : Command() {
     private val sessions = TreeMap<Long, ChatSession>()
     private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
-            "My prefix in this guild is *`{PREFIX}`*",
-            "Thanks for asking, my prefix here is *`{PREFIX}`*",
-            "That should be *`{PREFIX}`*",
-            "It was *`{PREFIX}`* if I'm not mistaken",
-            "In this server my prefix is *`{PREFIX}`*"
+        "My prefix in this guild is *`{PREFIX}`*",
+        "Thanks for asking, my prefix here is *`{PREFIX}`*",
+        "That should be *`{PREFIX}`*",
+        "It was *`{PREFIX}`* if I'm not mistaken",
+        "In this server my prefix is *`{PREFIX}`*"
     )
 
     init {
@@ -77,7 +77,7 @@ class ChatCommand : Command() {
 
         if (event.message.contentRaw.contains("prefix")) {
             MessageUtils.sendMsg(event, "${event.author.asMention}, " + responses[ctx.random.nextInt(responses.size)]
-                    .replace("{PREFIX}", ctx.guildSettings.customPrefix))
+                .replace("{PREFIX}", ctx.guildSettings.customPrefix))
             return
         }
 
@@ -133,9 +133,9 @@ class ChatCommand : Command() {
         var response1 = response
         for (element in Jsoup.parse(response1).getElementsByTag("a")) {
             response1 = response1.replace(oldValue = element.toString(),
-                    newValue = if (withAds) "[${element.text()}](${element.attr("href")})" else
-                    //It's usefull to show the text
-                        "${element.text()}(<${element.attr("href")}>)")
+                newValue = if (withAds) "[${element.text()}](${element.attr("href")})" else
+                //It's usefull to show the text
+                    "${element.text()}(<${element.attr("href")}>)")
         }
         return response1
     }
@@ -159,7 +159,7 @@ class ChatCommand : Command() {
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
-            "Usage: `$PREFIX$name <message>`"
+        "Usage: `$PREFIX$name <message>`"
 
     override fun getName() = "chat"
 }

@@ -48,7 +48,7 @@ class UpdateCommand : Command() {
         val event = ctx.event
 
         if (!isDev(event.author)
-                && Settings.OWNER_ID != event.author.idLong) {
+            && Settings.OWNER_ID != event.author.idLong) {
             sendMsg(event, ":x: ***YOU ARE DEFINITELY THE OWNER OF THIS BOT***")
             MessageUtils.sendError(event.message)
             return
@@ -56,7 +56,7 @@ class UpdateCommand : Command() {
 
         if (!Settings.enableUpdaterCommand) {
             val message = "The updater is not enabled. " +
-                    "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
+                "If you wish to use the updater you need to download it from [this page](https://github.com/ramidzkh/SkyBot-Updater/releases)."
             sendEmbed(event, EmbedUtils.embedMessage(message))
             return
         }

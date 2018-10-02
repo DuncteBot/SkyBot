@@ -32,8 +32,8 @@ import java.util.Comparator;
 import java.util.stream.Collectors;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildUtils {
 
@@ -90,9 +90,9 @@ public class GuildUtils {
     public static long countAnimatedAvatars(Guild g) {
 
         return g.getMemberCache().stream()
-                .map(Member::getUser)
-                .filter(it -> it.getAvatarId() != null)
-                .filter(it -> it.getAvatarId().startsWith("a_")).count();
+            .map(Member::getUser)
+            .filter(it -> it.getAvatarId() != null)
+            .filter(it -> it.getAvatarId().startsWith("a_")).count();
     }
 
     /**
@@ -134,6 +134,6 @@ public class GuildUtils {
 
     public static int getMemberJoinPosition(Member member) {
         return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
-                .collect(Collectors.toList()).indexOf(member) + 1;
+            .collect(Collectors.toList()).indexOf(member) + 1;
     }
 }

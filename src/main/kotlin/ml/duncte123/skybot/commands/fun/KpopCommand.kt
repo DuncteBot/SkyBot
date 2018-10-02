@@ -42,10 +42,10 @@ class KpopCommand : Command() {
             val queryString = if (!ctx.args.isEmpty()) ctx.argsRaw else ""
             val member = ApiUtils.getRandomKpopMember(ctx.database, queryString)
             val eb = EmbedUtils.defaultEmbed()
-                    .setDescription("Here is a kpop member from the group ${member.band}")
-                    .addField("Name of the member", member.name, false)
-                    .setImage(member.image)
-                    .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
+                .setDescription("Here is a kpop member from the group ${member.band}")
+                .addField("Name of the member", member.name, false)
+                .setImage(member.image)
+                .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
             sendEmbed(ctx.event, eb.build())
         } catch (ignored: SQLException) {
             MessageUtils.sendMsg(ctx.event, "Nothing found")
@@ -53,7 +53,7 @@ class KpopCommand : Command() {
     }
 
     override fun help() = "Gives you a random kpop member, command suggestion by Exa\n" +
-            "Usage: `$PREFIX$name [search term]`"
+        "Usage: `$PREFIX$name [search term]`"
 
     override fun getName() = "kpop"
 }

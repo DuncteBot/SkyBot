@@ -39,10 +39,10 @@ public class BadWordFilter {
     public BadWordFilter() {
         try {
             BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(
-                            new URL("https://docs.google.com/spreadsheets/d/"
-                                    + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
-                                    + "export?format=csv").openConnection().getInputStream()));
+                new InputStreamReader(
+                    new URL("https://docs.google.com/spreadsheets/d/"
+                        + "1hIEi2YG3ydav1E06Bzf2mQbGZ12kh2fe4ISgLg_UBuM/"
+                        + "export?format=csv").openConnection().getInputStream()));
             String line;
             int counter = 0;
             while ((line = reader.readLine()) != null) {
@@ -102,7 +102,7 @@ public class BadWordFilter {
         for (int start = 0; start < input.length(); start++)
             // from each letter, keep going to find bad words until either the end of the sentence is reached, or the max word length is reached.
             for (int offset = 1; offset < (input.length() + 1 - start)
-                    && offset < largestWordLength; offset++) {
+                && offset < largestWordLength; offset++) {
                 String wordToCheck = input.substring(start, start + offset);
                 if (words.containsKey(wordToCheck)) {
                     // for example, if you want to say the word bass, that should be possible.

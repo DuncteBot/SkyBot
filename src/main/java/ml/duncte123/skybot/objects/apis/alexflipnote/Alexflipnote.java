@@ -38,36 +38,36 @@ public class Alexflipnote {
 
     public PendingRequest<FlipnoteColourObj> getRandomColour() {
         return WebUtils.ins.prepareRaw(
-                makeRequest("colour/random"),
-                (r) -> {
-                    JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
-                    jsonObject.put("integer", jsonObject.getInt("int"));
-                    return gson.fromJson(jsonObject.toString(), FlipnoteColourObj.class);
-                }
+            makeRequest("colour/random"),
+            (r) -> {
+                JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
+                jsonObject.put("integer", jsonObject.getInt("int"));
+                return gson.fromJson(jsonObject.toString(), FlipnoteColourObj.class);
+            }
         );
     }
 
     public PendingRequest<byte[]> getAchievement(String text) {
         QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(
-                makeRequest("achievement" + builder.build()),
-                IOHelper::read
+            makeRequest("achievement" + builder.build()),
+            IOHelper::read
         );
     }
 
     public PendingRequest<byte[]> getDidYouMean(String input, String correction) {
         QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
         return WebUtils.ins.prepareRaw(
-                makeRequest("didyoumean" + builder.build()),
-                IOHelper::read
+            makeRequest("didyoumean" + builder.build()),
+            IOHelper::read
         );
     }
 
 
     private Request makeRequest(String path) {
         return defaultRequest()
-                .url("https://api.alexflipnote.xyz/" + path)
-                .get()
-                .build();
+            .url("https://api.alexflipnote.xyz/" + path)
+            .get()
+            .build();
     }
 }

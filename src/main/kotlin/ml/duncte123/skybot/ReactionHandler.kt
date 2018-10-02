@@ -74,7 +74,7 @@ class ReactionHandler : ListenerAdapter() {
             }
 
             ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild), ctx.channel, ctx.author,
-                    "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
+                "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
             requirementsCache -= cacheElement
             ctx.channel.deleteMessageById(msgId).queue()
         }
@@ -95,7 +95,7 @@ class ReactionHandler : ListenerAdapter() {
 
         executor.schedule({
 
-            if(requirementsCache.contains(cacheElement)) {
+            if (requirementsCache.contains(cacheElement)) {
                 requirementsCache -= cacheElement
                 consumerCache -= checkId
                 context.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue()

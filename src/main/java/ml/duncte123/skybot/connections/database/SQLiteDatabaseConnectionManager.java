@@ -129,71 +129,71 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
         //Not to self: SQLite doesn't have multi line queries
         try {
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS guildSettings " +
-                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "guildId TEXT NOT NULL," +
-                            "logChannelId TEXT NULL," +
-                            "welcomeLeaveChannel TEXT NULL," +
-                            "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
-                            "autoRole VARCHAR(255) NULL," +
-                            "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                            "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                            "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
-                            "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
-                            "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
-                            "customWelcomeMessage TEXT NOT NULL," +
-                            "serverDesc TEXT NULL," +
-                            "customLeaveMessage TEXT NOT NULL," +
-                            "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
-                            "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
-                            "muteRoleId varchar(255) DEFAULT NULL," +
-                            "ratelimits TEXT DEFAULT NULL);"
+                "CREATE TABLE IF NOT EXISTS guildSettings " +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guildId TEXT NOT NULL," +
+                    "logChannelId TEXT NULL," +
+                    "welcomeLeaveChannel TEXT NULL," +
+                    "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
+                    "autoRole VARCHAR(255) NULL," +
+                    "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                    "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                    "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
+                    "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
+                    "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
+                    "customWelcomeMessage TEXT NOT NULL," +
+                    "serverDesc TEXT NULL," +
+                    "customLeaveMessage TEXT NOT NULL," +
+                    "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
+                    "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
+                    "muteRoleId varchar(255) DEFAULT NULL," +
+                    "ratelimits TEXT DEFAULT NULL);"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS `tags`" +
-                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "author VARCHAR(255) NOT NULL," +
-                            "authorId VARCHAR(255) NOT NULL," +
-                            "tagName VARCHAR(10) NOT NULL," +
-                            "tagText TEXT NOT NULL);"
+                "CREATE TABLE IF NOT EXISTS `tags`" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "author VARCHAR(255) NOT NULL," +
+                    "authorId VARCHAR(255) NOT NULL," +
+                    "tagName VARCHAR(10) NOT NULL," +
+                    "tagText TEXT NOT NULL);"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS bans" +
-                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "modUserId VARCHAR(255) NOT NULL," +
-                            "userId VARCHAR(255) NOT NULL," +
-                            "Username VARCHAR(255) NOT NULL," +
-                            "discriminator VARCHAR(4) NOT NULL," +
-                            "ban_date DATETIME NOT NULL," +
-                            "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                            "guildId VARCHAR(255) NOT NULL);"
+                "CREATE TABLE IF NOT EXISTS bans" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "modUserId VARCHAR(255) NOT NULL," +
+                    "userId VARCHAR(255) NOT NULL," +
+                    "Username VARCHAR(255) NOT NULL," +
+                    "discriminator VARCHAR(4) NOT NULL," +
+                    "ban_date DATETIME NOT NULL," +
+                    "unban_date DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                    "guildId VARCHAR(255) NOT NULL);"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS customCommands" +
-                            "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "guildId VARCHAR(255) NOT NULL," +
-                            "invoke VARCHAR(10) NOT NULL," +
-                            "message TEXT NOT NULL);"
+                "CREATE TABLE IF NOT EXISTS customCommands" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guildId VARCHAR(255) NOT NULL," +
+                    "invoke VARCHAR(10) NOT NULL," +
+                    "message TEXT NOT NULL);"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS warnings" +
-                            "(`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
-                            "  `mod_id` varchar(255) NOT NULL," +
-                            "  `user_id` varchar(300) NOT NULL," +
-                            "  `reason` text NOT NULL," +
-                            "  `warn_date` date NOT NULL," +
-                            "  `expire_date` date NOT NULL," +
-                            "  `guild_id` varchar(266) DEFAULT NULL);"
+                "CREATE TABLE IF NOT EXISTS warnings" +
+                    "(`id` INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "  `mod_id` varchar(255) NOT NULL," +
+                    "  `user_id` varchar(300) NOT NULL," +
+                    "  `reason` text NOT NULL," +
+                    "  `warn_date` date NOT NULL," +
+                    "  `expire_date` date NOT NULL," +
+                    "  `guild_id` varchar(266) DEFAULT NULL);"
             );
 
             connection.createStatement().execute(
-                    "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
-                            "(user_id VARCHAR(255) NOT NULL," +
-                            "guild_id VARCHAR(255) NOT NULL);"
+                "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
+                    "(user_id VARCHAR(255) NOT NULL," +
+                    "guild_id VARCHAR(255) NOT NULL);"
             );
 
             close();

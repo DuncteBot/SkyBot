@@ -43,7 +43,7 @@ public class KittyCommand extends Command {
 
         String apiKey = ctx.getConfig().apis.thecatapi;
         WebUtils.ins.getText("http://thecatapi.com/api/images/get?" +
-                (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
+            (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((xml) -> {
             Document doc = Jsoup.parse(xml, "", Parser.xmlParser());
             String fullUrl = doc.selectFirst("url").text();
             String sourceUrl = doc.selectFirst("source_url").text();

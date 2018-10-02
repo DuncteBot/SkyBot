@@ -39,8 +39,8 @@ import java.util.List;
 import static me.duncte123.botCommons.messaging.MessageUtils.*;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class CustomCommandCommand extends Command {
 
@@ -79,14 +79,14 @@ public class CustomCommandCommand extends Command {
             GuildSettings s = ctx.getGuildSettings();
             StringBuilder sb = new StringBuilder();
             manager.getCustomCommands().stream()
-                    .filter(c -> c.getGuildId() == event.getGuild().getIdLong())
-                    .forEach(cmd -> sb.append(s.getCustomPrefix())
-                            .append(cmd.getName())
-                            .append("\n")
-                    );
+                .filter(c -> c.getGuildId() == event.getGuild().getIdLong())
+                .forEach(cmd -> sb.append(s.getCustomPrefix())
+                    .append(cmd.getName())
+                    .append("\n")
+                );
 
             sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
-                    .appendCodeBlock(sb.toString(), "ldif").build());
+                .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
             CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
@@ -221,9 +221,9 @@ public class CustomCommandCommand extends Command {
     @Override
     public String help() {
         return "Create, run and delete custom commands\n" +
-                "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
-                "`" + PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
-                "`" + PREFIX + getName() + " delete <name>` => deletes a custom command";
+            "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
+            "`" + PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
+            "`" + PREFIX + getName() + " delete <name>` => deletes a custom command";
     }
 
     @Override

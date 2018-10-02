@@ -68,11 +68,11 @@ class SkipCommand : MusicCommand() {
 
 
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
-                    "Now playing: ${mng.player.playingTrack.info.title}\n" +
-                    "Requester: ${String.format("%#s", user)}")
+                "Now playing: ${mng.player.playingTrack.info.title}\n" +
+                "Requester: ${String.format("%#s", user)}")
         } else {
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
-                    "Queue is now empty.")
+                "Queue is now empty.")
         }
         mng.latestChannel = event.channel.idLong
     }

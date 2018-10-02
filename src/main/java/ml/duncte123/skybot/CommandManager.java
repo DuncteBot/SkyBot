@@ -91,7 +91,7 @@ public class CommandManager {
             List<ICommand> commandSet = new ArrayList<>();
             List<String> names = new ArrayList<>();
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
-                    .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
+                .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
             Collections.sort(names);
             names.forEach(n -> commandSet.add(getCommand(n)));
             commandsSorted.addAll(commandSet);
@@ -126,7 +126,7 @@ public class CommandManager {
 
     public CustomCommand getCustomCommand(String invoke, long guildId) {
         return customCommands.stream().filter(c -> c.getGuildId() == guildId)
-                .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+            .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
     public boolean editCustomCommand(CustomCommand c) {
@@ -143,7 +143,7 @@ public class CommandManager {
         }
 
         boolean commandFound = this.customCommands.stream()
-                .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
+            .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
         boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
 
         if (commandFound || limitReached) {
@@ -156,8 +156,8 @@ public class CommandManager {
                     Connection conn = database.getConnManager().getConnection();
 
                     String sqlQuerry = (isEdit) ?
-                            "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
-                            "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
+                        "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
+                        "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
 
                     try {
                         PreparedStatement stm = conn.prepareStatement(sqlQuerry);
@@ -253,7 +253,7 @@ public class CommandManager {
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
             List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
-                    .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
+                .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
             for (String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;
@@ -274,9 +274,9 @@ public class CommandManager {
     public void runCommand(GuildMessageReceivedEvent event) {
         String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
-                "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                        Pattern.quote(customPrefix),
-                "").split("\\s+", 2);
+            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                Pattern.quote(customPrefix),
+            "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 
         List<String> args = new ArrayList<>();
@@ -306,14 +306,14 @@ public class CommandManager {
 
                     if (!cmd.isCustom()) {
 
-                        if(cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+                        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
                             sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
-                                    "Please mark this channel as NSFW to use this command");
+                                "Please mark this channel as NSFW to use this command");
                             return;
                         }
 
                         cmd.executeCommand(
-                                new CommandContext(invoke, args, event, variables)
+                            new CommandContext(invoke, args, event, variables)
                         );
 
                         return;
@@ -326,11 +326,11 @@ public class CommandManager {
 
                     try {
                         String message = CustomCommandUtils.PARSER.clear()
-                                .put("user", event.getAuthor())
-                                .put("channel", event.getChannel())
-                                .put("guild", event.getGuild())
-                                .put("args", String.join(" ", args))
-                                .parse(cc.getMessage());
+                            .put("user", event.getAuthor())
+                            .put("channel", event.getChannel())
+                            .put("guild", event.getGuild())
+                            .put("args", String.join(" ", args))
+                            .parse(cc.getMessage());
 
                         sendMsg(event, "\u200B" + message);
                         CustomCommandUtils.PARSER.clear();
@@ -366,9 +366,9 @@ public class CommandManager {
                 ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
                 while (res.next()) {
                     addCustomCommand(new CustomCommandImpl(
-                            res.getString("invoke"),
-                            res.getString("message"),
-                            Long.parseUnsignedLong(res.getString("guildId"))
+                        res.getString("invoke"),
+                        res.getString("message"),
+                        Long.parseUnsignedLong(res.getString("guildId"))
                     ), false, false);
                 }
             } catch (SQLException e) {

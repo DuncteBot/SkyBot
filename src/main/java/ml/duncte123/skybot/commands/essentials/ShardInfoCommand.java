@@ -37,8 +37,8 @@ import java.util.Collections;
 import java.util.List;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class ShardInfoCommand extends Command {
 
@@ -64,19 +64,19 @@ public class ShardInfoCommand extends Command {
         for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
             row.add(shard.getShardInfo().getShardId() +
-                    (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
+                (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
             row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
 
             String listening = shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
-                    .getSelfMember())).count() + " / " +
-                    shard.getVoiceChannelCache().stream().filter(vc ->
-                            vc.getMembers().contains(vc.getGuild().getSelfMember()))
-                            .mapToLong(it ->
-                                    it.getMembers().stream().filter(itt ->
-                                            !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
-                            ).sum();
+                .getSelfMember())).count() + " / " +
+                shard.getVoiceChannelCache().stream().filter(vc ->
+                    vc.getMembers().contains(vc.getGuild().getSelfMember()))
+                    .mapToLong(it ->
+                        it.getMembers().stream().filter(itt ->
+                            !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
+                    ).sum();
 
             row.add(listening);
             table.add(row);
@@ -146,15 +146,15 @@ public class ShardInfoCommand extends Command {
         String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         String guilds = String.valueOf(shardManager.getGuildCache().size());
         long connectedVC = shardManager.getShardCache().stream().mapToLong(shard ->
-                shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
+            shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
         ).sum();
         long listeningVC = shardManager.getShardCache().stream().mapToLong(shard ->
-                shard.getVoiceChannelCache().stream().filter(vc ->
-                        vc.getMembers().contains(vc.getGuild().getSelfMember()))
-                        .mapToLong(it ->
-                                it.getMembers().stream().filter(itt ->
-                                        !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
-                        ).sum()
+            shard.getVoiceChannelCache().stream().filter(vc ->
+                vc.getMembers().contains(vc.getGuild().getSelfMember()))
+                .mapToLong(it ->
+                    it.getMembers().stream().filter(itt ->
+                        !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
+                ).sum()
         ).sum();
         sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, connectedVC + " / " + listeningVC));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));

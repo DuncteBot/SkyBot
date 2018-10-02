@@ -43,9 +43,9 @@ public class TokenCommand extends Command {
     private static final Pattern TOKEN_REGEX = Pattern.compile("([a-zA-Z0-9]+)\\.([a-zA-Z0-9\\-_]+)\\.([a-zA-Z0-9\\-_]+)");
     private static final long TOKEN_EPOCH = 1293840000L;
     private static final String STRING_FORMAT = "Deconstruction results for token: `%s`%n%n" +
-            "**ID:** %s%n**Generated:** %s%n%n" +
-            "Checking validity...%s%n%n" +
-            "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
+        "**ID:** %s%n**Generated:** %s%n%n" +
+        "Checking validity...%s%n%n" +
+        "Keep in mind that verifying if the token is valid by making a request to discord is against the TOS";
 
     public TokenCommand() {
         this.category = CommandCategory.NERD_STUFF;
@@ -100,7 +100,7 @@ public class TokenCommand extends Command {
     @Override
     public String help() {
         return "Tries to get as much info about a token as possible\n" +
-                "Usage: `" + PREFIX + getName() + " <token of a discord bot>`";
+            "Usage: `" + PREFIX + getName() + " <token of a discord bot>`";
     }
 
     @Override

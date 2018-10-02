@@ -48,7 +48,7 @@ public class AnnounceCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         Permission[] perms = {
-                Permission.ADMINISTRATOR
+            Permission.ADMINISTRATOR
         };
 
         if (!event.getMember().hasPermission(perms)) {
@@ -109,7 +109,7 @@ public class AnnounceCommand extends Command {
     @Override
     public String help() {
         return "Announces a message.\n" +
-                "Usage `" + PREFIX + getName() + " <#channel> <message>`";
+            "Usage `" + PREFIX + getName() + " <#channel> <message>`";
     }
 
     @Override

@@ -36,12 +36,12 @@ import java.util.stream.Collectors;
  * A single event listener container
  */
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class EventManager
-        implements IEventManager {
+    implements IEventManager {
 
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
@@ -91,11 +91,12 @@ public class EventManager
     @Override
     public List<Object> getRegisteredListeners() {
         return getRegisteredListenersClass()
-                .stream().map(it -> (Object) it).collect(Collectors.toList());
+            .stream().map(it -> (Object) it).collect(Collectors.toList());
     }
 
     /**
      * Returns our reaction handler
+     *
      * @return our reaction handler
      */
     public ReactionHandler getReactionHandler() {

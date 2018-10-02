@@ -40,8 +40,8 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
  * Created by Duncan on 2-7-2017.
  */
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildInfoCommand extends Command {
 
@@ -57,13 +57,13 @@ public class GuildInfoCommand extends Command {
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
                     g.getInvites().queue(invites ->
-                            invites.stream().findFirst().ifPresent(invite ->
-                                    sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
-                            )
+                        invites.stream().findFirst().ifPresent(invite ->
+                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
+                        )
                     );
                 } else {
                     g.getVanityUrl().queue(invite ->
-                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
+                        sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
             } else {
@@ -100,16 +100,16 @@ public class GuildInfoCommand extends Command {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }
         eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
-                .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
-                        "**Name:** " + g.getName() + "\n" +
-                        "**Prefix:** " + settings.getCustomPrefix() + "\n" +
-                        "**Region:** " + g.getRegion().getName() + "\n" +
-                        "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
-                        "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                        inviteString, false)
-                .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
-                        "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
-                        "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
+            .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
+                "**Name:** " + g.getName() + "\n" +
+                "**Prefix:** " + settings.getCustomPrefix() + "\n" +
+                "**Region:** " + g.getRegion().getName() + "\n" +
+                "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
+                inviteString, false)
+            .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
+                "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
+                "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);
 
         sendEmbed(event, eb.build());
     }

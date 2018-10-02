@@ -48,26 +48,26 @@ public class CatCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
         WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
-                    String file = json.getString("file"),
-                            ext = FilenameUtils.getExtension(file);
+                String file = json.getString("file"),
+                    ext = FilenameUtils.getExtension(file);
 
-                    if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
-                        sendEmbed(event, EmbedUtils.embedImage(file));
-                        return;
-                    }
-
-                    try {
-                        ctx.getChannel().sendFile(new URL(file).openStream(),
-                                "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
-                    } catch (IOException e) {
-                        sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
-                        ComparatingUtils.execCheck(e);
-                    }
-                },
-                (error) -> {
-                    ctx.getCommandManager().dispatchCommand("kitty", ctx.getArgs(), event);
-                    ComparatingUtils.execCheck(error);
+                if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
+                    sendEmbed(event, EmbedUtils.embedImage(file));
+                    return;
                 }
+
+                try {
+                    ctx.getChannel().sendFile(new URL(file).openStream(),
+                        "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
+                } catch (IOException e) {
+                    sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
+                    ComparatingUtils.execCheck(e);
+                }
+            },
+            (error) -> {
+                ctx.getCommandManager().dispatchCommand("kitty", ctx.getArgs(), event);
+                ComparatingUtils.execCheck(error);
+            }
         );
     }
 

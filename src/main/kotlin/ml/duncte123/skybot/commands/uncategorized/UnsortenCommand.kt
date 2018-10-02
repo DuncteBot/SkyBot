@@ -48,22 +48,22 @@ class UnsortenCommand : Command() {
         }
 
         val builder = QueryBuilder()
-                .append("https://apis.duncte123.me/unshorten")
-                .append("url", url)
-                .append("token", event.jda.token)
+            .append("https://apis.duncte123.me/unshorten")
+            .append("url", url)
+            .append("token", event.jda.token)
 
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .url(builder.build())
-                .addHeader("Accept", WebUtils.EncodingType.APPLICATION_JSON.type)
-                .build()) { it.body() }.async(
-                { body ->
-                    try {
-                        val res = body.string()
-                        logger.debug("Unshorten: $res")
-                        val json = JSONObject(res)
+            .url(builder.build())
+            .addHeader("Accept", WebUtils.EncodingType.APPLICATION_JSON.type)
+            .build()) { it.body() }.async(
+            { body ->
+                try {
+                    val res = body.string()
+                    logger.debug("Unshorten: $res")
+                    val json = JSONObject(res)
 
-                        val embed = EmbedUtils.embedMessage("""Short url:
+                    val embed = EmbedUtils.embedMessage("""Short url:
                             |```
                             |${json.getString("shortened")}
                             |```
@@ -73,16 +73,16 @@ class UnsortenCommand : Command() {
                             |```
                         """.trimMargin())
 
-                        sendEmbed(event, embed)
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                        sendMsg(event, "An unknown error occurred.")
-                    }
-                },
-                { error ->
-                    ComparatingUtils.execCheck(error)
-                    sendMsg(event, "Something went wrong: `${error.message}`")
+                    sendEmbed(event, embed)
+                } catch (e: IOException) {
+                    e.printStackTrace()
+                    sendMsg(event, "An unknown error occurred.")
                 }
+            },
+            { error ->
+                ComparatingUtils.execCheck(error)
+                sendMsg(event, "Something went wrong: `${error.message}`")
+            }
         )
 
 

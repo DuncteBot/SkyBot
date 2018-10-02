@@ -59,9 +59,9 @@ public class LavalinkManager {
         String userId = getIdFromToken(config.discord.token);
 
         lavalink = new JdaLavalink(
-                userId,
-                config.discord.totalShards,
-                shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
+            userId,
+            config.discord.totalShards,
+            shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
 
         for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
@@ -75,8 +75,8 @@ public class LavalinkManager {
 
     public IPlayer createPlayer(long guildId) {
         return isEnabled()
-                ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
-                : new LavaplayerPlayerWrapper(audioUtils.getPlayerManager().createPlayer());
+            ? lavalink.getLink(String.valueOf(guildId)).getPlayer()
+            : new LavaplayerPlayerWrapper(audioUtils.getPlayerManager().createPlayer());
     }
 
     public void openConnection(VoiceChannel channel) {
@@ -97,8 +97,8 @@ public class LavalinkManager {
 
     public boolean isConnected(Guild g) {
         return isEnabled() ?
-                lavalink.getLink(g).getState() == Link.State.CONNECTED :
-                g.getAudioManager().isConnected();
+            lavalink.getLink(g).getState() == Link.State.CONNECTED :
+            g.getAudioManager().isConnected();
     }
 
     public VoiceChannel getConnectedChannel(@NotNull Guild guild) {
@@ -121,9 +121,9 @@ public class LavalinkManager {
      */
     private String getIdFromToken(String token) {
         return new String(
-                Base64.getDecoder().decode(
-                        token.split("\\.")[0]
-                )
+            Base64.getDecoder().decode(
+                token.split("\\.")[0]
+            )
         );
     }
 

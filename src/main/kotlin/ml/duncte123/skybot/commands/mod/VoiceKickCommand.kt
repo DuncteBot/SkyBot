@@ -35,9 +35,9 @@ class VoiceKickCommand : Command() {
         val event = ctx.event
 
         val neededPerms = arrayListOf(
-                Permission.MANAGE_CHANNEL,
-                Permission.MANAGE_SERVER,
-                Permission.VOICE_MOVE_OTHERS
+            Permission.MANAGE_CHANNEL,
+            Permission.MANAGE_SERVER,
+            Permission.VOICE_MOVE_OTHERS
         )
 
         if (!ctx.guild.selfMember.hasPermission(neededPerms)) {

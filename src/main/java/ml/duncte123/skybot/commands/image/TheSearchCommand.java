@@ -41,7 +41,7 @@ public class TheSearchCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Go on a journey to find intelligent life.\n" +
-                "Usage: `db!thesearch <message>`";
+            "Usage: `db!thesearch <message>`";
     }
 
     @Override

@@ -35,7 +35,7 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 public class SeekCommand extends MusicCommand {
 
     private static final Pattern TIME_REGEX = Pattern.compile("(\\d{2})" +
-            ":(\\d{2})");
+        ":(\\d{2})");
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -89,8 +89,8 @@ public class SeekCommand extends MusicCommand {
     @Override
     public String help() {
         return "seek in the currently playing track\n" +
-                "Usage: `" + PREFIX + getName() + " <minutes:seconds>`\n" +
-                "Examples: `" + PREFIX + getName() + " 04:20`\n" +
-                "`" + PREFIX + getName() + " 00:50`\n";
+            "Usage: `" + PREFIX + getName() + " <minutes:seconds>`\n" +
+            "Examples: `" + PREFIX + getName() + " 04:20`\n" +
+            "`" + PREFIX + getName() + " 00:50`\n";
     }
 }

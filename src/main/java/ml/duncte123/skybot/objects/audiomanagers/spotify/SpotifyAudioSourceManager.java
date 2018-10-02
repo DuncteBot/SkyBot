@@ -89,9 +89,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         } else {
             this.youtubeAudioSourceManager = youtubeAudioSourceManager;
             this.spotifyApi = new SpotifyApi.Builder()
-                    .setClientId(clientId)
-                    .setClientSecret(clientSecret)
-                    .build();
+                .setClientId(clientId)
+                .setClientSecret(clientSecret)
+                .build();
             this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
             service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
 
@@ -145,12 +145,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                     final List<AudioTrack> finalPlaylist = new ArrayList<>();
 
                     final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(res.group(res.groupCount() - 1),
-                            res.group(res.groupCount())).build().executeAsync();
+                        res.group(res.groupCount())).build().executeAsync();
                     final Playlist spotifyPlaylist = playlistFuture.get();
 
                     for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
                         List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
-                                + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
+                            + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
                         finalPlaylist.addAll(doThingWithPlaylist(results));
                     }
 
@@ -267,12 +267,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private AudioTrack audioTrackFromVideo(Video v) {
         return new SpotifyAudioTrack(new AudioTrackInfo(
-                v.getSnippet().getTitle(),
-                v.getSnippet().getChannelId(),
-                toLongDuration(v.getContentDetails().getDuration()),
-                v.getId(),
-                false,
-                "https://youtube.com/watch?v=" + v.getId()
+            v.getSnippet().getTitle(),
+            v.getSnippet().getChannelId(),
+            toLongDuration(v.getContentDetails().getDuration()),
+            v.getId(),
+            false,
+            "https://youtube.com/watch?v=" + v.getId()
         ), youtubeAudioSourceManager);
     }
 

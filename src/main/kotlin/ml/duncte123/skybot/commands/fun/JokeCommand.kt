@@ -52,7 +52,7 @@ class JokeCommand : Command() {
     }
 
     override fun help() = "See a funny joke. Dad's love them!\n" +
-            "Usage: `$PREFIX$name`"
+        "Usage: `$PREFIX$name`"
 
     override fun getName() = "joke"
 

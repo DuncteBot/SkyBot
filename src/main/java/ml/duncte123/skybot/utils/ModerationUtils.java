@@ -40,8 +40,8 @@ import java.util.concurrent.TimeUnit;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class ModerationUtils {
 
@@ -67,11 +67,11 @@ public class ModerationUtils {
             }
 
             sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
-                    punishedUser,
-                    punishment,
-                    mod,
-                    length,
-                    reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+                punishedUser,
+                punishment,
+                mod,
+                length,
+                reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
             ));
         }
     }
@@ -117,7 +117,7 @@ public class ModerationUtils {
             Connection conn = database.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
+                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
 
                 smt.setString(1, modID);
                 smt.setString(2, userName);
@@ -164,7 +164,7 @@ public class ModerationUtils {
             Connection conn = database.getConnManager().getConnection();
             try {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
+                    "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
                 smt.setString(1, moderator.getId());
                 smt.setString(2, target.getId());
                 smt.setString(3, reason);
@@ -213,13 +213,13 @@ public class ModerationUtils {
                             Guild guild = shardManager.getGuildById(guildId);
                             if (guild != null) {
                                 guild.getController()
-                                        .unban(userID).reason("Ban expired").queue();
+                                    .unban(userID).reason("Ban expired").queue();
                                 modLog(new ConsoleUser(),
-                                        new FakeUser(username,
-                                                Long.parseUnsignedLong(userID),
-                                                Short.valueOf(res.getString("discriminator"))),
-                                        "unbanned",
-                                        new DunctebotGuild(guild, variables)
+                                    new FakeUser(username,
+                                        Long.parseUnsignedLong(userID),
+                                        Short.valueOf(res.getString("discriminator"))),
+                                    "unbanned",
+                                    new DunctebotGuild(guild, variables)
                                 );
                             }
                         } catch (NullPointerException ignored) {
@@ -252,7 +252,7 @@ public class ModerationUtils {
         if (muteRoleId <= 0) {
             if (sendMessages)
                 sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
-                        "We disabled your spam filter until you have set up a role.");
+                    "We disabled your spam filter until you have set up a role.");
 
             guildSettings.setEnableSpamFilter(false);
             return;
@@ -279,21 +279,21 @@ public class ModerationUtils {
         }
         String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
-                (success) ->
-                        guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
-                                .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
-                ,
-                (failure) -> {
-                    long chan = guildSettings.getLogChannel();
-                    if (chan > 0) {
-                        TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+            (success) ->
+                guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
+                    .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
+            ,
+            (failure) -> {
+                long chan = guildSettings.getLogChannel();
+                if (chan > 0) {
+                    TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
-                        String message = String.format("%#s bypassed the mute.", member.getUser());
+                    String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                        if (sendMessages)
-                            MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
-                    }
-                });
+                    if (sendMessages)
+                        MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
+                }
+            });
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause) {

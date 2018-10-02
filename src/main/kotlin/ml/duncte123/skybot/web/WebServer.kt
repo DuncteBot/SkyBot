@@ -57,9 +57,9 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
     private val helpers = ApiHelpers()
     private val engine = JtwigTemplateEngine()
     private val oAuth2Client = OAuth2Client.Builder()
-            .setClientId(config.discord.oauth.clientId)
-            .setClientSecret(config.discord.oauth.clientSecret)
-            .build()
+        .setClientId(config.discord.oauth.clientId)
+        .setClientSecret(config.discord.oauth.clientSecret)
+        .build()
 
     private val FLASH_MESSAGE = "FLASH_MESSAGE"
 
@@ -74,7 +74,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
         get("/commands", DEFAULT_ACCEPT, engine) {
             val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
-                    .put("commands", commandManager.sortedCommands)
+                .put("commands", commandManager.sortedCommands)
 
             if (request.queryParams().contains("server")) {
                 val serverId: String = request.queryParams("server")
@@ -93,7 +93,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         }
 
         get("/suggest", WebVariables().put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.apis.chapta.sitekey), "suggest.twig")
+            .put("chapta_sitekey", config.apis.chapta.sitekey), "suggest.twig")
 
         post("/suggest") {
             val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
@@ -128,8 +128,8 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             before("") {
                 if (!request.session().attributes().contains("sessionId")) {
                     val url = oAuth2Client.generateAuthorizationURL(
-                            config.discord.oauth.redirUrl,
-                            Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
+                        config.discord.oauth.redirUrl,
+                        Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
                     request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
                     response.redirect(url)
@@ -179,7 +179,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 //                    lastCommands.forEach { array.put(it) }
 //                    return@post json.put("lastCommands", array).toString()
                 return@post "{\"lastCommands\":[\"help\", \"join\", \"play duncan\"], \"detailedReport\":\"\",\"description\":\"dank meme\"," +
-                        "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
+                    "\"inv\":\"https://discord.gg/NKM9Xtk\"}"
             }
         }
 
@@ -192,9 +192,9 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             val guilds = oAuth2Client.getGuilds(session).complete()
 
             return@get JSONObject()
-                    .put("status", "success")
-                    .put("server_count", guilds.size)
-                    .put("code", response.status())
+                .put("status", "success")
+                .put("server_count", guilds.size)
+                .put("code", response.status())
         }
 
 
@@ -215,29 +215,29 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 val member = guild?.getMember(user.getJDAUser(guild.jda))
                 val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
-                if(!hasPermission && !request.url().contains("noperms")) {
+                if (!hasPermission && !request.url().contains("noperms")) {
                     return@before response.redirect("/server/${request.params(":guildid")}/noperms")
                 }
             }
 
             get("/") {
                 engine.render(ModelAndView(WebVariables()
-                        .put("title", "Dashboard").put("id", request.params(":guildid"))
-                        .put("name", getGuildFromRequest(request)?.name).map,
-                        "dashboard/panelSelection.twig"))
+                    .put("title", "Dashboard").put("id", request.params(":guildid"))
+                    .put("name", getGuildFromRequest(request)?.name).map,
+                    "dashboard/panelSelection.twig"))
             }
             // Overview and editing
             get("/basic", WebVariables()
-                    .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
+                .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
             // Moderation
             get("/moderation", WebVariables()
-                    .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
+                .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
             // Custom commands
             get("/customcommands", WebVariables()
-                    .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
+                .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
             // Messages
             get("/messages", WebVariables()
-                    .put("title", "Dashboard"), "dashboard/welcomeLeaveDesc.twig", true)
+                .put("title", "Dashboard"), "dashboard/welcomeLeaveDesc.twig", true)
 
             post("/basic") {
                 val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
@@ -253,11 +253,11 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 val guild = getGuildFromRequest(request)
 
                 val newSettings = GuildSettingsUtils.getGuild(guild, variables)
-                        .setCustomPrefix(prefix)
-                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
-                        .setEnableJoinMessage(welcomeLeaveEnabled)
-                        .setAutoroleRole(toLong(autorole))
-                        .setAnnounceTracks(announceTracks)
+                    .setCustomPrefix(prefix)
+                    .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                    .setEnableJoinMessage(welcomeLeaveEnabled)
+                    .setAutoroleRole(toLong(autorole))
+                    .setAnnounceTracks(announceTracks)
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
@@ -287,14 +287,14 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 val guild = getGuildFromRequest(request)
 
                 val newSettings = GuildSettingsUtils.getGuild(guild, variables)
-                        .setLogChannel(toLong(modLogChannel))
-                        .setAutoDeHoist(autoDeHoist)
-                        .setFilterInvites(filterInvites)
-                        .setMuteRoleId(toLong(muteRole))
-                        .setKickState(kickMode)
-                        .setRatelimits(rateLimits)
-                        .setEnableSpamFilter(spamFilter)
-                        .setEnableSwearFilter(swearFilter)
+                    .setLogChannel(toLong(modLogChannel))
+                    .setAutoDeHoist(autoDeHoist)
+                    .setFilterInvites(filterInvites)
+                    .setMuteRoleId(toLong(muteRole))
+                    .setKickState(kickMode)
+                    .setRatelimits(rateLimits)
+                    .setEnableSpamFilter(spamFilter)
+                    .setEnableSwearFilter(swearFilter)
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
@@ -323,11 +323,11 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 val guild = getGuildFromRequest(request)
 
                 val newSettings = GuildSettingsUtils.getGuild(guild, variables)
-                        .setServerDesc(serverDescription)
-                        .setWelcomeLeaveChannel(toLong(welcomeChannel))
-                        .setCustomJoinMessage(welcomeMessage)
-                        .setCustomLeaveMessage(leaveMessage)
-                        .setEnableJoinMessage(welcomeLeaveEnabled)
+                    .setServerDesc(serverDescription)
+                    .setWelcomeLeaveChannel(toLong(welcomeChannel))
+                    .setCustomJoinMessage(welcomeMessage)
+                    .setCustomLeaveMessage(leaveMessage)
+                    .setEnableJoinMessage(welcomeLeaveEnabled)
 
                 GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
@@ -359,7 +359,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             get("/invalid") {
                 response.status(404)
                 "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
-                        "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
+                    "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
 
             get("/noperms") {
@@ -368,21 +368,21 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         }
 
         get("/callback") {
-            if(!request.queryParams().contains("code")) {
+            if (!request.queryParams().contains("code")) {
                 return@get response.redirect("/")
             }
 
             oAuth2Client.startSession(
-                    request.queryParams("code"),
-                    request.queryParams("state"),
-                    request.session().attribute("sessionId")
+                request.queryParams("code"),
+                request.queryParams("state"),
+                request.session().attribute("sessionId")
             ).complete()
             response.redirect("/dashboard")
         }
 
         get("/liveServerCount") {
             engine.render(ModelAndView(mapOf("nothing" to "something"),
-                    "static/liveServerCount.twig"))
+                "static/liveServerCount.twig"))
         }
 
         get("/invite") {
@@ -397,10 +397,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
             get("/getServerCount") {
                 return@get JSONObject()
-                        .put("status", "success")
-                        .put("server_count", shardManager.guildCache.size())
-                        .put("shard_count", shardManager.shardsTotal)
-                        .put("code", response.status())
+                    .put("status", "success")
+                    .put("server_count", shardManager.guildCache.size())
+                    .put("shard_count", shardManager.shardsTotal)
+                    .put("code", response.status())
             }
 
             get("/getUserGuilds") {
@@ -411,9 +411,9 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     }
                 }
                 return@get JSONObject()
-                        .put("status", "success")
-                        .put("guilds", guilds)
-                        .put("code", response.status())
+                    .put("status", "success")
+                    .put("guilds", guilds)
+                    .put("code", response.status())
             }
 
             get("/joinGuild") {
@@ -422,22 +422,22 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
             get("/llama") {
                 return@get ApiUtils.getRandomLlama(database).toJson()
-                        .put("status", "success")
-                        .put("code", response.status())
+                    .put("status", "success")
+                    .put("code", response.status())
             }
 
             get("/kpop") {
                 val search = request.queryParamOrDefault("search", "")
                 try {
                     return@get ApiUtils.getRandomKpopMember(database, search).toJson()
-                            .put("status", "success")
-                            .put("code", response.status())
+                        .put("status", "success")
+                        .put("code", response.status())
                 } catch (e: SQLException) {
                     response.status(404)
                     return@get JSONObject()
-                            .put("status", "faiure")
-                            .put("message", "Nothing found")
-                            .put("code", response.status())
+                        .put("status", "faiure")
+                        .put("message", "Nothing found")
+                        .put("code", response.status())
                 }
             }
         }
@@ -446,7 +446,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
             get("/clearExpiredWarns") {
                 database.connManager.connection.createStatement()
-                        .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
+                    .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
             }
 
         }
@@ -455,12 +455,12 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
                 response.type(APPLICATION_JSON.type)
                 return@notFound JSONObject()
-                        .put("status", "failure")
-                        .put("message", "'${request.pathInfo()}' was not found")
-                        .put("code", response.status())
+                    .put("status", "failure")
+                    .put("message", "'${request.pathInfo()}' was not found")
+                    .put("code", response.status())
             } else {
                 return@notFound engine.render(ModelAndView(WebVariables()
-                        .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
+                    .put("title", "404").put("path", request.pathInfo()).map, "errors/404.twig"))
             }
         }
 
@@ -468,9 +468,9 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             if (request.headers("Accept") == APPLICATION_JSON.type || response.type() == APPLICATION_JSON.type) {
                 response.type(APPLICATION_JSON.type)
                 return@internalServerError JSONObject()
-                        .put("status", "failure")
-                        .put("message", "Internal server error")
-                        .put("code", response.status())
+                    .put("status", "failure")
+                    .put("message", "Internal server error")
+                    .put("code", response.status())
             } else {
                 return@internalServerError "<html><body><h1>Internal server error</h1></body></html>"
             }
@@ -510,7 +510,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
     private fun renderSugPage(map: WebVariables): String {
         map.put("title", "Leave a suggestion")
-                .put("chapta_sitekey", config.apis.chapta.sitekey)
+            .put("chapta_sitekey", config.apis.chapta.sitekey)
 
         return engine.render(ModelAndView(map.map, "suggest.twig"))
     }
@@ -536,13 +536,13 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         val jdaGuild = shardManager.getGuildById(guild.id)
 
         return JSONObject()
-                .put("name", guild.name)
-                .put("iconId", guild.iconId)
-                .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
-                else "https://cdn.discordapp.com/embed/avatars/0.png")
-                .put("owner", guild.isOwner)
-                .put("members", jdaGuild?.memberCache?.size() ?: false)
-                .put("id", guild.id)
+            .put("name", guild.name)
+            .put("iconId", guild.iconId)
+            .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
+            else "https://cdn.discordapp.com/embed/avatars/0.png")
+            .put("owner", guild.isOwner)
+            .put("members", jdaGuild?.memberCache?.size() ?: false)
+            .put("id", guild.id)
     }
 
     private fun toMap(pairs: List<NameValuePair>): Map<String, String> {

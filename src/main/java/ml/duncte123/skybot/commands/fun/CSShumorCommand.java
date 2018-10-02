@@ -64,16 +64,16 @@ public class CSShumorCommand extends Command {
         WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
             Element code = doc.selectFirst(".crayon-pre");
             String text = code.text()
-                    .replace("*/ ", "*/\n") // Newline + tab after comments
-                    .replace("{ ", "{\n\t") // Newline + tab after {
-                    .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
-                    .replace("; }", ";\n}");
+                .replace("*/ ", "*/\n") // Newline + tab after comments
+                .replace("{ ", "{\n\t") // Newline + tab after {
+                .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
+                .replace("; }", ";\n}");
             String message = String.format("```CSS\n%s```", text);
             Element link = doc.selectFirst(".funny h2 a");
             sendEmbed(event, EmbedUtils.defaultEmbed()
-                    .setTitle(link.text(), link.attr("href"))
-                    .setDescription(message)
-                    .build());
+                .setTitle(link.text(), link.attr("href"))
+                .setDescription(message)
+                .build());
         });
     }
 

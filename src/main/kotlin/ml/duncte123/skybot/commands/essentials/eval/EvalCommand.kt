@@ -70,8 +70,8 @@ class EvalCommand : Command() {
         this.category = CommandCategory.PATRON
         // The GroovyShell is for the public eval
         protectedShell = object : GroovyShell(
-                CompilerConfiguration()
-                        .addCompilationCustomizers(SandboxTransformer())) {
+            CompilerConfiguration()
+                .addCompilationCustomizers(SandboxTransformer())) {
             @Throws(CompilationFailedException::class)
             override fun evaluate(scriptText: String): Any? {
                 if (filter.filterArrays(scriptText))
@@ -85,33 +85,33 @@ class EvalCommand : Command() {
         }
         engine = ScriptEngineManager().getEngineByName("groovy")
         val packageImports = listOf(
-                "java.io",
-                "java.lang",
-                "java.util",
-                "java.util.concurrent",
-                "net.dv8tion.jda.core",
-                "net.dv8tion.jda.core.entities",
-                "net.dv8tion.jda.core.entities.impl",
-                "net.dv8tion.jda.core.managers",
-                "net.dv8tion.jda.core.managers.impl",
-                "net.dv8tion.jda.core.utils",
-                "ml.duncte123.skybot.utils",
-                "ml.duncte123.skybot.entities",
-                "ml.duncte123.skybot.entities.delegate",
-                "ml.duncte123.skybot")
+            "java.io",
+            "java.lang",
+            "java.util",
+            "java.util.concurrent",
+            "net.dv8tion.jda.core",
+            "net.dv8tion.jda.core.entities",
+            "net.dv8tion.jda.core.entities.impl",
+            "net.dv8tion.jda.core.managers",
+            "net.dv8tion.jda.core.managers.impl",
+            "net.dv8tion.jda.core.utils",
+            "ml.duncte123.skybot.utils",
+            "ml.duncte123.skybot.entities",
+            "ml.duncte123.skybot.entities.delegate",
+            "ml.duncte123.skybot")
         val classImports = listOf(
-                "ml.duncte123.skybot.exceptions.DoomedException"
+            "ml.duncte123.skybot.exceptions.DoomedException"
         )
 
         val staticImports = listOf(
-                "ml.duncte123.skybot.objects.EvalFunctions.*",
-                "me.duncte123.botCommons.messaging.MessageUtils.*",
-                "ml.duncte123.skybot.utils.MessageUtils.*"
+            "ml.duncte123.skybot.objects.EvalFunctions.*",
+            "me.duncte123.botCommons.messaging.MessageUtils.*",
+            "ml.duncte123.skybot.utils.MessageUtils.*"
         )
 
         importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
-                classImports.joinToString(separator = "\nimport ", postfix = "\n") +
-                staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
+            classImports.joinToString(separator = "\nimport ", postfix = "\n") +
+            staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
 
     override fun executeCommand(ctx: CommandContext) {
@@ -134,8 +134,8 @@ class EvalCommand : Command() {
 
         if (userIn.startsWith("```") && userIn.endsWith("```"))
             userIn = userIn
-                    .replace("```(.*)\n".toRegex(), "")
-                    .replace("\n?```".toRegex(), "")
+                .replace("```(.*)\n".toRegex(), "")
+                .replace("\n?```".toRegex(), "")
 
         val script = importString + userIn
 
@@ -260,17 +260,17 @@ class EvalCommand : Command() {
                     }
                     if (isRanByBotOwner) {
                         MessageBuilder()
-                                .appendCodeBlock(out.toString(), "")
-                                .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                                .forEach { it -> sendMsg(event, it) }
+                            .appendCodeBlock(out.toString(), "")
+                            .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                            .forEach { it -> sendMsg(event, it) }
                     } else {
                         if (filter.containsMentions(out.toString())) {
                             sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
                         } else {
                             sendMsg(event, "**" + event.author.name
-                                    + ":** " + out.toString()
-                                    .replace("@here".toRegex(), "@h\u0435re")
-                                    .replace("@everyone".toRegex(), "@\u0435veryone"))
+                                + ":** " + out.toString()
+                                .replace("@here".toRegex(), "@h\u0435re")
+                                .replace("@everyone".toRegex(), "@\u0435veryone"))
                         }
                     }
                 }

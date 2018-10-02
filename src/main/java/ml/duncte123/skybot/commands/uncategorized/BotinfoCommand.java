@@ -46,9 +46,9 @@ import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
  * Created by Duncan on 11-7-2017.
  */
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class BotinfoCommand extends Command {
 
@@ -66,8 +66,8 @@ public class BotinfoCommand extends Command {
 
         OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
         String OS = platformMXBean.getName() +
-                " " + platformMXBean.getArch() +
-                " " + platformMXBean.getVersion();
+            " " + platformMXBean.getArch() +
+            " " + platformMXBean.getVersion();
         String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
         String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
         int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
@@ -80,28 +80,28 @@ public class BotinfoCommand extends Command {
         String ramid = getDev(event, 281673659834302464L, "ramidzkh (ramidzkh#4814)");
 
         MessageEmbed eb = EmbedUtils.defaultEmbed()
-                .setDescription("Here is some information about me \uD83D\uDE09")
-                .setThumbnail(u.getEffectiveAvatarUrl())
-                .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
-                        duncte + " and " + ramid + ".\n" +
-                        "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
-                        "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
-                        "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
-                        "\n\u200B", true)
-                .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
-                        "**Bot version:** " + Settings.VERSION + "\n"
-                        + "**Operating System:** " + OS + "\n" +
-                        "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
-                        "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
-                        "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
-                .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
-                        ") and Kotlin (version " + Settings.KOTLIN_VERSION + ")\n\n" +
-                        "**JDA version:** " + JDAInfo.VERSION + "" +
-                        "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
-                        "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
-                .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
-                        "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
-                .build();
+            .setDescription("Here is some information about me \uD83D\uDE09")
+            .setThumbnail(u.getEffectiveAvatarUrl())
+            .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
+                duncte + " and " + ramid + ".\n" +
+                "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
+                "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
+                "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
+                "\n\u200B", true)
+            .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+                "**Bot version:** " + Settings.VERSION + "\n"
+                + "**Operating System:** " + OS + "\n" +
+                "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
+                "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
+                "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
+            .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
+                ") and Kotlin (version " + Settings.KOTLIN_VERSION + ")\n\n" +
+                "**JDA version:** " + JDAInfo.VERSION + "" +
+                "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
+                "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
+            .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
+                "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
+            .build();
         sendEmbed(event, eb);
     }
 

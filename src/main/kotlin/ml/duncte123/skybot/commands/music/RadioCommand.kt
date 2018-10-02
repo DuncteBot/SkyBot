@@ -102,7 +102,7 @@ class RadioCommand : MusicCommand() {
     private fun sendRadioSender(event: GuildMessageReceivedEvent, full: Boolean = false) {
         val streams = radioStreams
         val string = streams.filter { if (!full) it.public else true }
-                .joinToString(separator = "\n") { it.toEmbedString() }
+            .joinToString(separator = "\n") { it.toEmbedString() }
         for (it in MessageBuilder().append(string).buildAll(MessageBuilder.SplitPolicy.NEWLINE)) {
             sendEmbed(event, EmbedUtils.defaultEmbed().setDescription(it.contentRaw).build())
         }

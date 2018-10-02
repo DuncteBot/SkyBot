@@ -48,7 +48,7 @@ class DeHoistCommand : Command() {
         }
         val toDehoist = event.message.mentionedMembers[0]
         if (!event.guild.selfMember.canInteract(toDehoist)
-                || !event.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)) {
+            || !event.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE)) {
             sendMsg(event, "I do not have the permission to change that members's nickname")
             return
         }
@@ -58,7 +58,7 @@ class DeHoistCommand : Command() {
         }
 
         event.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
-                .reason("de-hoist by ${String.format("%#s", event.author)}").queue()
+            .reason("de-hoist by ${String.format("%#s", event.author)}").queue()
         sendSuccess(event.message)
     }
 
@@ -79,7 +79,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.controller.setNickname(event.member, "\u25AA" + event.member.effectiveName)
-                    .reason("auto de-hoist").queue()
+                .reason("auto de-hoist").queue()
         }
     }
 
@@ -87,7 +87,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
             event.guild.controller.setNickname(event.member, "\uD82F\uDCA2" + event.member.effectiveName)
-                    .reason("auto de-hoist").queue()
+                .reason("auto de-hoist").queue()
         }
     }
 
@@ -98,7 +98,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
     private fun shouldChangeName(member: Member): Boolean {
         val memberName = member.effectiveName
         return (!memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
-                member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
-                GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
+            member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
+            GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
     }
 }

@@ -44,11 +44,11 @@ public class ColorCommand extends Command {
             String rgb = data.rgb;
 
             EmbedBuilder embed = defaultEmbed()
-                    .setColor(decode(hex))
-                    .setThumbnail(image);
+                .setColor(decode(hex))
+                .setThumbnail(image);
 
             String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
-                    name, hex, integer, rgb, brightness);
+                name, hex, integer, rgb, brightness);
             embed.setDescription(desc);
 
             sendEmbed(ctx.getEvent(), embed.build());

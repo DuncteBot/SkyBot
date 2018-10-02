@@ -49,27 +49,27 @@ class SlowModeCommand : Command() {
             return
         }
 
-        if(ctx.args.isEmpty()) {
+        if (ctx.args.isEmpty()) {
             sendMsg(event, "Missing arguments, check `${PREFIX}help $name`")
             return
         }
 
         val delay = ctx.args[0]
 
-        if(delay == "off") {
+        if (delay == "off") {
             ctx.channel.manager.setSlowmode(0).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
             MessageUtils.sendSuccess(ctx.message)
             return
         }
 
-        if(!AirUtils.isInt(delay)) {
+        if (!AirUtils.isInt(delay)) {
             sendMsg(event, "Provided argument is not an integer")
             return
         }
 
         val intDelay = delay.toInt()
 
-        if(intDelay < 1 || intDelay > 120) {
+        if (intDelay < 1 || intDelay > 120) {
             sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 1-120")
             return
         }

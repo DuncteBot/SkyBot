@@ -62,19 +62,19 @@ class LoadCommand : MusicCommand() {
                 val array = JSONArray(JSONTokener(it))
 
                 array.filter(Objects::nonNull)
-                        .forEach { obj ->
-                            // This probably announces it to the channel
-                            ctx.audioUtils.loadAndPlay(getMusicManager(event.guild, ctx.audioUtils),
-                                    event.channel,
-                                    event.author,
-                                    obj.toString(),
-                                    false,
-                                    ctx,
-                                    false)
-                        }
+                    .forEach { obj ->
+                        // This probably announces it to the channel
+                        ctx.audioUtils.loadAndPlay(getMusicManager(event.guild, ctx.audioUtils),
+                            event.channel,
+                            event.author,
+                            obj.toString(),
+                            false,
+                            ctx,
+                            false)
+                    }
 
                 sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,
-                        "Added ${array.length()} requested tracks."))
+                    "Added ${array.length()} requested tracks."))
             } catch (exception: JSONException) {
                 MessageUtils.sendError(event.message)
                 MessageUtils.sendMsg(event, "Invalid JSON file!")

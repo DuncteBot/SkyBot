@@ -69,12 +69,12 @@ public class BlargBot {
 
     private PendingRequest<byte[]> makeRequest(String path, JSONObject body) {
         return WebUtils.ins.prepareRaw(
-                defaultRequest()
-                        .url("https://api.blargbot.xyz/api/v1/" + path)
-                        .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), body.toString()))
-                        .addHeader("Authorization", token)
-                        .build(),
-                IOHelper::read
+            defaultRequest()
+                .url("https://api.blargbot.xyz/api/v1/" + path)
+                .post(RequestBody.create(EncodingType.APPLICATION_JSON.toMediaType(), body.toString()))
+                .addHeader("Authorization", token)
+                .build(),
+            IOHelper::read
         );
     }
 

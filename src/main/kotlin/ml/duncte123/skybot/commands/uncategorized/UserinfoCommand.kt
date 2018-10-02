@@ -94,7 +94,7 @@ class UserinfoCommand : Command() {
                 if (m == null) {
                     if (ctx.invoke == "avatar") {
                         MessageUtils.sendMsg(event,
-                                "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+                            "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
                         return
                     }
                     renderUserEmbed(event, u)
@@ -126,9 +126,9 @@ class UserinfoCommand : Command() {
         val createTimeHuman = prettyTime.format(createTimeDate)
 
         val embed = EmbedUtils.defaultEmbed()
-                .setColor(Settings.defaultColour)
-                .setThumbnail(user.effectiveAvatarUrl)
-                .setDescription("""User info for ${user.asMention}
+            .setColor(Settings.defaultColour)
+            .setThumbnail(user.effectiveAvatarUrl)
+            .setDescription("""User info for ${user.asMention}
                         |
                         |**Username + Discriminator:** ${String.format("%#s", user)}
                         |**User Id:** ${user.id}
@@ -148,7 +148,7 @@ class UserinfoCommand : Command() {
         val u = m.user
         val joinOrder = StringBuilder()
         val joins = event.guild.memberCache.stream().sorted(
-                Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
+            Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
         ).collect(Collectors.toList())
         var index = joins.indexOf(m)
         index -= 3
@@ -180,9 +180,9 @@ class UserinfoCommand : Command() {
         val joinTimeHuman = prettyTime.format(joinTimeDate)
 
         val embed = EmbedUtils.defaultEmbed()
-                .setColor(m.color)
-                .setThumbnail(u.effectiveAvatarUrl)
-                .setDescription("""User info for ${m.asMention}
+            .setColor(m.color)
+            .setThumbnail(u.effectiveAvatarUrl)
+            .setDescription("""User info for ${m.asMention}
                         |
                         |**Username + Discriminator:** ${String.format("%#s", u)}
                         |**User Id:** ${u.id}
@@ -198,11 +198,11 @@ class UserinfoCommand : Command() {
                     """.trimMargin())
 
         if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-                ctx.config.apis.weebSh.wolketoken != null) {
+            ctx.config.apis.weebSh.wolketoken != null) {
             ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
-                    u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
+                u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
                 event.channel.sendFile(it, "stat.png",
-                        MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+                    MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
                 ).queue(null) { _ ->
                     sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
                 }

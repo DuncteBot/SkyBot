@@ -77,9 +77,9 @@ public class EmbedUtils {
      */
     public static EmbedBuilder defaultEmbed() {
         return new EmbedBuilder()
-                .setColor(Settings.defaultColour)
-                .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
-                .setTimestamp(Instant.now());
+            .setColor(Settings.defaultColour)
+            .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
+            .setTimestamp(Instant.now());
     }
 
     /**
@@ -90,9 +90,9 @@ public class EmbedUtils {
      */
     public static String playerEmbed(GuildMusicManager mng) {
         return (mng.player.isPaused() ? "\u23F8" : "\u25B6") + " " +
-                generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
-                + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
-                + getVolumeIcon(mng.player.getVolume());
+            generateProgressBar((double) mng.player.getTrackPosition() / mng.player.getPlayingTrack().getDuration())
+            + " `[" + formatTime(mng.player.getTrackPosition()) + "/" + formatTime(mng.player.getPlayingTrack().getDuration()) + "]` "
+            + getVolumeIcon(mng.player.getVolume());
     }
 
     /**
@@ -166,15 +166,15 @@ public class EmbedUtils {
         }
         if (embed.getDescription() != null) {
             msg.append("_").append(embed.getDescription()
-                    // Reformat
-                    .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
+                // Reformat
+                .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
             ).append("_\n\n");
         }
         for (MessageEmbed.Field f : embed.getFields()) {
             msg.append("__").append(f.getName()).append("__\n").append(
-                    f.getValue()
-                            // Reformat
-                            .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
+                f.getValue()
+                    // Reformat
+                    .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
             ).append("\n\n");
         }
         if (embed.getImage() != null) {

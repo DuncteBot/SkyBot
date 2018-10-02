@@ -64,7 +64,7 @@ public class BanCommand extends Command {
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                    !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+                !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
@@ -76,10 +76,10 @@ public class BanCommand extends Command {
                 if (!AirUtils.isInt(timeParts[0])) {
                     String newReason = ctx.getArgsRaw();
                     event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                            (m) -> {
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
-                                MessageUtils.sendSuccess(event.getMessage());
-                            }
+                        (m) -> {
+                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
+                            MessageUtils.sendSuccess(event.getMessage());
+                        }
                     );
                     return;
                 }
@@ -90,23 +90,23 @@ public class BanCommand extends Command {
                 String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
                 int finalBanTime = calculateBanTime.getFinalBanTime();
                 event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (voidMethod) -> {
-                            if (finalBanTime > 0) {
-                                ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
-                                        toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                    (voidMethod) -> {
+                        if (finalBanTime > 0) {
+                            ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
+                                toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
 
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
-                            } else {
-                                final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
+                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
+                        } else {
+                            final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
 
-                                ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
-                            }
+                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
                         }
+                    }
                 );
                 MessageUtils.sendSuccess(event.getMessage());
             } else {
                 event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                        (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
+                    (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
                 );
             }
         } catch (HierarchyException e) {
@@ -118,7 +118,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-                "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
+            "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
     }
 
     @Override

@@ -63,16 +63,16 @@ public class WolframAlphaCommand extends Command {
      * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
      */
     private MessageEmbed generateEmbed(
-            GuildMessageReceivedEvent event,
-            WAQueryResult result,
-            String googleKey
+        GuildMessageReceivedEvent event,
+        WAQueryResult result,
+        String googleKey
     ) {
         Member m = event.getMember();
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
 
         eb.setTitle("**Input:** " + a(result.getQuery().getInput()),
-                a(result.getQuery().toWebsiteURL()));
+            a(result.getQuery().toWebsiteURL()));
 
         for (WAPod pod : result.getPods()) {
             String name = a(pod.getTitle());
@@ -148,12 +148,12 @@ public class WolframAlphaCommand extends Command {
                 result = engine.performQuery(query);
             } catch (WAException e) {
                 message.editMessage(":x: Error: "
-                        + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
+                    + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
                 e.printStackTrace();
                 return;
             }
             editMsg(message, new MessageBuilder().append("Result:")
-                    .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
+                .setEmbed(generateEmbed(event, result, ctx.getConfig().apis.googl)).build());
         });
     }
 

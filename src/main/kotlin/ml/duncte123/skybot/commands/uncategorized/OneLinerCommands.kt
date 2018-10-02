@@ -63,7 +63,7 @@ class OneLinerCommands : Command() {
 
             "mineh" -> sendMsg(event, MessageBuilder().setTTS(true).append("Insert creepy music here").build()) {
                 sendEmbed(event,
-                        EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
+                    EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/204540634478936064/213983832087592960/20160813133415_1.jpg")
                 )
             }
 
@@ -124,11 +124,11 @@ class OneLinerCommands : Command() {
             } else {
                 val img = it.getJSONArray("images").getJSONObject(0)
                 sendEmbed(event, EmbedUtils.defaultEmbed()
-                        .setAuthor(it.getJSONObject("user").getString("username"), null
-                                , it.getJSONObject("user").getString("profile_pic_url"))
-                        .setTitle("Latest picture of $username", "https://instagram.com/$username/")
-                        .setDescription(img.getString("caption"))
-                        .setImage(img.getString("url")).build())
+                    .setAuthor(it.getJSONObject("user").getString("username"), null
+                        , it.getJSONObject("user").getString("profile_pic_url"))
+                    .setTitle("Latest picture of $username", "https://instagram.com/$username/")
+                    .setDescription(img.getString("caption"))
+                    .setImage(img.getString("url")).build())
             }
         }
     }
@@ -136,18 +136,18 @@ class OneLinerCommands : Command() {
     private fun yesnoCommand(event: GuildMessageReceivedEvent) {
         WebUtils.ins.getJSONObject("https://yesno.wtf/api").async {
             sendEmbed(event, EmbedUtils.defaultEmbed()
-                    .setTitle(it.getString("answer"))
-                    .setImage(it.getString("image"))
-                    .build())
+                .setTitle(it.getString("answer"))
+                .setImage(it.getString("image"))
+                .build())
         }
     }
 
     private fun pingCommand(event: GuildMessageReceivedEvent) {
         sendMsg(event, "PONG!") {
             it.editMessage("PONG!\n" +
-                    "Rest ping: ${event.message.creationTime.until(it.creationTime, ChronoUnit.MILLIS)}ms\n" +
-                    "Websocket ping: ${event.jda.ping}ms\n" +
-                    "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
+                "Rest ping: ${event.message.creationTime.until(it.creationTime, ChronoUnit.MILLIS)}ms\n" +
+                "Websocket ping: ${event.jda.ping}ms\n" +
+                "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
         }
     }
 
@@ -249,5 +249,5 @@ class OneLinerCommands : Command() {
     override fun getName() = "ping"
 
     override fun getAliases() = arrayOf("cookie", "trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-            "insta", "donate", "insta", "xkcd", "reverse", "screenfetch")
+        "insta", "donate", "insta", "xkcd", "reverse", "screenfetch")
 }

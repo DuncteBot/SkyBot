@@ -49,29 +49,29 @@ public class YodaSpeakCommand extends Command {
         }
 
         QueryBuilder builder = new QueryBuilder()
-                .append("https://apis.duncte123.me/yoda")
-                .append("sentence", String.join(" ", args))
-                .append("token", event.getJDA().getToken());
+            .append("https://apis.duncte123.me/yoda")
+            .append("sentence", String.join(" ", args))
+            .append("token", event.getJDA().getToken());
 
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .url(builder.build())
-                .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
-                .build(), Response::body).async(
-                (body) -> {
-                    try {
-                        final String res = body.string();
-                        logger.debug("Yoda response: " + res);
-                        final JSONObject json = new JSONObject(res);
-                        sendMsg(event, json.getString("message"));
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                        sendMsg(event, "Yoda is asleep tell my developers to wake him up");
-                    }
-                },
-                error -> {
-                    error.printStackTrace();
+            .url(builder.build())
+            .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
+            .build(), Response::body).async(
+            (body) -> {
+                try {
+                    final String res = body.string();
+                    logger.debug("Yoda response: " + res);
+                    final JSONObject json = new JSONObject(res);
+                    sendMsg(event, json.getString("message"));
+                } catch (IOException e) {
+                    e.printStackTrace();
                     sendMsg(event, "Yoda is asleep tell my developers to wake him up");
                 }
+            },
+            error -> {
+                error.printStackTrace();
+                sendMsg(event, "Yoda is asleep tell my developers to wake him up");
+            }
         );
 
     }
@@ -79,7 +79,7 @@ public class YodaSpeakCommand extends Command {
     @Override
     public String help() {
         return "Convert your sentences into yoda speak.\n" +
-                "Usage: `" + PREFIX + getName() + " <A sentence.>`";
+            "Usage: `" + PREFIX + getName() + " <A sentence.>`";
     }
 
     @Override

@@ -45,7 +45,7 @@ class RepeatCommand : MusicCommand() {
         }
 
         MessageUtils.sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
-                "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
+            "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
 
     override fun help(): String = "Makes the player repeat the currently playing song"

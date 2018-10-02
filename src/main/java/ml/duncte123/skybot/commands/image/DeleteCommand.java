@@ -41,7 +41,7 @@ public class DeleteCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Creates a Delete button.\n" +
-                "Usage: `db!delete <text>`";
+            "Usage: `db!delete <text>`";
     }
 
     @Override

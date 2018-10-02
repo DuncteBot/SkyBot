@@ -37,9 +37,9 @@ import java.util.List;
 
 @SuppressWarnings("unused")
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken"),
-        @Author(nickname = "ramidzkh", author = "Ramid Khan")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken"),
+    @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
 public class ScriptDelegate extends Script {
 
@@ -143,7 +143,7 @@ public class ScriptDelegate extends Script {
         TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
 
         channel.getPinnedMessages().queue(it ->
-                MessageUtils.sendMsg(channel, it.size() + "/50 messages pinned in this channel")
+            MessageUtils.sendMsg(channel, it.size() + "/50 messages pinned in this channel")
         );
     }
 

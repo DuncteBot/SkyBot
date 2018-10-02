@@ -42,8 +42,8 @@ import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class CommandContext {
 
@@ -209,10 +209,10 @@ public class CommandContext {
 
     private String parseRawArgs(String in) {
         return in.replaceFirst(
-                "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
-                        Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                        Pattern.quote(getGuildSettings().getCustomPrefix()),
-                "")
-                .split("\\s+", 2)[1];
+            "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
+                Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                Pattern.quote(getGuildSettings().getCustomPrefix()),
+            "")
+            .split("\\s+", 2)[1];
     }
 }

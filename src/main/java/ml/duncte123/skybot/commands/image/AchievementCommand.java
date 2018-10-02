@@ -31,7 +31,7 @@ public class AchievementCommand extends ImageCommandBase {
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) return;
 
         ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
-                .async((image) -> handleBasicImage(ctx.getEvent(), image));
+            .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
@@ -42,7 +42,7 @@ public class AchievementCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "You got an achievement!\n" +
-                "Usage: `" + PREFIX + getName() + " <text>`";
+            "Usage: `" + PREFIX + getName() + " <text>`";
     }
 
     @Override

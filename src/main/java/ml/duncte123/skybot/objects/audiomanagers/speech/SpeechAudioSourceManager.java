@@ -36,11 +36,11 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
 
     private static final String PREFIX = "speak:";
     private static final String GOOGLE_TRANSLATE_URL = "https://translate.google.com/translate_tts" +
-            "?tl=%language%" +
-            "&q=%query%" +
-            "&ie=UTF-8&total=1&idx=0" +
-            "&text" + "len=%length%" +
-            "&client=tw-ob";
+        "?tl=%language%" +
+        "&q=%query%" +
+        "&ie=UTF-8&total=1&idx=0" +
+        "&text" + "len=%length%" +
+        "&client=tw-ob";
 
     private final String templateURL;
 
@@ -65,16 +65,16 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
 
         String data = reference.identifier.substring(PREFIX.length());
         data = data
-                // Remove whitespaces at the end
-                .trim()
-                // Remove whitespaces at the front
-                .replaceAll("^\\s+", "");
+            // Remove whitespaces at the end
+            .trim()
+            // Remove whitespaces at the front
+            .replaceAll("^\\s+", "");
 
         String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
 
         String mp3URL = templateURL
-                .replace("%length%", Integer.toString(data.length()))
-                .replace("%query%", encoded);
+            .replace("%length%", Integer.toString(data.length()))
+            .replace("%query%", encoded);
 
         // Redirect to somewhere else
         return new AudioReference(mp3URL, "Speaking " + data);

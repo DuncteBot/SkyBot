@@ -36,7 +36,7 @@ object ApiUtils {
         val conn = database.connManager.connection
 
         val resultSet = conn.createStatement()
-                .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
+            .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
         resultSet.next()
         val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
         conn.close()
@@ -60,10 +60,10 @@ object ApiUtils {
         }
         resultSet.next()
         val obj = KpopObject(
-                resultSet.getInt("id"),
-                resultSet.getString("name"),
-                resultSet.getString("band"),
-                resultSet.getString("img")
+            resultSet.getInt("id"),
+            resultSet.getString("name"),
+            resultSet.getString("band"),
+            resultSet.getString("img")
         )
         conn.close()
 
@@ -77,19 +77,19 @@ object ApiUtils {
 
         try {
             val smt = conn.prepareStatement(
-                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
+                "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
             smt.setString(1, userId)
             smt.setString(2, guildId)
             val result = smt.executeQuery()
 
             while (result.next()) {
                 warnings.add(Warning(
-                        result.getInt("id"),
-                        result.getDate("warn_date"),
-                        result.getDate("expire_date"),
-                        result.getString("mod_id"),
-                        result.getString("reason"),
-                        result.getString("guild_id")
+                    result.getInt("id"),
+                    result.getDate("warn_date"),
+                    result.getDate("expire_date"),
+                    result.getString("mod_id"),
+                    result.getString("reason"),
+                    result.getString("guild_id")
                 ))
             }
 

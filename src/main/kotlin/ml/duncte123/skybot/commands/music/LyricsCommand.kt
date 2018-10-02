@@ -61,19 +61,19 @@ class LyricsCommand : MusicCommand() {
         searchForSong(search, ctx.config.genius) {
             if (it.isNullOrBlank()) {
                 MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
-                        "Alternatively you can try `$PREFIX$name <song name>` to search for the lyrics on this song.\n" +
-                        "(sometimes the song names in the player are wrong)")
+                    "Alternatively you can try `$PREFIX$name <song name>` to search for the lyrics on this song.\n" +
+                    "(sometimes the song names in the player are wrong)")
             } else {
                 val url = "https://genius.com$it"
                 WebUtils.ins.scrapeWebPage(url).async { doc ->
                     val text = doc.select("div.lyrics").first().child(0).wholeText()
-                            .replace("<br>", "\n")
+                        .replace("<br>", "\n")
                     sendEmbed(event, EmbedUtils.defaultEmbed()
-                            .setTitle("Lyrics for $search", url)
-                            .setDescription(StringUtils.abbreviate(text, 1900))
-                            .appendDescription("\n\n Full lyrics on [genius.com]($url)")
-                            .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
-                            .build())
+                        .setTitle("Lyrics for $search", url)
+                        .setDescription(StringUtils.abbreviate(text, 1900))
+                        .appendDescription("\n\n Full lyrics on [genius.com]($url)")
+                        .setFooter("Powered by genius.com", Settings.DEFAULT_ICON)
+                        .build())
                 }
             }
         }
@@ -97,15 +97,15 @@ class LyricsCommand : MusicCommand() {
 
     private fun searchForSong(t: String?, config: DunctebotConfig.Genius, callback: (String?) -> Unit) {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-                .header("Authorization", getAuthToken(config))
-                .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
-                WebUtilsErrorUtils::toJSONObject).async {
+            .header("Authorization", getAuthToken(config))
+            .url("$apiBase/search?q=${URLEncoder.encode(t, "UTF-8")}").build(),
+            WebUtilsErrorUtils::toJSONObject).async {
             val hits = it.getJSONObject("response").getJSONArray("hits")
             if (hits.length() < 1) {
                 callback.invoke(null)
             } else {
                 callback.invoke(
-                        hits.getJSONObject(0).getJSONObject("result").getString("path")
+                    hits.getJSONObject(0).getJSONObject("result").getString("path")
                 )
             }
         }

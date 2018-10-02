@@ -34,22 +34,22 @@ class ApiHelpers {
         fields["secret"] = secret
         fields["response"] = response
         val req = web.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
-                WebUtils.EncodingType.APPLICATION_JSON)
-                .build(WebUtilsErrorUtils::toJSONObject, WebUtilsErrorUtils::handleError)
+            WebUtils.EncodingType.APPLICATION_JSON)
+            .build(WebUtilsErrorUtils::toJSONObject, WebUtilsErrorUtils::handleError)
 
         return req.execute()
     }
 
     fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello): JSONObject {
         val query = QueryBuilder()
-                .append("https://api.trello.com/1/cards")
-                .append("name", name)
-                .append("desc", desc)
-                .append("pos", "bottom")
-                .append("idList", "5ad2a228bef59be0aca289c9")
-                .append("keepFromSource", "all")
-                .append("key", config.key)
-                .append("token", config.token)
+            .append("https://api.trello.com/1/cards")
+            .append("name", name)
+            .append("desc", desc)
+            .append("pos", "bottom")
+            .append("idList", "5ad2a228bef59be0aca289c9")
+            .append("keepFromSource", "all")
+            .append("key", config.key)
+            .append("token", config.token)
 
         val t = web.preparePost(query.build()).execute()
         return JSONObject(t)

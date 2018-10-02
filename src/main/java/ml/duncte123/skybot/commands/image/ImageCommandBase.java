@@ -102,7 +102,7 @@ public abstract class ImageCommandBase extends Command {
 
         if (ctx.getMessage().getMentionedUsers().size() > 0) {
             url = ctx.getMessage().getMentionedUsers().get(0)
-                    .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+                .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
         }
 
         if (!ctx.getMessage().getAttachments().isEmpty()) {

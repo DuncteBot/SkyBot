@@ -64,7 +64,7 @@ class RestartShardCommand : Command() {
                 1 -> {
                     val id = ctx.args[0].toInt()
 
-                    if(id > ctx.shardManager.shardsTotal) {
+                    if (id > ctx.shardManager.shardsTotal) {
                         MessageUtils.sendMsg(ctx.event, "$id is an invalid shard id")
                         return
                     }

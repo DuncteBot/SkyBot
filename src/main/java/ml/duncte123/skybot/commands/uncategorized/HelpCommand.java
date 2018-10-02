@@ -41,8 +41,8 @@ import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
 
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class HelpCommand extends Command {
 
@@ -53,9 +53,9 @@ public class HelpCommand extends Command {
 
         if (ctx.getArgs().size() > 0) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
-                    .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
-                            Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                            Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
+                .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
+                    Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                    Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch))
                 sendCategoryHelp(event, ctx.getGuild().getSettings().getCustomPrefix(), toSearch.toUpperCase());
@@ -86,7 +86,7 @@ public class HelpCommand extends Command {
     private boolean isCategory(String name) {
         try {
             List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
-                    .equals(name.toLowerCase())).collect(Collectors.toList());
+                .equals(name.toLowerCase())).collect(Collectors.toList());
             if (categoryList.size() > 0) {
                 return true;
             }
@@ -99,14 +99,14 @@ public class HelpCommand extends Command {
 
     private void sendHelp(GuildMessageReceivedEvent event, MessageEmbed embed) {
         event.getAuthor().openPrivateChannel().queue(
-                pc -> pc.sendMessage(embed).queue(
-                        msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
-                        //When sending fails, send to the channel
-                        err -> sendMsg(event,
-                                "You can check out my commands here:\nhttps://bot.duncte123.me/commands?server=" +
-                                        event.getGuild().getId())
-                ),
-                err -> sendMsg(event, "ERROR: " + err.getMessage())
+            pc -> pc.sendMessage(embed).queue(
+                msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
+                //When sending fails, send to the channel
+                err -> sendMsg(event,
+                    "You can check out my commands here:\nhttps://bot.duncte123.me/commands?server=" +
+                        event.getGuild().getId())
+            ),
+            err -> sendMsg(event, "ERROR: " + err.getMessage())
         );
     }
 
@@ -114,15 +114,15 @@ public class HelpCommand extends Command {
         for (ICommand cmd : manager.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
                 sendMsg(event, "Command help for `" +
-                        cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
-                        (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                    cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
+                    (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
                 return;
             } else {
                 for (String alias : cmd.getAliases()) {
                     if (alias.equals(toSearch)) {
                         sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" +
-                                cmd.help(alias) + (cmd.getAliases().length > 0 ? "\nAliases: "
-                                + StringUtils.join(cmd.getAliases(), ", ") : ""));
+                            cmd.help(alias) + (cmd.getAliases().length > 0 ? "\nAliases: "
+                            + StringUtils.join(cmd.getAliases(), ", ") : ""));
                         return;
                     }
 
@@ -146,7 +146,7 @@ public class HelpCommand extends Command {
             return CommandCategory.valueOf(search.toUpperCase());
         } catch (IllegalArgumentException ignored) {
             List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
-                    .equals(search.toLowerCase())).collect(Collectors.toList());
+                .equals(search.toLowerCase())).collect(Collectors.toList());
             return categoryList.get(0);
         }
     }

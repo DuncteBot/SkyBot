@@ -26,8 +26,8 @@ import ml.duncte123.skybot.Settings;
  * This class will hold the settings for a guild
  */
 @Authors(authors = {
-        @Author(nickname = "Sanduhr32", author = "Maurice R S"),
-        @Author(nickname = "duncte123", author = "Duncan Sterken")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S"),
+    @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
 public class GuildSettings {
 
@@ -360,7 +360,7 @@ public class GuildSettings {
     @Override
     public String toString() {
         return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, customPrefix,
-                (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
+            (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
     }
 
     //A utility method that might come in handy in the future

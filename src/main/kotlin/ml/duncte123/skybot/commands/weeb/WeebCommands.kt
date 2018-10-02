@@ -45,11 +45,11 @@ class WeebCommands : WeebCommandBase() {
         when (ctx.invoke) {
             "hug" -> requestAndSend("hug", "hugs", args, event, ctx.weebApi)
             "lewd" -> sendEmbed(event,
-                    getWeebEmbedImage(ctx.weebApi.getRandomImage("lewd").execute().url))
+                getWeebEmbedImage(ctx.weebApi.getRandomImage("lewd").execute().url))
             "pat" -> requestAndSend("pat", "pats", args, event, ctx.weebApi)
             "punch" -> requestAndSend("punch", "punches", args, event, ctx.weebApi)
             "shrug" -> sendEmbed(event, getWeebEmbedImageAndDesc("${event.member.effectiveName} shrugs",
-                    ctx.weebApi.getRandomImage("shrug").execute().url))
+                ctx.weebApi.getRandomImage("shrug").execute().url))
             "lick" -> requestAndSend("lick", "licks", args, event, ctx.weebApi)
             "owo" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage("owo").execute().url))
             "b1nzy" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage(listOf("b1nzy")).execute().url))
@@ -74,9 +74,9 @@ class WeebCommands : WeebCommandBase() {
                 }
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
-                            .append("Here is a list of all the valid categories")
-                            .appendCodeBlock(StringUtils.join(weebTags, ", "), "LDIF")
-                            .build())
+                        .append("Here is a list of all the valid categories")
+                        .appendCodeBlock(StringUtils.join(weebTags, ", "), "LDIF")
+                        .build())
                     return
                 }
                 val type = StringUtils.join(args, "")
@@ -157,14 +157,14 @@ class WeebCommands : WeebCommandBase() {
     override fun getName() = "hug"
 
     override fun getAliases() = arrayOf(
-            "lewd",
-            "pat",
-            "punch",
-            "shrug",
-            "lick",
-            "owo",
-            "weeb",
-            "b1nzy",
-            "megumin"
+        "lewd",
+        "pat",
+        "punch",
+        "shrug",
+        "lick",
+        "owo",
+        "weeb",
+        "b1nzy",
+        "megumin"
     )
 }

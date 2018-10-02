@@ -68,7 +68,7 @@ public class HackbanCommand extends Command {
             } else if (arg0.matches(".{2,32}#\\d{4}")) {
 
                 Optional<User> opt = event.getJDA().getUsersByName(arg0.substring(0, arg0.length() - 5), false).stream()
-                        .findFirst();
+                    .findFirst();
 
                 if (opt.isPresent()) {
                     id = opt.get().getId();
@@ -83,7 +83,7 @@ public class HackbanCommand extends Command {
 
             try {
                 event.getGuild().getController().ban(id, 0)
-                        .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue(); //Commands are being ran on a separate thread, this is safe
+                    .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue(); //Commands are being ran on a separate thread, this is safe
                 messages.add(id);
             } catch (Exception e) {
                 e.printStackTrace();

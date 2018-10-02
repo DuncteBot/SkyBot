@@ -44,63 +44,63 @@ public class EvalFilter extends GroovyValueFilter {
      * This contains a list of all the allowed classes
      */
     private static final Class<?>[] ALLOWED_TYPES_LIST = {
-            StrictMath.class,
-            Math.class,
-            String.class,
-            StringBuilder.class,
-            StringBuffer.class,
+        StrictMath.class,
+        Math.class,
+        String.class,
+        StringBuilder.class,
+        StringBuffer.class,
 
-            Boolean.class,
-            boolean.class,
+        Boolean.class,
+        boolean.class,
 
-            Byte.class,
-            byte.class,
+        Byte.class,
+        byte.class,
 
-            Character.class,
-            char.class,
+        Character.class,
+        char.class,
 
-            Short.class,
-            short.class,
+        Short.class,
+        short.class,
 
-            Integer.class,
-            int.class,
+        Integer.class,
+        int.class,
 
-            Float.class,
-            float.class,
+        Float.class,
+        float.class,
 
-            Long.class,
-            long.class,
+        Long.class,
+        long.class,
 
-            Double.class,
-            double.class,
+        Double.class,
+        double.class,
 
-            Arrays.class,
+        Arrays.class,
 
-            Collection.class,
-            List.class,
-            ArrayList.class,
-            CollectionsKt.class,
+        Collection.class,
+        List.class,
+        ArrayList.class,
+        CollectionsKt.class,
 
-            BigDecimal.class,
-            BigInteger.class,
+        BigDecimal.class,
+        BigInteger.class,
 
-            //Java
-            ScriptDelegate.class,
+        //Java
+        ScriptDelegate.class,
 
-            //Kotlin
-            CategoryDelegate.class,
-            ChannelDelegate.class,
-            GuildDelegate.class,
-            JDADelegate.class,
-            MemberDelegate.class,
-            PresenceDelegate.class,
-            RoleDelegate.class,
-            TextChannelDelegate.class,
-            UserDelegate.class,
-            VoiceChannelDelegate.class,
+        //Kotlin
+        CategoryDelegate.class,
+        ChannelDelegate.class,
+        GuildDelegate.class,
+        JDADelegate.class,
+        MemberDelegate.class,
+        PresenceDelegate.class,
+        RoleDelegate.class,
+        TextChannelDelegate.class,
+        UserDelegate.class,
+        VoiceChannelDelegate.class,
 
-            Random.class,
-            ThreadLocalRandom.class
+        Random.class,
+        ThreadLocalRandom.class
     };
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
@@ -109,20 +109,20 @@ public class EvalFilter extends GroovyValueFilter {
      * Filter arrays of
      */
     private static final Pattern ARRAY_FILTER =
-            Pattern.compile(
-                    // Case insensitive
-                    "(?i)"
-                            // Decimals and Octals
-                            + "((\\[(\\s*[0-9]+\\s*)])"
-                            // Binary
-                            + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
-                            // Hexadecimal
-                            + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
+        Pattern.compile(
+            // Case insensitive
+            "(?i)"
+                // Decimals and Octals
+                + "((\\[(\\s*[0-9]+\\s*)])"
+                // Binary
+                + "|(\\[(\\s*)(0b)([01_]*)(\\s*)])"
+                // Hexadecimal
+                + "|(\\[\\s*(0x)[0-9a-f]+(\\s*)]))"),
     /**
      * Filter mentions
      */
     MENTION_FILTER =
-            Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here");
+        Pattern.compile("(<(@|@&)[0-9]{18}>)|@everyone|@here");
 
     /**
      * This filters the script
@@ -168,11 +168,11 @@ public class EvalFilter extends GroovyValueFilter {
     @Override
     public Object onSetArray(Invoker invoker, Object receiver, Object index, Object value) {
         throw new DoomedException(
-                String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
-                        receiver.toString(),
-                        receiver.getClass().getComponentType().getName(),
-                        index.toString(),
-                        value.toString()));
+            String.format("Cannot set array on %s, Class: %s, Index: %s, Value: %s",
+                receiver.toString(),
+                receiver.getClass().getComponentType().getName(),
+                index.toString(),
+                value.toString()));
     }
 
     /**
@@ -183,13 +183,13 @@ public class EvalFilter extends GroovyValueFilter {
      */
     public boolean filterLoops(String toFilter) {
         return Pattern.compile(
-                //for or while loop
-                "((while|for)" +
-                        //Stuff in the brackets
-                        "\\s*\\(.*\\))|" +
-                        // Other groovy loops
-                        "(\\.step|\\.times|\\.upto|\\.each)"
-                //match and find
+            //for or while loop
+            "((while|for)" +
+                //Stuff in the brackets
+                "\\s*\\(.*\\))|" +
+                // Other groovy loops
+                "(\\.step|\\.times|\\.upto|\\.each)"
+            //match and find
         ).matcher(toFilter).find();
     }
 

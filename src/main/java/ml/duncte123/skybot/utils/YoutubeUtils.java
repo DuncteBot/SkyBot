@@ -37,10 +37,10 @@ public class YoutubeUtils {
     static {
         try {
             youtube = new YouTube.Builder(
-                    GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
+                GoogleNetHttpTransport.newTrustedTransport(), JacksonFactory.getDefaultInstance(), (unused) -> {
             })
-                    .setApplicationName("SkyBot-youtube-search")
-                    .build();
+                .setApplicationName("SkyBot-youtube-search")
+                .build();
         } catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
@@ -49,22 +49,22 @@ public class YoutubeUtils {
 
     public static Video getVideoById(String videoID, String apiKey) throws Exception {
         return youtube.videos().list("snippet,statistics,contentDetails")
-                .setId(videoID)
-                .setKey(apiKey)
-                .execute()
-                .getItems().get(0);
+            .setId(videoID)
+            .setKey(apiKey)
+            .execute()
+            .getItems().get(0);
     }
 
 
     public static List<SearchResult> searchYoutube(String query, String apiKey, long size) throws IOException {
         return youtube.search().list("id,snippet")
-                .setKey(apiKey)
-                .setQ(query)
-                .setType("video")
-                .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
-                .setMaxResults(size)
-                .execute()
-                .getItems();
+            .setKey(apiKey)
+            .setQ(query)
+            .setType("video")
+            .setFields("items(id/kind,id/videoId,snippet/title,snippet/thumbnails/default/url)")
+            .setMaxResults(size)
+            .execute()
+            .getItems();
     }
 
 }

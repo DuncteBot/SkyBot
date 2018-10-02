@@ -131,24 +131,24 @@ public class HelpEmbeds {
     }*/
     public static MessageEmbed getCommandListWithPrefix(String prefix, CommandCategory... categories) {
         EmbedBuilder embed = EmbedUtils.defaultEmbed()
-                .setThumbnail(Settings.DEFAULT_ICON)
-                .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-                .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
+            .setThumbnail(Settings.DEFAULT_ICON)
+            .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
+            .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
         if (categories == null || categories.length == 0) {
             return embed
-                    .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
-                    .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
-                    .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
-                    .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
-                    .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
-                    .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
-                    .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
-                    .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
-                    .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
-                    .addField("Other suff",
-                            "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                                    "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
-                    .build();
+                .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
+                .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
+                .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
+                .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
+                .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
+                .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
+                .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
+                .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
+                .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
+                .addField("Other suff",
+                    "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+                        "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
+                .build();
         }
         for (CommandCategory category : categories) {
             switch (category) {
@@ -185,9 +185,9 @@ public class HelpEmbeds {
         }
 
         return embed.addField("Other suff",
-                "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
-                        "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
-                .build();
+            "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
+                "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
+            .build();
 
     }
 
