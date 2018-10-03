@@ -240,9 +240,17 @@ public class AudioUtils {
 
             @Override
             public void loadFailed(FriendlyException exception) {
-                if (announce)
+                if (!announce) {
+                    return;
+                }
+                
+                if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
+                    sendEmbed(channel, embedField(embedTitle, "Could not play: " + trackUrl
+                        + "\nExternal playback of this video was blocked by YouTube."));
+                } else {
                     sendEmbed(channel, embedField(embedTitle, "Could not play: " + exception.getMessage()
                         + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+                }
             }
         });
     }
