@@ -19,6 +19,8 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
 import kotlin.Triple;
 import me.duncte123.botCommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -102,22 +104,24 @@ public class BotListener extends ListenerAdapter {
     /**
      * This is used to check if we should trigger a update for the guild count when we leave a guild
      */
-    private final List<Long> botFamrs = new ArrayList<>();
+    private final TLongList botFamrs = new TLongArrayList();
     private final DBManager database;
     private final CommandManager commandManager;
     private final Variables variables;
     // A list of servers that list bots
-    private final List<Long> botLists = List.of(
-        110373943822540800L, // Dbots
-        264445053596991498L, // Dbl
-        374071874222686211L, // Bots for discord
-        112319935652298752L, // Carbon
-        439866052684283905L, // Discord Boats
-        387812458661937152L, // Botlist.space
-        483344253963993113L, // AutomaCord
-        454933217666007052L, // Divine Discord Bot List
-        446682534135201793L, // Discords best bots
-        477792727577395210L  // discordbotlist.xyz
+    private final TLongList botLists = new TLongArrayList(
+        new long[] {
+            110373943822540800L, // Dbots
+            264445053596991498L, // Dbl
+            374071874222686211L, // Bots for discord
+            112319935652298752L, // Carbon
+            439866052684283905L, // Discord Boats
+            387812458661937152L, // Botlist.space
+            483344253963993113L, // AutomaCord
+            454933217666007052L, // Divine Discord Bot List
+            446682534135201793L, // Discords best bots
+            477792727577395210L  // discordbotlist.xyz
+        }
     );
     /**
      * Make sure that we don't exit when we don't want to
@@ -172,6 +176,7 @@ public class BotListener extends ListenerAdapter {
         Guild supportGuild = manager.getGuildById(supportGuildId);
         List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
+
         Command.patrons.addAll(patrons);
 
         logger.info("Found {} normal patrons", patrons.size());
