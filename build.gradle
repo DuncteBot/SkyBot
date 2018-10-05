@@ -66,7 +66,7 @@ dependencies {
     compile group: 'me.duncte123', name: 'weebJava', version: '2.1.1'
     
     //My little utils
-    compile 'com.github.duncte123:botCommons:ff1af2d'
+    compile 'com.github.duncte123:botCommons:fbb8f98'
 
     //JDA (java discord api)
 //    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
