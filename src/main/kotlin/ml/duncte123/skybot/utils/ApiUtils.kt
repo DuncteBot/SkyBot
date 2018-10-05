@@ -34,7 +34,7 @@ object ApiUtils {
         val conn = database.connManager.connection
 
         val resultSet = conn.createStatement()
-            .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
+            .executeQuery("SELECT * FROM animal_apis WHERE api = \"llama\" ORDER BY RAND() LIMIT 1")
         resultSet.next()
         val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
         conn.close()
@@ -44,7 +44,7 @@ object ApiUtils {
 
     @JvmStatic
     fun getRandomAlpaca(): AlpacaObject {
-        val doc = WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").execute();
+        val doc = WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").execute()
 
         val img = doc.select("img").first().attributes().get("src")
         return AlpacaObject(img)
