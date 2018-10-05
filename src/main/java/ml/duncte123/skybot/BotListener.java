@@ -20,7 +20,7 @@ package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
 import kotlin.Triple;
-import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -61,7 +61,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {

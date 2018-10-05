@@ -30,57 +30,7 @@ import java.time.Instant;
  * A simple class to help me build embeds
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class EmbedUtils {
-
-    // Quote, User
-//    public static Map<String, String> footerQuotes = new HashMap<>();
-
-    /**
-     * The default way to send a embedded message to the channel with a field in it
-     *
-     * @param title   The title of the field
-     * @param message The message to display
-     * @return The {@link MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedField(String title, String message) {
-        return defaultEmbed().addField(title, message, false).build();
-    }
-
-    /**
-     * The default way to display a nice embedded message
-     *
-     * @param message The message to display
-     * @return The {@link MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedMessage(String message) {
-        return defaultEmbed().setDescription(message).build();
-    }
-
-    /**
-     * The default way to send a embedded image to the channel
-     *
-     * @param imageURL The url from the image
-     * @return The {@link MessageEmbed} to send to the channel
-     */
-    public static MessageEmbed embedImage(String imageURL) {
-        return defaultEmbed().setImage(imageURL).build();
-    }
-
-    public static MessageEmbed embedImageWithTitle(String title, String url, String image) {
-        return defaultEmbed().setTitle(title, url).setImage(image).build();
-    }
-
-    /**
-     * The default embed layout that all of the embeds are based off
-     *
-     * @return The way that that the {@link EmbedBuilder embed} will look like
-     */
-    public static EmbedBuilder defaultEmbed() {
-        return new EmbedBuilder()
-            .setColor(Settings.defaultColour)
-            .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
-            .setTimestamp(Instant.now());
-    }
+public class MusicEmbedUtils {
 
     /**
      * This will generate a nice player embed for us
@@ -151,46 +101,4 @@ public class EmbedUtils {
 
         return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
     }
-
-    /**
-     * This will convert our embeds for if the bot is not able to send embeds
-     *
-     * @param embed the {@link MessageEmbed} that we are trying to send
-     * @return the converted embed
-     */
-    static String embedToMessage(MessageEmbed embed) {
-        StringBuilder msg = new StringBuilder();
-
-        if (embed.getAuthor() != null) {
-            msg.append("***").append(embed.getAuthor().getName()).append("***\n\n");
-        }
-        if (embed.getDescription() != null) {
-            msg.append("_").append(embed.getDescription()
-                // Reformat
-                .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
-            ).append("_\n\n");
-        }
-        for (MessageEmbed.Field f : embed.getFields()) {
-            msg.append("__").append(f.getName()).append("__\n").append(
-                f.getValue()
-                    // Reformat
-                    .replaceAll("\\[(.+)]\\((.+)\\)", "$1 (Link: $2)")
-            ).append("\n\n");
-        }
-        if (embed.getImage() != null) {
-            msg.append(embed.getImage().getUrl()).append("\n");
-        }
-        if (embed.getFooter() != null) {
-            msg.append(embed.getFooter().getText());
-        }
-        if (embed.getTimestamp() != null) {
-            msg.append(" | ").append(embed.getTimestamp());
-        }
-
-        return msg.toString();
-    }
-
-    /*public static Queue<Message> embedToCodeBlock(MessageEmbed embed) {
-        return new MessageBuilder().appendCodeBlock(embedToMessage(embed), "java").buildAll(SplitPolicy.NEWLINE);
-    }*/
 }

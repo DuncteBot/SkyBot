@@ -51,8 +51,8 @@ import net.dv8tion.jda.core.entities.User;
 import java.util.*;
 import java.util.logging.Level;
 
-import static ml.duncte123.skybot.utils.EmbedUtils.embedField;
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedField;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 @SinceSkybot(version = "3.5.1")
 @Author(nickname = "duncte123", author = "Duncan Sterken")

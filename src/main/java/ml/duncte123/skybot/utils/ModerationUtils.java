@@ -37,7 +37,9 @@ import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -291,7 +293,7 @@ public class ModerationUtils {
                     String message = String.format("%#s bypassed the mute.", member.getUser());
 
                     if (sendMessages)
-                        MessageUtils.sendEmbed(logChannel, EmbedUtils.embedMessage(message));
+                        sendEmbed(logChannel, embedMessage(message));
                 }
             });
     }

@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.objects
 
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
-import ml.duncte123.skybot.utils.EmbedUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Member

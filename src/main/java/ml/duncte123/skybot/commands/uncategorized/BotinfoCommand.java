@@ -20,7 +20,8 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
-import me.duncte123.botCommons.messaging.MessageUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
+import me.duncte123.weebJava.WeebInfo;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -28,7 +29,7 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.EmbedUtils;
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
@@ -40,7 +41,7 @@ import java.lang.management.ManagementFactory;
 import java.sql.Time;
 import java.text.DecimalFormat;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 11-7-2017.
@@ -98,7 +99,7 @@ public class BotinfoCommand extends Command {
                 ") and Kotlin (version " + Settings.KOTLIN_VERSION + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION + "" +
                 "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
-                "**Weeb.java version:** " + WeebApi.VERSION + "\n\u200B", false)
+                "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
             .build();

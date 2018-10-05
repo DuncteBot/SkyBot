@@ -19,16 +19,16 @@
 package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.EmbedUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.utils.GuildUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.OnlineStatus
 import net.dv8tion.jda.core.Permission

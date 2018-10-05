@@ -20,7 +20,7 @@ package ml.duncte123.skybot.objects.delegate;
 
 import groovy.lang.Binding;
 import groovy.lang.Script;
-import me.duncte123.botCommons.messaging.MessageUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.entities.delegate.GuildDelegate;

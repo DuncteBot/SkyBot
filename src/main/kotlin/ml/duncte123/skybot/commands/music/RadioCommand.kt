@@ -18,16 +18,16 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils.sendErrorWithMessage
-import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*

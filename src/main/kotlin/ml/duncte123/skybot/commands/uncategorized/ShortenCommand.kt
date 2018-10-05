@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
-import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext

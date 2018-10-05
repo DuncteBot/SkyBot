@@ -22,7 +22,7 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
-import me.duncte123.botCommons.web.WebUtils.EncodingType.APPLICATION_JSON
+import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables

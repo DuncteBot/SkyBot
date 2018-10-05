@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.utils.YoutubeUtils
 import java.util.concurrent.TimeUnit
 
@@ -66,7 +66,7 @@ class SearchCommand : MusicCommand() {
             append("Type the number of the song that you want to play or type `cancel` to cancel your serach")
         }
 
-        MessageUtils.sendEmbed(event, EmbedUtils.embedMessage(string)) {
+        sendEmbed(event, EmbedUtils.embedMessage(string)) {
             handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
         }
 

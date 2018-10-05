@@ -19,7 +19,7 @@
 package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
-import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;

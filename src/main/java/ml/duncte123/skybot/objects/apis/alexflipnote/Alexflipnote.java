@@ -20,15 +20,15 @@ package ml.duncte123.skybot.objects.apis.alexflipnote;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
 import com.google.gson.Gson;
-import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
+import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import okhttp3.Request;
 import org.json.JSONObject;
 
-import static me.duncte123.botCommons.web.WebUtils.defaultRequest;
+import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Alexflipnote {

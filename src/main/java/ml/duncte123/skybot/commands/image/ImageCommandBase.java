@@ -33,7 +33,7 @@ import java.net.URL;
 import java.nio.file.Files;
 import java.util.List;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public abstract class ImageCommandBase extends Command {
