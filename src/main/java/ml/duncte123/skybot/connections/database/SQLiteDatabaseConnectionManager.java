@@ -50,7 +50,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     /**
      * Constructs a new SQLite file database
      *
-     * @param file The file where to create or load the database
+     * @param file
+     *         The file where to create or load the database
      */
     SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
@@ -122,7 +123,9 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     /**
      * This sets up the database and inserts the tables if they are not there
      *
-     * @param connection the connection to use
+     * @param connection
+     *         the connection to use
+     *
      * @author duncte123
      */
     private void innitDB(Connection connection) {

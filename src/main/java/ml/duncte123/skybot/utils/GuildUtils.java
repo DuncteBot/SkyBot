@@ -45,7 +45,9 @@ public class GuildUtils {
      * 1 = the total bots
      * 3 = the total members
      *
-     * @param g The {@link Guild Guild} to count the users in
+     * @param g
+     *         The {@link Guild Guild} to count the users in
+     *
      * @return an array with the member counts of the guild
      */
     public static long[] getBotAndUserCount(Guild g) {
@@ -60,7 +62,9 @@ public class GuildUtils {
     /**
      * This will calculate the bot to user ratio
      *
-     * @param g the {@link Guild} that we want to check
+     * @param g
+     *         the {@link Guild} that we want to check
+     *
      * @return the percentage of users and the percentage of bots in a nice compact array
      */
     public static double[] getBotRatio(Guild g) {
@@ -84,7 +88,9 @@ public class GuildUtils {
     /**
      * This counts the users in a guild that have an animated avatar
      *
-     * @param g the guild to count it in
+     * @param g
+     *         the guild to count it in
+     *
      * @return the amount users that have a animated avatar
      */
     public static long countAnimatedAvatars(Guild g) {
@@ -98,7 +104,9 @@ public class GuildUtils {
     /**
      * This will get the first channel of a guild that we can write in/should be able to write in
      *
-     * @param guild The guild that we want to get the main channel from
+     * @param guild
+     *         The guild that we want to get the main channel from
+     *
      * @return the Text channel that we can send our messages in.
      */
     public static TextChannel getPublicChannel(Guild guild) {
@@ -115,7 +123,9 @@ public class GuildUtils {
     /**
      * This will convert the VerificationLevel from the guild to how it is displayed in the settings
      *
-     * @param lvl The level to convert
+     * @param lvl
+     *         The level to convert
+     *
      * @return The converted verification level
      */
     // Null safety

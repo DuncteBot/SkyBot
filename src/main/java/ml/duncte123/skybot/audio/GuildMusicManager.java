@@ -32,6 +32,10 @@ import net.dv8tion.jda.core.entities.TextChannel;
 public class GuildMusicManager {
 
     /**
+     * This is the text channel were we will announce our songs
+     */
+    public long latestChannel = -1;
+    /**
      * This is our player
      */
     public final IPlayer player;
@@ -44,15 +48,12 @@ public class GuildMusicManager {
      * This is what actually sends the audio
      */
     private final AudioPlayerSenderHandler sendHandler;
-    /**
-     * This is the text channel were we will announce our songs
-     */
-    public long latestChannel = -1;
 
     /**
      * Constructor
      *
-     * @param g The guild that we want the manager for
+     * @param g
+     *         The guild that we want the manager for
      */
     public GuildMusicManager(Guild g, Variables variables) {
         player = LavalinkManager.ins.createPlayer(g.getIdLong());

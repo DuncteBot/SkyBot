@@ -18,10 +18,10 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
-import me.duncte123.botcommons.messaging.EmbedUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -87,8 +87,11 @@ public abstract class Command implements ICommand {
      * This checks if the user is a patrons if ours
      * It checks if the user has the patreon role on our support guild
      *
-     * @param u  The user to check
-     * @param tc the channel to send the message to, if the text channel is null it wont send a message
+     * @param u
+     *         The user to check
+     * @param tc
+     *         the channel to send the message to, if the text channel is null it wont send a message
+     *
      * @return true if the user is a patron
      */
     protected boolean isPatron(@NotNull User u, TextChannel tc) {

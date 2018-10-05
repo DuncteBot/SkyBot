@@ -19,12 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import net.dv8tion.jda.core.EmbedBuilder;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-
-import java.time.Instant;
 
 /**
  * A simple class to help me build embeds
@@ -35,7 +30,9 @@ public class MusicEmbedUtils {
     /**
      * This will generate a nice player embed for us
      *
-     * @param mng the {@link net.dv8tion.jda.core.entities.Guild} that we need the info for
+     * @param mng
+     *         the {@link net.dv8tion.jda.core.entities.Guild} that we need the info for
+     *
      * @return the String that we can place in our embed
      */
     public static String playerEmbed(GuildMusicManager mng) {
@@ -48,7 +45,9 @@ public class MusicEmbedUtils {
     /**
      * This will calculate the progressbar for us
      *
-     * @param percent how far we are in the audio track
+     * @param percent
+     *         how far we are in the audio track
+     *
      * @return the progressbar
      */
     private static String generateProgressBar(double percent) {
@@ -66,7 +65,9 @@ public class MusicEmbedUtils {
     /**
      * This will give a nice emote depending on how loud we are sending the music
      *
-     * @param volume the volume of our player
+     * @param volume
+     *         the volume of our player
+     *
      * @return the volume icon emote
      */
     private static String getVolumeIcon(int volume) {
@@ -85,7 +86,9 @@ public class MusicEmbedUtils {
     /**
      * This wil format our current player time in this format: hh:mm:ss
      *
-     * @param duration how far we are in the track
+     * @param duration
+     *         how far we are in the track
+     *
      * @return our formatted time
      */
     private static String formatTime(long duration) {

@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.uncategorized
 
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
@@ -25,8 +27,6 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils
 import ml.duncte123.skybot.utils.AirUtils
-import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import org.json.JSONObject
 import java.io.IOException
 

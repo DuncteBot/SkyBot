@@ -45,7 +45,8 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
     private final String templateURL;
 
     /**
-     * @param language The language and accent code to play back audio in
+     * @param language
+     *         The language and accent code to play back audio in
      */
     public SpeechAudioSourceManager(String language) {
         this.templateURL = GOOGLE_TRANSLATE_URL.replace("%language%", language);

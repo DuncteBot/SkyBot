@@ -58,15 +58,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AudioUtils {
     /**
-     * This is the default volume that the player will play at
-     * I've set it to 100 to save some resources
-     */
-    private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
-    /**
-     * This will hold the manager for the audio player
-     */
-    private static AudioPlayerManager playerManager;
-    /**
      * This is the title that you see in the embeds from the player
      */
     public final String embedTitle = "AirPlayer";
@@ -74,7 +65,15 @@ public class AudioUtils {
      * This will store all the music managers for all the guilds that we are playing music in
      */
     protected final Map<Long, GuildMusicManager> musicManagers;
-
+    /**
+     * This will hold the manager for the audio player
+     */
+    private static AudioPlayerManager playerManager;
+    /**
+     * This is the default volume that the player will play at
+     * I've set it to 100 to save some resources
+     */
+    private static final int DEFAULT_VOLUME = 100; //(0-150, where 100 is the default max volume)
     private final DunctebotConfig.Apis config;
     private final Variables variables;
 
@@ -87,24 +86,6 @@ public class AudioUtils {
         this.variables = variables;
         initPlayerManager();
         musicManagers = new HashMap<>();
-    }
-
-    /**
-     * This will return the formatted timestamp for the current playing track
-     *
-     * @param milliseconds the milliseconds that the track is at
-     * @return a formatted time
-     */
-    public static String getTimestamp(long milliseconds) {
-        int seconds = (int) (milliseconds / 1000) % 60;
-        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
-
-        if (hours > 0) {
-            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
-        } else {
-            return String.format("%02d:%02d", minutes, seconds);
-        }
     }
 
     private void initPlayerManager() {
@@ -139,10 +120,15 @@ public class AudioUtils {
     /**
      * Loads a track and plays it if the bot isn't playing
      *
-     * @param mng         The {@link GuildMusicManager MusicManager} for the guild
-     * @param channel     The {@link net.dv8tion.jda.core.entities.MessageChannel channel} that the bot needs to send the messages to
-     * @param trackUrlRaw The url from the track to play
-     * @param addPlayList If the url is a playlist
+     * @param mng
+     *         The {@link GuildMusicManager MusicManager} for the guild
+     * @param channel
+     *         The {@link net.dv8tion.jda.core.entities.MessageChannel channel} that the bot needs to send the messages
+     *         to
+     * @param trackUrlRaw
+     *         The url from the track to play
+     * @param addPlayList
+     *         If the url is a playlist
      */
     public void loadAndPlay(final GuildMusicManager mng, final TextChannel channel, User requester,
                             final String trackUrlRaw, final CommandContext ctx,
@@ -243,7 +229,7 @@ public class AudioUtils {
                 if (!announce) {
                     return;
                 }
-                
+
                 if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
                     sendEmbed(channel, embedField(embedTitle, "Could not play: " + trackUrl
                         + "\nExternal playback of this video was blocked by YouTube."));
@@ -258,7 +244,9 @@ public class AudioUtils {
     /**
      * This will get the music manager for the guild or register it if we don't have it yet
      *
-     * @param guild The guild that we need the manager for
+     * @param guild
+     *         The guild that we need the manager for
+     *
      * @return The music manager for that guild
      */
     public GuildMusicManager getMusicManager(Guild guild) {
@@ -285,5 +273,25 @@ public class AudioUtils {
 
     public Map<Long, GuildMusicManager> getMusicManagers() {
         return musicManagers;
+    }
+
+    /**
+     * This will return the formatted timestamp for the current playing track
+     *
+     * @param milliseconds
+     *         the milliseconds that the track is at
+     *
+     * @return a formatted time
+     */
+    public static String getTimestamp(long milliseconds) {
+        int seconds = (int) (milliseconds / 1000) % 60;
+        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+
+        if (hours > 0) {
+            return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+        } else {
+            return String.format("%02d:%02d", minutes, seconds);
+        }
     }
 }

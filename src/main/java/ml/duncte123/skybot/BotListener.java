@@ -71,11 +71,11 @@ import static ml.duncte123.skybot.objects.command.Command.*;
 })
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     /**
      * Check if we are updating
      */
     public static boolean isUpdating = false;
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -490,8 +490,10 @@ public class BotListener extends ListenerAdapter {
     /**
      * This handles the guild leave/ join events to deferments if the channel is empty
      *
-     * @param g  the guild
-     * @param vc the voice channel
+     * @param g
+     *         the guild
+     * @param vc
+     *         the voice channel
      */
     private void channelCheckThing(Guild g, @NotNull VoiceChannel vc) {
 

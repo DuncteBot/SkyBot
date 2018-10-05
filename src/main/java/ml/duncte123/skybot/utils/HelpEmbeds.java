@@ -35,11 +35,6 @@ import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 public class HelpEmbeds {
 
     /**
-     * This tells the fields to be inline or not
-     */
-    private static final boolean INLINE = true;
-
-    /**
      * These lists hold the commands for each category
      */
     private static List<String> mainCommands = new ArrayList<>();
@@ -51,6 +46,10 @@ public class HelpEmbeds {
     private static List<String> patronCommands = new ArrayList<>();
     private static List<String> weebCommands = new ArrayList<>();
     private static List<String> NSFWCommands = new ArrayList<>();
+    /**
+     * This tells the fields to be inline or not
+     */
+    private static final boolean INLINE = true;
 
     /**
      * This loads all the commands in the lists
@@ -125,7 +124,9 @@ public class HelpEmbeds {
     /**
      * This will return a embed containing all the commands
      *
-     * @param prefix the prefix that we need
+     * @param prefix
+     *         the prefix that we need
+     *
      * @return a embed containing all the commands
      */
     /*public static MessageEmbed generateCommandEmbed(String prefix) {
@@ -196,7 +197,9 @@ public class HelpEmbeds {
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
      *
-     * @param cmdNames the commands that should be added to the list
+     * @param cmdNames
+     *         the commands that should be added to the list
+     *
      * @return a concatenated string of the commands that we entered
      */
     private static String joinCommands(List<String> cmdNames) {

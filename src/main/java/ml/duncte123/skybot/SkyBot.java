@@ -158,6 +158,10 @@ public class SkyBot {
         }
     }
 
+    public ShardManager getShardManager() {
+        return shardManager;
+    }
+
     /**
      * This is our main method
      *
@@ -230,9 +234,5 @@ public class SkyBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ShardManager getShardManager() {
-        return shardManager;
     }
 }

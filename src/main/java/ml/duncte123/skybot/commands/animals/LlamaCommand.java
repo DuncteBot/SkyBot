@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.animals;
 
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.api.LlamaObject;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ApiUtils;
-import me.duncte123.botcommons.messaging.EmbedUtils;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;

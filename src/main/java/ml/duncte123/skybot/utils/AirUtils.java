@@ -46,7 +46,9 @@ public class AirUtils {
     /**
      * This will validate a link
      *
-     * @param url The thing to check
+     * @param url
+     *         The thing to check
+     *
      * @return true or false depending on if the url is valid
      */
     public static boolean isURL(String url) {
@@ -56,7 +58,9 @@ public class AirUtils {
     /**
      * This will check if the number that we are trying to parse is an int
      *
-     * @param integer the int to check
+     * @param integer
+     *         the int to check
+     *
      * @return true if it is an int
      */
     public static boolean isInt(String integer) {
@@ -97,7 +101,9 @@ public class AirUtils {
     /**
      * This will generate the uptime for us based on the time that we pass in
      *
-     * @param time The time that the bot has been running for
+     * @param time
+     *         The time that the bot has been running for
+     *
      * @return The uptime nicely formatted
      */
     public static String getUptime(long time) {
@@ -107,8 +113,11 @@ public class AirUtils {
     /**
      * This will generate the uptime for us based on the time that we pass in
      *
-     * @param time     The time that the bot has been running for
-     * @param withTime If we should add the seconds, minutes and hours to the time
+     * @param time
+     *         The time that the bot has been running for
+     * @param withTime
+     *         If we should add the seconds, minutes and hours to the time
+     *
      * @return The uptime nicely formatted
      */
     public static String getUptime(long time, boolean withTime) {
@@ -166,8 +175,11 @@ public class AirUtils {
     /**
      * This gets the channel from a name or id
      *
-     * @param channelId the channel name or id
-     * @param guild     the guild to search in
+     * @param channelId
+     *         the channel name or id
+     * @param guild
+     *         the guild to search in
+     *
      * @return the channel
      */
     public static TextChannel getLogChannel(String channelId, Guild guild) {
