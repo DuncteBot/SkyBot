@@ -426,6 +426,12 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     .put("code", response.status())
             }
 
+            get("/alpaca") {
+                return@get ApiUtils.getRandomAlpaca().toJson()
+                    .put("status", "success")
+                    .put("code", response.status())
+            }
+
             get("/kpop") {
                 val search = request.queryParamOrDefault("search", "")
                 try {
