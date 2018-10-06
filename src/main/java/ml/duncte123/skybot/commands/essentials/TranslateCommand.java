@@ -44,7 +44,7 @@ public class TranslateCommand extends Command {
         message.append("Original: " + input);
         message.append("\n");
         message.append("Translation to "+ targetLang + " : " + translation);
-        sendMsg(event, translation);
+        sendMsg(event, message.toString());
     }
 
     @Override
