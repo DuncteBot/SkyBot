@@ -2,7 +2,8 @@ package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botCommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.commands.image.ImageCommandBase;
+import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -13,7 +14,12 @@ import java.util.List;
 import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "sylmoss", author = "Sylvia Moss")
-public class TranslateCommand extends ImageCommandBase {
+public class TranslateCommand extends Command {
+
+    public TranslateCommand() {
+        this.category = CommandCategory.NERD_STUFF;
+    }
+
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
@@ -26,7 +32,7 @@ public class TranslateCommand extends ImageCommandBase {
 
         String targetLang = args.get(0);
         String input = String.join(" ", args.subList(1, args.size() - 1));
-        JSONArray translatedJson = WebUtils.ins.translate("en", targetLang, input);
+        JSONArray translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
         if (translatedJson.length() < 1) {
             sendMsg(ctx.getEvent(), "No translation found");
@@ -34,6 +40,10 @@ public class TranslateCommand extends ImageCommandBase {
         }
 
         String translation = translatedJson.getString(0);
+        StringBuilder message = new StringBuilder();
+        message.append("Original: " + input);
+        message.append("\n");
+        message.append("Translation to "+ targetLang + " : " + translation);
         sendMsg(event, translation);
     }
 
@@ -45,6 +55,6 @@ public class TranslateCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Translate a text from English to another language\n"
-                + "Usage: `" + PREFIX + getName() + "[destination language] <text>";
+            + "Usage: `" + PREFIX + getName() + "[destination language] <text>";
     }
 }
