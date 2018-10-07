@@ -36,7 +36,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),

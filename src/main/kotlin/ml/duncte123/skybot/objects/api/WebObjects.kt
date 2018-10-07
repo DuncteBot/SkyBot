@@ -28,6 +28,8 @@ import kotlin.reflect.full.memberProperties
 
 data class LlamaObject(val id: Int, val file: String) : ApiObject()
 
+data class AlpacaObject(val file: String) : ApiObject()
+
 data class KpopObject(val id: Int, val name: String, val band: String, val image: String) : ApiObject()
 
 data class WarnObject(val userId: String, val warnings: List<Warning>) : ApiObject()

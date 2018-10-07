@@ -18,13 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild;
 
-import me.duncte123.botCommons.messaging.MessageUtils;
+import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
@@ -34,7 +34,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.time.format.DateTimeFormatter;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 /**
  * Created by Duncan on 2-7-2017.

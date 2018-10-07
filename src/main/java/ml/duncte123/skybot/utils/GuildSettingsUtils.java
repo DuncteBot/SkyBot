@@ -98,7 +98,9 @@ public class GuildSettingsUtils {
     /**
      * This wil get a guild or register it if it's not there yet
      *
-     * @param guild the guild to get
+     * @param guild
+     *         the guild to get
+     *
      * @return the guild
      */
     @NotNull
@@ -116,8 +118,10 @@ public class GuildSettingsUtils {
     /**
      * This will save the settings into the database when the guild owner/admin updates it
      *
-     * @param guild    The guild to update it for
-     * @param settings the new settings
+     * @param guild
+     *         The guild to update it for
+     * @param settings
+     *         the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
         Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
@@ -185,7 +189,9 @@ public class GuildSettingsUtils {
     /**
      * This will register a new guild with their settings on bot join
      *
-     * @param g The guild that we are joining
+     * @param g
+     *         The guild that we are joining
+     *
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g, Variables variables) {
@@ -236,7 +242,8 @@ public class GuildSettingsUtils {
     /**
      * This will attempt to remove a guild wen we leave it
      *
-     * @param g the guild to remove from the database
+     * @param g
+     *         the guild to remove from the database
      */
     public static void deleteGuild(Guild g, Variables variables) {
         Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();

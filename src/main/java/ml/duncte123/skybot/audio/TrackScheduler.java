@@ -25,8 +25,8 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrackEndReason;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import lavalink.client.player.IPlayer;
 import lavalink.client.player.event.AudioEventAdapterWrapped;
-import me.duncte123.botCommons.messaging.MessageUtils;
-import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botcommons.messaging.MessageUtils;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.commands.music.RadioCommand;
@@ -48,8 +48,8 @@ import static ml.duncte123.skybot.SkyBot.getInstance;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     public final Queue<AudioTrack> queue;
+    private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
     private final Variables variables;
@@ -60,7 +60,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     /**
      * This instantiates our player
      *
-     * @param player Our audio player
+     * @param player
+     *         Our audio player
      */
     TrackScheduler(IPlayer player, Variables variables, GuildMusicManager guildMusicManager) {
         this.player = player;
@@ -72,7 +73,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     /**
      * Queue a track
      *
-     * @param track The {@link AudioTrack AudioTrack} to queue
+     * @param track
+     *         The {@link AudioTrack AudioTrack} to queue
      */
     public void queue(AudioTrack track) {
         if (player.getPlayingTrack() != null) {
@@ -105,9 +107,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     /**
      * Gets run when a track ends
      *
-     * @param player    The {@link AudioPlayer AudioTrack} for that guild
-     * @param lastTrack The {@link AudioTrack AudioTrack} that ended
-     * @param endReason Why did this track end?
+     * @param player
+     *         The {@link AudioPlayer AudioTrack} for that guild
+     * @param lastTrack
+     *         The {@link AudioTrack AudioTrack} that ended
+     * @param endReason
+     *         Why did this track end?
      */
     @Override
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
@@ -154,7 +159,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     /**
      * tell the player if needs to repeat
      *
-     * @param repeating if the player needs to repeat
+     * @param repeating
+     *         if the player needs to repeat
      */
     public void setRepeating(boolean repeating) {
         this.repeating = repeating;
@@ -172,7 +178,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     /**
      * tell the player if needs to repeat playlists
      *
-     * @param repeatingPlaylists if the player needs to repeat playlists
+     * @param repeatingPlaylists
+     *         if the player needs to repeat playlists
      */
     public void setRepeatingPlaylists(boolean repeatingPlaylists) {
         this.repeatPlayList = repeatingPlaylists;

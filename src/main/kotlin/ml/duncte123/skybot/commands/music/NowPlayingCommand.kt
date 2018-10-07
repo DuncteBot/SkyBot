@@ -18,13 +18,14 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.web.WebUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
+import ml.duncte123.skybot.utils.MusicEmbedUtils.playerEmbed
 import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
@@ -39,7 +40,7 @@ class NowPlayingCommand : MusicCommand() {
         val player = mng.player
         val msg = when {
             player.playingTrack != null && !player.playingTrack.info.isStream ->
-                EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + EmbedUtils.playerEmbed(mng))
+                EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + playerEmbed(mng))
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
                 val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }

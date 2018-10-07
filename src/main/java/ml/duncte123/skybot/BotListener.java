@@ -20,7 +20,7 @@ package ml.duncte123.skybot;
 
 import fredboat.audio.player.LavalinkManager;
 import kotlin.Triple;
-import me.duncte123.botCommons.text.TextColor;
+import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
@@ -61,7 +61,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {
@@ -71,11 +71,11 @@ import static ml.duncte123.skybot.objects.command.Command.*;
 })
 public class BotListener extends ListenerAdapter {
 
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     /**
      * Check if we are updating
      */
     public static boolean isUpdating = false;
+    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -490,8 +490,10 @@ public class BotListener extends ListenerAdapter {
     /**
      * This handles the guild leave/ join events to deferments if the channel is empty
      *
-     * @param g  the guild
-     * @param vc the voice channel
+     * @param g
+     *         the guild
+     * @param vc
+     *         the voice channel
      */
     private void channelCheckThing(Guild g, @NotNull VoiceChannel vc) {
 

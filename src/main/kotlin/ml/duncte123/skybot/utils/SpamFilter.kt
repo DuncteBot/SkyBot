@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.utils
 
-import me.duncte123.botCommons.text.TextColor
+import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.DBManager

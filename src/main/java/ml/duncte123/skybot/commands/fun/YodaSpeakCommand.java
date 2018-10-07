@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.commands.fun;
 
-import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtils.EncodingType;
+import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.WebUtils.EncodingType;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
@@ -33,7 +33,7 @@ import org.json.JSONObject;
 import java.io.IOException;
 import java.util.List;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class YodaSpeakCommand extends Command {

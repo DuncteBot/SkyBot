@@ -18,12 +18,10 @@
 
 package ml.duncte123.skybot.utils
 
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.connections.database.DBManager
-import ml.duncte123.skybot.objects.api.KpopObject
-import ml.duncte123.skybot.objects.api.LlamaObject
-import ml.duncte123.skybot.objects.api.WarnObject
-import ml.duncte123.skybot.objects.api.Warning
+import ml.duncte123.skybot.objects.api.*
 import java.sql.ResultSet
 import java.sql.SQLException
 
@@ -36,12 +34,28 @@ object ApiUtils {
         val conn = database.connManager.connection
 
         val resultSet = conn.createStatement()
-            .executeQuery("SELECT * FROM animal_apis ORDER BY RAND() LIMIT 1")
+            .executeQuery("SELECT * FROM animal_apis WHERE api = \"llama\" ORDER BY RAND() LIMIT 1")
         resultSet.next()
         val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
         conn.close()
 
         return obj
+    }
+
+    @JvmStatic
+    fun getRandomAlpaca(): AlpacaObject {
+        val doc = WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").execute()
+
+        val img = doc.select("img").first().attributes().get("src")
+        return AlpacaObject(img)
+    }
+
+    @JvmStatic
+    fun getRandomAlpacaAsync(callback: (AlpacaObject) -> Unit) {
+        WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async { doc ->
+            val img = doc.select("img").first().attributes().get("src")
+            callback.invoke(AlpacaObject(img))
+        }
     }
 
     @JvmStatic

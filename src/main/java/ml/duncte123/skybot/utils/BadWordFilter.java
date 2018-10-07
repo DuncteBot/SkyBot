@@ -76,9 +76,12 @@ public class BadWordFilter {
     }
 
     /**
-     * Iterates over a String input and checks whether a cuss word was found in a list, then checks if the word should be ignored (e.g. bass contains the word *ss).
+     * Iterates over a String input and checks whether a cuss word was found in a list, then checks if the word should
+     * be ignored (e.g. bass contains the word *ss).
      *
-     * @param in The sentence to check
+     * @param in
+     *         The sentence to check
+     *
      * @return every word as a item in array
      */
     private ArrayList<String> badWordsFound(String in) {
@@ -124,7 +127,9 @@ public class BadWordFilter {
     /**
      * Checks if the sentence contains a bad word
      *
-     * @param input the sentence to check
+     * @param input
+     *         the sentence to check
+     *
      * @return true if it contains a bad word
      */
     public boolean filterText(String input) {

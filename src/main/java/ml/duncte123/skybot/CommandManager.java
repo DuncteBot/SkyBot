@@ -44,15 +44,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
 @SuppressWarnings("WeakerAccess")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
-    private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
     /**
      * This stores all our commands
      */
@@ -106,7 +106,9 @@ public class CommandManager {
     /**
      * This tries to get a command with the provided name/alias
      *
-     * @param name the name of the command
+     * @param name
+     *         the name of the command
+     *
      * @return a possible null command for the name
      */
     public ICommand getCommand(String name) {
@@ -241,7 +243,9 @@ public class CommandManager {
     /**
      * This handles adding the command
      *
-     * @param command The command to add
+     * @param command
+     *         The command to add
+     *
      * @return true if the command is added
      */
     @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
@@ -269,7 +273,8 @@ public class CommandManager {
     /**
      * This will run the command when we need them
      *
-     * @param event the event for the message
+     * @param event
+     *         the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
         String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();

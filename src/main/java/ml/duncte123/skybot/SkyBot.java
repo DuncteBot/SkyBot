@@ -21,8 +21,9 @@ package ml.duncte123.skybot;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import fredboat.audio.player.LavalinkManager;
-import me.duncte123.botCommons.text.TextColor;
-import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.text.TextColor;
+import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -30,6 +31,7 @@ import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebServer;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
@@ -40,10 +42,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.charset.Charset;
-import java.sql.Connection;
-import java.util.EnumSet;
 import java.nio.charset.StandardCharsets;
+import java.sql.Connection;
+import java.time.Instant;
+import java.util.EnumSet;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -67,7 +69,14 @@ public class SkyBot {
         DBManager database = variables.getDatabase();
         CommandManager commandManager = variables.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
+
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
+        EmbedUtils.setEmbedBuilder(
+            () -> new EmbedBuilder()
+                .setColor(Settings.defaultColour)
+                .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
+                .setTimestamp(Instant.now())
+        );
 
         String configPrefix = config.discord.prefix;
         if (!Settings.PREFIX.equals(configPrefix)) {
@@ -149,11 +158,18 @@ public class SkyBot {
         }
     }
 
+    public ShardManager getShardManager() {
+        return shardManager;
+    }
+
     /**
      * This is our main method
      *
-     * @param args The args passed in while running the bot
-     * @throws Exception When you mess something up
+     * @param args
+     *         The args passed in while running the bot
+     *
+     * @throws Exception
+     *         When you mess something up
      * @deprecated Because I can lol
      */
     @Deprecated
@@ -218,9 +234,5 @@ public class SkyBot {
         } catch (IOException e) {
             e.printStackTrace();
         }
-    }
-
-    public ShardManager getShardManager() {
-        return shardManager;
     }
 }

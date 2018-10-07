@@ -52,7 +52,8 @@ public class GuildSettings {
     /**
      * This will init everything
      *
-     * @param guildId the id of the guild that the settings are for
+     * @param guildId
+     *         the id of the guild that the settings are for
      */
     public GuildSettings(long guildId) {
         this.guildId = guildId;
@@ -70,7 +71,9 @@ public class GuildSettings {
     /**
      * We use this to update if the join message should display
      *
-     * @param enableJoinMessage whether we should display the join message
+     * @param enableJoinMessage
+     *         whether we should display the join message
+     *
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setEnableJoinMessage(boolean enableJoinMessage) {
@@ -90,7 +93,9 @@ public class GuildSettings {
     /**
      * We use this to update if we should block swearwords
      *
-     * @param enableSwearFilter whether we should block swearing
+     * @param enableSwearFilter
+     *         whether we should block swearing
+     *
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setEnableSwearFilter(boolean enableSwearFilter) {
@@ -119,7 +124,9 @@ public class GuildSettings {
     /**
      * This will set the custom join for the corresponding guild
      *
-     * @param customJoinMessage The new join message
+     * @param customJoinMessage
+     *         The new join message
+     *
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setCustomJoinMessage(String customJoinMessage) {
@@ -139,7 +146,9 @@ public class GuildSettings {
     /**
      * This will set the custom leave message for the corresponding guild
      *
-     * @param customLeaveMessage The new leave message
+     * @param customLeaveMessage
+     *         The new leave message
+     *
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setCustomLeaveMessage(String customLeaveMessage) {
@@ -159,7 +168,9 @@ public class GuildSettings {
     /**
      * This will set the custom prefix for the corresponding guild
      *
-     * @param customPrefix The new prefix
+     * @param customPrefix
+     *         The new prefix
+     *
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setCustomPrefix(String customPrefix) {
@@ -179,7 +190,9 @@ public class GuildSettings {
     /**
      * This will set the channel that we log all the mod stuff in
      *
-     * @param tc the channel to log
+     * @param tc
+     *         the channel to log
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setLogChannel(long tc) {
@@ -199,7 +212,9 @@ public class GuildSettings {
     /**
      * This sets the role id for the autorole
      *
-     * @param autoroleRole the role to set the autorole to
+     * @param autoroleRole
+     *         the role to set the autorole to
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setAutoroleRole(long autoroleRole) {
@@ -223,7 +238,9 @@ public class GuildSettings {
     /**
      * This sets the channel in where the welcome or leave messages should display
      *
-     * @param welcomeLeaveChannel the channel in where the welcome or leave messages should display
+     * @param welcomeLeaveChannel
+     *         the channel in where the welcome or leave messages should display
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setWelcomeLeaveChannel(long welcomeLeaveChannel) {
@@ -243,7 +260,9 @@ public class GuildSettings {
     /**
      * Sets the current sever description to show up in DB!guildinfo
      *
-     * @param serverDesc the custom server description
+     * @param serverDesc
+     *         the custom server description
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setServerDesc(String serverDesc) {
@@ -263,7 +282,9 @@ public class GuildSettings {
     /**
      * Sets if the audio player should announce the tracks
      *
-     * @param announceTracks true to announce tracks
+     * @param announceTracks
+     *         true to announce tracks
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setAnnounceTracks(boolean announceTracks) {
@@ -283,7 +304,9 @@ public class GuildSettings {
     /**
      * This sets if we should auto de-hoist people
      *
-     * @param autoDeHoist if we should auto de-hoist people
+     * @param autoDeHoist
+     *         if we should auto de-hoist people
+     *
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
@@ -301,7 +324,9 @@ public class GuildSettings {
     }
 
     /**
-     * @param filterInvites Sets if we should filter out invites in messages
+     * @param filterInvites
+     *         Sets if we should filter out invites in messages
+     *
      * @return the current settings for chaining
      */
     public GuildSettings setFilterInvites(boolean filterInvites) {

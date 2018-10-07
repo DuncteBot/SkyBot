@@ -20,12 +20,12 @@ package ml.duncte123.skybot.commands.essentials;
 
 import com.wolfram.alpha.*;
 import com.wolfram.alpha.visitor.Visitable;
-import me.duncte123.botCommons.messaging.MessageUtils;
+import me.duncte123.botcommons.messaging.EmbedUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.EmbedUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.entities.Member;
@@ -35,8 +35,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.editMsg;
 import static ml.duncte123.skybot.utils.AirUtils.shortenUrl;
-import static ml.duncte123.skybot.utils.MessageUtils.editMsg;
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class WolframAlphaCommand extends Command {
@@ -47,19 +47,14 @@ public class WolframAlphaCommand extends Command {
         this.category = CommandCategory.NERD_STUFF;
     }
 
-    private static String a(String s) {
-        if (s == null) return "null";
-
-        if (s.length() <= 2000 - 6) return s;
-
-        return s.substring(2000 - 6 - 1) + '\u2026';
-    }
-
     /**
      * Generates an embed for the {@link WAQueryResult result of a computation}
      *
-     * @param event  The event
-     * @param result The result generated
+     * @param event
+     *         The event
+     * @param result
+     *         The result generated
+     *
      * @return An {@link MessageEmbed embed} representing this {@link WAQueryResult result}
      */
     private MessageEmbed generateEmbed(
@@ -193,5 +188,13 @@ public class WolframAlphaCommand extends Command {
         waEngine = engine;
 
         return engine;
+    }
+
+    private static String a(String s) {
+        if (s == null) return "null";
+
+        if (s.length() <= 2000 - 6) return s;
+
+        return s.substring(2000 - 6 - 1) + '\u2026';
     }
 }

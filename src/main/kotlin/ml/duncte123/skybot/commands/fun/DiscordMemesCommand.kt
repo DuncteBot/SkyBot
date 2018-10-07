@@ -18,11 +18,11 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DiscordMemesCommand : WeebCommandBase() {

@@ -29,13 +29,10 @@ import net.dv8tion.jda.core.entities.MessageEmbed;
 import java.util.ArrayList;
 import java.util.List;
 
+import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
-
-    /**
-     * This tells the fields to be inline or not
-     */
-    private static final boolean INLINE = true;
 
     /**
      * These lists hold the commands for each category
@@ -49,6 +46,10 @@ public class HelpEmbeds {
     private static List<String> patronCommands = new ArrayList<>();
     private static List<String> weebCommands = new ArrayList<>();
     private static List<String> NSFWCommands = new ArrayList<>();
+    /**
+     * This tells the fields to be inline or not
+     */
+    private static final boolean INLINE = true;
 
     /**
      * This loads all the commands in the lists
@@ -123,28 +124,30 @@ public class HelpEmbeds {
     /**
      * This will return a embed containing all the commands
      *
-     * @param prefix the prefix that we need
+     * @param prefix
+     *         the prefix that we need
+     *
      * @return a embed containing all the commands
      */
-    /*public static MessageEmbed getCommandListWithPrefix(String prefix) {
-        return getCommandListWithPrefix(prefix, null);
+    /*public static MessageEmbed generateCommandEmbed(String prefix) {
+        return generateCommandEmbed(prefix, null);
     }*/
-    public static MessageEmbed getCommandListWithPrefix(String prefix, CommandCategory... categories) {
-        EmbedBuilder embed = EmbedUtils.defaultEmbed()
+    public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
+        EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
             .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
         if (categories == null || categories.length == 0) {
             return embed
-                .addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE)
-                .addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE)
-                .addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE)
-                .addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE)
-                .addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE)
-                .addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE)
-                .addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE)
-                .addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE)
-                .addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE)
+                .addField("Main commands", joinCommands(mainCommands), INLINE)
+                .addField("Music commands", joinCommands(musicCommands), INLINE)
+                .addField("Animal commands", joinCommands(animalCommands), INLINE)
+                .addField("Weeb commands", joinCommands(weebCommands), INLINE)
+                .addField("Fun commands", joinCommands(funCommands), INLINE)
+                .addField("Nerd commands", joinCommands(nerdCommands), INLINE)
+                .addField("Mod/Admin commands", joinCommands(modAdminCommands), INLINE)
+                .addField("Patron only commands", joinCommands(patronCommands), INLINE)
+                .addField("NSFW commands", joinCommands(NSFWCommands), INLINE)
                 .addField("Other suff",
                     "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                         "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
@@ -153,31 +156,31 @@ public class HelpEmbeds {
         for (CommandCategory category : categories) {
             switch (category) {
                 case FUN:
-                    embed.addField("Fun commands", generateCommandsWithoutPrefix(funCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Fun commands", joinCommands(funCommands), INLINE);
                     break;
                 case MAIN:
-                    embed.addField("Main commands", generateCommandsWithoutPrefix(mainCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Main commands", joinCommands(mainCommands), INLINE);
                     break;
                 case NSFW:
-                    embed.addField("NSFW commands", generateCommandsWithoutPrefix(NSFWCommands.toArray(new String[0])), INLINE);
+                    embed.addField("NSFW commands", joinCommands(NSFWCommands), INLINE);
                     break;
                 case NERD_STUFF:
-                    embed.addField("Nerd commands", generateCommandsWithoutPrefix(nerdCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Nerd commands", joinCommands(nerdCommands), INLINE);
                     break;
                 case WEEB:
-                    embed.addField("Weeb commands", generateCommandsWithoutPrefix(weebCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Weeb commands", joinCommands(weebCommands), INLINE);
                     break;
                 case MUSIC:
-                    embed.addField("Music commands", generateCommandsWithoutPrefix(musicCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Music commands", joinCommands(musicCommands), INLINE);
                     break;
                 case PATRON:
-                    embed.addField("Patron only commands", generateCommandsWithoutPrefix(patronCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Patron only commands", joinCommands(patronCommands), INLINE);
                     break;
                 case ANIMALS:
-                    embed.addField("Animal commands", generateCommandsWithoutPrefix(animalCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Animal commands", joinCommands(animalCommands), INLINE);
                     break;
                 case MOD_ADMIN:
-                    embed.addField("Mod/Admin commands", generateCommandsWithoutPrefix(modAdminCommands.toArray(new String[0])), INLINE);
+                    embed.addField("Mod/Admin commands", joinCommands(modAdminCommands), INLINE);
                     break;
                 case UNLISTED:
                     break;
@@ -194,21 +197,12 @@ public class HelpEmbeds {
     /**
      * if you enter a list of commands in here it will generate a string containing all the commands
      *
-     * @param prefix   The prefix that will be in frond of the commands
-     * @param cmdNames the commands that should be added to the list
-     * @return a concatenated string of the commands that we entered
-     */
-    private static String generateCommandsWithPrefix(String prefix, String... cmdNames) {
-        return "`" + prefix + String.join("`, `" + prefix, cmdNames) + "`";
-    }
-
-    /**
-     * if you enter a list of commands in here it will generate a string containing all the commands
+     * @param cmdNames
+     *         the commands that should be added to the list
      *
-     * @param cmdNames the commands that should be added to the list
      * @return a concatenated string of the commands that we entered
      */
-    private static String generateCommandsWithoutPrefix(String... cmdNames) {
-        return generateCommandsWithPrefix("", cmdNames);
+    private static String joinCommands(List<String> cmdNames) {
+        return "`" + String.join("`, `", cmdNames) + "`";
     }
 }

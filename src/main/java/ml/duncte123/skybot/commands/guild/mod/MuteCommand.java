@@ -33,8 +33,8 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botCommons.messaging.MessageUtils.sendSuccess;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends Command {

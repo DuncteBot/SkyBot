@@ -127,7 +127,9 @@ public class EvalFilter extends GroovyValueFilter {
     /**
      * This filters the script
      *
-     * @param o the script to filter
+     * @param o
+     *         the script to filter
+     *
      * @return the script if it passes the filter
      */
     @Override
@@ -178,7 +180,9 @@ public class EvalFilter extends GroovyValueFilter {
     /**
      * This checks if the script contains any loop
      *
-     * @param toFilter the script to filter
+     * @param toFilter
+     *         the script to filter
+     *
      * @return true if the script contains a loop
      */
     public boolean filterLoops(String toFilter) {
@@ -196,7 +200,9 @@ public class EvalFilter extends GroovyValueFilter {
     /**
      * This checks if the script contains an array
      *
-     * @param toFilter the script to filter
+     * @param toFilter
+     *         the script to filter
+     *
      * @return true if the script contains an array
      */
     public boolean filterArrays(String toFilter) {

@@ -47,11 +47,10 @@ class MySQLConnectionManager implements DBConnectionManager {
         this.pass = config.password;
         this.dbName = config.database;
         try {
-            Class.forName("com.mysql.jdbc.Driver");
             this.connection = DriverManager.getConnection(
                 String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
                 user, pass);
-        } catch (SQLException | ClassNotFoundException e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
 
@@ -66,11 +65,10 @@ class MySQLConnectionManager implements DBConnectionManager {
     public Connection getConnection() {
         if (!isConnected()) {
             try {
-                Class.forName("com.mysql.jdbc.Driver");
                 this.connection = DriverManager.getConnection(
                     String.format("jdbc:mysql://%s:%s/%s?useUnicode=true&characterEncoding=UTF-8", dbHost, port, dbName),
                     user, pass);
-            } catch (SQLException | ClassNotFoundException e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
             }
         }

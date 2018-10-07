@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.util.concurrent.TimeUnit;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -61,37 +61,11 @@ public abstract class MusicCommand extends Command {
     }
 
     /**
-     * This is a shortcut for getting the the link
-     *
-     * @return the {@link LavalinkManager LavalinkManager}
-     */
-    protected static LavalinkManager getLavalinkManager() {
-        return LavalinkManager.ins;
-    }
-
-    /**
-     * @param guildId the {@link Guild} id that should receive the cooldown.
-     */
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void addCooldown(long guildId) {
-        cooldowns.put(guildId, 12600);
-    }
-
-    /**
-     * This method shuts down the service that cares for the dynamic cooldown decreasing.
-     */
-    @SinceSkybot(version = "3.54.2")
-    @Author(nickname = "Sanduhr32", author = "Maurice R S")
-    public static void shutdown() {
-        commandService.shutdown();
-    }
-
-
-    /**
      * This is a shortcut for getting the music manager
      *
-     * @param guild the guild to get the music manager for
+     * @param guild
+     *         the guild to get the music manager for
+     *
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
     //@Deprecated(message = "Use #getLavalinkManager(guild)")
@@ -102,8 +76,12 @@ public abstract class MusicCommand extends Command {
     /**
      * This performs some checks that we need for the music and may suppress error messages.
      *
-     * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
-     * @param reply whether the bot replies that you should make it join first
+     * @param event
+     *         The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+     *         GuildMessageReceivedEvent}
+     * @param reply
+     *         whether the bot replies that you should make it join first
+     *
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils, boolean reply) {
@@ -136,7 +114,10 @@ public abstract class MusicCommand extends Command {
     /**
      * This performs some checks that we need for the music and will always reply with error messages.
      *
-     * @param event The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent GuildMessageReceivedEvent}
+     * @param event
+     *         The current {@link net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+     *         GuildMessageReceivedEvent}
+     *
      * @return true if the checks pass
      */
     protected boolean channelChecks(GuildMessageReceivedEvent event, AudioUtils audioUtils) {
@@ -155,11 +136,39 @@ public abstract class MusicCommand extends Command {
         return false;
     }
 
+    protected boolean hasCoolDown(Guild guild) {
+        return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;
+    }
+
+    /**
+     * This is a shortcut for getting the the link
+     *
+     * @return the {@link LavalinkManager LavalinkManager}
+     */
+    protected static LavalinkManager getLavalinkManager() {
+        return LavalinkManager.ins;
+    }
+
+    /**
+     * @param guildId
+     *         the {@link Guild} id that should receive the cooldown.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void addCooldown(long guildId) {
+        cooldowns.put(guildId, 12600);
+    }
+
     /*protected boolean isOwner(GuildMessageReceivedEvent event) {
         return isDev(event.getAuthor()) || event.getAuthor().getId().equals(Settings.OWNER_ID);
     }*/
 
-    protected boolean hasCoolDown(Guild guild) {
-        return cooldowns.containsKey(guild.getIdLong()) && cooldowns.get(guild.getIdLong()) > 0;
+    /**
+     * This method shuts down the service that cares for the dynamic cooldown decreasing.
+     */
+    @SinceSkybot(version = "3.54.2")
+    @Author(nickname = "Sanduhr32", author = "Maurice R S")
+    public static void shutdown() {
+        commandService.shutdown();
     }
 }
