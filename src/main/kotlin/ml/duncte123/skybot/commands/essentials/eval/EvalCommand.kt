@@ -74,12 +74,12 @@ class EvalCommand : Command() {
                 .addCompilationCustomizers(SandboxTransformer())) {
             @Throws(CompilationFailedException::class)
             override fun evaluate(scriptText: String): Any? {
+                if (scriptText.isEmpty())
+                    return null
                 if (filter.filterArrays(scriptText))
                     throw DoomedException("Arrays are not allowed")
                 if (filter.filterLoops(scriptText))
                     throw DoomedException("Loops are not allowed")
-                if (scriptText.isEmpty())
-                    return null
                 return super.evaluate(scriptText)
             }
         }
