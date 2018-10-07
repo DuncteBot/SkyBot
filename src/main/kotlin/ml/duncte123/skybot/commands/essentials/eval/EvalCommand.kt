@@ -105,7 +105,7 @@ class EvalCommand : Command() {
 
         val staticImports = listOf(
             "ml.duncte123.skybot.objects.EvalFunctions.*",
-            "me.duncte123.botcommons.messaging.JSONMessageErrors.*",
+            "me.duncte123.botcommons.messaging.MessageUtils.*",
             "ml.duncte123.skybot.utils.JSONMessageErrors.*"
         )
 
