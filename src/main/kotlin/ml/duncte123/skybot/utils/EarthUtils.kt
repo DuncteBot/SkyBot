@@ -21,7 +21,9 @@ package ml.duncte123.skybot.utils
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
 import lavalink.client.player.IPlayer
-import me.duncte123.botCommons.web.WebUtils
+import me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.audio.GuildMusicManager
@@ -211,8 +213,8 @@ class EarthUtils {
                 }
 
                 if (posts.isEmpty()) {
-                    me.duncte123.botCommons.messaging.MessageUtils.sendError(event.message)
-                    me.duncte123.botCommons.messaging.MessageUtils.sendMsg(event, """Whoops I could not find any jokes.
+                    sendError(event.message)
+                    sendMsg(event, """Whoops I could not find any jokes.
                     |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
                     return@async
                 }
@@ -231,7 +233,7 @@ class EarthUtils {
                 val text: String = post.optString("selftext", "")
                 val url: String = post.getString("url")
 
-                val embed = EmbedUtils.defaultEmbed().setTitle(title, url)
+                val embed = defaultEmbed().setTitle(title, url)
 
                 if (text.isNotEmpty())
                     embed.setDescription(text)
@@ -245,7 +247,7 @@ class EarthUtils {
                     embed.setImage(image)
                 }
 
-                MessageUtils.sendEmbed(event, embed.build())
+                sendEmbed(event, embed.build())
             }
 
         }

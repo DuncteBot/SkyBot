@@ -18,12 +18,12 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.EmbedUtils
-import ml.duncte123.skybot.utils.MessageUtils.sendEmbed
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {

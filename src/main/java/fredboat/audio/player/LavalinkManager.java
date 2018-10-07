@@ -116,7 +116,9 @@ public class LavalinkManager {
     /**
      * This is a simple util function that extracts the bot id from the token
      *
-     * @param token the token of your bot
+     * @param token
+     *         the token of your bot
+     *
      * @return the client id of the bot
      */
     private String getIdFromToken(String token) {

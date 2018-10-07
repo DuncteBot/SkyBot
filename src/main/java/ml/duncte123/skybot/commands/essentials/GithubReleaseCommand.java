@@ -19,9 +19,9 @@
 package ml.duncte123.skybot.commands.essentials;
 
 import com.github.natanbc.reliqua.request.RequestException;
-import me.duncte123.botCommons.messaging.MessageUtils;
-import me.duncte123.botCommons.web.WebUtils;
-import me.duncte123.botCommons.web.WebUtilsErrorUtils;
+import me.duncte123.botcommons.messaging.MessageUtils;
+import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;

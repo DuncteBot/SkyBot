@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.essentials
 
 import fredboat.audio.player.LavalinkManager
 import kotlinx.coroutines.experimental.*
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.EventManager
 import ml.duncte123.skybot.Settings
@@ -28,6 +28,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import ml.duncte123.skybot.utils.JSONMessageErrors
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 
@@ -85,7 +86,7 @@ class RestartShardCommand : Command() {
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON)
-                ml.duncte123.skybot.utils.MessageUtils.sendErrorJSON(event.message, ex, false)
+                JSONMessageErrors.sendErrorJSON(event.message, ex, false)
             else {
                 MessageUtils.sendError(event.message)
             }
@@ -98,7 +99,7 @@ class RestartShardCommand : Command() {
 
     override fun getAliases() = arrayOf("shardrestart")
 
-    fun terminate(shard: Int, shardManager: ShardManager) {
+    private fun terminate(shard: Int, shardManager: ShardManager) {
         for (jda in shardManager.shardCache) {
             if (jda.shardInfo.shardId != shard && shard != -1)
                 continue

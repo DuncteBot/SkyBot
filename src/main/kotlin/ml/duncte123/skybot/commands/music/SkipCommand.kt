@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext

@@ -28,6 +28,7 @@ import static java.lang.System.getProperty;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Settings {
 
+    public static String PREFIX = "db!";
     public static final long OWNER_ID = 191231307290771456L;
     public static final List<Long> developers = new ArrayList<>();
     public static final String OTHER_PREFIX = "db.";
@@ -38,6 +39,5 @@ public class Settings {
     public static final Color defaultColour = decode("#0751c6");
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     public static final boolean useJSON = false;
-    public static String PREFIX = "db!";
 
 }

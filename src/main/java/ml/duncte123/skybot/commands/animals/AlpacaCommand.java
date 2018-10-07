@@ -18,16 +18,16 @@
 
 package ml.duncte123.skybot.commands.animals;
 
-import me.duncte123.botCommons.web.WebUtils;
+import kotlin.Unit;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.EmbedUtils;
+import ml.duncte123.skybot.utils.ApiUtils;
 import org.jetbrains.annotations.NotNull;
-import org.jsoup.nodes.Element;
 
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.EmbedUtils.embedImage;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class AlpacaCommand extends Command {
@@ -39,9 +39,9 @@ public class AlpacaCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async((doc) -> {
-            Element img = doc.select("img").first();
-            sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(img.attributes().get("src")));
+        ApiUtils.getRandomAlpacaAsync((alpaca) -> {
+            sendEmbed(ctx.getEvent(), embedImage(alpaca.getFile()));
+            return Unit.INSTANCE;
         });
     }
 

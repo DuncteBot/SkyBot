@@ -19,7 +19,7 @@
 package ml.duncte123.skybot
 
 import com.google.api.services.youtube.model.SearchResult
-import me.duncte123.botCommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.entities.Message

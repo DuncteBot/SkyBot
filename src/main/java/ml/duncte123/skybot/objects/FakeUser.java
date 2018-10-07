@@ -40,9 +40,12 @@ public class FakeUser implements User {
     /**
      * This will create a user based on the things that we put in
      *
-     * @param name   The name that the user has
-     * @param id     The user id
-     * @param discrm The discriminator that the user has
+     * @param name
+     *         The name that the user has
+     * @param id
+     *         The user id
+     * @param discrm
+     *         The discriminator that the user has
      */
     public FakeUser(String name, long id, short discrm) {
         this.name = name;

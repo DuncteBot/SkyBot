@@ -37,8 +37,8 @@ import java.util.List;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -64,7 +64,7 @@ public class HelpCommand extends Command {
 
             return;
         }
-        sendHelp(event, HelpEmbeds.getCommandListWithPrefix(ctx.getGuildSettings().getCustomPrefix()));
+        sendHelp(event, HelpEmbeds.generateCommandEmbed(ctx.getGuildSettings().getCustomPrefix()));
     }
 
     @Override
@@ -136,7 +136,7 @@ public class HelpCommand extends Command {
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {
         CommandCategory cat = getCategory(toSearch);
-        MessageEmbed embed = HelpEmbeds.getCommandListWithPrefix(prefix, cat);
+        MessageEmbed embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
         sendEmbed(event, embed);
     }
 

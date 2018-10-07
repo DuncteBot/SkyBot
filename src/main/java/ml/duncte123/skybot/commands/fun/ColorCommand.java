@@ -26,8 +26,8 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import org.jetbrains.annotations.NotNull;
 
 import static java.awt.Color.decode;
-import static ml.duncte123.skybot.utils.EmbedUtils.defaultEmbed;
-import static ml.duncte123.skybot.utils.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ColorCommand extends Command {

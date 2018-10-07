@@ -22,7 +22,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class DidYouMeanCommand extends ImageCommandBase {
     @Override

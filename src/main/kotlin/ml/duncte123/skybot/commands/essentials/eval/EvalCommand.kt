@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.essentials.eval
 
 import groovy.lang.GroovyShell
 import kotlinx.coroutines.experimental.*
-import me.duncte123.botCommons.messaging.MessageUtils.*
-import me.duncte123.botCommons.text.TextColor
+import me.duncte123.botcommons.messaging.MessageUtils.*
+import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
@@ -32,7 +32,7 @@ import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.MessageUtils.sendErrorJSON
+import ml.duncte123.skybot.utils.JSONMessageErrors.sendErrorJSON
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
@@ -105,8 +105,8 @@ class EvalCommand : Command() {
 
         val staticImports = listOf(
             "ml.duncte123.skybot.objects.EvalFunctions.*",
-            "me.duncte123.botCommons.messaging.MessageUtils.*",
-            "ml.duncte123.skybot.utils.MessageUtils.*"
+            "me.duncte123.botcommons.messaging.MessageUtils.*",
+            "ml.duncte123.skybot.utils.JSONMessageErrors.*"
         )
 
         importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
