@@ -120,6 +120,9 @@ dependencies {
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.2.Final'
 
+    // https://mvnrepository.com/artifact/net.sf.trove4j/trove4j
+    compile group: 'net.sf.trove4j', name: 'trove4j', version: '3.0.3'
+
 }
 
 task sourcesForRelease(type: Copy) {
