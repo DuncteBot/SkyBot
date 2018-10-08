@@ -44,12 +44,12 @@ public class TranslateCommand extends Command {
         List<String> args = ctx.getArgs();
 
         if (args.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + "[destination language code] <text>`");
+            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <destination language code> <text>`");
             return;
         }
 
         String targetLang = args.get(0);
-        String input = String.join(" ", args.subList(1, args.size() - 1));
+        String input = String.join(" ", args.subList(1, args.size()));
         JSONArray translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
         if (translatedJson.length() < 1) {
@@ -71,6 +71,6 @@ public class TranslateCommand extends Command {
     @Override
     public String help() {
         return "Translate a text from English to another language\n"
-            + "Usage: `" + PREFIX + getName() + "[destination language] <text>";
+            + "Usage: `" + PREFIX + getName() + " <destination language> <text>`";
     }
 }
