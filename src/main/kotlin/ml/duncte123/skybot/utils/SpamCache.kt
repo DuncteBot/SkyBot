@@ -18,28 +18,33 @@
 
 package ml.duncte123.skybot.utils
 
+import gnu.trove.list.TLongList
+import gnu.trove.list.array.TLongArrayList
+import gnu.trove.map.hash.TLongObjectHashMap
 import ml.duncte123.skybot.Author
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SpamCache : HashMap<Long, List<Long>>() {
+class SpamCache : TLongObjectHashMap<TLongList>() {
 
     @Throws(IllegalArgumentException::class)
     fun update(longs: LongArray, updateMode: Int = 0): SpamCache {
         when {
             updateMode == -1 && longs.size == 1 -> {
-                this - longs[0]
+                this.remove(longs[0])
             }
             longs.size == 2 -> {
-                val msgIds: List<Long> =
+                val msgIds: TLongList =
                     if (!this.containsKey(longs[0]))
-                        ArrayList()
+                        TLongArrayList()
                     else
-                        this[longs[0]] as ArrayList
+                        this[longs[0]] as TLongArrayList
 
                 if (updateMode == 0) {
-                    this[longs[0]] = msgIds.plus(longs[1])
+                    msgIds.add(longs[1])
+                    this.put(longs[0], msgIds)
                 } else if (updateMode == 1) {
-                    this[longs[0]] = msgIds.minus(longs[1])
+                    msgIds.remove(longs[1])
+                    this.put(longs[0], msgIds)
                 }
             }
             else -> {

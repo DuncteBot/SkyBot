@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.utils
 
+import gnu.trove.list.TLongList
+import gnu.trove.list.array.TLongArrayList
+import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
@@ -29,23 +32,23 @@ import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SpamFilter(private val database: DBManager, private val variables: Variables) : HashMap<Long, SpamCache>() {
+class SpamFilter(private val database: DBManager, private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
 
-    private lateinit var rates: LongArray
+    private lateinit var rates: TLongList
 
     @Throws(IllegalArgumentException::class)
     fun update(longs: LongArray, updateMode: Int = 0) {
         if (this.containsKey(longs[0]))
             this[longs[0]]!!.update(longs.copyOfRange(1, 3), updateMode)
         else {
-            this[longs[0]] = (SpamCache().update(longs.copyOfRange(1, 3), updateMode))
+            this.put(longs[0], (SpamCache().update(longs.copyOfRange(1, 3), updateMode)))
         }
     }
 
     fun clearMessages() {
-        for (guildsSpamCache in this.values) {
-            for (memberId in guildsSpamCache.keys) {
-                guildsSpamCache[memberId] = ArrayList()
+        for (guildsSpamCache in this.valueCollection()) {
+            for (memberId in guildsSpamCache.keys()) {
+                guildsSpamCache.put(memberId, TLongArrayList())
             }
         }
     }
@@ -72,8 +75,8 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
             is LongArray -> {
                 applyRates(any)
             }
-            is List<*> -> {
-                applyRates(any.filter { it is Long }.map { it as Long })
+            is TLongList -> {
+                applyRates(any)
             }
             else -> {
                 this
@@ -123,7 +126,7 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size > 7)
+                    if (msgs.size() > 7)
                         shouldModerate = true
                 }
             }
@@ -139,7 +142,7 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
                 }
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
                 msg.textChannel.deleteMessages(clearable).queue {
-                    this[guild.idLong]?.get(author.user.idLong)?.filter { !clearable.map { it.idLong }.contains(it) }
+                    this[guild.idLong]?.get(author.user.idLong)?.grep {value -> !clearable.map { l -> l.idLong }.contains(value) }
                 }
 
                 return true
@@ -150,12 +153,13 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
     }
 
     fun applyRates(newRates: LongArray): SpamFilter {
-        rates = newRates
+        rates.clear()
+        rates.addAll(newRates)
         return this
     }
 
-    fun applyRates(newRates: List<Long>): SpamFilter {
-        rates = newRates.toLongArray()
+    fun applyRates(newRates: TLongList): SpamFilter {
+        rates = newRates
         return this
     }
 

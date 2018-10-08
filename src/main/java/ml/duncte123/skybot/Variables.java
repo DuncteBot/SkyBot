@@ -21,6 +21,8 @@ package ml.duncte123.skybot;
 import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
@@ -47,7 +49,7 @@ public class Variables {
     private final DBManager database;
     private final CommandManager commandManager;
     private final BlargBot blargBot;
-    private final Map<Long, GuildSettings> guildSettings;
+    private final TLongObjectMap<GuildSettings> guildSettings;
     private DunctebotConfig config;
 
 
@@ -64,9 +66,7 @@ public class Variables {
         }
 
         //set the devs
-        for (long id : config.discord.constantSuperUserIds) {
-            Settings.developers.add(id);
-        }
+        Settings.developers.addAll(config.discord.constantSuperUserIds);
 
         this.audioUtils = new AudioUtils(config.apis, this);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
@@ -79,7 +79,7 @@ public class Variables {
         this.database = new DBManager(isSql, config.sql);
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
-        this.guildSettings = new HashMap<>();
+        this.guildSettings = new TLongObjectHashMap<>();
         this.alexflipnote = new Alexflipnote();
     }
 
@@ -99,7 +99,7 @@ public class Variables {
         return database;
     }
 
-    public Map<Long, GuildSettings> getGuildSettings() {
+    public TLongObjectMap<GuildSettings> getGuildSettings() {
         return guildSettings;
     }
 

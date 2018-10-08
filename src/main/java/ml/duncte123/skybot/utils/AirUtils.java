@@ -159,9 +159,11 @@ public class AirUtils {
             e.printStackTrace();
         }
         try {
-            audioUtils.musicManagers.forEach((a, b) -> {
+            audioUtils.musicManagers.forEachEntry((a, b) -> {
                 if (b.player.getPlayingTrack() != null)
                     b.player.stopTrack();
+
+                return true;
             });
         } catch (java.util.ConcurrentModificationException ignored) {
         }

@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
-import me.duncte123.botCommons.web.WebUtils;
+import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -29,7 +29,7 @@ import org.json.JSONArray;
 
 import java.util.List;
 
-import static me.duncte123.botCommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "sylmoss", author = "Sylvia Moss")
 public class TranslateCommand extends Command {
@@ -58,11 +58,9 @@ public class TranslateCommand extends Command {
         }
 
         String translation = translatedJson.getString(0);
-        StringBuilder message = new StringBuilder();
-        message.append("Original: " + input);
-        message.append("\n");
-        message.append("Translation to "+ targetLang + " : " + translation);
-        sendMsg(event, message.toString());
+        String message = "Original: " + input + "\n" +
+            "Translation to " + targetLang + " : " + translation;
+        sendMsg(event, message);
     }
 
     @Override

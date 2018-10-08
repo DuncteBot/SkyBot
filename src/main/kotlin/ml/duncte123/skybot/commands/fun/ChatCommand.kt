@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.web.WebUtils
@@ -42,7 +43,7 @@ import javax.xml.xpath.XPathFactory
 class ChatCommand : Command() {
 
     private val botid = "b0dafd24ee35a477"
-    private val sessions = TreeMap<Long, ChatSession>()
+    private val sessions = TLongObjectHashMap<ChatSession>()
     private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
         "My prefix in this guild is *`{PREFIX}`*",
@@ -56,13 +57,13 @@ class ChatCommand : Command() {
         this.category = CommandCategory.FUN
 
         commandService.scheduleAtFixedRate({
-            val temp = TreeMap<Long, ChatSession>(sessions)
+            val temp = TLongObjectHashMap<ChatSession>(sessions)
             val now = Date()
             var cleared = 0
-            temp.forEach {
-                val duration = now.time - it.value.time.time
+            for (it in temp.keys()) {
+                val duration = now.time - sessions.get(it).time.time
                 if (duration >= MAX_DURATION) {
-                    sessions.remove(it.key)
+                    sessions.remove(it)
                     cleared++
                 }
             }
@@ -93,7 +94,7 @@ class ChatCommand : Command() {
         message = replaceStuff(event, message)
 
         if (!sessions.containsKey(event.author.idLong)) {
-            sessions[event.author.idLong] = ChatSession(botid, event.author.idLong)
+            sessions.put(event.author.idLong, ChatSession(botid, event.author.idLong))
             //sessions[event.author.id]?.session =
         }
 

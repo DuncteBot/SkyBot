@@ -184,7 +184,7 @@ public class BotListener extends ListenerAdapter {
         List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
-        List<Long> patronGuilds = new ArrayList<>();
+        TLongList patronGuilds = new TLongArrayList();
 
         guildPatrons.forEach((patron) -> {
             List<Long> guilds = manager.getMutualGuilds(patron).stream()

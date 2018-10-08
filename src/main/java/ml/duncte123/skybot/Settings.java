@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot;
 
+import gnu.trove.list.TLongList;
+import gnu.trove.list.array.TLongArrayList;
+
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +33,7 @@ public class Settings {
 
     public static String PREFIX = "db!";
     public static final long OWNER_ID = 191231307290771456L;
-    public static final List<Long> developers = new ArrayList<>();
+    public static final TLongList developers = new TLongArrayList();
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final String KOTLIN_VERSION = "@kotlinVersion@";

@@ -32,6 +32,8 @@ import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.track.AudioPlaylist;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.Variables;
@@ -64,7 +66,7 @@ public class AudioUtils {
     /**
      * This will store all the music managers for all the guilds that we are playing music in
      */
-    protected final Map<Long, GuildMusicManager> musicManagers;
+    protected final TLongObjectMap<GuildMusicManager> musicManagers;
     /**
      * This will hold the manager for the audio player
      */
@@ -85,7 +87,7 @@ public class AudioUtils {
         this.config = config;
         this.variables = variables;
         initPlayerManager();
-        musicManagers = new HashMap<>();
+        musicManagers = new TLongObjectHashMap<>();
     }
 
     private void initPlayerManager() {
@@ -271,7 +273,7 @@ public class AudioUtils {
         return mng;
     }
 
-    public Map<Long, GuildMusicManager> getMusicManagers() {
+    public TLongObjectMap<GuildMusicManager> getMusicManagers() {
         return musicManagers;
     }
 

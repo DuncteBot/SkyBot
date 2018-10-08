@@ -54,7 +54,7 @@ import kotlin.system.measureTimeMillis
 class EvalCommand : Command() {
 
     private val protectedShell: GroovyShell
-    private val engine: ScriptEngine
+    private val engine: GroovyShell
     /*private val packageImports: List<String>
     private val classImports: List<String>
     private val staticImports: List<String>*/
@@ -83,7 +83,8 @@ class EvalCommand : Command() {
                 return super.evaluate(scriptText)
             }
         }
-        engine = ScriptEngineManager().getEngineByName("groovy")
+//        engine = ScriptEngineManager().getEngineByName("groovy")
+        engine = GroovyShell()
         val packageImports = listOf(
             "java.io",
             "java.lang",
@@ -145,20 +146,20 @@ class EvalCommand : Command() {
         if (isRanByBotOwner && ctx.invoke.toLowerCase() != "safeeval") {
             timeout = 60000L
 
-            engine.put("commandManager", ctx.commandManager)
+            engine.setVariable("commandManager", ctx.commandManager)
 
-            engine.put("message", ctx.message)
-            engine.put("channel", ctx.message.textChannel)
-            engine.put("guild", ctx.guild)
-            engine.put("member", ctx.member)
-            engine.put("author", ctx.author)
-            engine.put("jda", ctx.jda)
-            engine.put("shardManager", ctx.jda.asBot().shardManager)
-            engine.put("event", event)
+            engine.setVariable("message", ctx.message)
+            engine.setVariable("channel", ctx.message.textChannel)
+            engine.setVariable("guild", ctx.guild)
+            engine.setVariable("member", ctx.member)
+            engine.setVariable("author", ctx.author)
+            engine.setVariable("jda", ctx.jda)
+            engine.setVariable("shardManager", ctx.jda.asBot().shardManager)
+            engine.setVariable("event", event)
 
-            engine.put("skraa", script)
-            engine.put("args", ctx.args)
-            engine.put("ctx", ctx)
+            engine.setVariable("skraa", script)
+            engine.setVariable("args", ctx.args)
+            engine.setVariable("ctx", ctx)
 
             @SinceSkybot("3.58.0")
             (GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
@@ -209,9 +210,9 @@ class EvalCommand : Command() {
     private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
             val out = withTimeoutOrNull(millis) {
-                engine.put("scope", this)
+                engine.setVariable("scope", this)
                 try {
-                    if (isRanByBotOwner) engine.eval(script)
+                    if (isRanByBotOwner) engine.evaluate(script)
                     else {
                         filter.register()
                         protectedShell.evaluate(script)

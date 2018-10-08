@@ -126,8 +126,10 @@ class EarthUtils {
         @JvmStatic
         fun audioJSON(audioUtils: AudioUtils): JSONObject {
             val json = JSONObject().put("time", OffsetDateTime.now())
-            for ((key, value) in audioUtils.musicManagers.entries) {
+
+            audioUtils.musicManagers.forEachEntry { key, value ->
                 json.put(key.toString(), JSONObject().put("guildId", key).put("manager", gMMtoJSON(value)))
+                return@forEachEntry true
             }
             return json
         }

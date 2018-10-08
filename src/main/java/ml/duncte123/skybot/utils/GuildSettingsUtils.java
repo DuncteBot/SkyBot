@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.utils;
 
+import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
@@ -48,7 +49,7 @@ public class GuildSettingsUtils {
     }
 
 
-    private static void loadGuildSettings(DBManager database, Map<Long, GuildSettings> guildSettings) {
+    private static void loadGuildSettings(DBManager database, TLongObjectMap<GuildSettings> guildSettings) {
         logger.debug("Loading Guild settings.");
 
         String dbName = database.getName();
@@ -106,7 +107,7 @@ public class GuildSettingsUtils {
     @NotNull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
 
-        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
         if (!guildSettings.containsKey(guild.getIdLong())) {
             return registerNewGuild(guild, variables);
         }
@@ -124,7 +125,7 @@ public class GuildSettingsUtils {
      *         the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
-        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
         DBManager database = variables.getDatabase();
         if (!guildSettings.containsKey(settings.getGuildId())) {
             registerNewGuild(guild, variables);
@@ -195,7 +196,7 @@ public class GuildSettingsUtils {
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g, Variables variables) {
-        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
         DBManager database = variables.getDatabase();
         if (guildSettings.containsKey(g.getIdLong())) {
             return guildSettings.get(g.getIdLong());
@@ -246,7 +247,7 @@ public class GuildSettingsUtils {
      *         the guild to remove from the database
      */
     public static void deleteGuild(Guild g, Variables variables) {
-        Map<Long, GuildSettings> guildSettings = variables.getGuildSettings();
+        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
         DBManager database = variables.getDatabase();
         guildSettings.remove(g.getIdLong());
         database.run(() -> {
