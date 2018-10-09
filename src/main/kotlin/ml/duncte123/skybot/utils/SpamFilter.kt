@@ -153,8 +153,7 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
     }
 
     fun applyRates(newRates: LongArray): SpamFilter {
-        rates.clear()
-        rates.addAll(newRates)
+        rates = TLongArrayList(newRates)
         return this
     }
 
