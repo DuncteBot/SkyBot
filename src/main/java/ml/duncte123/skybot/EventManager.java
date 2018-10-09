@@ -28,9 +28,10 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * A single event listener container
@@ -46,13 +47,19 @@ public class EventManager
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
-    private final BotListener botListener;
-    private final DeHoistListener deHoistListener;
     private final ReactionHandler reactionHandler = new ReactionHandler();
+    private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
-        this.botListener = new BotListener(variables);
-        this.deHoistListener = new DeHoistListener(variables);
+        BotListener botListener = new BotListener(variables);
+        DeHoistListener deHoistListener = new DeHoistListener(variables);
+        this.listeners.add(botListener);
+        this.listeners.add(deHoistListener);
+        this.listeners.add(reactionHandler);
+
+        if (LavalinkManager.ins.isEnabled()) {
+            this.listeners.add(LavalinkManager.ins.getLavalink());
+        }
     }
 
 
@@ -90,8 +97,7 @@ public class EventManager
 
     @Override
     public List<Object> getRegisteredListeners() {
-        return getRegisteredListenersClass()
-            .stream().map(it -> (Object) it).collect(Collectors.toList());
+        return Collections.singletonList(this.listeners);
     }
 
     /**
@@ -100,14 +106,11 @@ public class EventManager
      * @return our reaction handler
      */
     public ReactionHandler getReactionHandler() {
-        return reactionHandler;
+        return this.reactionHandler;
     }
 
     private List<EventListener> getRegisteredListenersClass() {
-        if (LavalinkManager.ins.isEnabled())
-            return Arrays.asList(LavalinkManager.ins.getLavalink(), botListener, deHoistListener, reactionHandler);
-        else
-            return Arrays.asList(botListener, deHoistListener, reactionHandler);
+        return this.listeners;
     }
 
 }
