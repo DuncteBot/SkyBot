@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.objects.api
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.eloquent
 import org.json.JSONObject
 import java.sql.Date
 import kotlin.reflect.KVisibility
@@ -42,7 +43,13 @@ open class ApiObject {
 
         this::class.memberProperties.forEach {
             if (it.visibility == KVisibility.PUBLIC) {
-                json.put(it.name, it.getter.call(this))
+
+                if(it.name == "file") {
+                    val file = it.getter.call(this) as String
+                    json.put(it.name, "https://cdn.duncte123.me/" + file.eloquent())
+                } else {
+                    json.put(it.name, it.getter.call(this))
+                }
             }
         }
 

@@ -22,10 +22,12 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
+import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.extensions.illuminate
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
@@ -42,9 +44,11 @@ import spark.Request
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
+import java.lang.Exception
 import java.nio.charset.Charset
 import java.sql.SQLException
 import java.util.*
+import javax.imageio.ImageIO
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebServer(private val shardManager: ShardManager, private val variables: Variables) {
