@@ -52,7 +52,6 @@ import org.slf4j.LoggerFactory;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -110,7 +109,7 @@ public class BotListener extends ListenerAdapter {
     private final Variables variables;
     // A list of servers that list bots
     private final TLongList botLists = new TLongArrayList(
-        new long[] {
+        new long[]{
             110373943822540800L, // Dbots
             264445053596991498L, // Dbl
             374071874222686211L, // Bots for discord

@@ -41,8 +41,6 @@ import org.codehaus.groovy.control.CompilerConfiguration
 import org.kohsuke.groovy.sandbox.SandboxTransformer
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.TimeoutException
-import javax.script.ScriptEngine
-import javax.script.ScriptEngineManager
 import javax.script.ScriptException
 import kotlin.system.measureTimeMillis
 

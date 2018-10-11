@@ -22,8 +22,6 @@ import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.List;
 
 import static java.awt.Color.decode;
 import static java.lang.System.getProperty;

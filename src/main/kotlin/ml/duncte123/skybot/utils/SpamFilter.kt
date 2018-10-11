@@ -142,7 +142,7 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
                 }
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
                 msg.textChannel.deleteMessages(clearable).queue {
-                    this[guild.idLong]?.get(author.user.idLong)?.grep {value -> !clearable.map { l -> l.idLong }.contains(value) }
+                    this[guild.idLong]?.get(author.user.idLong)?.grep { value -> !clearable.map { l -> l.idLong }.contains(value) }
                 }
 
                 return true
