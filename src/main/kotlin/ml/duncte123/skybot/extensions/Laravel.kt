@@ -18,14 +18,18 @@
 
 package ml.duncte123.skybot.extensions
 
-private const val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:/."
-private const val target = "rCnZk8Aw9P0Y24sUM6x5tKRl31L7IhJifDdcbueoOqHavByzGpVSXmjNWTgQFE[!$"
+import java.util.Base64.getUrlEncoder as MagicClass
+
+private const val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:/.="
+private const val target = "rCnZk8Aw9P0Y24sUM6x5tKRl31L7IhJifDdcbueoOqHavByzGpVSXmjNWTgQFE[!$ "
 
 fun String.eloquent(): String {
 
-    val result = CharArray(length)
-    for (i in 0 until length) {
-        val c = this[i]
+    val magic = MagicClass().encodeToString(toByteArray())
+
+    val result = CharArray(magic.length)
+    for (i in 0 until magic.length) {
+        val c = magic[i]
         val index = source.indexOf(c)
 
         if (index == -1) {
@@ -36,6 +40,6 @@ fun String.eloquent(): String {
         result[i] = target[index]
     }
 
-    return String(result)
+    return String(result).trim()
 
 }
