@@ -1,10 +1,19 @@
-[![Codacy Badge](https://api.codacy.com/project/badge/Grade/3ac632a5366a47e6a3a534303b4eb5f8)](https://www.codacy.com/app/DuncteBot/SkyBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DuncteBot/SkyBot&amp;utm_campaign=Badge_Grade)
-# SkyBot [![Build Status](https://circleci.com/gh/DuncteBot/SkyBot/tree/master.svg?style=shield)](https://circleci.com/gh/duncte123/SkyBot) [![DiscordBots](https://discordbots.org/api/widget/status/210363111729790977.png)](https://discordbots.org/bot/210363111729790977)
+[codacy]: https://api.codacy.com/project/badge/Grade/3ac632a5366a47e6a3a534303b4eb5f8
+[codacyLink]: https://www.codacy.com/app/DuncteBot/SkyBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DuncteBot/SkyBot&amp;utm_campaign=Badge_Grade
+[circle]: https://circleci.com/gh/DuncteBot/SkyBot/tree/master.svg?style=shield
+[circleLink]: https://circleci.com/gh/duncte123/SkyBot
+[dbl]: https://discordbots.org/api/widget/status/210363111729790977.png
+[dblLink]: https://discordbots.org/bot/210363111729790977
+[discord]: https://discordapp.com/api/guilds/191245668617158656/embed.png
+[discordLink]: https://discord.gg/NKM9Xtk
+
+[![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Support Guild][discord]][discordLink]
+
+# SkyBot 
 SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
 If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) 
-[![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png)](https://discord.gg/NKM9Xtk)
 
 
 # How to invite the bot to a server?
