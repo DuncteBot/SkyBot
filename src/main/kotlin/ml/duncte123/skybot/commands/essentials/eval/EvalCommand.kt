@@ -177,9 +177,6 @@ class EvalCommand : Command() {
                 return@launch eval(event, false, script, timeout)
             }))
         }
-
-        // Garbage collect
-        System.gc()
     }
 
     override fun help() = """Evaluate java code on the bot

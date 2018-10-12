@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
-import com.afollestad.ason.Ason
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
@@ -46,14 +45,13 @@ class ImageCommand : Command() {
                 return
             }
             val keyword = StringUtils.join(ctx.args, "+")
-            WebUtils.ins.getText(String.format(ctx.googleBaseUrl, keyword)).async {
-                val jsonRaw = Ason(it)
-                val jsonArray = jsonRaw.getJsonArray<Ason>("items")
-                val randomItem = jsonArray.getJsonObject(ctx.random.nextInt(jsonArray.size()))
+            WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
+                val jsonArray = it.getJSONArray("items")
+                val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))
                 sendEmbed(event,
                     EmbedUtils.defaultEmbed()
-                        .setTitle(randomItem?.getString("title"), randomItem?.getString("image.contextLink"))
-                        .setImage(randomItem?.getString("link")).build()
+                        .setTitle(randomItem.getString("title"), randomItem.getString("image.contextLink"))
+                        .setImage(randomItem.getString("link")).build()
                 )
             }
 

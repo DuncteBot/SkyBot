@@ -74,7 +74,11 @@ class VoiceKickCommand : Command() {
                 return
             }
             controller.createVoiceChannel("temp_voicekick_${System.currentTimeMillis()}").queue { channel ->
-                channel as VoiceChannel
+
+                if(channel !is VoiceChannel) {
+                    logger.error("Created a Voice Channel but the result wasn't a voice channel (received ${channel.javaClass.name})")
+                    return@queue
+                }
                 controller.moveVoiceMember(member, channel).queue {
                     channel.delete().queue()
                 }

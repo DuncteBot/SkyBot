@@ -59,8 +59,8 @@ class SkipCommand : MusicCommand() {
         if (mng.player.playingTrack != null) {
             val trackUserData = mng.player.playingTrack.userData
 
-            val user = if (trackUserData != null) {
-                val userData = trackUserData as TrackUserData
+            val user = if (trackUserData != null && trackUserData is TrackUserData) {
+                val userData = trackUserData
                 ctx.jda.getUserById(userData.userId)
             } else {
                 ctx.author
