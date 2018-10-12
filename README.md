@@ -57,3 +57,6 @@ The following libraries are used:
 - [x] ~~Make kpop command take in a search term (name/id)~~
 - [ ] Find international music streams for the [RadioCommand](https://github.com/duncte123/SkyBot/blob/dev/src/main/kotlin/ml/duncte123/skybot/commands/music/RadioCommand.kt#L69)
 - [X] ~~Make web requests thread safe~~
+
+# Widgets from botlists
+[![Discord Boats](https://discordboats.xyz/api/widget/dunctebot)](https://discordboats.xyz/bot/dunctebot)

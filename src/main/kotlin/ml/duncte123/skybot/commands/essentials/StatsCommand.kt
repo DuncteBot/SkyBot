@@ -73,8 +73,8 @@ class StatsCommand : Command() {
                 """.trimMargin(), false)
 
             .addField("JVM stats",
-                """**Total thread count:** ${Thread.getAllStackTraces().keys.size}
-                            |**Active thread count:** ${Thread.activeCount()}
+                """**Active thread count:** ${Thread.activeCount()}
+                            |**Total thread count:** ${Thread.getAllStackTraces().keys.size}
                             |**Used ram:** ${jvmMem}MB
                             |**Allocated ram:** ${jvmUsage}MB
                         """.trimMargin(), false)
