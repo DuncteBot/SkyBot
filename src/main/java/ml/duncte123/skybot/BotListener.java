@@ -243,13 +243,16 @@ public class BotListener extends ListenerAdapter {
         }
 
         Guild guild = event.getGuild();
+        String selfMember = guild.getSelfMember().getAsMention();
+        String selfUser = event.getJDA().getSelfUser().getAsMention();
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
         String rw = event.getMessage().getContentRaw();
+        String rwLower = rw.toLowerCase();
 
         if (doAutoModChecks(event, settings, rw)) return;
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser())
-            && rw.equals(guild.getSelfMember().getAsMention())) {
+            && rw.equals(selfMember)) {
             sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                 event.getAuthor().getId(),
                 Settings.PREFIX)
@@ -257,16 +260,17 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        if (!rw.toLowerCase().startsWith(Settings.PREFIX.toLowerCase()) &&
+        if (!rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
             !rw.startsWith(settings.getCustomPrefix())
-            && !rw.startsWith(guild.getSelfMember().getAsMention())
-            && !rw.toLowerCase().startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
+            && !rw.startsWith(selfMember)
+            && !rw.startsWith(selfUser)
+            && !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
             return;
         }
 
         if (!canRunCommands(rw, settings, event)) return;
 
-        if (!rw.startsWith(guild.getSelfMember().getAsMention())) {
+        if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
             //Handle the command
             commandManager.runCommand(event);
             return;
