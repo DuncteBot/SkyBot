@@ -6,6 +6,7 @@
 [dblLink]: https://discordbots.org/bot/210363111729790977
 [discord]: https://discordapp.com/api/guilds/191245668617158656/embed.png
 [discordLink]: https://discord.gg/NKM9Xtk
+[inviteLink]: https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1
 
 [![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Support Guild][discord]][discordLink]
 
@@ -18,7 +19,7 @@ If you need any support please join our [support guild](https://discord.gg/NKM9X
 
 # How to invite the bot to a server?
 
-Go to `https://discordapp.com/oauth2/authorize?&client_id=210363111729790977scope=bot&permissions=-1` and follow the steps on the website
+Go to [`https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1`][inviteLink] and follow the steps on the website
 
 
 # How to setup? / Self hosting
