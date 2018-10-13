@@ -99,7 +99,7 @@ public class TempBanCommand extends Command {
         }
 
         event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-            (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
+            (v) -> modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
         );
         sendSuccess(event.getMessage());
     }

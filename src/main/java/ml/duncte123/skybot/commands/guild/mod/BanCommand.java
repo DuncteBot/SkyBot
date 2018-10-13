@@ -18,25 +18,22 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.apache.commons.lang3.time.DateUtils;
 import org.jetbrains.annotations.NotNull;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.List;
 import java.util.Objects;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class BanCommand extends Command {
@@ -52,20 +49,20 @@ public class BanCommand extends Command {
         List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            MessageUtils.sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
+            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
-            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <Reason>");
+            sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <Reason>");
             return;
         }
 
         try {
             final User toBan = event.getMessage().getMentionedUsers().get(0);
             if (toBan.equals(event.getAuthor()) &&
-                !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
+                !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+                sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
 
@@ -73,14 +70,14 @@ public class BanCommand extends Command {
             String reason = String.join(" ", args.subList(2, args.size()));
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                 (m) -> {
-                    ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
-                    MessageUtils.sendSuccess(event.getMessage());
+                    modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
+                    sendSuccess(event.getMessage());
                 }
             );
 
         } catch (HierarchyException e) {
             //e.printStackTrace();
-            MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
+            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }
 
@@ -97,6 +94,6 @@ public class BanCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"dabon"};
+        return new String[]{"dabon"};
     }
 }
