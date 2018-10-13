@@ -126,6 +126,11 @@ public class BanCommand extends Command {
         return "ban";
     }
 
+    @Override
+    public String[] getAliases() {
+        return new String[] {"dabon"};
+    }
+
     private class CalculateBanTime {
         private boolean error;
         private GuildMessageReceivedEvent event;
