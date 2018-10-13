@@ -145,17 +145,17 @@ public class TempBanCommand extends Command {
             try {
                 banTime = Integer.parseInt(timeParts[0]);
             } catch (NumberFormatException e) {
-                MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
+                sendMsg(event, e.getMessage() + " is not a valid number");
                 error = true;
                 return this;
             } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
-                MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
                 error = true;
                 return this;
             }
             if (banTime > 0) {
                 if (timeParts.length != 2) {
-                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                    sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
                     error = true;
                     return this;
                 }
@@ -166,7 +166,7 @@ public class TempBanCommand extends Command {
                 switch (timeParts[1]) {
                     case "m":
                         if (Integer.parseInt(timeParts[0]) < 10) {
-                            MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
+                            sendMsg(event, "The minimum time for minutes is 10.");
                             error = true;
                             return this;
                         }
@@ -189,7 +189,7 @@ public class TempBanCommand extends Command {
                         break;
 
                     default:
-                        MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
+                        sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
                         error = true;
                         return this;
                 }
