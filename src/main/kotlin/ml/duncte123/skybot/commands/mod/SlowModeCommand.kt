@@ -49,7 +49,11 @@ class SlowModeCommand : Command() {
         }
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `${PREFIX}help $name`")
+
+            val currentMode = ctx.channel.slowmode
+            val currentModeString = if (currentMode == 0) "off" else "${currentMode}ms"
+
+            sendMsg(event, "Current slowmode is `$currentModeString`")
             return
         }
 
