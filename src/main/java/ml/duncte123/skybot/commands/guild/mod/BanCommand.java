@@ -57,7 +57,7 @@ public class BanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
-            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>");
+            MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <Reason>");
             return;
         }
 
@@ -68,47 +68,16 @@ public class BanCommand extends Command {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            //noinspection ConstantConditions
-            if (args.size() >= 2) {
-                String reason = String.join(" ", args.subList(2, args.size()));
-                String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
-                if (!AirUtils.isInt(timeParts[0])) {
-                    String newReason = ctx.getArgsRaw();
-                    event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                        (m) -> {
-                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
-                            MessageUtils.sendSuccess(event.getMessage());
-                        }
-                    );
-                    return;
+
+            String reason = String.join(" ", args.subList(2, args.size()));
+            event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+                (m) -> {
+                    ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
+                    MessageUtils.sendSuccess(event.getMessage());
                 }
+            );
 
-                CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
-                if (calculateBanTime.hasError()) return;
-
-                String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
-                int finalBanTime = calculateBanTime.getFinalBanTime();
-                event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                    (voidMethod) -> {
-                        if (finalBanTime > 0) {
-                            ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
-                                toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
-
-                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
-                        } else {
-                            final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
-
-                            ModerationUtils.modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
-                        }
-                    }
-                );
-                MessageUtils.sendSuccess(event.getMessage());
-            } else {
-                event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                    (v) -> ModerationUtils.modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
-                );
-            }
         } catch (HierarchyException e) {
             //e.printStackTrace();
             MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
@@ -118,7 +87,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + PREFIX + getName() + " <@user> [<time><m/h/d/w/M/Y>] <Reason>`";
+            "Usage: `" + PREFIX + getName() + " <@user> <Reason>`";
     }
 
     @Override
@@ -129,93 +98,5 @@ public class BanCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[] {"dabon"};
-    }
-
-    private class CalculateBanTime {
-        private boolean error;
-        private GuildMessageReceivedEvent event;
-        private String[] timeParts;
-        private String finalUnbanDate;
-        private int finalBanTime;
-
-        private CalculateBanTime(GuildMessageReceivedEvent event, String... timeParts) {
-            this.event = event;
-            this.timeParts = timeParts;
-        }
-
-        private boolean hasError() {
-            return error;
-        }
-
-        private String getFinalUnbanDate() {
-            return finalUnbanDate;
-        }
-
-        private int getFinalBanTime() {
-            return finalBanTime;
-        }
-
-        private CalculateBanTime invoke() {
-            String unbanDate = "";
-            int banTime; // initial value is always 0
-            try {
-                banTime = Integer.parseInt(timeParts[0]);
-            } catch (NumberFormatException e) {
-                MessageUtils.sendMsg(event, e.getMessage() + " is not a valid number");
-                error = true;
-                return this;
-            } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
-                MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                error = true;
-                return this;
-            }
-            if (banTime > 0) {
-                if (timeParts.length != 2) {
-                    MessageUtils.sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
-                    error = true;
-                    return this;
-                }
-
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date dt = new Date(System.currentTimeMillis());
-
-                switch (timeParts[1]) {
-                    case "m":
-                        if (Integer.parseInt(timeParts[0]) < 10) {
-                            MessageUtils.sendMsg(event, "The minimum time for minutes is 10.");
-                            error = true;
-                            return this;
-                        }
-                        dt = DateUtils.addMinutes(dt, banTime);
-                        break;
-                    case "h":
-                        dt = DateUtils.addHours(dt, banTime);
-                        break;
-                    case "d":
-                        dt = DateUtils.addDays(dt, banTime);
-                        break;
-                    case "w":
-                        dt = DateUtils.addWeeks(dt, banTime);
-                        break;
-                    case "M":
-                        dt = DateUtils.addMonths(dt, banTime);
-                        break;
-                    case "Y":
-                        dt = DateUtils.addYears(dt, banTime);
-                        break;
-
-                    default:
-                        MessageUtils.sendMsg(event, timeParts[1] + " is not defined, please choose from m, d, h, w, M or Y");
-                        error = true;
-                        return this;
-                }
-                unbanDate = df.format(dt);
-            }
-
-            finalUnbanDate = unbanDate.isEmpty() ? "" : unbanDate;
-            finalBanTime = banTime;
-            error = false;
-            return this;
-        }
     }
 }
