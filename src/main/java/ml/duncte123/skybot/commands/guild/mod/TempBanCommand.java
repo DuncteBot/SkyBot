@@ -18,11 +18,9 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
-import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -37,6 +35,7 @@ import java.util.Objects;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.ModerationUtils.addBannedUserToDb;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class TempBanCommand extends Command {
@@ -76,31 +75,32 @@ public class TempBanCommand extends Command {
         CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
         if (calculateBanTime.hasError()) return;
 
-        if (!reason.isEmpty()) {
-            String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
-            int finalBanTime = calculateBanTime.getFinalBanTime();
-            event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                (voidMethod) -> {
-                    if (finalBanTime > 0) {
-                        ModerationUtils.addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
-                            toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
-
-                        modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
-                    } else {
-                        logger.error("This code should never run");
-                        final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
-
-                        modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
-                    }
-                }
+        if (reason.isEmpty()) {
+            event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
+                (v) -> modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
             );
             sendSuccess(event.getMessage());
             return;
         }
 
-        event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-            (v) -> modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
+        String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
+        int finalBanTime = calculateBanTime.getFinalBanTime();
+        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+            (voidMethod) -> {
+                if (finalBanTime > 0) {
+                    addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
+                        toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+
+                    modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
+                } else {
+                    logger.error("This code should never run");
+                    final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
+
+                    modLog(event.getAuthor(), toBan, "banned", newReason, ctx.getGuild());
+                }
+            }
         );
+
         sendSuccess(event.getMessage());
     }
 
