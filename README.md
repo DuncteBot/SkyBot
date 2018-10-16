@@ -60,4 +60,5 @@ The following libraries are used:
 - [X] ~~Make web requests thread safe~~
 
 # Widgets from botlists
+[![Bots for discord](https://botsfordiscord.com/api/bot/210363111729790977/widget)](https://botsfordiscord.com/bots/210363111729790977)
 [![Discord Boats](https://discordboats.xyz/api/widget/dunctebot)](https://discordboats.xyz/bot/dunctebot)
