@@ -79,6 +79,7 @@ class UserinfoCommand : Command() {
 
             } else {
                 u = users[0]
+                m = ctx.guild.getMember(u)
             }
         }
 
