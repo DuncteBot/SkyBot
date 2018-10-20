@@ -19,9 +19,12 @@
 package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
+import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
@@ -98,6 +101,10 @@ public class AirUtils {
         return gameType + " " + g.getName();
     }*/
 
+    private static int longToInt(long input) {
+        return (int) input;
+    }
+
     /**
      * This will generate the uptime for us based on the time that we pass in
      *
@@ -125,9 +132,9 @@ public class AirUtils {
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
          */
         //Like it's ever gonna be up for more then a week
-        long years = time / 31104000000L;
-        long months = time / 2592000000L % 12;
-        long days = time / 86400000L % 30;
+        int years = longToInt(time / 31104000000L);
+        int months = longToInt(time / 2592000000L % 12);
+        int days = longToInt(time / 86400000L % 30);
 
         //Get the years, months and days
         String uptimeString = "";
@@ -137,9 +144,9 @@ public class AirUtils {
 
         //If we want the time added we pass in true
         if (withTime) {
-            long hours = time / 3600000L % 24;
-            long minutes = time / 60000L % 60;
-            long seconds = time / 1000L % 60;
+            int hours = longToInt(time / 3600000L % 24);
+            int minutes = longToInt(time / 60000L % 60);
+            int seconds = longToInt(time / 1000L % 60);
 
             uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", ");
             uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
@@ -158,14 +165,16 @@ public class AirUtils {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        try {
-            audioUtils.musicManagers.forEachEntry((a, b) -> {
-                if (b.player.getPlayingTrack() != null)
-                    b.player.stopTrack();
 
-                return true;
-            });
-        } catch (java.util.ConcurrentModificationException ignored) {
+        TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
+
+        for (long key : temp.keys()) {
+
+            GuildMusicManager mng = audioUtils.musicManagers.get(key);
+
+            if (mng.player.getPlayingTrack() != null) {
+                mng.player.stopTrack();
+            }
         }
         database.getService().shutdown();
     }
