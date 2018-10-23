@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.PendingRequest;
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.botcommons.web.WebUtils;
@@ -196,17 +197,13 @@ public class AirUtils {
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
-        TextChannel tc;
-        try {
-            tc = guild.getTextChannelById(channelId);
-        } catch (NumberFormatException e) {
-            List<TextChannel> tcl = guild.getTextChannelsByName(channelId, true);
-            if (tcl.size() > 0) {
-                tc = tcl.get(0);
-            } else return null;
+        List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
+
+        if(foundChannels.isEmpty()) {
+            return null;
         }
 
-        return tc;
+        return foundChannels.get(0);
     }
 
     /**
