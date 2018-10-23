@@ -305,48 +305,51 @@ public class CommandManager {
     }
 
     public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
+
+        if(cmd == null) {
+            return;
+        }
+
         commandThread.submit(() -> {
-            if (cmd != null) {
-                try {
+            try {
 
-                    if (!cmd.isCustom()) {
+                if (!cmd.isCustom()) {
 
-                        if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
-                            sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
-                                "Please mark this channel as NSFW to use this command");
-                            return;
-                        }
-
-                        cmd.executeCommand(
-                            new CommandContext(invoke, args, event, variables)
-                        );
-
+                    if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+                        sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
+                            "Please mark this channel as NSFW to use this command");
                         return;
                     }
 
-                    CustomCommand cc = (CustomCommand) cmd;
+                    cmd.executeCommand(
+                        new CommandContext(invoke, args, event, variables)
+                    );
 
-                    if (cc.getGuildId() != event.getGuild().getIdLong())
-                        return;
-
-                    try {
-                        String message = CustomCommandUtils.PARSER.clear()
-                            .put("user", event.getAuthor())
-                            .put("channel", event.getChannel())
-                            .put("guild", event.getGuild())
-                            .put("args", String.join(" ", args))
-                            .parse(cc.getMessage());
-
-                        sendMsg(event, "\u200B" + message);
-                        CustomCommandUtils.PARSER.clear();
-                    } catch (Exception e) {
-                        sendMsg(event, "Error with parsing custom command: " + e.getMessage());
-                        execCheck(e);
-                    }
-
-                } catch (Throwable ex) {
-                    execCheck(ex);
+                    return;
                 }
+
+                CustomCommand cc = (CustomCommand) cmd;
+
+                if (cc.getGuildId() != event.getGuild().getIdLong())
+                    return;
+
+                try {
+                    String message = CustomCommandUtils.PARSER.clear()
+                        .put("user", event.getAuthor())
+                        .put("channel", event.getChannel())
+                        .put("guild", event.getGuild())
+                        .put("args", String.join(" ", args))
+                        .parse(cc.getMessage());
+
+                    sendMsg(event, "\u200B" + message);
+                    CustomCommandUtils.PARSER.clear();
+                } catch (Exception e) {
+                    sendMsg(event, "Error with parsing custom command: " + e.getMessage());
+                    execCheck(e);
+                }
+
+            } catch (Throwable ex) {
+                execCheck(ex);
             }
         });
     }
