@@ -146,7 +146,7 @@ public class CommandManager {
 
         boolean commandFound = this.customCommands.stream()
             .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
-        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
+        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 75 && !isEdit;
 
         if (commandFound || limitReached) {
             return new Triple<>(false, commandFound, limitReached);
