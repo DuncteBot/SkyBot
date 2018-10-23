@@ -36,8 +36,6 @@ import net.dv8tion.jda.core.entities.Game
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.User
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import net.dv8tion.jda.core.utils.MiscUtil
-import org.apache.commons.lang3.StringUtils
 import org.ocpsoft.prettytime.PrettyTime
 import java.time.OffsetDateTime
 import java.time.format.DateTimeFormatter
@@ -58,49 +56,44 @@ class UserinfoCommand : Command() {
         val args = ctx.args
 
         var u: User? = null
-        var m: Member?
+        var m: Member? = null
 
         if (args.isEmpty()) {
             u = event.author
             m = event.guild.getMemberById(u.id)
         } else {
-            val mentioned = event.message.mentionedUsers
-            if (!mentioned.isEmpty()) {
-                m = event.guild.getMember(mentioned[0])
+
+            var users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
+
+            if (users.isEmpty()) {
+
+                val members = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+
+                if (members.isNotEmpty()) {
+
+                    users = members.stream().map { it.user }.collect(Collectors.toList())
+
+                    m = members[0]
+                    u = users[0]
+                }
+
             } else {
-                val name = StringUtils.join(args, " ")
-
-                var members = event.guild.getMembersByName(name, true)
-                if (members.isEmpty()) {
-                    members = event.guild.getMembersByNickname(name, true)
-                }
-                m = if (members.isEmpty()) null else members[0]
-                if (m == null) {
-                    try {
-                        val memberId = MiscUtil.parseSnowflake(name)
-                        m = event.guild.getMemberById(memberId)
-                    } catch (ignored: NumberFormatException) { /* ignored */
-                    }
-                }
-
+                u = users[0]
+                m = ctx.guild.getMember(u)
             }
         }
 
-        if (u == null && m == null) {
-            val users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
-            if (users.isNotEmpty()) {
-                u = users[0]
-                m = ctx.guild.getMember(u)
-                if (m == null) {
-                    if (ctx.invoke == "avatar") {
-                        MessageUtils.sendMsg(event,
-                            "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
-                        return
-                    }
-                    renderUserEmbed(event, u)
-                    return
-                }
+        if (u != null && m == null) {
+
+            if (ctx.invoke == "avatar") {
+                MessageUtils.sendMsg(event,
+                    "**${String.format("%#s", u)}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
+                return
             }
+
+            renderUserEmbed(event, u)
+            return
+
         }
 
         if (m == null) {
@@ -111,7 +104,7 @@ class UserinfoCommand : Command() {
         u = m.user
 
         if (ctx.invoke == "avatar") {
-            MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n ${u.effectiveAvatarUrl}?size=2048")
+            MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
             return
         }
 
@@ -197,18 +190,19 @@ class UserinfoCommand : Command() {
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
-        if (event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES) &&
-            ctx.config.apis.weebSh.wolketoken != null) {
-            ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
-                u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
-                event.channel.sendFile(it, "stat.png",
-                    MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-                ).queue(null) { _ ->
-                    sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
-                }
-            }
-        } else {
+        if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
+            || ctx.config.apis.weebSh.wolketoken == null) {
             sendEmbed(event, embed.build())
+            return
+        }
+
+        ctx.weebApi.generateDiscordStatus(toWeebshStatus(m),
+            u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
+            event.channel.sendFile(it, "stat.png",
+                MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
+            ).queue(null) { _ ->
+                sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+            }
         }
     }
 
