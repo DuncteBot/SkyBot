@@ -36,7 +36,7 @@ public class ForceDisconnectCommand extends MusicCommand {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(event.getAuthor())) {
+        if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(event, "You need administrator perms to run this command.");
             return;
         }
