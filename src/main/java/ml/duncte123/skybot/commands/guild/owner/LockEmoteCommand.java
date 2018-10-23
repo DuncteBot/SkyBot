@@ -54,7 +54,7 @@ public class LockEmoteCommand extends Command {
             return;
         }
 
-        if(!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
             sendMsg(event, "I need the manage emotes permission in order to lock the emotes to roles");
             return;
         }
@@ -74,7 +74,7 @@ public class LockEmoteCommand extends Command {
             );
         }
 
-        if(mentionedEmotes.isEmpty() || mentionedRoles.isEmpty()) {
+        if (mentionedEmotes.isEmpty() || mentionedRoles.isEmpty()) {
             sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <emote> <@role...>`");
             return;
         }
@@ -97,7 +97,7 @@ public class LockEmoteCommand extends Command {
                 sendSuccess(message);
                 List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
                 sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
-                    "following roles: `" + String.join("`, `", roleNames) + "`" );
+                    "following roles: `" + String.join("`, `", roleNames) + "`");
             },
             (error) -> sendMsg(event, "That emote does not exist on this server")
         );

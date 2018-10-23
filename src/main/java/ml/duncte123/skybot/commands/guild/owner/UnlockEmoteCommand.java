@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -28,9 +27,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -53,7 +50,7 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        if(!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
+        if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_EMOTES)) {
             sendMsg(event, "I need the manage emotes permission in order to lock the emotes to roles");
             return;
         }
