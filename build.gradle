@@ -86,8 +86,7 @@ dependencies {
 
     //groovy
 //    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.2'
-    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '3.0.0-alpha-3'
-//    implementation 'com.github.apache.groovy:groovy:c0fd90be7b'
+    implementation 'com.github.apache.groovy:groovy:c0fd90be7b'
     
     //groovy sandbox
     compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.19'
