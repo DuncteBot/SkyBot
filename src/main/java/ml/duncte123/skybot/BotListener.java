@@ -62,8 +62,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.objects.command.Command.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -173,30 +173,31 @@ public class BotListener extends ListenerAdapter {
     private void loadPatrons(@NotNull ShardManager manager) {
         logger.info("Collecting patrons");
         Guild supportGuild = manager.getGuildById(supportGuildId);
-        List<Long> patrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
+        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
 
-        Command.patrons.addAll(patrons);
+        patrons.addAll(patronsList);
 
         logger.info("Found {} normal patrons", patrons.size());
 
-        List<User> guildPatrons = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
+        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
-        TLongList patronGuilds = new TLongArrayList();
+        TLongList patronGuildsTrove = new TLongArrayList();
 
-        guildPatrons.forEach((patron) -> {
+        guildPatronsList.forEach((patron) -> {
             List<Long> guilds = manager.getMutualGuilds(patron).stream()
                 .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
                     it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
                 .map(Guild::getIdLong)
                 .collect(Collectors.toList());
 
-            patronGuilds.addAll(guilds);
+            patronGuildsTrove.addAll(guilds);
         });
-        Command.guildPatrons.addAll(patronGuilds);
 
-        logger.info("Found {} guild patrons", patronGuilds.size());
+        guildPatrons.addAll(patronGuildsTrove);
+
+        logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
         String dbName = database.getName();
         Connection connection = database.getConnection();
@@ -211,10 +212,10 @@ public class BotListener extends ListenerAdapter {
                     long userId = Long.parseLong(resultSet.getString("user_id"));
                     long guildId = Long.parseLong(resultSet.getString("guild_id"));
 
-                    Command.oneGuildPatrons.put(userId, guildId);
+                    oneGuildPatrons.put(userId, guildId);
                 }
 
-                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
+                logger.info("Found {} one guild patrons", oneGuildPatrons.keySet().size());
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -691,7 +692,7 @@ public class BotListener extends ListenerAdapter {
 
     private void handlePatronRemoveal(long userId) {
         // Remove the user from the patrons list
-        Command.patrons.remove(userId);
+        patrons.remove(userId);
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);
