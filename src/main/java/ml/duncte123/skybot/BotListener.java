@@ -471,7 +471,7 @@ public class BotListener extends ListenerAdapter {
         double[] botToUserRatio = GuildUtils.getBotRatio(guild);
         long[] counts = GuildUtils.getBotAndUserCount(guild);
 
-        if (botToUserRatio[1] < maxBotPercentage || counts[0] > minHumanCount) {
+        if (botToUserRatio[1] < maxBotPercentage && counts[0] > minHumanCount) {
             return false;
         }
 
