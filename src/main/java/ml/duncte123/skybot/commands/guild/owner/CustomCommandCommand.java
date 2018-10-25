@@ -164,8 +164,8 @@ public class CustomCommandCommand extends Command {
         //new command
         String commandName = args.get(1);
 
-        if (commandName.length() > 10) {
-            sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 10 characters");
+        if (commandName.length() > 25) {
+            sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 25 characters");
             return;
         }
 
