@@ -225,9 +225,17 @@ public class BotListener extends ListenerAdapter {
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-        //We only want to respond to members/users
-        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null)
+
+        Guild guild = event.getGuild();
+
+        if (isBotfarm(guild)) {
             return;
+        }
+
+        //We only want to respond to members/users
+        if (event.getAuthor().isFake() || event.getAuthor().isBot() || event.getMember() == null) {
+            return;
+        }
 
         if (event.getMessage().getContentRaw().equals(Settings.PREFIX + "shutdown")
             && Settings.developers.contains(event.getAuthor().getIdLong())) {
@@ -242,7 +250,6 @@ public class BotListener extends ListenerAdapter {
             return;
         }
 
-        Guild guild = event.getGuild();
         String selfMember = guild.getSelfMember().getAsMention();
         String selfUser = event.getJDA().getSelfUser().getAsMention();
         GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
@@ -292,6 +299,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         Guild guild = event.getGuild();
         if (event.getMember().equals(guild.getSelfMember())) return;
+
         /*
         {{USER_MENTION}} = mention user
         {{USER_NAME}} = return username
@@ -352,38 +360,10 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         Guild guild = event.getGuild();
-        //if 70 of a guild is bots, we'll leave it
-        double[] botToUserRatio = GuildUtils.getBotRatio(guild);
-        long[] counts = GuildUtils.getBotAndUserCount(guild);
-        long members = guild.getMemberCache().size();
-        if (botToUserRatio[1] >= 70 && !botLists.contains(guild.getIdLong()) && members > 30) {
-            sendMsg(GuildUtils.getPublicChannel(guild),
-                String.format("Hey %s, %s%s of this guild are bots (%s is the total btw). I'm outta here.",
-                    guild.getOwner().getAsMention(),
-                    botToUserRatio[1],
-                    "%",
-                    guild.getMemberCache().size()
-                ),
-                message -> message.getGuild().leave().queue(),
-                er -> guild.leave().queue()
-            );
-            /*logger.info(TextColor.RED + String.format("Joining guild: %s, and leaving it after. BOT ALERT (%s/%s)",
-                    guild.getName(),
-                    counts[0],
-                    counts[1]) + TextColor.RESET);*/
-            logger.info("{}Joining guild: {}, and leaving it after. BOT ALTER ({}/{}){}",
-                TextColor.RED,
-                guild.getName(),
-                counts[0],
-                counts[1],
-                TextColor.RESET
-            );
-            botFamrs.add(guild.getIdLong());
+
+        if (isBotfarm(guild)) {
             return;
         }
-        /*String message = String.format("Joining guild %s, ID: %s on shard %s.", guild.getName(), guild.getId(), guild.getJDA().getShardInfo()
-                .getShardId());
-        logger.info(TextColor.GREEN + message + TextColor.RESET);*/
 
         logger.info("{}Joining guild {}, ID: {} on shard {}{}",
             TextColor.GREEN,
@@ -392,18 +372,20 @@ public class BotListener extends ListenerAdapter {
             guild.getJDA().getShardInfo().getShardId(),
             TextColor.RESET
         );
+
         GuildSettingsUtils.registerNewGuild(guild, variables);
     }
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         Guild guild = event.getGuild();
-        if (!botFamrs.contains(guild.getIdLong())) {
-            logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
-            //GuildSettingsUtils.deleteGuild(guild, database);
-        } else {
+
+        if (botFamrs.contains(guild.getIdLong())) {
+//            GuildSettingsUtils.deleteGuild(guild, variables);
             botFamrs.remove(guild.getIdLong());
         }
+
+        logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
     }
 
     @Override
@@ -473,6 +455,47 @@ public class BotListener extends ListenerAdapter {
          */
         if (!isUpdating)
             System.exit(0);
+    }
+
+    private boolean isBotfarm(Guild guild) {
+
+        if (botLists.contains(guild.getIdLong())) {
+            return false;
+        }
+
+        // how many humans should there at least be
+        int minHumanCount = 15;
+        // What percentage of bots do we allow
+        float maxBotPercentage = 60;
+
+        double[] botToUserRatio = GuildUtils.getBotRatio(guild);
+        long[] counts = GuildUtils.getBotAndUserCount(guild);
+
+        if (botToUserRatio[1] < maxBotPercentage || counts[0] > minHumanCount) {
+            return false;
+        }
+
+        sendMsg(GuildUtils.getPublicChannel(guild),
+            String.format("Hello %s, this server is now blacklisted as botfarm and the bot will leave the guild (%s humans / %s bots).",
+                guild.getOwner().getAsMention(),
+                counts[0],
+                counts[1]
+            ),
+            message -> guild.leave().queue(),
+            er -> guild.leave().queue()
+        );
+
+        logger.info("{}Botfarm found: {} ({} humans / {} bots){}",
+            TextColor.RED,
+            guild.getName(),
+            counts[0],
+            counts[1],
+            TextColor.RESET
+        );
+
+        botFamrs.add(guild.getIdLong());
+
+        return true;
     }
 
     private boolean shouldBlockCommand(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
@@ -603,8 +626,9 @@ public class BotListener extends ListenerAdapter {
                 return false;
             }
 
-            if (shouldBlockCommand(settings, rw, s))
+            if (shouldBlockCommand(settings, rw, s)) {
                 return false;
+            }
 
         }
 
@@ -645,7 +669,7 @@ public class BotListener extends ListenerAdapter {
                         String.format("Hello there, %s please do not use cursive language within this Discord.",
                             event.getAuthor().getAsMention()
                         ),
-                        m -> m.delete().queueAfter(3, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
+                        m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, CUSTOM_QUEUE_ERROR));
                     return true;
                 }
             }
@@ -661,6 +685,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
         }
+
         return false;
     }
 
