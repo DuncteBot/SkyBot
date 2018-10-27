@@ -159,9 +159,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         }
     }
 
-    private AudioItem getSpotifyPlaylist(AudioReference referencea) {
-
-        AudioReference reference = new AudioReference("https://open.spotify.com/playlist/6WF66xzMQSZJWBaJw4p2QR?si=_BrLEbiNRaW_XQjVBWmhtw", "a");
+    private AudioItem getSpotifyPlaylist(AudioReference reference) {
 
         Matcher res = getSpotifyPlaylistFromString(reference.identifier);
 
