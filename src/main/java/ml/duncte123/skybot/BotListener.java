@@ -119,7 +119,8 @@ public class BotListener extends ListenerAdapter {
             483344253963993113L, // AutomaCord
             454933217666007052L, // Divine Discord Bot List
             446682534135201793L, // Discords best bots
-            477792727577395210L  // discordbotlist.xyz
+            477792727577395210L, // discordbotlist.xyz
+            475571221946171393L, // bots.discordlist.app
         }
     );
     /**
