@@ -62,8 +62,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.objects.command.Command.*;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -76,7 +76,6 @@ public class BotListener extends ListenerAdapter {
      * Check if we are updating
      */
     public static boolean isUpdating = false;
-    private static final Pattern DISCORD_INVITE_PATTERN = Pattern.compile("(http|https)?(:)?(//)?(discordapp|discord).(gg|io|me|com)/(\\w+:?\\w*@)?(\\S+)(:[0-9]+)?(/|/([\\w#!:.?+=&%@!-/]))?");
     private final Logger logger = LoggerFactory.getLogger(BotListener.class);
     /**
      * This filter helps us to fiter out swearing
@@ -452,8 +451,9 @@ public class BotListener extends ListenerAdapter {
         /*
          * Only shut down if we are not updating
          */
-        if (!isUpdating)
+        if (!isUpdating) {
             System.exit(0);
+        }
     }
 
     private boolean isBotfarm(Guild guild) {
@@ -462,15 +462,20 @@ public class BotListener extends ListenerAdapter {
             return false;
         }
 
-        // how many humans should there at least be
-        int minHumanCount = 15;
+        // How many members should we at least have in the server
+        // before starting to conciser it as a botfarm
+        int minTotalMembers = 30;
         // What percentage of bots do we allow
-        float maxBotPercentage = 60;
+        double maxBotPercentage = 70;
 
         double[] botToUserRatio = GuildUtils.getBotRatio(guild);
         long[] counts = GuildUtils.getBotAndUserCount(guild);
+        long totalMembers = guild.getMemberCache().size();
 
-        if (botToUserRatio[1] < maxBotPercentage && counts[0] > minHumanCount) {
+        // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
+        logger.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));
+        logger.debug("botToUserRatio[1] <= maxBotPercentage " + (botToUserRatio[1] <= maxBotPercentage));
+        if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > minTotalMembers)) {
             return false;
         }
 
@@ -484,9 +489,10 @@ public class BotListener extends ListenerAdapter {
             er -> guild.leave().queue()
         );
 
-        logger.info("{}Botfarm found: {} ({} humans / {} bots){}",
+        logger.info("{}Botfarm found: {} {}% bots ({} humans / {} bots){}",
             TextColor.RED,
-            guild.getName(),
+            guild,
+            botToUserRatio[1],
             counts[0],
             counts[1],
             TextColor.RESET
@@ -638,7 +644,7 @@ public class BotListener extends ListenerAdapter {
             && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
             if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                Matcher matcher = DISCORD_INVITE_PATTERN.matcher(rw);
+                Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
                 if (matcher.find()) {
                     //Get the invite Id from the message
                     String inviteID = matcher.group(matcher.groupCount());
