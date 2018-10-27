@@ -178,7 +178,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                 "CREATE TABLE IF NOT EXISTS customCommands" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId VARCHAR(255) NOT NULL," +
-                    "invoke VARCHAR(10) NOT NULL," +
+                    "invoke VARCHAR(25) NOT NULL," +
                     "message TEXT NOT NULL);"
             );
 
