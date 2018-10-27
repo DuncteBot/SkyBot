@@ -100,10 +100,7 @@ public class BotListener extends ListenerAdapter {
             logger.error("RestAction queue returned failure", it);
         }
     };
-    /**
-     * This is used to check if we should trigger a update for the guild count when we leave a guild
-     */
-    private final TLongList botFamrs = new TLongArrayList();
+
     private final DBManager database;
     private final CommandManager commandManager;
     private final Variables variables;
@@ -382,12 +379,12 @@ public class BotListener extends ListenerAdapter {
     public void onGuildLeave(GuildLeaveEvent event) {
         Guild guild = event.getGuild();
 
-        if (botFamrs.contains(guild.getIdLong())) {
-//            GuildSettingsUtils.deleteGuild(guild, variables);
-            botFamrs.remove(guild.getIdLong());
-        }
-
-        logger.info(TextColor.RED + "Leaving guild: " + guild.getName() + "." + TextColor.RESET);
+        logger.info("{}Leaving guild: {} ({}).{}",
+            TextColor.RED,
+            guild.getName(),
+            guild.getId(),
+            TextColor.RESET
+        );
     }
 
     @Override
@@ -494,8 +491,6 @@ public class BotListener extends ListenerAdapter {
             counts[1],
             TextColor.RESET
         );
-
-        botFamrs.add(guild.getIdLong());
 
         return true;
     }
