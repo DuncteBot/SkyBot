@@ -20,15 +20,17 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Authors(authors = {
@@ -43,12 +45,15 @@ public class GuildUtils {
      * Returns an array with the member counts of the guild
      * 0 = the total users
      * 1 = the total bots
-     * 3 = the total members
+     * 2 = the total members
      *
      * @param g
      *         The {@link Guild Guild} to count the users in
      *
      * @return an array with the member counts of the guild
+     * [0] = users
+     * [1] = bots
+     * [2] = total
      */
     public static long[] getBotAndUserCount(Guild g) {
         MemberCacheView memberCache = g.getMemberCache();
@@ -61,11 +66,15 @@ public class GuildUtils {
 
     /**
      * This will calculate the bot to user ratio
+     * 0 = users percentage
+     * 1 = bot percentage
      *
      * @param g
      *         the {@link Guild} that we want to check
      *
      * @return the percentage of users and the percentage of bots in a nice compact array
+     * [0] = users percentage
+     * [1] = bot percentage
      */
     public static double[] getBotRatio(Guild g) {
 
@@ -80,7 +89,12 @@ public class GuildUtils {
         //percent in bots
         double botCountP = (botCount / totalCount) * 100;
 
-        logger.debug("In the guild " + g.getName() + "(" + totalCount + " Members), " + userCountP + "% are users, " + botCountP + "% are bots");
+        logger.debug("In the guild {}({} Members), {}% are users, {}% are bots",
+            g.getName(),
+            totalCount,
+            userCountP,
+            botCountP
+        );
 
         return new double[]{Math.round(userCountP), Math.round(botCountP)};
     }
@@ -97,8 +111,9 @@ public class GuildUtils {
 
         return g.getMemberCache().stream()
             .map(Member::getUser)
-            .filter(it -> it.getAvatarId() != null)
-            .filter(it -> it.getAvatarId().startsWith("a_")).count();
+            .map(User::getAvatarId)
+            .filter(Objects::nonNull)
+            .filter(it -> it.startsWith("a_")).count();
     }
 
     /**
@@ -113,8 +128,9 @@ public class GuildUtils {
 
         TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
 
-        if (pubChann == null || !pubChann.getGuild().getSelfMember().hasPermission(pubChann, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-            return guild.getTextChannelCache().stream().filter(channel -> guild.getSelfMember().hasPermission(channel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)).findFirst().orElse(null);
+        if (pubChann == null || !pubChann.canTalk()) {
+
+            return guild.getTextChannelCache().stream().filter(TextChannel::canTalk).findFirst().orElse(null);
         }
 
         return pubChann;
@@ -129,17 +145,24 @@ public class GuildUtils {
      * @return The converted verification level
      */
     // Null safety
-    public static String verificationLvlToName(Guild.VerificationLevel lvl) {
-        if (Guild.VerificationLevel.LOW.equals(lvl)) {
-            return "Low";
-        } else if (Guild.VerificationLevel.MEDIUM.equals(lvl)) {
-            return "Medium";
-        } else if (Guild.VerificationLevel.HIGH.equals(lvl)) {
-            return "(╯°□°）╯︵ ┻━┻";
-        } else if (Guild.VerificationLevel.VERY_HIGH.equals(lvl)) {
-            return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+    public static String verificationLvlToName(VerificationLevel lvl) {
+
+        if (lvl == null) {
+            return "None";
         }
-        return "None";
+
+        switch (lvl) {
+            case LOW:
+                return "Low";
+            case MEDIUM:
+                return "Medium";
+            case HIGH:
+                return "(╯°□°）╯︵ ┻━┻";
+            case VERY_HIGH:
+                return "┻━┻彡 ヽ(ಠ益ಠ)ノ彡┻━┻";
+            default:
+                return "None";
+        }
     }
 
     public static int getMemberJoinPosition(Member member) {
