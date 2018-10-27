@@ -61,14 +61,14 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/([a-zA-z0-9]+)";
     private static final String ALBUM_REGEX = "album/([a-zA-z0-9]+)";
-    private static final String PLAYLIST_REGEX = "user/(.*)/playlist/([a-zA-z0-9]+)";
+    private static final String PLAYLIST_REGEX = "user/(?:.*)/playlist/([a-zA-z0-9]+)";
     private static final String REST_REGEX = "(?:.*)";
     private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
 
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ALBUM_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
-    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^(?:spotify:user:)(.*)(?::playlist:)(.*)$");
+    private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^(?:spotify:user:)(?:.*)(?::playlist:)(.*)$");
     private final SpotifyApi spotifyApi;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
     private final ScheduledExecutorService service;
@@ -116,75 +116,102 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
 
-        if (isSpotifyAlbum(reference.identifier)) {
-            Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
-            if (res.matches()) {
+        AudioItem item = getSpotifyAlbum(reference);
 
-                try {
-                    final List<AudioTrack> playList = new ArrayList<>();
-
-                    final Future<Album> albumFuture = spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
-                    final Album album = albumFuture.get();
-
-                    for (TrackSimplified t : album.getTracks().getItems()) {
-                        List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(), config.googl, 1L);
-                        playList.addAll(doThingWithPlaylist(results));
-                    }
-
-                    return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
-                }
-            }
-        } else if (isSpotifyPlaylist(reference.identifier)) {
-            Matcher res = getSpotifyPlaylistFromString(reference.identifier);
-            if (res.matches()) {
-
-                try {
-                    final List<AudioTrack> finalPlaylist = new ArrayList<>();
-
-                    final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(res.group(res.groupCount() - 1),
-                        res.group(res.groupCount())).build().executeAsync();
-                    final Playlist spotifyPlaylist = playlistFuture.get();
-
-                    for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
-                        List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
-                            + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
-                        finalPlaylist.addAll(doThingWithPlaylist(results));
-                    }
-
-                    return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
-                } catch (IllegalArgumentException ex) {
-                    throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
-                }
-            }
-        } else if (isSpotyfyTrack(reference.identifier)) {
-            Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
-            if (res.matches()) {
-
-                try {
-                    final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
-                    final Track track = trackFuture.get();
-
-                    List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(), config.googl, 1L);
-
-                    if (results.isEmpty())
-                        return null;
-
-                    Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
-                    return audioTrackFromVideo(v);
-                } catch (Exception e) {
-                    //logger.error("Something went wrong!", e);
-                    throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
-                }
-            }
+        if (item == null) {
+            item = getSpotifyPlaylist(reference);
         }
 
-        return null;
+        if (item == null) {
+            item = getSpotifyTrack(reference);
+        }
+
+        return item;
+    }
+
+    private AudioItem getSpotifyAlbum(AudioReference reference) {
+        Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
+
+        if (!res.matches()) {
+            return null;
+        }
+
+        try {
+            final List<AudioTrack> playList = new ArrayList<>();
+
+            final Future<Album> albumFuture = spotifyApi.getAlbum(res.group(res.groupCount())).build().executeAsync();
+            final Album album = albumFuture.get();
+
+            for (TrackSimplified t : album.getTracks().getItems()) {
+                List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(),
+                    config.googl, 1L);
+
+                playList.addAll(doThingWithPlaylist(results));
+            }
+
+            return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
+        } catch (Exception e) {
+            //logger.error("Something went wrong!", e);
+            throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
+        }
+    }
+
+    private AudioItem getSpotifyPlaylist(AudioReference reference) {
+        Matcher res = getSpotifyPlaylistFromString(reference.identifier);
+
+        if (!res.matches()) {
+            return null;
+        }
+
+        try {
+            final List<AudioTrack> finalPlaylist = new ArrayList<>();
+
+            final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(res.group(res.groupCount() - 1)).build().executeAsync();
+
+            final Playlist spotifyPlaylist = playlistFuture.get();
+
+            for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
+                List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
+                    + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
+
+                finalPlaylist.addAll(doThingWithPlaylist(results));
+            }
+
+            return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
+        } catch (IllegalArgumentException ex) {
+            throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
+        } catch (Exception e) {
+            //logger.error("Something went wrong!", e);
+            throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
+        }
+
+    }
+
+    private AudioItem getSpotifyTrack(AudioReference reference) {
+
+        Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
+        if (!res.matches()) {
+            return null;
+        }
+
+        try {
+            final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
+            final Track track = trackFuture.get();
+
+            List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(),
+                config.googl, 1L);
+
+            if (results.isEmpty()) {
+                return null;
+            }
+
+            Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
+
+            return audioTrackFromVideo(v);
+        } catch (Exception e) {
+            //logger.error("Something went wrong!", e);
+            throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
+        }
     }
 
 
@@ -215,18 +242,6 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     }
 
-    private boolean isSpotyfyTrack(String input) {
-        return SPOTIFY_TRACK_REGEX.matcher(input).matches();
-    }
-
-    private boolean isSpotifyAlbum(String input) {
-        return SPOTIFY_ALBUM_REGEX.matcher(input).matches();
-    }
-
-    private boolean isSpotifyPlaylist(String input) {
-        return SPOTIFY_PLAYLIST_REGEX.matcher(input).matches();
-    }
-
     private void updateAccessToken() {
         try {
             final ClientCredentialsRequest request = spotifyApi.clientCredentials().build();
@@ -245,11 +260,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private Matcher getSpotifyPlaylistFromString(String input) {
-        Matcher match1 = SPOTIFY_PLAYLIST_REGEX.matcher(input);
-        if (match1.matches())
-            return match1;
-        else
-            return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
+        Matcher match = SPOTIFY_PLAYLIST_REGEX.matcher(input);
+
+        if (match.matches()) {
+            return match;
+        }
+
+        return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
     }
 
     private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results) throws Exception {

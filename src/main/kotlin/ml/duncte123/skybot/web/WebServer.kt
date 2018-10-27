@@ -55,7 +55,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
     private val audioUtils = variables.audioUtils
 
     private val helpers = ApiHelpers()
-    private val engine = JtwigTemplateEngine()
+    private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
