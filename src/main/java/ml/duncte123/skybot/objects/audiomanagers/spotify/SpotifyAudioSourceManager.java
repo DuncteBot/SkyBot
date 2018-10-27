@@ -276,7 +276,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private Matcher getSpotifyPlaylistFromString(String input) {
         Matcher match = SPOTIFY_PLAYLIST_REGEX.matcher(input);
-        System.out.println(SPOTIFY_PLAYLIST_REGEX);
+
         if (match.matches()) {
             return match;
         }
