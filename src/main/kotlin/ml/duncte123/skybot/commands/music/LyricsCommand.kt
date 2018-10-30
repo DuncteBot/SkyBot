@@ -64,7 +64,7 @@ class LyricsCommand : MusicCommand() {
         searchForSong(search, ctx.config.genius) {
             if (it.isNullOrBlank()) {
                 sendMsg(event, "There where no lyrics found for the title of this song\n" +
-                    "Alternatively you can try `$PREFIX$name <song name>` to search for the lyrics on this song.\n" +
+                    "Alternatively you can try `${Settings.PREFIX}$name <song name>` to search for the lyrics on this song.\n" +
                     "(sometimes the song names in the player are wrong)")
             } else {
                 val url = "https://genius.com$it"

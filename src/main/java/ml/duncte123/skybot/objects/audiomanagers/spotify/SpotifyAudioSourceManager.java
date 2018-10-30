@@ -57,17 +57,20 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
-    private static final String PROTOCOL_REGEX = "?:spotify:(track:)|(http://|https://)[a-z]+\\.";
+    private static final String PROTOCOL_REGEX = "?:spotify:(track:)|(?:http://|https://)[a-z]+\\.";
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/([a-zA-z0-9]+)";
     private static final String ALBUM_REGEX = "album/([a-zA-z0-9]+)";
-    private static final String PLAYLIST_REGEX = "user/(?:.*)/playlist/([a-zA-z0-9]+)";
+    private static final String USER_PART = "user/(.*)/";
+    private static final String PLAYLIST_REGEX = "playlist/([a-zA-z0-9]+)";
     private static final String REST_REGEX = "(?:.*)";
     private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
 
     private static final Pattern SPOTIFY_TRACK_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + TRACK_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_ALBUM_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ALBUM_REGEX + ")" + REST_REGEX + "$");
     private static final Pattern SPOTIFY_PLAYLIST_REGEX = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" + PLAYLIST_REGEX + REST_REGEX + "$");
+    private static final Pattern SPOTIFY_PLAYLIST_REGEX_USER = Pattern.compile("^(" + SPOTIFY_BASE_REGEX + ")" +
+        USER_PART + PLAYLIST_REGEX + REST_REGEX + "$");
     private static final Pattern SPOTIFY_SECOND_PLAYLIST_REGEX = Pattern.compile("^(?:spotify:user:)(?:.*)(?::playlist:)(.*)$");
     private final SpotifyApi spotifyApi;
     private final YoutubeAudioSourceManager youtubeAudioSourceManager;
@@ -157,16 +160,28 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private AudioItem getSpotifyPlaylist(AudioReference reference) {
+
         Matcher res = getSpotifyPlaylistFromString(reference.identifier);
 
         if (!res.matches()) {
             return null;
         }
 
+        String playListId = res.group(res.groupCount());
+        String userId = res.group(res.groupCount() - 1);
+
         try {
             final List<AudioTrack> finalPlaylist = new ArrayList<>();
 
-            final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(res.group(res.groupCount() - 1)).build().executeAsync();
+            final Future<Playlist> playlistFuture;
+
+            if (userId != null) {
+                // Disable inspection because old playlists don't have unique ids
+                //noinspection deprecation
+                playlistFuture = spotifyApi.getPlaylist(userId, playListId).build().executeAsync();
+            } else {
+                playlistFuture = spotifyApi.getPlaylist(playListId).build().executeAsync();
+            }
 
             final Playlist spotifyPlaylist = playlistFuture.get();
 
@@ -264,6 +279,12 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
         if (match.matches()) {
             return match;
+        }
+
+        Matcher withUser = SPOTIFY_PLAYLIST_REGEX_USER.matcher(input);
+
+        if (withUser.matches()) {
+            return withUser;
         }
 
         return SPOTIFY_SECOND_PLAYLIST_REGEX.matcher(input);
