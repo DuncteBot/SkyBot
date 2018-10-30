@@ -59,9 +59,15 @@ repositories {
         name 'jitpack'
         url 'https://jitpack.io'
     }
+
+    maven {
+        url  "https://dl.bintray.com/duncte123/maven"
+    }
 }
 
 dependencies {
+    compile 'me.duncte123:loadingbar:1.0.1_a781719'
+    
     //Weeb api
     compile group: 'me.duncte123', name: 'weebJava', version: '2.1.1'
     
