@@ -25,6 +25,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.bot.utils.cache.ShardCacheView;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
@@ -61,10 +62,13 @@ public class ShardInfoCommand extends Command {
         ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
         List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
+
         for (JDA shard : shards) {
             List<String> row = new ArrayList<>();
+
             row.add(shard.getShardInfo().getShardId() +
                 (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
+
             row.add(WordUtils.capitalizeFully(shard.getStatus().toString().replace("_", " ")));
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
@@ -80,6 +84,7 @@ public class ShardInfoCommand extends Command {
 
             row.add(listening);
             table.add(row);
+
             if (table.size() == 20) {
                 MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
                 table = new ArrayList<>();
@@ -142,13 +147,18 @@ public class ShardInfoCommand extends Command {
             sb.append(String.format(formatLine.toString(), row.toArray()));
         }
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
-        String connectedShards = String.valueOf(shardManager.getShards().stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+
+        ShardCacheView shardCache = shardManager.getShardCache();
+
+        String connectedShards = String.valueOf(shardCache.stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
         String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         String guilds = String.valueOf(shardManager.getGuildCache().size());
-        long connectedVC = shardManager.getShardCache().stream().mapToLong(shard ->
+
+        long connectedVC = shardCache.stream().mapToLong(shard ->
             shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
         ).sum();
-        long listeningVC = shardManager.getShardCache().stream().mapToLong(shard ->
+
+        long listeningVC = shardCache.stream().mapToLong(shard ->
             shard.getVoiceChannelCache().stream().filter(vc ->
                 vc.getMembers().contains(vc.getGuild().getSelfMember()))
                 .mapToLong(it ->
@@ -156,6 +166,7 @@ public class ShardInfoCommand extends Command {
                         !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
                 ).sum()
         ).sum();
+
         sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, connectedVC + " / " + listeningVC));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");

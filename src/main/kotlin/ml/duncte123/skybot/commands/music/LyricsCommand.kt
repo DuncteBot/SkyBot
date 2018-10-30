@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
 import ml.duncte123.skybot.Author
@@ -54,13 +55,15 @@ class LyricsCommand : MusicCommand() {
                 player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
             else -> null
         }
+
         if (search.isNullOrBlank()) {
-            MessageUtils.sendMsg(event, "The player is not currently playing anything!")
+            sendMsg(event, "The player is not currently playing anything!")
             return
         }
+
         searchForSong(search, ctx.config.genius) {
             if (it.isNullOrBlank()) {
-                MessageUtils.sendMsg(event, "There where no lyrics found for the title of this song\n" +
+                sendMsg(event, "There where no lyrics found for the title of this song\n" +
                     "Alternatively you can try `$PREFIX$name <song name>` to search for the lyrics on this song.\n" +
                     "(sometimes the song names in the player are wrong)")
             } else {
@@ -68,6 +71,7 @@ class LyricsCommand : MusicCommand() {
                 WebUtils.ins.scrapeWebPage(url).async { doc ->
                     val text = doc.select("div.lyrics").first().child(0).wholeText()
                         .replace("<br>", "\n")
+
                     sendEmbed(event, EmbedUtils.defaultEmbed()
                         .setTitle("Lyrics for $search", url)
                         .setDescription(StringUtils.abbreviate(text, 1900))

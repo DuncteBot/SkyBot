@@ -45,12 +45,12 @@ class StatsCommand : Command() {
         val serverUptimeString = AirUtils.getSystemUptime()
         val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
-        val processUsage = DecimalFormat("###.###%").format(platformMXBean.processCpuLoad)
+        val processUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
         val serverMem = platformMXBean.totalPhysicalMemorySize
         val serverUsage = serverMem - platformMXBean.freePhysicalMemorySize
         val jvmMem = ManagementFactory.getMemoryMXBean().heapMemoryUsage.used shr 20
         val jvmUsage = ManagementFactory.getMemoryMXBean().heapMemoryUsage.max shr 20
-        val OS = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
+        val os = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
 
         val embed = defaultEmbed()
 
@@ -69,7 +69,7 @@ class StatsCommand : Command() {
                     |**Ram usage:** ${serverUsage shr 20}MB
                     |**Total ram:** ${serverMem shr 20}MB
                     |**System uptime:** $serverUptimeString
-                    |**Operating System:** $OS
+                    |**Operating System:** $os
                 """.trimMargin(), false)
 
             .addField("JVM stats",
