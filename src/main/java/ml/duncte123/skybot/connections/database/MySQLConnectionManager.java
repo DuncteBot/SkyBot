@@ -159,6 +159,7 @@ class MySQLConnectionManager implements DBConnectionManager {
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (" +
                 "  `id` int(11) NOT NULL AUTO_INCREMENT," +
                 "  `guildId` text NOT NULL," +
+                "  `embedColor` int(8) NOT NULL DEFAULT 0x0751c6," +
                 "  `prefix` varchar(255) NOT NULL DEFAULT '/'," +
                 "  `autoRole` varchar(255) DEFAULT NULL," +
                 "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0'," +

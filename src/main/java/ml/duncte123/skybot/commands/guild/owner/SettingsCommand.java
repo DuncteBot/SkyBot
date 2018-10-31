@@ -67,54 +67,6 @@ public class SettingsCommand extends Command {
         GuildSettings settings = guild.getSettings();
         boolean isEnabled;
         switch (ctx.getInvoke()) {
-            case "settings":
-            case "options": {
-                //true <:check:314349398811475968>
-                //false <:xmark:314349398824058880>
-                TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
-                TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
-                MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
-                    "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
-                    "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
-                    "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
-                    "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
-                    "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
-                    "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
-                    "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
-                    "**MuteRole:** " + (settings.getMuteRoleId() <= 0
-                    ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +
-                    "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
-                    "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
-                    "**AutoRole:** " + (settings.getAutoroleRole() <= 0
-                    ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
-                    "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
-                    "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
-                    "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
-                );
-                sendEmbed(event, message);
-                break;
-            }
-
-            case "setprefix":
-                if (args.size() < 1) {
-                    sendMsg(event, "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
-                    return;
-                }
-                String newPrefix = ctx.getArgsJoined();
-                guild.setSettings(settings.setCustomPrefix(newPrefix));
-                sendMsg(event, "New prefix has been set to `" + newPrefix + "`");
-                break;
-
-            case "setjoinmessage":
-            case "setwelcomenmessage":
-                if (args.size() < 1) {
-                    sendMsg(event, "Correct usage is `" + PREFIX + "setJoinMessage <new join message>`");
-                    return;
-                }
-                String newJoinMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
-                guild.setSettings(settings.setCustomJoinMessage(newJoinMessage));
-                sendMsg(event, "The new join message has been set to `" + newJoinMessage + "`");
-                break;
 
             case "setleavemessage":
                 if (args.size() < 1) {
@@ -356,17 +308,6 @@ public class SettingsCommand extends Command {
     @Override
     public String help(String invoke) {
         switch (invoke) {
-            case "settings":
-            case "options":
-                return "Shows the current settings\n" +
-                    "Usage: `" + PREFIX + invoke + "`";
-            case "setprefix":
-                return "Sets the new prefix\n" +
-                    "Usage: `" + PREFIX + invoke + " <prefix>`";
-            case "setjoinmessage":
-            case "setwelcomenmessage":
-                return "Sets the message that the bot shows when a new member joins\n" +
-                    "Usage: `" + PREFIX + invoke + " <join message>`";
             case "setleavemessage":
                 return "Sets the message that the bot shows when a member leaves\n" +
                     "Usage: `" + PREFIX + invoke + " <leave message>`";
@@ -447,21 +388,18 @@ public class SettingsCommand extends Command {
 
     @Override
     public String getName() {
-        return "settings";
+        return "setratelimits";
     }
 
     @Override
     public String[] getAliases() {
-        return new String[]{"options",
+        return new String[]{
             "enablejoinmessage",
             "togglejoinmessage",
             "disablejoinmessage",
-            "setjoinmessage",
-            "setwelcomenmessage",
             "enableswearfilter",
             "disableswearfilter",
             "toggleswearfilter",
-            "setprefix",
             "setlogchannel",
             "setwelcomechannel",
             "setleavechannel",

@@ -88,7 +88,7 @@ public class BotinfoCommand extends Command {
                 "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
                 "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
                 "\n\u200B", true)
-            .addField("Other info", "**Guilds:** " + event.getJDA().asBot().getShardManager().getGuildCache().size() + "\n" +
+            .addField("Other info", "**Guilds:** " + ctx.getShardManager().getGuildCache().size() + "\n" +
                 "**Bot version:** " + Settings.VERSION + "\n"
                 + "**Operating System:** " + OS + "\n" +
                 "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +

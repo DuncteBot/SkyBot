@@ -135,6 +135,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                 "CREATE TABLE IF NOT EXISTS guildSettings " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId TEXT NOT NULL," +
+                    "embedColor INTEGER(8) NOT NULL DEFAULT 0x0751c6," +
                     "logChannelId TEXT NULL," +
                     "welcomeLeaveChannel TEXT NULL," +
                     "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
