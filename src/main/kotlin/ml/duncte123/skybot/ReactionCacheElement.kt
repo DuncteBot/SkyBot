@@ -22,7 +22,20 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 data class ReactionCacheElement(val msgID: Long, val authorId: Long) {
-    fun equals(other: GuildMessageReceivedEvent): Boolean {
+    override fun equals(other: Any?): Boolean {
+
+        if (other == null) {
+            return false
+        }
+
+        if (other !is GuildMessageReceivedEvent) {
+            return false
+        }
+
         return other.author.idLong == authorId
+    }
+
+    override fun hashCode(): Int {
+        return super.hashCode()
     }
 }

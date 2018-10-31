@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials
 
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
@@ -35,6 +35,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
+import java.util.concurrent.Executors
 
 @Author(author = "Ramid Khan", nickname = "ramidzkh")
 class UpdateCommand : Command() {
@@ -83,9 +84,9 @@ class UpdateCommand : Command() {
                 if (ctx.args[0] != "gradle")
                     return
                 sendMsg(event, "✅ Updating") {
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         initUpdate(event, it.id, ctx.database, ctx.audioUtils)
-                    })
+                    }
                 }
             }
         }
@@ -99,7 +100,9 @@ class UpdateCommand : Command() {
         lateinit var version: String
         lateinit var links: String
 
-        val updateprogress: Deferred<Boolean> = GlobalScope.async(newSingleThreadContext("Update-Coroutine"), CoroutineStart.DEFAULT, {
+        val executor = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
+
+        val updateprogress: Deferred<Boolean> = GlobalScope.async(executor, CoroutineStart.DEFAULT) {
             val pull = getCommand("git pull")
             val build = getCommand("gradlew build --refresh-dependencies -x test")
             val versioncmd = getCommand("gradlew printVersion")
@@ -123,7 +126,7 @@ class UpdateCommand : Command() {
             }
             return@async false
 //            return@async true
-        })
+        }
 
         val progress = updateprogress.await()
 

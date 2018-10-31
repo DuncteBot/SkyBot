@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials.eval
 
 import groovy.lang.GroovyShell
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
@@ -113,6 +113,7 @@ class EvalCommand : Command() {
             staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
 
+    @ExperimentalCoroutinesApi
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
@@ -160,9 +161,9 @@ class EvalCommand : Command() {
             engine.setVariable("ctx", ctx)
 
             @SinceSkybot("3.58.0")
-            (GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
+            GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {
                 return@launch eval(event, isRanByBotOwner, script, timeout)
-            }))
+            })
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
             protectedShell.setVariable("guild", GuildDelegate(event.guild))
@@ -173,9 +174,9 @@ class EvalCommand : Command() {
                 protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
 
             @SinceSkybot("3.58.0")
-            (GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+            GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                 return@launch eval(event, false, script, timeout)
-            }))
+            }
         }
     }
 
