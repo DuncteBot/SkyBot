@@ -58,12 +58,17 @@ class SearchCommand : MusicCommand() {
         val toPlay = ctx.argsRaw
         val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
 
+        if (res.isEmpty()) {
+            sendMsg(event, "\uD83D\uDD0E No results found.")
+            return
+        }
+
         val string = buildString {
             res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
                 append(index + 1).append(". ").append(s).append("\n")
             }
             append("\n\n")
-            append("Type the number of the song that you want to play or type `cancel` to cancel your serach")
+            append("Type the number of the song that you want to play or type `cancel` to cancel your search")
         }
 
         sendEmbed(event, EmbedUtils.embedMessage(string)) {

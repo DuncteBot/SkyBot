@@ -19,41 +19,34 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.entities.TextChannel;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetLogChannelCommand extends SettingsBase {
+public class ToggleKickModeCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
-            return;
-        }
+        DunctebotGuild guild = ctx.getGuild();
+        GuildSettings settings = guild.getSettings();
 
-        TextChannel channel = findTextChannel(ctx);
+        boolean kickState = !settings.getKickState();
+        guild.setSettings(settings.setKickState(kickState));
 
-        if (channel == null) {
-            sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
-                "Make sure that it's a valid channel that I can speak in");
-            return;
-        }
-
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(channel.getIdLong()));
-        sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
+        sendMsg(ctx.getEvent(), "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");
     }
 
     @Override
     public String getName() {
-        return "setlogchannel";
+        return "togglekickmode";
     }
 
     @Override
     public String help() {
-        return "Sets the channel to log messages in\n" +
-            "Usage: `" + PREFIX + getName() + " <text channel>`";
+        return "Toggles whether we should kick or assign a role for spammers.\n" +
+            "Usage: `" + PREFIX + getName() + "`";
     }
 }

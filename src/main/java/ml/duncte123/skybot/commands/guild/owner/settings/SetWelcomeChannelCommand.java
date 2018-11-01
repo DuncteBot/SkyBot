@@ -18,49 +18,47 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
-
-import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class SettingsBase extends Command {
-
-    public SettingsBase() {
-        this.category = CommandCategory.MOD_ADMIN;
-        this.displayAliasesInHelp = true;
-    }
-
+public class SetWelcomeChannelCommand extends SettingsBase {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-        if (!ctx.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(ctx.getAuthor())) {
-            sendMsg(ctx.getEvent(), "You need the \"Manage Server\" permission to use this command");
+    public void run(@NotNull CommandContext ctx) {
+        if (ctx.getArgs().size() < 1) {
+            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setwelcomechannel [text channel]`");
             return;
         }
 
-        run(ctx);
-    }
+        TextChannel channel = findTextChannel(ctx);
 
-    public abstract void run(@NotNull CommandContext ctx);
-
-    @Nullable
-    protected TextChannel findTextChannel(@NotNull CommandContext ctx) {
-        List<TextChannel> foundChannels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
-
-        if (foundChannels.isEmpty()) {
-            return null;
+        if(channel == null) {
+            sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
+                "Make sure that it's a valid channel that I can speak in");
+            return;
         }
 
-        return foundChannels.stream()
-            .filter(TextChannel::canTalk).findFirst().orElse(null);
+        ctx.getGuild().setSettings(ctx.getGuildSettings().setWelcomeLeaveChannel(channel.getIdLong()));
+        sendMsg(ctx.getEvent(), "The new welcome channel has been set to " + channel.getAsMention());
+    }
+
+    @Override
+    public String getName() {
+        return "setwelcomechannel";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"setleavechannel"};
+    }
+
+    @Override
+    public String help() {
+        return "Sets the channel that displays the welcome and leave messages\n" +
+            "Usage: `" + PREFIX + getName() + " <channel>`";
     }
 }

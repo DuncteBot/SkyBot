@@ -19,41 +19,35 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.entities.TextChannel;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetLogChannelCommand extends SettingsBase {
+public class ToggleAutoDehoistCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
-            return;
-        }
+        DunctebotGuild guild = ctx.getGuild();
+        GuildSettings settings = guild.getSettings();
 
-        TextChannel channel = findTextChannel(ctx);
+        boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
+        guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
 
-        if (channel == null) {
-            sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
-                "Make sure that it's a valid channel that I can speak in");
-            return;
-        }
-
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(channel.getIdLong()));
-        sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
+        sendMsg(ctx.getEvent(), "Auto de-hoisting has been **"
+            + (shouldAutoDeHoist ? "enabled" : "disabled") + "**");
     }
 
     @Override
     public String getName() {
-        return "setlogchannel";
+        return "toggleautodehoist";
     }
 
     @Override
     public String help() {
-        return "Sets the channel to log messages in\n" +
-            "Usage: `" + PREFIX + getName() + " <text channel>`";
+        return "Toggles if if the bot should auto de-hoist users\n" +
+            "Usage: `" + PREFIX + getName() + "`";
     }
 }
