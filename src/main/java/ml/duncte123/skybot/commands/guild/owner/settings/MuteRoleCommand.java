@@ -64,7 +64,7 @@ public class MuteRoleCommand extends SettingsBase {
 
         List<Role> selfRoles = ctx.getSelfMember().getRoles();
 
-        if(selfRoles.isEmpty()) {
+        if (selfRoles.isEmpty()) {
             sendMsg(event, "I need a role above the specified role in order for this feature to work.");
             return;
         }
@@ -74,7 +74,7 @@ public class MuteRoleCommand extends SettingsBase {
                 (role) -> role.getPosition() < selfRoles.get(0).getPosition()
             ).collect(Collectors.toList());
 
-        if(foundRoles.isEmpty()) {
+        if (foundRoles.isEmpty()) {
             sendMsg(event, "I'm sorry but I could not find any roles for your input, " +
                 "make sure that the target role is below my role.");
             return;
@@ -93,7 +93,7 @@ public class MuteRoleCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"spamrole"};
+        return new String[]{"spamrole"};
     }
 
     @Override

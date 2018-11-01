@@ -36,7 +36,7 @@ public class SetWelcomeChannelCommand extends SettingsBase {
 
         TextChannel channel = findTextChannel(ctx);
 
-        if(channel == null) {
+        if (channel == null) {
             sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
                 "Make sure that it's a valid channel that I can speak in");
             return;
@@ -53,7 +53,7 @@ public class SetWelcomeChannelCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"setleavechannel"};
+        return new String[]{"setleavechannel"};
     }
 
     @Override

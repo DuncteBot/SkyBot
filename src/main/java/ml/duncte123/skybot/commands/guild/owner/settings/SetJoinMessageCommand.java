@@ -45,7 +45,7 @@ public class SetJoinMessageCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"setwelcomenmessage"};
+        return new String[]{"setwelcomenmessage"};
     }
 
     @Override

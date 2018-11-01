@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import gnu.trove.map.TLongObjectMap;
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
@@ -45,6 +46,7 @@ public class GuildSettingsUtils {
 
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabase(), variables.getGuildSettings());
+        loadEmbedColors(variables.getDatabase());
     }
 
 
@@ -93,6 +95,41 @@ public class GuildSettingsUtils {
                 }
             }
         });
+    }
+
+    private static void loadEmbedColors(DBManager database) {
+        logger.debug("Loading embed colors.");
+        String dbName = database.getName();
+
+        database.run(() -> {
+            Connection connection = database.getConnManager().getConnection();
+            try {
+                Statement smt = connection.createStatement();
+
+                ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".embedSettings");
+
+                int loaded = 0;
+
+                while (res.next()) {
+                    long guildId = toLong(res.getString("guild_id"));
+                    int color = res.getInt("embed_color");
+
+                    EmbedUtils.addColor(guildId, color);
+                    loaded++;
+                }
+
+                logger.debug("Loaded embed colors for " + loaded + " guilds.");
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }
+        });
+
     }
 
     /**
@@ -237,6 +274,42 @@ public class GuildSettingsUtils {
             guildSettings.put(g.getIdLong(), newGuildSettings);
         });
         return newGuildSettings;
+    }
+
+    public static void updateEmbedColor(Guild g, int color, Variables variables) {
+        DBManager database = variables.getDatabase();
+
+        database.run(() -> {
+            String dbName = database.getName();
+            Connection connection = database.getConnManager().getConnection();
+
+            try {
+
+                String updateString = "ON DUPLICATE KEY UPDATE embed_color = ?";
+
+                if (!variables.isSql()) {
+                    updateString = "ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?";
+                }
+
+                PreparedStatement smt = connection.prepareStatement(
+                    "INSERT INTO " + dbName + ".embedSettings(guild_id, embed_color) VALUES( ? , ? ) " + updateString);
+
+                smt.setString(1, g.getId());
+                smt.setInt(2, color);
+                smt.setInt(3, color);
+
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                logger.error("Database error: ", e);
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e2) {
+                    e2.printStackTrace();
+                }
+            }
+
+        });
     }
 
     /**

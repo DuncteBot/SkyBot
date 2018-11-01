@@ -71,7 +71,7 @@ public class SettingsCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"options"};
+        return new String[]{"options"};
     }
 
     @Override

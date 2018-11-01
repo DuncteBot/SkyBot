@@ -306,7 +306,7 @@ public class CommandManager {
 
     public void dispatchCommand(ICommand cmd, String invoke, List<String> args, GuildMessageReceivedEvent event) {
 
-        if(cmd == null) {
+        if (cmd == null) {
             return;
         }
 

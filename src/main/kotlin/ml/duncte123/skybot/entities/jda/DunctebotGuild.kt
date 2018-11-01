@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.entities.jda
 
+import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.guild.GuildSettings
@@ -37,6 +38,11 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
      */
     fun setSettings(settings: GuildSettings) {
         GuildSettingsUtils.updateGuildSettings(this.guild, settings, variables)
+    }
+
+    fun setColor(color: Int) {
+        EmbedUtils.addColor(idLong, color)
+        GuildSettingsUtils.updateEmbedColor(this.guild, color, variables)
     }
 
     override fun toString() = "G:${this.guild.name} (${this.guild.id}"

@@ -47,7 +47,7 @@ public class ToggleJoinMessageCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[] {
+        return new String[]{
             "enablejoinmessage",
             "disablejoinmessage"
         };
