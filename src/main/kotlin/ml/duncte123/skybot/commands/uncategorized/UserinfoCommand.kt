@@ -22,6 +22,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
@@ -132,7 +133,7 @@ class UserinfoCommand : Command() {
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
-        sendEmbed(event, embed.build())
+        sendEmbed(event.channel, embed)
     }
 
 
@@ -192,7 +193,7 @@ class UserinfoCommand : Command() {
 
         if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
             || ctx.config.apis.weebSh.wolketoken == null) {
-            sendEmbed(event, embed.build())
+            sendEmbedRaw(event.channel, embed.build(), null)
             return
         }
 
@@ -201,7 +202,7 @@ class UserinfoCommand : Command() {
             event.channel.sendFile(it, "stat.png",
                 MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
             ).queue(null) { _ ->
-                sendEmbed(event, embed.setThumbnail(u.effectiveAvatarUrl).build())
+                sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
             }
         }
     }

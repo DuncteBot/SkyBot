@@ -24,7 +24,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.entities.MessageEmbed;
+import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
@@ -42,7 +42,7 @@ public class SettingsCommand extends SettingsBase {
         //false <:xmark:314349398824058880>
         TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
         TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
-        MessageEmbed message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
+        EmbedBuilder message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
             "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
             "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
             "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +

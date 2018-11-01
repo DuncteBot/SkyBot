@@ -71,7 +71,7 @@ class SearchCommand : MusicCommand() {
             append("Type the number of the song that you want to play or type `cancel` to cancel your search")
         }
 
-        sendEmbed(event, EmbedUtils.embedMessage(string)) {
+        sendEmbed(ctx.channel, EmbedUtils.embedMessage(string)) {
             handler.waitForReaction(TimeUnit.SECONDS.toMillis(timeout), it, event.author.idLong, ctx, res)
         }
 

@@ -249,7 +249,7 @@ class EarthUtils {
                     embed.setImage(image)
                 }
 
-                sendEmbed(event, embed.build())
+                sendEmbed(event, embed)
             }
 
         }
