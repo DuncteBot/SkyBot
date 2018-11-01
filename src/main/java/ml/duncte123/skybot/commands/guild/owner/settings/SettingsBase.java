@@ -18,14 +18,21 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class SettingsBase extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -42,5 +49,23 @@ abstract class SettingsBase extends Command {
     @Override
     public CommandCategory getCategory() {
         return CommandCategory.MOD_ADMIN;
+    }
+
+    @Nullable
+    protected TextChannel findTextChannel(@NotNull CommandContext ctx) {
+        List<TextChannel> foundChannels = ctx.getMessage().getMentionedChannels();
+
+        if(foundChannels.isEmpty()) {
+            foundChannels.add(
+                AirUtils.getLogChannel(ctx.getArgsRaw(), ctx.getGuild())
+            );
+        }
+
+        if (foundChannels.isEmpty()) {
+            return null;
+        }
+
+        return foundChannels.stream()
+            .filter(TextChannel::canTalk).findFirst().orElse(null);
     }
 }

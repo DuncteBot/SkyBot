@@ -135,7 +135,6 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                 "CREATE TABLE IF NOT EXISTS guildSettings " +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId TEXT NOT NULL," +
-                    "embedColor INTEGER(8) NOT NULL DEFAULT 0x0751c6," +
                     "logChannelId TEXT NULL," +
                     "welcomeLeaveChannel TEXT NULL," +
                     "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
@@ -152,6 +151,12 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                     "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
                     "muteRoleId varchar(255) DEFAULT NULL," +
                     "ratelimits TEXT DEFAULT NULL);"
+            );
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS `embedSettings`" +
+                    "(guild_id INTEGER(20) PRIMARY KEY," +
+                    "embed_color INTEGER(8) NOT NULL DEFAULT 0x0751c6);"
             );
 
             connection.createStatement().execute(

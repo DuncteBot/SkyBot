@@ -65,60 +65,7 @@ public class SettingsCommand extends Command {
 
         DunctebotGuild guild = ctx.getGuild();
         GuildSettings settings = guild.getSettings();
-        boolean isEnabled;
         switch (ctx.getInvoke()) {
-
-            case "setleavemessage":
-                if (args.size() < 1) {
-                    sendMsg(event, "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
-                    return;
-                }
-                String newLeaveMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
-                guild.setSettings(settings.setCustomLeaveMessage(newLeaveMessage));
-                sendMsg(event, "The new leave message has been set to `" + newLeaveMessage + "`");
-                break;
-
-            case "enablejoinmessage":
-            case "disablejoinmessage":
-            case "togglejoinmessage":
-                isEnabled = settings.isEnableJoinMessage();
-                guild.setSettings(settings.setEnableJoinMessage(!isEnabled));
-                sendMsg(event, "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
-                break;
-
-            case "enableswearfilter":
-            case "disableswearfilter":
-            case "toggleswearfilter":
-                isEnabled = settings.isEnableSwearFilter();
-                guild.setSettings(settings.setEnableSwearFilter(!isEnabled));
-                sendMsg(event, "The swearword filter has been " + (!isEnabled ? "enabled" : "disabled") + ".");
-                break;
-
-            case "setlogchannel":
-                if (args.size() < 1) {
-                    sendMsg(event, "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
-                    return;
-                }
-                if (event.getMessage().getMentionedChannels().size() > 0) {
-                    TextChannel tc = event.getMessage().getMentionedChannels().get(0);
-                    if (!tc.getGuild().getSelfMember().hasPermission(tc, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                        sendError(event.getMessage());
-                        sendMsg(event, "I'm sorry but I have to be able to talk in that channel.");
-                        return;
-                    }
-                    guild.setSettings(settings.setLogChannel(tc.getIdLong()));
-                    sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
-                    return;
-                }
-
-                TextChannel tc = AirUtils.getLogChannel(ctx.getArgsRaw(), guild);
-                if (tc == null) {
-                    sendMsg(event, "This channel could not be found.");
-                    return;
-                }
-                guild.setSettings(settings.setLogChannel(tc.getIdLong()));
-                sendMsg(event, "The new log channel has been set to " + tc.getAsMention());
-                break;
             case "setwelcomechannel":
             case "setleavechannel":
                 if (args.size() < 1) {
@@ -308,22 +255,6 @@ public class SettingsCommand extends Command {
     @Override
     public String help(String invoke) {
         switch (invoke) {
-            case "setleavemessage":
-                return "Sets the message that the bot shows when a member leaves\n" +
-                    "Usage: `" + PREFIX + invoke + " <leave message>`";
-            case "enablejoinmessage":
-            case "disablejoinmessage":
-            case "togglejoinmessage":
-                return "Turns the join message on or off\n" +
-                    "Usage: `" + PREFIX + invoke + "`";
-            case "enableswearfilter":
-            case "disableswearfilter":
-            case "toggleswearfilter":
-                return "Turns the swearword filter on or off\n" +
-                    "Usage: `" + PREFIX + invoke + "`";
-            case "setlogchannel":
-                return "Sets the channel to log messages in\n" +
-                    "Usage: `" + PREFIX + invoke + " <text channel>`";
             case "setwelcomechannel":
             case "setleavechannel":
                 return "Sets the channel that displays the welcome and leave messages\n" +
@@ -394,16 +325,8 @@ public class SettingsCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{
-            "enablejoinmessage",
-            "togglejoinmessage",
-            "disablejoinmessage",
-            "enableswearfilter",
-            "disableswearfilter",
-            "toggleswearfilter",
-            "setlogchannel",
             "setwelcomechannel",
             "setleavechannel",
-            "setleavemessage",
             "autorole",
             "setdescription",
             "toggleannouncetracks",
@@ -415,10 +338,5 @@ public class SettingsCommand extends Command {
             "setratelimits",
             "togglekickmode"
         };
-    }
-
-
-    private String boolToEmoji(boolean flag) {
-        return flag ? "<:check:414777605141561344>" : "<:xmark:414777605250875402>";
     }
 }

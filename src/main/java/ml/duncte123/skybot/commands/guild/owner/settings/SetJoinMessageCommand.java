@@ -18,11 +18,13 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetJoinMessageCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {

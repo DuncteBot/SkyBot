@@ -87,6 +87,7 @@ public class BotinfoCommand extends Command {
                 "If you want to add me to your server you can do that by [clicking here](https://bots.discord.pw/bots/210363111729790977).\n" +
                 "\n**[Support server](https://discord.gg/NKM9Xtk)** \u2022 **[Website](https://bot.duncte123.me)** \u2022 " +
                 "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
+                " \u2022 **[Twitter](https://twitter.com/DuncteBot)**  \u2022 **[Cheap hosting](https://billing.oxide.host/aff.php?aff=6)**" +
                 "\n\u200B", true)
             .addField("Other info", "**Guilds:** " + ctx.getShardManager().getGuildCache().size() + "\n" +
                 "**Bot version:** " + Settings.VERSION + "\n"

@@ -19,33 +19,43 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import ml.duncte123.skybot.objects.guild.GuildSettings;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetPrefixCommand extends SettingsBase {
+public class ToggleJoinMessageCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
-            return;
-        }
 
-        String newPrefix = ctx.getArgsJoined();
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
-        sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + "`");
+        DunctebotGuild guild = ctx.getGuild();
+        GuildSettings settings = guild.getSettings();
+
+        boolean isEnabled = settings.isEnableJoinMessage();
+        guild.setSettings(settings.setEnableJoinMessage(!isEnabled));
+
+        sendMsg(ctx.getEvent(), "The join and leave messages have been " + (!isEnabled ? "enabled" : "disabled") + ".");
     }
 
     @Override
     public String getName() {
-        return "setprefix";
+        return "togglejoinmessage";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {
+            "enablejoinmessage",
+            "disablejoinmessage"
+        };
     }
 
     @Override
     public String help() {
-        return "Sets the new prefix\n" +
-            "Usage: `" + PREFIX + getName() + " <prefix>`";
+        return "Turns the join message on or off\n" +
+            "Usage: `" + PREFIX + getName() + "`";
     }
 }

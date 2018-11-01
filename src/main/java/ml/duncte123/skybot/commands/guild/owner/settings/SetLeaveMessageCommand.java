@@ -25,27 +25,28 @@ import org.jetbrains.annotations.NotNull;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetPrefixCommand extends SettingsBase {
+public class SetLeaveMessageCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
         if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
+            sendMsg(ctx.getEvent(), "Correct usage is `" + PREFIX + "setleavemessage <new join message>`");
             return;
         }
 
-        String newPrefix = ctx.getArgsJoined();
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
-        sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + "`");
+        String newLeaveMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+        ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomLeaveMessage(newLeaveMessage));
+
+        sendMsg(ctx.getEvent(), "The new leave message has been set to `" + newLeaveMessage + "`");
     }
 
     @Override
     public String getName() {
-        return "setprefix";
+        return "setleavemessage";
     }
 
     @Override
     public String help() {
-        return "Sets the new prefix\n" +
-            "Usage: `" + PREFIX + getName() + " <prefix>`";
+        return "Sets the message that the bot shows when a member leaves\n" +
+            "Usage: `" + PREFIX + getName() + " <leave message>`";
     }
 }

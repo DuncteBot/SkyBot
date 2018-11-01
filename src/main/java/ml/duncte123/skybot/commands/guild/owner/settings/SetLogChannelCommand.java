@@ -20,32 +20,40 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SetPrefixCommand extends SettingsBase {
+public class SetLogChannelCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
         if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Correct usage is `" + PREFIX + "setPrefix <new prefix>`");
+            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
             return;
         }
 
-        String newPrefix = ctx.getArgsJoined();
-        ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
-        sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + "`");
+        TextChannel channel = findTextChannel(ctx);
+
+        if(channel == null) {
+            sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +
+                "Make sure that it's a valid channel that I can speak in");
+            return;
+        }
+
+        ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(channel.getIdLong()));
+        sendMsg(ctx.getEvent(), "The new log channel has been set to " + channel.getAsMention());
     }
 
     @Override
     public String getName() {
-        return "setprefix";
+        return "setlogchannel";
     }
 
     @Override
     public String help() {
-        return "Sets the new prefix\n" +
-            "Usage: `" + PREFIX + getName() + " <prefix>`";
+        return "Sets the channel to log messages in\n" +
+            "Usage: `" + PREFIX + getName() + " <text channel>`";
     }
 }

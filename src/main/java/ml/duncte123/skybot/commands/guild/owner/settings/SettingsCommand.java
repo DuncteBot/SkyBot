@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -29,6 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SettingsCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
