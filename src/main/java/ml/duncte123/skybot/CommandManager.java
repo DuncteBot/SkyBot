@@ -90,12 +90,15 @@ public class CommandManager {
         if (commandsSorted.isEmpty()) {
             List<ICommand> commandSet = new ArrayList<>();
             List<String> names = new ArrayList<>();
+
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
                 .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
             Collections.sort(names);
+
             names.forEach(n -> commandSet.add(getCommand(n)));
             commandsSorted.addAll(commandSet);
         }
+
         return commandsSorted;
     }
 

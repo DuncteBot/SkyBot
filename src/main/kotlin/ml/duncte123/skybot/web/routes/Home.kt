@@ -16,15 +16,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.dashboard
+package ml.duncte123.skybot.web.routes
 
-import spark.kotlin.*
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.web.WebHolder
 
-class Test {
+@Author(nickname = "duncte123", author = "Duncan Sterken")
+class Home(holder: WebHolder) {
 
     init {
-        get("/testing") {
-            "hello world"
-        }
+        holder.get("/", WebVariables().put("title", "Home"), "home.twig")
     }
+
 }
