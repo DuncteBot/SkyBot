@@ -58,7 +58,8 @@ public class SettingsCommand extends SettingsBase {
             ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
             "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
             "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
-            "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none")
+            "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none") + "\n" +
+            "**Embed color code:** " + guild.getHexColor()
         );
 
         sendEmbed(ctx.getEvent(), message);

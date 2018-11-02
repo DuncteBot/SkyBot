@@ -22,15 +22,18 @@ import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import com.jagrosh.jdautilities.oauth2.session.Session
+import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
+import ml.duncte123.skybot.web.dashboard.Test
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.Guild
@@ -42,6 +45,7 @@ import spark.Request
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
+import java.awt.Color
 import java.nio.charset.Charset
 import java.sql.SQLException
 import java.util.*
@@ -62,6 +66,9 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         .build()
 
     private val FLASH_MESSAGE = "FLASH_MESSAGE"
+    private val SESSION_ID = "sessionId"
+    private val USER_SESSION = "USER_SESSION"
+    private val SPLITTER = ":SKIRT:"
 
     init {
 
@@ -69,6 +76,8 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         port(2000)
 
         staticFiles.location("/public")
+
+        Test()
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
 
@@ -126,12 +135,12 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         path("/dashboard") {
 
             before("") {
-                if (!request.session().attributes().contains("sessionId")) {
+                if (!request.session().attributes().contains(SESSION_ID)) {
                     val url = oAuth2Client.generateAuthorizationURL(
                         config.discord.oauth.redirUrl,
                         Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
                     )
-                    request.session(true).attribute("sessionId", "session_${System.currentTimeMillis()}")
+                    request.session(true).attribute(SESSION_ID, "session_${System.currentTimeMillis()}")
                     response.redirect(url)
                 }
             }
@@ -184,7 +193,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         }
 
         get("/my-guild-count") {
-            if (!request.session().attributes().contains("sessionId")) {
+            if (!request.session().attributes().contains(USER_SESSION)) {
                 return@get response.redirect("/dashboard")
             }
 
@@ -201,9 +210,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
         path("/server/:guildid") {
 
             before("/*") {
-                if (!request.session().attributes().contains("sessionId")) {
+                if (!request.session().attributes().contains(USER_SESSION)) {
                     return@before response.redirect("/dashboard")
                 }
+
                 val guild = getGuildFromRequest(request)
                 if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
                     return@before response.redirect("/server/${request.params(":guildid")}/invalid")
@@ -211,8 +221,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     return@before response.redirect("/server/${request.params(":guildid")}/")
                 }
 
-                val user = oAuth2Client.getUser(getSession(request)).complete()
-                val member = guild?.getMember(user.getJDAUser(guild.jda))
+                val userId = (request.session().attribute(USER_SESSION) as String).split(SPLITTER)[1]
+
+                val user = shardManager.getUserById(userId)
+                val member = guild?.getMember(user)
                 val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
                 if (!hasPermission && !request.url().contains("noperms")) {
@@ -226,6 +238,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     .put("name", getGuildFromRequest(request)?.name).map,
                     "dashboard/panelSelection.twig"))
             }
+
             // Overview and editing
             get("/basic", WebVariables()
                 .put("title", "Dashboard"), "dashboard/basicSettings.twig", true)
@@ -249,8 +262,10 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 val autorole = params["autoRoleRole"]
                 //val autoRoleEnabled      = params["autoRoleRoleCB"]
                 val announceTracks = paramToBoolean(params["announceTracks"])
+                val color = Color.decode(params["embedColor"]).rgb
 
-                val guild = getGuildFromRequest(request)
+                val guild = DunctebotGuild(getGuildFromRequest(request)!!, variables)
+                guild.setColor(color)
 
                 val newSettings = GuildSettingsUtils.getGuild(guild, variables)
                     .setCustomPrefix(prefix)
@@ -372,11 +387,18 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                 return@get response.redirect("/")
             }
 
-            oAuth2Client.startSession(
+            val sesid: String = request.session().attribute(SESSION_ID)
+
+            val oauthses = oAuth2Client.startSession(
                 request.queryParams("code"),
                 request.queryParams("state"),
-                request.session().attribute("sessionId")
+                sesid
             ).complete()
+
+            val userId = oAuth2Client.getUser(oauthses).complete().id
+
+            request.session().attribute(USER_SESSION, "$sesid$SPLITTER$userId")
+
             response.redirect("/dashboard")
         }
 
@@ -404,6 +426,14 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
             }
 
             get("/getUserGuilds") {
+
+                if (!request.session().attributes().contains(USER_SESSION)) {
+                    return@get JSONObject()
+                        .put("status", "error")
+                        .put("message", "SESSION_INVALID")
+                        .put("code", response.status())
+                }
+
                 val guilds = ArrayList<JSONObject>()
                 oAuth2Client.getGuilds(getSession(request)).complete().forEach {
                     if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
@@ -485,6 +515,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
 
     private fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
         get(path, DEFAULT_ACCEPT, engine) {
+
             if (withGuildData) {
                 val guild = getGuildFromRequest(request)
                 if (guild != null) {
@@ -494,10 +525,14 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     val goodRoles = guild.roles.filter {
                         guild.selfMember.roles[0].canInteract(it) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
+
+                    val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.defaultColour)
+
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
                     map.put("settings", GuildSettingsUtils.getGuild(guild, variables))
                     map.put("guild", guild)
+                    map.put("guildColor", colorToHex(colorRaw))
 
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)
@@ -509,6 +544,7 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
                     }
                 }
             }
+
             map.put("color", colorToHex(Settings.defaultColour))
             ModelAndView(map.map, model)
         }
@@ -529,10 +565,12 @@ class WebServer(private val shardManager: ShardManager, private val variables: V
     }
 
     private fun getSession(request: Request): Session? {
-        val session: String? = request.session().attribute("sessionId")
+        val session: String? = request.session().attribute(SESSION_ID)
+
         if (session.isNullOrEmpty()) {
             return null
         }
+
         return oAuth2Client.sessionController.getSession(session)
     }
 
