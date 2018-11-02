@@ -39,7 +39,7 @@ public class SetDescriptionCommand extends SettingsBase {
         DunctebotGuild guild = ctx.getGuild();
         GuildSettings settings = guild.getSettings();
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendErrorWithMessage(ctx.getMessage(), "Incorrect usage\n" +
                 "Correct usage : `" + PREFIX + getName() + " <description>`");
             return;
