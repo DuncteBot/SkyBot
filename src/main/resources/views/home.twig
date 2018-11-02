@@ -2,19 +2,6 @@
 
 {% block container %}
 
-    {#<p>
-        <label>
-            <input type="checkbox" class="filled-in checkbox-green" checked="checked" />
-            <span>Filled in</span>
-        </label>
-    </p>#}
-
-    {#<label>
-        <div id="" onclick="customCheckBoxClick(this)" class="valuebox3 state1"></div>
-        <span></span>
-    </label>#}
-
-
     <div class="row">
         <div class="col m6 s12">
             <h1 class="bounceInLeft animated">DuncteBot</h1>
@@ -60,39 +47,4 @@
         </div>
     </div>
 
-    <script>
-        function customCheckBoxClick(clicked) {
-            id = parseInt(clicked.id.toString().charAt(0));
-            code = parseInt(clicked.id.toString().substr(1));
-            if (clicked.classList.contains("state0")) {
-                clicked.classList.remove("state0");
-                clicked.classList.add("state1");
-            } else if (clicked.classList.contains("state1")) {
-                clicked.classList.remove("state1");
-                clicked.classList.add("state2");
-            } else if (clicked.classList.contains("state2")) {
-                clicked.classList.remove("state2");
-                clicked.classList.add("state1");
-            }
-        }
-
-    </script>
-
 {% endblock %}
-
-{#
-function customCheckBoxClick(clicked) {
-            id = parseInt(clicked.id.toString().charAt(0));
-            code = parseInt(clicked.id.toString().substr(1));
-            if (clicked.classList.contains("state0")) {
-                clicked.classList.remove("state0");
-                clicked.classList.add("state1");
-            } else if (clicked.classList.contains("state1")) {
-                clicked.classList.remove("state1");
-                clicked.classList.add("state2");
-            } else if (clicked.classList.contains("state2")) {
-                clicked.classList.remove("state2");
-                clicked.classList.add("state0");
-            }
-        }
-#}
