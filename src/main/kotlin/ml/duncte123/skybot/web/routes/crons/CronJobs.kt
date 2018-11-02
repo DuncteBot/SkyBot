@@ -30,8 +30,10 @@ class CronJobs(private val holder: WebHolder) {
         path("/crons") {
 
             get("/clearExpiredWarns") {
-                holder.database.connManager.connection.createStatement()
+                val connection = holder.database.connManager.connection
+                    connection.createStatement()
                     .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
+                connection.close()
             }
 
         }
