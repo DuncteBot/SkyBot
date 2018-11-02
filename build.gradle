@@ -40,7 +40,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = "ml.duncte123.skybot"
-version "3.81.3_${getGitHash()}"
+version "3.82.0_${getGitHash()}"
 
 def javaVersion = JavaVersion.VERSION_11
 
@@ -63,64 +63,65 @@ repositories {
 
 dependencies {
     //Weeb api
-    compile group: 'me.duncte123', name: 'weebJava', version: '2.1.1'
+//    implementation group: 'me.duncte123', name: 'weebJava', version: '2.1.1'
+    implementation group: 'com.github.duncte123', name: 'weeb.java', version: '78d064c500'
     
     //My little utils
-    compile group: 'com.github.duncte123', name: 'botCommons', version: '8c9ad29'
+    implementation group: 'com.github.duncte123', name: 'botCommons', version: '8c9ad29'
 
     //JDA (java discord api)
-//    compile (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
-    compile(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_439') {
+//    implementation (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
+    implementation(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_439') {
         exclude module: 'opus-java'
     }
 
     //Lavaplayer/Lavalink
-    compile group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.10'
+    implementation group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.10'
 //    compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: '125b074'
-    compile group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: '08e1ce5'
+    implementation group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: '08e1ce5'
 
     // MySQL
-    compile group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
     // SQLite
-    compile group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
+    implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
 
     //groovy
 //    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.2'
     implementation group: 'com.github.apache.groovy', name: 'groovy-jsr223', version: '43d9f2178f'
     
     //groovy sandbox
-    compile group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.19'
+    implementation group: 'org.kohsuke', name: 'groovy-sandbox', version: '1.19'
 
     // Logback classic
-    compile group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
+    implementation group: 'ch.qos.logback', name: 'logback-classic', version: '1.2.3'
 
     // cp scraping stuffz
-    compile group: 'org.reflections', name: 'reflections', version: '0.9.11'
+    implementation group: 'org.reflections', name: 'reflections', version: '0.9.11'
 
     //Spotify API
-    compile group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '2.1.1'
+    implementation group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '2.1.1'
     // Youtube api
-    compile group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev206-1.25.0'
+    implementation group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev206-1.25.0'
 
     //Add kotlin
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
-    compile group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
-    compile group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.0.0'
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
+    implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.0.0'
 
     //Spark for website
-    compile group: 'com.sparkjava', name: 'spark-kotlin', version: '1.0.0-alpha'
-    compile group: 'com.sparkjava', name: 'spark-core', version: '2.8.0' // Override spark to the latest version
-    compile group: 'com.sparkjava', name: 'spark-template-jtwig', version: '2.7.1'
+    implementation group: 'com.sparkjava', name: 'spark-kotlin', version: '1.0.0-alpha'
+    implementation group: 'com.sparkjava', name: 'spark-core', version: '2.8.0' // Override spark to the latest version
+    implementation group: 'com.sparkjava', name: 'spark-template-jtwig', version: '2.7.1'
     // Oauth
-    compile group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'b98962c'
+    implementation group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'b98962c'
 
-    compile group: 'com.jagrosh', name: 'JagTag', version: '0.5'
+    implementation group: 'com.jagrosh', name: 'JagTag', version: '0.5'
 
     //Wolfaram alpha
     implementation group: 'com.github.DuncteBot', name: 'wolfram-alpha-java-binding', version: '5c123ae'
     
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
-    compile group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.2.Final'
+    implementation group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.2.Final'
 }
 
 task sourcesForRelease(type: Copy) {
