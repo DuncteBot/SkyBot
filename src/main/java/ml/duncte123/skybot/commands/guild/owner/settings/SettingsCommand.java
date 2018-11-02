@@ -48,7 +48,7 @@ public class SettingsCommand extends SettingsBase {
             "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +
             "**Auto de-hoist:** " + boolToEmoji(settings.isAutoDeHoist()) + "\n" +
             "**Filter Discord invites:** " + boolToEmoji(settings.isFilterInvites()) + "\n" +
-            "**Spamfilter:** " + boolToEmoji(settings.getEnableSpamFilter()) + "\n" +
+            "**Spamfilter:** " + boolToEmoji(settings.isEnableSpamFilter()) + "\n" +
             "**Kick Mode:** " + (settings.getKickState() ? "Kick Members" : "Mute members") + "\n" +
             "**MuteRole:** " + (settings.getMuteRoleId() <= 0
             ? "Not Set" : guild.getRoleById(settings.getMuteRoleId()).getAsMention()) + "\n" +

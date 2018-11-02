@@ -202,7 +202,7 @@ public class GuildSettingsUtils {
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
-                smt.setBoolean(13, settings.getEnableSpamFilter());
+                smt.setBoolean(13, settings.isEnableSpamFilter());
                 smt.setString(14, String.valueOf(settings.getMuteRoleId()));
                 smt.setString(15, convertJ2S(settings.getRatelimits()));
                 smt.setBoolean(16, settings.getKickState());

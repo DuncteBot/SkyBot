@@ -677,7 +677,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            if (settings.getEnableSpamFilter()) {
+            if (settings.isEnableSpamFilter()) {
                 Message messageToCheck = event.getMessage();
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);

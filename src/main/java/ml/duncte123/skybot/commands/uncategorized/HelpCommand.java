@@ -51,16 +51,18 @@ public class HelpCommand extends Command {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (ctx.getArgs().size() > 0) {
+        if (!ctx.getArgs().isEmpty()) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
                 .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
                     Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
-            if (isCategory(toSearch))
+            if (isCategory(toSearch)) {
                 sendCategoryHelp(event, ctx.getGuild().getSettings().getCustomPrefix(), toSearch.toUpperCase());
-            else
-                sendCommandHelp(event, toSearch, ctx.getCommandManager());
+                return;
+            }
+
+            sendCommandHelp(event, toSearch, ctx.getCommandManager());
 
             return;
         }
@@ -87,7 +89,7 @@ public class HelpCommand extends Command {
         try {
             List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
                 .equals(name.toLowerCase())).collect(Collectors.toList());
-            if (categoryList.size() > 0) {
+            if (!categoryList.isEmpty()) {
                 return true;
             }
 

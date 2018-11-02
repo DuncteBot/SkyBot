@@ -41,7 +41,7 @@ public class ToggleSpamFilterCommand extends SettingsBase {
             return;
         }
 
-        boolean spamState = !settings.getEnableSpamFilter();
+        boolean spamState = !settings.isEnableSpamFilter();
         guild.setSettings(settings.setEnableSpamFilter(spamState));
         String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
 
