@@ -23,9 +23,9 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHolder
 import net.dv8tion.jda.core.Permission
 import org.json.JSONObject
+import spark.Spark.path
 import spark.kotlin.get
-import java.util.ArrayList
-import spark.Spark.*
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class GetUserGuilds(private val holder: WebHolder) {

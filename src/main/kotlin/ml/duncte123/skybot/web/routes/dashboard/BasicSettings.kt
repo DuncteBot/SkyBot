@@ -24,8 +24,8 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHolder
 import org.apache.http.client.utils.URLEncodedUtils
-import spark.Spark.*
-import spark.kotlin.*
+import spark.Spark.path
+import spark.kotlin.post
 import java.awt.Color
 import java.nio.charset.Charset
 

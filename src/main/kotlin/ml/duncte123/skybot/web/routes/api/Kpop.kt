@@ -22,7 +22,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.web.WebHolder
 import org.json.JSONObject
-import spark.Spark.*
+import spark.Spark.path
 import spark.kotlin.*
 import java.sql.SQLException
 

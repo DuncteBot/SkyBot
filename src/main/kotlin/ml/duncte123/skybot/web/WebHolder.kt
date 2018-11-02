@@ -48,22 +48,22 @@ import java.util.*
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebHolder(val shardManager: ShardManager, val variables: Variables) {
 
-        val config = variables.config
-        val commandManager = variables.commandManager
-        val database = variables.database
-        val audioUtils = variables.audioUtils
+    val config = variables.config
+    val commandManager = variables.commandManager
+    val database = variables.database
+    val audioUtils = variables.audioUtils
 
-        val helpers = ApiHelpers()
-        val engine = JtwigTemplateEngine("views")
-        val oAuth2Client = OAuth2Client.Builder()
-            .setClientId(config.discord.oauth.clientId)
-            .setClientSecret(config.discord.oauth.clientSecret)
-            .build()
+    val helpers = ApiHelpers()
+    val engine = JtwigTemplateEngine("views")
+    val oAuth2Client = OAuth2Client.Builder()
+        .setClientId(config.discord.oauth.clientId)
+        .setClientSecret(config.discord.oauth.clientSecret)
+        .build()
 
-        val FLASH_MESSAGE = "FLASH_MESSAGE"
-        val SESSION_ID = "sessionId"
-        val USER_SESSION = "USER_SESSION"
-        val SPLITTER = ":SKIRT:"
+    val FLASH_MESSAGE = "FLASH_MESSAGE"
+    val SESSION_ID = "sessionId"
+    val USER_SESSION = "USER_SESSION"
+    val SPLITTER = ":SKIRT:"
 
 
     init {

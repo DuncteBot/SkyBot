@@ -20,7 +20,7 @@ package ml.duncte123.skybot.web.routes
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHolder
-import spark.kotlin.*
+import spark.kotlin.get
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class Callback(private val holder: WebHolder) {

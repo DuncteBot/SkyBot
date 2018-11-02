@@ -20,8 +20,8 @@ package ml.duncte123.skybot.web.routes.crons
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.*
-import spark.kotlin.*
+import spark.Spark.path
+import spark.kotlin.get
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class CronJobs(private val holder: WebHolder) {

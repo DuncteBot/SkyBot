@@ -21,8 +21,8 @@ package ml.duncte123.skybot.web.routes.dashboard
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.*
-import spark.kotlin.*
+import spark.Spark.path
+import spark.kotlin.post
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class CustomCommandSettings(private val holder: WebHolder) {

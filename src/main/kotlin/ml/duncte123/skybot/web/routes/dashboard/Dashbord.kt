@@ -25,7 +25,7 @@ import ml.duncte123.skybot.web.WebHolder
 import net.dv8tion.jda.core.Permission
 import org.json.JSONObject
 import spark.ModelAndView
-import spark.Spark.*
+import spark.Spark.path
 import spark.kotlin.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

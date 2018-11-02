@@ -23,7 +23,6 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.web.WebHolder
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
-import spark.Spark.*
 import spark.kotlin.*
 import java.nio.charset.Charset
 

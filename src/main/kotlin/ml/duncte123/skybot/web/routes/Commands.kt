@@ -25,7 +25,8 @@ import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHolder
 import spark.ModelAndView
-import spark.kotlin.*
+import spark.kotlin.DEFAULT_ACCEPT
+import spark.kotlin.get
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class Commands(private val holder: WebHolder) {
