@@ -49,6 +49,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
+import org.apache.commons.lang3.exception.ExceptionUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -237,10 +238,21 @@ public class AudioUtils {
                 if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
                     sendEmbed(channel, embedField(embedTitle, "Could not play: " + trackUrl
                         + "\nExternal playback of this video was blocked by YouTube."));
-                } else {
-                    sendEmbed(channel, embedField(embedTitle, "Could not play: " + exception.getMessage()
-                        + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+                    return;
                 }
+
+                Throwable root = ExceptionUtils.getRootCause(exception);
+
+                if (root == null) {
+                    // It can return null so shush
+                    // noinspection UnusedAssignment
+                    root = exception;
+                    return;
+                }
+
+                sendEmbed(channel, embedField(embedTitle, "Could not play: " + root.getMessage()
+                    + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
+
             }
         });
     }
