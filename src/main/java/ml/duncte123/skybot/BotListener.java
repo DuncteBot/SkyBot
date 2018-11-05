@@ -216,6 +216,12 @@ public class BotListener extends ListenerAdapter {
 
             } catch (SQLException e) {
                 e.printStackTrace();
+            } finally {
+                try {
+                    connection.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
 
         });
@@ -677,7 +683,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            if (settings.getEnableSpamFilter()) {
+            if (settings.isEnableSpamFilter()) {
                 Message messageToCheck = event.getMessage();
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);

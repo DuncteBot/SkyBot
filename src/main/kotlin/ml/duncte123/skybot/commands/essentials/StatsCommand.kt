@@ -40,16 +40,21 @@ class StatsCommand : Command() {
                 vc.members.contains(vc.guild.selfMember)
             }.count()
         }.sum()
+
         val uptimeLong = ManagementFactory.getRuntimeMXBean().uptime
         val uptimeTime = Time(uptimeLong - 3600000)
         val serverUptimeString = AirUtils.getSystemUptime()
         val cores = ManagementFactory.getOperatingSystemMXBean().availableProcessors
         val platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean::class.java)
-        val processUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
-        val serverMem = platformMXBean.totalPhysicalMemorySize
-        val serverUsage = serverMem - platformMXBean.freePhysicalMemorySize
-        val jvmMem = ManagementFactory.getMemoryMXBean().heapMemoryUsage.used shr 20
-        val jvmUsage = ManagementFactory.getMemoryMXBean().heapMemoryUsage.max shr 20
+        val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
+        val serverMem = (platformMXBean.totalPhysicalMemorySize shr 20).toDouble()
+        val serverMemUsage = serverMem - (platformMXBean.freePhysicalMemorySize shr 20)
+        val serverMemPercent = (serverMemUsage / serverMem) * 100.0
+
+        val jvmCpuUsage = DecimalFormat("###.###%").format(platformMXBean.processCpuLoad)
+        val jvmMemUsage = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.used shr 20).toDouble()
+        val jvmMemTotal = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.max shr 20).toDouble()
+        val jvmMemPercent = jvmMemUsage / jvmMemTotal * 100
         val os = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
 
         val embed = defaultEmbed()
@@ -64,22 +69,20 @@ class StatsCommand : Command() {
                 """.trimMargin(), false)
 
             .addField("Server stats",
-                """**CPU's:** $cores
-                    |**CPU usage:** $processUsage
-                    |**Ram usage:** ${serverUsage shr 20}MB
-                    |**Total ram:** ${serverMem shr 20}MB
+                """**CPU cores:** $cores
+                    |**CPU usage:** $serverCpuUsage
+                    |**Ram:** ${serverMemUsage}MB / ${serverMem}MB ($serverMemPercent%)
                     |**System uptime:** $serverUptimeString
                     |**Operating System:** $os
                 """.trimMargin(), false)
 
             .addField("JVM stats",
-                """**Active thread count:** ${Thread.activeCount()}
-                            |**Total thread count:** ${Thread.getAllStackTraces().keys.size}
-                            |**Used ram:** ${jvmMem}MB
-                            |**Allocated ram:** ${jvmUsage}MB
+                """**CPU usage:** $jvmCpuUsage
+                    |**Threads:** ${Thread.activeCount()} / ${Thread.getAllStackTraces().keys.size}
+                            |**Ram:** ${jvmMemUsage}MB / ${jvmMemTotal}MB ($jvmMemPercent%)
                         """.trimMargin(), false)
 
-        sendEmbed(ctx.event, embed.build())
+        sendEmbed(ctx.event, embed)
 
     }
 

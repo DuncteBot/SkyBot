@@ -80,7 +80,6 @@
 
                 {# Other boolean flags #}
                 <div class="input-field col s12 m3">
-
                     <div class="switch">
                         Announce tracks:
                         <label>
@@ -91,6 +90,17 @@
                             Enabled
                         </label>
                     </div>
+                </div>
+
+                <div class="input-field col s12 m3">
+
+                    <input type="color" style="display: none;" id="embedColor" name="embedColor"
+                           onchange="_('embedPreview').style.background = this.value;" value="{{ guildColor }}" />
+
+                    <button type="button" id="embedPreview" onclick="_('embedColor').click()"
+                            class="btn-large waves-effect waves-light waves-ripple white-text" style="background: {{ guildColor }};">
+                        Change embed color
+                    </button>
 
                 </div>
 

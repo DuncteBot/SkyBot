@@ -179,6 +179,13 @@ class MySQLConnectionManager implements DBConnectionManager {
                 ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
 
             connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS embedSettings" +
+                    "(guild_id int(20)," +
+                    "embed_color int(10) NOT NULL DEFAULT 0x0751c6," +
+                    "PRIMARY KEY (`guild_id`));"
+            );
+
+            connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS customCommands" +
                     "(id int(11) AUTO_INCREMENT," +
                     "guildId VARCHAR(255) NOT NULL," +

@@ -65,7 +65,7 @@ class IssueCommand : Command() {
                             """.trimMargin())
                         .addField("Invite:", if (data.isNull("inv") || data.getString("inv").isBlank()) event.channel.createInvite().complete(true).url else data.getString("inv"), false)
 
-                    sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed.build())
+                    sendEmbed(event.jda.getTextChannelById(424146177626210305L), embed)
                 } catch (ex: JSONException) {
                     val msg =
                         """You malformed the JSON.

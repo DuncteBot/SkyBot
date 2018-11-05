@@ -28,7 +28,7 @@ import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.web.WebServer;
+import ml.duncte123.skybot.web.WebHolder;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -154,7 +154,7 @@ public class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebServer(shardManager, variables);
+            new WebHolder(shardManager, variables);
         }
     }
 

@@ -113,7 +113,8 @@ class ChatCommand : Command() {
             response = parseATags(response, withAds)
             if (withAds) {
                 response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/duncte123)."
-                MessageUtils.sendMsg(event, MessageBuilder().append(event.author).setEmbed(EmbedUtils.embedMessage(response)).build())
+                MessageUtils.sendMsg(event, MessageBuilder().append(event.author)
+                    .setEmbed(EmbedUtils.embedMessage(response).build()).build())
             } else {
                 MessageUtils.sendMsg(event, "${event.author.asMention}, $response")
             }

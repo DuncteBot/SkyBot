@@ -199,7 +199,7 @@ public class AirUtils {
 
         List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
 
-        if(foundChannels.isEmpty()) {
+        if (foundChannels.isEmpty()) {
             return null;
         }
 
@@ -230,7 +230,8 @@ public class AirUtils {
         return WebUtils.ins.shortenUrl(url, googleKey);
     }
 
-    public static String colorToHex(Color color) {
+    public static String colorToHex(int hex) {
+        Color color = new Color(hex);
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
