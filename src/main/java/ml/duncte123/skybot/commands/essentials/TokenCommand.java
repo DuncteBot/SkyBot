@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.math.BigInteger;
 import java.time.OffsetDateTime;
@@ -70,7 +71,17 @@ public class TokenCommand extends Command {
         }
 
         String id = decodeBase64ToString(matcher.group(1));
-        String timestamp = toTimeStamp(matcher.group(2)).format(DateTimeFormatter.RFC_1123_DATE_TIME);
+
+        OffsetDateTime time = toTimeStamp(matcher.group(2));
+
+        if (time == null) {
+            sendMsg(event, "Could not decode timestamp.");
+            return;
+        }
+
+        String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+
+
 
         sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
@@ -116,17 +127,23 @@ public class TokenCommand extends Command {
         return new String(decodeBase64(input));
     }
 
+    @Nullable
     private OffsetDateTime toTimeStamp(String input) {
-        BigInteger decoded = new BigInteger(decodeBase64(input));
-        long receivedTime = decoded.longValue();
+        try {
+            BigInteger decoded = new BigInteger(decodeBase64(input));
+            long receivedTime = decoded.longValue();
 
-        long timestamp = TOKEN_EPOCH + receivedTime;
+            long timestamp = TOKEN_EPOCH + receivedTime;
 
-        Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-        long millis = timestamp * 1000;
-        gmt.setTimeInMillis(millis);
+            Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            long millis = timestamp * 1000;
+            gmt.setTimeInMillis(millis);
 
-        return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
+            return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
+        }
+        catch (IllegalArgumentException ignored) {
+            return null;
+        }
     }
 
     private boolean isLong(String input) {
