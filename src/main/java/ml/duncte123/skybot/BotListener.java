@@ -36,10 +36,7 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.core.events.guild.member.*;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -50,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -410,6 +408,7 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         Guild guild = event.getGuild();
+
         try {
             if (LavalinkManager.ins.isConnected(guild)) {
                 if (!event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild)) && event.getMember().equals(guild.getSelfMember())) {
@@ -430,14 +429,57 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() != supportGuildId) return;
+        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+            return;
+        }
 
         for (Role role : event.getRoles()) {
             long roleId = role.getIdLong();
-            if (!(roleId == patronsRole || roleId == guildPatronsRole)) continue;
+
+            if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole || roleId == Command.oneGuildPatronsRole)) {
+                continue;
+            }
 
             handlePatronRemoveal(event.getUser().getIdLong());
         }
+    }
+
+    @Override
+    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+
+        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+            return;
+        }
+
+        User user = event.getUser();
+        long userId = user.getIdLong();
+        ShardManager manager = event.getJDA().asBot().getShardManager();
+
+        for (Role role : event.getRoles()) {
+            long roleId = role.getIdLong();
+
+            if (roleId == Command.patronsRole) {
+                Command.patrons.add(userId);
+            }
+
+            if (roleId == Command.guildPatronsRole) {
+                List<Long> guilds = manager.getMutualGuilds(user).stream()
+                    .filter((it) -> {
+                        Member member = it.getMember(user);
+
+                        return it.getOwner().equals(member) || member.hasPermission(Permission.ADMINISTRATOR);
+                    })
+                    .map(Guild::getIdLong)
+                    .collect(Collectors.toList());
+
+                Command.guildPatrons.addAll(guilds);
+            }
+
+            if (roleId == Command.oneGuildPatronsRole) {
+                //
+            }
+        }
+
     }
 
     @Override
@@ -707,5 +749,29 @@ public class BotListener extends ListenerAdapter {
 
         // TODO: Handle full guild case
         // But hey, who cares right now
+    }
+
+    private void handleNewOneGuildPatron(long userId, ShardManager manager) {
+        database.run(() -> {
+
+            try (Connection connection = database.getConnection()) {
+                //
+
+                PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM " + database.getName() + ".oneGuildPatrons WHERE user_id = ? LIMIT 1");
+
+                statement.setLong(1, userId);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 }
