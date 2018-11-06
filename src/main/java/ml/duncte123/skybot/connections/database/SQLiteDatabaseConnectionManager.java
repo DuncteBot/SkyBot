@@ -201,7 +201,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
 
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
-                    "(user_id VARCHAR(255) NOT NULL," +
+                    "(user_id VARCHAR(255) NOT NULL PRIMARY KEY," +
                     "guild_id VARCHAR(255) NOT NULL);"
             );
 

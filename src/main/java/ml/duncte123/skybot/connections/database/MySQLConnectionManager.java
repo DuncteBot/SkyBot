@@ -216,7 +216,8 @@ class MySQLConnectionManager implements DBConnectionManager {
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
                     "(user_id VARCHAR(255) NOT NULL," +
-                    "guild_id VARCHAR(255) NOT NULL);"
+                    "guild_id VARCHAR(255) NOT NULL," +
+                    "PRIMARY KEY (`user_id`));"
             );
 
             close();

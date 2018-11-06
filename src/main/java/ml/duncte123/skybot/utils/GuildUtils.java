@@ -236,7 +236,7 @@ public class GuildUtils {
                 }
 
                 PreparedStatement smt = connection.prepareStatement("INSERT INTO " + database.getName() +
-                    ".embedSettings(user_id, guild_id) VALUES( ? , ? ) " + updateString);
+                    ".oneGuildPatrons(user_id, guild_id) VALUES( ? , ? ) " + updateString);
 
                 smt.setLong(1, userId);
                 smt.setLong(2, guildId);
