@@ -158,13 +158,12 @@ public class CommandManager {
         if (insertInDb) {
             try {
                 Triple<Boolean, Boolean, Boolean> res = database.run(() -> {
-                    Connection conn = database.getConnManager().getConnection();
 
                     String sqlQuerry = (isEdit) ?
                         "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
                         "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
 
-                    try {
+                    try (Connection conn = database.getConnManager().getConnection()) {
                         PreparedStatement stm = conn.prepareStatement(sqlQuerry);
                         stm.setString((isEdit) ? 2 : 1, Long.toString(command.getGuildId()));
                         stm.setString((isEdit) ? 3 : 2, command.getName());
@@ -172,14 +171,10 @@ public class CommandManager {
                         stm.execute();
                     } catch (SQLException e) {
                         e.printStackTrace();
+
                         return new Triple<>(false, false, false);
-                    } finally {
-                        try {
-                            conn.close();
-                        } catch (SQLException e) {
-                            e.printStackTrace();
-                        }
                     }
+
                     return null;
                 }).get();
 
@@ -190,9 +185,11 @@ public class CommandManager {
                 e.printStackTrace();
             }
         }
+
         if (isEdit) {
             this.customCommands.remove(getCustomCommand(command.getName(), command.getGuildId()));
         }
+
         this.customCommands.add(command);
 
         return new Triple<>(true, false, false);
@@ -215,9 +212,8 @@ public class CommandManager {
 
         try {
             return database.run(() -> {
-                Connection con = database.getConnManager().getConnection();
 
-                try {
+                try (Connection con = database.getConnManager().getConnection()) {
                     PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
                     stm.setString(1, name);
                     stm.setString(2, Long.toString(guildId));
@@ -225,12 +221,6 @@ public class CommandManager {
                 } catch (SQLException e) {
                     e.printStackTrace();
                     return false;
-                } finally {
-                    try {
-                        con.close();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-                    }
                 }
 
                 this.customCommands.remove(cmd);
@@ -372,8 +362,8 @@ public class CommandManager {
 
     private void loadCustomCommands() {
         database.run(() -> {
-            Connection con = database.getConnManager().getConnection();
-            try {
+
+            try (Connection con = database.getConnManager().getConnection()) {
                 ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
                 while (res.next()) {
                     addCustomCommand(new CustomCommandImpl(
@@ -384,12 +374,6 @@ public class CommandManager {
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    con.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
