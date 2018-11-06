@@ -20,15 +20,21 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import net.dv8tion.jda.core.entities.Guild;
+import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.command.Command;
+import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.entities.Guild.VerificationLevel;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.cache.MemberCacheView;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -168,5 +174,79 @@ public class GuildUtils {
     public static int getMemberJoinPosition(Member member) {
         return member.getGuild().getMemberCache().stream().sorted(Comparator.comparing(Member::getJoinDate))
             .collect(Collectors.toList()).indexOf(member) + 1;
+    }
+
+    public static void reloadOneGuildPatrons(@NotNull ShardManager manager, @NotNull DBManager database) {
+        logger.info("(Re)loading one guild patrons");
+
+        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
+
+        database.run(() -> {
+
+            try (Connection connection = database.getConnection()) {
+                ResultSet resultSet = connection.createStatement()
+                    .executeQuery("SELECT * FROM " + database.getName() + ".oneGuildPatrons");
+
+                while (resultSet.next()) {
+
+                    long userId = Long.parseLong(resultSet.getString("user_id"));
+                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
+
+                    Member memberInServer = supportGuild.getMemberById(userId);
+
+                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
+                        Command.oneGuildPatrons.put(userId, guildId);
+                    }
+                }
+
+                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
+
+    }
+
+    public static void removeOneGuildPatron(long userId, @NotNull DBManager database) {
+        database.run(() -> {
+
+            try (Connection connection = database.getConnection()) {
+                connection.createStatement()
+                    .execute("DELETE FROM " + database.getName() + ".oneGuildPatrons WHERE user_id = " + userId);
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
+    }
+
+    public static void addOneGuildPatron(long userId, long guildId, @NotNull Variables variables) {
+        DBManager database = variables.getDatabase();
+
+        database.run(() -> {
+
+            try (Connection connection = database.getConnection()) {
+
+                String updateString = "ON DUPLICATE KEY UPDATE guild_id = ?";
+
+                if (!variables.isSql()) {
+                    updateString = "ON CONFLICT(user_id) DO UPDATE SET guild_id = ?";
+                }
+
+                PreparedStatement smt = connection.prepareStatement("INSERT INTO " + database.getName() +
+                    ".embedSettings(user_id, guild_id) VALUES( ? , ? ) " + updateString);
+
+                smt.setLong(1, userId);
+                smt.setLong(2, guildId);
+                smt.setLong(3, guildId);
+
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 }

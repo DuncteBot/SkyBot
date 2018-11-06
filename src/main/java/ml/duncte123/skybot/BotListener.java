@@ -194,35 +194,7 @@ public class BotListener extends ListenerAdapter {
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
-        String dbName = database.getName();
-        Connection connection = database.getConnection();
-
-        database.run(() -> {
-
-            try {
-                ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
-
-                while (resultSet.next()) {
-
-                    long userId = Long.parseLong(resultSet.getString("user_id"));
-                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
-
-                    oneGuildPatrons.put(userId, guildId);
-                }
-
-                logger.info("Found {} one guild patrons", oneGuildPatrons.keySet().size());
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
-            }
-
-        });
+        GuildUtils.reloadOneGuildPatrons(manager, database);
     }
 
     @Override
@@ -746,6 +718,7 @@ public class BotListener extends ListenerAdapter {
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);
+        GuildUtils.removeOneGuildPatron(userId, database);
 
         // TODO: Handle full guild case
         // But hey, who cares right now

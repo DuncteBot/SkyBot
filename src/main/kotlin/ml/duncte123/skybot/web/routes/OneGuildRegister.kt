@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.routes
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
+import ml.duncte123.skybot.utils.GuildUtils
 import ml.duncte123.skybot.web.WebHolder
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.User
@@ -72,7 +73,7 @@ class OneGuildRegister(private val holder: WebHolder) {
                 return@post renderPage(WebVariables().put("message", "Captcha error: Please try again later"))
             }
 
-            //
+            GuildUtils.addOneGuildPatron(user.idLong, guild.idLong, holder.variables)
 
             renderPage(WebVariables().put("message", "Server successfully registered").put("hideForm", true))
         }
