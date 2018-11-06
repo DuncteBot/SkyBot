@@ -50,6 +50,7 @@ public abstract class Command implements ICommand {
 
     public static final TLongSet patrons = new TLongHashSet();
     public static final TLongSet guildPatrons = new TLongHashSet();
+    // Key: user_id Value: guild_id
     public static final TLongLongMap oneGuildPatrons = new TLongLongHashMap();
     public static final long supportGuildId = 191245668617158656L;
     public static final long guildPatronsRole = 470581447196147733L;

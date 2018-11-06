@@ -340,7 +340,7 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         if (guild.getIdLong() == supportGuildId) {
-            handlePatronRemoveal(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong());
         }
 
         if (event.getMember().equals(guild.getSelfMember())) return;
@@ -440,7 +440,7 @@ public class BotListener extends ListenerAdapter {
                 continue;
             }
 
-            handlePatronRemoveal(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong());
         }
     }
 
@@ -476,7 +476,7 @@ public class BotListener extends ListenerAdapter {
             }
 
             if (roleId == Command.oneGuildPatronsRole) {
-                //
+                handleNewOneGuildPatron(userId);
             }
         }
 
@@ -740,7 +740,7 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
-    private void handlePatronRemoveal(long userId) {
+    private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
         patrons.remove(userId);
 
@@ -751,12 +751,10 @@ public class BotListener extends ListenerAdapter {
         // But hey, who cares right now
     }
 
-    private void handleNewOneGuildPatron(long userId, ShardManager manager) {
+    private void handleNewOneGuildPatron(long userId) {
         database.run(() -> {
 
             try (Connection connection = database.getConnection()) {
-                //
-
                 PreparedStatement statement = connection.prepareStatement(
                     "SELECT * FROM " + database.getName() + ".oneGuildPatrons WHERE user_id = ? LIMIT 1");
 
@@ -765,7 +763,9 @@ public class BotListener extends ListenerAdapter {
                 ResultSet resultSet = statement.executeQuery();
 
                 while (resultSet.next()) {
+                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
 
+                    Command.oneGuildPatrons.put(userId, guildId);
                 }
 
             } catch (SQLException e) {
