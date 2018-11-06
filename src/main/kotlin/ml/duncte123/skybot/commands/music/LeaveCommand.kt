@@ -33,7 +33,7 @@ class LeaveCommand : MusicCommand() {
             return
         val guild = event.guild
 
-        if (hasCoolDown(guild) && !isPatron(ctx.author, null)) {
+        if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
             MessageUtils.sendMsg(event, """I still have cooldown!
                     |Remaining cooldown: ${cooldowns[guild.idLong].toDouble() / 1000}s""".trimMargin())
             MessageUtils.sendError(event.message)

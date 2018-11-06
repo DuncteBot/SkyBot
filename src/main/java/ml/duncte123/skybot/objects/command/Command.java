@@ -97,17 +97,16 @@ public abstract class Command implements ICommand {
      * @return true if the user is a patron
      */
     protected boolean isPatron(@NotNull User u, TextChannel tc) {
-        //noinspection deprecation
-        if (isDev(u)) {
+        if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
-        if (patrons.contains(u.getIdLong())) {
-            return true;
-        }
+
         Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+
         if (supportGuild == null) {
             return false;
         }
+
         Member m = supportGuild.getMember(u);
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
@@ -129,18 +128,19 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    private boolean isPatron(User u, TextChannel tc, boolean reply) {
+    private boolean isPatron(@NotNull User u, TextChannel tc, boolean reply) {
         TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
-    private boolean isGuildPatron(User u, Guild g) {
+    private boolean isGuildPatron(@NotNull User u, @NotNull Guild g) {
 
         if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
         }
 
         Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+
         if (supportGuild == null) {
             return false;
         }
@@ -160,17 +160,17 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent event, boolean reply) {
+    protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent event, boolean reply) {
         boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
-    protected boolean isUserOrGuildPatron(GuildMessageReceivedEvent e) {
+    protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent e) {
         return isUserOrGuildPatron(e, true);
     }
 
 
-    protected boolean isDev(User u) {
+    protected boolean isDev(@NotNull User u) {
         return Settings.developers.contains(u.getIdLong());
     }
 
