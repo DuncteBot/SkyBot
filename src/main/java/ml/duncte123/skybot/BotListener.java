@@ -212,10 +212,8 @@ public class BotListener extends ListenerAdapter {
 
                     Member memberInServer = supportGuild.getMemberById(userId);
 
-                    if (memberInServer != null) {
-                        if (memberInServer.getRoles().contains(oneGuildRole)) {
-                            Command.oneGuildPatrons.put(userId, guildId);
-                        }
+                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
+                        Command.oneGuildPatrons.put(userId, guildId);
                     }
                 }
 
