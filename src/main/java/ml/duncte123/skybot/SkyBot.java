@@ -93,14 +93,17 @@ public class SkyBot {
                 logger.error("Can't load database settings. ABORTING!!!!!");
                 System.exit(-2);
             }
-            Connection conn = database.getConnection();
-            if (!database.isConnected() && variables.isSql()) {
-                logger.error("Can't connect to database. ABORTING!!!!!");
-                System.exit(-3);
-            } else {
+
+            try (Connection conn = database.getConnection()) {
+
+                if (conn.isClosed() && variables.isSql()) {
+                    logger.error("Can't connect to database. ABORTING!!!!!");
+                    System.exit(-3);
+                }
+
                 logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
-                conn.close();
             }
+
         } else {
             int startIn = 5;
             logger.warn("Using SQLite as the database");

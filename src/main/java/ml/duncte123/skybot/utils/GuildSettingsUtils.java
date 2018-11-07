@@ -55,8 +55,7 @@ public class GuildSettingsUtils {
 
         String dbName = database.getName();
         database.run(() -> {
-            Connection connection = database.getConnManager().getConnection();
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 Statement smt = connection.createStatement();
 
                 ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
@@ -85,14 +84,8 @@ public class GuildSettingsUtils {
                 }
 
                 logger.debug("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }
@@ -102,8 +95,7 @@ public class GuildSettingsUtils {
         String dbName = database.getName();
 
         database.run(() -> {
-            Connection connection = database.getConnManager().getConnection();
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 Statement smt = connection.createStatement();
 
                 ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".embedSettings");
@@ -119,14 +111,8 @@ public class GuildSettingsUtils {
                 }
 
                 logger.debug("Loaded embed colors for " + loaded + " guilds.");
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
 
@@ -169,9 +155,8 @@ public class GuildSettingsUtils {
         }
         database.run(() -> {
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 PreparedStatement smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
                     "enableJoinMessage= ? , " +
                     "enableSwearFilter= ? ," +
@@ -209,16 +194,7 @@ public class GuildSettingsUtils {
                 smt.executeUpdate();
 
             } catch (SQLException e1) {
-                if (!e1.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
-                    e1.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
+                e1.printStackTrace();
             }
         });
     }
@@ -241,9 +217,8 @@ public class GuildSettingsUtils {
         database.run(() -> {
 
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 ResultSet resultSet = connection.createStatement()
                     .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
@@ -262,15 +237,8 @@ public class GuildSettingsUtils {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    try {
-                        connection.close();
-                    } catch (SQLException e2) {
-                        e2.printStackTrace();
-                    }
-                }
             }
+
             guildSettings.put(g.getIdLong(), newGuildSettings);
         });
         return newGuildSettings;
@@ -281,9 +249,8 @@ public class GuildSettingsUtils {
 
         database.run(() -> {
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
 
                 String updateString = "ON DUPLICATE KEY UPDATE embed_color = ?";
 
@@ -301,12 +268,6 @@ public class GuildSettingsUtils {
                 smt.executeUpdate();
             } catch (SQLException e) {
                 logger.error("Database error: ", e);
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
 
         });
@@ -324,19 +285,12 @@ public class GuildSettingsUtils {
         guildSettings.remove(g.getIdLong());
         database.run(() -> {
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 Statement smt = connection.createStatement();
                 smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }

@@ -61,7 +61,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -167,15 +166,17 @@ public class BotListener extends ListenerAdapter {
 
     private void loadPatrons(@NotNull ShardManager manager) {
         logger.info("Collecting patrons");
-        Guild supportGuild = manager.getGuildById(supportGuildId);
-        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
+
+        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+
+        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
 
-        patrons.addAll(patronsList);
+        Command.patrons.addAll(patronsList);
 
-        logger.info("Found {} normal patrons", patrons.size());
+        logger.info("Found {} normal patrons", Command.patrons.size());
 
-        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
+        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
         TLongList patronGuildsTrove = new TLongArrayList();
@@ -190,7 +191,7 @@ public class BotListener extends ListenerAdapter {
             patronGuildsTrove.addAll(guilds);
         });
 
-        guildPatrons.addAll(patronGuildsTrove);
+        Command.guildPatrons.addAll(patronGuildsTrove);
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
@@ -311,7 +312,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
 
-        if (guild.getIdLong() == supportGuildId) {
+        if (guild.getIdLong() == Command.supportGuildId) {
             handlePatronRemoval(event.getUser().getIdLong());
         }
 
@@ -714,7 +715,7 @@ public class BotListener extends ListenerAdapter {
 
     private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
-        patrons.remove(userId);
+        Command.patrons.remove(userId);
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);

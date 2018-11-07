@@ -119,8 +119,7 @@ class MySQLConnectionManager implements DBConnectionManager {
     @Override
     public void close() throws IOException {
         try {
-            if (isConnected())
-                connection.close();
+            connection.close();
         } catch (SQLException e) {
             throw new IOException(e);
         }
