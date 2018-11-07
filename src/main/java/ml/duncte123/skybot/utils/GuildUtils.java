@@ -190,8 +190,8 @@ public class GuildUtils {
 
                 while (resultSet.next()) {
 
-                    long userId = Long.parseLong(resultSet.getString("user_id"));
-                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
+                    long userId = resultSet.getLong("user_id");
+                    long guildId = resultSet.getLong("guild_id");
 
                     Member memberInServer = supportGuild.getMemberById(userId);
 
