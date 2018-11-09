@@ -184,7 +184,7 @@ githubRelease {
     token "${System.getenv('GITHUB_TOKEN')}"
     owner 'DuncteBot'
     repo 'SkyBot'
-    releaseAssets jar.destinationDir.listFiles()
+    releaseAssets shadowJar.outputs.getFiles().toList()
     overwrite true
 }
 
