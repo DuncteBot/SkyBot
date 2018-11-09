@@ -12,4 +12,4 @@ cache:
 
 script:
 - ./gradlew build
-- ./.travis/uploadscript.sh
+- if [[ $TRAVIS_BRANCH == 'master' ]]; then ./gradlew githubRelease; else echo 'Not on master, not uploading'; fi
