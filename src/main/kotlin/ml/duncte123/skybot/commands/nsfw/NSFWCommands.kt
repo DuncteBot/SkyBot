@@ -54,8 +54,9 @@ class NSFWCommands : Command() {
                     val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))
                     sendEmbed(event,
                         EmbedUtils.defaultEmbed()
-                            .setTitle(randomItem.getString("title"), randomItem.getString("image.contextLink"))
-                            .setImage(randomItem.getString("link")).build()
+                            .setTitle(randomItem.getString("title"), randomItem.getJSONObject("image")
+                                .getString("contextLink"))
+                            .setImage(randomItem.getString("link"))
                     )
                 }
 
