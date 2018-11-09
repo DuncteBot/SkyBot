@@ -170,7 +170,6 @@ compileKotlin {
 }
 
 build {
-    println System.getenv('TRAVIS_PULL_REQUEST')
     dependsOn clean
     dependsOn jar
 
