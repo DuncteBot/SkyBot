@@ -16,4 +16,4 @@ cache:
 
 script:
 - ./gradlew build
-- ./gradlew githubRelease
+- ./.travis/uploadscript.sh
