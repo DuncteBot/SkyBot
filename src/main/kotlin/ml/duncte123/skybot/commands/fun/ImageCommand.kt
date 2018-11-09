@@ -50,7 +50,8 @@ class ImageCommand : Command() {
                 val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))
                 sendEmbed(event,
                     EmbedUtils.defaultEmbed()
-                        .setTitle(randomItem.getString("title"), randomItem.getString("image.contextLink"))
+                        .setTitle(randomItem.getString("title"), randomItem.getJSONObject("image")
+                            .getString("contextLink"))
                         .setImage(randomItem.getString("link")).build()
                 )
             }
