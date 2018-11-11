@@ -21,9 +21,6 @@ package ml.duncte123.skybot;
 import gnu.trove.list.TLongList;
 import gnu.trove.list.array.TLongArrayList;
 
-import java.awt.*;
-
-import static java.awt.Color.decode;
 import static java.lang.System.getProperty;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -37,7 +34,7 @@ public class Settings {
     public static final String KOTLIN_VERSION = "@kotlinVersion@";
     public static final String DEFAULT_NAME = "DuncteBot";
     public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
-    public static final Color defaultColour = decode("#0751c6");
+    public static final int defaultColour = 0x0751c6;
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     public static final boolean useJSON = false;
 

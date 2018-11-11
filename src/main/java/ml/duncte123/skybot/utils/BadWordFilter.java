@@ -27,6 +27,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * This class probably came from the internet
@@ -34,7 +35,7 @@ import java.util.Map;
 public class BadWordFilter {
 
     private int largestWordLength = 0;
-    private Map<String, String[]> words = new HashMap<>();
+    private Map<String, String[]> words = new ConcurrentHashMap<>();
 
     public BadWordFilter() {
         try {
@@ -134,6 +135,6 @@ public class BadWordFilter {
      */
     public boolean filterText(String input) {
         ArrayList<String> badWords = badWordsFound(input);
-        return badWords.size() > 0;
+        return !badWords.isEmpty();
     }
 }

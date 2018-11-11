@@ -49,7 +49,7 @@ class NowPlayingCommand : MusicCommand() {
                     EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}]" +
                         "(${stream.url}) by ${channeldata.getString("artist")}**")
                         .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}")
-                        .setColor(Color.decode(channeldata.getString("color"))).build()
+                        .setColor(Color.decode(channeldata.getString("color")))
                 } else {
                     EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
                 }

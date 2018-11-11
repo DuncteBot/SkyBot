@@ -128,7 +128,7 @@ class OneLinerCommands : Command() {
                         , it.getJSONObject("user").getString("profile_pic_url"))
                     .setTitle("Latest picture of $username", "https://instagram.com/$username/")
                     .setDescription(img.getString("caption"))
-                    .setImage(img.getString("url")).build())
+                    .setImage(img.getString("url")))
             }
         }
     }

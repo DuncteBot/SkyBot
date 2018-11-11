@@ -334,7 +334,7 @@ public class GuildSettings {
         return this;
     }
 
-    public boolean getEnableSpamFilter() {
+    public boolean isEnableSpamFilter() {
         return enableSpamFilter;
     }
 

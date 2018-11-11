@@ -72,13 +72,13 @@ class DeHoistCommand : Command() {
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
 
-    private val badNameChars = "[\\[\\]*_\\-=+!@#\$%^&()]"
-    private val regex = Pattern.compile(badNameChars)
+    private val regex = "[!\"#\$%&'()*+,-./](?:.*)".toRegex()
+    private val dehoistChar = "▪"
 
     override fun onGuildMemberJoin(event: GuildMemberJoinEvent) {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
-            event.guild.controller.setNickname(event.member, "\u25AA" + event.member.effectiveName)
+            event.guild.controller.setNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
     }
@@ -86,7 +86,7 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
     override fun onGuildMemberNickChange(event: GuildMemberNickChangeEvent) {
         if (shouldChangeName(event.member)) {
             //the char \uD82F\uDCA2 or \u1BCA2 is a null char that puts a member to the bottom
-            event.guild.controller.setNickname(event.member, "\uD82F\uDCA2" + event.member.effectiveName)
+            event.guild.controller.setNickname(event.member, dehoistChar + event.member.effectiveName)
                 .reason("auto de-hoist").queue()
         }
     }
@@ -97,7 +97,8 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
      */
     private fun shouldChangeName(member: Member): Boolean {
         val memberName = member.effectiveName
-        return (!memberName.startsWith("\uD82F\uDCA2") && regex.matcher(memberName).find() &&
+        val matcher = regex.matches(memberName)
+        return (!memberName.startsWith(dehoistChar) && matcher &&
             member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
             GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
     }

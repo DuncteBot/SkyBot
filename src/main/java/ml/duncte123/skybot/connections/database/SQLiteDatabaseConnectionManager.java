@@ -154,6 +154,12 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
             );
 
             connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS `embedSettings`" +
+                    "(guild_id INTEGER(20) PRIMARY KEY," +
+                    "embed_color INTEGER(10) NOT NULL DEFAULT 0x0751c6);"
+            );
+
+            connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS `tags`" +
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "author VARCHAR(255) NOT NULL," +

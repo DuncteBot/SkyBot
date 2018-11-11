@@ -63,7 +63,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static ml.duncte123.skybot.objects.command.Command.*;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -169,15 +168,18 @@ public class BotListener extends ListenerAdapter {
 
     private void loadPatrons(@NotNull ShardManager manager) {
         logger.info("Collecting patrons");
-        Guild supportGuild = manager.getGuildById(supportGuildId);
-        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(patronsRole))
+
+        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
+
+        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
 
-        patrons.addAll(patronsList);
+        Command.patrons.addAll(patronsList);
 
-        logger.info("Found {} normal patrons", patrons.size());
+        logger.info("Found {} normal patrons", Command.patrons.size());
 
-        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(guildPatronsRole))
+        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
         TLongList patronGuildsTrove = new TLongArrayList();
@@ -192,16 +194,15 @@ public class BotListener extends ListenerAdapter {
             patronGuildsTrove.addAll(guilds);
         });
 
-        guildPatrons.addAll(patronGuildsTrove);
+        Command.guildPatrons.addAll(patronGuildsTrove);
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
         String dbName = database.getName();
-        Connection connection = database.getConnection();
 
         database.run(() -> {
 
-            try {
+            try (Connection connection = database.getConnection()) {
                 ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
 
                 while (resultSet.next()) {
@@ -209,10 +210,14 @@ public class BotListener extends ListenerAdapter {
                     long userId = Long.parseLong(resultSet.getString("user_id"));
                     long guildId = Long.parseLong(resultSet.getString("guild_id"));
 
-                    oneGuildPatrons.put(userId, guildId);
+                    Member memberInServer = supportGuild.getMemberById(userId);
+
+                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
+                        Command.oneGuildPatrons.put(userId, guildId);
+                    }
                 }
 
-                logger.info("Found {} one guild patrons", oneGuildPatrons.keySet().size());
+                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
 
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -335,7 +340,7 @@ public class BotListener extends ListenerAdapter {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         Guild guild = event.getGuild();
 
-        if (guild.getIdLong() == supportGuildId) {
+        if (guild.getIdLong() == Command.supportGuildId) {
             handlePatronRemoveal(event.getUser().getIdLong());
         }
 
@@ -424,11 +429,11 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() != supportGuildId) return;
+        if (event.getGuild().getIdLong() != Command.supportGuildId) return;
 
         for (Role role : event.getRoles()) {
             long roleId = role.getIdLong();
-            if (!(roleId == patronsRole || roleId == guildPatronsRole)) continue;
+            if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole)) continue;
 
             handlePatronRemoveal(event.getUser().getIdLong());
         }
@@ -677,7 +682,7 @@ public class BotListener extends ListenerAdapter {
                 }
             }
 
-            if (settings.getEnableSpamFilter()) {
+            if (settings.isEnableSpamFilter()) {
                 Message messageToCheck = event.getMessage();
                 long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
@@ -694,7 +699,7 @@ public class BotListener extends ListenerAdapter {
 
     private void handlePatronRemoveal(long userId) {
         // Remove the user from the patrons list
-        patrons.remove(userId);
+        Command.patrons.remove(userId);
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);

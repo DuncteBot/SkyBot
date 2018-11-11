@@ -23,7 +23,6 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.api.*
 import java.sql.ResultSet
-import java.sql.SQLException
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object ApiUtils {
@@ -31,15 +30,13 @@ object ApiUtils {
     @JvmStatic
     fun getRandomLlama(database: DBManager): LlamaObject {
 
-        val conn = database.connManager.connection
-
-        val resultSet = conn.createStatement()
-            .executeQuery("SELECT * FROM animal_apis WHERE api = \"llama\" ORDER BY RAND() LIMIT 1")
-        resultSet.next()
-        val obj = LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
-        conn.close()
-
-        return obj
+        database.connManager.use {
+            val conn = it.connection
+            val resultSet = conn.createStatement()
+                .executeQuery("SELECT * FROM animal_apis WHERE api = \"llama\" ORDER BY RAND() LIMIT 1")
+            resultSet.next()
+            return LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
+        }
     }
 
     @JvmStatic
@@ -61,35 +58,38 @@ object ApiUtils {
     @JvmStatic
     fun getRandomKpopMember(database: DBManager, search: String = ""): KpopObject {
 
-        val conn = database.connManager.connection
+        database.connManager.use {
+            val conn = it.connection
 
-        lateinit var resultSet: ResultSet
-        resultSet = if (!search.isEmpty()) {
-            val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
-            stmt.setString(1, "%$search%")
-            stmt.setString(2, search)
-            stmt.executeQuery()
-        } else {
-            conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
+            lateinit var resultSet: ResultSet
+
+            resultSet = if (!search.isEmpty()) {
+                val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
+                stmt.setString(1, "%$search%")
+                stmt.setString(2, search)
+                stmt.executeQuery()
+            } else {
+                conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
+            }
+
+            resultSet.next()
+
+            return KpopObject(
+                resultSet.getInt("id"),
+                resultSet.getString("name"),
+                resultSet.getString("band"),
+                resultSet.getString("img")
+            )
         }
-        resultSet.next()
-        val obj = KpopObject(
-            resultSet.getInt("id"),
-            resultSet.getString("name"),
-            resultSet.getString("band"),
-            resultSet.getString("img")
-        )
-        conn.close()
-
-        return obj
     }
 
     @JvmStatic
     fun getWarnsForUser(database: DBManager, userId: String, guildId: String): WarnObject {
-        val conn = database.connManager.connection
-        val warnings = ArrayList<Warning>()
 
-        try {
+        database.connManager.use {
+            val conn = it.connection
+            val warnings = ArrayList<Warning>()
+
             val smt = conn.prepareStatement(
                 "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
             smt.setString(1, userId)
@@ -107,10 +107,6 @@ object ApiUtils {
                 ))
             }
 
-            conn.close()
-            return WarnObject(userId, warnings)
-        } catch (e: SQLException) {
-            conn.close()
             return WarnObject(userId, warnings)
         }
     }

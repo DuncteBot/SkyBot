@@ -27,7 +27,7 @@ import org.jetbrains.annotations.NotNull;
 
 import static java.awt.Color.decode;
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class ColorCommand extends Command {
@@ -51,7 +51,7 @@ public class ColorCommand extends Command {
                 name, hex, integer, rgb, brightness);
             embed.setDescription(desc);
 
-            sendEmbed(ctx.getEvent(), embed.build());
+            sendEmbedRaw(ctx.getChannel(), embed.build(), null);
         });
     }
 

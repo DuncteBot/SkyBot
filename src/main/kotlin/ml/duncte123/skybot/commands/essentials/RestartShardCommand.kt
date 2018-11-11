@@ -19,7 +19,7 @@
 package ml.duncte123.skybot.commands.essentials
 
 import fredboat.audio.player.LavalinkManager
-import kotlinx.coroutines.experimental.*
+import kotlinx.coroutines.*
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.EventManager

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.utils;
 
 import gnu.trove.map.TLongObjectMap;
+import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
@@ -45,6 +46,7 @@ public class GuildSettingsUtils {
 
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabase(), variables.getGuildSettings());
+        loadEmbedColors(variables.getDatabase());
     }
 
 
@@ -53,8 +55,7 @@ public class GuildSettingsUtils {
 
         String dbName = database.getName();
         database.run(() -> {
-            Connection connection = database.getConnManager().getConnection();
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 Statement smt = connection.createStatement();
 
                 ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
@@ -83,16 +84,38 @@ public class GuildSettingsUtils {
                 }
 
                 logger.debug("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
+    }
+
+    private static void loadEmbedColors(DBManager database) {
+        logger.debug("Loading embed colors.");
+        String dbName = database.getName();
+
+        database.run(() -> {
+            try (Connection connection = database.getConnManager().getConnection()) {
+                Statement smt = connection.createStatement();
+
+                ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".embedSettings");
+
+                int loaded = 0;
+
+                while (res.next()) {
+                    long guildId = toLong(res.getString("guild_id"));
+                    int color = res.getInt("embed_color");
+
+                    EmbedUtils.addColor(guildId, color);
+                    loaded++;
+                }
+
+                logger.debug("Loaded embed colors for " + loaded + " guilds.");
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+        });
+
     }
 
     /**
@@ -132,9 +155,8 @@ public class GuildSettingsUtils {
         }
         database.run(() -> {
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 PreparedStatement smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
                     "enableJoinMessage= ? , " +
                     "enableSwearFilter= ? ," +
@@ -165,23 +187,14 @@ public class GuildSettingsUtils {
                 smt.setBoolean(10, settings.isAnnounceTracks());
                 smt.setBoolean(11, settings.isAutoDeHoist());
                 smt.setBoolean(12, settings.isFilterInvites());
-                smt.setBoolean(13, settings.getEnableSpamFilter());
+                smt.setBoolean(13, settings.isEnableSpamFilter());
                 smt.setString(14, String.valueOf(settings.getMuteRoleId()));
                 smt.setString(15, convertJ2S(settings.getRatelimits()));
                 smt.setBoolean(16, settings.getKickState());
                 smt.executeUpdate();
 
             } catch (SQLException e1) {
-                if (!e1.getLocalizedMessage().toLowerCase().startsWith("incorrect string value"))
-                    e1.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
+                e1.printStackTrace();
             }
         });
     }
@@ -204,9 +217,8 @@ public class GuildSettingsUtils {
         database.run(() -> {
 
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 ResultSet resultSet = connection.createStatement()
                     .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
                 int rows = 0;
@@ -225,18 +237,40 @@ public class GuildSettingsUtils {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                if (connection != null) {
-                    try {
-                        connection.close();
-                    } catch (SQLException e2) {
-                        e2.printStackTrace();
-                    }
-                }
             }
+
             guildSettings.put(g.getIdLong(), newGuildSettings);
         });
         return newGuildSettings;
+    }
+
+    public static void updateEmbedColor(Guild g, int color, Variables variables) {
+        DBManager database = variables.getDatabase();
+
+        database.run(() -> {
+            String dbName = database.getName();
+
+            try (Connection connection = database.getConnManager().getConnection()) {
+
+                String updateString = "ON DUPLICATE KEY UPDATE embed_color = ?";
+
+                if (!variables.isSql()) {
+                    updateString = "ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?";
+                }
+
+                PreparedStatement smt = connection.prepareStatement(
+                    "INSERT INTO " + dbName + ".embedSettings(guild_id, embed_color) VALUES( ? , ? ) " + updateString);
+
+                smt.setString(1, g.getId());
+                smt.setInt(2, color);
+                smt.setInt(3, color);
+
+                smt.executeUpdate();
+            } catch (SQLException e) {
+                logger.error("Database error: ", e);
+            }
+
+        });
     }
 
     /**
@@ -251,19 +285,12 @@ public class GuildSettingsUtils {
         guildSettings.remove(g.getIdLong());
         database.run(() -> {
             String dbName = database.getName();
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
                 Statement smt = connection.createStatement();
                 smt.execute("DELETE FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
             } catch (Exception e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }

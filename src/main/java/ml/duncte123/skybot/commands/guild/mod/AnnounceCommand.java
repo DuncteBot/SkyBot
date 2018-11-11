@@ -92,7 +92,7 @@ public class AnnounceCommand extends Command {
                         });
                     }
 
-                    sendEmbed(targetChannel, embed.build());
+                    sendEmbed(targetChannel, embed);
                     MessageUtils.sendSuccess(event.getMessage());
                     break;
             }

@@ -109,7 +109,7 @@ public class Variables {
         return weebApi;
     }
 
-    boolean isSql() {
+    public boolean isSql() {
         return isSql;
     }
 

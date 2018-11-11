@@ -137,8 +137,7 @@ public class ModerationUtils {
     public static void addBannedUserToDb(DBManager database, String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
 
         database.run(() -> {
-            Connection conn = database.getConnManager().getConnection();
-            try {
+            try (Connection conn = database.getConnManager().getConnection()) {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
                     "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
 
@@ -149,14 +148,8 @@ public class ModerationUtils {
                 smt.setString(5, unbanDate);
                 smt.setString(6, guildId);
                 smt.execute();
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
@@ -189,8 +182,7 @@ public class ModerationUtils {
     public static void addWarningToDb(DBManager database, User moderator, User target, String reason, Guild guild) {
 
         database.run(() -> {
-            Connection conn = database.getConnManager().getConnection();
-            try {
+            try (Connection conn = database.getConnManager().getConnection()) {
                 PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
                     "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
                 smt.setString(1, moderator.getId());
@@ -200,12 +192,6 @@ public class ModerationUtils {
                 smt.executeUpdate();
             } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    conn.close();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                }
             }
         });
     }
@@ -219,9 +205,8 @@ public class ModerationUtils {
             ShardManager shardManager = SkyBot.getInstance().getShardManager();
             logger.debug("Checking for users to unban");
             int usersUnbanned = 0;
-            Connection connection = database.getConnManager().getConnection();
 
-            try {
+            try (Connection connection = database.getConnManager().getConnection()) {
 
                 Statement smt = connection.createStatement();
 
@@ -256,14 +241,8 @@ public class ModerationUtils {
                     }
                 }
                 logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
-            } catch (Exception e) {
+            } catch (SQLException e) {
                 e.printStackTrace();
-            } finally {
-                try {
-                    connection.close();
-                } catch (SQLException e2) {
-                    e2.printStackTrace();
-                }
             }
         });
     }

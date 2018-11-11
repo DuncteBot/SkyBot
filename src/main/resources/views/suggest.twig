@@ -15,11 +15,16 @@
             <p>If you feel that the bot is missing a feature why not suggest it here?</p>
             <p>Make sure to check our <a href="https://trello.com/b/iSaxpcGR/skybot-suggestions" target="_blank">Trello
                     board</a> to see if someone already suggested your idea.</p>
+            <p>Make sure to join our discord server so that we can contact you if needed.
+                <a href="/api/joinGuild" target="_blank">Click here</a></p>
+
             <form id="quotesForm" action="" method="post" autocomplete="off">
                 <div class="input-field">
-                    <input type="text" class="input-field validate " name="name" id="name" required/>
+                    <input type="text" pattern=".*#[0-9]{4}" class="input-field validate" name="name" id="name" required/>
                     <label for="name">Your (user)name</label>
+                    <span class="helper-text" data-error="A discord tag usually contains a # (example duncte123#1245)" data-success=""></span>
                 </div>
+
                 <div class="input-field">
                     <input type="text" class="input-field validate " name="sug" data-length="100" maxlength="100"
                            id="sug" required/>

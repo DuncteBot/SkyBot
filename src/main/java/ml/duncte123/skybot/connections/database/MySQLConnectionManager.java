@@ -119,8 +119,7 @@ class MySQLConnectionManager implements DBConnectionManager {
     @Override
     public void close() throws IOException {
         try {
-            if (isConnected())
-                connection.close();
+            connection.close();
         } catch (SQLException e) {
             throw new IOException(e);
         }
@@ -177,6 +176,13 @@ class MySQLConnectionManager implements DBConnectionManager {
                 "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL," +
                 "PRIMARY KEY (`id`)" +
                 ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
+
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS embedSettings" +
+                    "(guild_id int(20)," +
+                    "embed_color int(10) NOT NULL DEFAULT 0x0751c6," +
+                    "PRIMARY KEY (`guild_id`));"
+            );
 
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS customCommands" +
