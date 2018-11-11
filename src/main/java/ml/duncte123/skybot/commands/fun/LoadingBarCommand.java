@@ -22,9 +22,7 @@ import me.duncte123.loadingbar.LoadingBar;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
@@ -67,7 +65,7 @@ public class LoadingBarCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"progress", "progressbar"};
+        return new String[]{"progress", "progressbar"};
     }
 
     @Override
