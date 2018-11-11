@@ -64,9 +64,7 @@ public class LavalinkManager {
             shardId -> SkyBot.getInstance().getShardManager().getShardById(shardId)
         );
 
-        for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
-            lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass, LavalinkRegion.valueOf(node.region));
-        }
+        reloadNodes();
     }
 
     public boolean isEnabled() {
@@ -111,6 +109,17 @@ public class LavalinkManager {
 
     public JdaLavalink getLavalink() {
         return lavalink;
+    }
+
+    public void reloadNodes() {
+        JdaLavalink lavalink = getLavalink();
+
+        lavalink.getNodes().clear();
+
+        for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
+            lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass, LavalinkRegion.valueOf(node.region));
+        }
+
     }
 
     /**
