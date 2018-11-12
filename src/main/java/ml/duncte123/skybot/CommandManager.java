@@ -381,7 +381,7 @@ public class CommandManager {
         database.run(() -> {
 
             try (Connection con = database.getConnManager().getConnection()) {
-                ResultSet res = con.createStatement().executeQuery("SELECT * FROM customCommands");
+                ResultSet res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands");
                 while (res.next()) {
                     addCustomCommand(new CustomCommandImpl(
                         res.getString("invoke"),
