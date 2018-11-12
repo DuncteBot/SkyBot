@@ -1,5 +1,5 @@
 {% extends 'templates/base.twig' %}
-{% set discord_id_pattern = "[0-9]{18,20}" %}
+{% set pattern = "[0-9]{18,20}" %}
 
 {% block container %}
 
@@ -28,7 +28,7 @@
                 <form id="{{ form_id }}" action="" method="post" autocomplete="off">
 
                     <div class="input-field">
-                        <input type="text" pattern="{{ discord_id_pattern }}"
+                        <input type="text" pattern="{{ pattern }}"
                                class="input-field validate" name="user_id" id="user_id" required/>
                         <label for="user_id">Your discord user id</label>
                         <span class="helper-text" data-error="That does not look like a discord id"
@@ -36,7 +36,7 @@
                     </div>
 
                     <div class="input-field">
-                        <input type="text" pattern="{{ discord_id_pattern }}"
+                        <input type="text" pattern="{{ pattern }}"
                                class="input-field validate" name="guild_id" id="guild_id" required/>
                         <label for="guild_id">Your discord server id</label>
                         <span class="helper-text" data-error="That does not look like a discord id"
