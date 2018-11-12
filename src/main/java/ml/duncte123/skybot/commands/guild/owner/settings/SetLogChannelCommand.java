@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class SetLogChannelCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
         if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setLogChannel [text channel]`");
+            sendMsg(ctx.getEvent(), "Incorrect usage: `" + Settings.PREFIX + "setLogChannel [text channel]`");
             return;
         }
 
@@ -54,6 +55,6 @@ public class SetLogChannelCommand extends SettingsBase {
     @Override
     public String help() {
         return "Sets the channel to log messages in\n" +
-            "Usage: `" + PREFIX + getName() + " <text channel>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <text channel>`";
     }
 }

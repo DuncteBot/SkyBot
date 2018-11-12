@@ -26,7 +26,9 @@ import net.dv8tion.jda.core.Permission
 import org.json.JSONObject
 import spark.ModelAndView
 import spark.Spark.path
-import spark.kotlin.*
+import spark.kotlin.before
+import spark.kotlin.get
+import spark.kotlin.post
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class Dashbord(private val holder: WebHolder) {

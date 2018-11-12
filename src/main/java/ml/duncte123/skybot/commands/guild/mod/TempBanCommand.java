@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
@@ -51,7 +52,7 @@ public class TempBanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
-            sendMsg(event, "Usage is `" + PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
@@ -67,7 +68,7 @@ public class TempBanCommand extends Command {
 
 
         if (!AirUtils.isInt(timeParts[0])) {
-            sendMsg(event, "Usage is `" + PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
@@ -112,7 +113,7 @@ public class TempBanCommand extends Command {
     @Override
     public String help() {
         return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
     }
 
     private class CalculateBanTime {
@@ -149,13 +150,13 @@ public class TempBanCommand extends Command {
                 error = true;
                 return this;
             } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
-                sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                sendMsg(event, "Incorrect time format, use `" + Settings.PREFIX + "help " + getName() + "` for more info.");
                 error = true;
                 return this;
             }
             if (banTime > 0) {
                 if (timeParts.length != 2) {
-                    sendMsg(event, "Incorrect time format, use `" + PREFIX + "help " + getName() + "` for more info.");
+                    sendMsg(event, "Incorrect time format, use `" + Settings.PREFIX + "help " + getName() + "` for more info.");
                     error = true;
                     return this;
                 }

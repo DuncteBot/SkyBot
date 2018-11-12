@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.web.WebHolder
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
-import spark.kotlin.*
+import spark.kotlin.post
 import java.nio.charset.Charset
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

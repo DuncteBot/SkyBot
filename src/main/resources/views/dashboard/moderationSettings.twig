@@ -68,8 +68,8 @@
                     </label>
                 </div>
 
-                <br />
-                <br />
+                <br/>
+                <br/>
 
                 {# Mute role #}
                 <div class="input-field col s12 m3">
@@ -118,11 +118,13 @@
 
             <div class="row">
                 <h6>Ratelimits:</h6>
-                <small>The following values indicate the mutes duration in minutes for incrementing amount of violations</small>
+                <small>The following values indicate the mutes duration in minutes for incrementing amount of
+                    violations
+                </small>
                 <br/>
                 {% for i,r in settings.getRateLimitsForTwig() %}
                     <div class="input-field col s12 m1">
-                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required />
+                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required/>
                     </div>
                 {% endfor %}
             </div>

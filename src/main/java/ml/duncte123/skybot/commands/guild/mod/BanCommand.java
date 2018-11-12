@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -54,7 +55,7 @@ public class BanCommand extends Command {
         }
 
         if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
-            sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <Reason>");
+            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <Reason>");
             return;
         }
 
@@ -84,7 +85,7 @@ public class BanCommand extends Command {
     @Override
     public String help() {
         return "Bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + PREFIX + getName() + " <@user> <Reason>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <Reason>`";
     }
 
     @Override

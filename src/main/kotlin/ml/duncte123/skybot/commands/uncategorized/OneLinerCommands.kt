@@ -24,6 +24,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.extensions.getString
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -162,88 +163,88 @@ class OneLinerCommands : Command() {
         return when (invoke) {
             "ping" -> {
                 """Pong
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "cookie" -> {
                 """blobnomcookie
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "trigger" -> {
                 """Use when you are triggered.
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "spam" -> {
                 """What do you think 😏
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "wam" -> {
                 """you need more WAM!
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "mineh" -> {
                 """HERE COMES MINEH!
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "invite" -> {
                 """Gives you the bot invite
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "uptime" -> {
                 """Shows the bot uptime
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "quote" -> {
                 """Shows an inspiring quote
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "yesno" -> {
                 """Chooses between yes or no
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "donate" -> {
                 """Gives you a link to donate for the bot
-                    |Usage: `$PREFIX$invoke [amount]`
+                    |Usage: `${Settings.PREFIX}$invoke [amount]`
                 """.trimMargin()
             }
             "insta" -> {
                 """Get the latest picture of someones profile
-                    |Usage: `$PREFIX$invoke [username]`
+                    |Usage: `${Settings.PREFIX}$invoke [username]`
                 """.trimMargin()
             }
             "xkcd" -> """Get a random comic from xkcd.com
-                |Usage: `$PREFIX$invoke`
+                |Usage: `${Settings.PREFIX}$invoke`
             """.trimMargin()
             "reverse" -> """Reverses a string
-                |Usage: `$PREFIX$invoke <text>`
+                |Usage: `${Settings.PREFIX}$invoke <text>`
             """.trimMargin()
             else -> "invalid invoke"
         }
     }
 
-    override fun help() = """`${PREFIX}ping` => Shows the delay from the bot to the discord servers.
-            |`${PREFIX}cookie` => blobnomcookie.
-            |`${PREFIX}trigger` => Use when you are triggered.
-            |`${PREFIX}spam` => What do you think 😏
-            |`${PREFIX}wam` => You need more WAM!.
-            |`${PREFIX}mineh` => HERE COMES MINEH!
-            |`${PREFIX}invite` => Gives you the bot invite
-            |`${PREFIX}uptime` => Shows the bot uptime
-            |`${PREFIX}quote` => Shows an inspiring quote
-            |`${PREFIX}yesno` => Chooses between yes or no
-            |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
-            |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
-            |`${PREFIX}xkcd` => Get a random comic from xkcd.com
-            |`${PREFIX}reverse <text>` => reverses a string
+    override fun help() = """`${Settings.PREFIX}ping` => Shows the delay from the bot to the discord servers.
+            |`${Settings.PREFIX}cookie` => blobnomcookie.
+            |`${Settings.PREFIX}trigger` => Use when you are triggered.
+            |`${Settings.PREFIX}spam` => What do you think 😏
+            |`${Settings.PREFIX}wam` => You need more WAM!.
+            |`${Settings.PREFIX}mineh` => HERE COMES MINEH!
+            |`${Settings.PREFIX}invite` => Gives you the bot invite
+            |`${Settings.PREFIX}uptime` => Shows the bot uptime
+            |`${Settings.PREFIX}quote` => Shows an inspiring quote
+            |`${Settings.PREFIX}yesno` => Chooses between yes or no
+            |`${Settings.PREFIX}donate [amount]` => Gives you a link to donate for the bot
+            |`${Settings.PREFIX}insta [amount]` => Get the latest picture of someones profile
+            |`${Settings.PREFIX}xkcd` => Get a random comic from xkcd.com
+            |`${Settings.PREFIX}reverse <text>` => reverses a string
     """.trimMargin()
 
     override fun getName() = "ping"

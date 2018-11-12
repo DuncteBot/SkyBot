@@ -221,9 +221,9 @@ public class CustomCommandCommand extends Command {
     @Override
     public String help() {
         return "Create, run and delete custom commands\n" +
-            "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
-            "`" + PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
-            "`" + PREFIX + getName() + " delete <name>` => deletes a custom command";
+            "`" + Settings.PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
+            "`" + Settings.PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
+            "`" + Settings.PREFIX + getName() + " delete <name>` => deletes a custom command";
     }
 
     @Override

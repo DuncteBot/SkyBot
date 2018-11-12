@@ -44,7 +44,7 @@ public class TranslateCommand extends Command {
         List<String> args = ctx.getArgs();
 
         if (args.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <destination language code> <text>`");
+            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <destination language code> <text>`");
             return;
         }
 
@@ -71,6 +71,6 @@ public class TranslateCommand extends Command {
     @Override
     public String help() {
         return "Translate a text from English to another language\n"
-            + "Usage: `" + PREFIX + getName() + " <destination language> <text>`";
+            + "Usage: `" + Settings.PREFIX + getName() + " <destination language> <text>`";
     }
 }

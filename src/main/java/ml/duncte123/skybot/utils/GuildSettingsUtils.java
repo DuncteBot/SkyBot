@@ -230,7 +230,7 @@ public class GuildSettingsUtils {
                         "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
                         "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
                     smt.setString(1, newGuildSettings.getCustomJoinMessage());
-                    smt.setString(2, Settings.PREFIX);
+                    smt.setString(2, Settings.Settings.PREFIX);
                     smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
                     smt.setString(4, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
                     smt.execute();

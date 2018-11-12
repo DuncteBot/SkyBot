@@ -36,7 +36,7 @@ public class GuildSettings {
     private boolean enableSwearFilter = false;
     private String customJoinMessage = "Welcome {atuser}, to the official **{server}** guild.";
     private String customLeaveMessage = "**{user}** has left **{server}** :worried:";
-    private String customPrefix = Settings.PREFIX;
+    private String customPrefix = Settings.Settings.PREFIX;
     private long logChannel = 0L;
     private long welcomeLeaveChannel = 0L;
     private long autoroleRole = 0L;

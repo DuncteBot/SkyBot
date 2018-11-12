@@ -23,7 +23,7 @@ import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.web.WebHolder
 import org.json.JSONObject
 import spark.Spark.path
-import spark.kotlin.*
+import spark.kotlin.get
 import java.sql.SQLException
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")

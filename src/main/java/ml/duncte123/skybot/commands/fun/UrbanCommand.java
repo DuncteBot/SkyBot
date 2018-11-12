@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.fun;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -42,7 +43,7 @@ public class UrbanCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
 
         if (ctx.getArgs().size() < 1) {
-            sendMsg(ctx.getEvent(), "Correct usage: `" + PREFIX + getName() + " <search term>`");
+            sendMsg(ctx.getEvent(), "Correct usage: `" + Settings.PREFIX + getName() + " <search term>`");
             return;
         }
 
@@ -77,7 +78,7 @@ public class UrbanCommand extends Command {
     @Override
     public String help() {
         return "Search the urban dictionary.\n" +
-            "Usage: `" + PREFIX + getName() + " <search term>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <search term>`";
     }
 
     @Override

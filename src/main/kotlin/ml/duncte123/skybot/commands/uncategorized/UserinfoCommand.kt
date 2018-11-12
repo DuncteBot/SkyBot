@@ -130,7 +130,7 @@ class UserinfoCommand : Command() {
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
-                        |_Use `${PREFIX}avatar [user]` to get a user's avatar_
+                        |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         sendEmbed(event.channel, embed)
@@ -188,7 +188,7 @@ class UserinfoCommand : Command() {
                         |**Online Status:** ${convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                         |
-                        |_Use `${PREFIX}avatar [user]` to get a user's avatar_
+                        |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
@@ -207,7 +207,7 @@ class UserinfoCommand : Command() {
         }
     }
 
-    override fun help() = "Get information from yourself or from another user.\nUsage: `$PREFIX$name [username]`"
+    override fun help() = "Get information from yourself or from another user.\nUsage: `${Settings.PREFIX}$name [username]`"
 
     override fun getName() = "userinfo"
 

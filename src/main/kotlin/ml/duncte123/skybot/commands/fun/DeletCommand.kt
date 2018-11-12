@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.weeb.WeebCommandBase
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -39,7 +40,7 @@ class DeletCommand : WeebCommandBase() {
     }
 
     override fun help() = """Delet this
-        |Usage: `$PREFIX$name`
+        |Usage: `${Settings.PREFIX}$name`
     """.trimMargin()
 
     override fun getName() = "delet"

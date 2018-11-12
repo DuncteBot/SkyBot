@@ -54,13 +54,13 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = -1
                     terminate(-1, event.jda.asBot().shardManager)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart()
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                    })
+                    }
                 }
                 1 -> {
                     val id = ctx.args[0].toInt()
@@ -74,13 +74,13 @@ class RestartShardCommand : Command() {
                     EventManager.shouldFakeBlock = true
                     EventManager.restartingShard = id
                     terminate(id, event.jda.asBot().shardManager)
-                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT, {
+                    GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         delay(TimeUnit.SECONDS.toMillis(15))
                         shardManager.restart(id)
 
                         EventManager.restartingShard = -32
                         EventManager.shouldFakeBlock = false
-                    })
+                    }
                 }
                 else -> MessageUtils.sendError(event.message)
             }
@@ -93,7 +93,7 @@ class RestartShardCommand : Command() {
         }
     }
 
-    override fun help() = "Restart the bot or a shard\nUsage: $PREFIX$name [shard id]`"
+    override fun help() = "Restart the bot or a shard\nUsage: ${Settings.PREFIX}$name [shard id]`"
 
     override fun getName() = "restartshard"
 

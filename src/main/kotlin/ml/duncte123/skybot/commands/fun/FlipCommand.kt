@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -66,7 +67,7 @@ class FlipCommand : Command() {
     }
 
     override fun help() = "Flips a user.\n" +
-        "Usage: `$PREFIX$name [@user]`"
+        "Usage: `${Settings.PREFIX}$name [@user]`"
 
     override fun getName() = "flip"
 }

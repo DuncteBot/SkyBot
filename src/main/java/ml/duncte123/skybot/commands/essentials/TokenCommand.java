@@ -82,7 +82,6 @@ public class TokenCommand extends Command {
         String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
 
-
         sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
                 if (isLong(id)) {
@@ -111,7 +110,7 @@ public class TokenCommand extends Command {
     @Override
     public String help() {
         return "Tries to get as much info about a token as possible\n" +
-            "Usage: `" + PREFIX + getName() + " <token of a discord bot>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <token of a discord bot>`";
     }
 
     @Override
@@ -140,8 +139,7 @@ public class TokenCommand extends Command {
             gmt.setTimeInMillis(millis);
 
             return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
-        }
-        catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException ignored) {
             return null;
         }
     }

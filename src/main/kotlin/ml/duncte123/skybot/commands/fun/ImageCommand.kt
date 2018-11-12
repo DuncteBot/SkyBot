@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -41,7 +42,7 @@ class ImageCommand : Command() {
 
         if (isUserOrGuildPatron(event)) {
             if (ctx.args.isEmpty()) {
-                MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <search term>`")
+                MessageUtils.sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <search term>`")
                 return
             }
             val keyword = StringUtils.join(ctx.args, "+")
@@ -60,7 +61,7 @@ class ImageCommand : Command() {
     }
 
     override fun help() = """Searches for an image on google
-        |Usage: `$PREFIX$name <search term>`""".trimMargin()
+        |Usage: `${Settings.PREFIX}$name <search term>`""".trimMargin()
 
     override fun getName() = "image"
 }

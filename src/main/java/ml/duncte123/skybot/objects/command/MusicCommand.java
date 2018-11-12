@@ -94,7 +94,7 @@ public abstract class MusicCommand extends Command {
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply) {
-                sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
+                sendMsg(event, "I'm not in a voice channel, use `" + Settings.PREFIX + "join` to make me join a channel\n\n" +
                     "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
             return false;

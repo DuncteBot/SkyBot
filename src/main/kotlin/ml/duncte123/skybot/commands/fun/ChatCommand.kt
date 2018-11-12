@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -83,7 +84,7 @@ class ChatCommand : Command() {
         }
 
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Incorrect usage: `$PREFIX$name <message>`")
+            MessageUtils.sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <message>`")
             return
         }
 
@@ -153,7 +154,7 @@ class ChatCommand : Command() {
     }
 
     override fun help() = "Have a chat with dunctebot\n" +
-        "Usage: `$PREFIX$name <message>`"
+        "Usage: `${Settings.PREFIX}$name <message>`"
 
     override fun getName() = "chat"
 }

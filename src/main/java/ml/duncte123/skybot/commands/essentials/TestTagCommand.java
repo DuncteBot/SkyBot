@@ -81,6 +81,6 @@ public class TestTagCommand extends Command {
     @Override
     public String help() {
         return "Test your jagtag format before you save it as custom command etc.\n" +
-            "Usage: `" + PREFIX + getName() + " <JagTag syntax>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <JagTag syntax>`";
     }
 }

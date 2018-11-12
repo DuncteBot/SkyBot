@@ -108,7 +108,7 @@ public class BotinfoCommand extends Command {
 
     @Override
     public String help() {
-        return "Gets some info about the bot\nUsage: `" + PREFIX + getName() + "`";
+        return "Gets some info about the bot\nUsage: `" + Settings.PREFIX + getName() + "`";
     }
 
     @Override

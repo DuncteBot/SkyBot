@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.music;
 
 import lavalink.client.player.IPlayer;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -48,7 +49,7 @@ public class SeekCommand extends MusicCommand {
         List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Missing arguments, check `" + PREFIX + "help " + getName() + "`");
+            sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
             return;
         }
 
@@ -89,8 +90,8 @@ public class SeekCommand extends MusicCommand {
     @Override
     public String help() {
         return "seek in the currently playing track\n" +
-            "Usage: `" + PREFIX + getName() + " <minutes:seconds>`\n" +
-            "Examples: `" + PREFIX + getName() + " 04:20`\n" +
-            "`" + PREFIX + getName() + " 00:50`\n";
+            "Usage: `" + Settings.PREFIX + getName() + " <minutes:seconds>`\n" +
+            "Examples: `" + Settings.PREFIX + getName() + " 04:20`\n" +
+            "`" + Settings.PREFIX + getName() + " 00:50`\n";
     }
 }

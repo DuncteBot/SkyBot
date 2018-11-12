@@ -116,7 +116,7 @@ public class CleanupCommand extends Command {
     @Override
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
-            "Usage: `" + PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
+            "Usage: `" + Settings.PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
     }
 
     @Override

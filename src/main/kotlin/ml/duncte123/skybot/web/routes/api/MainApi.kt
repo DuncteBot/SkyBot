@@ -24,7 +24,8 @@ import ml.duncte123.skybot.utils.ApiUtils
 import ml.duncte123.skybot.web.WebHolder
 import org.json.JSONObject
 import spark.Spark.path
-import spark.kotlin.*
+import spark.kotlin.before
+import spark.kotlin.get
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class MainApi(private val holder: WebHolder) {

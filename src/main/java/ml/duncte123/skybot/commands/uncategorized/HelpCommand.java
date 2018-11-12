@@ -53,8 +53,8 @@ public class HelpCommand extends Command {
 
         if (!ctx.getArgs().isEmpty()) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
-                .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
-                    Pattern.quote(Settings.OTHER_PREFIX) + "|" +
+                .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
+                    Pattern.quote(Settings.OTHER_Settings.PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch)) {
@@ -71,7 +71,7 @@ public class HelpCommand extends Command {
 
     @Override
     public String help() {
-        return "Shows a list of all the commands.\nUsage: `" + PREFIX + "help [command]`";
+        return "Shows a list of all the commands.\nUsage: `" + Settings.PREFIX + "help [command]`";
     }
 
     @Override
@@ -133,7 +133,7 @@ public class HelpCommand extends Command {
             }
         }
 
-        sendMsg(event, "That command could not be found, try `" + PREFIX + "help` for a list of commands");
+        sendMsg(event, "That command could not be found, try `" + Settings.PREFIX + "help` for a list of commands");
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {

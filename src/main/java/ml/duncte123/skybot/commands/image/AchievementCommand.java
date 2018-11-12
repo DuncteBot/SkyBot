@@ -42,7 +42,7 @@ public class AchievementCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "You got an achievement!\n" +
-            "Usage: `" + PREFIX + getName() + " <text>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
     }
 
     @Override
