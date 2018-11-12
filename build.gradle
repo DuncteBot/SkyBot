@@ -63,6 +63,8 @@ repositories {
 }
 
 dependencies {
+    implementation group: 'me.duncte123', name: 'loadingbar', version: '1.0.1_a781719'
+    
     //Weeb api
 //    implementation group: 'me.duncte123', name: 'weebJava', version: '2.1.1'
     implementation group: 'com.github.duncte123', name: 'weeb.java', version: '78d064c500'
