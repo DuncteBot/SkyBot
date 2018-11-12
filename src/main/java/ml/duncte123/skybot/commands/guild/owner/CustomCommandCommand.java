@@ -22,6 +22,7 @@ import kotlin.Triple;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;

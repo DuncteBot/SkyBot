@@ -54,7 +54,7 @@ public class HelpCommand extends Command {
         if (!ctx.getArgs().isEmpty()) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
                 .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
-                    Pattern.quote(Settings.OTHER_Settings.PREFIX) + "|" +
+                    Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
             if (isCategory(toSearch)) {
