@@ -179,7 +179,7 @@ class MySQLConnectionManager implements DBConnectionManager {
 
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS embedSettings" +
-                    "(guild_id int(20)," +
+                    "(guild_id varchar(20)," +
                     "embed_color int(10) NOT NULL DEFAULT 0x0751c6," +
                     "PRIMARY KEY (`guild_id`));"
             );
