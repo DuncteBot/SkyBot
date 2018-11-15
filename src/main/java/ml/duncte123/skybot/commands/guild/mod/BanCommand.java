@@ -67,7 +67,7 @@ public class BanCommand extends Command {
             }
 
 
-            String reason = String.join(" ", args.subList(2, args.size()));
+            String reason = String.join(" ", args.subList(1, args.size()));
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                 (m) -> {
                     modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
