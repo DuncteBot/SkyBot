@@ -26,6 +26,7 @@ import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebHolder;
@@ -84,9 +85,8 @@ public class SkyBot {
         }
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = (t) -> {
-        };
-        RestAction.setPassContext(true);
+        RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
+        RestAction.setPassContext(false);
 
         if (variables.isSql()) { //Don't try to connect if we don't want to
             if (!database.getConnManager().hasSettings()) {
