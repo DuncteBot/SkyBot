@@ -54,25 +54,25 @@ object Dashbord {
 
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)
         if (guild == null && !request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(":guildid")}/invalid")
+            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/invalid")
         } else if (guild != null && request.uri().contains("invalid") && !request.uri().contains("noperms")) {
-            return response.redirect("/server/${request.params(":guildid")}/")
+            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
         }
 
-        val userId = (request.session().attribute(WebRouter.USER_SESSION) as String).split(WebRouter.SPLITTER)[1]
+        val userId = WebHelpers.getUserId(request)
 
         val user = shardManager.getUserById(userId)
         val member = guild?.getMember(user)
         val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
         if (!hasPermission && !request.url().contains("noperms")) {
-            return response.redirect("/server/${request.params(":guildid")}/noperms")
+            return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/noperms")
         }
     }
 
     fun serverSelection(request: Request, shardManager: ShardManager, engine: JtwigTemplateEngine): Any {
         return engine.render(ModelAndView(WebVariables()
-            .put("title", "Dashboard").put("id", request.params(":guildid"))
+            .put("title", "Dashboard").put("id", request.params(WebRouter.GUILD_ID))
             .put("name", WebHelpers.getGuildFromRequest(request, shardManager)?.name).map,
             "dashboard/panelSelection.twig"))
     }

@@ -134,6 +134,10 @@ public class CommandManager {
             .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
+    public List<CustomCommand> getCustomCommands(long guildId) {
+        return customCommands.stream().filter(c -> c.getGuildId() == guildId).collect(Collectors.toList());
+    }
+
     public boolean editCustomCommand(CustomCommand c) {
         return addCustomCommand(c, true, true).getFirst();
     }

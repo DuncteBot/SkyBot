@@ -21,7 +21,6 @@ package ml.duncte123.skybot.web.controllers
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.objects.config.DunctebotConfig
-import ml.duncte123.skybot.web.ApiHelpers
 import ml.duncte123.skybot.web.WebHelpers
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.ModelAndView
@@ -45,7 +44,7 @@ object Suggestions {
             return renderSugPage(WebVariables().put("message", "Please fill in all the fields."), config, engine)
         }
 
-        val cap = ApiHelpers.verifyCapcha(captcha, config.apis.chapta.secret)
+        val cap = WebHelpers.verifyCapcha(captcha, config.apis.chapta.secret)
 
         if (!cap.getBoolean("success")) {
             return renderSugPage(WebVariables().put("message", "Captcha error: Please try again later"), config, engine)
@@ -54,7 +53,7 @@ object Suggestions {
         val extraDesc = if (!description.isNullOrEmpty()) "$description\n\n" else ""
         val descText = "${extraDesc}Suggested by: $name\nSuggested from website"
 
-        val url = ApiHelpers.addTrelloCard(suggestion.toString(), descText, config.apis.trello)
+        val url = WebHelpers.addTrelloCard(suggestion.toString(), descText, config.apis.trello)
             .getString("shortUrl")
 
         return renderSugPage(WebVariables().put("message",

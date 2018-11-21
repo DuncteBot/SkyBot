@@ -70,6 +70,10 @@ main {
     background-color: #23272A;
 }
 
+.dark {
+    background-color: #2C2F33 !important;
+}
+
 .collection {
     border-color: #2C2F33;
 }
@@ -95,4 +99,8 @@ main {
 
 button, input, optgroup, select, textarea {
     color: #ffffff;
+}
+
+pre {
+    word-wrap: break-word;
 }

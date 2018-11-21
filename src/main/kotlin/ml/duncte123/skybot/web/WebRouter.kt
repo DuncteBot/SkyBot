@@ -30,6 +30,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.Commands
 import ml.duncte123.skybot.web.controllers.Suggestions
+import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.Kpop
 import ml.duncte123.skybot.web.controllers.api.MainApi
@@ -49,14 +50,14 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
 
     private val logger = LoggerFactory.getLogger(WebRouter::class.java)
 
-    private val config = variables.config!!
-    private val database = variables.database!!
+    private val config = variables.config
+    private val database = variables.database
 
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
         .setClientId(config.discord.oauth.clientId)
         .setClientSecret(config.discord.oauth.clientSecret)
-        .build()!!
+        .build()
 
 
     init {
@@ -109,7 +110,7 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
             }
         }
 
-        path("/server/:guildid") {
+        path("/server/$GUILD_ID") {
             before("/*") {
                 return@before Dashbord.beforeServer(request, response, shardManager)
             }
@@ -122,7 +123,7 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
                 response.status(404)
 
                 return@get "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
-                    "/authorize?client_id=210363111729790977&guild_id=${request.params(":guildid")}" +
+                    "/authorize?client_id=210363111729790977&guild_id=${request.params(GUILD_ID)}" +
                     "&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
 
@@ -197,6 +198,10 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
             get("/kpop") {
                 return@get Kpop.show(request, response, database)
             }
+
+            get("/customcommands/$GUILD_ID") {
+                return@get CustomCommands.show(request, response, shardManager, variables)
+            }
         }
 
         path("/crons") {
@@ -262,5 +267,6 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         const val SESSION_ID = "sessionId"
         const val USER_SESSION = "USER_SESSION"
         const val SPLITTER = ":SKIRT:"
+        const val GUILD_ID = ":guildid"
     }
 }

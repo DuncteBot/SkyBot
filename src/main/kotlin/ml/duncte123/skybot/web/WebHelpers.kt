@@ -20,13 +20,44 @@ package ml.duncte123.skybot.web
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
+import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import me.duncte123.weebJava.helpers.QueryBuilder
+import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.entities.Guild
 import org.apache.http.NameValuePair
+import org.json.JSONObject
 import spark.Request
 import java.util.*
 
 object WebHelpers {
+
+    fun verifyCapcha(response: String, secret: String): JSONObject {
+        val fields = HashMap<String, Any>()
+        fields["secret"] = secret
+        fields["response"] = response
+        val req = WebUtils.ins.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
+            WebUtils.EncodingType.APPLICATION_JSON)
+            .build(WebUtilsErrorUtils::toJSONObject, WebUtilsErrorUtils::handleError)
+
+        return req.execute()
+    }
+
+    fun addTrelloCard(name: String, desc: String, config: DunctebotConfig.Apis.Trello): JSONObject {
+        val query = QueryBuilder()
+            .append("https://api.trello.com/1/cards")
+            .append("name", name)
+            .append("desc", desc)
+            .append("pos", "bottom")
+            .append("idList", "5ad2a228bef59be0aca289c9")
+            .append("keepFromSource", "all")
+            .append("key", config.key)
+            .append("token", config.token)
+
+        val t = WebUtils.ins.preparePost(query.build()).execute()
+        return JSONObject(t)
+    }
 
     fun toMap(pairs: List<NameValuePair>): Map<String, String> {
         val map = HashMap<String, String>()
@@ -39,7 +70,7 @@ object WebHelpers {
 
     fun getGuildFromRequest(request: Request, shardManager: ShardManager): Guild? {
 
-        val guildId = request.params(":guildid")
+        val guildId = request.params(WebRouter.GUILD_ID)
 
         return shardManager.getGuildById(guildId) ?: null
     }
@@ -56,5 +87,9 @@ object WebHelpers {
         }
 
         return oAuth2Client.sessionController.getSession(session)
+    }
+
+    fun getUserId(request: Request): String {
+        return (request.session().attribute(WebRouter.USER_SESSION) as String).split(WebRouter.SPLITTER)[1]
     }
 }
