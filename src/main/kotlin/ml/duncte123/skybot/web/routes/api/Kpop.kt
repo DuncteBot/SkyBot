@@ -19,32 +19,31 @@
 package ml.duncte123.skybot.web.routes.api
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.utils.ApiUtils
-import ml.duncte123.skybot.web.WebHolder
 import org.json.JSONObject
-import spark.Spark.path
-import spark.kotlin.*
+import spark.Request
+import spark.Response
 import java.sql.SQLException
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class Kpop(private val holder: WebHolder) {
+object Kpop {
 
-    init {
-        path("/api") {
-            get("/kpop") {
-                val search = request.queryParamOrDefault("search", "")
-                try {
-                    return@get ApiUtils.getRandomKpopMember(holder.database, search).toJson()
-                        .put("status", "success")
-                        .put("code", response.status())
-                } catch (e: SQLException) {
-                    response.status(404)
-                    return@get JSONObject()
-                        .put("status", "faiure")
-                        .put("message", "Nothing found")
-                        .put("code", response.status())
-                }
-            }
+    fun show(request: Request, response: Response, database: DBManager): Any {
+        val search = request.queryParamOrDefault("search", "")
+
+        return try {
+            ApiUtils.getRandomKpopMember(database, search).toJson()
+                .put("status", "success")
+                .put("code", response.status())
+
+        } catch (e: SQLException) {
+            response.status(404)
+
+            JSONObject()
+                .put("status", "faiure")
+                .put("message", "Nothing found")
+                .put("code", response.status())
         }
     }
 }

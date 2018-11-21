@@ -19,50 +19,42 @@
 package ml.duncte123.skybot.web.routes.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHolder
+import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.bot.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
-import spark.Spark.path
-import spark.kotlin.post
-import java.nio.charset.Charset
+import spark.Request
+import spark.Response
+import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class MessageSettings(private val holder: WebHolder) {
+object MessageSettings {
 
-    init {
-        path("/server/:guildid") {
+    fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
+        val params = WebHelpers.toMap(pairs)
 
-            // Messages
-            holder.get("/messages", WebVariables()
-                .put("title", "Dashboard"), "dashboard/welcomeLeaveDesc.twig", true)
+        val welcomeLeaveEnabled = WebHelpers.paramToBoolean(params["welcomeChannelCB"])
+        val welcomeMessage = params["welcomeMessage"]
+        val leaveMessage = params["leaveMessage"]
+        val serverDescription = params["serverDescription"]
+        val welcomeChannel = params["welcomeChannel"]
 
-            post("/messages") {
-                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-                val params = holder.toMap(pairs)
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
 
-                val welcomeLeaveEnabled = holder.paramToBoolean(params["welcomeChannelCB"])
-                val welcomeMessage = params["welcomeMessage"]
-                val leaveMessage = params["leaveMessage"]
-                val serverDescription = params["serverDescription"]
-                val welcomeChannel = params["welcomeChannel"]
+        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+            .setServerDesc(serverDescription)
+            .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
+            .setCustomJoinMessage(welcomeMessage)
+            .setCustomLeaveMessage(leaveMessage)
+            .setEnableJoinMessage(welcomeLeaveEnabled)
 
-                val guild = holder.getGuildFromRequest(request)
+        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
-                val newSettings = GuildSettingsUtils.getGuild(guild, holder.variables)
-                    .setServerDesc(serverDescription)
-                    .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
-                    .setCustomJoinMessage(welcomeMessage)
-                    .setCustomLeaveMessage(leaveMessage)
-                    .setEnableJoinMessage(welcomeLeaveEnabled)
+        request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, holder.variables)
-
-                request.session().attribute(holder.FLASH_MESSAGE, "<h4>Settings updated</h4>")
-
-                response.redirect(request.url())
-            }
-        }
+        return response.redirect(request.url())
     }
-
 }

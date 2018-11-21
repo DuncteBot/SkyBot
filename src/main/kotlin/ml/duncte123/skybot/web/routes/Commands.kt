@@ -20,37 +20,36 @@ package ml.duncte123.skybot.web.routes
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHolder
+import net.dv8tion.jda.bot.sharding.ShardManager
 import spark.ModelAndView
-import spark.kotlin.DEFAULT_ACCEPT
-import spark.kotlin.get
+import spark.Request
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class Commands(private val holder: WebHolder) {
+object Commands {
 
-    init {
-        get("/commands", DEFAULT_ACCEPT, holder.engine) {
-            val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
-                .put("commands", holder.variables.commandManager.sortedCommands)
+    fun show(request: Request, variables: Variables, shardManager: ShardManager): Any {
+        val map = WebVariables().put("title", "List of commands").put("prefix", Settings.PREFIX)
+            .put("commands", variables.commandManager.sortedCommands)
 
-            if (request.queryParams().contains("server")) {
-                val serverId: String = request.queryParams("server")
-                if (serverId.isNotEmpty()) {
-                    val guild = holder.shardManager.getGuildById(serverId)
-                    if (guild != null) {
-                        val settings = GuildSettingsUtils.getGuild(guild, holder.variables)
-                        map.put("prefix", settings.customPrefix)
-                    }
+        if (request.queryParams().contains("server")) {
+            val serverId: String = request.queryParams("server")
+            if (serverId.isNotEmpty()) {
+                val guild = shardManager.getGuildById(serverId)
+
+                if (guild != null) {
+                    val settings = GuildSettingsUtils.getGuild(guild, variables)
+                    map.put("prefix", settings.customPrefix)
                 }
             }
-
-            map.put("color", AirUtils.colorToHex(Settings.defaultColour))
-
-            ModelAndView(map.map, "commands.twig")
         }
+
+        map.put("color", AirUtils.colorToHex(Settings.defaultColour))
+
+        return ModelAndView(map.map, "commands.twig")
     }
 
 }

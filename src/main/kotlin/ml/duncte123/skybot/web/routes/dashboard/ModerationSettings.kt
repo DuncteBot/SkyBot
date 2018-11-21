@@ -19,60 +19,53 @@
 package ml.duncte123.skybot.web.routes.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.WebHolder
+import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
+import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.bot.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
-import spark.Spark.path
-import spark.kotlin.post
-import java.nio.charset.Charset
+import spark.Request
+import spark.Response
+import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class ModerationSettings(private val holder: WebHolder) {
+object ModerationSettings {
 
-    init {
-        path("/server/:guildid") {
-            // Moderation
-            holder.get("/moderation", WebVariables()
-                .put("title", "Dashboard"), "dashboard/moderationSettings.twig", true)
+    fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
+        val params = WebHelpers.toMap(pairs)
 
-            post("/moderation") {
-                val pairs = URLEncodedUtils.parse(request.body(), Charset.defaultCharset())
-                val params = holder.toMap(pairs)
+        val modLogChannel = params["modChannel"]
+        val autoDeHoist = paramToBoolean(params["autoDeHoist"])
+        val filterInvites = paramToBoolean(params["filterInvites"])
+        val swearFilter = paramToBoolean(params["swearFilter"])
+        val muteRole = params["muteRole"]
+        val spamFilter = paramToBoolean(params["spamFilter"])
+        val kickMode = paramToBoolean(params["kickMode"])
+        val rateLimits = LongArray(6)
 
-                val modLogChannel = params["modChannel"]
-                val autoDeHoist = holder.paramToBoolean(params["autoDeHoist"])
-                val filterInvites = holder.paramToBoolean(params["filterInvites"])
-                val swearFilter = holder.paramToBoolean(params["swearFilter"])
-                val muteRole = params["muteRole"]
-                val spamFilter = holder.paramToBoolean(params["spamFilter"])
-                val kickMode = holder.paramToBoolean(params["kickMode"])
-                val rateLimits = LongArray(6)
-
-                for (i in 0..5) {
-                    rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
-                }
-
-
-                val guild = holder.getGuildFromRequest(request)
-
-                val newSettings = GuildSettingsUtils.getGuild(guild, holder.variables)
-                    .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
-                    .setAutoDeHoist(autoDeHoist)
-                    .setFilterInvites(filterInvites)
-                    .setMuteRoleId(GuildSettingsUtils.toLong(muteRole))
-                    .setKickState(kickMode)
-                    .setRatelimits(rateLimits)
-                    .setEnableSpamFilter(spamFilter)
-                    .setEnableSwearFilter(swearFilter)
-
-                GuildSettingsUtils.updateGuildSettings(guild, newSettings, holder.variables)
-
-                request.session().attribute(holder.FLASH_MESSAGE, "<h4>Settings updated</h4>")
-
-                response.redirect(request.url())
-            }
+        for (i in 0..5) {
+            rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
         }
-    }
 
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+
+        val newSettings = GuildSettingsUtils.getGuild(guild, variables)
+            .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
+            .setAutoDeHoist(autoDeHoist)
+            .setFilterInvites(filterInvites)
+            .setMuteRoleId(GuildSettingsUtils.toLong(muteRole))
+            .setKickState(kickMode)
+            .setRatelimits(rateLimits)
+            .setEnableSpamFilter(spamFilter)
+            .setEnableSwearFilter(swearFilter)
+
+        GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+
+        request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
+
+        return response.redirect(request.url())
+    }
 }

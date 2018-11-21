@@ -27,7 +27,7 @@ import org.json.JSONObject
 import me.duncte123.botcommons.web.WebUtils.ins as web
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class ApiHelpers {
+object ApiHelpers {
 
     fun verifyCapcha(response: String, secret: String): JSONObject {
         val fields = HashMap<String, Any>()

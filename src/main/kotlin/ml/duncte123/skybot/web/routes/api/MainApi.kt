@@ -18,49 +18,37 @@
 
 package ml.duncte123.skybot.web.routes.api
 
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.utils.ApiUtils
-import ml.duncte123.skybot.web.WebHolder
+import net.dv8tion.jda.bot.sharding.ShardManager
 import org.json.JSONObject
-import spark.Spark.path
-import spark.kotlin.*
+import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class MainApi(private val holder: WebHolder) {
+object MainApi {
 
-    init {
-        path("/api") {
-
-            before("/*") {
-                response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
-            }
-
-            get("/getServerCount") {
-                return@get JSONObject()
-                    .put("status", "success")
-                    .put("server_count", holder.shardManager.guildCache.size())
-                    .put("shard_count", holder.shardManager.shardsTotal)
-                    .put("code", response.status())
-            }
-
-            get("/joinGuild") {
-                response.redirect("https://discord.gg/NKM9Xtk")
-            }
-
-            get("/llama") {
-                return@get ApiUtils.getRandomLlama(holder.database).toJson()
-                    .put("status", "success")
-                    .put("code", response.status())
-            }
-
-            get("/alpaca") {
-                return@get ApiUtils.getRandomAlpaca().toJson()
-                    .put("status", "success")
-                    .put("code", response.status())
-            }
-
-        }
+    fun serverCount(response: Response, shardManager: ShardManager): Any {
+        return JSONObject()
+            .put("status", "success")
+            .put("server_count", shardManager.guildCache.size())
+            .put("shard_count", shardManager.shardsTotal)
+            .put("code", response.status())
     }
 
+    fun joinGuild(response: Response) {
+        response.redirect("https://discord.gg/NKM9Xtk")
+    }
+
+    fun llama(response: Response, database: DBManager): Any {
+        return ApiUtils.getRandomLlama(database).toJson()
+            .put("status", "success")
+            .put("code", response.status())
+    }
+
+    fun alpaca(response: Response): Any {
+        return ApiUtils.getRandomAlpaca().toJson()
+            .put("status", "success")
+            .put("code", response.status())
+    }
 }

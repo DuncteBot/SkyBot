@@ -18,33 +18,34 @@
 
 package ml.duncte123.skybot.web.routes
 
+import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
-import spark.kotlin.get
+import ml.duncte123.skybot.web.WebRouter
+import spark.Request
+import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class Callback(private val holder: WebHolder) {
+object Callback {
 
-    init {
-        get("/callback") {
-            if (!request.queryParams().contains("code")) {
-                return@get response.redirect("/")
-            }
+    fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
-            val sesid: String = request.session().attribute(holder.SESSION_ID)
-
-            val oauthses = holder.oAuth2Client.startSession(
-                request.queryParams("code"),
-                request.queryParams("state"),
-                sesid
-            ).complete()
-
-            val userId = holder.oAuth2Client.getUser(oauthses).complete().id
-
-            request.session(true).attribute(holder.USER_SESSION, "$sesid${holder.SPLITTER}$userId")
-
-            response.redirect("/dashboard")
+        if (!request.queryParams().contains("code")) {
+            return response.redirect("/")
         }
+
+        val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
+
+        val oauthses = oAuth2Client.startSession(
+            request.queryParams("code"),
+            request.queryParams("state"),
+            sesid
+        ).complete()
+
+        val userId = oAuth2Client.getUser(oauthses).complete().id
+
+        request.session(true).attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+
+        return response.redirect("/dashboard")
     }
 
 }

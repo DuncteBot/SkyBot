@@ -18,46 +18,48 @@
 
 package ml.duncte123.skybot.web.routes.api
 
+import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.entities.OAuth2Guild
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
+import ml.duncte123.skybot.web.WebHelpers
+import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import org.json.JSONObject
-import spark.Spark.path
-import spark.kotlin.get
+import spark.Request
+import spark.Response
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class GetUserGuilds(private val holder: WebHolder) {
+object GetUserGuilds {
 
-    init {
-        path("/api") {
-            get("/getUserGuilds") {
+    fun show(request: Request, response: Response, oAuth2Client: OAuth2Client, shardManager: ShardManager): Any {
+        val attributes = request.session().attributes()
 
-                if (!request.session().attributes().contains(holder.USER_SESSION)) {
-                    return@get JSONObject()
-                        .put("status", "error")
-                        .put("message", "SESSION_INVALID")
-                        .put("code", response.status())
-                }
+        if (!attributes.contains(WebRouter.USER_SESSION)) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "SESSION_INVALID")
+                .put("code", response.status())
+        }
 
-                val guilds = ArrayList<JSONObject>()
-                holder.oAuth2Client.getGuilds(holder.getSession(request)).complete().forEach {
-                    if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
-                        guilds.add(guildToJson(it))
-                    }
-                }
-                return@get JSONObject()
-                    .put("status", "success")
-                    .put("guilds", guilds)
-                    .put("code", response.status())
+        val guilds = ArrayList<JSONObject>()
+
+        oAuth2Client.getGuilds(WebHelpers.getSession(request, oAuth2Client)).complete().forEach {
+            if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
+                guilds.add(guildToJson(it, shardManager))
             }
         }
+
+        return JSONObject()
+            .put("status", "success")
+            .put("guilds", guilds)
+            .put("code", response.status())
     }
 
-    private fun guildToJson(guild: OAuth2Guild): JSONObject {
+    private fun guildToJson(guild: OAuth2Guild, shardManager: ShardManager): JSONObject {
 
-        val jdaGuild = holder.shardManager.getGuildById(guild.id)
+        val jdaGuild = shardManager.getGuildById(guild.id)
 
         return JSONObject()
             .put("name", guild.name)

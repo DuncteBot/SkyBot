@@ -19,27 +19,18 @@
 package ml.duncte123.skybot.web.routes.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
-import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.path
-import spark.kotlin.post
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.bot.sharding.ShardManager
+import spark.Request
+import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class CustomCommandSettings(private val holder: WebHolder) {
+object CustomCommandSettings {
 
-    init {
-        path("/server/:guildid") {
-            // Custom commands
-            holder.get("/customcommands", WebVariables()
-                .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
+    fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
 
-            post("/customcommands") {
-
-                request.session().attribute(holder.FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
-
-                response.redirect(request.url())
-            }
-        }
+        return response.redirect(request.url())
     }
-
 }

@@ -69,3 +69,7 @@ main {
 .card {
     background-color: #23272A;
 }
+
+button, input, optgroup, select, textarea {
+    color: #ffffff;
+}

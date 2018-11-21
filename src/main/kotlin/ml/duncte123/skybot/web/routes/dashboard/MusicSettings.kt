@@ -19,34 +19,24 @@
 package ml.duncte123.skybot.web.routes.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.path
-import spark.kotlin.*
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.web.WebHelpers
+import net.dv8tion.jda.bot.sharding.ShardManager
+import spark.Request
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class MusicSettings(private val holder: WebHolder) {
+object MusicSettings {
 
-    init {
-        path("/server/:guildid") {
-            //audio stuff
-            get("/music") {
-                val guild = holder.getGuildFromRequest(request)
-                if (guild != null) {
-                    val mng = holder.audioUtils.getMusicManager(guild, false)
+    fun show(request: Request, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+            ?: return "Guild does not exist"
 
-                    if (mng != null) {
-                        return@get """<p>Audio player details:</p>
-                            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
-                            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
-                        """.trimMargin()
-                    } else {
-                        return@get "The audio player does not seem to be active"
-                    }
-                } else {
-                    return@get "ERROR"
-                }
-            }
-        }
+        val mng = variables.audioUtils.getMusicManager(guild, false)
+            ?: return "The audio player does not seem to be active"
+
+        return """<p>Audio player details:</p>
+            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
+            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
+        """.trimMargin()
     }
-
 }

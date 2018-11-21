@@ -19,25 +19,18 @@
 package ml.duncte123.skybot.web.routes.crons
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.path
-import spark.kotlin.get
+import ml.duncte123.skybot.connections.database.DBManager
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class CronJobs(private val holder: WebHolder) {
+object CronJobs {
 
-    init {
-        path("/crons") {
+    fun clearExpiredWarns(database: DBManager): Any {
 
-            get("/clearExpiredWarns") {
-
-                holder.database.connManager.use {
-                    it.connection.createStatement()
-                        .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
-                }
-            }
-
+        database.connManager.use {
+            it.connection.createStatement()
+                .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
         }
-    }
 
+        return "Ok"
+    }
 }
