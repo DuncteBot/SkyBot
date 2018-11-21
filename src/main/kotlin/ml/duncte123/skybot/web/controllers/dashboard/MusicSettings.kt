@@ -16,21 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.dashboard
+package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.web.WebRouter
+import ml.duncte123.skybot.web.WebHelpers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import spark.Request
-import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object CustomCommandSettings {
+object MusicSettings {
 
-    fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
+    fun show(request: Request, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+            ?: return "Guild does not exist"
 
-        return response.redirect(request.url())
+        val mng = variables.audioUtils.getMusicManager(guild, false)
+            ?: return "The audio player does not seem to be active"
+
+        return """<p>Audio player details:</p>
+            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
+            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
+        """.trimMargin()
     }
 }

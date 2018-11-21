@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes
+package ml.duncte123.skybot.web.controllers
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings

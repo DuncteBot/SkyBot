@@ -16,7 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.errors
+package ml.duncte123.skybot.web.controllers.errors
 
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.WebVariables

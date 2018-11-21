@@ -16,21 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.crons
+package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.web.WebRouter
+import net.dv8tion.jda.bot.sharding.ShardManager
+import spark.Request
+import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object CronJobs {
+object CustomCommandSettings {
 
-    fun clearExpiredWarns(database: DBManager): Any {
+    fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
 
-        database.connManager.use {
-            it.connection.createStatement()
-                .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
-        }
-
-        return "Ok"
+        return response.redirect(request.url())
     }
 }

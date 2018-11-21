@@ -16,27 +16,36 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.dashboard
+package ml.duncte123.skybot.web.controllers
 
+import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.web.WebHelpers
-import net.dv8tion.jda.bot.sharding.ShardManager
+import ml.duncte123.skybot.web.WebRouter
 import spark.Request
+import spark.Response
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object MusicSettings {
+object Callback {
 
-    fun show(request: Request, shardManager: ShardManager, variables: Variables): Any {
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
-            ?: return "Guild does not exist"
+    fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
-        val mng = variables.audioUtils.getMusicManager(guild, false)
-            ?: return "The audio player does not seem to be active"
+        if (!request.queryParams().contains("code")) {
+            return response.redirect("/")
+        }
 
-        return """<p>Audio player details:</p>
-            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
-            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
-        """.trimMargin()
+        val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
+
+        val oauthses = oAuth2Client.startSession(
+            request.queryParams("code"),
+            request.queryParams("state"),
+            sesid
+        ).complete()
+
+        val userId = oAuth2Client.getUser(oauthses).complete().id
+
+        request.session(true).attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+
+        return response.redirect("/dashboard")
     }
+
 }

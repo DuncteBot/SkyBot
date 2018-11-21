@@ -16,10 +16,11 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.dashboard
+package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
@@ -28,39 +29,33 @@ import net.dv8tion.jda.bot.sharding.ShardManager
 import org.apache.http.client.utils.URLEncodedUtils
 import spark.Request
 import spark.Response
+import java.awt.Color
 import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object ModerationSettings {
+object BasicSettings {
 
     fun save(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val pairs = URLEncodedUtils.parse(request.body(), StandardCharsets.UTF_8)
         val params = WebHelpers.toMap(pairs)
 
-        val modLogChannel = params["modChannel"]
-        val autoDeHoist = paramToBoolean(params["autoDeHoist"])
-        val filterInvites = paramToBoolean(params["filterInvites"])
-        val swearFilter = paramToBoolean(params["swearFilter"])
-        val muteRole = params["muteRole"]
-        val spamFilter = paramToBoolean(params["spamFilter"])
-        val kickMode = paramToBoolean(params["kickMode"])
-        val rateLimits = LongArray(6)
+        val prefix = params["prefix"]
+        val welcomeChannel = params["welcomeChannel"]
+        val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
+        val autorole = params["autoRoleRole"]
+        //val autoRoleEnabled      = params["autoRoleRoleCB"]
+        val announceTracks = paramToBoolean(params["announceTracks"])
+        val color = Color.decode(params["embedColor"]).rgb
 
-        for (i in 0..5) {
-            rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
-        }
-
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!, variables)
+        guild.setColor(color)
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)
-            .setLogChannel(GuildSettingsUtils.toLong(modLogChannel))
-            .setAutoDeHoist(autoDeHoist)
-            .setFilterInvites(filterInvites)
-            .setMuteRoleId(GuildSettingsUtils.toLong(muteRole))
-            .setKickState(kickMode)
-            .setRatelimits(rateLimits)
-            .setEnableSpamFilter(spamFilter)
-            .setEnableSwearFilter(swearFilter)
+            .setCustomPrefix(prefix)
+            .setWelcomeLeaveChannel(GuildSettingsUtils.toLong(welcomeChannel))
+            .setEnableJoinMessage(welcomeLeaveEnabled)
+            .setAutoroleRole(GuildSettingsUtils.toLong(autorole))
+            .setAnnounceTracks(announceTracks)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

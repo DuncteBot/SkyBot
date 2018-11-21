@@ -27,15 +27,15 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
-import ml.duncte123.skybot.web.routes.Callback
-import ml.duncte123.skybot.web.routes.Commands
-import ml.duncte123.skybot.web.routes.Suggestions
-import ml.duncte123.skybot.web.routes.api.GetUserGuilds
-import ml.duncte123.skybot.web.routes.api.Kpop
-import ml.duncte123.skybot.web.routes.api.MainApi
-import ml.duncte123.skybot.web.routes.crons.CronJobs
-import ml.duncte123.skybot.web.routes.dashboard.*
-import ml.duncte123.skybot.web.routes.errors.HttpErrorHandlers
+import ml.duncte123.skybot.web.controllers.Callback
+import ml.duncte123.skybot.web.controllers.Commands
+import ml.duncte123.skybot.web.controllers.Suggestions
+import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
+import ml.duncte123.skybot.web.controllers.api.Kpop
+import ml.duncte123.skybot.web.controllers.api.MainApi
+import ml.duncte123.skybot.web.controllers.crons.CronJobs
+import ml.duncte123.skybot.web.controllers.dashboard.*
+import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import spark.ModelAndView
@@ -189,13 +189,13 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
             }
 
             get("/kpop") {
-                Kpop.show(request, response, database)
+                return@get Kpop.show(request, response, database)
             }
         }
 
         path("/crons") {
             get("/clearExpiredWarns") {
-                CronJobs.clearExpiredWarns(database)
+                return@get CronJobs.clearExpiredWarns(database)
             }
         }
 

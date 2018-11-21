@@ -16,36 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes
+package ml.duncte123.skybot.web.controllers.crons
 
-import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebRouter
-import spark.Request
-import spark.Response
+import ml.duncte123.skybot.connections.database.DBManager
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object Callback {
+object CronJobs {
 
-    fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
+    fun clearExpiredWarns(database: DBManager): Any {
 
-        if (!request.queryParams().contains("code")) {
-            return response.redirect("/")
+        database.connManager.use {
+            it.connection.createStatement()
+                .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
         }
 
-        val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
-
-        val oauthses = oAuth2Client.startSession(
-            request.queryParams("code"),
-            request.queryParams("state"),
-            sesid
-        ).complete()
-
-        val userId = oAuth2Client.getUser(oauthses).complete().id
-
-        request.session(true).attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
-
-        return response.redirect("/dashboard")
+        return "Ok"
     }
-
 }
