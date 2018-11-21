@@ -1,5 +1,7 @@
 {% extends 'templates/base.twig' %}
-{% set pattern = "[0-9]{18,20}" %}
+
+{% set pattern = '[0-9]{18,20}' %}
+{% set youtube_video = 'https://youtube.com/watch?v=' %}
 
 {% block container %}
 
@@ -12,7 +14,7 @@
                 you and the server that you want the perks to be active in here to have the patron perks enabled</p>
 
             <p>Don't know how to get these ids? No problem, here's <a href="" target="_blank">a video</a> explaining how
-                to obtain these ids <a href="" target="_blank">link</a></p>
+                to obtain these ids: <a href="{{ youtube_video }}" target="_blank">{{ youtube_video }}</a></p>
 
             <div id="confirm">
                 {% if message %}
