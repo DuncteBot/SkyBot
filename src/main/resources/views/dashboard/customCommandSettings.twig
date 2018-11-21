@@ -12,4 +12,35 @@
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>
     </div>
 
+
+    <div class="row">
+        <h6>Custom commands:</h6> <br/>
+
+        <ul class="collection">
+
+            {% for i in [1,2,3,4,5] %}
+
+            <li class="collection-item">
+                <h6 class="left">CommandName</h6>
+
+                <div class="right">
+                    <a class="waves-effect waves-light btn"><i class="material-icons">create</i> Edit</a>
+                    <a class="waves-effect waves-light red btn"><i class="material-icons">delete</i> Delete</a>
+                </div>
+
+                <div class="clearfix"></div>
+            </li>
+
+            {% endfor %}
+
+        </ul>
+
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script>
+        //
+    </script>
 {% endblock %}

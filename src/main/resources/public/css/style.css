@@ -70,6 +70,29 @@ main {
     background-color: #23272A;
 }
 
+.collection {
+    border-color: #2C2F33;
+}
+
+.collection .collection-item {
+    background-color: #23272A;
+    border-color: #2C2F33;
+}
+
+.collection .collection-item:nth-child(even) {
+    background-color: #43474b;
+    border-color: #2C2F33;
+}
+
+.collection .collection-item:focus {
+    background-color: #23272A;
+    border-color: #2C2F33;
+}
+
+.input-field.textarea {
+    border: 1px solid #99AAB5;
+}
+
 button, input, optgroup, select, textarea {
     color: #ffffff;
 }

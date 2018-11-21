@@ -38,6 +38,7 @@ import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
+import org.slf4j.LoggerFactory
 import spark.ModelAndView
 import spark.Spark.path
 import spark.kotlin.*
@@ -45,6 +46,8 @@ import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(val shardManager: ShardManager, val variables: Variables) {
+
+    private val logger = LoggerFactory.getLogger(WebRouter::class.java)
 
     private val config = variables.config!!
     private val database = variables.database!!
@@ -63,6 +66,9 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         staticFiles.location("/public")
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
+
+        get("/customcommands", WebVariables().put("title", "Dashboard"),
+            "dashboard/customCommandSettings.twig", true)
 
         get("/commands") {
             val output = Commands.show(request, variables, shardManager)
@@ -212,11 +218,15 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         get(path) {
 
             if (withGuildData) {
-                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+                logger.error("Remove the guild id when finished")
+//                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+                val guild = shardManager.getGuildById(191245668617158656L)
+
                 if (guild != null) {
                     val tcs = guild.textChannelCache.filter {
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
+
                     val goodRoles = guild.roles.filter {
                         guild.selfMember.roles[0].canInteract(it) && it.name != "@everyone" && it.name != "@here"
                     }.toList()
@@ -231,6 +241,7 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
 
                     val session = request.session()
                     val message: String? = session.attribute(FLASH_MESSAGE)
+
                     if (!message.isNullOrEmpty()) {
                         session.attribute(FLASH_MESSAGE, null)
                         map.put("message", message)
