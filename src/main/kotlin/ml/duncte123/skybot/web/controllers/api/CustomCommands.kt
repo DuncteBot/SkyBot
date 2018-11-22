@@ -19,25 +19,34 @@
 package ml.duncte123.skybot.web.controllers.api
 
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand.*
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebRouter
 import net.dv8tion.jda.bot.sharding.ShardManager
 import org.json.JSONObject
 import spark.Request
 import spark.Response
+import spark.kotlin.halt
 
 object CustomCommands {
 
-    fun show(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        /*val attributes = request.session().attributes()
+    fun before(request: Request, response: Response) {
+        val attributes = request.session().attributes()
 
         if (!attributes.contains(WebRouter.USER_SESSION)) {
-            return JSONObject()
-                .put("status", "error")
-                .put("message", "SESSION_INVALID")
-                .put("code", response.status())
-        }*/
+            response.status(401)
 
+            halt(401,
+                JSONObject()
+                    .put("status", "error")
+                    .put("message", "Invalid session")
+                    .put("code", response.status())
+                    .toString()
+            )
+        }
+    }
+
+    fun show(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)
 
         val commands = variables.commandManager
@@ -49,4 +58,110 @@ object CustomCommands {
             .put("code", response.status())
     }
 
+    fun update(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val commandData = JSONObject(request.body())
+
+        if (!commandData.has("name") || !commandData.has("message")) {
+            response.status(403)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Invalid data")
+                .put("code", response.status())
+        }
+
+        val invoke = commandData.getString("name")
+        val message = commandData.getString("message")
+        val manager = variables.commandManager
+
+        if (!commandExists(invoke, guild.idLong, manager)) {
+            response.status(404)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Unknown command")
+                .put("code", response.status())
+        }
+
+        val customCommand = manager.getCustomCommand(invoke, guild.idLong)
+
+        val returnData = editCustomCommand(customCommand, message, manager)
+
+        if (!returnData) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Something failed")
+                .put("code", response.status())
+        }
+
+        return JSONObject()
+            .put("status", "success")
+            .put("code", response.status())
+    }
+
+    fun create(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val commandData = JSONObject(request.body())
+
+        if (!commandData.has("name") || !commandData.has("message")) {
+            response.status(403)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Invalid data")
+                .put("code", response.status())
+        }
+
+        var invoke = commandData.getString("name")
+        invoke = invoke.replace("\\s".toRegex(), "")
+
+
+        if (invoke.length > 25) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Invoke is over 25 characters")
+                .put("code", response.status())
+        }
+
+        val message = commandData.getString("message")
+        val manager = variables.commandManager
+
+        if (commandExists(invoke, guild.idLong, manager)) {
+            response.status(404)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Command already exists")
+                .put("code", response.status())
+        }
+
+        val result = registerCustomCommand(invoke, message, guild.idLong, manager)
+
+        if (result.first) {
+            return JSONObject()
+                .put("status", "success")
+                .put("message", "Command added")
+                .put("code", response.status())
+        }
+
+        if (result.second) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Command already exists")
+                .put("code", response.status())
+        }
+
+        if (result.third) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "You reached the limit of 50 custom commands for this server")
+                .put("code", response.status())
+        }
+
+        return JSONObject()
+            .put("status", "error")
+            .put("message", "Database error")
+            .put("code", response.status())
+    }
 }

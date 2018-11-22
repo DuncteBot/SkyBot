@@ -23,7 +23,7 @@ function initModal() {
 
 function initEitor() {
     const jagTagCompleter = {
-        getCompletions: function(editor, session, pos, prefix, callback) {
+        getCompletions: function (editor, session, pos, prefix, callback) {
 
             const firstChar = session.getTokenAt(pos.row, pos.column - 1).value;
 
@@ -54,8 +54,8 @@ function initEitor() {
     editor.completers = [jagTagCompleter];
 }
 
-function loadCommands(guild) {
-    fetch(`/api/customcommands/${guild}`, {
+function loadCommands() {
+    fetch(`/api/customcommands/${guildId}`, {
         credentials: "same-origin"
     })
         .then((response) => response.json())
@@ -90,7 +90,8 @@ function loadCommands(guild) {
                         <div class="right">
                             <a href="#" onclick="showCommand('${command.name}'); return false;"
                                 class="waves-effect waves-light btn"><i class="material-icons">create</i> Edit</a>
-                            <a class="waves-effect waves-light red btn"><i class="material-icons">delete</i> Delete</a>
+                            <a href="#" onclick="toast('Not implemented yet, use \\'\\'${prefix}cc delete ${command.name}\\'\\''); return false" 
+                                class="waves-effect waves-light red btn"><i class="material-icons">delete</i> Delete</a>
                         </div>
 
                         <div class="clearfix"></div>
@@ -107,13 +108,116 @@ function showCommand(name) {
 
     const command = storedCommands[name];
 
-    editor.setValue(command.message);
+    showModal(name, command.message, `saveEdit("${name}")`);
+}
+
+function clearEditor() {
+    editor.setValue("");
+    modal.close();
+}
+
+function saveEdit(name) {
+    toast("Saving...");
+
+    const command = storedCommands[name];
+    command.message = editor.getValue();
+
+    fetch(`/api/customcommands/${guildId}`, {
+        method: "PATCH",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(command)
+    })
+        .then((response) => response.json())
+        .then((json) => {
+
+            if (json.status === "success") {
+                toast("Saved!");
+                modal.close();
+                return
+            }
+
+            toast(`Could not save: ${json.message}`);
+        })
+        .catch((e) => {
+            toast(`Could not save: ${e}`);
+        });
+}
+
+function showModal(invoke, message, method) {
+    editor.setValue(message);
+    _("commandName").value = invoke;
+
+    _("saveBtn").setAttribute("onclick", `${method}; return false;`);
 
     modal.open();
     editor.resize();
     editor.clearSelection();
 }
 
-function clearEditor() {
-    editor.setValue("");
+function prepareCreateNew() {
+    showModal("", "", "createNew()")
+}
+
+function createNew() {
+    let name = _("commandName").value;
+    name = name.replace(/\s+/g, '');
+
+    if (name === "") {
+        toast("Please give a name");
+        return
+    }
+
+    if (name.length > 25) {
+        toast("Name must be less than 25 characters");
+        return
+    }
+
+    const action = editor.getValue();
+
+    if (action === "") {
+        toast("Message cannot be empty");
+        return
+    }
+
+    const command = {
+        name: name,
+        message: action,
+        guildId: guildId
+    };
+
+    storedCommands[name] = command;
+
+    toast("Adding command....");
+
+    fetch(`/api/customcommands/${guildId}`, {
+        method: "POST",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify(command)
+    })
+        .then((response) => response.json())
+        .then((json) => {
+
+            if (json.status === "success") {
+                toast("Command added");
+                modal.close();
+                return
+            }
+
+            toast(`Could not save: ${json.message}`);
+        })
+        .catch((e) => {
+            toast(`Could not save: ${e}`);
+        });
+}
+
+function toast(message) {
+    M.toast({
+        html: message,
+    });
 }

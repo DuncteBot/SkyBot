@@ -39,7 +39,7 @@ object Dashbord {
         if (!request.session().attributes().contains(WebRouter.SESSION_ID)) {
             val url = oAuth2Client.generateAuthorizationURL(
                 config.discord.oauth.redirUrl,
-                Scope.IDENTIFY, Scope.GUILDS, Scope.GUILDS_JOIN
+                Scope.IDENTIFY, Scope.GUILDS
             )
             request.session(true).attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
             response.redirect(url)

@@ -205,15 +205,15 @@ public class CustomCommandCommand extends Command {
 
     }
 
-    private boolean commandExists(String name, long guild, CommandManager manager) {
+    public static boolean commandExists(String name, long guild, CommandManager manager) {
         return manager.getCustomCommand(name, guild) != null;
     }
 
-    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
+    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
         return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
     }
 
-    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
+    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
         CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
         return manager.editCustomCommand(cmd);
     }

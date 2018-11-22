@@ -66,31 +66,8 @@ main {
     animation-delay: 900ms;
 }
 
-.card {
-    background-color: #23272A;
-}
-
-.dark {
-    background-color: #2C2F33 !important;
-}
-
-.collection {
-    border-color: #2C2F33;
-}
-
-.collection .collection-item {
-    background-color: #23272A;
-    border-color: #2C2F33;
-}
-
 .collection .collection-item:nth-child(even) {
-    background-color: #43474b;
-    border-color: #2C2F33;
-}
-
-.collection .collection-item:focus {
-    background-color: #23272A;
-    border-color: #2C2F33;
+    background-color: #6f7b82;
 }
 
 .input-field.textarea {

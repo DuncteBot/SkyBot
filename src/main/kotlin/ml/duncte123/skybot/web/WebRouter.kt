@@ -39,8 +39,6 @@ import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
-import org.json.JSONObject
-import org.slf4j.LoggerFactory
 import spark.ModelAndView
 import spark.Spark.path
 import spark.kotlin.*
@@ -48,8 +46,6 @@ import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebRouter(val shardManager: ShardManager, val variables: Variables) {
-
-    private val logger = LoggerFactory.getLogger(WebRouter::class.java)
 
     private val config = variables.config
     private val database = variables.database
@@ -68,9 +64,6 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         staticFiles.location("/public")
 
         get("/", WebVariables().put("title", "Home"), "home.twig")
-
-        get("/customcommands", WebVariables().put("title", "Dashboard"),
-            "dashboard/customCommandSettings.twig", true)
 
         get("/commands") {
             val output = Commands.show(request, variables, shardManager)
@@ -152,10 +145,6 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
             get("/customcommands", WebVariables().put("title", "Dashboard"),
                 "dashboard/customCommandSettings.twig", true)
 
-            post("/customcommands") {
-                return@post CustomCommandSettings.save(request, response, shardManager, variables)
-            }
-
             // Message settings
             get("/messages", WebVariables().put("title", "Dashboard"),
                 "dashboard/welcomeLeaveDesc.twig", true)
@@ -200,9 +189,24 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
                 return@get Kpop.show(request, response, database)
             }
 
-            get("/customcommands/$GUILD_ID") {
-                return@get CustomCommands.show(request, response, shardManager, variables)
+            path("/customcommands/$GUILD_ID") {
+                before("") {
+                    return@before CustomCommands.before(request, response)
+                }
+
+                get("") {
+                    return@get CustomCommands.show(request, response, shardManager, variables)
+                }
+
+                patch("") {
+                    return@patch CustomCommands.update(request, response, shardManager, variables)
+                }
+
+                post("") {
+                    return@post CustomCommands.create(request, response, shardManager, variables)
+                }
             }
+
         }
 
         path("/crons") {
@@ -224,9 +228,7 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         get(path) {
 
             if (withGuildData) {
-                logger.error("Remove the guild id when finished")
-//                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
-                val guild = shardManager.getGuildById(191245668617158656L)
+                val guild = WebHelpers.getGuildFromRequest(request, shardManager)
 
                 if (guild != null) {
                     val tcs = guild.textChannelCache.filter {
