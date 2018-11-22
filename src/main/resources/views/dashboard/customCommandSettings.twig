@@ -17,7 +17,7 @@
         <h6>Custom commands:</h6> <br/>
 
         <ul class="collection" id="commands">
-            //
+            <p class="center flow-text">Loading...</p>
         </ul>
 
     </div>
@@ -29,86 +29,24 @@
             <div id="editor"></div>
         </div>
         <div class="modal-footer dark">
-            <a href="#" class="modal-close waves-effect waves-green btn-flat white-text">Save</a>
-            <a href="#" onclick="clearEditor();" class="modal-close waves-effect waves-red btn-flat white-text">Discard</a>
+            <a href="#" onclick="return false;"
+               class="modal-close waves-effect waves-green btn green white-text">Save</a>
+            <a href="#" onclick="clearEditor(); return false;"
+               class="modal-close waves-effect waves-red btn red white-text">Discard</a>
         </div>
     </div>
 
 {% endblock %}
 
 {% block script %}
+    <script src="/js/customCommands.js"></script>
     <script src="/js/ace/ace.js"></script>
+    <script src="/js/ace/ext-language_tools.js"></script>
+    <script src="/js/wordlist.js"></script>
     <script>
-        const storedCommands = {};
-        const modal = M.Modal.init(document.querySelectorAll('.modal'))[0];
-        const editor = ace.edit("editor", {
-            theme: "ace/theme/monokai",
-            mode: "ace/mode/perl",
-            maxLines: 18,
-            minLines: 10,
-            wrap: true,
-            autoScrollEditorIntoView: true
-        });
-
-        fetch("/api/customcommands/{{ guild.getIdLong() }}", {
-            credentials: "same-origin"
-        })
-            .then((response) => response.json())
-            .then((json) => {
-
-                const div = _("commands");
-
-                if (json.status === "error") {
-
-                    div.innerHTML = `<h1 class="center">Session not valid</h1>
-                              <h5 class="center">Please refresh your browser</h5>`;
-
-                    return;
-                }
-
-                if (json.commands.length < 0) {
-
-                    div.innerHTML = `<h1 class="center">No commands here</h1>`;
-
-                    return;
-                }
-
-                div.innerHTML = "";
-
-                for (const command of json.commands) {
-                    storedCommands[command.name] = command;
-
-                    div.innerHTML += `
-                    <li class="collection-item">
-                        <h6 class="left">${command.name}</h6>
-
-                        <div class="right">
-                            <a href="#" onclick="showCommand('${command.name}'); return false;"
-                                class="waves-effect waves-light btn"><i class="material-icons">create</i> Edit</a>
-                            <a class="waves-effect waves-light red btn"><i class="material-icons">delete</i> Delete</a>
-                        </div>
-
-                        <div class="clearfix"></div>
-                    </li>`;
-                }
-
-            })
-            .catch(
-                () => _("commands").innerHTML = "Your session has expired, please refresh your browser"
-            );
-
-        function showCommand(name) {
-
-            const command = storedCommands[name];
-
-            editor.setValue(command.message);
-
-            modal.open();
-            editor.resize();
-        }
-
-        function clearEditor() {
-            editor.setValue("");
-        }
+        // Load modules
+        initModal();
+        initEitor();
+        loadCommands("{{ guild.getIdLong() }}");
     </script>
 {% endblock %}
