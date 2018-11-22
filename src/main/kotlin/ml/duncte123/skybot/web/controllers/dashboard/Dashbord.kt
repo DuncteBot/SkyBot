@@ -59,10 +59,14 @@ object Dashbord {
             return response.redirect("/server/${request.params(WebRouter.GUILD_ID)}/")
         }
 
+        if (guild == null) {
+            return
+        }
+
         val userId = WebHelpers.getUserId(request)
 
         val user = shardManager.getUserById(userId)
-        val member = guild?.getMember(user)
+        val member = guild.getMember(user)
         val hasPermission = member!!.hasPermission(Permission.ADMINISTRATOR) || member.hasPermission(Permission.MANAGE_SERVER)
 
         if (!hasPermission && !request.url().contains("noperms")) {
