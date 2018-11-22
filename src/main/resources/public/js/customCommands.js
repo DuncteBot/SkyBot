@@ -136,6 +136,7 @@ function saveEdit(name) {
             if (json.status === "success") {
                 toast("Saved!");
                 modal.close();
+                setTimeout(() => window.location.reload(), 500);
                 return
             }
 
