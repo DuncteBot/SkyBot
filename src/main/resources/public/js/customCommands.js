@@ -22,7 +22,7 @@ function initModal() {
 }
 
 function initEitor() {
-    const staticWordCompleter = {
+    const jagTagCompleter = {
         getCompletions: function(editor, session, pos, prefix, callback) {
 
             const firstChar = session.getTokenAt(pos.row, pos.column - 1).value;
@@ -51,7 +51,7 @@ function initEitor() {
         enableLiveAutocompletion: true,
     });
 
-    editor.completers = [staticWordCompleter];
+    editor.completers = [jagTagCompleter];
 }
 
 function loadCommands(guild) {
