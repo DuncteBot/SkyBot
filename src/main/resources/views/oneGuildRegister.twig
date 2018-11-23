@@ -1,7 +1,7 @@
 {% extends 'templates/base.twig' %}
 
 {% set pattern = '[0-9]{18,20}' %}
-{% set youtube_video = 'https://youtube.com/watch?v=' %}
+{% set link = 'https://support.discordapp.com/hc/en-us/articles/206346498-Where-can-I-find-my-User-Server-Message-ID-' %}
 
 {% block container %}
 
@@ -13,8 +13,8 @@
                 <a href="https://www.patreon.com/DuncteBot" target="_blank">our Patreon</a> you can enter the id of
                 you and the server that you want the perks to be active in here to have the patron perks enabled</p>
 
-            <p>Don't know how to get these ids? No problem, here's <a href="" target="_blank">a video</a> explaining how
-                to obtain these ids: <a href="{{ youtube_video }}" target="_blank">{{ youtube_video }}</a></p>
+            <p>Don't know how to get these ids? No problem, here's <a href="{{ link }}" target="_blank">an article</a> explaining how
+                to obtain these ids: <a href="{{ link }}" target="_blank">{{ link }}</a></p>
 
             <div id="confirm">
                 {% if message %}
@@ -124,8 +124,6 @@
                     console.log(e);
                     console.error(e)
                 });
-
-            //document.getElementById("{{ form_id }}").submit();
         }
         
         function getMessage(m) {
@@ -138,10 +136,8 @@
                 case "no_guild":
                     return "The specified server id did not resolve any servers.";
                 default:
-                    return "Something went wrong, try again later";
+                    return m;
             }
-            
-            
         }
     </script>
 {% endblock %}
