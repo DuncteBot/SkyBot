@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -27,6 +28,7 @@ import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -60,7 +62,7 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        List<Emote> foundEmotes = message.getEmotes();
+        List<Emote> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
 
         if (foundEmotes.isEmpty()) {
             sendMsg(event, "No emotes found");

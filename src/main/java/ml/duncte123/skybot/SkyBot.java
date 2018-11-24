@@ -47,6 +47,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -62,6 +66,10 @@ public class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
+    private IntFunction<? extends Game> gameProvider;
+    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
+        (r) -> new Thread(r, "Bot-Service-Thread")
+    );
 
     private SkyBot() throws Exception {
 
@@ -122,7 +130,7 @@ public class SkyBot {
         String token = config.discord.token;
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = config.discord.totalShards;
+        int totalShards = config.discord.totalShards;
 
         //Set the game from the config
         int gameId = config.discord.game.type;
@@ -135,22 +143,26 @@ public class SkyBot {
             url = config.discord.game.streamUrl;
         }
 
+        final String finalUrl = url;
+        this.gameProvider = (shardId) -> Game.of(type,
+            name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl);
+
         logger.info(commandManager.getCommands().size() + " commands loaded.");
         LavalinkManager.ins.start(config, variables.getAudioUtils());
-        final String finalUrl = url;
+
 
         //Set up sharding for the bot
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
             .setEventManagerProvider((id) -> eventManager)
             .setBulkDeleteSplittingEnabled(false)
-            .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
-            .setShardsTotal(TOTAL_SHARDS)
-            .setGameProvider(shardId -> Game.of(type,
-                name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
-            )
+            .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setShardsTotal(totalShards)
+            .setGameProvider(this.gameProvider)
             .setToken(token)
             .build();
+
+        this.startGameTimer();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
@@ -188,6 +200,12 @@ public class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
+    }
+
+    private void startGameTimer() {
+        this.gameScheduler.scheduleAtFixedRate(
+            () -> this.shardManager.setGameProvider(this.gameProvider),
+            1, 1, TimeUnit.HOURS);
     }
 
     private static void gen() {
