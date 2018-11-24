@@ -36,6 +36,7 @@ import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.cannotInteractWithEmote;
 
 public class LockEmoteCommand extends Command {
 
@@ -83,15 +84,7 @@ public class LockEmoteCommand extends Command {
 
         ctx.getGuild().retrieveEmoteById(mentionedEmote.getIdLong()).queue(
             (emote) -> {
-                if (!emote.getGuild().equals(event.getGuild())) {
-                    sendMsg(event, "That emote does not exist on this server");
-                    return;
-                }
-
-                if (emote.isManaged()) {
-                    sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
-                    return;
-                }
+                if (cannotInteractWithEmote(event, emote)) return;
 
                 emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
                 sendSuccess(message);

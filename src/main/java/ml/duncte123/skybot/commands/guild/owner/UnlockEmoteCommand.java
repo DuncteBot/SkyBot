@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
+import net.dv8tion.jda.core.entities.ListedEmote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -72,15 +73,7 @@ public class UnlockEmoteCommand extends Command {
 
         ctx.getGuild().retrieveEmoteById(foundEmote.getIdLong()).queue(
             (emote) -> {
-                if (!emote.getGuild().equals(event.getGuild())) {
-                    sendMsg(event, "That emote does not exist on this server");
-                    return;
-                }
-
-                if (emote.isManaged()) {
-                    sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
-                    return;
-                }
+                if (cannotInteractWithEmote(event, emote)) return;
 
                 emote.getManager().setRoles(Collections.emptySet()).queue();
                 sendSuccess(message);
@@ -90,6 +83,19 @@ public class UnlockEmoteCommand extends Command {
         );
 
 
+    }
+
+    static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, ListedEmote emote) {
+        if (!emote.getGuild().equals(event.getGuild())) {
+            sendMsg(event, "That emote does not exist on this server");
+            return true;
+        }
+
+        if (emote.isManaged()) {
+            sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
+            return true;
+        }
+        return false;
     }
 
     @Override
