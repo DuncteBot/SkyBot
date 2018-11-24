@@ -366,13 +366,19 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         Guild guild = event.getGuild();
-        if (LavalinkManager.ins.isConnected(guild)
-            && !event.getVoiceState().getMember().equals(guild.getSelfMember())) {
-            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(guild);
+        LavalinkManager manager = LavalinkManager.ins;
+        GuildVoiceState voiceState = event.getVoiceState();
+
+        if (manager.isConnected(guild)
+            && !voiceState.getMember().equals(guild.getSelfMember())) {
+            VoiceChannel vc = manager.getConnectedChannel(guild);
+
             if (vc != null) {
+
                 if (!event.getChannelLeft().equals(vc)) {
                     return;
                 }
+
                 channelCheckThing(guild, event.getChannelLeft());
             }
         }
@@ -381,21 +387,25 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         Guild guild = event.getGuild();
+        LavalinkManager manager = LavalinkManager.ins;
 
-        try {
-            if (LavalinkManager.ins.isConnected(guild)) {
-                if (!event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild)) && event.getMember().equals(guild.getSelfMember())) {
-                    channelCheckThing(guild, LavalinkManager.ins.getConnectedChannel(guild));
+        if (manager.isConnected(guild)) {
+            VoiceChannel connected = manager.getConnectedChannel(guild);
 
-                    return;
-                }
-
-                if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(guild))) {
-                    channelCheckThing(guild, event.getChannelLeft());
-                    //return;
-                }
+            if (connected == null) {
+                return;
             }
-        } catch (NullPointerException ignored) {
+
+            if (!event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
+                channelCheckThing(guild, connected);
+
+                return;
+            }
+
+            if (event.getChannelLeft().equals(connected)) {
+                channelCheckThing(guild, event.getChannelLeft());
+                //return;
+            }
         }
     }
 
@@ -563,6 +573,7 @@ public class BotListener extends ListenerAdapter {
                 g.getAudioManager().setConnectionListener(null);
 
             sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+
             if (LavalinkManager.ins.isConnected(g)) {
                 LavalinkManager.ins.closeConnection(g);
                 variables.getAudioUtils().getMusicManagers().remove(g.getIdLong());
