@@ -26,6 +26,7 @@ import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
+import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebHolder;
@@ -33,6 +34,7 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.io.FileUtils;
@@ -46,6 +48,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.Connection;
 import java.time.Instant;
 import java.util.EnumSet;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.function.IntFunction;
 
 /**
  * NOTE TO SELF String.format("%#s", userObject)
@@ -61,6 +67,10 @@ public class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
+    private IntFunction<? extends Game> gameProvider;
+    private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
+        (r) -> new Thread(r, "Bot-Service-Thread")
+    );
 
     private SkyBot() throws Exception {
 
@@ -84,9 +94,8 @@ public class SkyBot {
         }
 
         //throwable.printStackTrace();
-        RestAction.DEFAULT_FAILURE = (t) -> {
-        };
-        RestAction.setPassContext(true);
+        RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
+        RestAction.setPassContext(false);
 
         if (variables.isSql()) { //Don't try to connect if we don't want to
             if (!database.getConnManager().hasSettings()) {
@@ -122,35 +131,36 @@ public class SkyBot {
         String token = config.discord.token;
 
         //But this time we are going to shard it
-        int TOTAL_SHARDS = config.discord.totalShards;
+        int totalShards = config.discord.totalShards;
 
         //Set the game from the config
         int gameId = config.discord.game.type;
         String name = config.discord.game.name;
-        String url = "https://www.twitch.tv/duncte123";
+        GameType gameType = GameType.fromKey(gameId);
+        String streamUrl = gameType == GameType.STREAMING ? config.discord.game.streamUrl : null;
 
-
-        Game.GameType type = Game.GameType.fromKey(gameId);
-        if (type.equals(Game.GameType.STREAMING)) {
-            url = config.discord.game.streamUrl;
-        }
+        this.gameProvider = (shardId) -> Game.of(
+            gameType,
+            name.replace("{shardId}", Integer.toString(shardId + 1)),
+            streamUrl
+        );
 
         logger.info(commandManager.getCommands().size() + " commands loaded.");
         LavalinkManager.ins.start(config, variables.getAudioUtils());
-        final String finalUrl = url;
+
 
         //Set up sharding for the bot
         EventManager eventManager = new EventManager(variables);
         this.shardManager = new DefaultShardManagerBuilder()
             .setEventManagerProvider((id) -> eventManager)
             .setBulkDeleteSplittingEnabled(false)
-            .setDisabledCacheFlags(EnumSet.of(CacheFlag.EMOTE, CacheFlag.GAME))
-            .setShardsTotal(TOTAL_SHARDS)
-            .setGameProvider(shardId -> Game.of(type,
-                name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl)
-            )
+            .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setShardsTotal(totalShards)
+            .setGameProvider(this.gameProvider)
             .setToken(token)
             .build();
+
+        this.startGameTimer();
 
         //Load all the commands for the help embed last
         HelpEmbeds.init(commandManager);
@@ -188,6 +198,12 @@ public class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
+    }
+
+    private void startGameTimer() {
+        this.gameScheduler.scheduleAtFixedRate(
+            () -> this.shardManager.setGameProvider(this.gameProvider),
+            1, 1, TimeUnit.DAYS);
     }
 
     private static void gen() {

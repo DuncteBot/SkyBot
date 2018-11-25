@@ -54,7 +54,7 @@ public class CustomCommandCommand extends Command {
         List<String> args = ctx.getArgs();
         CommandManager manager = ctx.getCommandManager();
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Insufficient arguments use `db!help customcommand`");
             return;
         }

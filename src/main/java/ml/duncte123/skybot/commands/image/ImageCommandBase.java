@@ -91,7 +91,7 @@ public abstract class ImageCommandBase extends Command {
 
         String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
 
-        if (args.size() > 0 && ctx.getMessage().getMentionedUsers().size() < 1) {
+        if (!args.isEmpty() && ctx.getMessage().getMentionedUsers().size() < 1) {
             try {
                 url = new URL(args.get(0)).toString();
             } catch (MalformedURLException ignored) {
@@ -100,7 +100,7 @@ public abstract class ImageCommandBase extends Command {
             }
         }
 
-        if (ctx.getMessage().getMentionedUsers().size() > 0) {
+        if (!ctx.getMessage().getMentionedUsers().isEmpty()) {
             url = ctx.getMessage().getMentionedUsers().get(0)
                 .getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
         }

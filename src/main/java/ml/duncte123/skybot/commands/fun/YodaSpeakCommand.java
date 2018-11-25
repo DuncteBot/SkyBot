@@ -44,7 +44,7 @@ public class YodaSpeakCommand extends Command {
         GuildMessageReceivedEvent event = ctx.getEvent();
         List<String> args = ctx.getArgs();
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <A sentence.>`");
             return;
         }

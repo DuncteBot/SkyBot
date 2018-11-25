@@ -54,7 +54,7 @@ public class BanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
+        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <Reason>");
             return;
         }
@@ -68,7 +68,7 @@ public class BanCommand extends Command {
             }
 
 
-            String reason = String.join(" ", args.subList(2, args.size()));
+            String reason = String.join(" ", args.subList(1, args.size()));
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                 (m) -> {
                     modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());

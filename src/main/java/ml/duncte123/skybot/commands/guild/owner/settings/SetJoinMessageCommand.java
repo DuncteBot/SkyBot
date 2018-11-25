@@ -29,7 +29,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class SetJoinMessageCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        if (ctx.getArgs().size() < 1) {
+        if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage is `" + Settings.PREFIX + "setJoinMessage <new join message>`");
             return;
         }

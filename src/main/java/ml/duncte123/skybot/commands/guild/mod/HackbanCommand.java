@@ -52,7 +52,7 @@ public class HackbanCommand extends Command {
             return;
         }
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <userId...>");
             return;
         }
