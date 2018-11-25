@@ -120,7 +120,7 @@ public class WolframAlphaCommand extends Command {
 
         if (!isUserOrGuildPatron(event)) return;
 
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }

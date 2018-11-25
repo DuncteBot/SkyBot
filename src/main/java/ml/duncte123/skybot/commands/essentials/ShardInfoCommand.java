@@ -90,7 +90,8 @@ public class ShardInfoCommand extends Command {
                 table = new ArrayList<>();
             }
         }
-        if (table.size() > 0) {
+
+        if (!table.isEmpty()) {
             MessageUtils.sendMsg(event, makeAsciiTable(headers, table, shardManager));
         }
     }

@@ -51,7 +51,7 @@ public class KickCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1) {
+        if (event.getMessage().getMentionedUsers().isEmpty()) {
             MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }

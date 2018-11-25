@@ -53,7 +53,7 @@ public class MuteCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedMembers().size() < 1 || args.size() < 2) {
+        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <reason>");
             return;
         }

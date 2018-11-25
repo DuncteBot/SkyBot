@@ -189,7 +189,7 @@ public class AudioUtils {
                     tracks.add(track);
                 }
 
-                if (tracks.size() == 0) {
+                if (tracks.isEmpty()) {
                     sendEmbed(channel, embedField(embedTitle, "Error: This playlist is empty."));
                     return;
 
