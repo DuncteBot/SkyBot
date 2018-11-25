@@ -21,6 +21,7 @@
 package ml.duncte123.skybot.objects.api
 
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.extensions.cdnPrefix
 import ml.duncte123.skybot.extensions.eloquent
 import org.json.JSONObject
 import java.sql.Date
@@ -46,7 +47,7 @@ open class ApiObject {
 
                 if (it.name == "file" || it.name == "image") {
                     val file = it.getter.call(this) as String
-                    json.put(it.name, "https://cdn.duncte123.me/" + file.eloquent())
+                    json.put(it.name, file.cdnPrefix())
                 } else {
                     json.put(it.name, it.getter.call(this))
                 }

@@ -51,7 +51,7 @@ public class HackbanCommand extends Command {
             return;
         }
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Usage is " + PREFIX + getName() + " <userId...>");
             return;
         }
