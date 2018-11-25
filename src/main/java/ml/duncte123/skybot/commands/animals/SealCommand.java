@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.animals;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.extensions.LaravelKt;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,18 +31,22 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SealCommand extends Command {
 
+    @SuppressWarnings("FieldCanBeLocal")
+    private final int availableSeals = 83;
+
     public SealCommand() {
         this.category = CommandCategory.ANIMALS;
     }
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        int availableSeals = 83;
         int sealID = (int) Math.floor(Math.random() * availableSeals) + 1;
-        String idStr = ("0000" + String.valueOf(sealID)).substring(String.valueOf(sealID).length());
-        String sealLoc = "https://raw.githubusercontent.com/TheBITLINK/randomse.al/master/seals/" + idStr + ".jpg";
-        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(sealLoc));
+        String idStr = ("0000" + sealID).substring(String.valueOf(sealID).length());
+        String sealLoc = LaravelKt.cdnPrefix(
+            "https://focabot.github.io/random-seal/seals/" + idStr + ".jpg"
+        );
 
+        sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(sealLoc));
     }
 
     @Override

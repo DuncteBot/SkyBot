@@ -29,7 +29,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class SetWelcomeChannelCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        if (ctx.getArgs().size() < 1) {
+        if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setwelcomechannel [text channel]`");
             return;
         }

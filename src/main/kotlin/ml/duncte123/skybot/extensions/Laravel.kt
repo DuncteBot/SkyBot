@@ -43,3 +43,7 @@ fun String.eloquent(): String {
     return String(result).trim()
 
 }
+
+fun String.cdnPrefix(): String {
+    return "https://cdn.duncte123.me/${eloquent()}"
+}
