@@ -205,7 +205,7 @@ public class SkyBot {
     private void startGameTimer() {
         this.gameScheduler.scheduleAtFixedRate(
             () -> this.shardManager.setGameProvider(this.gameProvider),
-            1, 1, TimeUnit.HOURS);
+            1, 1, TimeUnit.DAYS);
     }
 
     private static void gen() {

@@ -80,20 +80,15 @@ public class LockEmoteCommand extends Command {
             return;
         }
 
-        Emote mentionedEmote = mentionedEmotes.get(0);
+        Emote emote = mentionedEmotes.get(0);
 
-        ctx.getGuild().retrieveEmoteById(mentionedEmote.getIdLong()).queue(
-            (emote) -> {
-                if (cannotInteractWithEmote(event, emote)) return;
+        if (cannotInteractWithEmote(event, emote)) return;
 
-                emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
-                sendSuccess(message);
-                List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
-                sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
-                    "following roles: `" + String.join("`, `", roleNames) + "`");
-            },
-            (error) -> sendMsg(event, "That emote does not exist on this server")
-        );
+        emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
+        sendSuccess(message);
+        List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
+        sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
+            "following roles: `" + String.join("`, `", roleNames) + "`");
     }
 
     @Override

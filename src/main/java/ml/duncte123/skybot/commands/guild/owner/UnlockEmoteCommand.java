@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Emote;
-import net.dv8tion.jda.core.entities.ListedEmote;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -69,23 +68,15 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        Emote foundEmote = foundEmotes.get(0);
+        Emote emote = foundEmotes.get(0);
 
-        ctx.getGuild().retrieveEmoteById(foundEmote.getIdLong()).queue(
-            (emote) -> {
-                if (cannotInteractWithEmote(event, emote)) return;
-
-                emote.getManager().setRoles(Collections.emptySet()).queue();
-                sendSuccess(message);
-                sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
-            },
-            (error) -> sendMsg(event, "That emote does not exist on this server")
-        );
-
-
+        if (cannotInteractWithEmote(event, emote)) return;
+        emote.getManager().setRoles(Collections.emptySet()).queue();
+        sendSuccess(message);
+        sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
-    static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, ListedEmote emote) {
+    static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {
         if (!emote.getGuild().equals(event.getGuild())) {
             sendMsg(event, "That emote does not exist on this server");
             return true;
