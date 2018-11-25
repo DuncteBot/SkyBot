@@ -29,10 +29,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import net.dv8tion.jda.core.entities.MessageEmbed;
-import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
@@ -48,7 +45,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
@@ -342,16 +338,16 @@ public class CommandManager {
                         .put("args", String.join(" ", args))
                         .parse(cc.getMessage());
 
-                    JSONObject embedJson = parser.get("embed");
+                    /*JSONObject embedJson = parser.get("embed");
 
                     JDAImpl jda = (JDAImpl) event.getJDA();
-                    MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);
+                    MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);*/
 
                     if (!message.isBlank()) {
                         sendMsg(event, "\u200B" + message);
                     }
 
-                    sendEmbedRaw(event.getChannel(), embed, null);
+//                    sendEmbedRaw(event.getChannel(), embed, null);
                     parser.clear();
                 } catch (Exception e) {
                     sendMsg(event, "Error with parsing custom command: " + e.getMessage());

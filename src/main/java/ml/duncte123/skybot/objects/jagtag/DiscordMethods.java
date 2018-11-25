@@ -31,8 +31,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
@@ -226,7 +224,7 @@ public class DiscordMethods {
                 }
                 int randNum = (int) Math.round(Math.random() * channels.size()) + 1;
                 return channels.get(randNum).getAsMention();
-            }),
+            })/*,
 
             new Method("embed", (env, input) -> {
                 try {
@@ -238,7 +236,7 @@ public class DiscordMethods {
                     throw new ParseException("The embed input is not valid JSON");
                 }
                 return "";
-            })
+            })*/
         );
     }
 

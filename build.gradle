@@ -118,8 +118,8 @@ dependencies {
     // Oauth
     implementation group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'b98962c'
 
-//    implementation group: 'com.jagrosh', name: 'JagTag', version: '0.5'
-    implementation 'com.github.DuncteBot:JagTag:8d06aeae63'
+    implementation group: 'com.jagrosh', name: 'JagTag', version: '0.5'
+//    implementation 'com.github.DuncteBot:JagTag:8d06aeae63'
     
     //Wolfaram alpha
     implementation group: 'com.github.DuncteBot', name: 'wolfram-alpha-java-binding', version: '5c123ae'
