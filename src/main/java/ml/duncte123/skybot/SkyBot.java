@@ -34,6 +34,7 @@ import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.Game;
+import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.io.FileUtils;
@@ -135,17 +136,14 @@ public class SkyBot {
         //Set the game from the config
         int gameId = config.discord.game.type;
         String name = config.discord.game.name;
-        String url = "https://www.twitch.tv/duncte123";
+        GameType gameType = GameType.fromKey(gameId);
+        String streamUrl = gameType == GameType.STREAMING ? config.discord.game.streamUrl : null;
 
-
-        Game.GameType type = Game.GameType.fromKey(gameId);
-        if (type.equals(Game.GameType.STREAMING)) {
-            url = config.discord.game.streamUrl;
-        }
-
-        final String finalUrl = url;
-        this.gameProvider = (shardId) -> Game.of(type,
-            name.replace("{shardId}", Integer.toString(shardId + 1)), finalUrl);
+        this.gameProvider = (shardId) -> Game.of(
+            gameType,
+            name.replace("{shardId}", Integer.toString(shardId + 1)),
+            streamUrl
+        );
 
         logger.info(commandManager.getCommands().size() + " commands loaded.");
         LavalinkManager.ins.start(config, variables.getAudioUtils());

@@ -51,7 +51,7 @@ public class SoftbanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 1) {
+        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 1) {
             MessageUtils.sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> [Reason]");
             return;
         }

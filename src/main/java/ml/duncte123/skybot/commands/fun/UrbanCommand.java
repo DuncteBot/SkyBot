@@ -41,7 +41,7 @@ public class UrbanCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (ctx.getArgs().size() < 1) {
+        if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage: `" + PREFIX + getName() + " <search term>`");
             return;
         }
