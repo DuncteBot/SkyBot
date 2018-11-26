@@ -52,6 +52,10 @@ function initEitor() {
     });
 
     editor.completers = [jagTagCompleter];
+
+    editor.getSession().on('change', () => {
+        _("chars").innerHTML = editor.getSession().getValue().length;
+    });
 }
 
 function loadCommands() {
@@ -112,6 +116,7 @@ function showCommand(name) {
 }
 
 function clearEditor() {
+    _("chars").innerHTML = 0;
     editor.setValue("");
     modal.close();
 }
@@ -136,6 +141,7 @@ function saveEdit(name) {
             if (json.status === "success") {
                 toast("Saved!");
                 modal.close();
+                _("chars").innerHTML = 0;
                 return
             }
 
@@ -155,10 +161,12 @@ function showModal(invoke, message, method) {
     modal.open();
     editor.resize();
     editor.clearSelection();
+    _("chars").innerHTML = message.length;
 }
 
 function prepareCreateNew() {
-    showModal("", "", "createNew()")
+    _("chars").innerHTML = 0;
+    showModal("", "", "createNew()");
 }
 
 function createNew() {
@@ -179,6 +187,11 @@ function createNew() {
 
     if (action === "") {
         toast("Message cannot be empty");
+        return
+    }
+
+    if (action.length > 4000) {
+        toast("Message cannot greater than 4000 characters");
         return
     }
 
@@ -207,6 +220,7 @@ function createNew() {
                 toast("Command added");
                 setTimeout(() => window.location.reload(), 500);
                 modal.close();
+                _("chars").innerHTML = 0;
                 return
             }
 
