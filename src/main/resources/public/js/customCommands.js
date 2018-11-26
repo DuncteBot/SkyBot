@@ -136,7 +136,6 @@ function saveEdit(name) {
             if (json.status === "success") {
                 toast("Saved!");
                 modal.close();
-                setTimeout(() => window.location.reload(), 500);
                 return
             }
 
@@ -206,6 +205,7 @@ function createNew() {
 
             if (json.status === "success") {
                 toast("Command added");
+                setTimeout(() => window.location.reload(), 500);
                 modal.close();
                 return
             }

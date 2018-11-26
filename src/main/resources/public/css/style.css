@@ -74,6 +74,10 @@ main {
     border: 1px solid #99AAB5;
 }
 
+.toast {
+    background-color: #626161 !important;
+}
+
 button, input, optgroup, select, textarea {
     color: #ffffff;
 }
