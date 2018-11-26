@@ -125,6 +125,14 @@ object CustomCommands {
         }
 
         val message = commandData.getString("message")
+
+        if (message.length > 4000) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Message is over 4000 characters")
+                .put("code", response.status())
+        }
+
         val manager = variables.commandManager
 
         if (commandExists(invoke, guild.idLong, manager)) {

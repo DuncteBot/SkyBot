@@ -224,7 +224,19 @@ public class DiscordMethods {
                 }
                 int randNum = (int) Math.round(Math.random() * channels.size()) + 1;
                 return channels.get(randNum).getAsMention();
-            })
+            })/*,
+
+            new Method("embed", (env, input) -> {
+                try {
+                    JSONObject jsonObject = new JSONObject(input[0]);
+                    jsonObject.put("type", "rich");
+                    env.put("embed", jsonObject);
+                }
+                catch (JSONException e) {
+                    throw new ParseException("The embed input is not valid JSON");
+                }
+                return "";
+            })*/
         );
     }
 

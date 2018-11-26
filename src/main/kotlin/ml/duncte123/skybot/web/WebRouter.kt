@@ -29,16 +29,15 @@ import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.Commands
+import ml.duncte123.skybot.web.controllers.OneGuildRegister
 import ml.duncte123.skybot.web.controllers.Suggestions
-import ml.duncte123.skybot.web.controllers.api.CustomCommands
-import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
-import ml.duncte123.skybot.web.controllers.api.Kpop
-import ml.duncte123.skybot.web.controllers.api.MainApi
+import ml.duncte123.skybot.web.controllers.api.*
 import ml.duncte123.skybot.web.controllers.crons.CronJobs
 import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
+import org.apache.commons.lang3.RandomStringUtils
 import spark.ModelAndView
 import spark.Spark.path
 import spark.kotlin.*
@@ -88,6 +87,15 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
         get("/liveServerCount") {
             return@get engine.render(ModelAndView(mapOf("nothing" to "something"),
                 "static/liveServerCount.twig"))
+        }
+
+        get("/register-server", WebVariables()
+            .put("title", "Register your server for patron perks")
+            .put("chapta_sitekey", config.apis.chapta.sitekey)
+            .put("form_id", RandomStringUtils.random(10, true, false)), "oneGuildRegister.twig")
+
+        post("/register-server") {
+            return@post OneGuildRegister.post(request, shardManager, variables, engine)
         }
 
         path("/dashboard") {
@@ -205,6 +213,10 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
                 post("") {
                     return@post CustomCommands.create(request, response, shardManager, variables)
                 }
+            }
+
+            post("/checkUserAndGuild") {
+                return@post FindUserAndGuild.get(request, response, shardManager)
             }
 
         }
