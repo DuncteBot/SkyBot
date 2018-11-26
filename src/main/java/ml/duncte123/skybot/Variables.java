@@ -28,6 +28,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.apis.BlargBot;
+import ml.duncte123.skybot.objects.apis.DuncteApis;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -49,6 +50,7 @@ public class Variables {
     private final BlargBot blargBot;
     private final TLongObjectMap<GuildSettings> guildSettings;
     private DunctebotConfig config;
+    private final DuncteApis apis;
 
 
     public Variables() {
@@ -75,6 +77,8 @@ public class Variables {
             .build();
         this.isSql = config.use_database;
         this.database = new DBManager(isSql, config.sql);
+//        this.apis = new DuncteApis().setApiKey("Bot " + config.discord.token);
+        this.apis = new DuncteApis().setApiKey("");
         this.commandManager = new CommandManager(this);
         this.blargBot = new BlargBot(config.apis.blargbot);
         this.guildSettings = new TLongObjectHashMap<>();
@@ -119,5 +123,9 @@ public class Variables {
 
     public AudioUtils getAudioUtils() {
         return audioUtils;
+    }
+
+    public DuncteApis getApis() {
+        return apis;
     }
 }

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
+import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -29,11 +30,11 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.ConcurrentHashMap;
@@ -361,20 +362,19 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        database.run(() -> {
 
-            try (Connection con = database.getConnManager().getConnection()) {
-                ResultSet res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands");
-                while (res.next()) {
-                    addCustomCommand(new CustomCommandImpl(
-                        res.getString("invoke"),
-                        res.getString("message"),
-                        Long.parseUnsignedLong(res.getString("guildId"))
-                    ), false, false);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+        variables.getApis().getCustomCommands().async(
+                (rc) -> rc.forEach(
+                    (c) -> {
+                        JSONObject j = (JSONObject) c;
+
+                        addCustomCommand(new CustomCommandImpl(
+                            j.getString("invoke"),
+                            j.getString("message"),
+                            j.getLong("guildId")
+                        ), false, false);
+                    }
+                )
+            );
     }
 }
