@@ -1,0 +1,143 @@
+{% extends 'templates/base.twig' %}
+
+{% set pattern = '[0-9]{17,20}' %}
+{% set link = 'https://support.discordapp.com/hc/en-us/articles/206346498' %}
+
+{% block container %}
+
+    <div class="row col s12">
+        <div class="rowInner">
+            <h3>Register your server for patron perks</h3>
+            <div class="divider"></div>
+            <p>If you bought the <strong>One server premium features</strong> from
+                <a href="https://www.patreon.com/DuncteBot" target="_blank">our Patreon</a> you can enter the id of
+                you and the server that you want the perks to be active in here to have the patron perks enabled</p>
+
+            <p>Don't know how to get these ids? No problem, here's <a href="{{ link }}" target="_blank">an article</a> explaining how
+                to obtain these ids: <a href="{{ link }}" target="_blank">{{ link }}</a></p>
+
+            <div id="confirm">
+                {% if message %}
+                    <div class="row">
+                        <div class="col s5">
+                            <p>{{ message | raw }}</p>
+                        </div>
+                    </div>
+                {% endif %}
+            </div>
+
+            {% if not hideForm %}
+                <form id="{{ form_id }}" action="" method="post" autocomplete="off">
+
+                    <div class="input-field">
+                        <input type="text" pattern="{{ pattern }}"
+                               class="input-field validate" name="user_id" id="user_id" required/>
+                        <label for="user_id">Your discord user id</label>
+                        <span class="helper-text" data-error="That does not look like a discord id"
+                              data-success=""></span>
+                    </div>
+
+                    <div class="input-field">
+                        <input type="text" pattern="{{ pattern }}"
+                               class="input-field validate" name="guild_id" id="guild_id" required/>
+                        <label for="guild_id">Your discord server id</label>
+                        <span class="helper-text" data-error="That does not look like a discord id"
+                              data-success=""></span>
+                    </div>
+
+                    <button class="btn waves-effect waves-light waves-ripple blue accent-4 g-recaptcha"
+                            id="btn"
+                            data-sitekey="{{ chapta_sitekey }}"
+                            data-callback="submitForm">Submit
+                    </button>
+
+                    <span id="msg"></span>
+                </form>
+            {% endif %}
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script src='https://www.google.com/recaptcha/api.js'></script>
+    <script>
+        function submitForm(token) {
+
+            let userId = _("user_id").value;
+            let guildId = _("guild_id").value;
+
+            _("btn").disabled = true;
+            _("btn").classList.add("disabled");
+            _("msg").innerHTML = "Checking ids.....";
+
+            fetch("/api/checkUserAndGuild", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/x-www-form-urlencoded"
+                },
+                body: `user_id=${userId}&guild_id=${guildId}`
+            })
+                .then((blob) => blob.json())
+                .then((json) => {
+
+                    window.scrollTo(0, 0);
+                    _("btn").disabled = false;
+                    _("btn").classList.remove("disabled");
+                    _("msg").innerHTML = "";
+
+                    if (json.code !== 200) {
+                        _("confirm").innerHTML = `ERROR: <b>${getMessage(json.message)}</b>`;
+                        return;
+                    }
+
+                    _("confirm").innerHTML = `
+                    <div class="row">
+                    <div class="col s12 m6">
+                        <div class="card small indigo">
+                            <div class="card-content white-text">
+                                <span class="card-title">Confirm your selection</span>
+                                <p>To make sure that the patron perks get added to the correct user and server,
+                                    please confirm your input</p>
+                                <br>
+
+                                <p>User: <i>${json.user.formatted}</i></p>
+                                <p>Server: <i>${json.guild.name}</i></p>
+                                <br>
+
+                                <p>If this is not correct please change the ids in the form and press submit again.</p>
+                            </div>
+                            <div class="card-action ">
+                                <a href="#" class="green-text text-lighten-4" onclick="_('{{ form_id }}').submit(); return false;">This is correct</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                    `;
+                })
+                .catch((e) => {
+                    window.scrollTo(0, 0);
+                    _("btn").disabled = false;
+                    _("btn").classList.remove("disabled");
+                    _("msg").innerHTML = e.message;
+                    console.log(e);
+                    console.error(e)
+                });
+        }
+        
+        function getMessage(m) {
+            
+            switch (m) {
+                case "missing_input":
+                    return "Please fill in all fields";
+                case "no_user":
+                    return "The specified user id did not resolve any users.";
+                case "no_guild":
+                    return "The specified server id did not resolve any servers.";
+                default:
+                    return m;
+            }
+        }
+    </script>
+{% endblock %}

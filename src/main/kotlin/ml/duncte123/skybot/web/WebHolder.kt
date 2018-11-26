@@ -29,6 +29,7 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.routes.*
+import ml.duncte123.skybot.web.routes.api.FindUserAndGuild
 import ml.duncte123.skybot.web.routes.api.GetUserGuilds
 import ml.duncte123.skybot.web.routes.api.Kpop
 import ml.duncte123.skybot.web.routes.api.MainApi
@@ -79,6 +80,7 @@ class WebHolder(val shardManager: ShardManager, val variables: Variables) {
         Callback(this)
         Invite()
         LiveServerCount(this)
+        OneGuildRegister(this)
 
         // Dashboard routes
         Dashbord(this)
@@ -92,6 +94,7 @@ class WebHolder(val shardManager: ShardManager, val variables: Variables) {
         MainApi(this)
         GetUserGuilds(this)
         Kpop(this)
+        FindUserAndGuild(this)
 
         // Cronjob routes
         CronJobs(this)
