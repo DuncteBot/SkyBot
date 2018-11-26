@@ -63,7 +63,7 @@ import java.util.function.IntFunction;
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
     @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
-public class SkyBot {
+public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
