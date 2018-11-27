@@ -41,7 +41,7 @@ import java.util.Objects;
  * https://github.com/Frederikam/FredBoat/blob/master/FredBoat/src/main/java/fredboat/audio/player/LavalinkManager.java\
  * and has been modified to fit my needs
  */
-public class LavalinkManager {
+public final class LavalinkManager {
 
     public static final LavalinkManager ins = new LavalinkManager();
     private JdaLavalink lavalink = null;

@@ -16,35 +16,21 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes
+package ml.duncte123.skybot.web.controllers.crons
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
-import spark.kotlin.get
+import ml.duncte123.skybot.connections.database.DBManager
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class Callback(private val holder: WebHolder) {
+object CronJobs {
 
-    init {
-        get("/callback") {
-            if (!request.queryParams().contains("code")) {
-                return@get response.redirect("/")
-            }
+    fun clearExpiredWarns(database: DBManager): Any {
 
-            val sesid: String = request.session().attribute(holder.SESSION_ID)
-
-            val oauthses = holder.oAuth2Client.startSession(
-                request.queryParams("code"),
-                request.queryParams("state"),
-                sesid
-            ).complete()
-
-            val userId = holder.oAuth2Client.getUser(oauthses).complete().id
-
-            request.session(true).attribute(holder.USER_SESSION, "$sesid${holder.SPLITTER}$userId")
-
-            response.redirect("/dashboard")
+        database.connManager.use {
+            it.connection.createStatement()
+                .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
         }
-    }
 
+        return "Ok"
+    }
 }

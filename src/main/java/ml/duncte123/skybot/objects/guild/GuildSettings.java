@@ -362,7 +362,7 @@ public class GuildSettings {
     }
 
     @SuppressWarnings("unused") // This is used in twig but not detected by your ide
-    // because for some reason twig can't handle long[]
+    // because for some reason twig casts long[] to an object
     public Long[] getRateLimitsForTwig() {
         Long[] temp = new Long[ratelimits.length];
         for (int i = 0; i < ratelimits.length; i++)

@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
-import ml.duncte123.skybot.web.WebHolder;
+import ml.duncte123.skybot.web.WebRouter;
 import net.dv8tion.jda.bot.sharding.DefaultShardManagerBuilder;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.EmbedBuilder;
@@ -63,7 +63,7 @@ import java.util.function.IntFunction;
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
     @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
-public class SkyBot {
+public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
@@ -167,7 +167,7 @@ public class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebHolder(shardManager, variables);
+            new WebRouter(shardManager, variables);
         }
     }
 

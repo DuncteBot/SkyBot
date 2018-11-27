@@ -12,4 +12,65 @@
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>
     </div>
 
+
+    <div class="row">
+
+        <h6 class="left">Custom commands:</h6>
+
+        <div class="right">
+
+            <a href="#" class="btn btn-large waves-effect waves-light"
+                    onclick="prepareCreateNew(); return false;"><i class="material-icons">add</i> Create new command</a>
+
+        </div>
+
+        <div class="clearfix"></div><br/>
+
+        <ul class="collection" id="commands">
+            <p class="center flow-text">Loading...</p>
+        </ul>
+
+    </div>
+
+
+    <div id="commandModal" class="modal discord not-black">
+        <div class="modal-content">
+            <div class="input-field">
+                <input type="text" id="commandName" name="commandName" placeholder="Name your command" maxlength="25">
+                <label for="commandName">Command name</label>
+            </div>
+            <br />
+
+            <div>
+                <div id="editor"></div>
+                <div class="right"><span id="chars">0</span>/4000</div>
+                <div class="clearfix"></div>
+            </div>
+
+            <p>Need help with the JagTag syntax? <a href="https://github.com/DuncteBot/SkyBot/wiki/JagTag"
+                                                    target="_blank">Click here!</a></p>
+        </div>
+        <div class="modal-footer discord not-black">
+            <a href="#" onclick="saveEdit(); return false;" id="saveBtn"
+               class="waves-effect waves-green btn green white-text">Save</a>
+            <a href="#" onclick="clearEditor(); return false;"
+               class="waves-effect waves-red btn red white-text">Discard</a>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script src="/js/customCommands.js"></script>
+    <script src="/js/ace/ace.js"></script>
+    <script src="/js/ace/ext-language_tools.js"></script>
+    <script src="/js/wordlist.js"></script>
+    <script>
+        window.guildId = "{{ guild.getIdLong() }}";
+        window.prefix = "{{ settings.getCustomPrefix() }}";
+        // Load modules
+        initModal();
+        initEitor();
+        loadCommands();
+    </script>
 {% endblock %}

@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.time.DateUtils;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
@@ -133,6 +134,10 @@ public class CommandManager {
     public CustomCommand getCustomCommand(String invoke, long guildId) {
         return customCommands.stream().filter(c -> c.getGuildId() == guildId)
             .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+    }
+
+    public List<CustomCommand> getCustomCommands(long guildId) {
+        return customCommands.stream().filter(c -> c.getGuildId() == guildId).collect(Collectors.toList());
     }
 
     public boolean editCustomCommand(CustomCommand c) {
@@ -375,6 +380,12 @@ public class CommandManager {
 
     private void loadCustomCommands() {
         database.run(() -> {
+
+            try {
+                // Sleep for database safety
+                Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
+            } catch (InterruptedException ignored) {
+            }
 
             try (Connection con = database.getConnManager().getConnection()) {
                 ResultSet res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands");
