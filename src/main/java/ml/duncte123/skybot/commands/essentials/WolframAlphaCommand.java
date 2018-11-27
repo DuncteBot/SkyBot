@@ -66,35 +66,35 @@ public class WolframAlphaCommand extends Command {
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
 
-        eb.setTitle("**Input:** " + a(result.getQuery().getInput()),
-            a(result.getQuery().toWebsiteURL()));
+        eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
+            parseString(result.getQuery().toWebsiteURL()));
 
         for (WAPod pod : result.getPods()) {
-            String name = a(pod.getTitle());
+            String name = parseString(pod.getTitle());
             StringBuilder embeds = new StringBuilder();
             //Loop over the subpods
             for (WASubpod sp : pod.getSubpods()) {
                 //yet another stringbuilder
                 StringBuilder e = new StringBuilder();
                 //append the title
-                e.append(a(sp.getTitle()));
+                e.append(parseString(sp.getTitle()));
                 //loop over the contents
                 for (Visitable v : sp.getContents()) {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
-                        d += "[" + a(i.getTitle()) + "](" + shortenUrl(i.getURL(), googleKey).execute() + ")";
+                        d += "[" + parseString(i.getTitle()) + "](" + shortenUrl(i.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAInfo) {
                         WAInfo i = (WAInfo) v;
-                        d += a(i.getText());
+                        d += parseString(i.getText());
                         //Ramid when?
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
                         WALink l = (WALink) v;
-                        d += "[" + a(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey).execute() + ")";
+                        d += "[" + parseString(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAPlainText) {
                         WAPlainText pt = (WAPlainText) v;
-                        d += a(pt.getText());
+                        d += parseString(pt.getText());
                     } else if (v instanceof WASound) {
                         WASound sound = (WASound) v;
                         d += shortenUrl(sound.getURL(), googleKey).execute();
@@ -103,10 +103,10 @@ public class WolframAlphaCommand extends Command {
                     e.append(d).append("\n\n");
                 }
 
-                embeds.append(a(e.toString().trim())).append("\n\n");
+                embeds.append(parseString(e.toString().trim())).append("\n\n");
             }
 
-            eb.addField(name, a(embeds.toString().trim()), false);
+            eb.addField(name, parseString(embeds.toString().trim()), false);
         }
 
         return eb.build();
@@ -120,7 +120,7 @@ public class WolframAlphaCommand extends Command {
 
         if (!isUserOrGuildPatron(event)) return;
 
-        if (args.size() == 0) {
+        if (args.isEmpty()) {
             MessageUtils.sendMsg(event, ":x: Must give a question!!!");
             return;
         }
@@ -190,7 +190,7 @@ public class WolframAlphaCommand extends Command {
         return engine;
     }
 
-    private static String a(String s) {
+    private static String parseString(String s) {
         if (s == null) return "null";
 
         if (s.length() <= 2000 - 6) return s;

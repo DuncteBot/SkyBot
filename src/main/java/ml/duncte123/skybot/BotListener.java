@@ -36,10 +36,7 @@ import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
-import net.dv8tion.jda.core.events.guild.member.GenericGuildMemberEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberLeaveEvent;
-import net.dv8tion.jda.core.events.guild.member.GuildMemberRoleRemoveEvent;
+import net.dv8tion.jda.core.events.guild.member.*;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -50,6 +47,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
@@ -170,7 +168,6 @@ public class BotListener extends ListenerAdapter {
         logger.info("Collecting patrons");
 
         Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-        Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
 
         List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
@@ -198,32 +195,7 @@ public class BotListener extends ListenerAdapter {
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
-        String dbName = database.getName();
-
-        database.run(() -> {
-
-            try (Connection connection = database.getConnection()) {
-                ResultSet resultSet = connection.createStatement().executeQuery("SELECT * FROM " + dbName + ".oneGuildPatrons");
-
-                while (resultSet.next()) {
-
-                    long userId = Long.parseLong(resultSet.getString("user_id"));
-                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
-
-                    Member memberInServer = supportGuild.getMemberById(userId);
-
-                    if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
-                        Command.oneGuildPatrons.put(userId, guildId);
-                    }
-                }
-
-                logger.info("Found {} one guild patrons", Command.oneGuildPatrons.keySet().size());
-
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-
-        });
+        GuildUtils.reloadOneGuildPatrons(manager, database);
     }
 
     @Override
@@ -341,7 +313,7 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         if (guild.getIdLong() == Command.supportGuildId) {
-            handlePatronRemoveal(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong());
         }
 
         if (event.getMember().equals(guild.getSelfMember())) return;
@@ -394,13 +366,19 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         Guild guild = event.getGuild();
-        if (LavalinkManager.ins.isConnected(guild)
-            && !event.getVoiceState().getMember().equals(guild.getSelfMember())) {
-            VoiceChannel vc = LavalinkManager.ins.getConnectedChannel(guild);
+        LavalinkManager manager = LavalinkManager.ins;
+        GuildVoiceState voiceState = event.getVoiceState();
+
+        if (manager.isConnected(guild)
+            && !voiceState.getMember().equals(guild.getSelfMember())) {
+            VoiceChannel vc = manager.getConnectedChannel(guild);
+
             if (vc != null) {
+
                 if (!event.getChannelLeft().equals(vc)) {
                     return;
                 }
+
                 channelCheckThing(guild, event.getChannelLeft());
             }
         }
@@ -409,34 +387,82 @@ public class BotListener extends ListenerAdapter {
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         Guild guild = event.getGuild();
-        try {
-            if (LavalinkManager.ins.isConnected(guild)) {
-                if (!event.getChannelJoined().equals(LavalinkManager.ins.getConnectedChannel(guild)) && event.getMember().equals(guild.getSelfMember())) {
-                    channelCheckThing(guild, LavalinkManager.ins.getConnectedChannel(guild));
+        LavalinkManager manager = LavalinkManager.ins;
 
-                    return;
-                }
+        if (manager.isConnected(guild)) {
+            VoiceChannel connected = manager.getConnectedChannel(guild);
 
-                if (event.getChannelLeft().equals(LavalinkManager.ins.getConnectedChannel(guild))) {
-                    channelCheckThing(guild, event.getChannelLeft());
-                    //return;
-                }
+            if (connected == null) {
+                return;
             }
-        } catch (NullPointerException ignored) {
+
+            if (!event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
+                channelCheckThing(guild, connected);
+
+                return;
+            }
+
+            if (event.getChannelLeft().equals(connected)) {
+                channelCheckThing(guild, event.getChannelLeft());
+                //return;
+            }
         }
     }
 
     @Override
     public void onGuildMemberRoleRemove(GuildMemberRoleRemoveEvent event) {
 
-        if (event.getGuild().getIdLong() != Command.supportGuildId) return;
+        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+            return;
+        }
 
         for (Role role : event.getRoles()) {
             long roleId = role.getIdLong();
-            if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole)) continue;
 
-            handlePatronRemoveal(event.getUser().getIdLong());
+            if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole || roleId == Command.oneGuildPatronsRole)) {
+                continue;
+            }
+
+            handlePatronRemoval(event.getUser().getIdLong());
         }
+    }
+
+    @Override
+    public void onGuildMemberRoleAdd(GuildMemberRoleAddEvent event) {
+
+        if (event.getGuild().getIdLong() != Command.supportGuildId) {
+            return;
+        }
+
+        User user = event.getUser();
+        long userId = user.getIdLong();
+        ShardManager manager = event.getJDA().asBot().getShardManager();
+
+        for (Role role : event.getRoles()) {
+            long roleId = role.getIdLong();
+
+            if (roleId == Command.patronsRole) {
+                Command.patrons.add(userId);
+            }
+
+            if (roleId == Command.guildPatronsRole) {
+                List<Long> guilds = manager.getMutualGuilds(user).stream()
+                    .filter((it) -> {
+                        Member member = it.getMember(user);
+
+                        return it.getOwner().equals(member) || member.hasPermission(Permission.ADMINISTRATOR);
+                    })
+                    .map(Guild::getIdLong)
+                    .collect(Collectors.toList());
+
+                Command.guildPatrons.addAll(guilds);
+            }
+
+            if (roleId == Command.oneGuildPatronsRole) {
+                handleNewOneGuildPatron(userId);
+            }
+        }
+
     }
 
     @Override
@@ -547,6 +573,7 @@ public class BotListener extends ListenerAdapter {
                 g.getAudioManager().setConnectionListener(null);
 
             sendMsg(g.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+
             if (LavalinkManager.ins.isConnected(g)) {
                 LavalinkManager.ins.closeConnection(g);
                 variables.getAudioUtils().getMusicManagers().remove(g.getIdLong());
@@ -697,14 +724,39 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
-    private void handlePatronRemoveal(long userId) {
+    private void handlePatronRemoval(long userId) {
         // Remove the user from the patrons list
         Command.patrons.remove(userId);
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);
+        GuildUtils.removeOneGuildPatron(userId, database);
 
         // TODO: Handle full guild case
         // But hey, who cares right now
+    }
+
+    private void handleNewOneGuildPatron(long userId) {
+        database.run(() -> {
+
+            try (Connection connection = database.getConnection()) {
+                PreparedStatement statement = connection.prepareStatement(
+                    "SELECT * FROM " + database.getName() + ".oneGuildPatrons WHERE user_id = ? LIMIT 1");
+
+                statement.setLong(1, userId);
+
+                ResultSet resultSet = statement.executeQuery();
+
+                while (resultSet.next()) {
+                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
+
+                    Command.oneGuildPatrons.put(userId, guildId);
+                }
+
+            } catch (SQLException e) {
+                e.printStackTrace();
+            }
+
+        });
     }
 }

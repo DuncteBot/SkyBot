@@ -53,7 +53,7 @@ public class BanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().size() < 1 || args.size() < 2) {
+        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + PREFIX + getName() + " <@user> <Reason>");
             return;
         }

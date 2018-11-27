@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -60,35 +61,32 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        List<Emote> foundEmotes = message.getEmotes();
+        List<Emote> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
 
         if (foundEmotes.isEmpty()) {
             sendMsg(event, "No emotes found");
             return;
         }
 
-        Emote foundEmote = foundEmotes.get(0);
+        Emote emote = foundEmotes.get(0);
 
-        ctx.getGuild().retrieveEmoteById(foundEmote.getIdLong()).queue(
-            (emote) -> {
-                if (!emote.getGuild().equals(event.getGuild())) {
-                    sendMsg(event, "That emote does not exist on this server");
-                    return;
-                }
+        if (cannotInteractWithEmote(event, emote)) return;
+        emote.getManager().setRoles(Collections.emptySet()).queue();
+        sendSuccess(message);
+        sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
+    }
 
-                if (emote.isManaged()) {
-                    sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
-                    return;
-                }
+    static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {
+        if (!emote.getGuild().equals(event.getGuild())) {
+            sendMsg(event, "That emote does not exist on this server");
+            return true;
+        }
 
-                emote.getManager().setRoles(Collections.emptySet()).queue();
-                sendSuccess(message);
-                sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
-            },
-            (error) -> sendMsg(event, "That emote does not exist on this server")
-        );
-
-
+        if (emote.isManaged()) {
+            sendMsg(event, "That emote is managed unfortunately, this means that I can't assign roles to it");
+            return true;
+        }
+        return false;
     }
 
     @Override

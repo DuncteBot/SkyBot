@@ -16,30 +16,29 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.dashboard
-
-import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.objects.WebVariables
-import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.path
-import spark.kotlin.post
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-class CustomCommandSettings(private val holder: WebHolder) {
-
-    init {
-        path("/server/:guildid") {
-            // Custom commands
-            holder.get("/customcommands", WebVariables()
-                .put("title", "Dashboard"), "dashboard/customCommandSettings.twig", true)
-
-            post("/customcommands") {
-
-                request.session().attribute(holder.FLASH_MESSAGE, "<h4>NOT SUPPORTED</h4>")
-
-                response.redirect(request.url())
-            }
-        }
-    }
-
-}
+window.wordList = [
+    "{user}",
+    "{user:SEARCH}",
+    "{nick}",
+    "{nick:SEARCH}",
+    "{discrim}",
+    "{discrim:SEARCH}",
+    "{avatar}",
+    "{avatar:SEARCH}",
+    "{creation:ENTITY ID}",
+    "{userid}",
+    "{atuser}",
+    "{server}",
+    "{serverid}",
+    "{servercount}",
+    "{servericon}",
+    "{channel}",
+    "{channel:SEARCH}",
+    "{channelid}",
+    "{channelid:SEARCH}",
+    "{randuser}",
+    "{randatuser}",
+    "{randonline}",
+    "{randatonline}",
+    "{randchannel}",
+];

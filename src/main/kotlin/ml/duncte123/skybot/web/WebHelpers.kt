@@ -18,22 +18,26 @@
 
 package ml.duncte123.skybot.web
 
+import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
-import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.config.DunctebotConfig
+import net.dv8tion.jda.bot.sharding.ShardManager
+import net.dv8tion.jda.core.entities.Guild
+import org.apache.http.NameValuePair
 import org.json.JSONObject
-import me.duncte123.botcommons.web.WebUtils.ins as web
+import spark.Request
+import java.util.*
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-class ApiHelpers {
+object WebHelpers {
 
     fun verifyCapcha(response: String, secret: String): JSONObject {
         val fields = HashMap<String, Any>()
         fields["secret"] = secret
         fields["response"] = response
-        val req = web.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
+        val req = WebUtils.ins.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
             WebUtils.EncodingType.APPLICATION_JSON)
             .build(WebUtilsErrorUtils::toJSONObject, WebUtilsErrorUtils::handleError)
 
@@ -51,8 +55,41 @@ class ApiHelpers {
             .append("key", config.key)
             .append("token", config.token)
 
-        val t = web.preparePost(query.build()).execute()
+        val t = WebUtils.ins.preparePost(query.build()).execute()
         return JSONObject(t)
     }
 
+    fun toMap(pairs: List<NameValuePair>): Map<String, String> {
+        val map = HashMap<String, String>()
+        for (i in pairs.indices) {
+            val pair = pairs[i]
+            map[pair.name] = pair.value
+        }
+        return map
+    }
+
+    fun getGuildFromRequest(request: Request, shardManager: ShardManager): Guild? {
+
+        val guildId = request.params(WebRouter.GUILD_ID)
+
+        return shardManager.getGuildById(guildId) ?: null
+    }
+
+    fun paramToBoolean(param: String?): Boolean {
+        return if (param.isNullOrEmpty()) false else (param == "on")
+    }
+
+    fun getSession(request: Request, oAuth2Client: OAuth2Client): Session? {
+        val session: String? = request.session().attribute(WebRouter.SESSION_ID)
+
+        if (session.isNullOrEmpty()) {
+            return null
+        }
+
+        return oAuth2Client.sessionController.getSession(session)
+    }
+
+    fun getUserId(request: Request): String {
+        return (request.session().attribute(WebRouter.USER_SESSION) as String).split(WebRouter.SPLITTER)[1]
+    }
 }

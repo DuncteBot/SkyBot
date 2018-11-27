@@ -292,7 +292,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results) throws Exception {
         List<AudioTrack> playList = new ArrayList<>();
-        if (results.size() > 0) {
+        if (!results.isEmpty()) {
             SearchResult video = results.get(0);
             ResourceId rId = video.getId();
             if (rId.getKind().equals("youtube#video")) {

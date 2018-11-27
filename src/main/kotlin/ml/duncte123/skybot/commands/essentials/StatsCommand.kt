@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.AirUtils
 import java.lang.management.ManagementFactory
 import java.sql.Time
 import java.text.DecimalFormat
+import kotlin.math.floor
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StatsCommand : Command() {
@@ -49,12 +50,12 @@ class StatsCommand : Command() {
         val serverCpuUsage = DecimalFormat("###.###%").format(platformMXBean.systemCpuLoad)
         val serverMem = (platformMXBean.totalPhysicalMemorySize shr 20).toDouble()
         val serverMemUsage = serverMem - (platformMXBean.freePhysicalMemorySize shr 20)
-        val serverMemPercent = (serverMemUsage / serverMem) * 100.0
+        val serverMemPercent = floor((serverMemUsage / serverMem) * 100.0)
 
         val jvmCpuUsage = DecimalFormat("###.###%").format(platformMXBean.processCpuLoad)
         val jvmMemUsage = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.used shr 20).toDouble()
         val jvmMemTotal = (ManagementFactory.getMemoryMXBean().heapMemoryUsage.max shr 20).toDouble()
-        val jvmMemPercent = jvmMemUsage / jvmMemTotal * 100
+        val jvmMemPercent = floor((jvmMemUsage / jvmMemTotal) * 100)
         val os = "${platformMXBean.name} ${platformMXBean.arch} ${platformMXBean.version}"
 
         val embed = defaultEmbed()

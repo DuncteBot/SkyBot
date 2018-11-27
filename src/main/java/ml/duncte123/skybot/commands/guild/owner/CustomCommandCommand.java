@@ -50,10 +50,10 @@ public class CustomCommandCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
 
         GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        List<String> args = ctx.getArgsWithQuotes();
         CommandManager manager = ctx.getCommandManager();
 
-        if (args.size() < 1) {
+        if (args.isEmpty()) {
             sendMsg(event, "Insufficient arguments use `db!help customcommand`");
             return;
         }
@@ -90,11 +90,12 @@ public class CustomCommandCommand extends Command {
         } else {
             //fetch a custom command
             CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
-            if (cmd != null)
+            if (cmd != null) {
                 //Run the custom command?
                 manager.dispatchCommand(cmd, arg, List.of(), event);
-            else
+            } else {
                 sendMsg(event, "Invalid arguments use `db!help customcommand`");
+            }
         }
     }
 
@@ -144,9 +145,10 @@ public class CustomCommandCommand extends Command {
 
             //fetch a custom command
             CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getIdLong());
-            if (cmd != null)
+            if (cmd != null) {
                 //Run the custom command?
                 manager.dispatchCommand(cmd, args.get(0), args.subList(1, args.size()), event);
+            }
 
             return;
 
@@ -205,15 +207,15 @@ public class CustomCommandCommand extends Command {
 
     }
 
-    private boolean commandExists(String name, long guild, CommandManager manager) {
+    public static boolean commandExists(String name, long guild, CommandManager manager) {
         return manager.getCustomCommand(name, guild) != null;
     }
 
-    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
+    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
         return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
     }
 
-    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
+    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
         CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
         return manager.editCustomCommand(cmd);
     }
@@ -222,8 +224,10 @@ public class CustomCommandCommand extends Command {
     public String help() {
         return "Create, run and delete custom commands\n" +
             "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
-            "`" + PREFIX + getName() + " new <name> <text>` creates a new custom command\n" +
-            "`" + PREFIX + getName() + " delete <name>` => deletes a custom command";
+            "`" + PREFIX + getName() + " new <name> <text>` => Creates a new custom command\n" +
+            "`" + PREFIX + getName() + " edit <name> <text>` => Edits a custom command\n" +
+            "`" + PREFIX + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
+            "`" + PREFIX + getName() + " delete <name>` => Deletes a custom command";
     }
 
     @Override
