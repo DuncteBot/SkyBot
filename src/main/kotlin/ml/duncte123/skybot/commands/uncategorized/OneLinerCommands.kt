@@ -97,7 +97,13 @@ class OneLinerCommands : Command() {
                     sendMsg(event, "Missing arguments")
                     return
                 }
-                sendMsg(event, "**Output:** ${ctx.argsRaw.reversed()}")
+
+                val message = """**${String.format("%#s", ctx.author)}:**
+                    |**Input:** ${ctx.argsRaw}
+                    |**Output:** ${ctx.argsRaw.reversed()}
+                """.trimMargin()
+
+                sendMsg(event, message)
             }
 
             else -> println("Invoke was invalid: ${ctx.invoke}")
