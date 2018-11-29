@@ -19,28 +19,22 @@
 package ml.duncte123.skybot;
 
 import kotlin.Triple;
-import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.json.JSONObject;
 import org.reflections.Reflections;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -212,22 +206,19 @@ public class CommandManager {
             return false;
 
         try {
-            return database.run(() -> {
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
+                future.complete(bool);
+                return null;
+            });
 
-                try (Connection con = database.getConnManager().getConnection()) {
-                    PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
-                    stm.setString(1, name);
-                    stm.setString(2, Long.toString(guildId));
-                    stm.execute();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            boolean result = future.get();
 
+            if (result) {
                 this.customCommands.remove(cmd);
+            }
 
-                return true;
-            }).get();
+            return result;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
@@ -363,18 +354,14 @@ public class CommandManager {
 
     private void loadCustomCommands() {
 
-        variables.getApis().getCustomCommands().async(
-                (rc) -> rc.forEach(
-                    (c) -> {
-                        JSONObject j = (JSONObject) c;
+        variables.getDatabaseAdapter().getCustomCommands(
+            (loadedCommands) -> {
+                loadedCommands.forEach(
+                    (command) -> addCustomCommand(command, false, false)
+                );
 
-                        addCustomCommand(new CustomCommandImpl(
-                            j.getString("invoke"),
-                            j.getString("message"),
-                            j.getLong("guildId")
-                        ), false, false);
-                    }
-                )
-            );
+                return null;
+            }
+        );
     }
 }
