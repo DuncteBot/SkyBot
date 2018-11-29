@@ -22,27 +22,34 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import org.json.JSONObject
+import java.lang.Exception
 
 class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
 
         variables.database.run {
-            val customCommands = arrayListOf<CustomCommand>()
+            try {
 
-            val array = variables.apis.getCustomCommands()
+                val customCommands = arrayListOf<CustomCommand>()
 
-            array.forEach { c ->
-                val j = c as JSONObject
+                val array = variables.apis.getCustomCommands()
 
-                customCommands.add(CustomCommandImpl(
-                    j.getString("invoke"),
-                    j.getString("message"),
-                    j.getLong("guildId")
-                ))
+                array.forEach { c ->
+                    val j = c as JSONObject
+
+                    customCommands.add(CustomCommandImpl(
+                        j.getString("invoke"),
+                        j.getString("message"),
+                        j.getLong("guildId")
+                    ))
+                }
+
+                callback.invoke(customCommands)
             }
-
-            callback.invoke(customCommands)
+            catch (e: Exception) {
+                e.printStackTrace()
+            }
         }
     }
 

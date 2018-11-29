@@ -24,10 +24,23 @@ import okhttp3.Request
 import org.json.JSONArray
 import org.json.JSONObject
 
+
 class DuncteApis(private val apiKey: String) {
 
     fun getCustomCommands(): JSONArray {
-        return executeRequest(defaultRequest("customcommands")).getJSONArray("data")
+        val page1 = executeRequest(defaultRequest("customcommands?page=1")).getJSONObject("data")
+
+        var data = page1.getJSONArray("data")
+
+        val totalPages = page1.getInt("last_page") + 1
+
+        for (i in 2 until totalPages) {
+            val page = executeRequest(defaultRequest("customcommands?page=$i")).getJSONObject("data")
+
+            data = concatArray(data, page.getJSONArray("data"))
+        }
+
+        return data
     }
 
     fun deleteCustomCommand(guildId: Long, invoke: String): Boolean {
@@ -38,6 +51,18 @@ class DuncteApis(private val apiKey: String) {
 
     private fun executeRequest(request: Request.Builder): JSONObject {
         return WebUtils.ins.prepareRaw(request.build(), WebUtilsErrorUtils::toJSONObject).execute()
+    }
+
+    private fun concatArray(vararg arrs: JSONArray): JSONArray {
+        val result = JSONArray()
+
+        for (arr in arrs) {
+            for (i in 0 until arr.length()) {
+                result.put(arr.get(i))
+            }
+        }
+
+        return result
     }
 
     private fun defaultRequest(path: String): Request.Builder {
