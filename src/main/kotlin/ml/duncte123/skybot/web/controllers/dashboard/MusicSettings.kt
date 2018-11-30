@@ -16,28 +16,27 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes.crons
+package ml.duncte123.skybot.web.controllers.dashboard
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.web.WebHolder
-import spark.Spark.path
-import spark.kotlin.get
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.web.WebHelpers
+import net.dv8tion.jda.bot.sharding.ShardManager
+import spark.Request
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class CronJobs(private val holder: WebHolder) {
+object MusicSettings {
 
-    init {
-        path("/crons") {
+    fun show(request: Request, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+            ?: return "Guild does not exist"
 
-            get("/clearExpiredWarns") {
+        val mng = variables.audioUtils.getMusicManager(guild, false)
+            ?: return "The audio player does not seem to be active"
 
-                holder.database.connManager.use {
-                    it.connection.createStatement()
-                        .execute("DELETE FROM `warnings` WHERE (CURDATE() >= DATE_ADD(expire_date, INTERVAL 5 DAY))")
-                }
-            }
-
-        }
+        return """<p>Audio player details:</p>
+            |<p>Currently playing: <b>${if (mng.player.playingTrack != null) mng.player.playingTrack.info.title else "nothing"}</b></p>
+            |<p>Total tracks in queue: <b>${mng.scheduler.queue.size}</b></p>
+        """.trimMargin()
     }
-
 }

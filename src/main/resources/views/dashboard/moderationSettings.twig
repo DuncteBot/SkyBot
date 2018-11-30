@@ -70,6 +70,9 @@
 
                 <br/>
                 <br/>
+            </div>
+
+            <div class="row section">
 
                 {# Mute role #}
                 <div class="input-field col s12 m3">
@@ -116,11 +119,11 @@
             </div>
 
 
-            <div class="row">
+            <div class="row section">
                 <h6>Ratelimits:</h6>
-                <small>The following values indicate the mutes duration in minutes for incrementing amount of
+                <p>The following values indicate the mutes duration in minutes for incrementing amount of
                     violations
-                </small>
+                </p>
                 <br/>
                 {% for i,r in settings.getRateLimitsForTwig() %}
                     <div class="input-field col s12 m1">

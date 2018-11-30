@@ -40,6 +40,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -48,6 +49,7 @@ import java.util.regex.Pattern;
 public class CommandContext {
 
     private final String invoke;
+    private List<String> argsWithoutQuotes;
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
@@ -110,11 +112,21 @@ public class CommandContext {
     }
 
     public List<String> getArgs() {
+
+        if (this.argsWithoutQuotes == null) {
+            this.argsWithoutQuotes = this.args.stream()
+                .map((arg) -> arg.replace("\"", "")).collect(Collectors.toList());
+        }
+
+        return this.argsWithoutQuotes;
+    }
+
+    public List<String> getArgsWithQuotes() {
         return this.args;
     }
 
     public String getArgsJoined() {
-        return String.join(" ", this.args);
+        return String.join(" ", this.getArgs());
     }
 
     public String getArgsRaw() {

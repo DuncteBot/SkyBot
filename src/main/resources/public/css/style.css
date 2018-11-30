@@ -66,6 +66,22 @@ main {
     animation-delay: 900ms;
 }
 
-.card {
-    background-color: #23272A;
+.collection .collection-item:nth-child(even) {
+    background-color: #6f7b82;
+}
+
+.input-field.textarea {
+    border: 1px solid #99AAB5;
+}
+
+.toast {
+    background-color: #626161 !important;
+}
+
+button, input, optgroup, select, textarea {
+    color: #ffffff;
+}
+
+pre {
+    word-wrap: break-word;
 }

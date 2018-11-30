@@ -1,18 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <style>
-        * {
-            --color: {{ color }};
-        }
-    </style>
-    <!--Import Google Icon Font-->
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
-    <!-- Compiled and minified CSS -->
-    <link rel="stylesheet" href="/css/materialize.custom.css"/>
-    <link rel="stylesheet" href="/css/style.css"/>
-    <link rel="stylesheet" href="/css/animate.css"/>
-
     <!--Let browser know website is optimized for mobile-->
     <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
     <meta charset="UTF-8"/>
@@ -39,9 +27,21 @@
     <link href="/img/favicon.png" rel="shortcut icon" type="image/png"/>
     <link href="/img/favicon.png" rel="apple-touch-icon" type="image/png"/>
 
+    <style>
+        * {
+            --color: {{ color }};
+        }
+    </style>
+    <!--Import Google Icon Font-->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet"/>
+    <!-- Compiled and minified CSS -->
+    <link rel="stylesheet" href="/css/materialize.custom.css"/>
+    <link rel="stylesheet" href="/css/style.css"/>
+    <link rel="stylesheet" href="/css/animate.css"/>
+
     <title>{{ title }}</title>
 </head>
-<body>
+<body class="discord dark-not-black">
 <header>
     <div class="hide">
         {% block menu %}
@@ -113,7 +113,7 @@
 
 <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
 <!-- Compiled and minified JavaScript -->
-<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0-rc.2/js/materialize.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 <script src="/js/main.js"></script>
 {% block script %}{% endblock %}
 </body>
