@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
+import ml.duncte123.skybot.Variables
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Member
@@ -84,6 +85,13 @@ class EvalFunctions {
         fun pinnedMessageCheck(channel: TextChannel) {
             channel.pinnedMessages.queue {
                 MessageUtils.sendMsg(channel, "${it.size}/50 messages pinned in this channel")
+            }
+        }
+
+        @JvmStatic
+        fun loadGuildSetting(guildId: Long, variables: Variables) {
+            variables.databaseAdapter.loadGuildSetting(guildId) {
+                variables.guildSettings.put(guildId, it)
             }
         }
     }

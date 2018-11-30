@@ -22,7 +22,6 @@ import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
@@ -52,7 +51,7 @@ public class GuildSettingsUtils {
 
 
     private static void loadGuildSettings(DatabaseAdapter databaseAdapter, TLongObjectMap<GuildSettings> guildSettings) {
-        logger.debug("Loading Guild settings.");
+        logger.info("Loading Guild settings.");
 
         databaseAdapter.getGuildSettings(
             (storedSettings) -> {
@@ -61,7 +60,7 @@ public class GuildSettingsUtils {
                     (setting) -> guildSettings.put(setting.getGuildId(), setting)
                 );
 
-                logger.debug("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
+                logger.info("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
 
                 return null;
             }
@@ -106,8 +105,8 @@ public class GuildSettingsUtils {
      */
     @NotNull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
-
         TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
+
         if (!guildSettings.containsKey(guild.getIdLong())) {
             return registerNewGuild(guild, variables);
         }
@@ -125,56 +124,12 @@ public class GuildSettingsUtils {
      *         the new settings
      */
     public static void updateGuildSettings(Guild guild, GuildSettings settings, Variables variables) {
-        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
-        DBManager database = variables.getDatabase();
-        if (!guildSettings.containsKey(settings.getGuildId())) {
+        if (!variables.getGuildSettings().containsKey(settings.getGuildId())) {
             registerNewGuild(guild, variables);
             return;
         }
-        database.run(() -> {
-            String dbName = database.getName();
 
-            try (Connection connection = database.getConnManager().getConnection()) {
-                PreparedStatement smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                    "enableJoinMessage= ? , " +
-                    "enableSwearFilter= ? ," +
-                    "customWelcomeMessage= ? ," +
-                    "prefix= ? ," +
-                    "autoRole= ? ," +
-                    "logChannelId= ? ," +
-                    "welcomeLeaveChannel= ? ," +
-                    "customLeaveMessage = ? ," +
-                    "serverDesc = ? ," +
-                    "announceNextTrack = ? ," +
-                    "autoDeHoist = ? ," +
-                    "filterInvites = ? ," +
-                    "spamFilterState = ? ," +
-                    "muteRoleId = ? ," +
-                    "ratelimits = ? ," +
-                    "kickInsteadState = ? " +
-                    "WHERE guildId='" + settings.getGuildId() + "'");
-                smt.setBoolean(1, settings.isEnableJoinMessage());
-                smt.setBoolean(2, settings.isEnableSwearFilter());
-                smt.setString(3, fixUnicodeAndLines(settings.getCustomJoinMessage()));
-                smt.setString(4, replaceUnicode(settings.getCustomPrefix()));
-                smt.setString(5, String.valueOf(settings.getAutoroleRole()));
-                smt.setString(6, String.valueOf(settings.getLogChannel()));
-                smt.setString(7, String.valueOf(settings.getWelcomeLeaveChannel()));
-                smt.setString(8, fixUnicodeAndLines(settings.getCustomLeaveMessage()));
-                smt.setString(9, fixUnicodeAndLines(settings.getServerDesc()));
-                smt.setBoolean(10, settings.isAnnounceTracks());
-                smt.setBoolean(11, settings.isAutoDeHoist());
-                smt.setBoolean(12, settings.isFilterInvites());
-                smt.setBoolean(13, settings.isEnableSpamFilter());
-                smt.setString(14, String.valueOf(settings.getMuteRoleId()));
-                smt.setString(15, convertJ2S(settings.getRatelimits()));
-                smt.setBoolean(16, settings.getKickState());
-                smt.executeUpdate();
-
-            } catch (SQLException e1) {
-                e1.printStackTrace();
-            }
-        });
+        variables.getDatabaseAdapter().updateGuildSetting(settings, (bool) -> null);
     }
 
     /**
@@ -262,7 +217,7 @@ public class GuildSettingsUtils {
         return entery.replaceAll("\n", "\\\\n");
     }
 
-    private static String replaceUnicode(String entery) {
+    public static String replaceUnicode(String entery) {
         if (entery == null || entery.isEmpty())
             return null;
         return entery.replaceAll("\\P{Print}", "");
@@ -272,7 +227,7 @@ public class GuildSettingsUtils {
         return replaceUnicode(replaceNewLines(s));
     }*/
 
-    private static String fixUnicodeAndLines(String s) {
+    public static String fixUnicodeAndLines(String s) {
         return replaceUnicode(fixNewLines(replaceNewLines(s)));
     }
 
@@ -280,7 +235,7 @@ public class GuildSettingsUtils {
         return Arrays.stream(in).mapToObj(String::valueOf).collect(Collectors.joining("|", "", ""));
     }
 
-    public static long[] convertS2J(String in) {
+    private static long[] convertS2J(String in) {
         if (in.isEmpty())
             return new long[]{20, 45, 60, 120, 240, 2400};
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();
@@ -302,10 +257,6 @@ public class GuildSettingsUtils {
     }
 
     public static boolean toBool(int s) {
-        try {
-            return s == 1;
-        } catch (Exception ignored) {
-            return false;
-        }
+        return s == 1;
     }
 }

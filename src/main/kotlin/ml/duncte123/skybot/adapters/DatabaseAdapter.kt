@@ -60,6 +60,10 @@ abstract class DatabaseAdapter(variables: Variables) {
 
     abstract fun getGuildSettings(callback: (List<GuildSettings>) -> Unit)
 
+    abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit)
+
+    abstract fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
+
     abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
 
 }

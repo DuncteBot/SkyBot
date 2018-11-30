@@ -88,25 +88,25 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
                 val array = variables.apis.getGuildSettings()
 
                 array.forEach { c ->
-                    val j = c as JSONObject
+                    val json = c as JSONObject
 
-                    val setting = GuildSettings(j.getLong("guildId"))
-                        .setEnableJoinMessage(toBool(j.getInt("enableJoinMessage")))
-                        .setEnableSwearFilter(toBool(j.getInt("enableSwearFilter")))
-                        .setCustomJoinMessage(replaceNewLines(j.getString("customWelcomeMessage")))
-                        .setCustomPrefix(j.getString("prefix"))
-                        .setLogChannel(toLong(j.optString("logChannelId")))
-                        .setWelcomeLeaveChannel(toLong(j.optString("welcomeLeaveChannel")))
-                        .setCustomLeaveMessage(replaceNewLines(j.getString("customLeaveMessage")))
-                        .setAutoroleRole(toLong(j.optString("autoRole")))
-                        .setServerDesc(replaceNewLines(j.optString("serverDesc", null)))
-                        .setAnnounceTracks(toBool(j.getInt("announceNextTrack")))
-                        .setAutoDeHoist(toBool(j.getInt("autoDeHoist")))
-                        .setFilterInvites(toBool(j.getInt("filterInvites")))
-                        .setEnableSpamFilter(toBool(j.getInt("spamFilterState")))
-                        .setMuteRoleId(toLong(j.optString("muteRoleId")))
-                        .setRatelimits(ratelimmitChecks(j.getString("ratelimits")))
-                        .setKickState(toBool(j.getInt("kickInsteadState")))
+                    val setting = GuildSettings(json.getLong("guildId"))
+                        .setEnableJoinMessage(toBool(json.getInt("enableJoinMessage")))
+                        .setEnableSwearFilter(toBool(json.getInt("enableSwearFilter")))
+                        .setCustomJoinMessage(replaceNewLines(json.getString("customWelcomeMessage")))
+                        .setCustomPrefix(json.getString("prefix"))
+                        .setLogChannel(toLong(json.optString("logChannelId")))
+                        .setWelcomeLeaveChannel(toLong(json.optString("welcomeLeaveChannel")))
+                        .setCustomLeaveMessage(replaceNewLines(json.getString("customLeaveMessage")))
+                        .setAutoroleRole(toLong(json.optString("autoRole")))
+                        .setServerDesc(replaceNewLines(json.optString("serverDesc", null)))
+                        .setAnnounceTracks(toBool(json.getInt("announceNextTrack")))
+                        .setAutoDeHoist(toBool(json.getInt("autoDeHoist")))
+                        .setFilterInvites(toBool(json.getInt("filterInvites")))
+                        .setEnableSpamFilter(toBool(json.getInt("spamFilterState")))
+                        .setMuteRoleId(toLong(json.optString("muteRoleId")))
+                        .setRatelimits(ratelimmitChecks(json.getString("ratelimits")))
+                        .setKickState(toBool(json.getInt("kickInsteadState")))
 
                     settings.add(setting)
                 }
@@ -119,10 +119,45 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
         }
     }
 
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
+        variables.database.run {
+
+            val item = variables.apis.getGuildSetting(guildId)
+
+            val setting = GuildSettings(item.getLong("guildId"))
+                .setEnableJoinMessage(toBool(item.getInt("enableJoinMessage")))
+                .setEnableSwearFilter(toBool(item.getInt("enableSwearFilter")))
+                .setCustomJoinMessage(replaceNewLines(item.getString("customWelcomeMessage")))
+                .setCustomPrefix(item.getString("prefix"))
+                .setLogChannel(toLong(item.optString("logChannelId")))
+                .setWelcomeLeaveChannel(toLong(item.optString("welcomeLeaveChannel")))
+                .setCustomLeaveMessage(replaceNewLines(item.getString("customLeaveMessage")))
+                .setAutoroleRole(toLong(item.optString("autoRole")))
+                .setServerDesc(replaceNewLines(item.optString("serverDesc", null)))
+                .setAnnounceTracks(toBool(item.getInt("announceNextTrack")))
+                .setAutoDeHoist(toBool(item.getInt("autoDeHoist")))
+                .setFilterInvites(toBool(item.getInt("filterInvites")))
+                .setEnableSpamFilter(toBool(item.getInt("spamFilterState")))
+                .setMuteRoleId(toLong(item.optString("muteRoleId")))
+                .setRatelimits(ratelimmitChecks(item.getString("ratelimits")))
+                .setKickState(toBool(item.getInt("kickInsteadState")))
+
+            callback.invoke(setting)
+        }
+    }
+
+    override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+        variables.database.run {
+            callback.invoke(
+                variables.apis.updateGuildSettings(guildSettings)
+            )
+        }
+    }
+
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         variables.database.run {
             callback.invoke(
-                variables.apis.registerNewGuild(guildSettings)
+                variables.apis.registerNewGuildSettings(guildSettings)
             )
         }
     }

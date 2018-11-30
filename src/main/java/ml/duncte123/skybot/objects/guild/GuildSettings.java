@@ -37,22 +37,22 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 public class GuildSettings {
 
     private final long guildId;
+    private String prefix = Settings.PREFIX;
+    private long autoRole = 0L;
     private boolean enableJoinMessage = false;
     private boolean enableSwearFilter = false;
-    private String customWelcomeMessage = "Welcome {atuser}, to the official **{server}** guild.";
-    private String customLeaveMessage = "**{user}** has left **{server}** :worried:";
-    private String prefix = Settings.PREFIX;
-    private long logChannelId = 0L;
-    private long welcomeLeaveChannel = 0L;
-    private long autoroleRole = 0L;
-    private long muteRoleId = 0L;
-    private String serverDesc = "";
-    private boolean announceTracks = false;
     private boolean autoDeHoist = false;
     private boolean filterInvites = false;
-    private boolean enableSpamFilter = false;
-    private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
+    private boolean announceNextTrack = false;
+    private String customWelcomeMessage = "Welcome {atuser}, to the official **{server}** guild.";
+    private String customLeaveMessage = "**{user}** has left **{server}** :worried:";
+    private String serverDesc = "";
+    private long logChannelId = 0L;
+    private long welcomeLeaveChannel = 0L;
+    private boolean spamFilterState = false;
     private boolean kickInsteadState = false;
+    private long muteRoleId = 0L;
+    private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
 
     /**
      * This will init everything
@@ -211,7 +211,7 @@ public class GuildSettings {
      * @return the role id for the autorole feature
      */
     public long getAutoroleRole() {
-        return autoroleRole;
+        return autoRole;
     }
 
     /**
@@ -223,12 +223,12 @@ public class GuildSettings {
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setAutoroleRole(long autoroleRole) {
-        this.autoroleRole = autoroleRole;
+        this.autoRole = autoroleRole;
         return this;
     }
 
     public boolean isAutoroleEnabled() {
-        return this.autoroleRole > 0;
+        return this.autoRole > 0;
     }
 
     /**
@@ -281,7 +281,7 @@ public class GuildSettings {
      * @return if we should announce the next track
      */
     public boolean isAnnounceTracks() {
-        return announceTracks;
+        return announceNextTrack;
     }
 
     /**
@@ -293,7 +293,7 @@ public class GuildSettings {
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setAnnounceTracks(boolean announceTracks) {
-        this.announceTracks = announceTracks;
+        this.announceNextTrack = announceTracks;
         return this;
     }
 
@@ -340,11 +340,11 @@ public class GuildSettings {
     }
 
     public boolean isEnableSpamFilter() {
-        return enableSpamFilter;
+        return spamFilterState;
     }
 
     public GuildSettings setEnableSpamFilter(boolean newState) {
-        enableSpamFilter = newState;
+        spamFilterState = newState;
         return this;
     }
 
@@ -390,11 +390,11 @@ public class GuildSettings {
     @Override
     public String toString() {
         return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, prefix,
-            (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
+            (enableSwearFilter ? "Enabled" : "Disabled"), autoRole, (spamFilterState ? "Enabled" : "Disabled"));
     }
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
-    // The future is now (30-11-2018)
+    // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
     public JSONObject toJson() {
         GuildSettings obj = this;
         JSONObject j = new JSONObject();

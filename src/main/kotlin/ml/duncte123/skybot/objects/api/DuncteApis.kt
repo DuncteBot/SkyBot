@@ -61,7 +61,18 @@ class DuncteApis(private val apiKey: String) {
         return paginateData("guildsettings")
     }
 
-    fun registerNewGuild(guildSettings: GuildSettings): Boolean {
+    fun getGuildSetting(guildId: Long): JSONObject {
+        return executeRequest(defaultRequest("guildsettings/$guildId")).getJSONObject("data")
+    }
+
+    fun updateGuildSettings(guildSettings: GuildSettings): Boolean {
+        val json = guildSettings.toJson()
+        val response = patchJSON("guildsettings/${guildSettings.guildId}", json)
+
+        return response.getBoolean("success")
+    }
+
+    fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson()
         val response = postJSON("guildsettings", json)
         val success = response.getBoolean("success")

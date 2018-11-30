@@ -23,10 +23,9 @@ import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.GuildSettingsUtils.*
+import org.apache.http.MethodNotSupportedException
 import java.sql.SQLException
-import ml.duncte123.skybot.utils.GuildSettingsUtils.replaceNewLines
-import ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks
-import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
 
 class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
 
@@ -147,6 +146,68 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
         }
     }
 
+    override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
+        throw MethodNotSupportedException("Not supported for SQLite")
+    }
+
+    override fun updateGuildSetting(settings: GuildSettings, callback: (Boolean) -> Unit) {
+        val database = variables.database
+
+        database.run {
+
+            val dbName = database.name
+
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+
+                    val smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
+                        "enableJoinMessage= ? , " +
+                        "enableSwearFilter= ? ," +
+                        "customWelcomeMessage= ? ," +
+                        "prefix= ? ," +
+                        "autoRole= ? ," +
+                        "logChannelId= ? ," +
+                        "welcomeLeaveChannel= ? ," +
+                        "customLeaveMessage = ? ," +
+                        "serverDesc = ? ," +
+                        "announceNextTrack = ? ," +
+                        "autoDeHoist = ? ," +
+                        "filterInvites = ? ," +
+                        "spamFilterState = ? ," +
+                        "muteRoleId = ? ," +
+                        "ratelimits = ? ," +
+                        "kickInsteadState = ? " +
+                        "WHERE guildId='" + settings.guildId + "'")
+                    smt.setBoolean(1, settings.isEnableJoinMessage)
+                    smt.setBoolean(2, settings.isEnableSwearFilter)
+                    smt.setString(3, fixUnicodeAndLines(settings.customJoinMessage))
+                    smt.setString(4, replaceUnicode(settings.customPrefix))
+                    smt.setString(5, settings.autoroleRole.toString())
+                    smt.setString(6, settings.logChannel.toString())
+                    smt.setString(7, settings.welcomeLeaveChannel.toString())
+                    smt.setString(8, fixUnicodeAndLines(settings.customLeaveMessage))
+                    smt.setString(9, fixUnicodeAndLines(settings.serverDesc))
+                    smt.setBoolean(10, settings.isAnnounceTracks)
+                    smt.setBoolean(11, settings.isAutoDeHoist)
+                    smt.setBoolean(12, settings.isFilterInvites)
+                    smt.setBoolean(13, settings.isEnableSpamFilter)
+                    smt.setString(14, settings.muteRoleId.toString())
+                    smt.setString(15, convertJ2S(settings.ratelimits))
+                    smt.setBoolean(16, settings.kickState)
+                    smt.executeUpdate()
+
+                }
+            } catch (e1: SQLException) {
+                e1.printStackTrace()
+
+                callback.invoke(false)
+            }
+
+            callback.invoke(true)
+        }
+    }
+
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         val database = variables.database
 
@@ -208,8 +269,7 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
                 stm.setString(if (isEdit) 1 else 3, message)
                 stm.execute()
             }
-        }
-        catch (e: SQLException) {
+        } catch (e: SQLException) {
             e.printStackTrace()
             return Triple(false, false, false)
         }
