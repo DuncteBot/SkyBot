@@ -128,20 +128,6 @@ class MySQLConnectionManager implements DBConnectionManager {
     private void innitDB(Connection connection) {
         try {
             connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS embedSettings" +
-                    "(guild_id varchar(20)," +
-                    "embed_color int(10) NOT NULL DEFAULT 0x0751c6," +
-                    "PRIMARY KEY (`guild_id`));"
-            );
-
-            connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS animal_apis" +
-                    "(`id` int(11) NOT NULL AUTO_INCREMENT," +
-                    "  `file` text NOT NULL," +
-                    "  `api` varchar(255) NOT NULL," +
-                    "  PRIMARY KEY (`id`));"
-            );
-            connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS warnings" +
                     "(`id` int(11) NOT NULL AUTO_INCREMENT," +
                     "  `mod_id` varchar(255) NOT NULL," +
