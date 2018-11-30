@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.adapters
 
+import gnu.trove.map.TLongIntMap
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
@@ -66,4 +67,10 @@ abstract class DatabaseAdapter(variables: Variables) {
 
     abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
 
+    /////////////////
+    // Embed settings
+
+    abstract fun loadEmbedSettings(callback: (TLongIntMap) -> Unit)
+
+    abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int)
 }

@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.adapters
 
+import gnu.trove.map.TLongIntMap
+import gnu.trove.map.hash.TLongIntHashMap
+import me.duncte123.botcommons.messaging.EmbedUtils
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -150,7 +153,7 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
         throw MethodNotSupportedException("Not supported for SQLite")
     }
 
-    override fun updateGuildSetting(settings: GuildSettings, callback: (Boolean) -> Unit) {
+    override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         val database = variables.database
 
         database.run {
@@ -178,23 +181,23 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
                         "muteRoleId = ? ," +
                         "ratelimits = ? ," +
                         "kickInsteadState = ? " +
-                        "WHERE guildId='" + settings.guildId + "'")
-                    smt.setBoolean(1, settings.isEnableJoinMessage)
-                    smt.setBoolean(2, settings.isEnableSwearFilter)
-                    smt.setString(3, fixUnicodeAndLines(settings.customJoinMessage))
-                    smt.setString(4, replaceUnicode(settings.customPrefix))
-                    smt.setString(5, settings.autoroleRole.toString())
-                    smt.setString(6, settings.logChannel.toString())
-                    smt.setString(7, settings.welcomeLeaveChannel.toString())
-                    smt.setString(8, fixUnicodeAndLines(settings.customLeaveMessage))
-                    smt.setString(9, fixUnicodeAndLines(settings.serverDesc))
-                    smt.setBoolean(10, settings.isAnnounceTracks)
-                    smt.setBoolean(11, settings.isAutoDeHoist)
-                    smt.setBoolean(12, settings.isFilterInvites)
-                    smt.setBoolean(13, settings.isEnableSpamFilter)
-                    smt.setString(14, settings.muteRoleId.toString())
-                    smt.setString(15, convertJ2S(settings.ratelimits))
-                    smt.setBoolean(16, settings.kickState)
+                        "WHERE guildId='" + guildSettings.guildId + "'")
+                    smt.setBoolean(1, guildSettings.isEnableJoinMessage)
+                    smt.setBoolean(2, guildSettings.isEnableSwearFilter)
+                    smt.setString(3, fixUnicodeAndLines(guildSettings.customJoinMessage))
+                    smt.setString(4, replaceUnicode(guildSettings.customPrefix))
+                    smt.setString(5, guildSettings.autoroleRole.toString())
+                    smt.setString(6, guildSettings.logChannel.toString())
+                    smt.setString(7, guildSettings.welcomeLeaveChannel.toString())
+                    smt.setString(8, fixUnicodeAndLines(guildSettings.customLeaveMessage))
+                    smt.setString(9, fixUnicodeAndLines(guildSettings.serverDesc))
+                    smt.setBoolean(10, guildSettings.isAnnounceTracks)
+                    smt.setBoolean(11, guildSettings.isAutoDeHoist)
+                    smt.setBoolean(12, guildSettings.isFilterInvites)
+                    smt.setBoolean(13, guildSettings.isEnableSpamFilter)
+                    smt.setString(14, guildSettings.muteRoleId.toString())
+                    smt.setString(15, convertJ2S(guildSettings.ratelimits))
+                    smt.setBoolean(16, guildSettings.kickState)
                     smt.executeUpdate()
 
                 }
@@ -248,6 +251,55 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
 
             callback.invoke(true)
         }
+    }
+
+    override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
+        val database = variables.database
+
+        database.run {
+            val map = TLongIntHashMap()
+
+            try {
+                val dbName = database.name
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+                    val smt = connection.createStatement()
+
+                    val res = smt.executeQuery("SELECT * FROM $dbName.embedSettings")
+
+                    while (res.next()) {
+                        map.put(res.getLong("guild_id"), res.getInt("embed_color"))
+                    }
+
+                    callback.invoke(map)
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
+        val database = variables.database
+
+        val dbName = database.name
+
+        try {
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.prepareStatement(
+                    "INSERT INTO $dbName.embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?")
+
+                smt.setString(1, guildId.toString())
+                smt.setInt(2, color)
+                smt.setInt(3, color)
+
+                smt.executeUpdate()
+            }
+        } catch (e: SQLException) {
+
+        }
+
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {

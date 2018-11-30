@@ -18,6 +18,9 @@
 
 package ml.duncte123.skybot.adapters
 
+import gnu.trove.impl.hash.TLongIntHash
+import gnu.trove.map.TLongIntMap
+import gnu.trove.map.hash.TLongIntHashMap
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -159,6 +162,26 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
             callback.invoke(
                 variables.apis.registerNewGuildSettings(guildSettings)
             )
+        }
+    }
+
+    override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
+        variables.database.run {
+            val map = TLongIntHashMap()
+
+            variables.apis.loadEmbedSettings().forEach {
+                val json = it as JSONObject
+
+                map.put(json.getLong("guild_id"), json.getInt("embed_color"))
+            }
+
+            callback.invoke(map)
+        }
+    }
+
+    override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
+        variables.database.run {
+            variables.apis.updateOrCreateEmbedColor(guildId, color)
         }
     }
 }

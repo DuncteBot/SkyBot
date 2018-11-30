@@ -24,14 +24,12 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
@@ -46,7 +44,7 @@ public class GuildSettingsUtils {
 
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettings());
-        loadEmbedColors(variables.getDatabase());
+        loadEmbedColors(variables.getDatabaseAdapter());
     }
 
 
@@ -67,32 +65,23 @@ public class GuildSettingsUtils {
         );
     }
 
-    private static void loadEmbedColors(DBManager database) {
-        logger.debug("Loading embed colors.");
-        String dbName = database.getName();
+    private static void loadEmbedColors(DatabaseAdapter databaseAdapter) {
+        logger.info("Loading embed colors.");
 
-        database.run(() -> {
-            try (Connection connection = database.getConnManager().getConnection()) {
-                Statement smt = connection.createStatement();
-
-                ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".embedSettings");
-
+        databaseAdapter.loadEmbedSettings(
+            (settings) -> {
                 int loaded = 0;
 
-                while (res.next()) {
-                    long guildId = toLong(res.getString("guild_id"));
-                    int color = res.getInt("embed_color");
-
-                    EmbedUtils.addColor(guildId, color);
+                for (long key : settings.keys()) {
+                    EmbedUtils.addColor(key, settings.get(key));
                     loaded++;
                 }
 
-                logger.debug("Loaded embed colors for " + loaded + " guilds.");
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+                logger.info("Loaded embed colors for " + loaded + " guilds.");
 
+                return null;
+            }
+        );
     }
 
     /**
@@ -155,41 +144,16 @@ public class GuildSettingsUtils {
     }
 
     public static void updateEmbedColor(Guild g, int color, Variables variables) {
-        DBManager database = variables.getDatabase();
-
-        database.run(() -> {
-            String dbName = database.getName();
-
-            try (Connection connection = database.getConnManager().getConnection()) {
-
-                String updateString = "ON DUPLICATE KEY UPDATE embed_color = ?";
-
-                if (!variables.isSql()) {
-                    updateString = "ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?";
-                }
-
-                PreparedStatement smt = connection.prepareStatement(
-                    "INSERT INTO " + dbName + ".embedSettings(guild_id, embed_color) VALUES( ? , ? ) " + updateString);
-
-                smt.setString(1, g.getId());
-                smt.setInt(2, color);
-                smt.setInt(3, color);
-
-                smt.executeUpdate();
-            } catch (SQLException e) {
-                logger.error("Database error: ", e);
-            }
-
-        });
+        variables.getDatabaseAdapter().updateOrCreateEmbedColor(g.getIdLong(), color);
     }
 
-    /**
-     * This will attempt to remove a guild wen we leave it
+    /*
+     * This will attempt to remove a guild when we leave it
      *
      * @param g
      *         the guild to remove from the database
      */
-    public static void deleteGuild(Guild g, Variables variables) {
+    /*public static void deleteGuild(Guild g, Variables variables) {
         TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
         DBManager database = variables.getDatabase();
         guildSettings.remove(g.getIdLong());
@@ -203,7 +167,7 @@ public class GuildSettingsUtils {
                 e.printStackTrace();
             }
         });
-    }
+    }*/
 
     public static String replaceNewLines(String entery) {
         if (entery == null || entery.isEmpty())

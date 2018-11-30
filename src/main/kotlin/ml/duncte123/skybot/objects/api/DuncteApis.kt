@@ -81,9 +81,24 @@ class DuncteApis(private val apiKey: String) {
             return true
         }
 
-        logger.error("Failed to register new guild {}", response.getJSONObject("error").toString(4))
+        logger.error("Failed to register new guild\n" +
+            "Response: {}", response.getJSONObject("error").toString(4))
 
         return false
+    }
+
+    fun loadEmbedSettings(): JSONArray {
+        return paginateData("embedsettings")
+    }
+
+    fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
+        val json = JSONObject().put("embed_color", color)
+        val response = postJSON("embedsettings/$guildId", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to save embed data\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
     }
 
     private fun paginateData(path: String): JSONArray {
