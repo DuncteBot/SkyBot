@@ -127,28 +127,6 @@ class MySQLConnectionManager implements DBConnectionManager {
 
     private void innitDB(Connection connection) {
         try {
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (" +
-                "  `id` int(11) NOT NULL AUTO_INCREMENT," +
-                "  `guildId` text NOT NULL," +
-                "  `prefix` varchar(255) NOT NULL DEFAULT '/'," +
-                "  `autoRole` varchar(255) DEFAULT NULL," +
-                "  `enableJoinMessage` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `enableSwearFilter` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `autoDeHoist` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `filterInvites` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `announceNextTrack` tinyint(1) NOT NULL DEFAULT '1'," +
-                "  `customWelcomeMessage` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL," +
-                "  `customLeaveMessage` text DEFAULT NULL," +
-                "  `serverDesc` text DEFAULT NULL," +
-                "  `logChannelId` varchar(255) DEFAULT NULL," +
-                "  `welcomeLeaveChannel` varchar(255) DEFAULT NULL," +
-                "  `spamFilterState` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `kickInsteadState` tinyint(1) NOT NULL DEFAULT '0'," +
-                "  `muteRoleId` varchar(255) DEFAULT NULL," +
-                "  `ratelimits` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_520_ci DEFAULT NULL," +
-                "PRIMARY KEY (`id`)" +
-                ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS embedSettings" +
                     "(guild_id varchar(20)," +
