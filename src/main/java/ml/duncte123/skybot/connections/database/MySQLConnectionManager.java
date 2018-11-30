@@ -53,8 +53,6 @@ class MySQLConnectionManager implements DBConnectionManager {
         } catch (SQLException e) {
             e.printStackTrace();
         }
-
-        innitDB(getConnection());
     }
 
     /**
@@ -122,21 +120,6 @@ class MySQLConnectionManager implements DBConnectionManager {
             connection.close();
         } catch (SQLException e) {
             throw new IOException(e);
-        }
-    }
-
-    private void innitDB(Connection connection) {
-        try {
-            connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
-                    "(user_id VARCHAR(255) NOT NULL," +
-                    "guild_id VARCHAR(255) NOT NULL," +
-                    "PRIMARY KEY (`user_id`));"
-            );
-
-            close();
-        } catch (SQLException | IOException e) {
-            e.printStackTrace();
         }
     }
 }
