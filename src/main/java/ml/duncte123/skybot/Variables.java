@@ -65,12 +65,12 @@ public class Variables {
             e.printStackTrace();
         }
 
-        if (config == null) {
+        if (this.config == null) {
             System.exit(0);
         }
 
         //set the devs
-        Settings.developers.addAll(config.discord.constantSuperUserIds);
+        Settings.developers.addAll(this.config.discord.constantSuperUserIds);
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + this.config.apis.googl + "&safe=off";
         this.isSql = this.config.use_database;
@@ -152,8 +152,7 @@ public class Variables {
     public DuncteApis getApis() {
 
         if (this.apis == null) {
-//            this.apis = new DuncteApis("Bot " + this.config.discord.token);
-            this.apis = new DuncteApis("");
+            this.apis = new DuncteApis("Bot " + this.config.discord.token);
         }
 
         return this.apis;

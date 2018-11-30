@@ -53,6 +53,22 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
         }
     }
 
+    override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+        variables.database.run {
+            val res = changeCommand(guildId, invoke, message, false)
+
+            callback.invoke(res)
+        }
+    }
+
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+        variables.database.run {
+            val res = changeCommand(guildId, invoke, message, true)
+
+            callback.invoke(res)
+        }
+    }
+
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit) {
         val database = variables.database
 
@@ -77,5 +93,33 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
         }.get()
 
         callback.invoke(ret)
+    }
+
+    private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {
+        val database = variables.database
+
+        val sqlQuerry = if (isEdit)
+            "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?"
+        else
+            "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)"
+
+        try {
+            database.connManager.use { manager ->
+                val conn = manager.connection
+
+                val stm = conn.prepareStatement(sqlQuerry)
+
+                stm.setString(if (isEdit) 2 else 1, guildId.toString())
+                stm.setString(if (isEdit) 3 else 2, invoke)
+                stm.setString(if (isEdit) 1 else 3, message)
+                stm.execute()
+            }
+        }
+        catch (e: SQLException) {
+            e.printStackTrace()
+            return Triple(false, false, false)
+        }
+
+        return null
     }
 }

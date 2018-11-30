@@ -19,8 +19,10 @@
 package ml.duncte123.skybot.objects.api
 
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
 import okhttp3.Request
+import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
 
@@ -28,19 +30,21 @@ import org.json.JSONObject
 class DuncteApis(private val apiKey: String) {
 
     fun getCustomCommands(): JSONArray {
-        val page1 = executeRequest(defaultRequest("customcommands?page=1")).getJSONObject("data")
+        return paginateData("customcommands")
+    }
 
-        var data = page1.getJSONArray("data")
+    fun createCustomCommand(guildId: Long, invoke: String, message: String): Triple<Boolean, Boolean, Boolean> {
+        val json = JSONObject().put("invoke", invoke).put("message", message)
+        val response = postJSON("customcommands/$guildId", json)
 
-        val totalPages = page1.getInt("last_page") + 1
+        return parseTripleResponse(response)
+    }
 
-        for (i in 2 until totalPages) {
-            val page = executeRequest(defaultRequest("customcommands?page=$i")).getJSONObject("data")
+    fun updateCustomCommand(guildId: Long, invoke: String, message: String): Triple<Boolean, Boolean, Boolean> {
+        val json = JSONObject().put("message", message)
+        val response = patchJSON("customcommands/$guildId/$invoke", json)
 
-            data = concatArray(data, page.getJSONArray("data"))
-        }
-
-        return data
+        return parseTripleResponse(response)
     }
 
     fun deleteCustomCommand(guildId: Long, invoke: String): Boolean {
@@ -49,25 +53,79 @@ class DuncteApis(private val apiKey: String) {
         return executeRequest(request).getBoolean("success")
     }
 
+    private fun paginateData(path: String): JSONArray {
+        val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
+
+        val data = page1.getJSONArray("data")
+
+        val totalPages = page1.getInt("last_page") + 1
+
+        for (i in 2 until totalPages) {
+            val page = executeRequest(defaultRequest("$path?page=$i")).getJSONObject("data")
+
+            val pageData = page.getJSONArray("data")
+
+            for (i2 in 0 until pageData.length()) {
+                data.put(pageData.get(i2))
+            }
+        }
+
+        return data
+    }
+
+    private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {
+        val success = response.getBoolean("success")
+
+        if (success) {
+            return Triple(true, false, false)
+        }
+
+        val error = response.getJSONObject("error")
+
+        if (error.getString("type") == "AmountException") {
+            return Triple(false, false, true)
+        }
+
+        if (error.getString("type") == "ValidationException") {
+            val errors = response.getJSONObject("error").getJSONObject("errors")
+
+            for (key in errors.keySet()) {
+                val reasons = errors.getJSONArray(key)
+
+                if (reasons.contains("The invoke has already been taken.")) {
+                    return Triple(false, true, false)
+                }
+
+                if (reasons.contains("The message may not be greater than 4000 characters.")) {
+                    return Triple(false, false, false)
+                }
+            }
+        }
+
+        return Triple(false, false, false)
+    }
+
+    private fun patchJSON(path: String, json: JSONObject): JSONObject {
+        val body = RequestBody.create(null, json.toString())
+        val request = defaultRequest(path).patch(body).addHeader("Content-Type", APPLICATION_JSON.type)
+
+        return executeRequest(request)
+    }
+
+    private fun postJSON(path: String, json: JSONObject): JSONObject {
+        val body = RequestBody.create(null, json.toString())
+        val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+
+        return executeRequest(request)
+    }
+
     private fun executeRequest(request: Request.Builder): JSONObject {
         return WebUtils.ins.prepareRaw(request.build(), WebUtilsErrorUtils::toJSONObject).execute()
     }
 
-    private fun concatArray(vararg arrs: JSONArray): JSONArray {
-        val result = JSONArray()
-
-        for (arr in arrs) {
-            for (i in 0 until arr.length()) {
-                result.put(arr.get(i))
-            }
-        }
-
-        return result
-    }
-
     private fun defaultRequest(path: String): Request.Builder {
         return WebUtils.defaultRequest()
-//            .url("https://apis.duncte123.me/$path")
+//            .url("https://apis.duncte123.me/bot/$path")
             .url("http://duncte123-apis-lumen.local/bot/$path")
             .get()
             .addHeader("Authorization", apiKey)

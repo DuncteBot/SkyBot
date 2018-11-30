@@ -53,6 +53,22 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
         }
     }
 
+    override fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+        variables.database.run {
+            callback.invoke(
+                variables.apis.createCustomCommand(guildId, invoke, message)
+            )
+        }
+    }
+
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+        variables.database.run {
+            callback.invoke(
+                variables.apis.updateCustomCommand(guildId, invoke, message)
+            )
+        }
+    }
+
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit) {
         variables.database.run {
             callback.invoke(variables.apis.deleteCustomCommand(guildId, invoke))

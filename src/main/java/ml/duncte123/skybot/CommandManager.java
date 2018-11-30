@@ -30,9 +30,6 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
 import java.util.*;
 import java.util.concurrent.*;
 import java.util.regex.Matcher;
@@ -152,26 +149,23 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                Triple<Boolean, Boolean, Boolean> res = database.run(() -> {
+                CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
 
-                    String sqlQuerry = (isEdit) ?
-                        "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
-                        "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
+                if (isEdit) {
+                    variables.getDatabaseAdapter()
+                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                } else {
+                    variables.getDatabaseAdapter()
+                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                }
 
-                    try (Connection conn = database.getConnManager().getConnection()) {
-                        PreparedStatement stm = conn.prepareStatement(sqlQuerry);
-                        stm.setString((isEdit) ? 2 : 1, Long.toString(command.getGuildId()));
-                        stm.setString((isEdit) ? 3 : 2, command.getName());
-                        stm.setString((isEdit) ? 1 : 3, command.getMessage());
-                        stm.execute();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-
-                        return new Triple<>(false, false, false);
-                    }
-
-                    return null;
-                }).get();
+                Triple<Boolean, Boolean, Boolean> res = future.get();
 
                 if (res != null && !res.getFirst()) {
                     return res;

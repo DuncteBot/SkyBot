@@ -26,6 +26,29 @@ abstract class DatabaseAdapter(variables: Variables) {
 
     abstract fun getCustomCommands(callback: (List<CustomCommand>) -> Unit)
 
+    /**
+     * Creates a custom command
+     *
+     * @param guildId
+     *          the id of the guild
+     *
+     * @param invoke
+     *          the invoke of the command
+     *
+     * @param message
+     *          the action of the command
+     *
+     * @param callback
+     *          the result of the action
+     *          the boolean values in the tripple are:
+     *             1. True when the command was added
+     *             2. True when the guild already has a command with this invoke
+     *             3. True when the guild reached the custom command limit
+     */
+    abstract fun createCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
+
+    abstract fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
+
     abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit)
 
 }
