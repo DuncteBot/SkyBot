@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot;
 
+import com.jagrosh.jagtag.Parser;
 import kotlin.Triple;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
@@ -28,6 +29,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.apache.commons.lang3.time.DateUtils;
 import org.reflections.Reflections;
 
 import java.util.*;
@@ -124,6 +126,10 @@ public class CommandManager {
     public CustomCommand getCustomCommand(String invoke, long guildId) {
         return customCommands.stream().filter(c -> c.getGuildId() == guildId)
             .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+    }
+
+    public List<CustomCommand> getCustomCommands(long guildId) {
+        return customCommands.stream().filter(c -> c.getGuildId() == guildId).collect(Collectors.toList());
     }
 
     public boolean editCustomCommand(CustomCommand c) {
@@ -268,8 +274,9 @@ public class CommandManager {
         if (split.length > 1) {
             String raw = split[1];
             Matcher m = COMMAND_PATTERN.matcher(raw);
-            while (m.find())
-                args.add(m.group(1).replace("\"", "")); // Add .replace("\"", "") to remove surrounding quotes.
+            while (m.find()) {
+                args.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
+            }
         }
 
         dispatchCommand(invoke, args, event);
@@ -313,15 +320,26 @@ public class CommandManager {
                     return;
 
                 try {
-                    String message = CustomCommandUtils.PARSER.clear()
+                    Parser parser = CustomCommandUtils.PARSER;
+
+                    String message = parser.clear()
                         .put("user", event.getAuthor())
                         .put("channel", event.getChannel())
                         .put("guild", event.getGuild())
                         .put("args", String.join(" ", args))
                         .parse(cc.getMessage());
 
-                    sendMsg(event, "\u200B" + message);
-                    CustomCommandUtils.PARSER.clear();
+                    /*JSONObject embedJson = parser.get("embed");
+
+                    JDAImpl jda = (JDAImpl) event.getJDA();
+                    MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);*/
+
+                    if (!message.isBlank()) {
+                        sendMsg(event, "\u200B" + message);
+                    }
+
+//                    sendEmbedRaw(event.getChannel(), embed, null);
+                    parser.clear();
                 } catch (Exception e) {
                     sendMsg(event, "Error with parsing custom command: " + e.getMessage());
                     execCheck(e);

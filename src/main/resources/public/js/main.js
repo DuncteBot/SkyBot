@@ -25,3 +25,17 @@ document.addEventListener("DOMContentLoaded", () => {
     M.Sidenav.init(document.querySelectorAll(".sidenav"));
 });
 
+function getMessage(m) {
+
+    switch (m) {
+        case "missing_input":
+            return "Please fill in all fields";
+        case "no_user":
+            return "The specified user id did not resolve any users.";
+        case "no_guild":
+            return "The specified server id did not resolve any servers.";
+        default:
+            return m;
+    }
+}
+

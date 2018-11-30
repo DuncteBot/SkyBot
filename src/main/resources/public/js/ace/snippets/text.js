@@ -16,18 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.web.routes
-
-import ml.duncte123.skybot.Author
-import spark.kotlin.get
-
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-class Invite {
-
-    init {
-        get("/invite") {
-            response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
+ace.define("ace/snippets/text",["require","exports","module"],function(e,t,n){"use strict";t.snippetText=undefined,t.scope="text"});                (function() {
+    ace.require(["ace/snippets/text"], function(m) {
+        if (typeof module == "object" && typeof exports == "object" && module) {
+            module.exports = m;
         }
-    }
-
-}
+    });
+})();

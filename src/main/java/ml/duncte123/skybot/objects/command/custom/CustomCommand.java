@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public interface CustomCommand extends ICommand {
@@ -55,5 +56,12 @@ public interface CustomCommand extends ICommand {
     @Override
     default boolean shouldDisplayAliasesInHelp() {
         return false;
+    }
+
+    default JSONObject toJSONObject() {
+        return new JSONObject()
+            .put("guildId", getGuildId())
+            .put("name", getName())
+            .put("message", getMessage());
     }
 }

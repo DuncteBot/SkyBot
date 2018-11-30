@@ -19,7 +19,7 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
 buildscript {
-    ext.kotlin_version = '1.3.0'
+    ext.kotlin_version = '1.3.10'
 
     repositories {
         mavenCentral()
@@ -35,13 +35,13 @@ plugins {
     id 'maven'
     id 'application'
     id 'com.github.johnrengelman.shadow' version '2.0.4'
-    id 'org.jetbrains.kotlin.jvm' version '1.3.0'
+    id 'org.jetbrains.kotlin.jvm' version '1.3.10'
     id 'com.github.breadmoirai.github-release' version '2.2.0'
 }
 apply plugin: 'kotlin'
 
 group = "ml.duncte123.skybot"
-version "3.82.0_${getGitHash()}"
+version "3.82.1_${getGitHash()}"
 
 def javaVersion = JavaVersion.VERSION_11
 
@@ -74,7 +74,7 @@ dependencies {
 
     //JDA (java discord api)
 //    implementation (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
-    implementation(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_439') {
+    implementation(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_447') {
         exclude module: 'opus-java'
     }
 
@@ -109,7 +109,7 @@ dependencies {
     //Add kotlin
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-stdlib', version: kotlin_version
     implementation group: 'org.jetbrains.kotlin', name: 'kotlin-reflect', version: kotlin_version
-    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.0.0'
+    implementation group: 'org.jetbrains.kotlinx', name: 'kotlinx-coroutines-core', version: '1.0.1'
 
     //Spark for website
     implementation group: 'com.sparkjava', name: 'spark-kotlin', version: '1.0.0-alpha'
@@ -119,7 +119,8 @@ dependencies {
     implementation group: 'com.github.JDA-Applications.JDA-Utilities', name: 'jda-utilities-oauth2', version: 'b98962c'
 
     implementation group: 'com.jagrosh', name: 'JagTag', version: '0.5'
-
+//    implementation 'com.github.DuncteBot:JagTag:8d06aeae63'
+    
     //Wolfaram alpha
     implementation group: 'com.github.DuncteBot', name: 'wolfram-alpha-java-binding', version: '5c123ae'
     
