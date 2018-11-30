@@ -128,18 +128,6 @@ class MySQLConnectionManager implements DBConnectionManager {
     private void innitDB(Connection connection) {
         try {
             connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS warnings" +
-                    "(`id` int(11) NOT NULL AUTO_INCREMENT," +
-                    "  `mod_id` varchar(255) NOT NULL," +
-                    "  `user_id` varchar(300) NOT NULL," +
-                    "  `reason` text NOT NULL," +
-                    "  `warn_date` date NOT NULL," +
-                    "  `expire_date` date NOT NULL," +
-                    "  `guild_id` varchar(266) DEFAULT NULL," +
-                    "  PRIMARY KEY (`id`));"
-            );
-
-            connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS oneGuildPatrons" +
                     "(user_id VARCHAR(255) NOT NULL," +
                     "guild_id VARCHAR(255) NOT NULL," +
