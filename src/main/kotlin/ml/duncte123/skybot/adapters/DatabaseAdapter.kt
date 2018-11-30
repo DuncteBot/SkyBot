@@ -20,9 +20,13 @@ package ml.duncte123.skybot.adapters
 
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
+import ml.duncte123.skybot.objects.guild.GuildSettings
 
 @Suppress("UNUSED_PARAMETER")
 abstract class DatabaseAdapter(variables: Variables) {
+
+    //////////////////
+    // Custom commands
 
     abstract fun getCustomCommands(callback: (List<CustomCommand>) -> Unit)
 
@@ -50,5 +54,10 @@ abstract class DatabaseAdapter(variables: Variables) {
     abstract fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit)
 
     abstract fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit)
+
+    /////////////////
+    // Guild settings
+
+    abstract fun getGuildSettings(callback: (List<GuildSettings>) -> Unit)
 
 }

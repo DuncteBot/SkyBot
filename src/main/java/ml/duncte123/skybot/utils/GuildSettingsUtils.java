@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
@@ -45,49 +46,26 @@ public class GuildSettingsUtils {
 
 
     public static void loadAllSettings(Variables variables) {
-        loadGuildSettings(variables.getDatabase(), variables.getGuildSettings());
+        loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettings());
         loadEmbedColors(variables.getDatabase());
     }
 
 
-    private static void loadGuildSettings(DBManager database, TLongObjectMap<GuildSettings> guildSettings) {
+    private static void loadGuildSettings(DatabaseAdapter databaseAdapter, TLongObjectMap<GuildSettings> guildSettings) {
         logger.debug("Loading Guild settings.");
 
-        String dbName = database.getName();
-        database.run(() -> {
-            try (Connection connection = database.getConnManager().getConnection()) {
-                Statement smt = connection.createStatement();
+        databaseAdapter.getGuildSettings(
+            (storedSettings) -> {
 
-                ResultSet res = smt.executeQuery("SELECT * FROM " + dbName + ".guildSettings");
-
-                while (res.next()) {
-                    long guildId = toLong(res.getString("guildId"));
-
-                    guildSettings.put(guildId, new GuildSettings(guildId)
-                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
-                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
-                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
-                        .setCustomPrefix(res.getString("prefix"))
-                        .setLogChannel(toLong(res.getString("logChannelId")))
-                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
-                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                        .setAutoroleRole(toLong(res.getString("autoRole")))
-                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
-                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
-                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
-                        .setFilterInvites(res.getBoolean("filterInvites"))
-                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
-                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
-                        .setKickState(res.getBoolean("kickInsteadState"))
-                    );
-                }
+                storedSettings.forEach(
+                    (setting) -> guildSettings.put(setting.getGuildId(), setting)
+                );
 
                 logger.debug("Loaded settings for " + guildSettings.keySet().size() + " guilds.");
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+                return null;
             }
-        });
+        );
     }
 
     private static void loadEmbedColors(DBManager database) {
@@ -295,7 +273,7 @@ public class GuildSettingsUtils {
         });
     }
 
-    private static String replaceNewLines(String entery) {
+    public static String replaceNewLines(String entery) {
         if (entery == null || entery.isEmpty())
             return null;
         return entery.replaceAll("\\\\n", "\n");
@@ -343,6 +321,14 @@ public class GuildSettingsUtils {
             return Long.parseUnsignedLong(s);
         } catch (NumberFormatException ignored) {
             return 0L;
+        }
+    }
+
+    public static boolean toBool(int s) {
+        try {
+            return s == 1;
+        } catch (Exception ignored) {
+            return false;
         }
     }
 }

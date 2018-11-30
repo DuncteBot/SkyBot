@@ -21,7 +21,12 @@ package ml.duncte123.skybot.adapters
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
+import ml.duncte123.skybot.objects.guild.GuildSettings
 import java.sql.SQLException
+import ml.duncte123.skybot.utils.GuildSettingsUtils.replaceNewLines
+import ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks
+import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
+import ml.duncte123.skybot.utils.GuildSettingsUtils.toBool
 
 class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
 
@@ -93,6 +98,53 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
         }.get()
 
         callback.invoke(ret)
+    }
+
+    override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
+        variables.database.run {
+
+            val database = variables.database
+
+            val dbName = database.name
+            database.run {
+                try {
+                    val settings = arrayListOf<GuildSettings>()
+                    database.connManager.use { manager ->
+                        val connection = manager.connection
+                        val smt = connection.createStatement()
+
+                        val res = smt.executeQuery("SELECT * FROM $dbName.guildSettings")
+
+                        while (res.next()) {
+                            val guildId = toLong(res.getString("guildId"))
+
+                            settings.add(GuildSettings(guildId)
+                                .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                                .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                                .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                                .setCustomPrefix(res.getString("prefix"))
+                                .setLogChannel(toLong(res.getString("logChannelId")))
+                                .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                                .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                                .setAutoroleRole(toLong(res.getString("autoRole")))
+                                .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                                .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                                .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                                .setFilterInvites(res.getBoolean("filterInvites"))
+                                .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                                .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                                .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                                .setKickState(res.getBoolean("kickInsteadState"))
+                            )
+                        }
+                        callback.invoke(settings)
+                    }
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+
+        }
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {

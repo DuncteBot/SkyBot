@@ -53,6 +53,10 @@ class DuncteApis(private val apiKey: String) {
         return executeRequest(request).getBoolean("success")
     }
 
+    fun getGuildSettings(): JSONArray {
+        return paginateData("guildsettings")
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 
