@@ -127,34 +127,6 @@ class MySQLConnectionManager implements DBConnectionManager {
 
     private void innitDB(Connection connection) {
         try {
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `bans` (" +
-                "`id` int(11) NOT NULL AUTO_INCREMENT," +
-                "  `modUserId` varchar(255) NOT NULL," +
-                "  `userId` varchar(300) NOT NULL," +
-                "  `Username` varchar(266) NOT NULL," +
-                "  `discriminator` varchar(4) NOT NULL," +
-                "  `ban_date` datetime NOT NULL," +
-                "  `unban_date` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                "  `guildId` varchar(266) NOT NULL," +
-                "  PRIMARY KEY (`id`)" +
-                ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `footerQuotes` (" +
-                "  `id` int(11) NOT NULL AUTO_INCREMENT," +
-                "  `name` varchar(200) NOT NULL COMMENT 'Username'," +
-                "  `quote` text NOT NULL COMMENT 'Quote'," +
-                "  PRIMARY KEY (`id`)" +
-                ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-
-            connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `tags` (" +
-                "  `id` int(11) NOT NULL AUTO_INCREMENT," +
-                "  `author` varchar(255) NOT NULL," +
-                "  `authorId` varchar(255) NOT NULL," +
-                "  `tagName` varchar(10) NOT NULL," +
-                "  `tagText` text NOT NULL," +
-                "  PRIMARY KEY (`id`)" +
-                ") ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE utf8mb4_general_ci;");
-
             connection.createStatement().execute("CREATE TABLE IF NOT EXISTS `guildSettings` (" +
                 "  `id` int(11) NOT NULL AUTO_INCREMENT," +
                 "  `guildId` text NOT NULL," +
@@ -182,15 +154,6 @@ class MySQLConnectionManager implements DBConnectionManager {
                     "(guild_id varchar(20)," +
                     "embed_color int(10) NOT NULL DEFAULT 0x0751c6," +
                     "PRIMARY KEY (`guild_id`));"
-            );
-
-            connection.createStatement().execute(
-                "CREATE TABLE IF NOT EXISTS customCommands" +
-                    "(id int(11) AUTO_INCREMENT," +
-                    "guildId VARCHAR(255) NOT NULL," +
-                    "invoke VARCHAR(25) NOT NULL," +
-                    "message TEXT NOT NULL," +
-                    "PRIMARY KEY (`id`));"
             );
 
             connection.createStatement().execute(
