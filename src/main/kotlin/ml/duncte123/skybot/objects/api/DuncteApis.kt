@@ -21,13 +21,17 @@ package ml.duncte123.skybot.objects.api
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import ml.duncte123.skybot.objects.guild.GuildSettings
 import okhttp3.Request
 import okhttp3.RequestBody
 import org.json.JSONArray
 import org.json.JSONObject
+import org.slf4j.LoggerFactory
 
 
 class DuncteApis(private val apiKey: String) {
+
+    private val logger = LoggerFactory.getLogger(javaClass)
 
     fun getCustomCommands(): JSONArray {
         return paginateData("customcommands")
@@ -55,6 +59,20 @@ class DuncteApis(private val apiKey: String) {
 
     fun getGuildSettings(): JSONArray {
         return paginateData("guildsettings")
+    }
+
+    fun registerNewGuild(guildSettings: GuildSettings): Boolean {
+        val json = guildSettings.toJson()
+        val response = postJSON("guildsettings", json)
+        val success = response.getBoolean("success")
+
+        if (success) {
+            return true
+        }
+
+        logger.error("Failed to register new guild {}", response.getJSONObject("error").toString(4))
+
+        return false
     }
 
     private fun paginateData(path: String): JSONArray {

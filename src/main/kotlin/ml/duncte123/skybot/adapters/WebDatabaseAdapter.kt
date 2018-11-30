@@ -112,11 +112,18 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
                 }
 
                 callback.invoke(settings)
-
             }
             catch (e: Exception) {
                 e.printStackTrace()
             }
+        }
+    }
+
+    override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+        variables.database.run {
+            callback.invoke(
+                variables.apis.registerNewGuild(guildSettings)
+            )
         }
     }
 }

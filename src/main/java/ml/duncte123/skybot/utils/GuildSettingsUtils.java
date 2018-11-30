@@ -187,38 +187,15 @@ public class GuildSettingsUtils {
      */
     public static GuildSettings registerNewGuild(Guild g, Variables variables) {
         TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
-        DBManager database = variables.getDatabase();
+
         if (guildSettings.containsKey(g.getIdLong())) {
             return guildSettings.get(g.getIdLong());
         }
+
         GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
-        database.run(() -> {
+        variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
+        guildSettings.put(g.getIdLong(), newGuildSettings);
 
-            String dbName = database.getName();
-
-            try (Connection connection = database.getConnManager().getConnection()) {
-                ResultSet resultSet = connection.createStatement()
-                    .executeQuery("SELECT id FROM " + dbName + ".guildSettings WHERE guildId='" + g.getId() + "'");
-                int rows = 0;
-                while (resultSet.next())
-                    rows++;
-
-                if (rows == 0) {
-                    PreparedStatement smt = connection.prepareStatement("INSERT INTO " + dbName + ".guildSettings(guildId," +
-                        "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
-                        "VALUES('" + g.getId() + "' , ? , ? , ? , ?)");
-                    smt.setString(1, newGuildSettings.getCustomJoinMessage());
-                    smt.setString(2, Settings.PREFIX);
-                    smt.setString(3, newGuildSettings.getCustomLeaveMessage().replaceAll("\\P{Print}", ""));
-                    smt.setString(4, "20|45|60|120|240|2400".replaceAll("\\P{Print}", ""));
-                    smt.execute();
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-
-            guildSettings.put(g.getIdLong(), newGuildSettings);
-        });
         return newGuildSettings;
     }
 
@@ -299,11 +276,11 @@ public class GuildSettingsUtils {
         return replaceUnicode(fixNewLines(replaceNewLines(s)));
     }
 
-    private static String convertJ2S(long[] in) {
+    public static String convertJ2S(long[] in) {
         return Arrays.stream(in).mapToObj(String::valueOf).collect(Collectors.joining("|", "", ""));
     }
 
-    private static long[] convertS2J(String in) {
+    public static long[] convertS2J(String in) {
         if (in.isEmpty())
             return new long[]{20, 45, 60, 120, 240, 2400};
         return Arrays.stream(in.split("\\|")).mapToLong(Long::valueOf).toArray();

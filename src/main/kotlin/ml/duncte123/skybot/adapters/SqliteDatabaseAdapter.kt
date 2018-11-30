@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.adapters
 
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -26,7 +27,6 @@ import java.sql.SQLException
 import ml.duncte123.skybot.utils.GuildSettingsUtils.replaceNewLines
 import ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks
 import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
-import ml.duncte123.skybot.utils.GuildSettingsUtils.toBool
 
 class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
 
@@ -101,9 +101,9 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
     }
 
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
-        variables.database.run {
+        val database = variables.database
 
-            val database = variables.database
+        database.run {
 
             val dbName = database.name
             database.run {
@@ -144,6 +144,48 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
                 }
             }
 
+        }
+    }
+
+    override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
+        val database = variables.database
+
+        database.run {
+
+            val dbName = database.name
+            val guildId = guildSettings.guildId
+
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+                    val resultSet = connection.createStatement()
+
+                        .executeQuery("SELECT id FROM $dbName.guildSettings WHERE guildId='$guildId'")
+                    var rows = 0
+
+                    while (resultSet.next()) {
+                        rows++
+                    }
+
+                    if (rows == 0) {
+                        val smt = connection.prepareStatement("INSERT INTO $dbName.guildSettings(guildId," +
+                            "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
+                            "VALUES('$guildId' , ? , ? , ? , ?)")
+
+                        smt.setString(1, guildSettings.customJoinMessage)
+                        smt.setString(2, Settings.PREFIX)
+                        smt.setString(3, guildSettings.customLeaveMessage.replace("\\P{Print}".toRegex(), ""))
+                        smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
+                        smt.execute()
+                    }
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+
+                callback.invoke(false)
+            }
+
+            callback.invoke(true)
         }
     }
 

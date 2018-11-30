@@ -21,6 +21,11 @@ package ml.duncte123.skybot.objects.guild;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
+import org.json.JSONObject;
+
+import java.lang.reflect.Field;
+
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 
 /**
  * This class will hold the settings for a guild
@@ -34,10 +39,10 @@ public class GuildSettings {
     private final long guildId;
     private boolean enableJoinMessage = false;
     private boolean enableSwearFilter = false;
-    private String customJoinMessage = "Welcome {atuser}, to the official **{server}** guild.";
+    private String customWelcomeMessage = "Welcome {atuser}, to the official **{server}** guild.";
     private String customLeaveMessage = "**{user}** has left **{server}** :worried:";
-    private String customPrefix = Settings.PREFIX;
-    private long logChannel = 0L;
+    private String prefix = Settings.PREFIX;
+    private long logChannelId = 0L;
     private long welcomeLeaveChannel = 0L;
     private long autoroleRole = 0L;
     private long muteRoleId = 0L;
@@ -47,7 +52,7 @@ public class GuildSettings {
     private boolean filterInvites = false;
     private boolean enableSpamFilter = false;
     private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
-    private boolean kickInstead = false;
+    private boolean kickInsteadState = false;
 
     /**
      * This will init everything
@@ -118,7 +123,7 @@ public class GuildSettings {
      * @return The custom join message
      */
     public String getCustomJoinMessage() {
-        return customJoinMessage;
+        return customWelcomeMessage;
     }
 
     /**
@@ -130,7 +135,7 @@ public class GuildSettings {
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setCustomJoinMessage(String customJoinMessage) {
-        this.customJoinMessage = customJoinMessage;
+        this.customWelcomeMessage = customJoinMessage;
         return this;
     }
 
@@ -162,7 +167,7 @@ public class GuildSettings {
      * @return The prefix that the guild is using
      */
     public String getCustomPrefix() {
-        return customPrefix;
+        return prefix;
     }
 
     /**
@@ -174,7 +179,7 @@ public class GuildSettings {
      * @return The current {@link GuildSettings}
      */
     public GuildSettings setCustomPrefix(String customPrefix) {
-        this.customPrefix = customPrefix;
+        this.prefix = customPrefix;
         return this;
     }
 
@@ -184,7 +189,7 @@ public class GuildSettings {
      * @return the channel to log in
      */
     public long getLogChannel() {
-        return logChannel;
+        return logChannelId;
     }
 
     /**
@@ -196,7 +201,7 @@ public class GuildSettings {
      * @return the current {@link GuildSettings}
      */
     public GuildSettings setLogChannel(long tc) {
-        this.logChannel = tc;
+        this.logChannelId = tc;
         return this;
     }
 
@@ -371,11 +376,11 @@ public class GuildSettings {
     }
 
     public boolean getKickState() {
-        return kickInstead;
+        return kickInsteadState;
     }
 
     public GuildSettings setKickState(boolean newState) {
-        kickInstead = newState;
+        kickInsteadState = newState;
         return this;
     }
 
@@ -384,21 +389,36 @@ public class GuildSettings {
      */
     @Override
     public String toString() {
-        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, customPrefix,
+        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, prefix,
             (enableSwearFilter ? "Enabled" : "Disabled"), autoroleRole, (enableSpamFilter ? "Enabled" : "Disabled"));
     }
 
-    //A utility method that might come in handy in the future
-    /*public org.json.JSONObject toJson() {
+    // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
+    // The future is now (30-11-2018)
+    public JSONObject toJson() {
         GuildSettings obj = this;
-        org.json.JSONObject j = new JSONObject();
-        for (java.lang.reflect.Field field : obj.getClass().getDeclaredFields()) {
+        JSONObject j = new JSONObject();
+
+        for (Field field : obj.getClass().getDeclaredFields()) {
             try {
-                j.put(field.getName(), field.get(obj));
+                String name = field.getName();
+                Object value = field.get(obj);
+
+                if (name.equals("ratelimits")) {
+                    j.put(name, convertJ2S((long[]) value));
+                    continue;
+                }
+
+                if (value instanceof Long) {
+                    value = String.valueOf(value);
+                }
+
+                j.put(name, value);
             } catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }
+
         return j;
-    }*/
+    }
 }
