@@ -23,10 +23,10 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
@@ -35,10 +35,9 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.xml.crypto.Data;
-import java.sql.*;
-import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -171,51 +170,43 @@ public class ModerationUtils {
      * This will check if there are users that can be unbanned
      */
     public static void checkUnbans(Variables variables) {
-        DBManager database = variables.getDatabase();
-        database.run(() -> {
-            ShardManager shardManager = SkyBot.getInstance().getShardManager();
-            logger.debug("Checking for users to unban");
-            int usersUnbanned = 0;
+        variables.getDatabaseAdapter().getExpiredBans(
+            (bans) -> {
+                logger.info("Checking for users to unban");
+                ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-            try (Connection connection = database.getConnManager().getConnection()) {
+                for (Ban ban : bans) {
+                    Guild guild = shardManager.getGuildById(ban.getGuildId());
 
-                Statement smt = connection.createStatement();
-
-                ResultSet res = smt.executeQuery("SELECT * FROM " + database.getName() + ".bans");
-
-                while (res.next()) {
-                    Date unbanDate = res.getTimestamp("unban_date");
-                    Date currDate = new Date();
-
-                    if (currDate.after(unbanDate)) {
-                        usersUnbanned++;
-                        String username = res.getString("Username");
-                        logger.debug("Unbanning " + username);
-                        try {
-                            String guildId = res.getString("guildId");
-                            String userID = res.getString("userId");
-                            Guild guild = shardManager.getGuildById(guildId);
-                            if (guild != null) {
-                                guild.getController()
-                                    .unban(userID).reason("Ban expired").queue();
-                                modLog(new ConsoleUser(),
-                                    new FakeUser(username,
-                                        Long.parseUnsignedLong(userID),
-                                        Short.valueOf(res.getString("discriminator"))),
-                                    "unbanned",
-                                    new DunctebotGuild(guild, variables)
-                                );
-                            }
-                        } catch (NullPointerException ignored) {
-                        }
-                        connection.createStatement().executeUpdate("DELETE FROM " + database.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    if (guild == null) {
+                        continue;
                     }
+
+
+                    logger.debug("Unbanning " + ban.getUserName());
+
+                    guild.getController()
+                        .unban(ban.getUserId()).reason("Ban expired").queue();
+
+                    modLog(new ConsoleUser(),
+                        new FakeUser(ban.getUserName(),
+                            Long.parseUnsignedLong(ban.getUserId()),
+                            Short.valueOf(ban.getDiscriminator())),
+                        "unbanned",
+                        new DunctebotGuild(guild, variables)
+                    );
+
                 }
-                logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+                logger.info("Checking done, unbanned {} users.", bans.size());
+
+                List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
+
+                variables.getApis().purgeBans(purgeIds);
+
+                return null;
             }
-        });
+        );
     }
 
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {

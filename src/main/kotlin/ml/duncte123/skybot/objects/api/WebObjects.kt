@@ -37,6 +37,8 @@ data class KpopObject(val id: Int, val name: String, val band: String, val image
 data class WarnObject(val userId: String, val warnings: List<Warning>) : ApiObject()
 data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId: String, val reason: String, val guildId: String) : ApiObject()
 
+data class Ban(val id: Int, val modId: String, val userId: String, val userName: String, val discriminator: String, val guildId: String)
+
 
 open class ApiObject {
     fun toJson(): JSONObject {

@@ -162,6 +162,7 @@ class EvalCommand : Command() {
             engine.setVariable("skraa", script)
             engine.setVariable("args", ctx.args)
             engine.setVariable("ctx", ctx)
+            engine.setVariable("variables", ctx.variables)
 
             @SinceSkybot("3.58.0")
             GlobalScope.launch(Dispatchers.Default, start = CoroutineStart.ATOMIC, block = {

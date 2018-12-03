@@ -24,6 +24,7 @@ import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.WarnObject
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -32,6 +33,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.apache.http.MethodNotSupportedException
 import java.sql.SQLException
+import java.util.*
 
 class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
@@ -488,6 +490,45 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(warnings)
         }
+    }
+
+    override fun getExpiredBans(callback: (List<Ban>) -> Unit) {
+        val database = variables.database
+        val dbName = database.name
+
+        database.run {
+            val bans = arrayListOf<Ban>()
+
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.createStatement()
+                val res = smt.executeQuery("SELECT * FROM $dbName.bans")
+
+                while (res.next()) {
+                    val unbanDate = res.getTimestamp("unban_date")
+                    val currDate = Date()
+
+                    if (!currDate.after(unbanDate)) {
+                        continue
+                    }
+
+                    bans.add(Ban(
+                        res.getInt("id"),
+                        res.getString("modUserId"),
+                        res.getString("userId"),
+                        res.getString("Username"),
+                        res.getString("discriminator"),
+                        res.getString("guildId")
+                    ))
+                }
+            }
+
+            callback.invoke(bans)
+        }
+    }
+
+    override fun purgeBans(ids: List<Int>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {

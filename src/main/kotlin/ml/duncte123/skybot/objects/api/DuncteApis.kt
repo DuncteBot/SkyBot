@@ -164,6 +164,22 @@ class DuncteApis(private val apiKey: String) {
         return response.getJSONArray("data")
     }
 
+    fun getExpiredBans(): JSONArray {
+        val response = executeRequest(defaultRequest("bans/expired"))
+
+        return response.getJSONArray("data")
+    }
+
+    fun purgeBans(ids: List<Int>) {
+        val json = JSONObject().put("ids", ids)
+        val response = deleteJSON("bans", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to purge bans\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 
@@ -226,6 +242,13 @@ class DuncteApis(private val apiKey: String) {
     private fun postJSON(path: String, json: JSONObject): JSONObject {
         val body = RequestBody.create(null, json.toString())
         val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+
+        return executeRequest(request)
+    }
+
+    private fun deleteJSON(path: String, json: JSONObject): JSONObject {
+        val body = RequestBody.create(null, json.toString())
+        val request = defaultRequest(path).delete(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return executeRequest(request)
     }

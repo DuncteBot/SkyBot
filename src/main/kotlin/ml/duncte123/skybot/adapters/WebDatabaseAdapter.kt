@@ -23,6 +23,7 @@ import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -265,5 +266,32 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(items)
         }
+    }
+
+    override fun getExpiredBans(callback: (List<Ban>) -> Unit) {
+        variables.database.run {
+            val bans = arrayListOf<Ban>()
+
+            val storedBans = variables.apis.getExpiredBans()
+
+            storedBans.forEach {
+                val json = it as JSONObject
+
+                bans.add(Ban(
+                    json.getInt("id"),
+                    json.getString("modUserId"),
+                    json.getString("userId"),
+                    json.getString("Username"),
+                    json.getString("discriminator"),
+                    json.getString("guildId")
+                ))
+            }
+
+            callback.invoke(bans)
+        }
+    }
+
+    override fun purgeBans(ids: List<Int>) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }
