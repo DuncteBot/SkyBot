@@ -207,19 +207,6 @@ public class CustomCommandCommand extends Command {
 
     }
 
-    public static boolean commandExists(String name, long guild, CommandManager manager) {
-        return manager.getCustomCommand(name, guild) != null;
-    }
-
-    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
-    }
-
-    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
-        CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
-        return manager.editCustomCommand(cmd);
-    }
-
     @Override
     public String help() {
         return "Create, run and delete custom commands\n" +
@@ -243,5 +230,18 @@ public class CustomCommandCommand extends Command {
     @SuppressWarnings("BooleanMethodIsAlwaysInverted")
     private boolean isAdmin(GuildMessageReceivedEvent event) {
         return event.getMember().hasPermission(event.getChannel(), Permission.ADMINISTRATOR);
+    }
+
+    public static boolean commandExists(String name, long guild, CommandManager manager) {
+        return manager.getCustomCommand(name, guild) != null;
+    }
+
+    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
+        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
+    }
+
+    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
+        CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
+        return manager.editCustomCommand(cmd);
     }
 }

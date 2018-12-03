@@ -25,7 +25,6 @@ import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
-import ml.duncte123.skybot.objects.api.WarnObject
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -421,7 +420,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     val conn = manager.connection
                     val smt = conn.prepareStatement(
                         "INSERT INTO $dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)")
+                            "VALUES(? , ? , ? , ? , NOW() , ?, ?)")
 
                     smt.setString(1, modId.toString())
                     smt.setString(2, userName)
@@ -447,7 +446,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     val smt = conn.prepareStatement(
                         "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")
+                            "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")
 
                     smt.setString(1, modId.toString())
                     smt.setString(2, userId.toString())

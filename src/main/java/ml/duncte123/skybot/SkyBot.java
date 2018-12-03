@@ -24,7 +24,6 @@ import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -44,7 +43,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.concurrent.Executors;
@@ -66,10 +64,10 @@ public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
-    private IntFunction<? extends Game> gameProvider;
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
         (r) -> new Thread(r, "Bot-Service-Thread")
     );
+    private IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
 
@@ -152,6 +150,12 @@ public final class SkyBot {
         return shardManager;
     }
 
+    private void startGameTimer() {
+        this.gameScheduler.scheduleAtFixedRate(
+            () -> this.shardManager.setGameProvider(this.gameProvider),
+            1, 1, TimeUnit.DAYS);
+    }
+
     /**
      * This is our main method
      *
@@ -175,12 +179,6 @@ public final class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
-    }
-
-    private void startGameTimer() {
-        this.gameScheduler.scheduleAtFixedRate(
-            () -> this.shardManager.setGameProvider(this.gameProvider),
-            1, 1, TimeUnit.DAYS);
     }
 
     private static void gen() {

@@ -42,7 +42,12 @@ public class DBManager {
      */
     public DBManager(boolean isSql) {
         this.connManager = createDBManager(isSql);
-        this.name = connManager.getName();
+
+        if (this.connManager != null) {
+            this.name = connManager.getName();
+        } else {
+            this.name = "No_Db";
+        }
     }
 
     private DBConnectionManager createDBManager(boolean isSql) {
@@ -58,6 +63,7 @@ public class DBManager {
      *
      * @return true if we are connected
      */
+    @SuppressWarnings("unused")
     public boolean isConnected() {
         return connManager.isConnected();
     }
@@ -76,6 +82,7 @@ public class DBManager {
      *
      * @return the connection, will we null if we aren't connected
      */
+    @SuppressWarnings("unused")
     public Connection getConnection() {
         return connManager.getConnection();
     }

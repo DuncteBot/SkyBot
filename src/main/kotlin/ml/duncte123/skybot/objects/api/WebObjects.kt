@@ -22,7 +22,6 @@ package ml.duncte123.skybot.objects.api
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.extensions.cdnPrefix
-import ml.duncte123.skybot.extensions.eloquent
 import org.json.JSONObject
 import java.sql.Date
 import kotlin.reflect.KVisibility

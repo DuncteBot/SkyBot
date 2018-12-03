@@ -75,7 +75,7 @@ class VoiceKickCommand : Command() {
             }
             controller.createVoiceChannel("temp_voicekick_${System.currentTimeMillis()}").queue { channel ->
 
-                if(channel !is VoiceChannel) {
+                if (channel !is VoiceChannel) {
                     logger.error("Created a Voice Channel but the result wasn't a voice channel (received ${channel.javaClass.name})")
                     return@queue
                 }

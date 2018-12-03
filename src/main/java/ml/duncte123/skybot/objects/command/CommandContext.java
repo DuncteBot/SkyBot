@@ -49,10 +49,10 @@ import java.util.stream.Collectors;
 public class CommandContext {
 
     private final String invoke;
-    private List<String> argsWithoutQuotes;
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
+    private List<String> argsWithoutQuotes;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 

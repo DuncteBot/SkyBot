@@ -43,15 +43,15 @@ import java.io.IOException;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Variables {
 
+    private final String googleBaseUrl;
+    private final boolean isSql;
+    private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
-    private final String googleBaseUrl;
     private WeebApi weebApi;
-    private final boolean isSql;
     private DBManager database;
     private CommandManager commandManager;
     private BlargBot blargBot;
-    private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
     private DunctebotConfig config;
     private DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
