@@ -31,7 +31,10 @@ import ml.duncte123.skybot.web.controllers.Callback
 import ml.duncte123.skybot.web.controllers.Commands
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
 import ml.duncte123.skybot.web.controllers.Suggestions
-import ml.duncte123.skybot.web.controllers.api.*
+import ml.duncte123.skybot.web.controllers.api.CustomCommands
+import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
+import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
+import ml.duncte123.skybot.web.controllers.api.MainApi
 import ml.duncte123.skybot.web.controllers.crons.CronJobs
 import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
@@ -181,20 +184,8 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
                 return@get MainApi.joinGuild(response)
             }
 
-            get("/llama") {
-                return@get MainApi.llama(response, database)
-            }
-
-            get("/alpaca") {
-                return@get MainApi.alpaca(response)
-            }
-
             get("/getUserGuilds") {
                 return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager)
-            }
-
-            get("/kpop") {
-                return@get Kpop.show(request, response, database)
             }
 
             path("/customcommands/$GUILD_ID") {

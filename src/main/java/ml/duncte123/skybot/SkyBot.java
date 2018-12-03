@@ -38,7 +38,6 @@ import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +92,6 @@ public final class SkyBot {
             Settings.PREFIX = configPrefix;
         }
 
-        //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(false);
 
@@ -114,15 +112,9 @@ public final class SkyBot {
             }
 
         } else {
-            int startIn = 5;
             logger.warn("Using SQLite as the database");
-            logger.warn("Please note that is is not recommended and can break some features.");
-            logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
-            Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
+            logger.warn("Please note that is is not recommended for production");
         }
-
-        //2 seconds safe sleep for database
-        Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings(variables);

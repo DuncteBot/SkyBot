@@ -22,65 +22,46 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.connections.database.DBManager
 import ml.duncte123.skybot.objects.api.*
-import java.sql.ResultSet
+import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
+import java.net.URLEncoder
+import java.nio.charset.StandardCharsets
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object ApiUtils {
 
     @JvmStatic
-    fun getRandomLlama(database: DBManager): LlamaObject {
+    fun getRandomLlama(): LlamaObject {
+        val json = WebUtils.ins.getJSONObject("$API_HOST/llama").execute().getJSONObject("data")
 
-        database.connManager.use {
-            val conn = it.connection
-            val resultSet = conn.createStatement()
-                .executeQuery("SELECT * FROM animal_apis WHERE api = \"llama\" ORDER BY RAND() LIMIT 1")
-            resultSet.next()
-            return LlamaObject(resultSet.getInt("id"), resultSet.getString("file"))
-        }
+        return LlamaObject(json.getInt("id"), json.getString("file"))
     }
 
     @JvmStatic
     fun getRandomAlpaca(): AlpacaObject {
-        val doc = WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").execute()
+        val json = WebUtils.ins.getJSONObject("$API_HOST/alpaca").execute()
 
-        val img = doc.select("img").first().attributes().get("src")
-        return AlpacaObject(img)
+        return AlpacaObject(json.getString("data"))
     }
 
     @JvmStatic
     fun getRandomAlpacaAsync(callback: (AlpacaObject) -> Unit) {
-        WebUtils.ins.scrapeWebPage("http://www.randomalpaca.com/").async { doc ->
-            val img = doc.select("img").first().attributes().get("src")
-            callback.invoke(AlpacaObject(img))
+        WebUtils.ins.getJSONObject("$API_HOST/alpaca").async {
+            callback.invoke(AlpacaObject(it.getString("data")))
         }
     }
 
     @JvmStatic
-    fun getRandomKpopMember(database: DBManager, search: String = ""): KpopObject {
+    fun getRandomKpopMember(search: String = ""): KpopObject {
+        val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
 
-        database.connManager.use {
-            val conn = it.connection
+        val json = WebUtils.ins.getJSONObject("$API_HOST/kpop$path").execute().getJSONObject("data")
 
-            lateinit var resultSet: ResultSet
-
-            resultSet = if (!search.isEmpty()) {
-                val stmt = conn.prepareStatement("SELECT * FROM kpop WHERE name LIKE ? OR id=? LIMIT 1")
-                stmt.setString(1, "%$search%")
-                stmt.setString(2, search)
-                stmt.executeQuery()
-            } else {
-                conn.createStatement().executeQuery("SELECT * FROM kpop ORDER BY RAND() LIMIT 1")
-            }
-
-            resultSet.next()
-
-            return KpopObject(
-                resultSet.getInt("id"),
-                resultSet.getString("name"),
-                resultSet.getString("band"),
-                resultSet.getString("img")
-            )
-        }
+        return KpopObject(
+            json.getInt("id"),
+            json.getString("name"),
+            json.getString("band"),
+            json.getString("img")
+        )
     }
 
     @JvmStatic

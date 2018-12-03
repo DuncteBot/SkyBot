@@ -206,9 +206,14 @@ class DuncteApis(private val apiKey: String) {
 
     private fun defaultRequest(path: String): Request.Builder {
         return WebUtils.defaultRequest()
-//            .url("https://apis.duncte123.me/bot/$path")
-            .url("http://duncte123-apis-lumen.local/bot/$path")
+            .url("$API_HOST/bot/$path")
             .get()
             .addHeader("Authorization", apiKey)
+    }
+
+    companion object {
+        @JvmStatic
+//        val API_HOST = "https://apis.duncte123.me"
+        val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }
