@@ -20,11 +20,12 @@ package ml.duncte123.skybot.utils
 
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
+import java.util.concurrent.CompletableFuture
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object ApiUtils {
@@ -34,13 +35,6 @@ object ApiUtils {
         val json = WebUtils.ins.getJSONObject("$API_HOST/llama").execute().getJSONObject("data")
 
         return LlamaObject(json.getInt("id"), json.getString("file"))
-    }
-
-    @JvmStatic
-    fun getRandomAlpaca(): AlpacaObject {
-        val json = WebUtils.ins.getJSONObject("$API_HOST/alpaca").execute()
-
-        return AlpacaObject(json.getString("data"))
     }
 
     @JvmStatic
@@ -65,31 +59,15 @@ object ApiUtils {
     }
 
     @JvmStatic
-    fun getWarnsForUser(database: DBManager, userId: String, guildId: String): WarnObject {
+    fun getWarnsForUser(adapter: DatabaseAdapter, userId: Long, guildId: Long): WarnObject {
 
-        database.connManager.use {
-            val conn = it.connection
-            val warnings = ArrayList<Warning>()
+        val future = CompletableFuture<List<Warning>>()
 
-            val smt = conn.prepareStatement(
-                "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
-            smt.setString(1, userId)
-            smt.setString(2, guildId)
-            val result = smt.executeQuery()
-
-            while (result.next()) {
-                warnings.add(Warning(
-                    result.getInt("id"),
-                    result.getDate("warn_date"),
-                    result.getDate("expire_date"),
-                    result.getString("mod_id"),
-                    result.getString("reason"),
-                    result.getString("guild_id")
-                ))
-            }
-
-            return WarnObject(userId, warnings)
+        adapter.getWarningsForUser(userId, guildId) {
+            future.complete(it)
         }
+
+        return WarnObject(userId.toString(), future.get())
     }
 
 }

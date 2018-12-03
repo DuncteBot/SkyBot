@@ -131,7 +131,7 @@ public class BotListener extends ListenerAdapter {
         this.database = variables.getDatabase();
         this.commandManager = variables.getCommandManager();
 
-        this.spamFilter = new SpamFilter(database, variables);
+        this.spamFilter = new SpamFilter(variables.getDatabaseAdapter(), variables);
     }
 
     @Override

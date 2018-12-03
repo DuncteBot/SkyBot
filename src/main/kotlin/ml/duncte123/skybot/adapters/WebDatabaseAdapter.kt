@@ -23,13 +23,13 @@ import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.json.JSONObject
-import java.text.SimpleDateFormat
-import java.util.*
+import java.sql.Date
 
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
@@ -225,20 +225,45 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun createBan(modId: String, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
+    override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         variables.database.run {
             val json = JSONObject()
-                .put("modUserID", modId)
+                .put("modUserID", modId.toString())
                 .put("Username", userName)
                 .put("discriminator", userDiscriminator)
                 .put("userId", userId.toString())
                 .put("guildId", guildId.toString())
                 .put("unban_date", unbanDate)
-                .put("ban_date", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
-
-            println(json.toString(4))
 
             variables.apis.createBan(json)
+        }
+    }
+
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+        variables.database.run {
+            variables.apis.createWarning(modId, userId, guildId, reason)
+        }
+    }
+
+    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
+        variables.database.run {
+            val data = variables.apis.getWarningsForUser(userId, guildId)
+            val items = arrayListOf<Warning>()
+
+            data.forEach {
+                val json = it as JSONObject
+
+                items.add(Warning(
+                    json.getInt("id"),
+                    Date.valueOf(json.getString("warn_date")),
+                    Date.valueOf(json.getString("expire_date")),
+                    json.getString("mod_id"),
+                    json.getString("reason"),
+                    json.getString("guild_id")
+                ))
+            }
+
+            callback.invoke(items)
         }
     }
 }

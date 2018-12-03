@@ -31,9 +31,11 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.xml.crypto.Data;
 import java.sql.*;
 import java.util.Date;
 import java.util.concurrent.TimeUnit;
@@ -135,7 +137,7 @@ public class ModerationUtils {
      * @param guildId
      *         What guild the user got banned in
      */
-    public static void addBannedUserToDb(DatabaseAdapter adapter, String modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
+    public static void addBannedUserToDb(DatabaseAdapter adapter, long modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
         adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
     }
 
@@ -147,11 +149,8 @@ public class ModerationUtils {
      *
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(DBManager database, User u, Guild g) {
-        if (u == null)
-            throw new IllegalArgumentException("User to check can not be null");
-
-        return ApiUtils.getWarnsForUser(database, u.getId(), g.getId()).getWarnings().size();
+    public static int getWarningCountForUser(DatabaseAdapter adapter, @NotNull User u, @NotNull Guild g) {
+        return ApiUtils.getWarnsForUser(adapter, u.getIdLong(), g.getIdLong()).getWarnings().size();
     }
 
     /**
@@ -164,21 +163,8 @@ public class ModerationUtils {
      * @param reason
      *         the reason for the warn
      */
-    public static void addWarningToDb(DBManager database, User moderator, User target, String reason, Guild guild) {
-
-        database.run(() -> {
-            try (Connection conn = database.getConnManager().getConnection()) {
-                PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                    "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
-                smt.setString(1, moderator.getId());
-                smt.setString(2, target.getId());
-                smt.setString(3, reason);
-                smt.setString(4, guild.getId());
-                smt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    public static void addWarningToDb(DatabaseAdapter adapter, User moderator, User target, String reason, Guild guild) {
+        adapter.createWarning(moderator.getIdLong(), target.getIdLong(), guild.getIdLong(), reason);
     }
 
     /**

@@ -88,7 +88,7 @@ public class TempBanCommand extends Command {
         event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (voidMethod) -> {
                 if (finalBanTime > 0) {
-                    addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getId(),
+                    addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
                         toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
 
                     modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());

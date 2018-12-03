@@ -24,6 +24,8 @@ import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.api.WarnObject
+import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
@@ -407,7 +409,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun createBan(modId: String, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
+    override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         val database = variables.database
         val dbName = database.name
 
@@ -415,11 +417,11 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             database.connManager.use { manager ->
                 try {
                     val conn = manager.connection
-                    val smt = conn.prepareStatement("""INSERT INTO
-                        |$dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId)
-                        |VALUES(? , ? , ? , ? , NOW() , ?, ?)""".trimMargin())
+                    val smt = conn.prepareStatement(
+                        "INSERT INTO $dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
+                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)")
 
-                    smt.setString(1, modId)
+                    smt.setString(1, modId.toString())
                     smt.setString(2, userName)
                     smt.setString(3, userDiscriminator)
                     smt.setString(4, userId.toString())
@@ -430,6 +432,61 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     e.printStackTrace()
                 }
             }
+        }
+    }
+
+    override fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+        val database = variables.database
+
+        database.run {
+            try {
+                database.connManager.use { manager ->
+                    val conn = manager.connection
+
+                    val smt = conn.prepareStatement(
+                        "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
+                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")
+
+                    smt.setString(1, modId.toString())
+                    smt.setString(2, userId.toString())
+                    smt.setString(3, reason)
+                    smt.setString(4, guildId.toString())
+                    smt.executeUpdate()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
+        val database = variables.database
+
+        database.run {
+            val warnings = ArrayList<Warning>()
+
+            database.connManager.use {
+                val conn = it.connection
+
+                val smt = conn.prepareStatement(
+                    "SELECT * FROM `warnings` WHERE user_id=? AND guild_id=? AND (CURDATE() <= DATE_ADD(expire_date, INTERVAL 3 DAY))")
+                smt.setString(1, userId.toString())
+                smt.setString(2, guildId.toString())
+                val result = smt.executeQuery()
+
+                while (result.next()) {
+                    warnings.add(Warning(
+                        result.getInt("id"),
+                        result.getDate("warn_date"),
+                        result.getDate("expire_date"),
+                        result.getString("mod_id"),
+                        result.getString("reason"),
+                        result.getString("guild_id")
+                    ))
+                }
+            }
+
+            callback.invoke(warnings)
         }
     }
 

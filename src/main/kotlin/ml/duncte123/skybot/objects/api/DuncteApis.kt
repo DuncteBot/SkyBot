@@ -143,6 +143,27 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String) {
+        val json = JSONObject()
+            .put("mod_id", modId.toString())
+            .put("user_id", userId.toString())
+            .put("guild_id", guildId.toString())
+            .put("reason", reason)
+
+        val response = postJSON("warns", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to create a warning\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun getWarningsForUser(userId: Long, guildId: Long): JSONArray {
+        val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
+
+        return response.getJSONArray("data")
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 
