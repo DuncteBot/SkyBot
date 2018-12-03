@@ -20,7 +20,6 @@ package ml.duncte123.skybot;
 
 import com.jagrosh.jagtag.Parser;
 import kotlin.Triple;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -29,7 +28,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.time.DateUtils;
 import org.reflections.Reflections;
 
 import java.util.*;
@@ -53,7 +51,6 @@ public class CommandManager {
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-    private final DBManager database;
 
     private final Variables variables;
 
@@ -62,7 +59,6 @@ public class CommandManager {
      */
     public CommandManager(Variables variables) {
         this.variables = variables;
-        this.database = variables.getDatabase();
 
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
@@ -233,7 +229,7 @@ public class CommandManager {
      *
      * @return true if the command is added
      */
-    @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
+    @SuppressWarnings({"UnusedReturnValue"})
     public boolean addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
