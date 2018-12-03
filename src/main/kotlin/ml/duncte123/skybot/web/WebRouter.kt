@@ -35,7 +35,6 @@ import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
-import ml.duncte123.skybot.web.controllers.crons.CronJobs
 import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
@@ -50,7 +49,6 @@ import spark.template.jtwig.JtwigTemplateEngine
 class WebRouter(val shardManager: ShardManager, val variables: Variables) {
 
     private val config = variables.config
-    private val database = variables.database
 
     private val engine = JtwigTemplateEngine("views")
     private val oAuth2Client = OAuth2Client.Builder()
@@ -210,12 +208,6 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
                 return@post FindUserAndGuild.get(request, response, shardManager)
             }
 
-        }
-
-        path("/crons") {
-            get("/clearExpiredWarns") {
-                return@get CronJobs.clearExpiredWarns(database)
-            }
         }
 
         notFound {

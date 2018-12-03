@@ -21,7 +21,6 @@ package ml.duncte123.skybot.objects.command;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -76,10 +75,6 @@ public class CommandContext {
 
     public DunctebotConfig getConfig() {
         return this.variables.getConfig();
-    }
-
-    public DBManager getDatabase() {
-        return this.variables.getDatabase();
     }
 
     public DatabaseAdapter getDatabaseAdapter() {

@@ -75,7 +75,6 @@ public final class SkyBot {
 
         Variables variables = new Variables();
         DunctebotConfig config = variables.getConfig();
-        DBManager database = variables.getDatabase();
         CommandManager commandManager = variables.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
