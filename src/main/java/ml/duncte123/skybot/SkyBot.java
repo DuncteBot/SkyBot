@@ -95,22 +95,8 @@ public final class SkyBot {
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(false);
 
-        if (variables.isSql()) { //Don't try to connect if we don't want to
-            if (!database.getConnManager().hasSettings()) {
-                logger.error("Can't load database settings. ABORTING!!!!!");
-                System.exit(-2);
-            }
-
-            try (Connection conn = database.getConnection()) {
-
-                if (conn.isClosed() && variables.isSql()) {
-                    logger.error("Can't connect to database. ABORTING!!!!!");
-                    System.exit(-3);
-                }
-
-                logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
-            }
-
+        if (variables.useApi()) {
+            logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
         } else {
             logger.warn("Using SQLite as the database");
             logger.warn("Please note that is is not recommended for production");

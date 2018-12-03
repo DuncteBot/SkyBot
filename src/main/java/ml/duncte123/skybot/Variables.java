@@ -101,7 +101,7 @@ public class Variables {
     public DBManager getDatabase() {
 
         if (this.database == null) {
-            this.database = new DBManager(this.isSql, this.config.sql);
+            this.database = new DBManager(this.useApi());
         }
 
         return this.database;
@@ -127,7 +127,7 @@ public class Variables {
         return this.weebApi;
     }
 
-    public boolean isSql() {
+    public boolean useApi() {
         return this.isSql;
     }
 
