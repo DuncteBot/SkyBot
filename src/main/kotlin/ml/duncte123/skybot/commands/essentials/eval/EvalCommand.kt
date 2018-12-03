@@ -97,7 +97,9 @@ class EvalCommand : Command() {
             "ml.duncte123.skybot.utils",
             "ml.duncte123.skybot.entities",
             "ml.duncte123.skybot.entities.delegate",
-            "ml.duncte123.skybot")
+            "ml.duncte123.skybot",
+            "ml.duncte123.skybot.objects.command")
+
         val classImports = listOf(
             "ml.duncte123.skybot.exceptions.DoomedException",
             "fredboat.audio.player.LavalinkManager"

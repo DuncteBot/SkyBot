@@ -101,6 +101,39 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun loadOneGuildPatrons(): JSONArray {
+        return paginateData("patrons/oneguild")
+    }
+
+    fun updateOrCreateOneGuildPatron(userId: Long, guildId: Long): Boolean {
+        val json = JSONObject().put("user_id", userId).put("guild_id", guildId)
+        val response = postJSON("patrons/oneguild", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to add one guild patron\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+
+            return false
+        }
+
+        return true
+    }
+
+    fun getOneGuildPatron(userId: Long): JSONArray {
+        val response = executeRequest(defaultRequest("patrons/oneguild/$userId"))
+
+        return response.getJSONArray("data")
+    }
+
+    fun removeOneGuildPatron(userId: Long) {
+        val response = executeRequest(defaultRequest("patrons/oneguild/$userId").delete())
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to remove one guild patron\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 

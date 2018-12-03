@@ -19,8 +19,9 @@
 package ml.duncte123.skybot.adapters
 
 import gnu.trove.map.TLongIntMap
+import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
-import me.duncte123.botcommons.messaging.EmbedUtils
+import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
@@ -30,7 +31,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.apache.http.MethodNotSupportedException
 import java.sql.SQLException
 
-class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
+class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
         val database = variables.database
@@ -79,7 +80,7 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
     override fun deleteCustomCommand(guildId: Long, invoke: String, callback: (Boolean) -> Unit) {
         val database = variables.database
 
-        val ret = database.run<Boolean> {
+        database.run {
 
             try {
                 database.connManager.use { manager ->
@@ -93,13 +94,13 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
 
             } catch (e: SQLException) {
                 e.printStackTrace()
-                return@run false
+                callback.invoke(false)
+
+                return@run
             }
 
-            return@run true
-        }.get()
-
-        callback.invoke(ret)
+            callback.invoke(true)
+        }
     }
 
     override fun getGuildSettings(callback: (List<GuildSettings>) -> Unit) {
@@ -281,25 +282,129 @@ class SqliteDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(
 
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
         val database = variables.database
-
         val dbName = database.name
 
-        try {
-            database.connManager.use { manager ->
-                val connection = manager.connection
-                val smt = connection.prepareStatement(
-                    "INSERT INTO $dbName.embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?")
+        database.run {
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+                    val smt = connection.prepareStatement(
+                        "INSERT INTO $dbName.embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?")
 
-                smt.setString(1, guildId.toString())
-                smt.setInt(2, color)
-                smt.setInt(3, color)
+                    smt.setString(1, guildId.toString())
+                    smt.setInt(2, color)
+                    smt.setInt(3, color)
 
-                smt.executeUpdate()
+                    smt.executeUpdate()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
             }
-        } catch (e: SQLException) {
-
         }
+    }
 
+    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
+        val database = variables.database
+        val dbName = database.name
+
+        database.run {
+            val map = TLongLongHashMap()
+
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+
+                    val resultSet = connection.createStatement().executeQuery("SELECT * FROM $dbName.oneGuildPatrons")
+
+                    while (resultSet.next()) {
+                        map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
+                    }
+
+                    callback.invoke(map)
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
+        val database = variables.database
+        val dbName = database.name
+
+        database.run {
+
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+
+                    val smt = connection.prepareStatement("INSERT INTO $dbName.oneGuildPatrons" +
+                        "(user_id, guild_id) VALUES( ? , ? ) ON DUPLICATE KEY UPDATE guild_id = ?")
+
+                    smt.setLong(1, userId)
+                    smt.setLong(2, guildId)
+                    smt.setLong(3, guildId)
+
+                    smt.executeUpdate()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+
+                return@run
+            }
+
+            callback.invoke(userId, guildId)
+        }
+    }
+
+    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
+        val database = variables.database
+        val dbName = database.name
+        val map = TLongLongHashMap()
+
+        database.run {
+
+            database.connManager.use { manager ->
+                try {
+                    val connection = manager.connection
+
+                    val statement = connection.prepareStatement(
+                        "SELECT * FROM $dbName.oneGuildPatrons WHERE user_id = ? LIMIT 1")
+
+                    statement.setLong(1, userId)
+
+                    val resultSet = statement.executeQuery()
+
+                    while (resultSet.next()) {
+                        val guildId = resultSet.getLong("guild_id")
+
+                        map.put(userId, guildId)
+                    }
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+
+            callback.invoke(map)
+        }
+    }
+
+    override fun removeOneGuildPatron(userId: Long) {
+        val database = variables.database
+        val dbName = database.name
+
+        database.run {
+            database.connManager.use { manager ->
+                try {
+                    val connection = manager.connection
+
+                    connection.createStatement()
+                        .execute("DELETE FROM $dbName.oneGuildPatrons WHERE user_id = $userId")
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+        }
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {

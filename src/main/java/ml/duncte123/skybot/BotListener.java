@@ -46,10 +46,6 @@ import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -195,7 +191,7 @@ public class BotListener extends ListenerAdapter {
 
         logger.info("Found {} guild patrons", patronGuildsTrove.size());
 
-        GuildUtils.reloadOneGuildPatrons(manager, database);
+        GuildUtils.reloadOneGuildPatrons(manager, variables.getDatabaseAdapter());
     }
 
     @Override
@@ -313,7 +309,7 @@ public class BotListener extends ListenerAdapter {
         Guild guild = event.getGuild();
 
         if (guild.getIdLong() == Command.supportGuildId) {
-            handlePatronRemoval(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
 
         if (event.getMember().equals(guild.getSelfMember())) return;
@@ -423,7 +419,7 @@ public class BotListener extends ListenerAdapter {
                 continue;
             }
 
-            handlePatronRemoval(event.getUser().getIdLong());
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
     }
 
@@ -724,39 +720,34 @@ public class BotListener extends ListenerAdapter {
         return false;
     }
 
-    private void handlePatronRemoval(long userId) {
+    private void handlePatronRemoval(long userId, ShardManager manager) {
         // Remove the user from the patrons list
         Command.patrons.remove(userId);
 
         // Remove the user from the one guild patrons
         Command.oneGuildPatrons.remove(userId);
-        GuildUtils.removeOneGuildPatron(userId, database);
+        GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
 
-        // TODO: Handle full guild case
-        // But hey, who cares right now
+        User user = manager.getUserById(userId);
+
+        manager.getMutualGuilds(user).forEach(
+            (guild) -> Command.guildPatrons.remove(guild.getIdLong())
+        );
     }
 
     private void handleNewOneGuildPatron(long userId) {
-        database.run(() -> {
+        variables.getDatabaseAdapter().getOneGuildPatron(userId,
+            (results) -> {
+                results.forEachEntry(
+                    (a, guildId) -> {
+                        Command.oneGuildPatrons.put(userId, guildId);
 
-            try (Connection connection = database.getConnection()) {
-                PreparedStatement statement = connection.prepareStatement(
-                    "SELECT * FROM " + database.getName() + ".oneGuildPatrons WHERE user_id = ? LIMIT 1");
+                        return true;
+                    }
+                );
 
-                statement.setLong(1, userId);
-
-                ResultSet resultSet = statement.executeQuery();
-
-                while (resultSet.next()) {
-                    long guildId = Long.parseLong(resultSet.getString("guild_id"));
-
-                    Command.oneGuildPatrons.put(userId, guildId);
-                }
-
-            } catch (SQLException e) {
-                e.printStackTrace();
+                return null;
             }
-
-        });
+        );
     }
 }

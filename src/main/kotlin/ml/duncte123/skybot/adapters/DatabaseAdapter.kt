@@ -19,12 +19,12 @@
 package ml.duncte123.skybot.adapters
 
 import gnu.trove.map.TLongIntMap
+import gnu.trove.map.TLongLongMap
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
 
-@Suppress("UNUSED_PARAMETER")
-abstract class DatabaseAdapter(variables: Variables) {
+abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val variables: Variables) {
 
     //////////////////
     // Custom commands
@@ -73,4 +73,15 @@ abstract class DatabaseAdapter(variables: Variables) {
     abstract fun loadEmbedSettings(callback: (TLongIntMap) -> Unit)
 
     abstract fun updateOrCreateEmbedColor(guildId: Long, color: Int)
+
+    ///////////////
+    // Patron stuff
+
+    abstract fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit)
+
+    abstract fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit)
+
+    abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
+
+    abstract fun removeOneGuildPatron(userId: Long)
 }

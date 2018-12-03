@@ -31,6 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 @Authors(authors = {
@@ -70,14 +71,16 @@ public class GuildSettingsUtils {
 
         databaseAdapter.loadEmbedSettings(
             (settings) -> {
-                int loaded = 0;
+                final AtomicInteger loaded = new AtomicInteger();
 
-                for (long key : settings.keys()) {
-                    EmbedUtils.addColor(key, settings.get(key));
-                    loaded++;
-                }
+                settings.forEachEntry((key, value) -> {
+                    EmbedUtils.addColor(key, value);
+                    loaded.incrementAndGet();
 
-                logger.info("Loaded embed colors for " + loaded + " guilds.");
+                    return true;
+                });
+
+                logger.info("Loaded embed colors for " + loaded.get() + " guilds.");
 
                 return null;
             }

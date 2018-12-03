@@ -18,22 +18,18 @@
 
 package ml.duncte123.skybot.adapters
 
-import gnu.trove.impl.hash.TLongIntHash
 import gnu.trove.map.TLongIntMap
+import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
+import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.json.JSONObject
-import java.lang.Exception
 
-import ml.duncte123.skybot.utils.GuildSettingsUtils.replaceNewLines
-import ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks
-import ml.duncte123.skybot.utils.GuildSettingsUtils.toLong
-import ml.duncte123.skybot.utils.GuildSettingsUtils.toBool
-
-class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(variables) {
+class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
 
@@ -55,8 +51,7 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
                 }
 
                 callback.invoke(customCommands)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -115,8 +110,7 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
                 }
 
                 callback.invoke(settings)
-            }
-            catch (e: Exception) {
+            } catch (e: Exception) {
                 e.printStackTrace()
             }
         }
@@ -182,6 +176,50 @@ class WebDatabaseAdapter(private val variables: Variables) : DatabaseAdapter(var
     override fun updateOrCreateEmbedColor(guildId: Long, color: Int) {
         variables.database.run {
             variables.apis.updateOrCreateEmbedColor(guildId, color)
+        }
+    }
+
+    override fun loadOneGuildPatrons(callback: (TLongLongMap) -> Unit) {
+        variables.database.run {
+            val map = TLongLongHashMap()
+
+            variables.apis.loadOneGuildPatrons().forEach {
+                val json = it as JSONObject
+
+                map.put(json.getLong("user_id"), json.getLong("guild_id"))
+            }
+
+            callback.invoke(map)
+        }
+    }
+
+    override fun addOneGuildPatrons(userId: Long, guildId: Long, callback: (Long, Long) -> Unit) {
+        variables.database.run {
+            val status = variables.apis.updateOrCreateOneGuildPatron(userId, guildId)
+
+            if (status) {
+                callback.invoke(userId, guildId)
+            }
+        }
+    }
+
+    override fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit) {
+        variables.database.run {
+            val map = TLongLongHashMap()
+
+            variables.apis.getOneGuildPatron(userId).forEach {
+                val json = it as JSONObject
+
+                map.put(json.getLong("user_id"), json.getLong("guild_id"))
+            }
+
+            callback.invoke(map)
+        }
+    }
+
+    override fun removeOneGuildPatron(userId: Long) {
+        variables.database.run {
+            variables.apis.removeOneGuildPatron(userId)
         }
     }
 }
