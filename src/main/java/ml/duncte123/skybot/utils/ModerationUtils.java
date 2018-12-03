@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.ConsoleUser;
@@ -134,24 +135,8 @@ public class ModerationUtils {
      * @param guildId
      *         What guild the user got banned in
      */
-    public static void addBannedUserToDb(DBManager database, String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-
-        database.run(() -> {
-            try (Connection conn = database.getConnManager().getConnection()) {
-                PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
-
-                smt.setString(1, modID);
-                smt.setString(2, userName);
-                smt.setString(3, userDiscriminator);
-                smt.setString(4, userId);
-                smt.setString(5, unbanDate);
-                smt.setString(6, guildId);
-                smt.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    public static void addBannedUserToDb(DatabaseAdapter adapter, String modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
+        adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
     }
 
     /**

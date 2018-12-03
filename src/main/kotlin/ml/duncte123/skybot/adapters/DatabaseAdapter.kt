@@ -84,4 +84,9 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
     abstract fun getOneGuildPatron(userId: Long, callback: (TLongLongMap) -> Unit)
 
     abstract fun removeOneGuildPatron(userId: Long)
+
+    /////////////
+    // Moderation
+
+    abstract fun createBan(modId: String, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long)
 }

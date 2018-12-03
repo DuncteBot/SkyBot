@@ -134,6 +134,15 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun createBan(json: JSONObject) {
+        val response = postJSON("bans", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to create a ban\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 

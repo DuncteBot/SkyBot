@@ -407,6 +407,32 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createBan(modId: String, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
+        val database = variables.database
+        val dbName = database.name
+
+        database.run {
+            database.connManager.use { manager ->
+                try {
+                    val conn = manager.connection
+                    val smt = conn.prepareStatement("""INSERT INTO
+                        |$dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId)
+                        |VALUES(? , ? , ? , ? , NOW() , ?, ?)""".trimMargin())
+
+                    smt.setString(1, modId)
+                    smt.setString(2, userName)
+                    smt.setString(3, userDiscriminator)
+                    smt.setString(4, userId.toString())
+                    smt.setString(5, unbanDate)
+                    smt.setString(6, guildId.toString())
+                    smt.execute()
+                } catch (e: SQLException) {
+                    e.printStackTrace()
+                }
+            }
+        }
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {
         val database = variables.database
 

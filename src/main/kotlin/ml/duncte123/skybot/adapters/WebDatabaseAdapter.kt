@@ -28,6 +28,8 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.json.JSONObject
+import java.text.SimpleDateFormat
+import java.util.*
 
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
@@ -220,6 +222,23 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun removeOneGuildPatron(userId: Long) {
         variables.database.run {
             variables.apis.removeOneGuildPatron(userId)
+        }
+    }
+
+    override fun createBan(modId: String, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
+        variables.database.run {
+            val json = JSONObject()
+                .put("modUserID", modId)
+                .put("Username", userName)
+                .put("discriminator", userDiscriminator)
+                .put("userId", userId.toString())
+                .put("guildId", guildId.toString())
+                .put("unban_date", unbanDate)
+                .put("ban_date", SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(Date()))
+
+            println(json.toString(4))
+
+            variables.apis.createBan(json)
         }
     }
 }

@@ -161,12 +161,6 @@ public class AirUtils {
      * Stops everything
      */
     public static void stop(DBManager database, AudioUtils audioUtils) {
-        try {
-            database.getConnManager().getConnection().close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (long key : temp.keys()) {
@@ -177,11 +171,12 @@ public class AirUtils {
                 mng.player.stopTrack();
             }
         }
+
         database.getService().shutdown();
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {
-        return getLogChannel(String.valueOf(channel), g);
+        return getLogChannel(Long.toString(channel), g);
     }
 
     /**
