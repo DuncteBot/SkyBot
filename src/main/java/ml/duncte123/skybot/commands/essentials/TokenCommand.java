@@ -82,7 +82,6 @@ public class TokenCommand extends Command {
         String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
 
-
         sendMsg(event, String.format(STRING_FORMAT, args.get(0), id, timestamp, ""), (message) -> {
             try {
                 if (isLong(id)) {
@@ -140,8 +139,7 @@ public class TokenCommand extends Command {
             gmt.setTimeInMillis(millis);
 
             return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
-        }
-        catch (IllegalArgumentException ignored) {
+        } catch (IllegalArgumentException ignored) {
             return null;
         }
     }

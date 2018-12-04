@@ -74,7 +74,7 @@ class UpdateCommand : Command() {
                     event.jda.asBot().shardManager.shutdown()
 
                     // Stop everything that my be using resources
-                    AirUtils.stop(ctx.database, ctx.audioUtils)
+                    AirUtils.stop(ctx.variables.database, ctx.audioUtils)
 
                     // Magic code. Tell the updater to update
                     System.exit(0x54)
@@ -85,7 +85,7 @@ class UpdateCommand : Command() {
                     return
                 sendMsg(event, "✅ Updating") {
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
-                        initUpdate(event, it.id, ctx.database, ctx.audioUtils)
+                        initUpdate(event, it.id, ctx.variables.database, ctx.audioUtils)
                     }
                 }
             }

@@ -24,7 +24,7 @@ import java.io.Closeable;
 import java.sql.Connection;
 
 /**
- * Use abstraction to easier handle {@link MySQLConnectionManager} for
+ * Use abstraction to easier handle {@code MySQLConnectionManager} for
  * databases and {@link SQLiteDatabaseConnectionManager} for file databases
  *
  * @author ramidzkh
