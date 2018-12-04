@@ -61,7 +61,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private static final String DOMAIN_REGEX = "spotify\\.com/";
     private static final String TRACK_REGEX = "track/([a-zA-z0-9]+)";
     private static final String ALBUM_REGEX = "album/([a-zA-z0-9]+)";
-    private static final String USER_PART = "user/(.*)/";
+    private static final String USER_PART = "user/(?:.*)/";
     private static final String PLAYLIST_REGEX = "playlist/([a-zA-z0-9]+)";
     private static final String REST_REGEX = "(?:.*)";
     private static final String SPOTIFY_BASE_REGEX = PROTOCOL_REGEX + DOMAIN_REGEX;
@@ -168,20 +168,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         }
 
         String playListId = res.group(res.groupCount());
-        String userId = res.group(res.groupCount() - 1);
 
         try {
             final List<AudioTrack> finalPlaylist = new ArrayList<>();
 
-            final Future<Playlist> playlistFuture;
-
-            if (userId != null) {
-                // Disable inspection because old playlists don't have unique ids
-                //noinspection deprecation
-                playlistFuture = spotifyApi.getPlaylist(userId, playListId).build().executeAsync();
-            } else {
-                playlistFuture = spotifyApi.getPlaylist(playListId).build().executeAsync();
-            }
+            final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(playListId).build().executeAsync();
 
             final Playlist spotifyPlaylist = playlistFuture.get();
 
