@@ -200,6 +200,13 @@ class DuncteApis(private val apiKey: String) {
         return data
     }
 
+    fun decodeToken(token: String): JSONObject {
+        val json = JSONObject().put("token", token)
+
+
+        return postJSON("token", json)
+    }
+
     private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {
         val success = response.getBoolean("success")
 
