@@ -89,8 +89,8 @@ public class TempBanCommand extends Command {
         event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (voidMethod) -> {
                 if (finalBanTime > 0) {
-                    addBannedUserToDb(ctx.getDatabase(), event.getAuthor().getId(),
-                        toBan.getName(), toBan.getDiscriminator(), toBan.getId(), finalUnbanDate, event.getGuild().getId());
+                    addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
+                        toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
 
                     modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
                 } else {
@@ -162,7 +162,7 @@ public class TempBanCommand extends Command {
                 }
 
                 DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-                Date dt = new Date(System.currentTimeMillis());
+                Date dt = new Date();
 
                 switch (timeParts[1]) {
                     case "m":

@@ -24,7 +24,7 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message
@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory
 import java.util.stream.Collectors
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class SpamFilter(private val database: DBManager, private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
+class SpamFilter(private val adapter: DatabaseAdapter, private val variables: Variables) : TLongObjectHashMap<SpamCache>() {
 
     private lateinit var rates: TLongList
 
@@ -132,9 +132,9 @@ class SpamFilter(private val database: DBManager, private val variables: Variabl
             }
 
             if (shouldModerate) {
-                val warnings = ModerationUtils.getWarningCountForUser(database, user, author.guild) + 1
+                val warnings = ModerationUtils.getWarningCountForUser(adapter, user, author.guild) + 1
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
-                ModerationUtils.addWarningToDb(database, jda.selfUser, user, "Spam", guild)
+                ModerationUtils.addWarningToDb(adapter, jda.selfUser, user, "Spam", guild)
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {

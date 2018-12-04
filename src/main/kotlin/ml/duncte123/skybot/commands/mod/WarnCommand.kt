@@ -53,7 +53,7 @@ class WarnCommand : Command() {
             MessageUtils.sendError(event.message)
             return
         }
-        if (ModerationUtils.getWarningCountForUser(ctx.database, target.user, event.guild) >= 3) {
+        if (ModerationUtils.getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
             ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
             return
@@ -66,7 +66,7 @@ class WarnCommand : Command() {
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 
-        ModerationUtils.addWarningToDb(ctx.database, event.author, target.user, reason, event.guild)
+        ModerationUtils.addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
         ModerationUtils.modLog(event.author, target.user, "warned", reason, ctx.guild)
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console

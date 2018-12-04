@@ -24,7 +24,6 @@ import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -38,14 +37,12 @@ import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
 import org.apache.commons.io.FileUtils;
-import org.apache.commons.lang3.time.DateUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.sql.Connection;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.concurrent.Executors;
@@ -67,16 +64,15 @@ public final class SkyBot {
 
     private static SkyBot instance;
     private final ShardManager shardManager;
-    private IntFunction<? extends Game> gameProvider;
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
         (r) -> new Thread(r, "Bot-Service-Thread")
     );
+    private IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
 
         Variables variables = new Variables();
         DunctebotConfig config = variables.getConfig();
-        DBManager database = variables.getDatabase();
         CommandManager commandManager = variables.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
@@ -93,36 +89,15 @@ public final class SkyBot {
             Settings.PREFIX = configPrefix;
         }
 
-        //throwable.printStackTrace();
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
         RestAction.setPassContext(false);
 
-        if (variables.isSql()) { //Don't try to connect if we don't want to
-            if (!database.getConnManager().hasSettings()) {
-                logger.error("Can't load database settings. ABORTING!!!!!");
-                System.exit(-2);
-            }
-
-            try (Connection conn = database.getConnection()) {
-
-                if (conn.isClosed() && variables.isSql()) {
-                    logger.error("Can't connect to database. ABORTING!!!!!");
-                    System.exit(-3);
-                }
-
-                logger.info(TextColor.GREEN + "Successful connection to the database" + TextColor.RESET);
-            }
-
+        if (variables.useApi()) {
+            logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
         } else {
-            int startIn = 5;
             logger.warn("Using SQLite as the database");
-            logger.warn("Please note that is is not recommended and can break some features.");
-            logger.warn("Please report bugs on GitHub (https://github.com/duncte123/SkyBot/issues)");
-            Thread.sleep(DateUtils.MILLIS_PER_SECOND * startIn);
+            logger.warn("Please note that is is not recommended for production");
         }
-
-        //2 seconds safe sleep for database
-        Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
 
         //Load the settings before loading the bot
         GuildSettingsUtils.loadAllSettings(variables);
@@ -175,6 +150,12 @@ public final class SkyBot {
         return shardManager;
     }
 
+    private void startGameTimer() {
+        this.gameScheduler.scheduleAtFixedRate(
+            () -> this.shardManager.setGameProvider(this.gameProvider),
+            1, 1, TimeUnit.DAYS);
+    }
+
     /**
      * This is our main method
      *
@@ -198,12 +179,6 @@ public final class SkyBot {
 
     public static SkyBot getInstance() {
         return instance;
-    }
-
-    private void startGameTimer() {
-        this.gameScheduler.scheduleAtFixedRate(
-            () -> this.shardManager.setGameProvider(this.gameProvider),
-            1, 1, TimeUnit.DAYS);
     }
 
     private static void gen() {

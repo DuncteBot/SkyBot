@@ -33,7 +33,6 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.sql.SQLException;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Matcher;
@@ -161,12 +160,6 @@ public class AirUtils {
      * Stops everything
      */
     public static void stop(DBManager database, AudioUtils audioUtils) {
-        try {
-            database.getConnManager().getConnection().close();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
         TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
         for (long key : temp.keys()) {
@@ -177,11 +170,12 @@ public class AirUtils {
                 mng.player.stopTrack();
             }
         }
+
         database.getService().shutdown();
     }
 
     public static TextChannel getLogChannel(long channel, Guild g) {
-        return getLogChannel(String.valueOf(channel), g);
+        return getLogChannel(Long.toString(channel), g);
     }
 
     /**
@@ -235,6 +229,13 @@ public class AirUtils {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
+    /**
+     * Returns the system uptime
+     *
+     * @return String lala
+     *
+     * @throws Exception
+     */
     public static String getSystemUptime() throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {

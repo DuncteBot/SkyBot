@@ -40,12 +40,14 @@ class KpopCommand : Command() {
 
         try {
             val queryString = if (!ctx.args.isEmpty()) ctx.argsRaw else ""
-            val member = ApiUtils.getRandomKpopMember(ctx.database, queryString)
+            val member = ApiUtils.getRandomKpopMember(queryString)
+
             val eb = EmbedUtils.defaultEmbed()
                 .setDescription("Here is a kpop member from the group ${member.band}")
                 .addField("Name of the member", member.name, false)
                 .setImage(member.image)
                 .setFooter("Query id: ${member.id}", Settings.DEFAULT_ICON)
+
             sendEmbed(ctx.event, eb.build())
         } catch (ignored: SQLException) {
             MessageUtils.sendMsg(ctx.event, "Nothing found")

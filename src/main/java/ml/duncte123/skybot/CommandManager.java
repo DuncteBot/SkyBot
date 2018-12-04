@@ -20,28 +20,18 @@ package ml.duncte123.skybot;
 
 import com.jagrosh.jagtag.Parser;
 import kotlin.Triple;
-import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
-import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.time.DateUtils;
 import org.reflections.Reflections;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -61,7 +51,6 @@ public class CommandManager {
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
     private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
-    private final DBManager database;
 
     private final Variables variables;
 
@@ -70,7 +59,6 @@ public class CommandManager {
      */
     public CommandManager(Variables variables) {
         this.variables = variables;
-        this.database = variables.getDatabase();
 
         //Get reflections for this project
         registerCommandsFromReflection(new Reflections("ml.duncte123.skybot.commands"));
@@ -163,26 +151,23 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                Triple<Boolean, Boolean, Boolean> res = database.run(() -> {
+                CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
 
-                    String sqlQuerry = (isEdit) ?
-                        "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?" :
-                        "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)";
+                if (isEdit) {
+                    variables.getDatabaseAdapter()
+                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                } else {
+                    variables.getDatabaseAdapter()
+                        .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                            future.complete(triple);
+                            return null;
+                        });
+                }
 
-                    try (Connection conn = database.getConnManager().getConnection()) {
-                        PreparedStatement stm = conn.prepareStatement(sqlQuerry);
-                        stm.setString((isEdit) ? 2 : 1, Long.toString(command.getGuildId()));
-                        stm.setString((isEdit) ? 3 : 2, command.getName());
-                        stm.setString((isEdit) ? 1 : 3, command.getMessage());
-                        stm.execute();
-                    } catch (SQLException e) {
-                        e.printStackTrace();
-
-                        return new Triple<>(false, false, false);
-                    }
-
-                    return null;
-                }).get();
+                Triple<Boolean, Boolean, Boolean> res = future.get();
 
                 if (res != null && !res.getFirst()) {
                     return res;
@@ -217,22 +202,19 @@ public class CommandManager {
             return false;
 
         try {
-            return database.run(() -> {
+            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
+                future.complete(bool);
+                return null;
+            });
 
-                try (Connection con = database.getConnManager().getConnection()) {
-                    PreparedStatement stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?");
-                    stm.setString(1, name);
-                    stm.setString(2, Long.toString(guildId));
-                    stm.execute();
-                } catch (SQLException e) {
-                    e.printStackTrace();
-                    return false;
-                }
+            boolean result = future.get();
 
+            if (result) {
                 this.customCommands.remove(cmd);
+            }
 
-                return true;
-            }).get();
+            return result;
         } catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
@@ -247,7 +229,7 @@ public class CommandManager {
      *
      * @return true if the command is added
      */
-    @SuppressWarnings({"UnusedReturnValue", "ConstantConditions"})
+    @SuppressWarnings({"UnusedReturnValue"})
     public boolean addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
@@ -379,26 +361,15 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-        database.run(() -> {
 
-            try {
-                // Sleep for database safety
-                Thread.sleep(DateUtils.MILLIS_PER_SECOND * 2);
-            } catch (InterruptedException ignored) {
-            }
+        variables.getDatabaseAdapter().getCustomCommands(
+            (loadedCommands) -> {
+                loadedCommands.forEach(
+                    (command) -> addCustomCommand(command, false, false)
+                );
 
-            try (Connection con = database.getConnManager().getConnection()) {
-                ResultSet res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands");
-                while (res.next()) {
-                    addCustomCommand(new CustomCommandImpl(
-                        res.getString("invoke"),
-                        res.getString("message"),
-                        Long.parseUnsignedLong(res.getString("guildId"))
-                    ), false, false);
-                }
-            } catch (SQLException e) {
-                e.printStackTrace();
+                return null;
             }
-        });
+        );
     }
 }
