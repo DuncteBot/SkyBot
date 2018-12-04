@@ -3,7 +3,7 @@
 
 1. Create a Fork (If you already have a local repository skip to step 3)
     
-    ![Create Fork](https://i.imgur.com/DqDWls4.png)
+    ![Create Fork](https://i.imgur.com/kQ9QRSO.png)
 
 2. Clone Repository
     ```bash
@@ -80,16 +80,16 @@ Based on the current `upstream/master` changes!
 
 3. Open Pull-Request
 
-    ![open pull request](https://i.imgur.com/YpRISyh.png)
+    ![open pull request](https://i.imgur.com/iZQNPJS.png)
 
 4. Set base branch to 
-    `base fork: duncte123/SkyBot` `base: dev`
+    `base fork: duncte123/SkyBot` `base: development`
 
 5. Allow edits from Maintainers
 
 6. Done! Just click **Create pull request** and await a review by one of the maintainers!
 
-![Example Pull-Request](https://i.imgur.com/ELZJSn2.png)
+![Example Pull-Request](https://i.imgur.com/0HywAuP.png)
 
 ### Examples
 
@@ -98,6 +98,9 @@ Based on the current `upstream/master` changes!
 ```diff
 +   public static Response postRequest(String url, Map<String, Object> postFields) 
 +   {
++       if (url != null)
++           return null;
++       
 +       return postRequest(url, postFields, AcceptType.URLENCODED);
 +   }
 ```
@@ -110,7 +113,13 @@ Based on the current `upstream/master` changes!
 +    * @param postFields the params for the post
 +    * @return The {@link okhttp3.Response Response} from the webserver
 +    */
-+   public static Response postRequest(String url, Map<String, Object> postFields) {
++   @Nullable
++   public static Response postRequest(String url, @NotNull Map<String, Object> postFields) {
++       if (url != null) {
++           return null;
++       }
++
 +       return postRequest(url, postFields, AcceptType.URLENCODED);
 +   }
 ```
+The annotations should always be imported from `org.jetbrains.annotations`
