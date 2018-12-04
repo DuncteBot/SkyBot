@@ -40,7 +40,9 @@ Based on the current `upstream/master` changes!
 
 1. Adding a new Method or Class
     - If your addition is not internal (e.g. an impl class or private method) you have to write documentation.
-        - For that we like to follow [JDA's JavaDoc template](https://github.com/DV8FromTheWorld/JDA/wiki/6%29-JDA-Structure-Guide#javadoc)
+        - For that we like to follow [this structure guide](https://github.com/DuncteBot/SkyBot/wiki/Structure-Guide#javadoc)
+        Our structure guide has been adapted from [JDA's structure guide](https://github.com/DV8FromTheWorld/JDA/wiki/6%29-JDA-Structure-Guide#javadoc)
+        - If you are using Intellij IDEA you can import the code styles that are included in the repo
     - Keep your code consistent! [example](#examples)
         - We use 4 spaces insted of tabs
         - Compare your code style to the one used all over SkyBot and ensure you

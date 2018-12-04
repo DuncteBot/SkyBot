@@ -229,6 +229,13 @@ public class AirUtils {
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
+    /**
+     * Returns the system uptime
+     *
+     * @return String lala
+     *
+     * @throws Exception
+     */
     public static String getSystemUptime() throws Exception {
         String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
