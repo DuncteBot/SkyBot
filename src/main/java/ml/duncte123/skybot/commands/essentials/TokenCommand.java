@@ -79,8 +79,11 @@ public class TokenCommand extends Command {
             return;
         }
 
-        sendMsg(event, "Something broke, please send this message to my developers: " +
-            "`Java broke regex (token command)`");
+        JSONObject error = json.getJSONObject("error");
+        String errorType = error.getString("type");
+        String errorMessage = error.getString("message");
+
+        sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
 
     @Override
