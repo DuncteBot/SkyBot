@@ -76,6 +76,18 @@ public class UnlockEmoteCommand extends Command {
         sendMsg(event, "The emote " + emote.getAsMention() + " has been unlocked");
     }
 
+    @Override
+    public String getName() {
+        return "unlockemote";
+    }
+
+    @Override
+    public String help() {
+        return "Unlocks an emote if it was locked\n" +
+            "Usage: `" + PREFIX + getName() + " <:emote:>`\n" +
+            "Please note that you have to mention the emote due the bot not caching emotes for their names";
+    }
+
     static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {
         if (!emote.getGuild().equals(event.getGuild())) {
             sendMsg(event, "That emote does not exist on this server");
@@ -87,17 +99,5 @@ public class UnlockEmoteCommand extends Command {
             return true;
         }
         return false;
-    }
-
-    @Override
-    public String getName() {
-        return "unlockemote";
-    }
-
-    @Override
-    public String help() {
-        return "Unlocks an emote if it was locked\n" +
-            "Usage: `" + PREFIX + getName() + " <:emote:>`\n" +
-            "Please note that you have to mention the emote due the bot not caching emotes for their names";
     }
 }

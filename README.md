@@ -7,14 +7,17 @@
 [discord]: https://discordapp.com/api/guilds/191245668617158656/embed.png
 [discordLink]: https://discord.gg/NKM9Xtk
 [inviteLink]: https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1
+[patronLink]: https://patreon.com/DuncteBot
+[patronImage]: https://img.shields.io/badge/Donate-Patreon-orange.svg
 
-[![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Support Guild][discord]][discordLink]
+[![Codacy Badge][codacy]][codacyLink] [![Build Status][circle]][circleLink] [![DiscordBots][dbl]][dblLink] [![Patreon][patronImage]][patronLink] [![Support Guild][discord]][discordLink]
 
 # SkyBot 
 SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
-If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) 
+If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) <br />
+If you want to support development of the bot [conciser to be come a patron][patronLink]
 
 
 # How to invite the bot to a server?
@@ -31,12 +34,9 @@ The following libraries are used:
 - [_weeb.java_](https://github.com/duncte123/weeb.java)
 - [_JDA_](https://github.com/DV8FromTheWorld/JDA)
 - [_LavaPlayer_](https://github.com/sedmelluq/lavaplayer)
-- [_jda-nas_](https://github.com/sedmelluq/jda-nas)
-- [_ason_](https://github.com/afollestad/ason)
+- [_Wolfaram|Alpha Binding_](https://github.com/aeurielesn/wolfram-alpha-java-binding)
 - [_reflections_](https://github.com/ronmamo/reflections)
 - [_commons-text_](https://commons.apache.org/proper/commons-text/)
-- [_jsoup_](https://jsoup.org/)
-- [_mysql-connector-java_](https://dev.mysql.com/downloads/connector/j/)
 - [_sqlite-connector-java_](https://github.com/xerial/sqlite-jdbc)
 - [_groovy-jsr223_](https://github.com/apache/groovy)
 - [_groovy-sandbox_](https://github.com/jenkinsci/groovy-sandbox)
@@ -46,18 +46,6 @@ The following libraries are used:
 # Support
 [![Support Guild](https://discordapp.com/api/guilds/191245668617158656/embed.png?style=banner2)](https://discord.gg/NKM9Xtk)
 
-# ToDo list
-- [x] ~~SQLite as a fail over database~~
-- [x] ~~Make database optional~~
-- [x] ~~Create Joke command~~
-- [x] ~~Fix timed bans in the ban command (Turned out to be a backend issue)~~
-- [x] ~~Add a wiki that explains how to set the bot up yourself~~
-- [x] ~~Create new way to load the bot token~~
-- [x] ~~Create a random seal command~~
-- [x] ~~Make the nowplaying command show the title of the song in the embed~~
-- [x] ~~Make kpop command take in a search term (name/id)~~
-- [ ] Find international music streams for the [RadioCommand](https://github.com/duncte123/SkyBot/blob/dev/src/main/kotlin/ml/duncte123/skybot/commands/music/RadioCommand.kt#L69)
-- [X] ~~Make web requests thread safe~~
 
 # Widgets from botlists
 [![Bots for discord](https://botsfordiscord.com/api/bot/210363111729790977/widget)](https://botsfordiscord.com/bots/210363111729790977)

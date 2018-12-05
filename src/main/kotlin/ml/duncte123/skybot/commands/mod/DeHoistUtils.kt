@@ -32,7 +32,6 @@ import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.events.guild.member.GuildMemberJoinEvent
 import net.dv8tion.jda.core.events.guild.member.GuildMemberNickChangeEvent
 import net.dv8tion.jda.core.hooks.ListenerAdapter
-import java.util.regex.Pattern
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class DeHoistCommand : Command() {

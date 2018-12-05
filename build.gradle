@@ -41,7 +41,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = "ml.duncte123.skybot"
-version "3.82.1_${getGitHash()}"
+version "3.83.0_${getGitHash()}"
 
 def javaVersion = JavaVersion.VERSION_11
 
@@ -82,14 +82,12 @@ dependencies {
     implementation group: 'com.sedmelluq', name: 'lavaplayer', version: '1.3.10'
 //    compile group: 'com.github.FredBoat', name: 'Lavalink-Client', version: '125b074'
     implementation group: 'com.github.DuncteBot', name: 'Lavalink-Client', version: 'f320299'
-
-    // MySQL
-    implementation group: 'mysql', name: 'mysql-connector-java', version: '8.0.13'
+    
     // SQLite
     implementation group: 'org.xerial', name: 'sqlite-jdbc', version: '3.25.2'
 
     //groovy
-//    compile group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.2'
+//    implementation group: 'org.codehaus.groovy', name: 'groovy-jsr223', version: '2.5.2'
     implementation group: 'com.github.apache.groovy', name: 'groovy-jsr223', version: '43d9f2178f'
     
     //groovy sandbox

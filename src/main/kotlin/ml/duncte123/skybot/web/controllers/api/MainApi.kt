@@ -19,8 +19,6 @@
 package ml.duncte123.skybot.web.controllers.api
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.connections.database.DBManager
-import ml.duncte123.skybot.utils.ApiUtils
 import net.dv8tion.jda.bot.sharding.ShardManager
 import org.json.JSONObject
 import spark.Response
@@ -38,17 +36,5 @@ object MainApi {
 
     fun joinGuild(response: Response) {
         response.redirect("https://discord.gg/NKM9Xtk")
-    }
-
-    fun llama(response: Response, database: DBManager): Any {
-        return ApiUtils.getRandomLlama(database).toJson()
-            .put("status", "success")
-            .put("code", response.status())
-    }
-
-    fun alpaca(response: Response): Any {
-        return ApiUtils.getRandomAlpaca().toJson()
-            .put("status", "success")
-            .put("code", response.status())
     }
 }

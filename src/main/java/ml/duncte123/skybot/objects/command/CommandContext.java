@@ -20,7 +20,7 @@ package ml.duncte123.skybot.objects.command;
 
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
-import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -49,10 +49,10 @@ import java.util.stream.Collectors;
 public class CommandContext {
 
     private final String invoke;
-    private List<String> argsWithoutQuotes;
     private final List<String> args;
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
+    private List<String> argsWithoutQuotes;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -77,8 +77,8 @@ public class CommandContext {
         return this.variables.getConfig();
     }
 
-    public DBManager getDatabase() {
-        return this.variables.getDatabase();
+    public DatabaseAdapter getDatabaseAdapter() {
+        return this.variables.getDatabaseAdapter();
     }
 
     public ThreadLocalRandom getRandom() {

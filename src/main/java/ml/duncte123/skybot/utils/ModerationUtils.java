@@ -22,20 +22,22 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
+import ml.duncte123.skybot.objects.api.Ban;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.sql.*;
-import java.util.Date;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.embedMessage;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -134,24 +136,8 @@ public class ModerationUtils {
      * @param guildId
      *         What guild the user got banned in
      */
-    public static void addBannedUserToDb(DBManager database, String modID, String userName, String userDiscriminator, String userId, String unbanDate, String guildId) {
-
-        database.run(() -> {
-            try (Connection conn = database.getConnManager().getConnection()) {
-                PreparedStatement smt = conn.prepareStatement("INSERT INTO bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                    "VALUES(? , ? , ? , ? , NOW() , ?, ?)");
-
-                smt.setString(1, modID);
-                smt.setString(2, userName);
-                smt.setString(3, userDiscriminator);
-                smt.setString(4, userId);
-                smt.setString(5, unbanDate);
-                smt.setString(6, guildId);
-                smt.execute();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    public static void addBannedUserToDb(DatabaseAdapter adapter, long modID, String userName, String userDiscriminator, long userId, String unbanDate, long guildId) {
+        adapter.createBan(modID, userName, userDiscriminator, userId, unbanDate, guildId);
     }
 
     /**
@@ -162,11 +148,8 @@ public class ModerationUtils {
      *
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(DBManager database, User u, Guild g) {
-        if (u == null)
-            throw new IllegalArgumentException("User to check can not be null");
-
-        return ApiUtils.getWarnsForUser(database, u.getId(), g.getId()).getWarnings().size();
+    public static int getWarningCountForUser(DatabaseAdapter adapter, @NotNull User u, @NotNull Guild g) {
+        return ApiUtils.getWarnsForUser(adapter, u.getIdLong(), g.getIdLong()).getWarnings().size();
     }
 
     /**
@@ -179,72 +162,51 @@ public class ModerationUtils {
      * @param reason
      *         the reason for the warn
      */
-    public static void addWarningToDb(DBManager database, User moderator, User target, String reason, Guild guild) {
-
-        database.run(() -> {
-            try (Connection conn = database.getConnManager().getConnection()) {
-                PreparedStatement smt = conn.prepareStatement("INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                    "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )");
-                smt.setString(1, moderator.getId());
-                smt.setString(2, target.getId());
-                smt.setString(3, reason);
-                smt.setString(4, guild.getId());
-                smt.executeUpdate();
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-        });
+    public static void addWarningToDb(DatabaseAdapter adapter, User moderator, User target, String reason, Guild guild) {
+        adapter.createWarning(moderator.getIdLong(), target.getIdLong(), guild.getIdLong(), reason);
     }
 
     /**
      * This will check if there are users that can be unbanned
      */
     public static void checkUnbans(Variables variables) {
-        DBManager database = variables.getDatabase();
-        database.run(() -> {
-            ShardManager shardManager = SkyBot.getInstance().getShardManager();
-            logger.debug("Checking for users to unban");
-            int usersUnbanned = 0;
+        variables.getDatabaseAdapter().getExpiredBans(
+            (bans) -> {
+                logger.info("Checking for users to unban");
+                ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-            try (Connection connection = database.getConnManager().getConnection()) {
+                for (Ban ban : bans) {
+                    Guild guild = shardManager.getGuildById(ban.getGuildId());
 
-                Statement smt = connection.createStatement();
-
-                ResultSet res = smt.executeQuery("SELECT * FROM " + database.getName() + ".bans");
-
-                while (res.next()) {
-                    Date unbanDate = res.getTimestamp("unban_date");
-                    Date currDate = new Date();
-
-                    if (currDate.after(unbanDate)) {
-                        usersUnbanned++;
-                        String username = res.getString("Username");
-                        logger.debug("Unbanning " + username);
-                        try {
-                            String guildId = res.getString("guildId");
-                            String userID = res.getString("userId");
-                            Guild guild = shardManager.getGuildById(guildId);
-                            if (guild != null) {
-                                guild.getController()
-                                    .unban(userID).reason("Ban expired").queue();
-                                modLog(new ConsoleUser(),
-                                    new FakeUser(username,
-                                        Long.parseUnsignedLong(userID),
-                                        Short.valueOf(res.getString("discriminator"))),
-                                    "unbanned",
-                                    new DunctebotGuild(guild, variables)
-                                );
-                            }
-                        } catch (NullPointerException ignored) {
-                        }
-                        connection.createStatement().executeUpdate("DELETE FROM " + database.getName() + ".bans WHERE id=" + res.getInt("id") + "");
+                    if (guild == null) {
+                        continue;
                     }
+
+
+                    logger.debug("Unbanning " + ban.getUserName());
+
+                    guild.getController()
+                        .unban(ban.getUserId()).reason("Ban expired").queue();
+
+                    modLog(new ConsoleUser(),
+                        new FakeUser(ban.getUserName(),
+                            Long.parseUnsignedLong(ban.getUserId()),
+                            Short.valueOf(ban.getDiscriminator())),
+                        "unbanned",
+                        new DunctebotGuild(guild, variables)
+                    );
+
                 }
-                logger.debug("Checking done, unbanned " + usersUnbanned + " users.");
-            } catch (SQLException e) {
-                e.printStackTrace();
+
+                logger.info("Checking done, unbanned {} users.", bans.size());
+
+                List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
+
+                variables.getApis().purgeBans(purgeIds);
+
+                return null;
             }
-        });
+        );
     }
 
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {

@@ -23,7 +23,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-import java.awt.Color;
+import java.awt.*;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

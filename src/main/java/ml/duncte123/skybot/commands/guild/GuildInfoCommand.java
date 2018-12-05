@@ -31,8 +31,11 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.ocpsoft.prettytime.PrettyTime;
 
+import java.time.OffsetDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.Date;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -47,6 +50,7 @@ public class GuildInfoCommand extends Command {
 
     //https://stackoverflow.com/a/1915107/4453592
     private static final String INVITE_STRING_TEMPLATE = "**Invite:** [discord.gg/%1$s](https://discord.gg/%1$s)";
+    private final PrettyTime prettyTime = new PrettyTime();
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -96,15 +100,22 @@ public class GuildInfoCommand extends Command {
         double[] ratio = GuildUtils.getBotRatio(g);
         EmbedBuilder eb = EmbedUtils.defaultEmbed();
         GuildSettings settings = ctx.getGuildSettings();
+
+        OffsetDateTime createTime = g.getCreationTime();
+        Date createTimeDate = Date.from(createTime.toInstant());
+        String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        String createTimeHuman = prettyTime.format(createTimeDate);
+
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }
+
         eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
             .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
                 "**Name:** " + g.getName() + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
                 "**Region:** " + g.getRegion().getName() + "\n" +
-                "**Created at:** " + g.getCreationTime().format(DateTimeFormatter.RFC_1123_DATE_TIME) + "\n" +
+                "**Created at:** " + String.format("%s (%s)", createTimeFormat, createTimeHuman) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
                 inviteString, false)
             .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
