@@ -27,7 +27,7 @@
             </div>
 
             {% if not hideForm %}
-                <form id="{{ form_id }}" action="" method="post" autocomplete="off">
+                <form id="patrons" action="" method="post" autocomplete="off">
 
                     <div class="input-field">
                         <input type="text" pattern="{{ pattern }}"
@@ -62,5 +62,5 @@
 
 {% block script %}
     <script src='https://www.google.com/recaptcha/api.js'></script>
-    <script src="/js/patron-guild.js"></script>
+    <script src="/js/patron-guild.js?v=2"></script>
 {% endblock %}
