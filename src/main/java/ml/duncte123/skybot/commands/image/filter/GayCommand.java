@@ -16,29 +16,8 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.image;
+package ml.duncte123.skybot.commands.image.filter;
 
-import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
-
-public class ScrollCommand extends ImageCommandBase {
-    @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), ctx.getArgs(), true)) return;
-
-        ctx.getAlexFlipnote().getScroll(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
-    }
-
-    @Override
-    public String getName() {
-        return "scroll";
-    }
-
-    @Override
-    public String help() {
-        return "The scroll of truth\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
-    }
+public class GayCommand extends FilterBase {
+    // Lol abstraction ftw
 }
