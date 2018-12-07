@@ -21,6 +21,7 @@ package ml.duncte123.skybot.utils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.adapters.DatabaseAdapter
+import ml.duncte123.skybot.extensions.illuminate
 import ml.duncte123.skybot.objects.api.*
 import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import java.net.URLEncoder
@@ -34,13 +35,20 @@ object ApiUtils {
     fun getRandomLlama(): LlamaObject {
         val json = WebUtils.ins.getJSONObject("$API_HOST/llama").execute().getJSONObject("data")
 
-        return LlamaObject(json.getInt("id"), json.getString("file"))
+        return LlamaObject(json.getInt("id"), json.getString("file").illuminate())
     }
 
     @JvmStatic
     fun getRandomAlpacaAsync(callback: (AlpacaObject) -> Unit) {
         WebUtils.ins.getJSONObject("$API_HOST/alpaca").async {
-            callback.invoke(AlpacaObject(it.getString("data")))
+            callback.invoke(AlpacaObject(it.getString("data").illuminate()))
+        }
+    }
+
+    @JvmStatic
+    fun getRandomSealAsync(callback: (String) -> Unit) {
+        WebUtils.ins.getJSONObject("$API_HOST/seal").async {
+            callback.invoke(it.getString("data").illuminate())
         }
     }
 
@@ -54,7 +62,7 @@ object ApiUtils {
             json.getInt("id"),
             json.getString("name"),
             json.getString("band"),
-            json.getString("img")
+            json.getString("img").illuminate()
         )
     }
 
