@@ -55,6 +55,14 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getScroll(String text) {
+        QueryBuilder builder = new QueryBuilder().append("text", text);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("scroll" + builder.build()),
+            IOHelper::read
+        );
+    }
+
     public PendingRequest<byte[]> getDidYouMean(String input, String correction) {
         QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
         return WebUtils.ins.prepareRaw(
