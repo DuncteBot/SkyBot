@@ -21,40 +21,16 @@
 package ml.duncte123.skybot.objects.api
 
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.extensions.cdnPrefix
-import org.json.JSONObject
 import java.sql.Date
-import kotlin.reflect.KVisibility
-import kotlin.reflect.full.memberProperties
 
-data class LlamaObject(val id: Int, val file: String) : ApiObject()
+data class LlamaObject(val id: Int, val file: String)
 
-data class AlpacaObject(val file: String) : ApiObject()
+data class AlpacaObject(val file: String)
 
-data class KpopObject(val id: Int, val name: String, val band: String, val image: String) : ApiObject()
+data class KpopObject(val id: Int, val name: String, val band: String, val image: String)
 
-data class WarnObject(val userId: String, val warnings: List<Warning>) : ApiObject()
-data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId: String, val reason: String, val guildId: String) : ApiObject()
+data class WarnObject(val userId: String, val warnings: List<Warning>)
+data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId: String, val reason: String, val guildId: String)
 
 data class Ban(val id: Int, val modId: String, val userId: String, val userName: String, val discriminator: String, val guildId: String)
 
-
-open class ApiObject {
-    fun toJson(): JSONObject {
-        val json = JSONObject()
-
-        this::class.memberProperties.forEach {
-            if (it.visibility == KVisibility.PUBLIC) {
-
-                if (it.name == "file" || it.name == "image") {
-                    val file = it.getter.call(this) as String
-                    json.put(it.name, file.cdnPrefix())
-                } else {
-                    json.put(it.name, it.getter.call(this))
-                }
-            }
-        }
-
-        return json
-    }
-}
