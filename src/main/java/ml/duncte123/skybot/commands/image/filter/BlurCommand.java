@@ -18,6 +18,6 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-public class GayCommand extends FilterBase {
+public class BlurCommand extends FilterBase {
     // The FilterBase class handles everything
 }
