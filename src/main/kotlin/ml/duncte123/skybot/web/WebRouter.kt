@@ -92,8 +92,7 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
 
         get("/register-server", WebVariables()
             .put("title", "Register your server for patron perks")
-            .put("chapta_sitekey", config.apis.chapta.sitekey)
-            .put("form_id", RandomStringUtils.random(10, true, false)), "oneGuildRegister.twig")
+            .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
         post("/register-server") {
             return@post OneGuildRegister.post(request, shardManager, variables, engine)

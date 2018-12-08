@@ -64,18 +64,17 @@ class UserinfoCommand : Command() {
             m = event.guild.getMemberById(u.id)
         } else {
 
-            var users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
+            val members = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+
+            var users = members.stream().map { it.user }.collect(Collectors.toList())
 
             if (users.isEmpty()) {
 
-                val members = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
+                users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
 
-                if (members.isNotEmpty()) {
-
-                    users = members.stream().map { it.user }.collect(Collectors.toList())
-
-                    m = members[0]
+                if (users.isNotEmpty()) {
                     u = users[0]
+                    m = ctx.guild.getMember(u)
                 }
 
             } else {
@@ -128,6 +127,7 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
+                        |**Nitro User?** ${isNitro(user)}
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
                         |_Use `${PREFIX}avatar [user]` to get a user's avatar_
@@ -182,6 +182,7 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
+                        |**Nitro User?** ${isNitro(u)}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
@@ -201,7 +202,7 @@ class UserinfoCommand : Command() {
             u.effectiveAvatarUrl.replace("gif", "png") + "?size=256").async {
             event.channel.sendFile(it, "stat.png",
                 MessageBuilder().setEmbed(embed.setThumbnail("attachment://stat.png").build()).build()
-            ).queue(null) { _ ->
+            ).queue(null) {
                 sendEmbedRaw(event.channel, embed.setThumbnail(u.effectiveAvatarUrl).build(), null)
             }
         }
@@ -223,6 +224,14 @@ class UserinfoCommand : Command() {
             OnlineStatus.IDLE -> StatusType.IDLE
             OnlineStatus.INVISIBLE -> StatusType.OFFLINE
             else -> StatusType.ONLINE
+        }
+    }
+
+    private fun isNitro(user: User): String {
+        return if (user.avatarId != null && user.avatarId.startsWith("a_")) {
+            "Yes"
+        } else {
+            "No"
         }
     }
 

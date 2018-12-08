@@ -16,19 +16,26 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.image;
+package ml.duncte123.skybot.commands.image.filter;
 
-import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.commands.image.ImageCommandBase;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class LinusCommand extends ImageCommandBase {
+public abstract class FilterBase extends ImageCommandBase {
+
+    private final String commandName;
+
+    public FilterBase() {
+        this.commandName = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
+        this.category = CommandCategory.PATRON;
+    }
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
         GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passesNoArgs(event)) {
@@ -36,19 +43,24 @@ public class LinusCommand extends ImageCommandBase {
         }
 
         String url = getImageFromCommand(ctx);
+
         if (url != null) {
-            ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+            ctx.getAlexFlipnote().getFilter(getFilterName(), url).async((image) -> handleBasicImage(event, image));
         }
     }
 
-    @Override
-    public String help() {
-        return "Shows a picture of Linus pointing to something on a monitor.\n" +
-            "Usage: `db!linus [image url]`";
+    String getFilterName() {
+        return commandName;
     }
 
     @Override
     public String getName() {
-        return "linus";
+        return commandName;
+    }
+
+    @Override
+    public String help() {
+        return "Overlays a " + getFilterName() + " filter to the provided image.\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " [image url]`";
     }
 }

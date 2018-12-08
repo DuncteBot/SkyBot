@@ -107,7 +107,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     fun updateOrCreateOneGuildPatron(userId: Long, guildId: Long): Boolean {
-        val json = JSONObject().put("user_id", userId).put("guild_id", guildId)
+        val json = JSONObject().put("user_id", userId.toString()).put("guild_id", guildId.toString())
         val response = postJSON("patrons/oneguild", json)
 
         if (!response.getBoolean("success")) {
@@ -199,6 +199,13 @@ class DuncteApis(private val apiKey: String) {
         }
 
         return data
+    }
+
+    fun decodeToken(token: String): JSONObject {
+        val json = JSONObject().put("token", token)
+
+
+        return postJSON("token", json)
     }
 
     private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {

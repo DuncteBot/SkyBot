@@ -84,8 +84,6 @@ class OneLinerCommands : Command() {
             "screenfetch" -> sendMsg(event, "```\n${screenFetchCommand()}```")
             //val test =  "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
 
-            "insta" -> instaCommand(args, event)
-
             "xkcd" -> {
                 WebUtils.ins.scrapeWebPage("https://c.xkcd.com/random/comic/").async {
                     sendMsg(event, "https:" + it.select("#comic img").attr("src"))
@@ -119,24 +117,6 @@ class OneLinerCommands : Command() {
                         |
                         |All donations are going directly into development of the bot ❤
                     """.trimMargin())
-    }
-
-    private fun instaCommand(args: List<String>, event: GuildMessageReceivedEvent) {
-        //LoggerFactory.getLogger(OneLinerCommands::class.java).error("THIS IS NO ONELINER!") // neither are some of the other commands in here
-        val username = if (args.isNotEmpty()) args.joinToString(separator = "") else "duncte123"
-        WebUtils.ins.getJSONObject("https://apis.duncte123.me/insta/$username").async {
-            if (it.getJSONArray("images").length() < 1) {
-                sendMsg(event, "No data found for this user")
-            } else {
-                val img = it.getJSONArray("images").getJSONObject(0)
-                sendEmbed(event, EmbedUtils.defaultEmbed()
-                    .setAuthor(it.getJSONObject("user").getString("username"), null
-                        , it.getJSONObject("user").getString("profile_pic_url"))
-                    .setTitle("Latest picture of $username", "https://instagram.com/$username/")
-                    .setDescription(img.getString("caption"))
-                    .setImage(img.getString("url")))
-            }
-        }
     }
 
     private fun yesnoCommand(event: GuildMessageReceivedEvent) {
@@ -221,11 +201,6 @@ class OneLinerCommands : Command() {
                     |Usage: `$PREFIX$invoke [amount]`
                 """.trimMargin()
             }
-            "insta" -> {
-                """Get the latest picture of someones profile
-                    |Usage: `$PREFIX$invoke [username]`
-                """.trimMargin()
-            }
             "xkcd" -> """Get a random comic from xkcd.com
                 |Usage: `$PREFIX$invoke`
             """.trimMargin()
@@ -247,7 +222,6 @@ class OneLinerCommands : Command() {
             |`${PREFIX}quote` => Shows an inspiring quote
             |`${PREFIX}yesno` => Chooses between yes or no
             |`${PREFIX}donate [amount]` => Gives you a link to donate for the bot
-            |`${PREFIX}insta [amount]` => Get the latest picture of someones profile
             |`${PREFIX}xkcd` => Get a random comic from xkcd.com
             |`${PREFIX}reverse <text>` => reverses a string
     """.trimMargin()
@@ -255,5 +229,5 @@ class OneLinerCommands : Command() {
     override fun getName() = "ping"
 
     override fun getAliases() = arrayOf("cookie", "trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-        "insta", "donate", "insta", "xkcd", "reverse", "screenfetch")
+        "insta", "donate", "xkcd", "reverse", "screenfetch")
 }
