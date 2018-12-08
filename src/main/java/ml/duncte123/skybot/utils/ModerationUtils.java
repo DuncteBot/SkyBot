@@ -202,7 +202,7 @@ public class ModerationUtils {
 
                 List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
 
-                variables.getApis().purgeBans(purgeIds);
+                variables.getDatabaseAdapter().purgeBans(purgeIds);
 
                 return null;
             }

@@ -62,7 +62,7 @@ function submitForm(token) {
                                 <p>If this is not correct please change the ids in the form and press submit again.</p>
                             </div>
                             <div class="card-action ">
-                                <a href="#" class="btn green white-text text-lighten-4" onclick="_('{{ form_id }}').submit(); return false;">This is correct</a>
+                                <a href="#" class="btn green white-text text-lighten-4" onclick="_('patrons').submit(); return false;">This is correct</a>
                             </div>
                         </div>
                     </div>

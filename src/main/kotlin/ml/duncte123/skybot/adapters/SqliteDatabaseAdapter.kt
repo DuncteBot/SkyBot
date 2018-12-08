@@ -22,6 +22,7 @@ import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
@@ -34,6 +35,7 @@ import org.apache.http.MethodNotSupportedException
 import java.sql.SQLException
 import java.util.*
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {

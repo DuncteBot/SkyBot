@@ -22,6 +22,7 @@ import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
 import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Warning
@@ -32,6 +33,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.json.JSONObject
 import java.sql.Date
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
@@ -292,6 +294,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun purgeBans(ids: List<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        variables.database.run {
+            variables.apis.purgeBans(ids)
+        }
     }
 }

@@ -20,12 +20,14 @@ package ml.duncte123.skybot.adapters
 
 import gnu.trove.map.TLongIntMap
 import gnu.trove.map.TLongLongMap
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val variables: Variables) {
 
     //////////////////

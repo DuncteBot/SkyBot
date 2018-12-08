@@ -79,7 +79,8 @@ public class CleanupCommand extends Command {
                     return;
                 }
                 if (total < 1 || total > 1000) {
-                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000");
+                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
+                        "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`");
                     return;
                 }
             }
@@ -117,6 +118,7 @@ public class CleanupCommand extends Command {
     @Override
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
+            "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`\n" +
             "Usage: `" + Settings.PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
     }
 

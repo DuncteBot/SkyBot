@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -28,7 +29,7 @@ import org.json.JSONArray
 import org.json.JSONObject
 import org.slf4j.LoggerFactory
 
-
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 class DuncteApis(private val apiKey: String) {
 
     private val logger = LoggerFactory.getLogger(javaClass)
@@ -106,7 +107,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     fun updateOrCreateOneGuildPatron(userId: Long, guildId: Long): Boolean {
-        val json = JSONObject().put("user_id", userId).put("guild_id", guildId)
+        val json = JSONObject().put("user_id", userId.toString()).put("guild_id", guildId.toString())
         val response = postJSON("patrons/oneguild", json)
 
         if (!response.getBoolean("success")) {
@@ -198,6 +199,13 @@ class DuncteApis(private val apiKey: String) {
         }
 
         return data
+    }
+
+    fun decodeToken(token: String): JSONObject {
+        val json = JSONObject().put("token", token)
+
+
+        return postJSON("token", json)
     }
 
     private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {
