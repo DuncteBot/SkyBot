@@ -41,7 +41,7 @@ class InstaCommand : Command() {
 
         WebUtils.ins.getJSONObject("https://apis.duncte123.me/insta/$username").async {
 
-            if (it.getJSONArray("images").length() < 1) {
+            if (!it.getBoolean("success")) {
                 MessageUtils.sendMsg(event, "No data found for this user")
                 return@async
             }
