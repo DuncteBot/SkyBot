@@ -29,7 +29,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
-import java.util.Set;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
