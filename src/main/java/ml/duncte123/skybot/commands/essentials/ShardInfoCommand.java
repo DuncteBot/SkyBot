@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.essentials;
 
+import kotlin.Pair;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -36,6 +37,7 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicLong;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -73,16 +75,9 @@ public class ShardInfoCommand extends Command {
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
 
-            String listening = shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild()
-                .getSelfMember())).count() + " / " +
-                shard.getVoiceChannelCache().stream().filter(vc ->
-                    vc.getMembers().contains(vc.getGuild().getSelfMember()))
-                    .mapToLong(it ->
-                        it.getMembers().stream().filter(itt ->
-                            !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
-                    ).sum();
+            Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
 
-            row.add(listening);
+            row.add(channelStats.getFirst() + " / " + channelStats.getSecond());
             table.add(row);
 
             if (table.size() == 20) {
@@ -155,20 +150,16 @@ public class ShardInfoCommand extends Command {
         String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         String guilds = String.valueOf(shardManager.getGuildCache().size());
 
-        long connectedVC = shardCache.stream().mapToLong(shard ->
-            shard.getVoiceChannelCache().stream().filter(vc -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count()
-        ).sum();
+        Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
 
-        long listeningVC = shardCache.stream().mapToLong(shard ->
-            shard.getVoiceChannelCache().stream().filter(vc ->
-                vc.getMembers().contains(vc.getGuild().getSelfMember()))
-                .mapToLong(it ->
-                    it.getMembers().stream().filter(itt ->
-                        !itt.getUser().isBot() && !itt.getVoiceState().isDeafened()).count()
-                ).sum()
-        ).sum();
-
-        sb.append(String.format(formatLine.toString(), "Sum/Avg", connectedShards, avgPing, guilds, connectedVC + " / " + listeningVC));
+        sb.append(String.format(
+            formatLine.toString(),
+            "Sum/Avg",
+            connectedShards,
+            avgPing,
+            guilds,
+            channelStats.getFirst() + " / " + channelStats.getSecond()
+        ));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");
         return sb.toString();
@@ -186,5 +177,45 @@ public class ShardInfoCommand extends Command {
             }
         }
         return ret.append(right).append("\n").toString();
+    }
+
+    private Pair<Long, Long> getConnectedVoiceChannels(ShardManager shardManager) {
+        AtomicLong connectedVC = new AtomicLong();
+        AtomicLong listeningVC = new AtomicLong();
+
+        shardManager.getShardCache().forEach(
+            (jda) -> {
+                Pair<Long, Long> shardStats = getConnectedVoiceChannels(jda);
+
+                connectedVC.addAndGet(shardStats.getFirst());
+                listeningVC.addAndGet(shardStats.getSecond());
+            }
+        );
+
+        return new Pair<>(connectedVC.get(), listeningVC.get());
+    }
+
+    /**
+     * @param shard
+     *         the current shard
+     *
+     * @return a pair where
+     * first  = connected channels
+     * second = users listening in channel
+     */
+    private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
+
+        long connectedVC = shard.getVoiceChannelCache().stream()
+            .filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
+
+        long listeningVC = shard.getVoiceChannelCache().stream().filter(
+            (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
+            .mapToLong(
+                (channel) -> channel.getMembers().stream().filter(
+                    (member) -> !member.getUser().isBot() && !member.getVoiceState().isDeafened()
+                ).count()
+            ).sum();
+
+        return new Pair<>(connectedVC, listeningVC);
     }
 }
