@@ -77,7 +77,7 @@ public class ShardInfoCommand extends Command {
 
             Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
 
-            row.add(channelStats.getFirst() + "/" + channelStats.getSecond());
+            row.add(channelStats.getFirst() + " / " + channelStats.getSecond());
             table.add(row);
 
             if (table.size() == 20) {
