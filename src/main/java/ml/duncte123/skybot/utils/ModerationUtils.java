@@ -172,7 +172,7 @@ public class ModerationUtils {
     public static void checkUnbans(Variables variables) {
         variables.getDatabaseAdapter().getExpiredBans(
             (bans) -> {
-                logger.info("Checking for users to unban");
+                logger.debug("Checking for users to unban");
                 ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
                 for (Ban ban : bans) {
@@ -198,7 +198,7 @@ public class ModerationUtils {
 
                 }
 
-                logger.info("Checking done, unbanned {} users.", bans.size());
+                logger.debug("Checking done, unbanned {} users.", bans.size());
 
                 List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
 
