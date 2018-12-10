@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -34,7 +35,7 @@ class DialogCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(ctx.event, "Correct usage: `$PREFIX$name <words>`")
+            MessageUtils.sendMsg(ctx.event, "Correct usage: `${Settings.PREFIX}$name <words>`")
             return
         }
 
@@ -59,7 +60,7 @@ class DialogCommand : Command() {
     }
 
     override fun help() = "Gives you a nice dialog\n" +
-        "Usage: `$PREFIX$name <text>`"
+        "Usage: `${Settings.PREFIX}$name <text>`"
 
     override fun getName() = "dialog"
 }

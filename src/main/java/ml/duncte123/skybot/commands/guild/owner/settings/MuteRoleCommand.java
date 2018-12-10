@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -49,7 +50,7 @@ public class MuteRoleCommand extends SettingsBase {
         }
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + PREFIX + "spamrole <role name/disable>`");
+            sendMsg(event, "Incorrect usage: `" + Settings.PREFIX + "spamrole <role name/disable>`");
             return;
         }
 
@@ -99,6 +100,6 @@ public class MuteRoleCommand extends SettingsBase {
     @Override
     public String help() {
         return "Gives members a role when they spam.\n" +
-            "Usage: `" + PREFIX + getName() + " <role>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <role>`";
     }
 }

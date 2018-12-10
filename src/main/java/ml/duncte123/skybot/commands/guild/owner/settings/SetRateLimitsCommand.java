@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -42,7 +43,7 @@ public class SetRateLimitsCommand extends SettingsBase {
         GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
-            sendMsg(event, "Incorrect usage: `" + PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
+            sendMsg(event, "Incorrect usage: `" + Settings.PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
             return;
         }
 
@@ -68,7 +69,7 @@ public class SetRateLimitsCommand extends SettingsBase {
     @Override
     public String help() {
         return "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
-            "Usage: `" + PREFIX + getName() + " <1|2|3|4|5|6>`\n" +
-            "Example: " + PREFIX + getName() + "20|45|60|120|240|2400";
+            "Usage: `" + Settings.PREFIX + getName() + " <1|2|3|4|5|6>`\n" +
+            "Example: " + Settings.PREFIX + getName() + "20|45|60|120|240|2400";
     }
 }

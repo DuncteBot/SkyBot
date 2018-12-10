@@ -23,6 +23,7 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.hash.TLongLongHashMap;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
@@ -94,7 +95,7 @@ public abstract class MusicCommand extends Command {
         LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply) {
-                sendMsg(event, "I'm not in a voice channel, use `" + PREFIX + "join` to make me join a channel\n\n" +
+                sendMsg(event, "I'm not in a voice channel, use `" + Settings.PREFIX + "join` to make me join a channel\n\n" +
                     "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
             return false;

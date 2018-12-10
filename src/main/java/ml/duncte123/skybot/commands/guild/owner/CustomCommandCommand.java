@@ -22,6 +22,7 @@ import kotlin.Triple;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
@@ -210,11 +211,11 @@ public class CustomCommandCommand extends Command {
     @Override
     public String help() {
         return "Create, run and delete custom commands\n" +
-            "`" + PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
-            "`" + PREFIX + getName() + " new <name> <text>` => Creates a new custom command\n" +
-            "`" + PREFIX + getName() + " edit <name> <text>` => Edits a custom command\n" +
-            "`" + PREFIX + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
-            "`" + PREFIX + getName() + " delete <name>` => Deletes a custom command";
+            "`" + Settings.PREFIX + getName() + " list` => Shows a list of all the custom commands\n" +
+            "`" + Settings.PREFIX + getName() + " new <name> <text>` => Creates a new custom command\n" +
+            "`" + Settings.PREFIX + getName() + " edit <name> <text>` => Edits a custom command\n" +
+            "`" + Settings.PREFIX + getName() + " raw <name>` => Shows the raw value of a custom command\n" +
+            "`" + Settings.PREFIX + getName() + " delete <name>` => Deletes a custom command";
     }
 
     @Override

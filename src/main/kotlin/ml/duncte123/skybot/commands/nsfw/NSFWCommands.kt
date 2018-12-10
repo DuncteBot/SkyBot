@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -80,32 +81,32 @@ class NSFWCommands : Command() {
         }
     }
 
-    override fun help() = """`${PREFIX}lewdneko` => Gives a very lewd neko
-        |`${PREFIX}carsandhentai` => Delet this
-        |`${PREFIX}lewdkitsune` => Shows you a lewd kitsune
-        |`${PREFIX}hentai` => Just some hentai
+    override fun help() = """`${Settings.PREFIX}lewdneko` => Gives a very lewd neko
+        |`${Settings.PREFIX}carsandhentai` => Delet this
+        |`${Settings.PREFIX}lewdkitsune` => Shows you a lewd kitsune
+        |`${Settings.PREFIX}hentai` => Just some hentai
     """.trimMargin()
 
     override fun help(invoke: String?): String {
         return when (invoke) {
             "lewdneko" -> {
                 """Gives a very lewd neko
-                    |Usage `$PREFIX$invoke`
+                    |Usage `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "carsandhentai" -> {
                 """Delet this
-                    |Usage `$PREFIX$invoke`
+                    |Usage `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "lewdkitsune" -> {
                 """Shows you a lewd kitsune
-                    |Usage `$PREFIX$invoke`
+                    |Usage `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "hentai" -> {
                 """Just some hentai
-                    |Usage `$PREFIX$invoke`
+                    |Usage `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             else -> "No U"

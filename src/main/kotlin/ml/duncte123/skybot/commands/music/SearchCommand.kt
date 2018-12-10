@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.YoutubeUtils
@@ -41,7 +42,7 @@ class SearchCommand : MusicCommand() {
         }
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Correct usage: `$PREFIX$name [search term]`")
+            sendMsg(event, "Correct usage: `${Settings.PREFIX}$name [search term]`")
             return
         }
 
@@ -80,5 +81,5 @@ class SearchCommand : MusicCommand() {
     override fun getName(): String = "search"
 
     override fun help(): String = """Make the bot play song.
-            |Usage: `$PREFIX$name [search term]`""".trimMargin()
+            |Usage: `${Settings.PREFIX}$name [search term]`""".trimMargin()
 }

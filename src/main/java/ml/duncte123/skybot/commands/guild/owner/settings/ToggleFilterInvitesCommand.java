@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -46,6 +47,6 @@ public class ToggleFilterInvitesCommand extends SettingsBase {
     @Override
     public String help() {
         return "Toggles if the bot should delete messages that contain invites\n" +
-            "Usage: `" + PREFIX + getName() + "`";
+            "Usage: `" + Settings.PREFIX + getName() + "`";
     }
 }

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.image;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
@@ -33,7 +34,7 @@ public class DidYouMeanCommand extends ImageCommandBase {
         String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + PREFIX + "help " + getName() + "`");
+            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
             return;
         }
 
@@ -50,7 +51,7 @@ public class DidYouMeanCommand extends ImageCommandBase {
     @Override
     public String help() {
         return "Did you type your search wrong?\n" +
-            "Usage: `" + PREFIX + getName() + " <Top text>|<Bottom text>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <Top text>|<Bottom text>`";
     }
 
     @Override

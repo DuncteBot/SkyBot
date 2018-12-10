@@ -52,7 +52,7 @@ public class HelpCommand extends Command {
 
         if (!ctx.getArgs().isEmpty()) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
-                .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
+                .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
                     Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
@@ -70,7 +70,7 @@ public class HelpCommand extends Command {
 
     @Override
     public String help() {
-        return "Shows a list of all the commands.\nUsage: `" + PREFIX + "help [command]`";
+        return "Shows a list of all the commands.\nUsage: `" + Settings.PREFIX + "help [command]`";
     }
 
     @Override
@@ -131,7 +131,7 @@ public class HelpCommand extends Command {
             }
         }
 
-        sendMsg(event, "That command could not be found, try `" + PREFIX + "help` for a list of commands");
+        sendMsg(event, "That command could not be found, try `" + Settings.PREFIX + "help` for a list of commands");
     }
 
     private String getCommandHelpMessage(ICommand cmd) {

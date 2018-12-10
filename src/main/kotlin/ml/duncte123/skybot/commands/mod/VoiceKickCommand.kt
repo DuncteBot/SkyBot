@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -51,7 +52,7 @@ class VoiceKickCommand : Command() {
         }
 
         if (ctx.args.isEmpty()) {
-            sendMsg(event, "Usage is `$PREFIX$name <@user/voice channel>`")
+            sendMsg(event, "Usage is `${Settings.PREFIX}$name <@user/voice channel>`")
             return
         }
 
@@ -94,7 +95,7 @@ class VoiceKickCommand : Command() {
     override fun getName() = "voicekick"
 
     override fun help() = """Kicks a user from the voice channel
-        |Usage: `$PREFIX$name <@user/voice channel>`
+        |Usage: `${Settings.PREFIX}$name <@user/voice channel>`
     """.trimMargin()
 
     override fun getCategory() = CommandCategory.MOD_ADMIN

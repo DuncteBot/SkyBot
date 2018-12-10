@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -57,7 +58,7 @@ public class UnlockEmoteCommand extends Command {
         }
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <emote/emote name>`");
+            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote/emote name>`");
             return;
         }
 
@@ -84,7 +85,7 @@ public class UnlockEmoteCommand extends Command {
     @Override
     public String help() {
         return "Unlocks an emote if it was locked\n" +
-            "Usage: `" + PREFIX + getName() + " <:emote:>`\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <:emote:>`\n" +
             "Please note that you have to mention the emote due the bot not caching emotes for their names";
     }
 

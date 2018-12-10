@@ -185,7 +185,7 @@ class EvalCommand : Command() {
     }
 
     override fun help() = """Evaluate java code on the bot
-        |Usage: `$PREFIX$name <java/groovy code>`
+        |Usage: `${Settings.PREFIX}$name <java/groovy code>`
     """.trimMargin()
 
     override fun getName() = "eval"

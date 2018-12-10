@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -35,7 +36,7 @@ class TextToBricksCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(ctx.event, "Correct usage: `$PREFIX${ctx.invoke} <words>`")
+            MessageUtils.sendMsg(ctx.event, "Correct usage: `${Settings.PREFIX}${ctx.invoke} <words>`")
             return
         }
 
