@@ -65,8 +65,6 @@ class LoadCommand : MusicCommand() {
                     .forEach { obj ->
                         // This probably announces it to the channel
                         ctx.audioUtils.loadAndPlay(getMusicManager(event.guild, ctx.audioUtils),
-                            event.channel,
-                            event.author,
                             obj.toString(),
                             false,
                             ctx,

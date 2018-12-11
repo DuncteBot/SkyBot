@@ -76,13 +76,12 @@ public class GuildListener extends BaseListener {
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
         Guild guild = event.getGuild();
         LavalinkManager manager = LavalinkManager.ins;
-        GuildVoiceState voiceState = event.getVoiceState();
 
         if (!manager.isConnected(guild)) {
             return;
         }
 
-        if (voiceState.getMember().equals(guild.getSelfMember())) {
+        if (event.getMember().equals(guild.getSelfMember())) {
             return;
         }
 
