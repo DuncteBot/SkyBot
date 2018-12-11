@@ -50,6 +50,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -271,12 +272,15 @@ public class AudioUtils {
         return mng;
     }
 
+    @Nullable(value = "unless createIfNull == true")
     public GuildMusicManager getMusicManager(Guild guild, boolean createIfNull) {
         long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
+
         if (mng == null) {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
+
                 if (mng == null && createIfNull) {
                     mng = new GuildMusicManager(guild, variables);
                     mng.player.setVolume(DEFAULT_VOLUME);
@@ -284,6 +288,7 @@ public class AudioUtils {
                 }
             }
         }
+
         return mng;
     }
 
