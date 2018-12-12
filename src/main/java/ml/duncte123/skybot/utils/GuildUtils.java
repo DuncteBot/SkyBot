@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
+import ml.duncte123.skybot.SkyBot;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.command.Command;
@@ -204,5 +205,27 @@ public class GuildUtils {
 
     public static void addOneGuildPatron(long userId, long guildId, @NotNull Variables variables) {
         variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> null);
+
+        SkyBot instance = SkyBot.getInstance();
+        Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
+
+        if (dbGuild == null) {
+            return;
+        }
+
+        Member newPatron = dbGuild.getMemberById(userId);
+
+        if (newPatron == null) {
+            return;
+        }
+
+        boolean hasRole = newPatron.getRoles().stream()
+            .map(Role::getIdLong)
+            .anyMatch( (role) -> role == Command.oneGuildPatronsRole );
+
+        if (hasRole) {
+            Command.oneGuildPatrons.put(userId, guildId);
+        }
+
     }
 }
