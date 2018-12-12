@@ -34,19 +34,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class BaseListener extends ListenerAdapter {
 
     public static boolean isUpdating = false;
+    protected static boolean shuttingDown = false;
     protected final Logger logger;
     protected final SpamFilter spamFilter;
-
-    protected static boolean shuttingDown = false;
-
     protected final Variables variables;
-
-    public BaseListener(Variables variables) {
-        this.logger = LoggerFactory.getLogger(getClass());
-        this.variables = variables;
-        this.spamFilter = new SpamFilter(variables);
-    }
-
     // A list of servers that list bots
     private final TLongList botLists = new TLongArrayList(
         new long[]{
@@ -63,6 +54,12 @@ public class BaseListener extends ListenerAdapter {
             475571221946171393L, // bots.discordlist.app
         }
     );
+
+    public BaseListener(Variables variables) {
+        this.logger = LoggerFactory.getLogger(getClass());
+        this.variables = variables;
+        this.spamFilter = new SpamFilter(variables);
+    }
 
     protected boolean isBotfarm(Guild guild) {
 

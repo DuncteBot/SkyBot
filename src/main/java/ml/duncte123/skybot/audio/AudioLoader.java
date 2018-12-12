@@ -82,19 +82,6 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
     }
 
-    static String getSteamTitle(AudioTrack track, String title, CommandManager commandManager) {
-        if (track.getInfo().isStream) {
-            Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
-                .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
-
-            if (stream.isPresent()) {
-                title = stream.get().getName();
-            }
-        }
-
-        return title;
-    }
-
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
@@ -172,5 +159,20 @@ public class AudioLoader implements AudioLoadResultHandler {
         sendEmbed(channel, embedField(audioUtils.embedTitle, "Could not play: " + root.getMessage()
             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
 
+    }
+
+    static String getSteamTitle(AudioTrack track, String rawTitle, CommandManager commandManager) {
+        String title = rawTitle;
+
+        if (track.getInfo().isStream) {
+            Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
+                .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
+
+            if (stream.isPresent()) {
+                title = stream.get().getName();
+            }
+        }
+
+        return title;
     }
 }

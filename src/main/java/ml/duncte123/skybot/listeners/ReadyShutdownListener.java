@@ -43,16 +43,15 @@ import java.util.stream.Collectors;
 
 public class ReadyShutdownListener extends BaseListener {
 
-    public ReadyShutdownListener(Variables variables) {
-        super(variables);
-    }
-
+    private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
+        r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
     private short shardsReady = 0;
 
-    private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
-        r -> new Thread(r, "Bot-Service-Thread"));
+    public ReadyShutdownListener(Variables variables) {
+        super(variables);
+    }
 
     @Override
     public void onReady(ReadyEvent event) {

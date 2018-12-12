@@ -29,9 +29,7 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.commands.music.RadioCommand;
 import ml.duncte123.skybot.objects.ConsoleUser;
-import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import net.dv8tion.jda.core.entities.Guild;
@@ -41,7 +39,10 @@ import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
