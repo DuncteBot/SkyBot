@@ -28,6 +28,7 @@ import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
+import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import org.jetbrains.annotations.NotNull;
@@ -99,6 +100,17 @@ public class GuildListener extends BaseListener {
     }
 
     @Override
+    public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
+        Guild guild = event.getGuild();
+
+        if (!event.getMember().equals(guild.getSelfMember())) {
+            return;
+        }
+
+        channelCheckThing(guild, event.getChannelJoined());
+    }
+
+    @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
         Guild guild = event.getGuild();
         LavalinkManager manager = LavalinkManager.ins;
@@ -140,25 +152,33 @@ public class GuildListener extends BaseListener {
 
         GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild, false);
 
-        if (manager == null) {
-            return;
-        }
+        if (manager != null) {
+            manager.player.stopTrack();
+            manager.player.setPaused(false);
+            manager.scheduler.queue.clear();
 
-        manager.player.stopTrack();
-        manager.player.setPaused(false);
-        manager.scheduler.queue.clear();
-        MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
+            sendMsg(guild.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+        }
 
         if (guild.getAudioManager().getConnectionListener() != null) {
             guild.getAudioManager().setConnectionListener(null);
         }
 
-        sendMsg(guild.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+        MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
 
-        if (LavalinkManager.ins.isConnected(guild)) {
-            LavalinkManager.ins.closeConnection(guild);
-            variables.getAudioUtils().getMusicManagers().remove(guild.getIdLong());
-        }
+        variables.getDatabase().run(() -> {
+            try {
+                // Run the disconnecting after 500ms so we allow JDA to receive updates
+                Thread.sleep(500L);
+
+                if (LavalinkManager.ins.isConnected(guild)) {
+                    LavalinkManager.ins.closeConnection(guild);
+                    variables.getAudioUtils().getMusicManagers().remove(guild.getIdLong());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
 
     }
 }
