@@ -25,9 +25,9 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.BotListener
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.connections.database.DBManager
+import ml.duncte123.skybot.listeners.BaseListener
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -65,7 +65,7 @@ class UpdateCommand : Command() {
         /*
          * Tell the bot that we are using the updater
          */
-        BotListener.isUpdating = true
+        BaseListener.isUpdating = true
 
         when (ctx.args.size) {
             0 -> {

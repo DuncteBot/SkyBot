@@ -73,7 +73,7 @@ class ReactionHandler : ListenerAdapter() {
                 return@BiConsumer
             }
 
-            ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild), ctx.channel, ctx.author,
+            ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild),
                 "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
             requirementsCache -= cacheElement
             ctx.channel.deleteMessageById(msgId).queue()
