@@ -77,8 +77,10 @@ public class GuildMusicManager {
     }
 
     TextChannel getLatestChannel() {
-        if (this.latestChannel == -1 || this.latestChannel == 0)
+        if (this.latestChannel == -1 || this.latestChannel == 0) {
             return null;
+        }
+
         return SkyBot.getInstance().getShardManager().getTextChannelById(this.latestChannel);
     }
 }

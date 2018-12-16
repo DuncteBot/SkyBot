@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
@@ -34,8 +35,8 @@ class KickMeCommand : Command() {
         val args = ctx.args
 
         val warningMsg = """**WARNING** this command will kick you from this server
-                        |If you are sure that you want to kick yourself off this server use `${PREFIX}kickme YESIMSURE`
-                        |By running `${PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
+                        |If you are sure that you want to kick yourself off this server use `${Settings.PREFIX}kickme YESIMSURE`
+                        |By running `${Settings.PREFIX}kickme YESIMSURE` you agree that you are responsible for the consequences of this command.
                         |DuncteBot and any of it's developers are not responsible for your own kick by running this command
                     """.trimMargin()
         if (args.isEmpty() || args[0] != "YESIMSURE") {
@@ -64,7 +65,7 @@ class KickMeCommand : Command() {
     }
 
     override fun help() = """Kickes you off the server
-                    |Usage: `$PREFIX$name`
+                    |Usage: `${Settings.PREFIX}$name`
                 """.trimMargin()
 
     override fun getName() = "kickme"

@@ -60,10 +60,6 @@ public abstract class Command implements ICommand {
     // The size should match the usage for stability but not more than 4.
     protected static final ScheduledExecutorService commandService = Executors.newScheduledThreadPool(10,
         r -> new Thread(r, "Command-Thread"));
-    /**
-     * This holds the prefix for us
-     */
-    protected static final String PREFIX = Settings.PREFIX;
 
     /**
      * This holds the category
@@ -198,7 +194,7 @@ public abstract class Command implements ICommand {
                 .replaceAll("\\n", "<br />")
                 .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
             if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
-                s += "<br />Aliases: " + PREFIX + String.join(", " + PREFIX, getAliases());
+                s += "<br />Aliases: " + Settings.PREFIX + String.join(", " + Settings.PREFIX, getAliases());
             }
             helpParsed = s;
         }

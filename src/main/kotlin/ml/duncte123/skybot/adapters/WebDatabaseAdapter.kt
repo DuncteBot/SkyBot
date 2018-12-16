@@ -294,6 +294,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun purgeBans(ids: List<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        variables.database.run {
+            variables.apis.purgeBans(ids)
+        }
     }
 }

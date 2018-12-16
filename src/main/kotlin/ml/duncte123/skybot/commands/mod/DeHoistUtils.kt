@@ -23,6 +23,7 @@ package ml.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -41,7 +42,7 @@ class DeHoistCommand : Command() {
 
         if (event.message.mentionedMembers.size == 0) {
             sendMsg(event, """"Incorrect usage
-                |Correct usage: `$PREFIX$name <@user>`
+                |Correct usage: `${Settings.PREFIX}$name <@user>`
             """.trimMargin())
             return
         }
@@ -62,7 +63,7 @@ class DeHoistCommand : Command() {
     }
 
     override fun help() = """De-hoists a user
-        |Usage: `$PREFIX$name <@user>`
+        |Usage: `${Settings.PREFIX}$name <@user>`
     """.trimMargin()
 
     override fun getName() = "dehoist"

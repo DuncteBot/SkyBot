@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -47,6 +48,6 @@ public class ToggleKickModeCommand extends SettingsBase {
     @Override
     public String help() {
         return "Toggles whether we should kick or assign a role for spammers.\n" +
-            "Usage: `" + PREFIX + getName() + "`";
+            "Usage: `" + Settings.PREFIX + getName() + "`";
     }
 }

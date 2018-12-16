@@ -18,32 +18,27 @@
 
 package ml.duncte123.skybot.extensions
 
-import java.util.Base64.getUrlEncoder as MagicClass
+import java.util.Base64.getUrlDecoder as MagicClass
 
 private const val source = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789:/.="
 private const val target = "rCnZk8Aw9P0Y24sUM6x5tKRl31L7IhJifDdcbueoOqHavByzGpVSXmjNWTgQFE[!$ "
 
-fun String.eloquent(): String {
+fun String.illuminate(): String {
 
-    val magic = MagicClass().encodeToString(toByteArray())
+    val thing = this.substring(25)
 
-    val result = CharArray(magic.length)
-    for (i in 0 until magic.length) {
-        val c = magic[i]
-        val index = source.indexOf(c)
+    val result = CharArray(thing.length)
+    for (i in 0 until thing.length) {
+        val c = thing[i]
+        val index = target.indexOf(c)
 
         if (index == -1) {
             result[i] = c
             continue
         }
 
-        result[i] = target[index]
+        result[i] = source[index]
     }
 
-    return String(result).trim()
-
-}
-
-fun String.cdnPrefix(): String {
-    return "https://cdn.duncte123.me/${eloquent()}"
+    return String(MagicClass().decode(String(result).trim())).trim()
 }

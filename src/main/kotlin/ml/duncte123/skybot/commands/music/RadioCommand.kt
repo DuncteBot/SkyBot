@@ -21,6 +21,7 @@ package ml.duncte123.skybot.commands.music
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.ILoveStream
 import ml.duncte123.skybot.objects.RadioStream
@@ -56,7 +57,7 @@ class RadioCommand : MusicCommand() {
 
         when (ctx.args.size) {
             0 -> {
-                sendMsg(event, "Insufficient args, usage: `$PREFIX$name <(full)list/station name>`")
+                sendMsg(event, "Insufficient args, usage: `${Settings.PREFIX}$name <(full)list/station name>`")
             }
             1 -> {
                 when (ctx.args[0]) {
@@ -74,7 +75,7 @@ class RadioCommand : MusicCommand() {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return
                         }
-                        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, radio.url, ctx, false)
+                        ctx.audioUtils.loadAndPlay(mng, radio.url, ctx, false)
                         scheduler.queue.forEach {
                             if (it.info.uri != radio.url)
                                 scheduler.nextTrack()
@@ -83,7 +84,7 @@ class RadioCommand : MusicCommand() {
                 }
             }
             else -> {
-                sendErrorWithMessage(event.message, "The stream name is too long! Type `$PREFIX$name (full)list` for a list of available streams!")
+                sendErrorWithMessage(event.message, "The stream name is too long! Type `${Settings.PREFIX}$name (full)list` for a list of available streams!")
             }
         }
     }
@@ -91,7 +92,7 @@ class RadioCommand : MusicCommand() {
     override fun help(): String = """Adds a radio http stream to your queue and goes to it!
         |**YOU HAVE TO UPVOTE!**
         |Yes it skips all songs until it finds the stream it may bug if the current stream has the same url.
-        |Usage: `$PREFIX$name <(full)list/station name>`""".trimMargin()
+        |Usage: `${Settings.PREFIX}$name <(full)list/station name>`""".trimMargin()
 
     override fun getName(): String = "radio"
 

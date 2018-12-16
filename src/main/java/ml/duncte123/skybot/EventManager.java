@@ -21,6 +21,10 @@ package ml.duncte123.skybot;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
+import ml.duncte123.skybot.listeners.GuildListener;
+import ml.duncte123.skybot.listeners.GuildMemberListener;
+import ml.duncte123.skybot.listeners.MessageListener;
+import ml.duncte123.skybot.listeners.ReadyShutdownListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
 import net.dv8tion.jda.core.hooks.EventListener;
@@ -50,9 +54,16 @@ public class EventManager
     private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
-        BotListener botListener = new BotListener(variables);
+        MessageListener messageListener = new MessageListener(variables);
+        GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
+        GuildListener guildListener = new GuildListener(variables);
+        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables);
         DeHoistListener deHoistListener = new DeHoistListener(variables);
-        this.listeners.add(botListener);
+
+        this.listeners.add(messageListener);
+        this.listeners.add(guildMemberListener);
+        this.listeners.add(guildListener);
+        this.listeners.add(readyShutdownListener);
         this.listeners.add(deHoistListener);
         this.listeners.add(reactionHandler);
 

@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.essentials;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -81,6 +82,6 @@ public class TestTagCommand extends Command {
     @Override
     public String help() {
         return "Test your jagtag format before you save it as custom command etc.\n" +
-            "Usage: `" + PREFIX + getName() + " <JagTag syntax>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <JagTag syntax>`";
     }
 }

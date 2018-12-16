@@ -36,8 +36,9 @@ public class LinusCommand extends ImageCommandBase {
         }
 
         String url = getImageFromCommand(ctx);
-        if (url != null)
+        if (url != null) {
             ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
+        }
     }
 
     @Override

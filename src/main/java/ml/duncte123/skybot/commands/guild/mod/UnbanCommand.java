@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -57,7 +58,7 @@ public class UnbanCommand extends Command {
         }
 
         if (args.isEmpty()) {
-            sendMsg(event, "Usage is " + PREFIX + getName() + " <username>");
+            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <username>");
             return;
         }
 

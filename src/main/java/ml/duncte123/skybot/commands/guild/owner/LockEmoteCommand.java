@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -61,7 +62,7 @@ public class LockEmoteCommand extends Command {
         }
 
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <emote> <@role...>`");
+            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`");
             return;
         }
 
@@ -76,7 +77,7 @@ public class LockEmoteCommand extends Command {
         }
 
         if (mentionedEmotes.isEmpty() || mentionedRoles.isEmpty()) {
-            sendMsg(event, "Correct usage: `" + PREFIX + getName() + " <emote> <@role...>`");
+            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`");
             return;
         }
 
@@ -99,7 +100,7 @@ public class LockEmoteCommand extends Command {
     @Override
     public String help() {
         return "Lock an emote to some roles.\n" +
-            "Usage: `" + PREFIX + getName() + " <emote> <@role...>`\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <emote> <@role...>`\n" +
             "Please note that you can't use the emote anymore if you don't have any of the specified roles,\n" +
             "even if you have administrator permission";
     }

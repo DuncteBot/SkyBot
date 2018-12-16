@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -48,6 +49,6 @@ public class ToggleAnnounceTracksCommand extends SettingsBase {
     @Override
     public String help() {
         return "Toggles if the player should announce the next playing track\n" +
-            "Usage: `" + PREFIX + getName() + "`";
+            "Usage: `" + Settings.PREFIX + getName() + "`";
     }
 }

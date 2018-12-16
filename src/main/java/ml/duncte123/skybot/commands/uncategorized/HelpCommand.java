@@ -29,7 +29,6 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
@@ -53,7 +52,7 @@ public class HelpCommand extends Command {
 
         if (!ctx.getArgs().isEmpty()) {
             String toSearch = ctx.getArgsRaw().toLowerCase()
-                .replaceFirst("(" + Pattern.quote(PREFIX) + "|" +
+                .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
                     Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
 
@@ -71,7 +70,7 @@ public class HelpCommand extends Command {
 
     @Override
     public String help() {
-        return "Shows a list of all the commands.\nUsage: `" + PREFIX + "help [command]`";
+        return "Shows a list of all the commands.\nUsage: `" + Settings.PREFIX + "help [command]`";
     }
 
     @Override
@@ -115,25 +114,31 @@ public class HelpCommand extends Command {
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
         for (ICommand cmd : manager.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
-                sendMsg(event, "Command help for `" +
-                    cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
-                    (cmd.getAliases().length > 0 ? "\nAliases: " + StringUtils.join(cmd.getAliases(), ", ") : ""));
-                return;
-            } else {
-                for (String alias : cmd.getAliases()) {
-                    if (alias.equals(toSearch)) {
-                        sendMsg(event, "Command help for `" + cmd.getName() + "` :\n" +
-                            cmd.help(alias) + (cmd.getAliases().length > 0 ? "\nAliases: "
-                            + StringUtils.join(cmd.getAliases(), ", ") : ""));
-                        return;
-                    }
 
+                sendMsg(event, getCommandHelpMessage(cmd));
+
+                return;
+            }
+
+            for (String alias : cmd.getAliases()) {
+                if (!alias.equals(toSearch)) {
+                    continue;
                 }
 
+                sendMsg(event, getCommandHelpMessage(cmd));
+
+                return;
             }
         }
 
-        sendMsg(event, "That command could not be found, try `" + PREFIX + "help` for a list of commands");
+        sendMsg(event, "That command could not be found, try `" + Settings.PREFIX + "help` for a list of commands");
+    }
+
+    private String getCommandHelpMessage(ICommand cmd) {
+        return "Command help for `" +
+            cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
+            (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
+            "\nSource code: <https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName() + '>';
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {

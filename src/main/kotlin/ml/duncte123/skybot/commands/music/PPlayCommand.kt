@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 import ml.duncte123.skybot.utils.AirUtils
@@ -40,7 +41,7 @@ class PPlayCommand : MusicCommand() {
         val mng = getMusicManager(guild, ctx.audioUtils)
 
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(event, "To few arguments, use `$PREFIX$name <media link>`")
+            MessageUtils.sendMsg(event, "To few arguments, use `${Settings.PREFIX}$name <media link>`")
             return
         }
 
@@ -56,7 +57,7 @@ class PPlayCommand : MusicCommand() {
 
         MessageUtils.sendMsg(event, "Loading playlist.......\n" +
             "This may take a while depending on the size.")
-        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, true)
+        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx, true)
     }
 
     override fun help(): String = "Add a playlist to the queue."

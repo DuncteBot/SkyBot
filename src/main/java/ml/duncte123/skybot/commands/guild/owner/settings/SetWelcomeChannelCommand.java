@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.guild.owner.settings;
 
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
 import org.jetbrains.annotations.NotNull;
@@ -30,7 +31,7 @@ public class SetWelcomeChannelCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
-            sendMsg(ctx.getEvent(), "Incorrect usage: `" + PREFIX + "setwelcomechannel [text channel]`");
+            sendMsg(ctx.getEvent(), "Incorrect usage: `" + Settings.PREFIX + "setwelcomechannel [text channel]`");
             return;
         }
 
@@ -59,6 +60,6 @@ public class SetWelcomeChannelCommand extends SettingsBase {
     @Override
     public String help() {
         return "Sets the channel that displays the welcome and leave messages\n" +
-            "Usage: `" + PREFIX + getName() + " <channel>`";
+            "Usage: `" + Settings.PREFIX + getName() + " <channel>`";
     }
 }

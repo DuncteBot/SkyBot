@@ -23,6 +23,7 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
@@ -66,7 +67,7 @@ class WeebCommands : WeebCommandBase() {
             }
             "weeb" -> {
                 if (args.isEmpty()) {
-                    sendMsg(event, "Please supply a valid category, Use `${PREFIX}weeb categories` for all categories")
+                    sendMsg(event, "Please supply a valid category, Use `${Settings.PREFIX}weeb categories` for all categories")
                     return
                 }
                 if (weebTags.isEmpty()) {
@@ -84,68 +85,68 @@ class WeebCommands : WeebCommandBase() {
                     val img = ctx.weebApi.getRandomImage(StringUtils.join(args, "")).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
-                    sendMsg(event, "That category could not be found, Use `${PREFIX}weeb_image categories` for all categories")
+                    sendMsg(event, "That category could not be found, Use `${Settings.PREFIX}weeb_image categories` for all categories")
                 }
             }
         }
     }
 
 
-    override fun help() = """`${PREFIX}hug` => Hug a user
-        |`${PREFIX}lewd` => When things get to lewd
-        |`${PREFIX}pat` => Pat a user
-        |`${PREFIX}punch` => Punch a user in their face
-        |`${PREFIX}shrug` => ¯\_(ツ)_/¯
-        |`${PREFIX}lick` => Lick a user
-        |`${PREFIX}owo` => OwO what's this
-        |`${PREFIX}weeb <category>` => Gives you a random image from weeb.sh with that type
+    override fun help() = """`${Settings.PREFIX}hug` => Hug a user
+        |`${Settings.PREFIX}lewd` => When things get to lewd
+        |`${Settings.PREFIX}pat` => Pat a user
+        |`${Settings.PREFIX}punch` => Punch a user in their face
+        |`${Settings.PREFIX}shrug` => ¯\_(ツ)_/¯
+        |`${Settings.PREFIX}lick` => Lick a user
+        |`${Settings.PREFIX}owo` => OwO what's this
+        |`${Settings.PREFIX}weeb <category>` => Gives you a random image from weeb.sh with that type
     """.trimMargin()
 
     override fun help(invoke: String?): String {
         return when (invoke) {
             "hug" -> {
                 """Hug a user.
-                    |Usage: `$PREFIX$invoke [username/@user]`
+                    |Usage: `${Settings.PREFIX}$invoke [username/@user]`
                 """.trimMargin()
             }
             "lewd" -> {
                 """ehhhhh
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "pat" -> {
                 """Pats a user.
-                    |Usage `$PREFIX$invoke [username/@user]`
+                    |Usage `${Settings.PREFIX}$invoke [username/@user]`
                 """.trimMargin()
             }
             "punch" -> {
                 """Punch a user in their face
-                    |Usage: `$PREFIX$invoke [username/@user]`
+                    |Usage: `${Settings.PREFIX}$invoke [username/@user]`
                 """.trimMargin()
             }
             "shrug" -> {
                 """¯\_(ツ)_/¯
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "lick" -> {
                 """Lick a user
-                    |Usage: `$PREFIX$invoke [username/@user]`
+                    |Usage: `${Settings.PREFIX}$invoke [username/@user]`
                 """.trimMargin()
             }
             "owo" -> {
                 """OwO what's this
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "megumin" -> {
                 """EXPLISION!!!!!
-                    |Usage: `$PREFIX$invoke`
+                    |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
             "weeb" -> {
                 """Gives you a random image from weeb.sh with that type
-                    |Usage: `$PREFIX$invoke <category>`
+                    |Usage: `${Settings.PREFIX}$invoke <category>`
                 """.trimMargin()
             }
             else -> {

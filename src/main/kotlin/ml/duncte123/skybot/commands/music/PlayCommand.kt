@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.audio.GuildMusicManager
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -57,7 +58,7 @@ open class PlayCommand : MusicCommand() {
 
                 player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
                 scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
-                    "For example `${PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
+                    "For example `${Settings.PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
             return
         }
@@ -91,12 +92,12 @@ open class PlayCommand : MusicCommand() {
             MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
         }
-        ctx.audioUtils.loadAndPlay(mng, event.channel, event.author, toPlay, ctx, false)
+        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx, false)
     }
 
 
     override fun help(): String = """Make the bot play song.
-            |Usage: `$PREFIX$name [url/search term]`""".trimMargin()
+            |Usage: `${Settings.PREFIX}$name [url/search term]`""".trimMargin()
 
     override fun getName(): String = "play"
 }
