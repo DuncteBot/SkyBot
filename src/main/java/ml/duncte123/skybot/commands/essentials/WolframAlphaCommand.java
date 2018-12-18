@@ -62,24 +62,24 @@ public class WolframAlphaCommand extends Command {
         WAQueryResult result,
         String googleKey
     ) {
-        Member m = event.getMember();
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        final Member m = event.getMember();
+        final EmbedBuilder eb = EmbedUtils.defaultEmbed();
         eb.setAuthor(m.getUser().getName(), null, m.getUser().getAvatarUrl());
 
         eb.setTitle("**Input:** " + parseString(result.getQuery().getInput()),
             parseString(result.getQuery().toWebsiteURL()));
 
-        for (WAPod pod : result.getPods()) {
-            String name = parseString(pod.getTitle());
-            StringBuilder embeds = new StringBuilder();
+        for (final WAPod pod : result.getPods()) {
+            final String name = parseString(pod.getTitle());
+            final StringBuilder embeds = new StringBuilder();
             //Loop over the subpods
-            for (WASubpod sp : pod.getSubpods()) {
+            for (final WASubpod sp : pod.getSubpods()) {
                 //yet another stringbuilder
-                StringBuilder e = new StringBuilder();
+                final StringBuilder e = new StringBuilder();
                 //append the title
                 e.append(parseString(sp.getTitle()));
                 //loop over the contents
-                for (Visitable v : sp.getContents()) {
+                for (final Visitable v : sp.getContents()) {
                     String d = "";
                     if (v instanceof WAImage) {
                         WAImage i = (WAImage) v;
@@ -115,8 +115,8 @@ public class WolframAlphaCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!isUserOrGuildPatron(event)) return;
 
@@ -125,19 +125,19 @@ public class WolframAlphaCommand extends Command {
             return;
         }
 
-        WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
+        final WAEngine engine = getWolframEngine(ctx.getConfig().apis.wolframalpha);
         if (engine == null) {
             MessageUtils.sendMsg(event, ":x: Wolfram|Alpha function unavailable!");
             return;
         }
 
         MessageUtils.sendMsg(event, "Calculating.....", message -> {
-            String queryString = ctx.getArgsRaw();
+            final String queryString = ctx.getArgsRaw();
                     /*= event.getMessage().getContentRaw()
                     .substring(event.getMessage().getContentRaw()
                             .split(" ")[0].length());*/
 
-            WAQuery query = engine.createQuery(queryString);
+            final WAQuery query = engine.createQuery(queryString);
             WAQueryResult result;
             try {
                 result = engine.performQuery(query);
@@ -176,7 +176,7 @@ public class WolframAlphaCommand extends Command {
         if (appId == null || appId.isEmpty())
             return null;
 
-        WAEngine engine = new WAEngine();
+        final WAEngine engine = new WAEngine();
 
         engine.setAppID(appId);
 

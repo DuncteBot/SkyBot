@@ -44,8 +44,8 @@ public class UnbanCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
@@ -62,14 +62,14 @@ public class UnbanCommand extends Command {
             return;
         }
 
-        String argsJoined = String.join(" ", args);
+        final String argsJoined = String.join(" ", args);
 
         try {
             event.getGuild().getBanList().queue(list -> {
 
                 for (Guild.Ban ban : list) {
-                    User bannedUser = ban.getUser();
-                    String userFormatted = String.format("%#s", bannedUser);
+                    final User bannedUser = ban.getUser();
+                    final String userFormatted = String.format("%#s", bannedUser);
 
 
                     if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||

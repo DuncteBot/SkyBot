@@ -97,13 +97,13 @@ public abstract class Command implements ICommand {
             return true;
         }
 
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
 
         if (supportGuild == null) {
             return false;
         }
 
-        Member m = supportGuild.getMember(u);
+        final Member m = supportGuild.getMember(u);
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -125,7 +125,7 @@ public abstract class Command implements ICommand {
     }
 
     private boolean isPatron(@NotNull User u, TextChannel tc, boolean reply) {
-        TextChannel textChannel = reply ? tc : null;
+        final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
@@ -135,13 +135,13 @@ public abstract class Command implements ICommand {
             return true;
         }
 
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
 
         if (supportGuild == null) {
             return false;
         }
 
-        Member m = supportGuild.getMember(u);
+        final Member m = supportGuild.getMember(u);
 
         if (m == null) {
             return false;

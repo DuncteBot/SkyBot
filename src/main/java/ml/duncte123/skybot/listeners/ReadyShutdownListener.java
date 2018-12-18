@@ -72,7 +72,7 @@ public class ReadyShutdownListener extends BaseListener {
         }
 
         shardsReady++;
-        ShardManager manager = event.getJDA().asBot().getShardManager();
+        final ShardManager manager = event.getJDA().asBot().getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
 
             loadPatrons(manager);
@@ -82,19 +82,19 @@ public class ReadyShutdownListener extends BaseListener {
     private void loadPatrons(@NotNull ShardManager manager) {
         logger.info("Collecting patrons");
 
-        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
 
-        List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
+        final List<Long> patronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.patronsRole))
             .stream().map(Member::getUser).map(User::getIdLong).collect(Collectors.toList());
 
         Command.patrons.addAll(patronsList);
 
         logger.info("Found {} normal patrons", Command.patrons.size());
 
-        List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
+        final List<User> guildPatronsList = supportGuild.getMembersWithRoles(supportGuild.getRoleById(Command.guildPatronsRole))
             .stream().map(Member::getUser).collect(Collectors.toList());
 
-        TLongList patronGuildsTrove = new TLongArrayList();
+        final TLongList patronGuildsTrove = new TLongArrayList();
 
         guildPatronsList.forEach((patron) -> {
             List<Long> guilds = manager.getMutualGuilds(patron).stream()

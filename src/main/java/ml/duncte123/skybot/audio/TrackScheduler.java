@@ -92,7 +92,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
 
         if (queue.peek() == null) return;
 
-        AudioTrack nextTrack = queue.poll();
+        final AudioTrack nextTrack = queue.poll();
 
         if (nextTrack != null) {
             player.playTrack(nextTrack);
@@ -135,13 +135,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             logger.debug("a playlist.....");
             nextTrack();
             //Offer it to the queue to prevent the player from playing it
-            AudioTrack clone = lastTrack.makeClone();
+            final AudioTrack clone = lastTrack.makeClone();
             clone.setUserData(lastTrack.getUserData());
             queue.offer(clone);
             return;
         }
 
-        AudioTrack clone = lastTrack.makeClone();
+        final AudioTrack clone = lastTrack.makeClone();
         clone.setUserData(lastTrack.getUserData());
         this.player.playTrack(clone);
         announceNextTrack(lastTrack, true);
@@ -200,9 +200,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private void announceNextTrack(AudioTrack track, boolean repeated) {
         if (guildMusicManager.isAnnounceTracks()) {
             String title = track.getInfo().title;
-            TrackUserData userData = (TrackUserData) track.getUserData();
+            final TrackUserData userData = (TrackUserData) track.getUserData();
             title = AudioLoader.getSteamTitle(track, title, variables.getCommandManager());
-            User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
+            final User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
             final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message);
         }
@@ -212,12 +212,12 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackException(AudioPlayer player, AudioTrack track, FriendlyException exception) {
         ComparatingUtils.execCheck(exception);
         if (exception.severity != FriendlyException.Severity.COMMON) {
-            TextChannel tc = guildMusicManager.getLatestChannel();
+            final TextChannel tc = guildMusicManager.getLatestChannel();
 
-            Guild g = tc == null ? null : tc.getGuild();
+            final Guild g = tc == null ? null : tc.getGuild();
 
             if (g != null) {
-                AudioTrackInfo info = track.getInfo();
+                final AudioTrackInfo info = track.getInfo();
                 final String error = String.format(
                     "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
                     g.getName(),
@@ -230,8 +230,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);
             }
 
-            Throwable rootCause = ExceptionUtils.getRootCause(exception);
-            Throwable finalCause = rootCause != null ? rootCause : exception;
+            final Throwable rootCause = ExceptionUtils.getRootCause(exception);
+            final Throwable finalCause = rootCause != null ? rootCause : exception;
 
             MessageUtils.sendMsg(tc,
                 "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +

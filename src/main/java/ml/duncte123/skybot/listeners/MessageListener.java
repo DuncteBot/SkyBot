@@ -58,7 +58,7 @@ public class MessageListener extends BaseListener {
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
 
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
             return;
@@ -69,7 +69,7 @@ public class MessageListener extends BaseListener {
             return;
         }
 
-        String rw = event.getMessage().getContentRaw();
+        final String rw = event.getMessage().getContentRaw();
 
         if (rw.equals(Settings.PREFIX + "shutdown")
             && Settings.developers.contains(event.getAuthor().getIdLong())) {
@@ -86,10 +86,10 @@ public class MessageListener extends BaseListener {
             return;
         }
 
-        String selfMember = guild.getSelfMember().getAsMention();
-        String selfUser = event.getJDA().getSelfUser().getAsMention();
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
-        String rwLower = rw.toLowerCase();
+        final String selfMember = guild.getSelfMember().getAsMention();
+        final String selfUser = event.getJDA().getSelfUser().getAsMention();
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final String rwLower = rw.toLowerCase();
 
         if (doAutoModChecks(event, settings, rw)) {
             return;
@@ -123,7 +123,7 @@ public class MessageListener extends BaseListener {
 
         final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         //Handle the chat command
-        ICommand cmd = commandManager.getCommand("chat");
+        final ICommand cmd = commandManager.getCommand("chat");
 
         if (cmd != null) {
             cmd.executeCommand(new CommandContext(
@@ -146,7 +146,7 @@ public class MessageListener extends BaseListener {
     //                                    raw,    category?
     private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName) {
 
-        ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+        final ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
             .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
         if (command == null) {
@@ -167,7 +167,7 @@ public class MessageListener extends BaseListener {
 
     private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
 
-        String topic = event.getChannel().getTopic();
+        final String topic = event.getChannel().getTopic();
 
         if (topic == null || topic.isEmpty()) {
             return true;
@@ -176,7 +176,7 @@ public class MessageListener extends BaseListener {
         if (topic.contains("-commands"))
             return false;
 
-        String[] blocked = topic.split("-");
+        final String[] blocked = topic.split("-");
 
         for (String s : blocked) {
             if (s.startsWith("!")) {
@@ -207,15 +207,15 @@ public class MessageListener extends BaseListener {
     }
 
     private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
             if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
+                final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
                 if (matcher.find()) {
                     //Get the invite Id from the message
-                    String inviteID = matcher.group(matcher.groupCount());
+                    final String inviteID = matcher.group(matcher.groupCount());
 
                     //Prohibiting failure because the bot is currently banned from the other guild.
                     guild.getInvites().queue((invites) -> {
@@ -231,7 +231,7 @@ public class MessageListener extends BaseListener {
             }
 
             if (settings.isEnableSwearFilter()) {
-                Message messageToCheck = event.getMessage();
+                final Message messageToCheck = event.getMessage();
                 if (wordFilter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
                         .queue(null, (t) -> {
@@ -248,10 +248,10 @@ public class MessageListener extends BaseListener {
             }
 
             if (settings.isEnableSpamFilter()) {
-                Message messageToCheck = event.getMessage();
-                long[] rates = settings.getRatelimits();
+                final Message messageToCheck = event.getMessage();
+                final long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
-                DunctebotGuild g = new DunctebotGuild(guild, variables);
+                final DunctebotGuild g = new DunctebotGuild(guild, variables);
                 if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
                         settings.getKickState() ? "kicked" : "muted", "spam", g);

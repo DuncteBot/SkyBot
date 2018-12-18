@@ -74,8 +74,8 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onGuildVoiceLeave(GuildVoiceLeaveEvent event) {
-        Guild guild = event.getGuild();
-        LavalinkManager manager = LavalinkManager.ins;
+        final Guild guild = event.getGuild();
+        final LavalinkManager manager = LavalinkManager.ins;
 
         if (!manager.isConnected(guild)) {
             return;
@@ -85,7 +85,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        VoiceChannel vc = manager.getConnectedChannel(guild);
+        final VoiceChannel vc = manager.getConnectedChannel(guild);
 
         if (vc == null) {
             return;
@@ -101,7 +101,7 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
 
         if (!event.getMember().equals(guild.getSelfMember())) {
             return;
@@ -112,14 +112,14 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onGuildVoiceMove(GuildVoiceMoveEvent event) {
-        Guild guild = event.getGuild();
-        LavalinkManager manager = LavalinkManager.ins;
+        final Guild guild = event.getGuild();
+        final LavalinkManager manager = LavalinkManager.ins;
 
         if (!manager.isConnected(guild)) {
             return;
         }
 
-        VoiceChannel connected = manager.getConnectedChannel(guild);
+        final VoiceChannel connected = manager.getConnectedChannel(guild);
 
         if (connected == null) {
             return;
@@ -150,7 +150,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild, false);
+        final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild, false);
 
         if (manager != null) {
             manager.player.stopTrack();

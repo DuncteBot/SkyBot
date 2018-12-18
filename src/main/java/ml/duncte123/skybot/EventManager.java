@@ -54,11 +54,11 @@ public class EventManager
     private final List<EventListener> listeners = new ArrayList<>();
 
     EventManager(Variables variables) {
-        MessageListener messageListener = new MessageListener(variables);
-        GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
-        GuildListener guildListener = new GuildListener(variables);
-        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables);
-        DeHoistListener deHoistListener = new DeHoistListener(variables);
+        final MessageListener messageListener = new MessageListener(variables);
+        final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
+        final GuildListener guildListener = new GuildListener(variables);
+        final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables);
+        final DeHoistListener deHoistListener = new DeHoistListener(variables);
 
         this.listeners.add(messageListener);
         this.listeners.add(guildMemberListener);

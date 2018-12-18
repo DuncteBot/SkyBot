@@ -80,12 +80,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     public SpotifyAudioSourceManager(YoutubeAudioSourceManager youtubeAudioSourceManager, DunctebotConfig.Apis config) {
         this.config = config;
 
-        String defaultValue = "To use Spotify search, please create an app over at https://developer.spotify.com/web-api/";
-        String clientId = config.spotify.clientId;
-        String clientSecret = config.spotify.clientSecret;
-        String youtubeApiKey = config.googl;
+        final String clientId = config.spotify.clientId;
+        final String clientSecret = config.spotify.clientSecret;
+        final String youtubeApiKey = config.googl;
         if (clientId == null || clientSecret == null || youtubeApiKey == null) {
-            logger.error("Could not load Spotify keys\n" + defaultValue);
+            logger.error("Could not load Spotify keys\n");
             this.spotifyApi = null;
             this.service = null;
             this.youtubeAudioSourceManager = null;
@@ -133,7 +132,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private AudioItem getSpotifyAlbum(AudioReference reference) {
-        Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
+        final Matcher res = SPOTIFY_ALBUM_REGEX.matcher(reference.identifier);
 
         if (!res.matches()) {
             return null;
@@ -167,7 +166,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             return null;
         }
 
-        String playListId = res.group(res.groupCount());
+        final String playListId = res.group(res.groupCount());
 
         try {
             final List<AudioTrack> finalPlaylist = new ArrayList<>();
@@ -195,7 +194,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     private AudioItem getSpotifyTrack(AudioReference reference) {
 
-        Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
+        final Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
         if (!res.matches()) {
             return null;
         }
@@ -204,14 +203,14 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
             final Track track = trackFuture.get();
 
-            List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(),
+            final List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(),
                 config.googl, 1L);
 
             if (results.isEmpty()) {
                 return null;
             }
 
-            Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
+            final Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
 
             return audioTrackFromVideo(v);
         } catch (Exception e) {
@@ -266,13 +265,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private Matcher getSpotifyPlaylistFromString(String input) {
-        Matcher match = SPOTIFY_PLAYLIST_REGEX.matcher(input);
+        final Matcher match = SPOTIFY_PLAYLIST_REGEX.matcher(input);
 
         if (match.matches()) {
             return match;
         }
 
-        Matcher withUser = SPOTIFY_PLAYLIST_REGEX_USER.matcher(input);
+        final Matcher withUser = SPOTIFY_PLAYLIST_REGEX_USER.matcher(input);
 
         if (withUser.matches()) {
             return withUser;
@@ -282,10 +281,10 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     }
 
     private List<AudioTrack> doThingWithPlaylist(List<SearchResult> results) throws Exception {
-        List<AudioTrack> playList = new ArrayList<>();
+        final List<AudioTrack> playList = new ArrayList<>();
         if (!results.isEmpty()) {
-            SearchResult video = results.get(0);
-            ResourceId rId = video.getId();
+            final SearchResult video = results.get(0);
+            final ResourceId rId = video.getId();
             if (rId.getKind().equals("youtube#video")) {
                 Video v = getVideoById(video.getId().getVideoId(), config.googl);
                 playList.add(audioTrackFromVideo(v));
@@ -308,7 +307,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private long toLongDuration(String dur) {
         String time = dur.substring(2);
         long duration = 0L;
-        Object[][] indexs = new Object[][]{{"H", 3600}, {"M", 60}, {"S", 1}};
+        final Object[][] indexs = new Object[][]{{"H", 3600}, {"M", 60}, {"S", 1}};
         for (Object[] index1 : indexs) {
             int index = time.indexOf((String) index1[0]);
             if (index != -1) {

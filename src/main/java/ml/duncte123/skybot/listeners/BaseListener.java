@@ -69,13 +69,13 @@ public class BaseListener extends ListenerAdapter {
 
         // How many members should we at least have in the server
         // before starting to conciser it as a botfarm
-        int minTotalMembers = 30;
+        final int minTotalMembers = 30;
         // What percentage of bots do we allow
-        double maxBotPercentage = 70;
+        final double maxBotPercentage = 70;
 
-        double[] botToUserRatio = GuildUtils.getBotRatio(guild);
-        long[] counts = GuildUtils.getBotAndUserCount(guild);
-        long totalMembers = guild.getMemberCache().size();
+        final double[] botToUserRatio = GuildUtils.getBotRatio(guild);
+        final long[] counts = GuildUtils.getBotAndUserCount(guild);
+        final long totalMembers = guild.getMemberCache().size();
 
         // if (!(botToUserRatio[1] >= maxBotPercentage && totalMembers > 30))
         logger.debug("totalMembers > minTotalMembers " + (totalMembers > minTotalMembers));

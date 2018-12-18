@@ -36,14 +36,14 @@ public class SettingsCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
 
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
         //true <:check:314349398811475968>
         //false <:xmark:314349398824058880>
-        TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
-        TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
-        EmbedBuilder message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
+        final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
+        final TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
+        final EmbedBuilder message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
             "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
             "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
             "**Announce next track:** " + boolToEmoji(settings.isAnnounceTracks()) + "\n" +

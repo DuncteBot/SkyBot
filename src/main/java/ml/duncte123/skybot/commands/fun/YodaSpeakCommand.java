@@ -37,14 +37,14 @@ public class YodaSpeakCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (ctx.getArgs().isEmpty()) {
             sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <A sentence.>`");
             return;
         }
 
-        QueryBuilder builder = new QueryBuilder()
+        final QueryBuilder builder = new QueryBuilder()
             .append("https://apis.duncte123.me/yoda")
             .append("sentence", ctx.getArgsDisplay())
             .append("token", event.getJDA().getToken());

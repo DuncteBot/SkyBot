@@ -48,8 +48,8 @@ public class LockEmoteCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        Message message = ctx.getMessage();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final Message message = ctx.getMessage();
 
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(event, "You need administrator perms to run this command.");
@@ -66,8 +66,8 @@ public class LockEmoteCommand extends Command {
             return;
         }
 
-        List<Emote> mentionedEmotes = message.getEmotes();
-        List<Role> mentionedRoles = new ArrayList<>(message.getMentionedRoles());
+        final List<Emote> mentionedEmotes = message.getEmotes();
+        final List<Role> mentionedRoles = new ArrayList<>(message.getMentionedRoles());
 
         if (mentionedRoles.isEmpty()) {
             // Loop over the args and check if there are roles found in text
@@ -81,7 +81,7 @@ public class LockEmoteCommand extends Command {
             return;
         }
 
-        Emote emote = mentionedEmotes.get(0);
+        final Emote emote = mentionedEmotes.get(0);
 
         if (cannotInteractWithEmote(event, emote)) return;
 

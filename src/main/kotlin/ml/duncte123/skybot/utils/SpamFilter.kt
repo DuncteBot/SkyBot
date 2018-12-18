@@ -24,7 +24,6 @@ import gnu.trove.map.hash.TLongObjectHashMap
 import me.duncte123.botcommons.text.TextColor
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import net.dv8tion.jda.core.entities.Member
 import net.dv8tion.jda.core.entities.Message

@@ -31,10 +31,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class ToggleAnnounceTracksCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
+        final boolean shouldAnnounceTracks = !settings.isAnnounceTracks();
         guild.setSettings(settings.setAnnounceTracks(shouldAnnounceTracks));
 
         sendMsg(ctx.getEvent(), "Announcing the next track has been **"

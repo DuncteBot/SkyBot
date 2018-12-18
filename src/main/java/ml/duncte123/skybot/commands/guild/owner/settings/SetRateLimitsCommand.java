@@ -37,10 +37,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class SetRateLimitsCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
             sendMsg(event, "Incorrect usage: `" + Settings.PREFIX + "setratelimits <1|2|3|4|5|6/default>`");
@@ -53,9 +53,9 @@ public class SetRateLimitsCommand extends SettingsBase {
             return;
         }
 
-        long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
+        final long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
         guild.setSettings(settings.setRatelimits(rates));
-        String steps = Arrays.stream(rates).mapToObj(String::valueOf)
+        final String steps = Arrays.stream(rates).mapToObj(String::valueOf)
             .collect(Collectors.joining(", ", "", " minutes"));
 
         sendMsg(event, "The new rates are " + steps);
