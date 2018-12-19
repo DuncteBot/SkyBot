@@ -32,9 +32,9 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A single event listener container
@@ -51,7 +51,7 @@ public class EventManager
     public static boolean shouldFakeBlock;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final List<EventListener> listeners = new ArrayList<>();
+    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     EventManager(Variables variables) {
         MessageListener messageListener = new MessageListener(variables);
@@ -96,7 +96,7 @@ public class EventManager
                     return;
             }
 
-            for (EventListener listener : getRegisteredListenersClass()) {
+            for (EventListener listener : this.listeners) {
                 listener.onEvent(event);
             }
 
@@ -117,10 +117,6 @@ public class EventManager
      */
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
-    }
-
-    private List<EventListener> getRegisteredListenersClass() {
-        return this.listeners;
     }
 
 }
