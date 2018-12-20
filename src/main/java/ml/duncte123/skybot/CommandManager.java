@@ -286,6 +286,7 @@ public class CommandManager {
         if (cmd == null) {
             cmd = getCustomCommand(invoke, event.getGuild().getIdLong());
         }
+
         dispatchCommand(cmd, invoke, args, event);
     }
 
@@ -296,6 +297,9 @@ public class CommandManager {
         }
 
         commandThread.submit(() -> {
+
+            event.getChannel().sendTyping().queue();
+
             try {
 
                 if (!cmd.isCustom()) {
@@ -315,8 +319,9 @@ public class CommandManager {
 
                 final CustomCommand cc = (CustomCommand) cmd;
 
-                if (cc.getGuildId() != event.getGuild().getIdLong())
+                if (cc.getGuildId() != event.getGuild().getIdLong()) {
                     return;
+                }
 
                 try {
                     final Parser parser = CustomCommandUtils.PARSER;

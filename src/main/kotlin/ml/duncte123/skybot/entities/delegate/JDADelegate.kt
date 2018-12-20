@@ -39,12 +39,15 @@ class JDADelegate(private val x0sAlsm7sW: JDA) : JDA by x0sAlsm7sW {
     override fun shutdownNow() = this.shutdown()
 
     override fun equals(other: Any?): Boolean {
-        if (other == null) return false
+        if (other == null) {
+            return false
+        }
 
-        if (other is JDADelegate)
+        if (other is JDADelegate) {
             return other.x0sAlsm7sW == x0sAlsm7sW
-        else if (other is JDA)
+        } else if (other is JDA) {
             return other == x0sAlsm7sW
+        }
 
         return false
     }

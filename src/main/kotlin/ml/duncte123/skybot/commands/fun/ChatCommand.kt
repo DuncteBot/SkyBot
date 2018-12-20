@@ -128,9 +128,13 @@ class ChatCommand : Command() {
         var response1 = response
         for (element in Jsoup.parse(response1).getElementsByTag("a")) {
             response1 = response1.replace(oldValue = element.toString(),
-                newValue = if (withAds) "[${element.text()}](${element.attr("href")})" else
-                //It's usefull to show the text
-                    "${element.text()}(<${element.attr("href")}>)")
+                newValue = if (withAds) {
+                    "[${element.text()}](${element.attr("href")})"
+                } else {
+                    //It's usefull to show the text
+                    "${element.text()}(<${element.attr("href")}>)"
+                }
+            )
         }
         return response1
     }

@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import com.google.common.base.Charsets;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import gnu.trove.map.TLongObjectMap;
@@ -39,6 +38,7 @@ import ml.duncte123.skybot.utils.AudioUtils;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Variables {
@@ -59,7 +59,7 @@ public class Variables {
 
     public Variables() {
         try {
-            String json = Files.asCharSource(new File("config.json"), Charsets.UTF_8).read();
+            final String json = Files.asCharSource(new File("config.json"), StandardCharsets.UTF_8).read();
             this.config = new Gson().fromJson(json, DunctebotConfig.class);
         } catch (IOException e) {
             e.printStackTrace();
@@ -127,7 +127,7 @@ public class Variables {
         return this.weebApi;
     }
 
-    public boolean useApi() {
+    boolean useApi() {
         return this.isSql;
     }
 

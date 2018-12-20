@@ -51,22 +51,22 @@ public class ShardInfoCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        List<String> headers = new ArrayList<>();
+        final List<String> headers = new ArrayList<>();
         headers.add("Shard ID");
         headers.add("Status");
         headers.add("Ping");
         headers.add("Guild Count");
         headers.add("Connected VCs");
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         List<List<String>> table = new ArrayList<>();
-        ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
-        List<JDA> shards = new ArrayList<>(shardManager.getShards());
+        final ShardManager shardManager = ctx.getJDA().asBot().getShardManager();
+        final List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
 
         for (JDA shard : shards) {
-            List<String> row = new ArrayList<>();
+            final List<String> row = new ArrayList<>();
 
             row.add(shard.getShardInfo().getShardId() +
                 (ctx.getJDA().getShardInfo().getShardId() == shard.getShardInfo().getShardId() ? " (current)" : ""));
@@ -75,7 +75,7 @@ public class ShardInfoCommand extends Command {
             row.add(String.valueOf(shard.getPing()));
             row.add(String.valueOf(shard.getGuilds().size()));
 
-            Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
+            final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shard);
 
             row.add(channelStats.getFirst() + " / " + channelStats.getSecond());
             table.add(row);
@@ -111,9 +111,9 @@ public class ShardInfoCommand extends Command {
      * https://github.com/FlareBot/FlareBot/blob/master/src/main/java/stream/flarebot/flarebot/util/ShardUtils.java
      */
     private String makeAsciiTable(List<String> headers, List<List<String>> table, ShardManager shardManager) {
-        StringBuilder sb = new StringBuilder();
-        int padding = 1;
-        int[] widths = new int[headers.size()];
+        final StringBuilder sb = new StringBuilder();
+        final int padding = 1;
+        final int[] widths = new int[headers.size()];
         for (int i = 0; i < widths.length; i++) {
             widths[i] = 0;
         }
@@ -131,7 +131,7 @@ public class ShardInfoCommand extends Command {
             }
         }
         sb.append("```").append("prolog").append("\n");
-        StringBuilder formatLine = new StringBuilder("║");
+        final StringBuilder formatLine = new StringBuilder("║");
         for (int width : widths) {
             formatLine.append(" %-").append(width).append("s ║");
         }
@@ -144,13 +144,13 @@ public class ShardInfoCommand extends Command {
         }
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
 
-        ShardCacheView shardCache = shardManager.getShardCache();
+        final ShardCacheView shardCache = shardManager.getShardCache();
 
-        String connectedShards = String.valueOf(shardCache.stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
-        String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
-        String guilds = String.valueOf(shardManager.getGuildCache().size());
+        final String connectedShards = String.valueOf(shardCache.stream().filter(shard -> shard.getStatus() == JDA.Status.CONNECTED).count());
+        final String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
+        final String guilds = String.valueOf(shardManager.getGuildCache().size());
 
-        Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
+        final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
 
         sb.append(String.format(
             formatLine.toString(),
@@ -167,7 +167,7 @@ public class ShardInfoCommand extends Command {
 
     private String appendSeparatorLine(String left, String middle, String right, int padding, int... sizes) {
         boolean first = true;
-        StringBuilder ret = new StringBuilder();
+        final StringBuilder ret = new StringBuilder();
         for (int size : sizes) {
             if (first) {
                 first = false;
@@ -180,12 +180,12 @@ public class ShardInfoCommand extends Command {
     }
 
     private Pair<Long, Long> getConnectedVoiceChannels(ShardManager shardManager) {
-        AtomicLong connectedVC = new AtomicLong();
-        AtomicLong listeningVC = new AtomicLong();
+        final AtomicLong connectedVC = new AtomicLong();
+        final AtomicLong listeningVC = new AtomicLong();
 
         shardManager.getShardCache().forEach(
             (jda) -> {
-                Pair<Long, Long> shardStats = getConnectedVoiceChannels(jda);
+                final Pair<Long, Long> shardStats = getConnectedVoiceChannels(jda);
 
                 connectedVC.addAndGet(shardStats.getFirst());
                 listeningVC.addAndGet(shardStats.getSecond());
@@ -205,10 +205,10 @@ public class ShardInfoCommand extends Command {
      */
     private Pair<Long, Long> getConnectedVoiceChannels(JDA shard) {
 
-        long connectedVC = shard.getVoiceChannelCache().stream()
+        final long connectedVC = shard.getVoiceChannelCache().stream()
             .filter((vc) -> vc.getMembers().contains(vc.getGuild().getSelfMember())).count();
 
-        long listeningVC = shard.getVoiceChannelCache().stream().filter(
+        final long listeningVC = shard.getVoiceChannelCache().stream().filter(
             (voiceChannel) -> voiceChannel.getMembers().contains(voiceChannel.getGuild().getSelfMember()))
             .mapToLong(
                 (channel) -> channel.getMembers().stream().filter(

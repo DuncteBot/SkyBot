@@ -32,17 +32,17 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class ToggleSpamFilterCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        long muteRoleId = settings.getMuteRoleId();
+        final long muteRoleId = settings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
             sendMsg(ctx.getEvent(), "**__Please set a spam/mute role first!__**");
             return;
         }
 
-        boolean spamState = !settings.isEnableSpamFilter();
+        final boolean spamState = !settings.isEnableSpamFilter();
         guild.setSettings(settings.setEnableSpamFilter(spamState));
         String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
 

@@ -35,9 +35,11 @@ public class ClintCommand extends ImageCommandBase {
             return;
         }
 
-        String url = getImageFromCommand(ctx);
-        if (url != null)
+        final String url = getImageFromCommand(ctx);
+
+        if (url != null) {
             ctx.getBlargbot().getClint(url).async((image) -> handleBasicImage(event, image));
+        }
     }
 
     @Override

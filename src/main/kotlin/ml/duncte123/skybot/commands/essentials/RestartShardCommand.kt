@@ -44,7 +44,10 @@ class RestartShardCommand : Command() {
 
         val event = ctx.event
 
-        if (!isDev(event.author)) return
+        if (!isDev(event.author)) {
+            return
+        }
+
         val shardManager = event.jda.asBot().shardManager
 
         try {
@@ -85,9 +88,9 @@ class RestartShardCommand : Command() {
                 else -> MessageUtils.sendError(event.message)
             }
         } catch (ex: NumberFormatException) {
-            if (Settings.useJSON)
+            if (Settings.useJSON) {
                 JSONMessageErrors.sendErrorJSON(event.message, ex, false)
-            else {
+            } else {
                 MessageUtils.sendError(event.message)
             }
         }
@@ -101,17 +104,15 @@ class RestartShardCommand : Command() {
 
     private fun terminate(shard: Int, shardManager: ShardManager) {
         for (jda in shardManager.shardCache) {
-            if (jda.shardInfo.shardId != shard && shard != -1)
+            if (jda.shardInfo.shardId != shard && shard != -1) {
                 continue
+            }
+
             for (guild in jda.guildCache) {
                 if (LavalinkManager.ins.isConnected(guild)) {
                     LavalinkManager.ins.closeConnection(guild)
                 }
             }
-//          for (link in LavalinkManager.ins.lavalink.links) {
-//              if (link.jda.shardInfo.shardId == shard || shard == -1)
-//                  link.disconnect(); link.resetPlayer(); link.destroy();
-//          }
         }
     }
 }

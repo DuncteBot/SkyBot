@@ -29,8 +29,10 @@ class LeaveCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
+
         val guild = event.guild
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
@@ -39,19 +41,25 @@ class LeaveCommand : MusicCommand() {
             MessageUtils.sendError(event.message)
             return
         }
+
         val manager = getMusicManager(guild, ctx.audioUtils)
 
-        if (getLavalinkManager().isConnected(guild)) {
-            manager.player.stopTrack()
-            getLavalinkManager().closeConnection(guild)
-            guild.audioManager.sendingHandler = null
-            MusicCommand.addCooldown(guild.idLong)
-            if (guild.audioManager.connectionListener != null)
-                guild.audioManager.connectionListener = null
-            MessageUtils.sendMsg(event, "Leaving your channel")
-        } else {
+        if (!getLavalinkManager().isConnected(guild)) {
             MessageUtils.sendMsg(event, "I'm not connected to any channels.")
+            return
         }
+
+        manager.player.stopTrack()
+        getLavalinkManager().closeConnection(guild)
+        guild.audioManager.sendingHandler = null
+        MusicCommand.addCooldown(guild.idLong)
+
+        if (guild.audioManager.connectionListener != null) {
+            guild.audioManager.connectionListener = null
+        }
+
+        MessageUtils.sendMsg(event, "Leaving your channel")
+
     }
 
     override fun help(): String = "Makes the bot leave your channel."

@@ -46,9 +46,9 @@ public class MuteCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
@@ -59,16 +59,16 @@ public class MuteCommand extends Command {
             return;
         }
 
-        GuildSettings settings = ctx.getGuildSettings();
+        final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
             return;
         }
 
-        String reason = StringUtils.join(args.subList(1, args.size()), " ");
-        Member toMute = event.getMessage().getMentionedMembers().get(0);
-        Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final String reason = StringUtils.join(args.subList(1, args.size()), " ");
+        final Member toMute = event.getMessage().getMentionedMembers().get(0);
+        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {

@@ -71,9 +71,9 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
             // Remove whitespaces at the front
             .replaceAll("^\\s+", "");
 
-        String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
+        final String encoded = URLEncoder.encode(data, StandardCharsets.UTF_8);
 
-        String mp3URL = templateURL
+        final String mp3URL = templateURL
             .replace("%length%", Integer.toString(data.length()))
             .replace("%query%", encoded);
 

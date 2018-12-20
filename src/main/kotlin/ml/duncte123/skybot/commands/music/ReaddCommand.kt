@@ -32,8 +32,9 @@ class ReaddCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
 
         val manager = getMusicManager(event.guild, ctx.audioUtils)
         val t = manager.player.playingTrack

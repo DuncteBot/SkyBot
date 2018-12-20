@@ -44,15 +44,15 @@ public class SoftbanCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members permission for this command, please contact your server administrator about this");
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 1) {
+        if (event.getMessage().getMentionedUsers().isEmpty() || args.isEmpty()) {
             MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
             return;
         }
@@ -64,7 +64,8 @@ public class SoftbanCommand extends Command {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            String reason = StringUtils.join(args.subList(1, args.size()), " ");
+            final String reason = StringUtils.join(args.subList(1, args.size()), " ");
+
             event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                 nothing -> {
                     ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());

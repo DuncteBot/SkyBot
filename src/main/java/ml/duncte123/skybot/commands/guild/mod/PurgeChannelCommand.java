@@ -41,8 +41,9 @@ public class PurgeChannelCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
+
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
             return;
@@ -58,14 +59,14 @@ public class PurgeChannelCommand extends Command {
             return;
         }
 
-        List<TextChannel> channels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
+        final List<TextChannel> channels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
 
         if (channels.isEmpty()) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <#text-channel>`");
             return;
         }
 
-        TextChannel toPurge = channels.get(0);
+        final TextChannel toPurge = channels.get(0);
 
         if (toPurge.equals(ctx.getChannel())) {
             sendMsg(event, "For security reasons you can not use this command in the channel that you want to purge");

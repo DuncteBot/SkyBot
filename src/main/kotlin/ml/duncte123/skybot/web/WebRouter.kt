@@ -39,7 +39,6 @@ import ml.duncte123.skybot.web.controllers.dashboard.*
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
-import org.apache.commons.lang3.RandomStringUtils
 import spark.ModelAndView
 import spark.Spark.path
 import spark.kotlin.*

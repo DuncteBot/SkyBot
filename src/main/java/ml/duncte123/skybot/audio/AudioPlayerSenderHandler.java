@@ -49,10 +49,12 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public boolean canProvide() {
-        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        final LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+
         if (lastFrame == null) {
             lastFrame = lavaplayerPlayer.provide();
         }
+
         return lastFrame != null;
     }
 
@@ -63,13 +65,15 @@ public class AudioPlayerSenderHandler implements AudioSendHandler {
      */
     @Override
     public byte[] provide20MsAudio() {
-        LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+        final LavaplayerPlayerWrapper lavaplayerPlayer = (LavaplayerPlayerWrapper) audioPlayer;
+
         if (lastFrame == null) {
             lastFrame = lavaplayerPlayer.provide();
         }
 
-        byte[] data = lastFrame != null ? lastFrame.getData() : null;
+        final byte[] data = lastFrame != null ? lastFrame.getData() : null;
         lastFrame = null;
+
         return data;
     }
 
