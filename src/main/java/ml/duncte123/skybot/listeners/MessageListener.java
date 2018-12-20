@@ -30,6 +30,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.BadWordFilter;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
+import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
@@ -46,14 +47,9 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class MessageListener extends BaseListener {
 
-    protected final CommandManager commandManager;
+    protected final CommandManager commandManager = variables.getCommandManager();
     private final BadWordFilter wordFilter = new BadWordFilter();
-
-    public MessageListener(Variables variables) {
-        super(variables);
-
-        this.commandManager = variables.getCommandManager();
-    }
+    protected final SpamFilter spamFilter = new SpamFilter(variables);
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {

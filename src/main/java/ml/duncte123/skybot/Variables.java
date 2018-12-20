@@ -56,8 +56,10 @@ public class Variables {
     private DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
 
+    private static Variables instance;
 
-    public Variables() {
+
+    private Variables() {
         try {
             String json = Files.asCharSource(new File("config.json"), Charsets.UTF_8).read();
             this.config = new Gson().fromJson(json, DunctebotConfig.class);
@@ -167,5 +169,14 @@ public class Variables {
         }
 
         return this.databaseAdapter;
+    }
+
+    public static synchronized Variables getInstance() {
+
+        if (instance == null) {
+            instance = new Variables();
+        }
+
+        return instance;
     }
 }

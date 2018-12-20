@@ -41,17 +41,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
-public class ReadyShutdownListener extends BaseListener {
+public class ReadyShutdownListener extends MessageListener {
 
     private final ScheduledExecutorService systemPool = Executors.newScheduledThreadPool(3,
         r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
     private short shardsReady = 0;
-
-    public ReadyShutdownListener(Variables variables) {
-        super(variables);
-    }
 
     @Override
     public void onReady(ReadyEvent event) {
