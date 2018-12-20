@@ -70,8 +70,7 @@ public final class SkyBot {
     private IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
-
-        Variables variables = new Variables();
+        Variables variables = Variables.getInstance();
         DunctebotConfig config = variables.getConfig();
         CommandManager commandManager = variables.getCommandManager();
         Logger logger = LoggerFactory.getLogger(SkyBot.class);
@@ -125,7 +124,7 @@ public final class SkyBot {
 
 
         //Set up sharding for the bot
-        EventManager eventManager = new EventManager(variables);
+        EventManager eventManager = new EventManager();
         this.shardManager = new DefaultShardManagerBuilder()
             .setEventManagerProvider((id) -> eventManager)
             .setBulkDeleteSplittingEnabled(false)
@@ -142,7 +141,7 @@ public final class SkyBot {
 
         if (!config.discord.local) {
             // init web server
-            new WebRouter(shardManager, variables);
+            new WebRouter(shardManager);
         }
     }
 

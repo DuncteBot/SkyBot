@@ -43,6 +43,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
@@ -53,7 +54,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
-    private final Variables variables;
+    private final Variables variables = Variables.getInstance();
     private boolean repeating = false;
     private boolean repeatPlayList = false;
 
@@ -64,10 +65,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * @param player
      *         Our audio player
      */
-    TrackScheduler(IPlayer player, Variables variables, GuildMusicManager guildMusicManager) {
+    TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
-        this.queue = new LinkedList<>();
-        this.variables = variables;
+        this.queue = new ConcurrentLinkedQueue<>();
         this.guildMusicManager = guildMusicManager;
     }
 
@@ -90,7 +90,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     public void nextTrack() {
 
-        if (queue.peek() == null) return;
+        if (queue.peek() == null) {
+            return;
+        }
 
         AudioTrack nextTrack = queue.poll();
 
@@ -119,7 +121,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     public void onTrackEnd(AudioPlayer player, AudioTrack lastTrack, AudioTrackEndReason endReason) {
         logger.debug("track ended");
 
-        if (!endReason.mayStartNext) return;
+        if (!endReason.mayStartNext) {
+            return;
+        }
 
         logger.debug("can start");
 

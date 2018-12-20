@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.listeners;
 
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
@@ -36,10 +35,6 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildMemberListener extends BaseListener {
-
-    public GuildMemberListener(Variables variables) {
-        super(variables);
-    }
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {

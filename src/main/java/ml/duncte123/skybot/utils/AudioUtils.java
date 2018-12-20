@@ -147,13 +147,6 @@ public class AudioUtils {
      * @return The music manager for that guild
      */
     public GuildMusicManager getMusicManager(Guild guild) {
-        GuildMusicManager mng = getMusicManager(guild, true);
-        guild.getAudioManager().setSendingHandler(mng.getSendHandler());
-        return mng;
-    }
-
-    @Nullable(value = "unless createIfNull == true")
-    public GuildMusicManager getMusicManager(Guild guild, boolean createIfNull) {
         long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
 
@@ -161,7 +154,7 @@ public class AudioUtils {
             synchronized (musicManagers) {
                 mng = musicManagers.get(guildId);
 
-                if (mng == null && createIfNull) {
+                if (mng == null) {
                     mng = new GuildMusicManager(guild, variables);
                     mng.player.setVolume(DEFAULT_VOLUME);
                     musicManagers.put(guildId, mng);

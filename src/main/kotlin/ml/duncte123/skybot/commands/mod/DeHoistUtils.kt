@@ -70,7 +70,7 @@ class DeHoistCommand : Command() {
 }
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
+class DeHoistListener : ListenerAdapter() {
 
     private val regex = "[!\"#\$%&'()*+,-./](?:.*)".toRegex()
     private val dehoistChar = "▪"
@@ -100,6 +100,6 @@ class DeHoistListener(private val variables: Variables) : ListenerAdapter() {
         val matcher = regex.matches(memberName)
         return (!memberName.startsWith(dehoistChar) && matcher &&
             member.guild.selfMember.hasPermission(Permission.NICKNAME_MANAGE) &&
-            GuildSettingsUtils.getGuild(member.guild, variables).isAutoDeHoist)
+            GuildSettingsUtils.getGuild(member.guild, Variables.getInstance()).isAutoDeHoist)
     }
 }

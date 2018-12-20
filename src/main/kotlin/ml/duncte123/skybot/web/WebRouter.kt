@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.web
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import javassist.compiler.ast.Variable
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -35,18 +36,22 @@ import ml.duncte123.skybot.web.controllers.api.CustomCommands
 import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
-import ml.duncte123.skybot.web.controllers.dashboard.*
+import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
+import ml.duncte123.skybot.web.controllers.dashboard.Dashbord
+import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
+import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
-import org.apache.commons.lang3.RandomStringUtils
 import spark.ModelAndView
 import spark.Spark.path
 import spark.kotlin.*
 import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class WebRouter(val shardManager: ShardManager, val variables: Variables) {
+class WebRouter(private val shardManager: ShardManager) {
+
+    private val variables = Variables.getInstance()
 
     private val config = variables.config
 
@@ -159,11 +164,6 @@ class WebRouter(val shardManager: ShardManager, val variables: Variables) {
 
             post("/messages") {
                 return@post MessageSettings.save(request, response, shardManager, variables)
-            }
-
-            // TODO: Music management
-            get("/music") {
-                return@get MusicSettings.show(request, shardManager, variables)
             }
         }
 

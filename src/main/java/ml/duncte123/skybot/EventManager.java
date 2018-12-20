@@ -53,14 +53,12 @@ public class EventManager
     private final ReactionHandler reactionHandler = new ReactionHandler();
     private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
-    EventManager(Variables variables) {
-        MessageListener messageListener = new MessageListener(variables);
-        GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
-        GuildListener guildListener = new GuildListener(variables);
-        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables);
-        DeHoistListener deHoistListener = new DeHoistListener(variables);
+    EventManager() {
+        GuildMemberListener guildMemberListener = new GuildMemberListener();
+        GuildListener guildListener = new GuildListener();
+        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
+        DeHoistListener deHoistListener = new DeHoistListener();
 
-        this.listeners.add(messageListener);
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
         this.listeners.add(readyShutdownListener);
