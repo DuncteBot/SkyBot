@@ -23,7 +23,6 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
-import ml.duncte123.skybot.listeners.MessageListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
@@ -32,9 +31,9 @@ import net.dv8tion.jda.core.hooks.IEventManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /**
  * A single event listener container
@@ -51,16 +50,14 @@ public class EventManager
     public static boolean shouldFakeBlock;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final List<EventListener> listeners = new ArrayList<>();
+    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
-    EventManager(Variables variables) {
-        final MessageListener messageListener = new MessageListener(variables);
-        final GuildMemberListener guildMemberListener = new GuildMemberListener(variables);
-        final GuildListener guildListener = new GuildListener(variables);
-        final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(variables);
-        final DeHoistListener deHoistListener = new DeHoistListener(variables);
+    EventManager() {
+        final GuildMemberListener guildMemberListener = new GuildMemberListener();
+        final GuildListener guildListener = new GuildListener();
+        final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
+        final DeHoistListener deHoistListener = new DeHoistListener();
 
-        this.listeners.add(messageListener);
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
         this.listeners.add(readyShutdownListener);

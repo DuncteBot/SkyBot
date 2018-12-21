@@ -30,8 +30,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendError;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 public class PurgeChannelCommand extends Command {
 
@@ -77,7 +76,10 @@ public class PurgeChannelCommand extends Command {
             .createCopyOfChannel(toPurge)
             .setPosition(toPurge.getPosition())
             .queue(
-                (success) -> toPurge.delete().queue(),
+                (success) -> {
+                    toPurge.delete().queue();
+                    sendSuccess(ctx.getMessage());
+                },
                 (error) -> sendError(ctx.getMessage())
             );
     }

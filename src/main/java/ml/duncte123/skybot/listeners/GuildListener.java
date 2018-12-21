@@ -37,10 +37,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildListener extends BaseListener {
 
-    public GuildListener(Variables variables) {
-        super(variables);
-    }
-
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
         final Guild guild = event.getGuild();
@@ -150,7 +146,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild, false);
+        final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild);
 
         if (manager != null) {
             manager.player.stopTrack();

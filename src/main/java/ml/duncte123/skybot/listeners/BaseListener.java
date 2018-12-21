@@ -23,7 +23,6 @@ import gnu.trove.list.array.TLongArrayList;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.utils.GuildUtils;
-import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.hooks.ListenerAdapter;
 import org.slf4j.Logger;
@@ -35,11 +34,10 @@ public class BaseListener extends ListenerAdapter {
 
     public static boolean isUpdating = false;
     protected static boolean shuttingDown = false;
-    protected final Logger logger;
-    protected final SpamFilter spamFilter;
-    protected final Variables variables;
+    protected static final Logger logger = LoggerFactory.getLogger(BaseListener.class);
+    protected final Variables variables = Variables.getInstance();
     // A list of servers that list bots
-    private final TLongList botLists = new TLongArrayList(
+    private static final TLongList botLists = new TLongArrayList(
         new long[]{
             110373943822540800L, // Dbots
             264445053596991498L, // Dbl
@@ -54,12 +52,6 @@ public class BaseListener extends ListenerAdapter {
             475571221946171393L, // bots.discordlist.app
         }
     );
-
-    public BaseListener(Variables variables) {
-        this.logger = LoggerFactory.getLogger(getClass());
-        this.variables = variables;
-        this.spamFilter = new SpamFilter(variables);
-    }
 
     protected boolean isBotfarm(Guild guild) {
 
