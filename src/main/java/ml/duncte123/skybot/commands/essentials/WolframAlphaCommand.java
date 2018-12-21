@@ -82,21 +82,21 @@ public class WolframAlphaCommand extends Command {
                 for (final Visitable v : sp.getContents()) {
                     String d = "";
                     if (v instanceof WAImage) {
-                        WAImage i = (WAImage) v;
+                        final WAImage i = (WAImage) v;
                         d += "[" + parseString(i.getTitle()) + "](" + shortenUrl(i.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAInfo) {
-                        WAInfo i = (WAInfo) v;
+                        final WAInfo i = (WAInfo) v;
                         d += parseString(i.getText());
                         //Ramid when?
                         // TODO: Display more...
                     } else if (v instanceof WALink) {
-                        WALink l = (WALink) v;
+                        final WALink l = (WALink) v;
                         d += "[" + parseString(l.getText()) + "](" + shortenUrl(l.getURL(), googleKey).execute() + ")";
                     } else if (v instanceof WAPlainText) {
-                        WAPlainText pt = (WAPlainText) v;
+                        final WAPlainText pt = (WAPlainText) v;
                         d += parseString(pt.getText());
                     } else if (v instanceof WASound) {
-                        WASound sound = (WASound) v;
+                        final WASound sound = (WASound) v;
                         d += shortenUrl(sound.getURL(), googleKey).execute();
                     }
 
@@ -138,7 +138,7 @@ public class WolframAlphaCommand extends Command {
                             .split(" ")[0].length());*/
 
             final WAQuery query = engine.createQuery(queryString);
-            WAQueryResult result;
+            final WAQueryResult result;
             try {
                 result = engine.performQuery(query);
             } catch (WAException e) {
@@ -167,14 +167,15 @@ public class WolframAlphaCommand extends Command {
         return new String[]{"wolfram", "wa", "wolframalpha"};
     }
 
-    private WAEngine getWolframEngine(String appId) {
+    private WAEngine getWolframEngine(final String appId) {
 
         if (waEngine != null) {
             return waEngine;
         }
 
-        if (appId == null || appId.isEmpty())
+        if (appId == null || appId.isEmpty()) {
             return null;
+        }
 
         final WAEngine engine = new WAEngine();
 
@@ -190,10 +191,14 @@ public class WolframAlphaCommand extends Command {
         return engine;
     }
 
-    private static String parseString(String s) {
-        if (s == null) return "null";
+    private static String parseString(final String s) {
+        if (s == null) {
+            return "null";
+        }
 
-        if (s.length() <= 2000 - 6) return s;
+        if (s.length() <= 2000 - 6) {
+            return s;
+        }
 
         return s.substring(2000 - 6 - 1) + '\u2026';
     }

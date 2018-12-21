@@ -67,7 +67,7 @@ public class UnbanCommand extends Command {
         try {
             event.getGuild().getBanList().queue(list -> {
 
-                for (Guild.Ban ban : list) {
+                for (final Guild.Ban ban : list) {
                     final User bannedUser = ban.getUser();
                     final String userFormatted = String.format("%#s", bannedUser);
 

@@ -68,7 +68,7 @@ public class ModerationUtils {
      *         A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
-        long chan = g.getSettings().getLogChannel();
+        final long chan = g.getSettings().getLogChannel();
         if (chan > 0) {
             final TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
@@ -219,9 +219,10 @@ public class ModerationUtils {
         final long muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                     "We disabled your spam filter until you have set up a role.");
+            }
 
             guildSettings.setEnableSpamFilter(false);
             return;
@@ -230,20 +231,23 @@ public class ModerationUtils {
         final Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "The role for the punished people is inexistent.");
+            }
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+            }
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I can not access either the member or the role.");
+            }
             return;
         }
         final String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
@@ -253,14 +257,15 @@ public class ModerationUtils {
                     .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
             ,
             (failure) -> {
-                long chan = guildSettings.getLogChannel();
+                final long chan = guildSettings.getLogChannel();
                 if (chan > 0) {
-                    TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+                    final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
-                    String message = String.format("%#s bypassed the mute.", member.getUser());
+                    final String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                    if (sendMessages)
+                    if (sendMessages) {
                         sendEmbed(logChannel, embedMessage(message));
+                    }
                 }
             });
     }
@@ -273,14 +278,16 @@ public class ModerationUtils {
         final Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+            }
             return;
         }
 
         if (!self.canInteract(member)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I can not access the member.");
+            }
             return;
         }
         final String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);

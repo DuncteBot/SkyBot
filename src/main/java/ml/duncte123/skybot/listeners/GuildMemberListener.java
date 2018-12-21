@@ -44,7 +44,9 @@ public class GuildMemberListener extends BaseListener {
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
         final Guild guild = event.getGuild();
-        if (event.getMember().equals(guild.getSelfMember())) return;
+        if (event.getMember().equals(guild.getSelfMember())) {
+            return;
+        }
 
         /*
         {{USER_MENTION}} = mention user
@@ -58,13 +60,13 @@ public class GuildMemberListener extends BaseListener {
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
-            long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
+            final long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                 ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
+            if (!msg.isEmpty() || !msg.isBlank() || welcomeLeaveChannel != null)
                 sendMsg(welcomeLeaveChannel, msg);
         }
 
@@ -87,7 +89,10 @@ public class GuildMemberListener extends BaseListener {
             handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
 
-        if (event.getMember().equals(guild.getSelfMember())) return;
+        if (event.getMember().equals(guild.getSelfMember())) {
+            return;
+        }
+
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
@@ -110,7 +115,7 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        for (Role role : event.getRoles()) {
+        for (final Role role : event.getRoles()) {
             long roleId = role.getIdLong();
 
             if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole || roleId == Command.oneGuildPatronsRole)) {
@@ -132,7 +137,7 @@ public class GuildMemberListener extends BaseListener {
         final long userId = user.getIdLong();
         final ShardManager manager = event.getJDA().asBot().getShardManager();
 
-        for (Role role : event.getRoles()) {
+        for (final Role role : event.getRoles()) {
             final long roleId = role.getIdLong();
 
             if (roleId == Command.patronsRole) {

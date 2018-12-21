@@ -87,7 +87,8 @@ public class LockEmoteCommand extends Command {
 
         emote.getManager().setRoles(new HashSet<>(mentionedRoles)).queue();
         sendSuccess(message);
-        List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
+        final List<String> roleNames = mentionedRoles.stream().map(Role::getName).collect(Collectors.toList());
+
         sendMsg(event, "The emote " + emote.getAsMention() + " has been locked to users that have the " +
             "following roles: `" + String.join("`, `", roleNames) + "`");
     }

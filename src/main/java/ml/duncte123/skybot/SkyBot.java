@@ -167,8 +167,8 @@ public final class SkyBot {
      * @deprecated Because I can lol
      */
     @Deprecated
-    public static void main(String[] args) throws Exception {
-        for (String arg : args) {
+    public static void main(final String[] args) throws Exception {
+        for (final String arg : args) {
             if ("--gen".equals(arg)) {
                 gen();
                 return;

@@ -76,7 +76,7 @@ public class MessageListener extends BaseListener {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
 
-            ShardManager manager = event.getJDA().asBot().getShardManager();
+            final ShardManager manager = event.getJDA().asBot().getShardManager();
 
             event.getMessage().addReaction("✅").queue(
                 success -> killAllShards(manager),

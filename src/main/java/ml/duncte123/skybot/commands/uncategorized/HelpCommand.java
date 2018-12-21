@@ -113,7 +113,7 @@ public class HelpCommand extends Command {
     }
 
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
-        for (ICommand cmd : manager.getCommands()) {
+        for (final ICommand cmd : manager.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
 
                 sendMsg(event, getCommandHelpMessage(cmd));
@@ -121,7 +121,7 @@ public class HelpCommand extends Command {
                 return;
             }
 
-            for (String alias : cmd.getAliases()) {
+            for (final String alias : cmd.getAliases()) {
                 if (alias.equals(toSearch)) {
                     sendMsg(event, getCommandHelpMessage(cmd));
 
