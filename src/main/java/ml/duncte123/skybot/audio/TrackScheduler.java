@@ -43,7 +43,6 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
@@ -67,7 +66,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
-        this.queue = new ConcurrentLinkedQueue<>();
+        this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
     }
 
