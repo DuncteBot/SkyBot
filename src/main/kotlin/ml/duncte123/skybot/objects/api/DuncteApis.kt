@@ -296,8 +296,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     companion object {
-        @JvmStatic
-        val API_HOST = "https://apis.duncte123.me"
-//        val API_HOST = "http://duncte123-apis-lumen.local"
+         const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }
