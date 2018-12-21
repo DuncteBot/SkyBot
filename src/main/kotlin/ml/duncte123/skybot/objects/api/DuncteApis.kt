@@ -208,6 +208,29 @@ class DuncteApis(private val apiKey: String) {
         return postJSON("token", json)
     }
 
+    fun getPronouns(userId: Long): JSONObject? {
+        val json = executeRequest(defaultRequest("pronouns/$userId"))
+
+        if (!json.getBoolean("success")) {
+            return null
+        }
+
+        return json.getJSONObject("data")
+    }
+
+    fun setPronouns(userId: Long, pronouns: String, singular: Boolean) {
+        val json = JSONObject()
+            .put("pronouns", pronouns)
+            .put("singular", singular)
+
+        val response = postJSON("pronouns/$userId", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to create a warning\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {
         val success = response.getBoolean("success")
 

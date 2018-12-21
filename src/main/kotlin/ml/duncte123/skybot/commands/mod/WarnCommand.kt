@@ -31,6 +31,7 @@ class WarnCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
+        val args = ctx.args
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command")
@@ -59,8 +60,9 @@ class WarnCommand : Command() {
             return
         }
         var reason = ""
-        if (ctx.args.size > 1)
-            reason = ctx.argsRaw.replace(target.asMention + " ", "")
+        if (ctx.args.size > 1) {
+            reason = args.subList(1, args.size).joinToString(separator = " ")
+        }
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
