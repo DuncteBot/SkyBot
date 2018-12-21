@@ -36,13 +36,13 @@ public abstract class FilterBase extends ImageCommandBase {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passesNoArgs(event)) {
             return;
         }
 
-        String url = getImageFromCommand(ctx);
+        final String url = getImageFromCommand(ctx);
 
         if (url != null) {
             ctx.getAlexFlipnote().getFilter(getFilterName(), url).async((image) -> handleBasicImage(event, image));

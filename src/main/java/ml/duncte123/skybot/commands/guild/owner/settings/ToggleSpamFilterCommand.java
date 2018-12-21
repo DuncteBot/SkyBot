@@ -46,7 +46,7 @@ public class ToggleSpamFilterCommand extends SettingsBase {
         guild.setSettings(settings.setEnableSpamFilter(spamState));
         String message = String.format("Spamfilter **%s**!", (spamState ? "activated" : "disabled"));
 
-        Role r = guild.getRoleById(muteRoleId);
+        final Role r = guild.getRoleById(muteRoleId);
         message += "\nThe spam role is " + ((r == null) ? "deleted. Please update it." : r.getName() + ". Change it if it's outdated.");
 
         sendMsg(ctx.getEvent(), message);

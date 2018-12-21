@@ -183,8 +183,10 @@ class EvalCommand : Command() {
             protectedShell.setVariable("jda", JDADelegate(event.jda))
             protectedShell.setVariable("member", MemberDelegate(event.member))
             protectedShell.setVariable("channel", TextChannelDelegate(event.channel))
-            if (event.channel.parent != null)
-                protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
+
+            if (event.channel.parent != null) {
+                protectedShell.setVariable("category", CategoryDelegate(event.channel.parent))
+            }
 
             @SinceSkybot("3.58.0")
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {

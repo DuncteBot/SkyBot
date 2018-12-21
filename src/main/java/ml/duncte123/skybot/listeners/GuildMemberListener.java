@@ -116,7 +116,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         for (final Role role : event.getRoles()) {
-            long roleId = role.getIdLong();
+            final long roleId = role.getIdLong();
 
             if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole || roleId == Command.oneGuildPatronsRole)) {
                 continue;

@@ -86,17 +86,19 @@ public class EventManager
     @Override
     public void handle(Event event) {
         try {
-            JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+            final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
             if (shouldFakeBlock) {
                 if (shardInfo == null) {
                     logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
                     return;
                 }
-                if (restartingShard == -1 || restartingShard == shardInfo.getShardId())
+
+                if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
                     return;
+                }
             }
 
-            for (EventListener listener : getRegisteredListenersClass()) {
+            for (final EventListener listener : this.listeners) {
                 listener.onEvent(event);
             }
 
@@ -117,10 +119,6 @@ public class EventManager
      */
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
-    }
-
-    private List<EventListener> getRegisteredListenersClass() {
-        return this.listeners;
     }
 
 }

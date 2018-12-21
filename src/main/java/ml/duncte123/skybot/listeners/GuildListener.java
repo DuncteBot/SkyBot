@@ -43,7 +43,7 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onGuildJoin(GuildJoinEvent event) {
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
             return;
@@ -62,7 +62,7 @@ public class GuildListener extends BaseListener {
 
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
 
         logger.info("{}Leaving guild: {} ({}).{}",
             TextColor.RED,

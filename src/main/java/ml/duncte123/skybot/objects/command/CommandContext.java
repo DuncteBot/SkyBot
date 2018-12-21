@@ -148,7 +148,7 @@ public class CommandContext {
     // --------------- Reaction processing methods --------------- //
 
     public ReactionHandler getReactionHandler() {
-        EventManager manager = (EventManager) this.event.getJDA().getEventManager();
+        final EventManager manager = (EventManager) this.getJDA().getEventManager();
 
         return manager.getReactionHandler();
     }

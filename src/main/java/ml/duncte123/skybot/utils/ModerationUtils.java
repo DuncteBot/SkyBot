@@ -175,8 +175,8 @@ public class ModerationUtils {
                 logger.debug("Checking for users to unban");
                 final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-                for (Ban ban : bans) {
-                    Guild guild = shardManager.getGuildById(ban.getGuildId());
+                for (final Ban ban : bans) {
+                    final Guild guild = shardManager.getGuildById(ban.getGuildId());
 
                     if (guild == null) {
                         continue;

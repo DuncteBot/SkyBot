@@ -162,7 +162,7 @@ public class AirUtils {
     public static void stop(DBManager database, AudioUtils audioUtils) {
         final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
-        for (long key : temp.keys()) {
+        for (final long key : temp.keys()) {
 
             final GuildMusicManager mng = audioUtils.musicManagers.get(key);
 

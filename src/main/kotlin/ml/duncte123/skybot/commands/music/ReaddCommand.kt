@@ -53,8 +53,9 @@ class ReaddCommand : MusicCommand() {
         if (track.info.isStream) {
             val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
                 .radioStreams.stream().filter { s -> s.url == track.info.uri }.findFirst()
-            if (stream.isPresent)
+            if (stream.isPresent) {
                 title = stream.get().name
+            }
         }
         var msg = "Adding to queue: $title"
         if (manager.player.playingTrack == null) {

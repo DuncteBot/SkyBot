@@ -34,7 +34,7 @@ public class SetPrefixCommand extends SettingsBase {
             return;
         }
 
-        String newPrefix = ctx.getArgsJoined();
+        final String newPrefix = ctx.getArgsJoined();
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomPrefix(newPrefix));
         sendMsg(ctx.getEvent(), "New prefix has been set to `" + newPrefix + "`");
     }

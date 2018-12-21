@@ -51,12 +51,13 @@ public class JSONMessageErrors {
      *         the cause
      */
     public static void sendErrorJSON(Message message, Throwable error, final boolean print) {
-        if (print)
+        if (print) {
             logger.error(error.getLocalizedMessage(), error);
+        }
 
         //Makes no difference if we use sendError or check here both perm types
         if (message.getChannelType() == ChannelType.TEXT) {
-            TextChannel channel = message.getTextChannel();
+            final TextChannel channel = message.getTextChannel();
             if (!channel.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_READ,
                 Permission.MESSAGE_WRITE, Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_ADD_REACTION)) {
                 return;

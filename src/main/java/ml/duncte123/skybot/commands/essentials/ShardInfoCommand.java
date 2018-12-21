@@ -65,7 +65,7 @@ public class ShardInfoCommand extends Command {
         final List<JDA> shards = new ArrayList<>(shardManager.getShards());
         Collections.reverse(shards);
 
-        for (JDA shard : shards) {
+        for (final JDA shard : shards) {
             final List<String> row = new ArrayList<>();
 
             row.add(shard.getShardInfo().getShardId() +
@@ -122,9 +122,9 @@ public class ShardInfoCommand extends Command {
                 widths[i] = headers.get(i).length();
             }
         }
-        for (List<String> row : table) {
+        for (final List<String> row : table) {
             for (int i = 0; i < row.size(); i++) {
-                String cell = row.get(i);
+                final String cell = row.get(i);
                 if (cell.length() > widths[i]) {
                     widths[i] = cell.length();
                 }
@@ -132,14 +132,14 @@ public class ShardInfoCommand extends Command {
         }
         sb.append("```").append("prolog").append("\n");
         final StringBuilder formatLine = new StringBuilder("║");
-        for (int width : widths) {
+        for (final int width : widths) {
             formatLine.append(" %-").append(width).append("s ║");
         }
         formatLine.append("\n");
         sb.append(appendSeparatorLine("╔", "╦", "╗", padding, widths));
         sb.append(String.format(formatLine.toString(), headers.toArray()));
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
-        for (List<String> row : table) {
+        for (final List<String> row : table) {
             sb.append(String.format(formatLine.toString(), row.toArray()));
         }
         sb.append(appendSeparatorLine("╠", "╬", "╣", padding, widths));
@@ -168,7 +168,7 @@ public class ShardInfoCommand extends Command {
     private String appendSeparatorLine(String left, String middle, String right, int padding, int... sizes) {
         boolean first = true;
         final StringBuilder ret = new StringBuilder();
-        for (int size : sizes) {
+        for (final int size : sizes) {
             if (first) {
                 first = false;
                 ret.append(left).append(StringUtils.repeat("═", size + padding * 2));

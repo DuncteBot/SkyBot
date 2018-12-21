@@ -107,7 +107,7 @@ public class CommandManager {
     public ICommand getCommand(String name) {
         Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
-        if (!cmd.isPresent()) {
+        if (cmd.isEmpty()) {
             cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         }
 
@@ -241,7 +241,7 @@ public class CommandManager {
             @SinceSkybot(version = "3.52.1")
             final List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
                 .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
-            for (String alias : command.getAliases()) {
+            for (final String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;
                 }
@@ -357,7 +357,7 @@ public class CommandManager {
 
     private void registerCommandsFromReflection(Reflections reflections) {
         //Loop over them commands
-        for (Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
+        for (final Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
             try {
                 final ICommand command = cmd.getDeclaredConstructor().newInstance();
 //                System.out.println(command.getName());

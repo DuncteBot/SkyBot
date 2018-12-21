@@ -145,7 +145,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             final Album album = albumFuture.get();
 
             for (final TrackSimplified t : album.getTracks().getItems()) {
-                List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(),
+                final List<SearchResult> results = searchYoutube(album.getArtists()[0].getName() + " " + t.getName(),
                     config.googl, 1L);
 
                 playList.addAll(doThingWithPlaylist(results));
@@ -175,8 +175,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
             final Playlist spotifyPlaylist = playlistFuture.get();
 
-            for (PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
-                List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
+            for (final PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
+                final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
                     + " - " + playlistTrack.getTrack().getName(), config.googl, 1L);
 
                 finalPlaylist.addAll(doThingWithPlaylist(results));
@@ -311,7 +311,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         for (final Object[] index1 : indexs) {
             final int index = time.indexOf((String) index1[0]);
             if (index != -1) {
-                String value = time.substring(0, index);
+                final String value = time.substring(0, index);
                 duration += Integer.parseInt(value) * (int) index1[1] * 1000;
                 time = time.substring(value.length() + 1);
             }

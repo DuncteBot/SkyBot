@@ -84,8 +84,7 @@ public class AudioUtils {
             playerManager = new DefaultAudioPlayerManager();
             //playerManager.enableGcMonitoring();
 
-            // Disable cookies for youtube
-            YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());

@@ -97,7 +97,7 @@ public class ReadyShutdownListener extends BaseListener {
         final TLongList patronGuildsTrove = new TLongArrayList();
 
         guildPatronsList.forEach((patron) -> {
-            List<Long> guilds = manager.getMutualGuilds(patron).stream()
+            final List<Long> guilds = manager.getMutualGuilds(patron).stream()
                 .filter((it) -> it.getOwner().equals(it.getMember(patron)) ||
                     it.getMember(patron).hasPermission(Permission.ADMINISTRATOR))
                 .map(Guild::getIdLong)

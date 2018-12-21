@@ -157,7 +157,7 @@ public abstract class Command implements ICommand {
     }
 
     protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent event, boolean reply) {
-        boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
+        final boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
@@ -215,7 +215,7 @@ public abstract class Command implements ICommand {
             return false;
         }
 
-        Command command = (Command) obj;
+        final Command command = (Command) obj;
 
         return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }

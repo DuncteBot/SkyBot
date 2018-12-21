@@ -50,7 +50,7 @@ public class BadWordFilter {
                 counter++;
 
                 try {
-                    String[] content = line.split(",");
+                    final String[] content = line.split(",");
 
                     if (content.length == 0) {
                         continue;

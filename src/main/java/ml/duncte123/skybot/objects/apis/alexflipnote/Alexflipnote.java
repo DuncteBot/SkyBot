@@ -40,7 +40,7 @@ public class Alexflipnote {
         return WebUtils.ins.prepareRaw(
             makeRequest("colour/random"),
             (r) -> {
-                JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
+                final JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
                 jsonObject.put("integer", jsonObject.getInt("int"));
                 return gson.fromJson(jsonObject.toString(), FlipnoteColourObj.class);
             }

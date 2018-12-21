@@ -38,9 +38,9 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
 
     @Throws(IllegalArgumentException::class)
     fun update(longs: LongArray, updateMode: Int = 0) {
-        if (this.containsKey(longs[0]))
+        if (this.containsKey(longs[0])) {
             this[longs[0]]!!.update(longs.copyOfRange(1, 3), updateMode)
-        else {
+        } else {
             this.put(longs[0], (SpamCache().update(longs.copyOfRange(1, 3), updateMode)))
         }
     }
@@ -126,8 +126,9 @@ class SpamFilter(private val variables: Variables) : TLongObjectHashMap<SpamCach
             if (cache != null) {
                 val msgs = cache[user.idLong]
                 if (msgs != null) {
-                    if (msgs.size() > 7)
+                    if (msgs.size() > 7) {
                         shouldModerate = true
+                    }
                 }
             }
 

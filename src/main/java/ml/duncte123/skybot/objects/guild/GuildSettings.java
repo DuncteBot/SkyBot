@@ -399,12 +399,12 @@ public class GuildSettings {
         final GuildSettings obj = this;
         final JSONObject j = new JSONObject();
 
-        for (Field field : obj.getClass().getDeclaredFields()) {
+        for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
                 final String name = field.getName();
                 Object value = field.get(obj);
 
-                if (name.equals("ratelimits")) {
+                if ("ratelimits".equals(name)) {
                     j.put(name, convertJ2S((long[]) value));
                     continue;
                 }

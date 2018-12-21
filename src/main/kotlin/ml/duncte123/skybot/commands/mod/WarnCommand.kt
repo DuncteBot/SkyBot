@@ -22,12 +22,18 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : Command() {
+
+    init {
+        this.category = CommandCategory.MOD_ADMIN
+    }
+
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
