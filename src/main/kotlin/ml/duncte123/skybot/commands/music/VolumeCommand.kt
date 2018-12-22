@@ -31,27 +31,31 @@ class VolumeCommand : MusicCommand() {
         val event = ctx.event
         val args = ctx.args
 
-        if (!isUserOrGuildPatron(event))
+        if (!isUserOrGuildPatron(event)) {
             return
+        }
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
 
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         if (args.isEmpty()) {
             MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
-        } else {
-            try {
-                val newVolume = Math.max(10, Math.min(100, Integer.parseInt(args[0])))
-                val oldVolume = player.volume
-                player.volume = newVolume
-                MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
-            } catch (e: NumberFormatException) {
-                MessageUtils.sendMsg(event, "**${args[0]}** is not a valid integer. (10 - 100)")
-            }
+            return
         }
+
+        try {
+            val newVolume = Math.max(5, Math.min(1000, Integer.parseInt(args[0])))
+            val oldVolume = player.volume
+            player.volume = newVolume
+            MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
+        } catch (e: NumberFormatException) {
+            MessageUtils.sendMsg(event, "**${args[0]}** is not a valid integer. (5 - 1000)")
+        }
+
     }
 
     override fun help() = """Sets the new volume on the player.

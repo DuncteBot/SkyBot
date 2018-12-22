@@ -37,7 +37,9 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -45,14 +47,14 @@ import static me.duncte123.botcommons.messaging.MessageUtils.*;
 })
 public class CustomCommandCommand extends Command {
 
-    private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "raw");
+    private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "remove", "raw");
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgsWithQuotes();
-        CommandManager manager = ctx.getCommandManager();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgsWithQuotes();
+        final CommandManager manager = ctx.getCommandManager();
 
         if (args.isEmpty()) {
             sendMsg(event, "Insufficient arguments use `db!help customcommand`");
@@ -77,8 +79,8 @@ public class CustomCommandCommand extends Command {
 
     private void invokeCustomCommand(String arg, GuildMessageReceivedEvent event, CommandManager manager, CommandContext ctx) {
         if (arg.equalsIgnoreCase("list")) {
-            GuildSettings s = ctx.getGuildSettings();
-            StringBuilder sb = new StringBuilder();
+            final GuildSettings s = ctx.getGuildSettings();
+            final StringBuilder sb = new StringBuilder();
             manager.getCustomCommands().stream()
                 .filter(c -> c.getGuildId() == event.getGuild().getIdLong())
                 .forEach(cmd -> sb.append(s.getCustomPrefix())
@@ -90,7 +92,7 @@ public class CustomCommandCommand extends Command {
                 .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
             //fetch a custom command
-            CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
+            final CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
             if (cmd != null) {
                 //Run the custom command?
                 manager.dispatchCommand(cmd, arg, List.of(), event);
@@ -110,9 +112,9 @@ public class CustomCommandCommand extends Command {
                 sendMsg(event, "No command was found for this name");
                 return;
             }
-            CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
+            final CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
             sendMsg(event, "Raw data for `" + commandName + "`:```perl\n" + cmd.getMessage() + "```");
-        } else if (args.get(0).equalsIgnoreCase("delete")) {
+        } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
 
             if (!isAdmin(event)) {
                 sendMsg(event, "You need the \"Administrator\" permission to add or remove commands");
@@ -127,8 +129,8 @@ public class CustomCommandCommand extends Command {
                 return;
             }
 
-            boolean success = manager.removeCustomCommand(commandName, guildid);
-            Message msg = event.getMessage();
+            final boolean success = manager.removeCustomCommand(commandName, guildid);
+            final Message msg = event.getMessage();
             if (!success) {
                 sendErrorWithMessage(msg, "Failed to delete custom command.");
                 return;
@@ -145,7 +147,7 @@ public class CustomCommandCommand extends Command {
 
 
             //fetch a custom command
-            CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getIdLong());
+            final CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getIdLong());
             if (cmd != null) {
                 //Run the custom command?
                 manager.dispatchCommand(cmd, args.get(0), args.subList(1, args.size()), event);
@@ -165,15 +167,15 @@ public class CustomCommandCommand extends Command {
             return;
         }
         //new command
-        String commandName = args.get(1);
+        final String commandName = args.get(1);
 
         if (commandName.length() > 25) {
             sendErrorWithMessage(event.getMessage(), "The maximum length of the command name is 25 characters");
             return;
         }
 
-        String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
-        long guildId = event.getGuild().getIdLong();
+        final String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
+        final long guildId = event.getGuild().getIdLong();
         if (commandExists(commandName, guildId, manager)) {
 
             if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
@@ -188,14 +190,14 @@ public class CustomCommandCommand extends Command {
 
             return;
         }
-        Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
+        final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
         if (result.getFirst()) {
             sendMsg(event, "Command added.");
 
             return;
         }
-        String error = "Failed to add custom command. \n Reason(s): %s";
+        final String error = "Failed to add custom command. \n Reason(s): %s";
         String reason = "";
         if (result.getSecond()) {
             reason += "The command was already found.\n";
@@ -242,7 +244,7 @@ public class CustomCommandCommand extends Command {
     }
 
     public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
-        CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
+        final CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
         return manager.editCustomCommand(cmd);
     }
 }

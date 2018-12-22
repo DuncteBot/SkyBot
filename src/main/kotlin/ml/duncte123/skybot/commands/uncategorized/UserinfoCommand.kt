@@ -144,22 +144,34 @@ class UserinfoCommand : Command() {
         val joins = event.guild.memberCache.stream().sorted(
             Comparator.comparing<Member, OffsetDateTime> { it.joinDate }
         ).collect(Collectors.toList())
+
         var index = joins.indexOf(m)
         index -= 3
-        if (index < 0)
+
+        if (index < 0) {
             index = 0
+        }
+
         joinOrder.append("\n")
-        if (joins[index] == m)
+
+        if (joins[index] == m) {
             joinOrder.append("[${joins[index].effectiveName}](https://bot.duncte123.me/)")
-        else
+        } else {
             joinOrder.append(joins[index].effectiveName)
+        }
+
         for (i in index + 1 until index + 7) {
-            if (i >= joins.size)
+            if (i >= joins.size) {
                 break
+            }
+
             val usr = joins[i]
             var usrName = usr.effectiveName
-            if (usr == m)
+
+            if (usr == m) {
                 usrName = "[$usrName](https://bot.duncte123.me/)"
+            }
+
             joinOrder.append(" > ").append(usrName)
         }
 
@@ -172,6 +184,8 @@ class UserinfoCommand : Command() {
         val joinTimeDate = Date.from(joinTime.toInstant())
         val joinTimeFormat = joinTime.format(DateTimeFormatter.RFC_1123_DATE_TIME)
         val joinTimeHuman = prettyTime.format(joinTimeDate)
+
+        val mStatus = m.onlineStatus
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(m.color)
@@ -186,7 +200,7 @@ class UserinfoCommand : Command() {
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
-                        |**Online Status:** ${convertStatus(m.onlineStatus)} ${m.onlineStatus.name.toLowerCase().replace("_".toRegex(), " ")}
+                        |**Online Status:** ${convertStatus(mStatus)} ${mStatus.name.toLowerCase().replaceFirst("_", " ")}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                         |
                         |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
@@ -215,8 +229,10 @@ class UserinfoCommand : Command() {
     override fun getAliases() = arrayOf("user", "i", "avatar", "whois")
 
     private fun toWeebshStatus(member: Member): StatusType {
-        if (member.game != null && member.game.type == Game.GameType.STREAMING)
+        if (member.game != null && member.game.type == Game.GameType.STREAMING) {
             return StatusType.STREAMING
+        }
+
         return when (member.onlineStatus) {
             OnlineStatus.ONLINE -> StatusType.ONLINE
             OnlineStatus.OFFLINE -> StatusType.OFFLINE

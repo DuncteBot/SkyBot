@@ -47,8 +47,8 @@ public class CleanupCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command!");
@@ -65,7 +65,7 @@ public class CleanupCommand extends Command {
         }
 
         // if size == 0 then this will just be skipped
-        for (String arg : args) {
+        for (final String arg : args) {
             if (arg.equalsIgnoreCase("keep-pinned")) {
                 keepPinned = true;
             } else if (arg.equalsIgnoreCase("bots-only")) {
@@ -88,24 +88,27 @@ public class CleanupCommand extends Command {
 
         @SinceSkybot(version = "3.78.2") final boolean keepPinnedFinal = keepPinned;
         final boolean clearBotsFinal = clearBots;
-        TextChannel channel = event.getChannel();
+        final TextChannel channel = event.getChannel();
         // Start of the annotation
         channel.getIterableHistory().takeAsync(total).thenApplyAsync((msgs) -> {
             Stream<Message> msgStream = msgs.stream();
 
-            if (keepPinnedFinal)
+            if (keepPinnedFinal) {
                 msgStream = msgStream.filter(msg -> !msg.isPinned());
-            if (clearBotsFinal)
+            }
+            if (clearBotsFinal) {
                 msgStream = msgStream.filter(msg -> msg.getAuthor().isBot());
+            }
 
-            List<Message> msgList = msgStream.collect(Collectors.toList());
+            final List<Message> msgList = msgStream.collect(Collectors.toList());
 
             channel.purgeMessages(msgList);
             return msgList.size();
         }).exceptionally((thr) -> {
             String cause = "";
-            if (thr.getCause() != null)
+            if (thr.getCause() != null) {
                 cause = " caused by: " + thr.getCause().getMessage();
+            }
             MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
             return 0;
         }).whenCompleteAsync((count, thr) -> {

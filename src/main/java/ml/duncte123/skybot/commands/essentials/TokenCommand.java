@@ -55,24 +55,24 @@ public class TokenCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
             sendMsg(event, "Missing arguments");
             return;
         }
 
-        Matcher matcher = TOKEN_REGEX.matcher(args.get(0));
+        final Matcher matcher = TOKEN_REGEX.matcher(args.get(0));
 
         if (!matcher.matches()) {
             sendMsg(event, "Your input `" + args.get(0) + "` has the wrong token format.");
             return;
         }
 
-        DuncteApis apis = ctx.getVariables().getApis();
+        final DuncteApis apis = ctx.getVariables().getApis();
 
-        JSONObject json = apis.decodeToken(args.get(0));
+        final JSONObject json = apis.decodeToken(args.get(0));
 
         if (json.getBoolean("success")) {
             handleSuccess(args.get(0), json.getJSONObject("data"), event);
@@ -80,9 +80,9 @@ public class TokenCommand extends Command {
             return;
         }
 
-        JSONObject error = json.getJSONObject("error");
-        String errorType = error.getString("type");
-        String errorMessage = error.getString("message");
+        final JSONObject error = json.getJSONObject("error");
+        final String errorType = error.getString("type");
+        final String errorMessage = error.getString("message");
 
         sendMsg(event, String.format("Invalid token: (%s) %s", errorType, errorMessage));
     }
@@ -101,8 +101,8 @@ public class TokenCommand extends Command {
     @Nullable
     private OffsetDateTime toTimeStamp(long input) {
         try {
-            Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
-            long millis = input * 1000;
+            final Calendar gmt = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+            final long millis = input * 1000;
             gmt.setTimeInMillis(millis);
 
             return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
@@ -120,21 +120,21 @@ public class TokenCommand extends Command {
     }
 
     private void handleSuccess(String arg, JSONObject data, GuildMessageReceivedEvent event) {
-        String id = data.getString("id");
-        OffsetDateTime time = toTimeStamp(data.getLong("timestamp"));
+        final String id = data.getString("id");
+        final OffsetDateTime time = toTimeStamp(data.getLong("timestamp"));
 
         if (time == null) {
             sendMsg(event, "Could not decode timestamp.");
             return;
         }
 
-        String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        final String timestamp = time.format(DateTimeFormatter.RFC_1123_DATE_TIME);
 
         sendMsg(event, String.format(STRING_FORMAT, arg, id, timestamp, ""), (message) -> {
             try {
                 if (!isLong(id)) {
-                    String info = String.format("%n%n%s is not a valid long id", id);
-                    String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
+                    final String info = String.format("%n%n%s is not a valid long id", id);
+                    final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
                     message.editMessage(newMessage).queue();
 
                     return;
@@ -142,20 +142,20 @@ public class TokenCommand extends Command {
 
                 event.getJDA().retrieveUserById(id).queue(
                     (user) -> {
-                        String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
-                        String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, userinfo);
+                        final String userinfo = String.format("%n%nToken has a valid structure. It belongs to **%#s** (%s).", user, user.getId());
+                        final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, userinfo);
                         message.editMessage(newMessage).queue();
                     },
                     (error) -> {
-                        String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
-                        String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
+                        final String info = String.format("%n%nToken is not valid or the account has been deleted (%s)", error.getMessage());
+                        final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
                         message.editMessage(newMessage).queue();
                     }
                 );
 
             } catch (IllegalArgumentException e) {
-                String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
-                String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
+                final String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
+                final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
                 message.editMessage(newMessage).queue();
             }
         });

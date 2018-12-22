@@ -29,8 +29,9 @@ class ShuffleCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
 
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler

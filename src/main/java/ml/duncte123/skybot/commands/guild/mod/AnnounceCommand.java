@@ -45,14 +45,10 @@ public class AnnounceCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        String invoke = ctx.getInvoke();
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final String invoke = ctx.getInvoke();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        Permission[] perms = {
-            Permission.ADMINISTRATOR
-        };
-
-        if (!event.getMember().hasPermission(perms)) {
+        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
             MessageUtils.sendMsg(event, "I'm sorry but you don't have permission to run this command.");
             return;
         }
@@ -63,16 +59,16 @@ public class AnnounceCommand extends Command {
         }
 
         try {
-            TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
+            final TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
-            if (!targetChannel.getGuild().getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
+            if (!ctx.getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
                 MessageUtils.sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
                 MessageUtils.sendError(event.getMessage());
                 return;
             }
 
             @SinceSkybot(version = "3.68.0")
-            String msg = ctx.getArgsRaw().replaceAll(targetChannel.getAsMention() + " ", "");
+            final String msg = ctx.getArgsRaw().replaceAll(targetChannel.getAsMention() + " ", "");
 
             switch (invoke) {
                 case "announce1":
@@ -82,14 +78,15 @@ public class AnnounceCommand extends Command {
                     break;
 
                 default:
-                    EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
+                    final EmbedBuilder embed = EmbedUtils.defaultEmbed().setDescription(msg).setFooter(null, "");
 
                     if (!event.getMessage().getAttachments().isEmpty()) {
                         event.getMessage().getAttachments().stream().filter(Message.Attachment::isImage).findFirst().ifPresent(attachment -> {
-                            if (invoke.endsWith("2"))
+                            if (invoke.endsWith("2")) {
                                 embed.setThumbnail(attachment.getUrl());
-                            else if (invoke.endsWith("3"))
+                            } else if (invoke.endsWith("3")) {
                                 embed.setImage(attachment.getUrl());
+                            }
                         });
                     }
 

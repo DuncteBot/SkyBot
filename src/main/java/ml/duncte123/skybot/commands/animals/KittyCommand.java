@@ -37,12 +37,13 @@ public class KittyCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
+        final String apiKey = ctx.getConfig().apis.thecatapi;
+        final String url = "https://api.thecatapi.com/api/images/get?" +
+            (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1";
 
-        String apiKey = ctx.getConfig().apis.thecatapi;
-        WebUtils.ins.scrapeWebPage("https://api.thecatapi.com/api/images/get?" +
-            (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1").async((doc) -> {
-            String fullUrl = doc.selectFirst("url").text();
-            String sourceUrl = doc.selectFirst("source_url").text();
+        WebUtils.ins.scrapeWebPage(url).async((doc) -> {
+            final String fullUrl = doc.selectFirst("url").text();
+            final String sourceUrl = doc.selectFirst("source_url").text();
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle("Source", sourceUrl, fullUrl));
         });
     }

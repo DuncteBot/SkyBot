@@ -39,10 +39,10 @@ public class AutoRoleCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
             sendMsg(event, "I need the _Manage Roles_ permission in order for this feature to work.");
@@ -60,14 +60,14 @@ public class AutoRoleCommand extends SettingsBase {
             return;
         }
 
-        List<Role> selfRoles = ctx.getSelfMember().getRoles();
+        final List<Role> selfRoles = ctx.getSelfMember().getRoles();
 
         if (selfRoles.isEmpty()) {
             sendMsg(event, "I need a role above the specified role in order for this feature to work.");
             return;
         }
 
-        List<Role> foundRoles = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
+        final List<Role> foundRoles = FinderUtil.findRoles(ctx.getArgsRaw(), ctx.getGuild())
             .stream().filter(
                 (role) -> role.getPosition() < selfRoles.get(0).getPosition()
             ).collect(Collectors.toList());
@@ -78,7 +78,7 @@ public class AutoRoleCommand extends SettingsBase {
             return;
         }
 
-        Role foundRole = foundRoles.get(0);
+        final Role foundRole = foundRoles.get(0);
         guild.setSettings(settings.setAutoroleRole(foundRole.getIdLong()));
 
         sendMsg(event, "AutoRole has been set to " + foundRole.getAsMention());

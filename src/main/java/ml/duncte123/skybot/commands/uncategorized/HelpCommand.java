@@ -48,10 +48,10 @@ public class HelpCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!ctx.getArgs().isEmpty()) {
-            String toSearch = ctx.getArgsRaw().toLowerCase()
+            final String toSearch = ctx.getArgsRaw().toLowerCase()
                 .replaceFirst("(" + Pattern.quote(Settings.PREFIX) + "|" +
                     Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                     Pattern.quote(ctx.getGuildSettings().getCustomPrefix()) + ")", "");
@@ -86,8 +86,9 @@ public class HelpCommand extends Command {
     @SuppressWarnings("ConstantConditions")
     private boolean isCategory(String name) {
         try {
-            List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
+            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
                 .equals(name.toLowerCase())).collect(Collectors.toList());
+
             if (!categoryList.isEmpty()) {
                 return true;
             }
@@ -112,7 +113,7 @@ public class HelpCommand extends Command {
     }
 
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
-        for (ICommand cmd : manager.getCommands()) {
+        for (final ICommand cmd : manager.getCommands()) {
             if (cmd.getName().equals(toSearch)) {
 
                 sendMsg(event, getCommandHelpMessage(cmd));
@@ -120,14 +121,12 @@ public class HelpCommand extends Command {
                 return;
             }
 
-            for (String alias : cmd.getAliases()) {
-                if (!alias.equals(toSearch)) {
-                    continue;
+            for (final String alias : cmd.getAliases()) {
+                if (alias.equals(toSearch)) {
+                    sendMsg(event, getCommandHelpMessage(cmd));
+
+                    return;
                 }
-
-                sendMsg(event, getCommandHelpMessage(cmd));
-
-                return;
             }
         }
 
@@ -142,8 +141,8 @@ public class HelpCommand extends Command {
     }
 
     private void sendCategoryHelp(GuildMessageReceivedEvent event, String prefix, String toSearch) {
-        CommandCategory cat = getCategory(toSearch);
-        MessageEmbed embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
+        final CommandCategory cat = getCategory(toSearch);
+        final MessageEmbed embed = HelpEmbeds.generateCommandEmbed(prefix, cat);
         sendEmbed(event, embed);
     }
 
@@ -152,7 +151,7 @@ public class HelpCommand extends Command {
         try {
             return CommandCategory.valueOf(search.toUpperCase());
         } catch (IllegalArgumentException ignored) {
-            List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
+            final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
                 .equals(search.toLowerCase())).collect(Collectors.toList());
             return categoryList.get(0);
         }

@@ -56,7 +56,7 @@ public final class LavalinkManager {
         this.audioUtils = a;
         if (!isEnabled()) return;
 
-        String userId = getIdFromToken(config.discord.token);
+        final String userId = getIdFromToken(config.discord.token);
 
         lavalink = new JdaLavalink(
             userId,
@@ -112,11 +112,11 @@ public final class LavalinkManager {
     }
 
     public void reloadNodes() {
-        JdaLavalink lavalink = getLavalink();
+        final JdaLavalink lavalink = getLavalink();
 
         lavalink.getNodes().clear();
 
-        for (DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
+        for (final DunctebotConfig.Lavalink.LavalinkNode node : config.lavalink.nodes) {
             lavalink.addNode(Objects.requireNonNull(toURI(node.wsurl)), node.pass, LavalinkRegion.valueOf(node.region));
         }
 

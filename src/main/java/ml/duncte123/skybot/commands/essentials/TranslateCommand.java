@@ -41,26 +41,27 @@ public class TranslateCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (args.isEmpty() || args.size() < 2) {
             sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <destination language code> <text>`");
             return;
         }
 
-        String targetLang = args.get(0);
-        String input = String.join(" ", args.subList(1, args.size()));
-        JSONArray translatedJson = WebUtils.ins.translate("auto", targetLang, input);
+        final String targetLang = args.get(0);
+        final String input = String.join(" ", args.subList(1, args.size()));
+        final JSONArray translatedJson = WebUtils.ins.translate("auto", targetLang, input);
 
         if (translatedJson.length() < 1) {
             sendMsg(ctx.getEvent(), "No translation found");
             return;
         }
 
-        String translation = translatedJson.getString(0);
-        String message = "Original: " + input + "\n" +
+        final String translation = translatedJson.getString(0);
+        final String message = "Original: " + input + "\n" +
             "Translation to " + targetLang + " : " + translation;
+
         sendMsg(event, message);
     }
 

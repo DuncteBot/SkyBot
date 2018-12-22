@@ -70,10 +70,11 @@ public final class SkyBot {
     private IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
-        Variables variables = Variables.getInstance();
-        DunctebotConfig config = variables.getConfig();
-        CommandManager commandManager = variables.getCommandManager();
-        Logger logger = LoggerFactory.getLogger(SkyBot.class);
+
+        final Variables variables = Variables.getInstance();
+        final DunctebotConfig config = variables.getConfig();
+        final CommandManager commandManager = variables.getCommandManager();
+        final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
         EmbedUtils.setEmbedBuilder(
@@ -83,7 +84,7 @@ public final class SkyBot {
                 .setTimestamp(Instant.now())
         );
 
-        String configPrefix = config.discord.prefix;
+        final String configPrefix = config.discord.prefix;
         if (!Settings.PREFIX.equals(configPrefix)) {
             Settings.PREFIX = configPrefix;
         }
@@ -102,16 +103,16 @@ public final class SkyBot {
         GuildSettingsUtils.loadAllSettings(variables);
 
         //Set the token to a string
-        String token = config.discord.token;
+        final String token = config.discord.token;
 
         //But this time we are going to shard it
-        int totalShards = config.discord.totalShards;
+        final int totalShards = config.discord.totalShards;
 
         //Set the game from the config
-        int gameId = config.discord.game.type;
-        String name = config.discord.game.name;
-        GameType gameType = GameType.fromKey(gameId);
-        String streamUrl = gameType == GameType.STREAMING ? config.discord.game.streamUrl : null;
+        final int gameId = config.discord.game.type;
+        final String name = config.discord.game.name;
+        final GameType gameType = GameType.fromKey(gameId);
+        final String streamUrl = gameType == GameType.STREAMING ? config.discord.game.streamUrl : null;
 
         this.gameProvider = (shardId) -> Game.of(
             gameType,
@@ -124,7 +125,7 @@ public final class SkyBot {
 
 
         //Set up sharding for the bot
-        EventManager eventManager = new EventManager();
+        final EventManager eventManager = new EventManager();
         this.shardManager = new DefaultShardManagerBuilder()
             .setEventManagerProvider((id) -> eventManager)
             .setBulkDeleteSplittingEnabled(false)
@@ -166,8 +167,8 @@ public final class SkyBot {
      * @deprecated Because I can lol
      */
     @Deprecated
-    public static void main(String[] args) throws Exception {
-        for (String arg : args) {
+    public static void main(final String[] args) throws Exception {
+        for (final String arg : args) {
             if ("--gen".equals(arg)) {
                 gen();
                 return;
@@ -181,11 +182,11 @@ public final class SkyBot {
     }
 
     private static void gen() {
-        DunctebotConfig config = new DunctebotConfig();
+        final DunctebotConfig config = new DunctebotConfig();
 
-        DunctebotConfig.Discord discord = new DunctebotConfig.Discord();
+        final DunctebotConfig.Discord discord = new DunctebotConfig.Discord();
         discord.local = false;
-        DunctebotConfig.Discord.Game game = new DunctebotConfig.Discord.Game();
+        final DunctebotConfig.Discord.Game game = new DunctebotConfig.Discord.Game();
         game.name = "Danny Phantom on shard #{shardId}";
         game.type = 3;
         discord.game = game;
@@ -193,12 +194,12 @@ public final class SkyBot {
         discord.constantSuperUserIds = new long[]{
             191231307290771456L
         };
-        DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
+        final DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
         oauth.clientId = 215011992275124225L;
         discord.oauth = oauth;
         config.discord = discord;
 
-        DunctebotConfig.Apis apis = new DunctebotConfig.Apis();
+        final DunctebotConfig.Apis apis = new DunctebotConfig.Apis();
 
         apis.trello = new DunctebotConfig.Apis.Trello();
 
@@ -211,17 +212,17 @@ public final class SkyBot {
 
         config.genius = new DunctebotConfig.Genius();
 
-        DunctebotConfig.Lavalink lavalink = new DunctebotConfig.Lavalink();
+        final DunctebotConfig.Lavalink lavalink = new DunctebotConfig.Lavalink();
         lavalink.enable = true;
-        DunctebotConfig.Lavalink.LavalinkNode node = new DunctebotConfig.Lavalink.LavalinkNode();
+        final DunctebotConfig.Lavalink.LavalinkNode node = new DunctebotConfig.Lavalink.LavalinkNode();
         lavalink.nodes = new DunctebotConfig.Lavalink.LavalinkNode[]{node};
         config.lavalink = lavalink;
 
         config.use_database = true;
         config.sql = new DunctebotConfig.Sql();
 
-        GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
-        String json = builder.create().toJson(config);
+        final GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
+        final String json = builder.create().toJson(config);
         try {
             FileUtils.writeStringToFile(new File("config-empty.json"), json, StandardCharsets.UTF_8);
         } catch (IOException e) {

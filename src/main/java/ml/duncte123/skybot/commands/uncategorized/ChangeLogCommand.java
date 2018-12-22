@@ -45,9 +45,9 @@ public class ChangeLogCommand extends Command {
             return;
         }
 
-        JDAImpl jda = (JDAImpl) ctx.getJDA();
+        final JDAImpl jda = (JDAImpl) ctx.getJDA();
 
-        MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(new JSONObject(embedJson));
+        final MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(new JSONObject(embedJson));
 
         sendEmbed(ctx.getEvent(), embed);
     }
@@ -64,14 +64,17 @@ public class ChangeLogCommand extends Command {
 
     private void fetchLatetstGitHubCommits(GuildMessageReceivedEvent event) {
         WebUtils.ins.getJSONObject("https://api.github.com/repos/DuncteBot/SkyBot/releases/latest").async(json -> {
-            String body = json.getString("body");
-            EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            final String body = json.getString("body");
+            final EmbedBuilder eb = EmbedUtils.defaultEmbed()
                 .setTitle("Changelog for DuncteBot", json.getString("html_url"))
                 .setDescription(body);
-            MessageEmbed embed = eb.build();
+
+            final MessageEmbed embed = eb.build();
+
             embedJson = embed.toJSONObject()
                 .put("type", "rich")
                 .toString();
+
             sendEmbed(event, embed);
         });
     }

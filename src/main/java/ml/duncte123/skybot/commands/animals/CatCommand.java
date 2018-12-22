@@ -48,8 +48,7 @@ public class CatCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
         GuildMessageReceivedEvent event = ctx.getEvent();
         WebUtils.ins.getJSONObject("https://aws.random.cat/meow").async((json) -> {
-                String file = json.getString("file"),
-                    ext = FilenameUtils.getExtension(file);
+                final String file = json.getString("file"), ext = FilenameUtils.getExtension(file);
 
                 if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), Permission.MESSAGE_ATTACH_FILES)) {
                     sendEmbed(event, EmbedUtils.embedImage(file));

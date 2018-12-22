@@ -132,9 +132,9 @@ public class AirUtils {
         This code has been inspired from JDA-Butler <https://github.com/Almighty-Alpaca/JDA-Butler/>
          */
         //Like it's ever gonna be up for more then a week
-        int years = longToInt(time / 31104000000L);
-        int months = longToInt(time / 2592000000L % 12);
-        int days = longToInt(time / 86400000L % 30);
+        final int years = longToInt(time / 31104000000L);
+        final int months = longToInt(time / 2592000000L % 12);
+        final int days = longToInt(time / 86400000L % 30);
 
         //Get the years, months and days
         String uptimeString = "";
@@ -144,9 +144,9 @@ public class AirUtils {
 
         //If we want the time added we pass in true
         if (withTime) {
-            int hours = longToInt(time / 3600000L % 24);
-            int minutes = longToInt(time / 60000L % 60);
-            int seconds = longToInt(time / 1000L % 60);
+            final int hours = longToInt(time / 3600000L % 24);
+            final int minutes = longToInt(time / 60000L % 60);
+            final int seconds = longToInt(time / 1000L % 60);
 
             uptimeString += ", " + (hours == 0 ? "" : hours + " Hour" + (hours > 1 ? "s" : "") + ", ");
             uptimeString += minutes == 0 ? "" : minutes + " Minute" + (minutes > 1 ? "s" : "") + ", ";
@@ -160,11 +160,11 @@ public class AirUtils {
      * Stops everything
      */
     public static void stop(DBManager database, AudioUtils audioUtils) {
-        TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
+        final TLongObjectMap<GuildMusicManager> temp = new TLongObjectHashMap<>(audioUtils.musicManagers);
 
-        for (long key : temp.keys()) {
+        for (final long key : temp.keys()) {
 
-            GuildMusicManager mng = audioUtils.musicManagers.get(key);
+            final GuildMusicManager mng = audioUtils.musicManagers.get(key);
 
             if (mng.player.getPlayingTrack() != null) {
                 mng.player.stopTrack();
@@ -191,7 +191,7 @@ public class AirUtils {
     public static TextChannel getLogChannel(String channelId, Guild guild) {
         if (channelId == null || channelId.isEmpty()) return GuildUtils.getPublicChannel(guild);
 
-        List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
+        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(channelId, guild);
 
         if (foundChannels.isEmpty()) {
             return null;
@@ -225,7 +225,7 @@ public class AirUtils {
     }
 
     public static String colorToHex(int hex) {
-        Color color = new Color(hex);
+        final Color color = new Color(hex);
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 
@@ -237,14 +237,14 @@ public class AirUtils {
      * @throws Exception
      */
     public static String getSystemUptime() throws Exception {
-        String os = System.getProperty("os.name").toLowerCase();
+        final String os = System.getProperty("os.name").toLowerCase();
         if (os.contains("mac") || os.contains("nix") || os.contains("nux") || os.contains("aix")) {
 //            Process uptimeProc = Runtime.getRuntime().exec("uptime | awk -F'( |,|:)+' '{print $6,$7\",\",$8,\"hours,\",$9,\"minutes\"}'");
-            Process uptimeProc = Runtime.getRuntime().exec("uptime");
-            BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
-            String line = in.readLine();
+            final Process uptimeProc = Runtime.getRuntime().exec("uptime");
+            final BufferedReader in = new BufferedReader(new InputStreamReader(uptimeProc.getInputStream()));
+            final String line = in.readLine();
             if (line != null) {
-                Matcher matcher = UNIX_UPTIME_PATTERN.matcher(line);
+                final Matcher matcher = UNIX_UPTIME_PATTERN.matcher(line);
                 if (matcher.find()) {
                     return matcher.group(matcher.groupCount());
                 }

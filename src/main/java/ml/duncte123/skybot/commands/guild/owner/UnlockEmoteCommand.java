@@ -44,8 +44,8 @@ public class UnlockEmoteCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        Message message = ctx.getMessage();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final Message message = ctx.getMessage();
 
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(event, "You need administrator perms to run this command.");
@@ -62,14 +62,14 @@ public class UnlockEmoteCommand extends Command {
             return;
         }
 
-        List<Emote> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
+        final List<Emote> foundEmotes = FinderUtil.findEmotes(ctx.getArgsRaw(), ctx.getJDA());
 
         if (foundEmotes.isEmpty()) {
             sendMsg(event, "No emotes found");
             return;
         }
 
-        Emote emote = foundEmotes.get(0);
+        final Emote emote = foundEmotes.get(0);
 
         if (cannotInteractWithEmote(event, emote)) return;
         emote.getManager().setRoles(Collections.emptySet()).queue();

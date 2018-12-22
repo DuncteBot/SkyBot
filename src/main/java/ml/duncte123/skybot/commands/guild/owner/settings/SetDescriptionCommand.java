@@ -35,10 +35,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class SetDescriptionCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
         if (args.isEmpty()) {
             sendErrorWithMessage(ctx.getMessage(), "Incorrect usage\n" +
@@ -52,7 +52,7 @@ public class SetDescriptionCommand extends SettingsBase {
             return;
         }
 
-        String description = ctx.getArgsRaw().replaceAll("\n", "\\\\n");
+        final String description = ctx.getArgsRaw().replaceAll("\n", "\\\\n");
         guild.setSettings(settings.setServerDesc(description));
 
         sendMsg(event, "Description has been updated, check `" + Settings.PREFIX + "guildinfo` to see your description");

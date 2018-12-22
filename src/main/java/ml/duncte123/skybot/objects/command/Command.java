@@ -97,13 +97,13 @@ public abstract class Command implements ICommand {
             return true;
         }
 
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
 
         if (supportGuild == null) {
             return false;
         }
 
-        Member m = supportGuild.getMember(u);
+        final Member m = supportGuild.getMember(u);
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
@@ -125,7 +125,7 @@ public abstract class Command implements ICommand {
     }
 
     private boolean isPatron(@NotNull User u, TextChannel tc, boolean reply) {
-        TextChannel textChannel = reply ? tc : null;
+        final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
@@ -135,13 +135,13 @@ public abstract class Command implements ICommand {
             return true;
         }
 
-        Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
+        final Guild supportGuild = u.getJDA().asBot().getShardManager().getGuildById(supportGuildId);
 
         if (supportGuild == null) {
             return false;
         }
 
-        Member m = supportGuild.getMember(u);
+        final Member m = supportGuild.getMember(u);
 
         if (m == null) {
             return false;
@@ -157,7 +157,7 @@ public abstract class Command implements ICommand {
     }
 
     protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent event, boolean reply) {
-        boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
+        final boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
@@ -215,7 +215,7 @@ public abstract class Command implements ICommand {
             return false;
         }
 
-        Command command = (Command) obj;
+        final Command command = (Command) obj;
 
         return this.help().equals(command.help()) && this.getName().equals(command.getName());
     }

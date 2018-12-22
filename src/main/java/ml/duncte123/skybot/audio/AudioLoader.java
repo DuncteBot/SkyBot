@@ -85,7 +85,7 @@ public class AudioLoader implements AudioLoadResultHandler {
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
-        List<AudioTrack> tracks = new ArrayList<>();
+        final List<AudioTrack> tracks = new ArrayList<>();
 
         for (final AudioTrack track : playlist.getTracks()) {
             track.setUserData(new TrackUserData(requester.getIdLong()));
@@ -116,7 +116,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                     msg += "\nand the Player has started playing;";
                 }
             } else {
-                String prefix = GuildSettingsUtils.getGuild(channel.getGuild(), ctx.getVariables()).getCustomPrefix();
+                final String prefix = GuildSettingsUtils.getGuild(channel.getGuild(), ctx.getVariables()).getCustomPrefix();
                 msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
                     "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
 
@@ -165,7 +165,7 @@ public class AudioLoader implements AudioLoadResultHandler {
         String title = rawTitle;
 
         if (track.getInfo().isStream) {
-            Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
+            final Optional<RadioStream> stream = ((RadioCommand) commandManager.getCommand("radio"))
                 .getRadioStreams().stream().filter(s -> s.getUrl().equals(track.getInfo().uri)).findFirst();
 
             if (stream.isPresent()) {

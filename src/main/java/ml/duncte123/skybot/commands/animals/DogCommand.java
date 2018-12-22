@@ -39,11 +39,11 @@ public class DogCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        String base = "https://random.dog/";
+        final String base = "https://random.dog/";
         GuildMessageReceivedEvent event = ctx.getEvent();
         try {
             WebUtils.ins.getText(base + "woof").async(it -> {
-                String finalS = base + it;
+                final String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {
                     sendEmbed(event, EmbedUtils.embedField("A video", "[Click for video](" + finalS + ")"));

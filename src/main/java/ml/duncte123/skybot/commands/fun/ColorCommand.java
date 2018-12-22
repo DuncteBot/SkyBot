@@ -36,18 +36,18 @@ public class ColorCommand extends Command {
     public void executeCommand(@NotNull CommandContext ctx) {
 
         ctx.getAlexFlipnote().getRandomColour().async((data) -> {
-            String hex = data.hex;
-            String image = data.image;
-            int integer = data.integer;
-            int brightness = data.brightness;
-            String name = data.name;
-            String rgb = data.rgb;
+            final String hex = data.hex;
+            final String image = data.image;
+            final int integer = data.integer;
+            final int brightness = data.brightness;
+            final String name = data.name;
+            final String rgb = data.rgb;
 
-            EmbedBuilder embed = defaultEmbed()
+            final EmbedBuilder embed = defaultEmbed()
                 .setColor(decode(hex))
                 .setThumbnail(image);
 
-            String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
+            final String desc = String.format("Name: %s%nHex: %s%nInt: %s%nRGB: %s%nBrightness: %s",
                 name, hex, integer, rgb, brightness);
             embed.setDescription(desc);
 

@@ -32,10 +32,10 @@ public class ToggleJoinMessageCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
 
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        boolean isEnabled = !settings.isEnableJoinMessage();
+        final boolean isEnabled = !settings.isEnableJoinMessage();
         guild.setSettings(settings.setEnableJoinMessage(isEnabled));
 
         sendMsg(ctx.getEvent(), "The join and leave messages have been " + (isEnabled ? "enabled" : "disabled") + ".");

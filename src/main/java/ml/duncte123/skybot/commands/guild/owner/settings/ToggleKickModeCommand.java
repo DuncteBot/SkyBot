@@ -31,10 +31,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class ToggleKickModeCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        boolean kickState = !settings.getKickState();
+        final boolean kickState = !settings.getKickState();
         guild.setSettings(settings.setKickState(kickState));
 
         sendMsg(ctx.getEvent(), "Kick-Mode **" + (kickState ? "activated" : "disabled") + "**!");

@@ -59,10 +59,10 @@ public class GuildUtils {
      * [2] = total
      */
     public static long[] getBotAndUserCount(Guild g) {
-        MemberCacheView memberCache = g.getMemberCache();
-        long totalCount = memberCache.size();
-        long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
-        long userCount = totalCount - botCount;
+        final MemberCacheView memberCache = g.getMemberCache();
+        final long totalCount = memberCache.size();
+        final long botCount = memberCache.stream().filter(it -> it.getUser().isBot()).count();
+        final long userCount = totalCount - botCount;
 
         return new long[]{userCount, botCount, totalCount};
     }
@@ -81,16 +81,16 @@ public class GuildUtils {
      */
     public static double[] getBotRatio(Guild g) {
 
-        long[] counts = getBotAndUserCount(g);
-        double totalCount = counts[2];
-        double userCount = counts[0];
-        double botCount = counts[1];
+        final long[] counts = getBotAndUserCount(g);
+        final double totalCount = counts[2];
+        final double userCount = counts[0];
+        final double botCount = counts[1];
 
         //percent in users
-        double userCountP = (userCount / totalCount) * 100;
+        final double userCountP = (userCount / totalCount) * 100;
 
         //percent in bots
-        double botCountP = (botCount / totalCount) * 100;
+        final double botCountP = (botCount / totalCount) * 100;
 
         logger.debug("In the guild {}({} Members), {}% are users, {}% are bots",
             g.getName(),
@@ -129,7 +129,7 @@ public class GuildUtils {
      */
     public static TextChannel getPublicChannel(Guild guild) {
 
-        TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
+        final TextChannel pubChann = guild.getTextChannelCache().getElementById(guild.getId());
 
         if (pubChann == null || !pubChann.canTalk()) {
 
@@ -176,14 +176,14 @@ public class GuildUtils {
     public static void reloadOneGuildPatrons(@NotNull ShardManager manager, @NotNull DatabaseAdapter adapter) {
         logger.info("(Re)loading one guild patrons");
 
-        Guild supportGuild = manager.getGuildById(Command.supportGuildId);
-        Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
+        final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
+        final Role oneGuildRole = supportGuild.getRoleById(Command.oneGuildPatronsRole);
 
         adapter.loadOneGuildPatrons(
             (patrons) -> {
                 patrons.forEachEntry((userId, guildId) -> {
 
-                    Member memberInServer = supportGuild.getMemberById(userId);
+                    final Member memberInServer = supportGuild.getMemberById(userId);
 
                     if (memberInServer != null && memberInServer.getRoles().contains(oneGuildRole)) {
                         Command.oneGuildPatrons.put(userId, guildId);
@@ -206,20 +206,20 @@ public class GuildUtils {
     public static void addOneGuildPatron(long userId, long guildId, @NotNull Variables variables) {
         variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> null);
 
-        SkyBot instance = SkyBot.getInstance();
-        Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
+        final SkyBot instance = SkyBot.getInstance();
+        final Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
 
         if (dbGuild == null) {
             return;
         }
 
-        Member newPatron = dbGuild.getMemberById(userId);
+        final Member newPatron = dbGuild.getMemberById(userId);
 
         if (newPatron == null) {
             return;
         }
 
-        boolean hasRole = newPatron.getRoles().stream()
+        final boolean hasRole = newPatron.getRoles().stream()
             .map(Role::getIdLong)
             .anyMatch( (role) -> role == Command.oneGuildPatronsRole );
 
