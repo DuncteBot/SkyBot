@@ -23,7 +23,6 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
-import ml.duncte123.skybot.listeners.MessageListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
@@ -54,10 +53,10 @@ public class EventManager
     private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     EventManager() {
-        GuildMemberListener guildMemberListener = new GuildMemberListener();
-        GuildListener guildListener = new GuildListener();
-        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
-        DeHoistListener deHoistListener = new DeHoistListener();
+        final GuildMemberListener guildMemberListener = new GuildMemberListener();
+        final GuildListener guildListener = new GuildListener();
+        final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
+        final DeHoistListener deHoistListener = new DeHoistListener();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
@@ -84,17 +83,19 @@ public class EventManager
     @Override
     public void handle(Event event) {
         try {
-            JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+            final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
             if (shouldFakeBlock) {
                 if (shardInfo == null) {
                     logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
                     return;
                 }
-                if (restartingShard == -1 || restartingShard == shardInfo.getShardId())
+
+                if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
                     return;
+                }
             }
 
-            for (EventListener listener : this.listeners) {
+            for (final EventListener listener : this.listeners) {
                 listener.onEvent(event);
             }
 

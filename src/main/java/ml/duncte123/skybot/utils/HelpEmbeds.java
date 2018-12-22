@@ -54,8 +54,8 @@ public class HelpEmbeds {
     /**
      * This loads all the commands in the lists
      */
-    public static void init(CommandManager manager) {
-        for (ICommand c : manager.getCommands()) {
+    public static void init(final CommandManager manager) {
+        for (final ICommand c : manager.getCommands()) {
             switch (c.getCategory()) {
                 case MAIN:
                     mainCommands.add(c.getName());
@@ -87,7 +87,7 @@ public class HelpEmbeds {
             }
 
             if (c.shouldDisplayAliasesInHelp())
-                for (String alias : c.getAliases()) {
+                for (final String alias : c.getAliases()) {
                     switch (c.getCategory()) {
                         case MAIN:
                             mainCommands.add(alias);
@@ -133,10 +133,11 @@ public class HelpEmbeds {
         return generateCommandEmbed(prefix, null);
     }*/
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
-        EmbedBuilder embed = defaultEmbed()
+        final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
             .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
             .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
+
         if (categories == null || categories.length == 0) {
             return embed
                 .addField("Main commands", joinCommands(mainCommands), INLINE)
@@ -153,7 +154,8 @@ public class HelpEmbeds {
                         "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
                 .build();
         }
-        for (CommandCategory category : categories) {
+
+        for (final CommandCategory category : categories) {
             switch (category) {
                 case FUN:
                     embed.addField("Fun commands", joinCommands(funCommands), INLINE);

@@ -108,8 +108,9 @@ class ReactionHandler : ListenerAdapter() {
         val checkId = event.author.idLong
         val intCheck = AirUtils.isInt(event.message.contentRaw) || event.message.contentRaw.toLowerCase() == "cancel"
 
-        if (!consumerCache.containsKey(checkId) && !intCheck)
+        if (!consumerCache.containsKey(checkId) && !intCheck) {
             return
+        }
 
         val pair = consumerCache[checkId] ?: return
 

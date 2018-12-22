@@ -98,7 +98,7 @@ public class ScriptDelegate extends Script {
 
     @Override
     public Binding getBinding() {
-        Binding b = new Binding();
+        final Binding b = new Binding();
         b.setProperty("meme", "you");
         return b;
     }
@@ -121,7 +121,7 @@ public class ScriptDelegate extends Script {
 
     @SuppressWarnings("UnnecessaryLocalVariable")
     public int quick_mafs(int x) {
-        int the_thing = x + 2 - 1;
+        final int the_thing = x + 2 - 1;
         return the_thing;
     }
 
@@ -130,20 +130,20 @@ public class ScriptDelegate extends Script {
     }
 
     public int countPeopleWithRole(String name) {
-        GuildDelegate guild = (GuildDelegate) super.getBinding().getProperty("guild");
-        List<Role> roles = guild.getRolesByName(name, true);
+        final GuildDelegate guild = (GuildDelegate) super.getBinding().getProperty("guild");
+        final List<Role> roles = guild.getRolesByName(name, true);
 
         if (roles.isEmpty()) {
             return 0;
         }
 
-        Role role = roles.get(0);
-        List<Member> members = guild.getMembersWithRoles(((RoleDelegate) role).getUA83D3Ax_ky());
+        final Role role = roles.get(0);
+        final List<Member> members = guild.getMembersWithRoles(((RoleDelegate) role).getUA83D3Ax_ky());
         return members.size();
     }
 
     public void pinnedMessageCheck() {
-        TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
+        final TextChannel channel = ((TextChannelDelegate) super.getBinding().getProperty("channel")).getK7S83hjaA();
 
         channel.getPinnedMessages().queue(it ->
             MessageUtils.sendMsg(channel, it.size() + "/50 messages pinned in this channel")

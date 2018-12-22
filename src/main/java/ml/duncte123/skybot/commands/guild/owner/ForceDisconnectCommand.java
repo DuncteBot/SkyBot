@@ -34,15 +34,15 @@ public class ForceDisconnectCommand extends MusicCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!ctx.getMember().hasPermission(Permission.ADMINISTRATOR) && !isDev(ctx.getAuthor())) {
             sendMsg(event, "You need administrator perms to run this command.");
             return;
         }
 
-        Guild g = event.getGuild();
-        GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
+        final Guild g = event.getGuild();
+        final GuildMusicManager manager = getMusicManager(g, ctx.getAudioUtils());
 
         manager.player.stopTrack();
         manager.scheduler.queue.clear();

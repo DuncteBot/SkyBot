@@ -30,7 +30,6 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.JDAInfo;
-import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -55,31 +54,31 @@ public class BotinfoCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if ("support".equals(ctx.getInvoke())) {
             MessageUtils.sendMsg(event, "You can join my support guild here: <https://discord.gg/NKM9Xtk>");
             return;
         }
 
-        User u = event.getJDA().getSelfUser();
+        final User u = event.getJDA().getSelfUser();
 
-        OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-        String OS = platformMXBean.getName() +
+        final OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
+        final String OS = platformMXBean.getName() +
             " " + platformMXBean.getArch() +
             " " + platformMXBean.getVersion();
-        String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
-        String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
-        int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
-        long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
-        long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
-        long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
-        Time uptimeTime = new Time(uptimeLong - 3600000);
+        final String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
+        final String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
+        final int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
+        final long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
+        final long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
+        final long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
+        final Time uptimeTime = new Time(uptimeLong - 3600000);
 
-        String duncte = getDev(event, 191231307290771456L, "duncte123 (duncte123#1245)");
-        String ramid = getDev(event, 281673659834302464L, "ramidzkh (ramidzkh#4814)");
+        final String duncte = " <@191231307290771456> (duncte123#1245)";
+        final String ramid = "<@281673659834302464> (ramidzkh#4814)";
 
-        MessageEmbed eb = EmbedUtils.defaultEmbed()
+        final MessageEmbed eb = EmbedUtils.defaultEmbed()
             .setDescription("Here is some information about me \uD83D\uDE09")
             .setThumbnail(u.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
@@ -103,6 +102,7 @@ public class BotinfoCommand extends Command {
             .addField("Support", "If you want to help keep the bot up 24/7, please consider " +
                 "[becoming a patron](https://www.patreon.com/DuncteBot).", false)
             .build();
+
         sendEmbed(event, eb);
     }
 
@@ -114,21 +114,6 @@ public class BotinfoCommand extends Command {
     @Override
     public String getName() {
         return "botinfo";
-    }
-
-    @Override
-    public String[] getAliases() {
-        return new String[]{"about", "info", "support"};
-    }
-
-    private String getDev(GuildMessageReceivedEvent event, long id, String defaultM) {
-        Member m = event.getGuild().getMemberById(id);
-
-        if (m != null) {
-            return m.getAsMention();
-        }
-
-        return defaultM;
     }
 
 }

@@ -62,14 +62,14 @@ public class CSShumorCommand extends Command {
     @Author(nickname = "ramidzkh", author = "Ramid Khan") // Thanks for the regex bud
     private void sendCssJoke(GuildMessageReceivedEvent event) {
         WebUtils.ins.scrapeWebPage("https://csshumor.com/").async((doc) -> {
-            Element code = doc.selectFirst(".crayon-pre");
-            String text = code.text()
+            final Element code = doc.selectFirst(".crayon-pre");
+            final String text = code.text()
                 .replace("*/ ", "*/\n") // Newline + tab after comments
                 .replace("{ ", "{\n\t") // Newline + tab after {
                 .replaceAll("; ([^}])", ";\n\t$1") // Newline + tab after '; (not })'
                 .replace("; }", ";\n}");
-            String message = String.format("```CSS\n%s```", text);
-            Element link = doc.selectFirst(".funny h2 a");
+            final String message = String.format("```CSS\n%s```", text);
+            final Element link = doc.selectFirst(".funny h2 a");
             sendEmbed(event, EmbedUtils.defaultEmbed()
                 .setTitle(link.text(), link.attr("href"))
                 .setDescription(message)

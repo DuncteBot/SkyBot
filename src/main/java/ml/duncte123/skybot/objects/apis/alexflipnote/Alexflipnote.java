@@ -40,7 +40,7 @@ public class Alexflipnote {
         return WebUtils.ins.prepareRaw(
             makeRequest("colour/random"),
             (r) -> {
-                JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
+                final JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
                 jsonObject.put("integer", jsonObject.getInt("int"));
                 return gson.fromJson(jsonObject.toString(), FlipnoteColourObj.class);
             }
@@ -48,7 +48,7 @@ public class Alexflipnote {
     }
 
     public PendingRequest<byte[]> getAchievement(String text) {
-        QueryBuilder builder = new QueryBuilder().append("text", text);
+        final QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(
             makeRequest("achievement" + builder.build()),
             IOHelper::read
@@ -56,7 +56,7 @@ public class Alexflipnote {
     }
 
     public PendingRequest<byte[]> getFilter(String filter, String image) {
-        QueryBuilder builder = new QueryBuilder().append(filter).append("image", image);
+        final QueryBuilder builder = new QueryBuilder().append(filter).append("image", image);
         return WebUtils.ins.prepareRaw(
             makeRequest("filter/" + builder.build()),
             IOHelper::read
@@ -64,7 +64,7 @@ public class Alexflipnote {
     }
 
     public PendingRequest<byte[]> getScroll(String text) {
-        QueryBuilder builder = new QueryBuilder().append("text", text);
+        final QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(
             makeRequest("scroll" + builder.build()),
             IOHelper::read
@@ -72,7 +72,7 @@ public class Alexflipnote {
     }
 
     public PendingRequest<byte[]> getDidYouMean(String input, String correction) {
-        QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
+        final QueryBuilder builder = new QueryBuilder().append("top", input).append("bottom", correction);
         return WebUtils.ins.prepareRaw(
             makeRequest("didyoumean" + builder.build()),
             IOHelper::read

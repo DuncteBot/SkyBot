@@ -535,10 +535,11 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {
         val database = variables.database
 
-        val sqlQuerry = if (isEdit)
+        val sqlQuerry = if (isEdit) {
             "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?"
-        else
+        } else {
             "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)"
+        }
 
         try {
             database.connManager.use { manager ->

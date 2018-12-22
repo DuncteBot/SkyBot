@@ -29,13 +29,13 @@ public class LinusCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passesNoArgs(event)) {
             return;
         }
 
-        String url = getImageFromCommand(ctx);
+        final String url = getImageFromCommand(ctx);
         if (url != null) {
             ctx.getBlargbot().getLinus(url).async((image) -> handleBasicImage(event, image));
         }

@@ -68,9 +68,9 @@ public class ModerationUtils {
      *         A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
-        long chan = g.getSettings().getLogChannel();
+        final long chan = g.getSettings().getLogChannel();
         if (chan > 0) {
-            TextChannel logChannel = AirUtils.getLogChannel(chan, g);
+            final TextChannel logChannel = AirUtils.getLogChannel(chan, g);
             String length = "";
             if (time != null && !time.isEmpty()) {
                 length = " lasting " + time + "";
@@ -173,10 +173,10 @@ public class ModerationUtils {
         variables.getDatabaseAdapter().getExpiredBans(
             (bans) -> {
                 logger.debug("Checking for users to unban");
-                ShardManager shardManager = SkyBot.getInstance().getShardManager();
+                final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-                for (Ban ban : bans) {
-                    Guild guild = shardManager.getGuildById(ban.getGuildId());
+                for (final Ban ban : bans) {
+                    final Guild guild = shardManager.getGuildById(ban.getGuildId());
 
                     if (guild == null) {
                         continue;
@@ -200,7 +200,7 @@ public class ModerationUtils {
 
                 logger.debug("Checking done, unbanned {} users.", bans.size());
 
-                List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
+                final List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
 
                 variables.getDatabaseAdapter().purgeBans(purgeIds);
 
@@ -214,53 +214,58 @@ public class ModerationUtils {
     }
 
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute, boolean sendMessages) {
-        Member self = guild.getSelfMember();
-        GuildSettings guildSettings = guild.getSettings();
-        long muteRoleId = guildSettings.getMuteRoleId();
+        final Member self = guild.getSelfMember();
+        final GuildSettings guildSettings = guild.getSettings();
+        final long muteRoleId = guildSettings.getMuteRoleId();
 
         if (muteRoleId <= 0) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "The role for the punished people is not configured. Please set it up." +
                     "We disabled your spam filter until you have set up a role.");
+            }
 
             guildSettings.setEnableSpamFilter(false);
             return;
         }
 
-        Role muteRole = guild.getRoleById(muteRoleId);
+        final Role muteRole = guild.getRoleById(muteRoleId);
 
         if (muteRole == null) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "The role for the punished people is inexistent.");
+            }
             return;
         }
 
         if (!self.hasPermission(Permission.MANAGE_ROLES)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I don't have permissions for muting a person. Please give me role managing permissions.");
+            }
             return;
         }
 
         if (!self.canInteract(member) || !self.canInteract(muteRole)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I can not access either the member or the role.");
+            }
             return;
         }
-        String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
+        final String reason = String.format("The member %#s was muted for %s until %d", member.getUser(), cause, minutesUntilUnMute);
         guild.getController().addSingleRoleToMember(member, muteRole).reason(reason).queue(
             (success) ->
                 guild.getController().removeSingleRoleFromMember(member, muteRole).reason("Scheduled un-mute")
                     .queueAfter(minutesUntilUnMute, TimeUnit.MINUTES)
             ,
             (failure) -> {
-                long chan = guildSettings.getLogChannel();
+                final long chan = guildSettings.getLogChannel();
                 if (chan > 0) {
-                    TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+                    final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
 
-                    String message = String.format("%#s bypassed the mute.", member.getUser());
+                    final String message = String.format("%#s bypassed the mute.", member.getUser());
 
-                    if (sendMessages)
+                    if (sendMessages) {
                         sendEmbed(logChannel, embedMessage(message));
+                    }
                 }
             });
     }
@@ -270,20 +275,22 @@ public class ModerationUtils {
     }
 
     public static void kickUser(Guild guild, Member member, TextChannel channel, String cause, boolean sendMessages) {
-        Member self = guild.getSelfMember();
+        final Member self = guild.getSelfMember();
 
         if (!self.hasPermission(Permission.KICK_MEMBERS)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I don't have permissions for kicking a person. Please give me kick members permissions.");
+            }
             return;
         }
 
         if (!self.canInteract(member)) {
-            if (sendMessages)
+            if (sendMessages) {
                 sendMsg(channel, "I can not access the member.");
+            }
             return;
         }
-        String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
+        final String reason = String.format("The member %#s was kicked for %s.", member.getUser(), cause);
         guild.getController().kick(member).reason(reason).queue();
     }
 }

@@ -43,8 +43,8 @@ public class TempBanCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
@@ -63,8 +63,8 @@ public class TempBanCommand extends Command {
             return;
         }
 
-        String reason = String.join(" ", args.subList(2, args.size()));
-        String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+        final String reason = String.join(" ", args.subList(2, args.size()));
+        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
 
         if (!AirUtils.isInt(timeParts[0])) {
@@ -73,7 +73,7 @@ public class TempBanCommand extends Command {
         }
 
 
-        CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
+        final CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
         if (calculateBanTime.hasError()) return;
 
         if (reason.isEmpty()) {
@@ -84,8 +84,8 @@ public class TempBanCommand extends Command {
             return;
         }
 
-        String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
-        int finalBanTime = calculateBanTime.getFinalBanTime();
+        final String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
+        final int finalBanTime = calculateBanTime.getFinalBanTime();
         event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
             (voidMethod) -> {
                 if (finalBanTime > 0) {
@@ -161,7 +161,7 @@ public class TempBanCommand extends Command {
                     return this;
                 }
 
-                DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 Date dt = new Date();
 
                 switch (timeParts[1]) {

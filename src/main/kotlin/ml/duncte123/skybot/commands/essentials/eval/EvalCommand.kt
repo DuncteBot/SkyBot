@@ -72,12 +72,18 @@ class EvalCommand : Command() {
                 .addCompilationCustomizers(SandboxTransformer())) {
             @Throws(CompilationFailedException::class)
             override fun evaluate(scriptText: String): Any? {
-                if (scriptText.isEmpty())
+                if (scriptText.isEmpty()) {
                     return null
-                if (filter.filterArrays(scriptText))
+                }
+
+                if (filter.filterArrays(scriptText)) {
                     throw DoomedException("Arrays are not allowed")
-                if (filter.filterLoops(scriptText))
+                }
+
+                if (filter.filterLoops(scriptText)) {
                     throw DoomedException("Loops are not allowed")
+                }
+
                 return super.evaluate(scriptText)
             }
         }
@@ -125,7 +131,9 @@ class EvalCommand : Command() {
         /*if (!isRanByBotOwner && !runIfNotOwner)
             return*/
 
-        if (!isRanByBotOwner && !isUserOrGuildPatron(event)) return
+        if (!isRanByBotOwner && !isUserOrGuildPatron(event)) {
+            return
+        }
 
         val userInput = event.message.contentRaw.split("\\s+".toRegex(), 2)
         if (userInput.size < 2) {
@@ -135,10 +143,11 @@ class EvalCommand : Command() {
 
         var userIn = ctx.argsRaw
 
-        if (userIn.startsWith("```") && userIn.endsWith("```"))
+        if (userIn.startsWith("```") && userIn.endsWith("```")) {
             userIn = userIn
                 .replace("```(.*)\n".toRegex(), "")
                 .replace("\n?```".toRegex(), "")
+        }
 
         val script = importString + userIn
 
@@ -174,8 +183,10 @@ class EvalCommand : Command() {
             protectedShell.setVariable("jda", JDADelegate(event.jda))
             protectedShell.setVariable("member", MemberDelegate(event.member))
             protectedShell.setVariable("channel", TextChannelDelegate(event.channel))
-            if (event.channel.parent != null)
-                protectedShell.setVariable("category", CategoryDelegate(event.channel.parent!!))
+
+            if (event.channel.parent != null) {
+                protectedShell.setVariable("category", CategoryDelegate(event.channel.parent))
+            }
 
             @SinceSkybot("3.58.0")
             GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
@@ -212,8 +223,9 @@ class EvalCommand : Command() {
             val out = withTimeoutOrNull(millis) {
                 engine.setVariable("scope", this)
                 try {
-                    if (isRanByBotOwner) engine.evaluate(script)
-                    else {
+                    if (isRanByBotOwner) {
+                        engine.evaluate(script)
+                    } else {
                         filter.register()
                         protectedShell.evaluate(script)
                     }
@@ -243,9 +255,9 @@ class EvalCommand : Command() {
                     sendErrorWithMessage(event.message, "ERROR: " + out.toString())
                 }
                 is Throwable -> {
-                    if (Settings.useJSON)
+                    if (Settings.useJSON && isRanByBotOwner) {
                         sendErrorJSON(event.message, out, true)
-                    else {
+                    } else {
                         sendMsg(event, "ERROR: " + out.toString())
 //                        out.printStackTrace()
                     }
@@ -259,21 +271,24 @@ class EvalCommand : Command() {
                         sendSuccess(event.message)
                         return
                     }
+
                     if (isRanByBotOwner) {
                         MessageBuilder()
                             .appendCodeBlock(out.toString(), "")
                             .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
                             .forEach { it -> sendMsg(event, it) }
-                    } else {
-                        if (filter.containsMentions(out.toString())) {
-                            sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
-                        } else {
-                            sendMsg(event, "**" + event.author.name
-                                + ":** " + out.toString()
-                                .replace("@here".toRegex(), "@h\u0435re")
-                                .replace("@everyone".toRegex(), "@\u0435veryone"))
-                        }
+                        return
                     }
+
+                    if (filter.containsMentions(out.toString())) {
+                        sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
+                    } else {
+                        sendMsg(event, "**" + event.author.name
+                            + ":** " + out.toString()
+                            .replace("@here".toRegex(), "@h\u0435re")
+                            .replace("@everyone".toRegex(), "@\u0435veryone"))
+                    }
+
                 }
             }
         }

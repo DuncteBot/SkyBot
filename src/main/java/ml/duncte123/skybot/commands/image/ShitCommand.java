@@ -29,13 +29,13 @@ import org.jetbrains.annotations.NotNull;
 public class ShitCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passes(event, ctx.getArgs(), false)) {
             return;
         }
 
-        String text = parseTextArgsForImage(ctx);
+        final String text = parseTextArgsForImage(ctx);
 
         if ("pluralshit".equals(ctx.getInvoke())) {
             ctx.getBlargbot().getShit(text, true).async((image) -> handleBasicImage(event, image));

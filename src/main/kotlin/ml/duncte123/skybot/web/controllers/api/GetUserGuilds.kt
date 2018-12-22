@@ -61,11 +61,16 @@ object GetUserGuilds {
 
         val jdaGuild = shardManager.getGuildById(guild.id)
 
+        val icon = if (!guild.iconUrl.isNullOrEmpty()) {
+            guild.iconUrl
+        } else {
+            "https://cdn.discordapp.com/embed/avatars/0.png"
+        }
+
         return JSONObject()
             .put("name", guild.name)
             .put("iconId", guild.iconId)
-            .put("iconUrl", if (!guild.iconUrl.isNullOrEmpty()) guild.iconUrl
-            else "https://cdn.discordapp.com/embed/avatars/0.png")
+            .put("iconUrl", icon)
             .put("owner", guild.isOwner)
             .put("members", jdaGuild?.memberCache?.size() ?: false)
             .put("id", guild.id)

@@ -30,8 +30,9 @@ class RestartCommand : MusicCommand() {
 
         val event = ctx.event
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
 
         val player = getMusicManager(event.guild, ctx.audioUtils).player
 

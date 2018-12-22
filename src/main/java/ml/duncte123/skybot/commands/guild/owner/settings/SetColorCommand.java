@@ -40,15 +40,15 @@ public class SetColorCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
 
-        List<String> args = ctx.getArgs();
+        final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage: `" + Settings.PREFIX + getName() + " <hex color>`");
             return;
         }
 
-        String colorString = args.get(0);
-        Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
+        final String colorString = args.get(0);
+        final Matcher colorMatcher = COLOR_REGEX.matcher(colorString);
 
         if (!colorMatcher.matches()) {
             sendMsg(ctx.getEvent(), "That color does not look like a valid hex color, hex colors start with a pound sign.\n" +
@@ -56,11 +56,11 @@ public class SetColorCommand extends SettingsBase {
             return;
         }
 
-        int colorInt = Color.decode(colorString).getRGB();
+        final int colorInt = Color.decode(colorString).getRGB();
 
         ctx.getGuild().setColor(colorInt);
 
-        String msg = String.format("Embed color has been set to `%s`", colorString);
+        final String msg = String.format("Embed color has been set to `%s`", colorString);
         sendEmbed(ctx.getEvent(), EmbedUtils.embedMessage(msg));
     }
 

@@ -47,10 +47,13 @@ object CustomCommands {
     }
 
     fun show(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager) ?: return JSONObject()
+                .put("status", "error")
+                .put("message", "guild not found")
+                .put("code", response.status())
 
         val commands = variables.commandManager
-            .getCustomCommands(guild!!.idLong).map { it.toJSONObject() }
+            .getCustomCommands(guild.idLong).map { it.toJSONObject() }
 
         return JSONObject()
             .put("status", "success")
@@ -59,7 +62,12 @@ object CustomCommands {
     }
 
     fun update(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
-        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager) ?: return JSONObject()
+            .put("status", "error")
+            .put("message", "guild not found")
+            .put("code", response.status())
+
         val commandData = JSONObject(request.body())
 
         if (!commandData.has("name") || !commandData.has("message")) {

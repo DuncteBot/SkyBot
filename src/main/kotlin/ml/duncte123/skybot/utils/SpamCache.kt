@@ -34,10 +34,11 @@ class SpamCache : TLongObjectHashMap<TLongList>() {
             }
             longs.size == 2 -> {
                 val msgIds: TLongList =
-                    if (!this.containsKey(longs[0]))
+                    if (!this.containsKey(longs[0])) {
                         TLongArrayList()
-                    else
+                    } else {
                         this[longs[0]] as TLongArrayList
+                    }
 
                 if (updateMode == 0) {
                     msgIds.add(longs[1])

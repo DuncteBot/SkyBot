@@ -78,8 +78,8 @@ public class CommandManager {
 
     public List<ICommand> getSortedCommands() {
         if (commandsSorted.isEmpty()) {
-            List<ICommand> commandSet = new ArrayList<>();
-            List<String> names = new ArrayList<>();
+            final List<ICommand> commandSet = new ArrayList<>();
+            final List<String> names = new ArrayList<>();
 
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
                 .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
@@ -107,7 +107,7 @@ public class CommandManager {
     public ICommand getCommand(String name) {
         Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
-        if (!cmd.isPresent()) {
+        if (cmd.isEmpty()) {
             cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         }
 
@@ -141,9 +141,9 @@ public class CommandManager {
             throw new DoomedException("Name can't have spaces!");
         }
 
-        boolean commandFound = this.customCommands.stream()
+        final boolean commandFound = this.customCommands.stream()
             .anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()) && cmd.getGuildId() == command.getGuildId()) && !isEdit;
-        boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
+        final boolean limitReached = this.customCommands.stream().filter((cmd) -> cmd.getGuildId() == command.getGuildId()).count() >= 50 && !isEdit;
 
         if (commandFound || limitReached) {
             return new Triple<>(false, commandFound, limitReached);
@@ -151,7 +151,7 @@ public class CommandManager {
 
         if (insertInDb) {
             try {
-                CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
+                final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
 
                 if (isEdit) {
                     variables.getDatabaseAdapter()
@@ -167,7 +167,7 @@ public class CommandManager {
                         });
                 }
 
-                Triple<Boolean, Boolean, Boolean> res = future.get();
+                final Triple<Boolean, Boolean, Boolean> res = future.get();
 
                 if (res != null && !res.getFirst()) {
                     return res;
@@ -197,18 +197,20 @@ public class CommandManager {
     }*/
 
     public boolean removeCustomCommand(String name, long guildId) {
-        CustomCommand cmd = getCustomCommand(name, guildId);
-        if (cmd == null)
+        final CustomCommand cmd = getCustomCommand(name, guildId);
+
+        if (cmd == null) {
             return false;
+        }
 
         try {
-            CompletableFuture<Boolean> future = new CompletableFuture<>();
+            final CompletableFuture<Boolean> future = new CompletableFuture<>();
             variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
                 future.complete(bool);
                 return null;
             });
 
-            boolean result = future.get();
+            final boolean result = future.get();
 
             if (result) {
                 this.customCommands.remove(cmd);
@@ -237,9 +239,9 @@ public class CommandManager {
 
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
             @SinceSkybot(version = "3.52.1")
-            List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
+            final List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
                 .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
-            for (String alias : command.getAliases()) {
+            for (final String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {
                     return false;
                 }
@@ -258,18 +260,18 @@ public class CommandManager {
      *         the event for the message
      */
     public void runCommand(GuildMessageReceivedEvent event) {
-        String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
+        final String customPrefix = GuildSettingsUtils.getGuild(event.getGuild(), variables).getCustomPrefix();
         final String[] split = event.getMessage().getContentRaw().replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" + Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(customPrefix),
             "").split("\\s+", 2);
         final String invoke = split[0].toLowerCase();
 
-        List<String> args = new ArrayList<>();
+        final List<String> args = new ArrayList<>();
 
         if (split.length > 1) {
-            String raw = split[1];
-            Matcher m = COMMAND_PATTERN.matcher(raw);
+            final String raw = split[1];
+            final Matcher m = COMMAND_PATTERN.matcher(raw);
             while (m.find()) {
                 args.add(m.group(1)); // Add .replace("\"", "") to remove surrounding quotes.
             }
@@ -280,9 +282,11 @@ public class CommandManager {
 
     public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
+
         if (cmd == null) {
             cmd = getCustomCommand(invoke, event.getGuild().getIdLong());
         }
+
         dispatchCommand(cmd, invoke, args, event);
     }
 
@@ -293,6 +297,9 @@ public class CommandManager {
         }
 
         commandThread.submit(() -> {
+
+            event.getChannel().sendTyping().queue();
+
             try {
 
                 if (!cmd.isCustom()) {
@@ -310,15 +317,16 @@ public class CommandManager {
                     return;
                 }
 
-                CustomCommand cc = (CustomCommand) cmd;
+                final CustomCommand cc = (CustomCommand) cmd;
 
-                if (cc.getGuildId() != event.getGuild().getIdLong())
+                if (cc.getGuildId() != event.getGuild().getIdLong()) {
                     return;
+                }
 
                 try {
-                    Parser parser = CustomCommandUtils.PARSER;
+                    final Parser parser = CustomCommandUtils.PARSER;
 
-                    String message = parser.clear()
+                    final String message = parser.clear()
                         .put("user", event.getAuthor())
                         .put("channel", event.getChannel())
                         .put("guild", event.getGuild())
@@ -349,9 +357,9 @@ public class CommandManager {
 
     private void registerCommandsFromReflection(Reflections reflections) {
         //Loop over them commands
-        for (Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
+        for (final Class<? extends ICommand> cmd : reflections.getSubTypesOf(ICommand.class)) {
             try {
-                ICommand command = cmd.getDeclaredConstructor().newInstance();
+                final ICommand command = cmd.getDeclaredConstructor().newInstance();
 //                System.out.println(command.getName());
                 //Add the command
                 this.addCommand(command);

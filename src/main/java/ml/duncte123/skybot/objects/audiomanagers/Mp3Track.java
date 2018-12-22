@@ -52,7 +52,7 @@ public class Mp3Track extends DelegatedAudioTrack {
     }
 
     private void loadStream(LocalAudioTrackExecutor localExecutor, HttpInterface httpInterface) throws Exception {
-        String trackUrl = trackInfo.identifier;
+        final String trackUrl = trackInfo.identifier;
         log.debug("Starting {} track from URL: {}", manager.getSourceName(), trackUrl);
         try (PersistentHttpStream stream = new PersistentHttpStream(httpInterface, new URI(trackUrl), null)) {
             processDelegate(new Mp3AudioTrack(trackInfo, stream), localExecutor);
