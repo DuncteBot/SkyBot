@@ -67,13 +67,12 @@ public abstract class ImageCommandBase extends Command {
         return passesNoArgs(event, true);
     }
 
-    private boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
-        event.getChannel().sendTyping().queue();
+    protected boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
         return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
     }
 
     private String getFileName() {
-        return getName() + "_" + System.currentTimeMillis() + ".png";
+        return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
     public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
