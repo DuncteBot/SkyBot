@@ -46,6 +46,7 @@ public class HelpEmbeds {
     private static List<String> patronCommands = new ArrayList<>();
     private static List<String> weebCommands = new ArrayList<>();
     private static List<String> NSFWCommands = new ArrayList<>();
+    private static List<String> LGBTQCommands = new ArrayList<>();
     /**
      * This tells the fields to be inline or not
      */
@@ -84,6 +85,9 @@ public class HelpEmbeds {
                 case NSFW:
                     NSFWCommands.add(c.getName());
                     break;
+                case LGBTQ:
+                    LGBTQCommands.add(c.getName());
+                    break;
             }
 
             if (c.shouldDisplayAliasesInHelp())
@@ -116,6 +120,9 @@ public class HelpEmbeds {
                         case NSFW:
                             NSFWCommands.add(alias);
                             break;
+                        case LGBTQ:
+                            LGBTQCommands.add(c.getName());
+                            break;
                     }
                 }
         }
@@ -144,6 +151,7 @@ public class HelpEmbeds {
                 .addField("Music commands", joinCommands(musicCommands), INLINE)
                 .addField("Animal commands", joinCommands(animalCommands), INLINE)
                 .addField("Weeb commands", joinCommands(weebCommands), INLINE)
+                .addField("LGBTQ+ commands", joinCommands(LGBTQCommands), INLINE)
                 .addField("Fun commands", joinCommands(funCommands), INLINE)
                 .addField("Nerd commands", joinCommands(nerdCommands), INLINE)
                 .addField("Mod/Admin commands", joinCommands(modAdminCommands), INLINE)
@@ -171,6 +179,9 @@ public class HelpEmbeds {
                     break;
                 case WEEB:
                     embed.addField("Weeb commands", joinCommands(weebCommands), INLINE);
+                    break;
+                case LGBTQ:
+                    embed.addField("LGBTQ+ commands", joinCommands(LGBTQCommands), INLINE);
                     break;
                 case MUSIC:
                     embed.addField("Music commands", joinCommands(musicCommands), INLINE);

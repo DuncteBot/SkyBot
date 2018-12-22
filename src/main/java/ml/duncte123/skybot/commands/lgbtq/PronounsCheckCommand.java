@@ -18,41 +18,33 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.json.JSONObject;
 
-import java.util.List;
-
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.AirUtils.getMentionedUser;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class PronounsCheckCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        User target = ctx.getAuthor();
-
-        if (!ctx.getArgs().isEmpty()) {
-            final List<User> foundUsers = FinderUtil.findUsers(ctx.getArgsRaw(), ctx.getJDA());
-
-            if (!foundUsers.isEmpty()) {
-                target = foundUsers.get(0);
-            }
-        }
-
+        final User target = getMentionedUser(ctx);
         final long userId = target.getIdLong();
         final JSONObject json = ctx.getApis().getPronouns(userId);
         final boolean isSelf = userId == ctx.getAuthor().getIdLong();
 
         if (json == null) {
-            sendMsg(event, (isSelf ? "You do" : target.getName() + " does" ) + " not have any pronouns set");
+            sendMsg(event, (isSelf ? "You do" : target.getName() + " does") + " not have any pronouns set");
             return;
         }
 
@@ -72,7 +64,12 @@ public class PronounsCheckCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[] {"pronouns"};
+        return new String[]{"pronouns"};
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.LGBTQ;
     }
 
     @Override

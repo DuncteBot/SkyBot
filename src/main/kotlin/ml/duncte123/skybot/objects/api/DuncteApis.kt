@@ -21,6 +21,7 @@ package ml.duncte123.skybot.objects.api
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import okhttp3.Request
@@ -226,9 +227,18 @@ class DuncteApis(private val apiKey: String) {
         val response = postJSON("pronouns/$userId", json)
 
         if (!response.getBoolean("success")) {
-            logger.error("Failed to create a warning\n" +
+            logger.error("Failed to create a pronoun\n" +
                 "Response: {}", response.getJSONObject("error").toString(4))
         }
+    }
+
+    fun getFlag(flag: String, avatarUrl: String): ByteArray {
+        val json = JSONObject().put("image", avatarUrl)
+
+        val body = RequestBody.create(null, json.toString())
+        val request = defaultRequest("flags/$flag").post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+
+        return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
     }
 
     private fun parseTripleResponse(response: JSONObject): Triple<Boolean, Boolean, Boolean> {

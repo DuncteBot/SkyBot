@@ -18,32 +18,95 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.commands.image.ImageCommandBase;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.List;
+
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class FlagCommand extends ImageCommandBase {
+
+    private final List<String> flags = List.of("agender", "aromantic", "asexual", "bear", "bi", "gay",
+        "genderfluid", "nonbinary", "pan", "transgender");
+
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
-        if (!passesNoArgs(event, false)) {
+        if (!passes(event, ctx.getArgs(), false)) {
             return;
         }
 
-        final String imageUrl = getImageFromCommand(ctx);
+        final String flag = ctx.getArgs().get(0).toLowerCase();
 
+        if ("list".equals(flag)) {
+            sendFlagsList(event);
+            return;
+        }
+
+        if (!flags.contains(flag)) {
+            sendMsg(event, "I do not know what this flag is, use `" + Settings.PREFIX + getName() + " list` for a list of available flags.");
+            return;
+        }
+
+        User user = ctx.getAuthor();
+
+        if (ctx.getArgs().size() > 1) {
+            final String search = String.join(" ", args.subList(1, args.size()));
+            final List<User> foundUsers = FinderUtil.findUsers(search, ctx.getJDA());
+
+            if (!foundUsers.isEmpty()) {
+                user = foundUsers.get(0);
+            }
+        }
+
+        final String imageUrl = user.getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
+        final byte[] image = ctx.getApis().getFlag(flag, imageUrl);
+
+        handleBasicImage(event, image);
+
+    }
+
+    private void sendFlagsList(GuildMessageReceivedEvent event) {
+        final String message = "Current list of available flags, if a flag is missing contact duncte123#1245 to have it added.\n" +
+            "**Agender** => Agender pride flag\n" +
+            "**Aromantic** => Aromantic pride flag\n" +
+            "**Asexual** => Asexuality pride flag\n" +
+            "**Bear** => Bear Brotherhood pride flag\n" +
+            "**Bi** => Bisexuality pride flag\n" +
+            "**Gay** => Gay pride flag\n" +
+            "**Genderfluid** => Genderfluidity pride flag\n" +
+            "**Nonbinary** => Nonbinary pride flag\n" +
+            "**Pan** => Pansexuality pride flag\n" +
+            "**Transgender** => Transgender pride flag";
+
+        sendMsg(event, message);
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.LGBTQ;
     }
 
     @Override
     public String getName() {
-        return null;
+        return "flag";
     }
 
     @Override
     public String help() {
-        return null;
+        return "Overlay your profile picture with a pride flag.\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <flag/list> [username]`";
     }
 }

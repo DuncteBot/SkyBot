@@ -18,8 +18,10 @@
 
 package ml.duncte123.skybot.commands.lgbtq;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
@@ -32,19 +34,20 @@ import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetPronounsCommand extends Command {
 
     private static final String PRONOUNS_REGEX = "([a-z]+\\/[a-z]+\\/[a-z]+\\/[a-z]+)(?:.*)";
 
     private final String[] messages = {
         "%6$s went into the kitchen.\n" +
-        "**%1$s** brought **%3$s** groceries with **%2$s**.\n" +
-        "At least I think the groceries were **%4$s**.\n" +
-        "**%1$s %5$s** making dinner tonight, after all.",
+            "**%1$s** brought **%3$s** groceries with **%2$s**.\n" +
+            "At least I think the groceries were **%4$s**.\n" +
+            "**%1$s %5$s** making dinner tonight, after all.",
 
         "**%1$s %5$s** a writer and wrote that book **%2$sself**. \n" +
-        "Those ideas are **%4$s**. \n" +
-        "I like both **%2$s** and **%3$s** ideas."
+            "Those ideas are **%4$s**. \n" +
+            "I like both **%2$s** and **%3$s** ideas."
     };
 
     @Override
@@ -91,6 +94,11 @@ public class SetPronounsCommand extends Command {
     @Override
     public String getName() {
         return "setpronouns";
+    }
+
+    @Override
+    public CommandCategory getCategory() {
+        return CommandCategory.LGBTQ;
     }
 
     @Override

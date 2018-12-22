@@ -25,7 +25,9 @@ import org.jetbrains.annotations.NotNull;
 public class ScrollCommand extends ImageCommandBase {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), ctx.getArgs(), true)) return;
+        if (!passes(ctx.getEvent(), ctx.getArgs(), true)) {
+            return;
+        }
 
         ctx.getAlexFlipnote().getScroll(parseTextArgsForImage(ctx))
             .async((image) -> handleBasicImage(ctx.getEvent(), image));

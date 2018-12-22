@@ -32,6 +32,7 @@ public enum CommandCategory {
     PATRON("patron"),
     WEEB("weeb"),
     NSFW("nsfw"),
+    LGBTQ("lgbtq+"),
     UNLISTED("null");
 
     private final String search;
