@@ -27,8 +27,10 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.entities.User;
 
 import java.awt.*;
 import java.io.BufferedReader;
@@ -251,5 +253,19 @@ public class AirUtils {
             }
         }
         return "";
+    }
+
+    public static User getMentionedUser(CommandContext ctx) {
+        User target = ctx.getAuthor();
+
+        if (!ctx.getArgs().isEmpty()) {
+            final List<User> foundUsers = FinderUtil.findUsers(ctx.getArgsRaw(), ctx.getJDA());
+
+            if (!foundUsers.isEmpty()) {
+                target = foundUsers.get(0);
+            }
+        }
+
+        return target;
     }
 }

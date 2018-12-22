@@ -59,7 +59,7 @@ public abstract class ImageCommandBase extends Command {
         return passes(event, args, true);
     }
 
-    boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
+    protected boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
         return passesNoArgs(event, patron) && hasArgs(event, args);
     }
 
@@ -68,12 +68,11 @@ public abstract class ImageCommandBase extends Command {
     }
 
     private boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
-        event.getChannel().sendTyping().queue();
         return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
     }
 
     private String getFileName() {
-        return getName() + "_" + System.currentTimeMillis() + ".png";
+        return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
     public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {

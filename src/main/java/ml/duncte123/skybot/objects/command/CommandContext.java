@@ -22,6 +22,7 @@ import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
+import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
@@ -103,6 +104,10 @@ public class CommandContext {
 
     public AudioUtils getAudioUtils() {
         return this.variables.getAudioUtils();
+    }
+
+    public DuncteApis getApis() {
+        return variables.getApis();
     }
 
     // --------------- Normal methods --------------- //
