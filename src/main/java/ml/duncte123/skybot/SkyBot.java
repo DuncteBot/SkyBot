@@ -146,7 +146,7 @@ public final class SkyBot {
         }
 
         // Check shard activity
-        new ShardWatcher();
+        new ShardWatcher(this);
     }
 
     public ShardManager getShardManager() {

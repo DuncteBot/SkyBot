@@ -33,9 +33,9 @@ class ShardWatcher {
     private final long[] pings;
     private final Logger logger = LoggerFactory.getLogger(ShardWatcher.class);
 
-    ShardWatcher() {
+    ShardWatcher(SkyBot skyBot) {
         final ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
-        final int totalShards = SkyBot.getInstance().getShardManager().getShardsTotal();
+        final int totalShards = skyBot.getShardManager().getShardsTotal();
 
         this.pings = new long[totalShards];
 
