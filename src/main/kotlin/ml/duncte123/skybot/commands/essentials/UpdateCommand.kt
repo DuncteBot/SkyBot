@@ -81,8 +81,10 @@ class UpdateCommand : Command() {
                 }
             }
             1 -> {
-                if (ctx.args[0] != "gradle")
+                if (ctx.args[0] != "gradle") {
                     return
+                }
+
                 sendMsg(event, "✅ Updating") {
                     GlobalScope.launch(Dispatchers.Default, CoroutineStart.DEFAULT) {
                         initUpdate(event, it.id, ctx.variables.database, ctx.audioUtils)

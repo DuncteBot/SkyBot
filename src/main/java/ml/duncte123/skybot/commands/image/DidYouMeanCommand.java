@@ -31,7 +31,7 @@ public class DidYouMeanCommand extends ImageCommandBase {
 
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) return;
 
-        String[] split = ctx.getArgsDisplay().split("\\|", 2);
+        final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
         if (split.length < 2) {
             sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");

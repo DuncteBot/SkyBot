@@ -105,8 +105,9 @@ class EarthUtils {
         fun write(a_file: String, content: String) {
             val file = File(a_file)
 
-            if (!file.exists())
+            if (!file.exists()) {
                 file.createNewFile()
+            }
 
             FileOutputStream(file).write(content.toByteArray())
         }
@@ -209,15 +210,23 @@ class EarthUtils {
 
                     filter as JSONObject
 
-                    (if (event.channel.isNSFW) true else !filter.getJSONObject("data").getBoolean("over_18") &&
-                        filter.getJSONObject("data").getString("selftext").length <= 550
-                        && filter.getJSONObject("data").getString("title").length <= 256)
+                    if (event.channel.isNSFW) {
+                        true
+                    } else {
+                        !filter.getJSONObject("data").getBoolean("over_18")
+                    }
+
+                } .filter {filter ->
+                    filter as JSONObject
+
+                    filter.getJSONObject("data").getString("selftext").length <= 550
+                        && filter.getJSONObject("data").getString("title").length <= 256
                 }
 
                 if (posts.isEmpty()) {
                     sendError(event.message)
-                    sendMsg(event, """Whoops I could not find any jokes.
-                    |This may be because Reddit is down or all jokes are NSFW (NSFW jokes are not displayed in channels that are not marked as NSFW)""".trimMargin())
+                    sendMsg(event, """Whoops I could not find any posts.
+                    |This may be because Reddit is down or all posts are NSFW (NSFW posts are not displayed in channels that are not marked as NSFW)""".trimMargin())
                     return@async
                 }
 
@@ -237,8 +246,9 @@ class EarthUtils {
 
                 val embed = defaultEmbed().setTitle(title, url)
 
-                if (text.isNotEmpty())
+                if (text.isNotEmpty()) {
                     embed.setDescription(text)
+                }
 
                 val imagesO = post.optJSONObject("preview")
 

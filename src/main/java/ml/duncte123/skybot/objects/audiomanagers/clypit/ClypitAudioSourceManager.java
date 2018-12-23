@@ -45,14 +45,14 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
 
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
-        Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
+        final Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
         if (!m.matches()) {
             return null;
         }
 
         try {
-            String clypitId = m.group(m.groupCount());
-            JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
+            final String clypitId = m.group(m.groupCount());
+            final JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
             return new AudioReference(json.getString("SecureMp3Url"), json.getString("Title"));
         } catch (Exception e) {
             return null;

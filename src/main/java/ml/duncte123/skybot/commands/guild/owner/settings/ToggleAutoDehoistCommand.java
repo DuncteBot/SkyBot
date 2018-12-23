@@ -31,10 +31,10 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class ToggleAutoDehoistCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
+        final boolean shouldAutoDeHoist = !settings.isAutoDeHoist();
         guild.setSettings(settings.setAutoDeHoist(shouldAutoDeHoist));
 
         sendMsg(ctx.getEvent(), "Auto de-hoisting has been **"

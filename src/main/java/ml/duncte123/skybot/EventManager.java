@@ -23,7 +23,6 @@ import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.commands.mod.DeHoistListener;
 import ml.duncte123.skybot.listeners.GuildListener;
 import ml.duncte123.skybot.listeners.GuildMemberListener;
-import ml.duncte123.skybot.listeners.MessageListener;
 import ml.duncte123.skybot.listeners.ReadyShutdownListener;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.Event;
@@ -48,16 +47,16 @@ public class EventManager
     implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
-    public static boolean shouldFakeBlock;
+    public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     EventManager() {
-        GuildMemberListener guildMemberListener = new GuildMemberListener();
-        GuildListener guildListener = new GuildListener();
-        ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
-        DeHoistListener deHoistListener = new DeHoistListener();
+        final GuildMemberListener guildMemberListener = new GuildMemberListener();
+        final GuildListener guildListener = new GuildListener();
+        final ReadyShutdownListener readyShutdownListener = new ReadyShutdownListener(); // Extends the message listener
+        final DeHoistListener deHoistListener = new DeHoistListener();
 
         this.listeners.add(guildMemberListener);
         this.listeners.add(guildListener);
@@ -83,24 +82,31 @@ public class EventManager
 
     @Override
     public void handle(Event event) {
-        try {
-            JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-            if (shouldFakeBlock) {
-                if (shardInfo == null) {
-                    logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
-                    return;
-                }
-                if (restartingShard == -1 || restartingShard == shardInfo.getShardId())
-                    return;
+        final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+
+        if (shouldFakeBlock) {
+            if (shardInfo == null) {
+                logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
+                return;
             }
 
-            for (EventListener listener : this.listeners) {
-                listener.onEvent(event);
+            if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
+                return;
             }
-
-        } catch (Throwable thr) {
-            logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
+
+        for (final EventListener listener : this.listeners) {
+            try {
+                listener.onEvent(event);
+            } catch (Throwable thr) {
+                logger.error("Error while handling event {}({}); {}",
+                    event.getClass().getName(),
+                    listener.getClass().getSimpleName(),
+                    thr.getLocalizedMessage());
+                logger.error("", thr);
+            }
+        }
+
     }
 
     @Override

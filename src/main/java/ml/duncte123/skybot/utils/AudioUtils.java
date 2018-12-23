@@ -84,8 +84,7 @@ public class AudioUtils {
             playerManager = new DefaultAudioPlayerManager();
             //playerManager.enableGcMonitoring();
 
-            // Disable cookies for youtube
-            YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
+            final YoutubeAudioSourceManager youtubeAudioSourceManager = new YoutubeAudioSourceManager(true);
 
             playerManager.registerSourceManager(new SpotifyAudioSourceManager(youtubeAudioSourceManager, config));
             playerManager.registerSourceManager(new ClypitAudioSourceManager());
@@ -133,7 +132,7 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        AudioLoader loader = new AudioLoader(ctx, mng, announce, addPlayList, trackUrl, this);
+        final AudioLoader loader = new AudioLoader(ctx, mng, announce, addPlayList, trackUrl, this);
 
         getPlayerManager().loadItemOrdered(mng, trackUrl, loader);
     }
@@ -147,7 +146,7 @@ public class AudioUtils {
      * @return The music manager for that guild
      */
     public GuildMusicManager getMusicManager(Guild guild) {
-        long guildId = guild.getIdLong();
+        final long guildId = guild.getIdLong();
         GuildMusicManager mng = musicManagers.get(guildId);
 
         if (mng == null) {
@@ -178,9 +177,9 @@ public class AudioUtils {
      * @return a formatted time
      */
     public static String getTimestamp(long milliseconds) {
-        int seconds = (int) (milliseconds / 1000) % 60;
-        int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
-        int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
+        final int seconds = (int) (milliseconds / 1000) % 60;
+        final int minutes = (int) ((milliseconds / (1000 * 60)) % 60);
+        final int hours = (int) ((milliseconds / (1000 * 60 * 60)) % 24);
 
         if (hours > 0) {
             return String.format("%02d:%02d:%02d", hours, minutes, seconds);

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.loadingbar.LoadingBar;
+import me.duncte123.loadingbar.LoadingBarConfig;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -44,10 +45,12 @@ public class LoadingBarCommand extends Command {
             return;
         }
 
-        LoadingBar loadingBar = new LoadingBar();
+        final LoadingBarConfig loadingBarConfig = LoadingBarConfig.defaultConfig();
+        loadingBarConfig.setInnerColor(ctx.getGuild().getColorColor());
+        final LoadingBar loadingBar = new LoadingBar();
 
-        double progress = loadingBar.getPercentage();
-        int year = Calendar.getInstance().getWeekYear();
+        final double progress = loadingBar.getPercentage();
+        final int year = Calendar.getInstance().getWeekYear();
 
         try {
             ctx.getChannel().sendFile(loadingBar.generateImage(progress), "bar.png")

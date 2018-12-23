@@ -97,7 +97,7 @@ public class GuildSettingsUtils {
      */
     @NotNull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
-        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
+        final TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
 
         if (!guildSettings.containsKey(guild.getIdLong())) {
             return registerNewGuild(guild, variables);
@@ -133,13 +133,13 @@ public class GuildSettingsUtils {
      * @return The new guild
      */
     public static GuildSettings registerNewGuild(Guild g, Variables variables) {
-        TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
+        final TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
 
         if (guildSettings.containsKey(g.getIdLong())) {
             return guildSettings.get(g.getIdLong());
         }
 
-        GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
+        final GuildSettings newGuildSettings = new GuildSettings(g.getIdLong());
         variables.getDatabaseAdapter().registerNewGuild(newGuildSettings, (bool) -> null);
         guildSettings.put(g.getIdLong(), newGuildSettings);
 

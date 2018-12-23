@@ -51,7 +51,7 @@ public class MusicEmbedUtils {
      * @return the progressbar
      */
     private static String generateProgressBar(double percent) {
-        StringBuilder str = new StringBuilder();
+        final StringBuilder str = new StringBuilder();
         for (int i = 0; i < 8; i++) {
             if (i == (int) (percent * 8)) {
                 str.append("\uD83D\uDD18");
@@ -97,9 +97,9 @@ public class MusicEmbedUtils {
         }
 
         long seconds = Math.round(duration / 1000.0);
-        long hours = seconds / (60 * 60);
+        final long hours = seconds / (60 * 60);
         seconds %= 60 * 60;
-        long minutes = seconds / 60;
+        final long minutes = seconds / 60;
         seconds %= 60;
 
         return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);

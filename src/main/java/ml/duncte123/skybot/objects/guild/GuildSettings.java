@@ -396,15 +396,15 @@ public class GuildSettings {
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
     // The future is now (30-11-2018) https://github.com/DuncteBot/SkyBot/commit/eb0303d5d819060efd2c908dde9d477b8fcf189f#diff-d6b916869893fbd27dd3e469ac1ddc5a
     public JSONObject toJson() {
-        GuildSettings obj = this;
-        JSONObject j = new JSONObject();
+        final GuildSettings obj = this;
+        final JSONObject j = new JSONObject();
 
-        for (Field field : obj.getClass().getDeclaredFields()) {
+        for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
-                String name = field.getName();
+                final String name = field.getName();
                 Object value = field.get(obj);
 
-                if (name.equals("ratelimits")) {
+                if ("ratelimits".equals(name)) {
                     j.put(name, convertJ2S((long[]) value));
                     continue;
                 }

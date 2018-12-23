@@ -47,22 +47,22 @@ public class TestTagCommand extends Command {
             return;
         }
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        String input = ctx.getArgsRaw();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final String input = ctx.getArgsRaw();
 
         if (input.length() > 1000) {
             sendMsg(event, "Pleas limit your input to 1000 characters.");
             return;
         }
 
-        String output = CustomCommandUtils.PARSER.clear()
+        final String output = CustomCommandUtils.PARSER.clear()
             .put("user", event.getAuthor())
             .put("channel", event.getChannel())
             .put("guild", event.getGuild())
             .put("args", ctx.getArgsJoined())
             .parse(input);
 
-        String message = new MessageBuilder()
+        final String message = new MessageBuilder()
             .append("**Input:**")
             .appendCodeBlock(input, "perl")
             .append('\n')

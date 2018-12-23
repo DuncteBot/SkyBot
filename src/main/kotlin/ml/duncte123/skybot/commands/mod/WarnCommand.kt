@@ -22,15 +22,22 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
 import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class WarnCommand : Command() {
+
+    init {
+        this.category = CommandCategory.MOD_ADMIN
+    }
+
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
+        val args = ctx.args
 
         if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You don't have permission to run this command")
@@ -43,24 +50,30 @@ class WarnCommand : Command() {
             MessageUtils.sendError(event.message)
             return
         }
+
         val target = event.message.mentionedMembers[0]
+
         if (target.user == event.jda.selfUser) {
             MessageUtils.sendErrorWithMessage(event.message, "You can not warn me")
             return
         }
+
         if (!event.member.canInteract(target)) {
             MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher or equal position than you")
             MessageUtils.sendError(event.message)
             return
         }
+
         if (ModerationUtils.getWarningCountForUser(ctx.databaseAdapter, target.user, event.guild) >= 3) {
             event.guild.controller.kick(target).reason("Reached 3 warnings").queue()
             ModerationUtils.modLog(event.author, target.user, "kicked", "Reached 3 warnings", ctx.guild)
             return
         }
+
         var reason = ""
-        if (ctx.args.size > 1)
-            reason = ctx.argsRaw.replace(target.asMention + " ", "")
+        if (ctx.args.size > 1) {
+            reason = args.subList(1, args.size).joinToString(separator = " ")
+        }
 
         val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
@@ -68,10 +81,12 @@ class WarnCommand : Command() {
 
         ModerationUtils.addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
         ModerationUtils.modLog(event.author, target.user, "warned", reason, ctx.guild)
+
         target.user.openPrivateChannel().queue {
             //Ignore the fail consumer, we don't want to have spam in the console
-            it.sendMessage(dmMessage).queue(null) { _ -> }
+            it.sendMessage(dmMessage).queue(null) {  }
         }
+
         MessageUtils.sendSuccess(event.message)
 
     }

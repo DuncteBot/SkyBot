@@ -71,14 +71,17 @@ class RadioCommand : MusicCommand() {
                     }
                     else -> {
                         val radio = radioStreams.firstOrNull { it.name == ctx.args[0].replace(oldValue = "❤", newValue = "love") }
+
                         if (radio == null) {
                             sendErrorWithMessage(event.message, "The stream is invalid!")
                             return
                         }
+
                         ctx.audioUtils.loadAndPlay(mng, radio.url, ctx, false)
                         scheduler.queue.forEach {
-                            if (it.info.uri != radio.url)
+                            if (it.info.uri != radio.url) {
                                 scheduler.nextTrack()
+                            }
                         }
                     }
                 }

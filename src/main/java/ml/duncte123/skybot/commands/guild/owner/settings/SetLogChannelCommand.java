@@ -35,7 +35,7 @@ public class SetLogChannelCommand extends SettingsBase {
             return;
         }
 
-        TextChannel channel = findTextChannel(ctx);
+        final TextChannel channel = findTextChannel(ctx);
 
         if (channel == null) {
             sendMsg(ctx.getEvent(), "I could not found a text channel for your query.\n" +

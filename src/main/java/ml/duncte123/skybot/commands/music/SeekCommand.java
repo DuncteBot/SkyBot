@@ -41,35 +41,36 @@ public class SeekCommand extends MusicCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!channelChecks(event, ctx.getAudioUtils()))
+        if (!channelChecks(event, ctx.getAudioUtils())) {
             return;
+        }
 
-        List<String> args = ctx.getArgs();
+        final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
             sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
             return;
         }
 
-        Matcher matcher = TIME_REGEX.matcher(args.get(0));
+        final Matcher matcher = TIME_REGEX.matcher(args.get(0));
 
         if (!matcher.matches()) {
             sendMsg(event, "Invalid time format");
             return;
         }
-        IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
+        final IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
 
         if (player.getPlayingTrack() == null) {
             sendMsg(event, "The player is currently not playing anything");
             return;
         }
 
-        long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
-        long seconds = Integer.parseInt(matcher.group(2)) * 1000;
+        final long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
+        final long seconds = Integer.parseInt(matcher.group(2)) * 1000;
 
-        long finalTime = minutes + seconds;
+        final long finalTime = minutes + seconds;
 
         player.seekTo(finalTime);
 

@@ -39,7 +39,7 @@ public class LlamaCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        LlamaObject llama = ApiUtils.getRandomLlama();
+        final LlamaObject llama = ApiUtils.getRandomLlama();
 
         sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(llama.getFile()));
     }

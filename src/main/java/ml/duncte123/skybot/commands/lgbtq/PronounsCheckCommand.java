@@ -16,68 +16,66 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.fun;
+package ml.duncte123.skybot.commands.lgbtq;
 
-import me.duncte123.botcommons.web.WebUtils;
-import me.duncte123.botcommons.web.WebUtils.EncodingType;
-import me.duncte123.botcommons.web.WebUtilsErrorUtils;
-import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
+import org.json.JSONObject;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static ml.duncte123.skybot.utils.AirUtils.getMentionedUser;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class YodaSpeakCommand extends Command {
+public class PronounsCheckCommand extends Command {
+
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
+        final User target = getMentionedUser(ctx);
+        final long userId = target.getIdLong();
+        final JSONObject json = ctx.getApis().getPronouns(userId);
+        final boolean isSelf = userId == ctx.getAuthor().getIdLong();
 
-        if (ctx.getArgs().isEmpty()) {
-            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <A sentence.>`");
+        if (json == null) {
+            sendMsg(event, (isSelf ? "You do" : target.getName() + " does") + " not have any pronouns set");
             return;
         }
 
-        final QueryBuilder builder = new QueryBuilder()
-            .append("https://apis.duncte123.me/yoda")
-            .append("sentence", ctx.getArgsDisplay())
-            .append("token", event.getJDA().getToken());
+        final String pronouns = json.getString("pronouns");
+        final String singular = json.getBoolean("singular") ? "Singular" : "Plural";
+        final String userName = isSelf ? "Your" : target.getName() + "'s";
 
-        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
-            .url(builder.build())
-            .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
-            .build(), WebUtilsErrorUtils::toJSONObject).async(
-            (json) -> {
-                logger.debug("Yoda response: " + json);
-                sendMsg(event, json.getString("data"));
-            },
-            error -> {
-                error.printStackTrace();
-                sendMsg(event, "Yoda is asleep tell my developers to wake him up");
-            }
-        );
+        final String format = "%s current pronouns are:%n**%s** (%s)";
 
-    }
-
-    @Override
-    public String help() {
-        return "Convert your sentences into yoda speak.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <A sentence.>`";
+        sendMsg(event, String.format(format, userName, pronouns, singular));
     }
 
     @Override
     public String getName() {
-        return "yoda";
+        return "pronounscheck";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"pronouns"};
     }
 
     @Override
     public CommandCategory getCategory() {
-        return CommandCategory.FUN;
+        return CommandCategory.LGBTQ;
+    }
+
+    @Override
+    public String help() {
+        return "Check someones pronouns.\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " [user]`\n" +
+            "Pronouns can be set via `" + Settings.PREFIX + "setpronouns`";
     }
 }

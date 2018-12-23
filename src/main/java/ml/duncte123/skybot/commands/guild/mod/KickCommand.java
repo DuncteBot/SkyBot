@@ -29,7 +29,6 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -44,8 +43,8 @@ public class KickCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
             MessageUtils.sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.");
@@ -59,14 +58,14 @@ public class KickCommand extends Command {
 
         try {
 
-            User toKick = event.getMessage().getMentionedUsers().get(0);
+            final User toKick = event.getMessage().getMentionedUsers().get(0);
             if (toKick.equals(event.getAuthor()) ||
                 !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             //Arrays.copyOfRange(Array, From, to)
-            String reason = StringUtils.join(args.subList(1, args.size()), " ");
+            final String reason = String.join("", args.subList(1, args.size()));
             event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
                 (noting) -> {
                     ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());

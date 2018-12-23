@@ -31,8 +31,9 @@ class SkipCommand : MusicCommand() {
         val event = ctx.event
         val args = ctx.args
 
-        if (!channelChecks(event, ctx.audioUtils))
+        if (!channelChecks(event, ctx.audioUtils)) {
             return
+        }
 
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
@@ -42,6 +43,7 @@ class SkipCommand : MusicCommand() {
             MessageUtils.sendMsg(event, "The player is not playing.")
             return
         }
+
         val count = if (args.isNotEmpty()) {
             if (!args[0].matches("\\d{1,10}".toRegex())) {
                 1

@@ -38,8 +38,10 @@ public class GuildMemberListener extends BaseListener {
 
     @Override
     public void onGuildMemberJoin(GuildMemberJoinEvent event) {
-        Guild guild = event.getGuild();
-        if (event.getMember().equals(guild.getSelfMember())) return;
+        final Guild guild = event.getGuild();
+        if (event.getMember().equals(guild.getSelfMember())) {
+            return;
+        }
 
         /*
         {{USER_MENTION}} = mention user
@@ -50,21 +52,21 @@ public class GuildMemberListener extends BaseListener {
         {{GUILD_OWNER_NAME}} = return the name form the owner
          */
 
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
-            long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
+            final long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                 ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
-            TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
-            String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
+            final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
+            final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null)
+            if (!msg.isEmpty() || !msg.isBlank() || welcomeLeaveChannel != null)
                 sendMsg(welcomeLeaveChannel, msg);
         }
 
         if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            Role r = guild.getRoleById(settings.getAutoroleRole());
+            final  Role r = guild.getRoleById(settings.getAutoroleRole());
 
             if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
                 guild.getController()
@@ -76,21 +78,24 @@ public class GuildMemberListener extends BaseListener {
 
     @Override
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
-        Guild guild = event.getGuild();
+        final Guild guild = event.getGuild();
 
         if (guild.getIdLong() == Command.supportGuildId) {
             handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
 
-        if (event.getMember().equals(guild.getSelfMember())) return;
-        GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+        if (event.getMember().equals(guild.getSelfMember())) {
+            return;
+        }
+
+        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
             long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                 ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
-            TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
-            String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
+            final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
+            final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
@@ -105,8 +110,8 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        for (Role role : event.getRoles()) {
-            long roleId = role.getIdLong();
+        for (final Role role : event.getRoles()) {
+            final long roleId = role.getIdLong();
 
             if (!(roleId == Command.patronsRole || roleId == Command.guildPatronsRole || roleId == Command.oneGuildPatronsRole)) {
                 continue;
@@ -123,19 +128,19 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        User user = event.getUser();
-        long userId = user.getIdLong();
-        ShardManager manager = event.getJDA().asBot().getShardManager();
+        final User user = event.getUser();
+        final long userId = user.getIdLong();
+        final ShardManager manager = event.getJDA().asBot().getShardManager();
 
-        for (Role role : event.getRoles()) {
-            long roleId = role.getIdLong();
+        for (final Role role : event.getRoles()) {
+            final long roleId = role.getIdLong();
 
             if (roleId == Command.patronsRole) {
                 Command.patrons.add(userId);
             }
 
             if (roleId == Command.guildPatronsRole) {
-                List<Long> guilds = manager.getMutualGuilds(user).stream()
+                final List<Long> guilds = manager.getMutualGuilds(user).stream()
                     .filter((it) -> {
                         Member member = it.getMember(user);
 
@@ -161,12 +166,12 @@ public class GuildMemberListener extends BaseListener {
             return "NOPE";
         }
 
-        Guild guild = event.getGuild();
-        GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
-        long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
-        long autoRoleId = s.getAutoroleRole();
+        final Guild guild = event.getGuild();
+        final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
+        final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
+        final long autoRoleId = s.getAutoroleRole();
 
-        String message = CustomCommandUtils.PARSER.clear()
+        final String message = CustomCommandUtils.PARSER.clear()
             .put("user", event.getUser())
             .put("guild", event.getGuild())
             .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
@@ -194,7 +199,7 @@ public class GuildMemberListener extends BaseListener {
         Command.oneGuildPatrons.remove(userId);
         GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
 
-        User user = manager.getUserById(userId);
+        final User user = manager.getUserById(userId);
 
         manager.getMutualGuilds(user).forEach(
             (guild) -> Command.guildPatrons.remove(guild.getIdLong())

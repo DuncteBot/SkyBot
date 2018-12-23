@@ -54,9 +54,9 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
         try {
-            Guild g = event.getGuild();
+            final Guild g = event.getGuild();
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
@@ -96,15 +96,15 @@ public class GuildInfoCommand extends Command {
     }
 
     private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {
-        Guild g = event.getGuild();
-        double[] ratio = GuildUtils.getBotRatio(g);
-        EmbedBuilder eb = EmbedUtils.defaultEmbed();
-        GuildSettings settings = ctx.getGuildSettings();
+        final Guild g = event.getGuild();
+        final double[] ratio = GuildUtils.getBotRatio(g);
+        final EmbedBuilder eb = EmbedUtils.defaultEmbed();
+        final GuildSettings settings = ctx.getGuildSettings();
 
-        OffsetDateTime createTime = g.getCreationTime();
-        Date createTimeDate = Date.from(createTime.toInstant());
-        String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
-        String createTimeHuman = prettyTime.format(createTimeDate);
+        final OffsetDateTime createTime = g.getCreationTime();
+        final Date createTimeDate = Date.from(createTime.toInstant());
+        final String createTimeFormat = createTime.format(DateTimeFormatter.RFC_1123_DATE_TIME);
+        final String createTimeHuman = prettyTime.format(createTimeDate);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);

@@ -32,10 +32,10 @@ public class ToggleSwearFilterCommand extends SettingsBase {
     @Override
     public void run(@NotNull CommandContext ctx) {
 
-        DunctebotGuild guild = ctx.getGuild();
-        GuildSettings settings = guild.getSettings();
+        final DunctebotGuild guild = ctx.getGuild();
+        final GuildSettings settings = guild.getSettings();
 
-        boolean isEnabled = !settings.isEnableSwearFilter();
+        final boolean isEnabled = !settings.isEnableSwearFilter();
         guild.setSettings(settings.setEnableSwearFilter(isEnabled));
 
         sendMsg(ctx.getEvent(), "The swearword filter has been " + (isEnabled ? "enabled" : "disabled") + ".");

@@ -47,20 +47,19 @@ public class UrbanCommand extends Command {
             return;
         }
 
-        String term = ctx.getArgsRaw();
-        String url = "http://api.urbandictionary.com/v0/define?term=" + term;
+        final String term = ctx.getArgsRaw();
+        final String url = "http://api.urbandictionary.com/v0/define?term=" + term;
 //        String webUrl = "https://www.urbandictionary.com/define.php?term=" + term;
-        WebUtils.ins.getJSONObject(url).async(json -> {
-//            System.out.println(json);
+        WebUtils.ins.getJSONObject(url).async((json) -> {
             if (json.getJSONArray("list").length() < 1) {
                 sendMsg(ctx.getEvent(), "Nothing found");
                 return;
             }
 
-            JSONObject item = json.getJSONArray("list").getJSONObject(0);
-            String permaLink = item.getString("permalink");
+            final JSONObject item = json.getJSONArray("list").getJSONObject(0);
+            final String permaLink = item.getString("permalink");
 
-            EmbedBuilder eb = EmbedUtils.defaultEmbed()
+            final EmbedBuilder eb = EmbedUtils.defaultEmbed()
 //                    .setTitle("term", webUrl)
                 .setAuthor("Author: " + item.getString("author"))
                 .setDescription("_TOP DEFINITION:_\n\n")

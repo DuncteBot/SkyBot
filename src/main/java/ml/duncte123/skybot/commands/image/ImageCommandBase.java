@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.Message.Attachment;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.File;
@@ -59,7 +59,7 @@ public abstract class ImageCommandBase extends Command {
         return passes(event, args, true);
     }
 
-    boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
+    protected boolean passes(GuildMessageReceivedEvent event, List<String> args, boolean patron) {
         return passesNoArgs(event, patron) && hasArgs(event, args);
     }
 
@@ -68,12 +68,11 @@ public abstract class ImageCommandBase extends Command {
     }
 
     private boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
-        event.getChannel().sendTyping().queue();
         return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
     }
 
     private String getFileName() {
-        return getName() + "_" + System.currentTimeMillis() + ".png";
+        return getName() + '_' + System.currentTimeMillis() + ".png";
     }
 
     public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
@@ -86,8 +85,8 @@ public abstract class ImageCommandBase extends Command {
     }
 
     protected String getImageFromCommand(CommandContext ctx) {
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         String url = event.getAuthor().getEffectiveAvatarUrl().replace("gif", "png") + "?size=512";
 
@@ -106,9 +105,9 @@ public abstract class ImageCommandBase extends Command {
         }
 
         if (!ctx.getMessage().getAttachments().isEmpty()) {
-            Message.Attachment attachment = ctx.getMessage().getAttachments().get(0);
+            final Attachment attachment = ctx.getMessage().getAttachments().get(0);
 
-            File file = new File(attachment.getFileName());
+            final File file = new File(attachment.getFileName());
 
 
             String mimetype = null;

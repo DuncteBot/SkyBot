@@ -46,8 +46,8 @@ public class BanCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        GuildMessageReceivedEvent event = ctx.getEvent();
-        List<String> args = ctx.getArgs();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
             sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
@@ -68,7 +68,7 @@ public class BanCommand extends Command {
             }
 
 
-            String reason = String.join(" ", args.subList(1, args.size()));
+            final String reason = String.join(" ", args.subList(1, args.size()));
             event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
                 (m) -> {
                     modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());

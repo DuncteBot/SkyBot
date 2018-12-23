@@ -92,7 +92,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        LavalinkManager lavalinkManager = getLavalinkManager();
+        final LavalinkManager lavalinkManager = getLavalinkManager();
         if (!lavalinkManager.isConnected(event.getGuild())) {
             if (reply) {
                 sendMsg(event, "I'm not in a voice channel, use `" + Settings.PREFIX + "join` to make me join a channel\n\n" +
