@@ -47,10 +47,10 @@ public class EventManager
     implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
-    public static boolean shouldFakeBlock;
+    public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
     private final ReactionHandler reactionHandler = new ReactionHandler();
-    private final List<EventListener> listeners = new CopyOnWriteArrayList<>();
+    private final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
 
     EventManager() {
         final GuildMemberListener guildMemberListener = new GuildMemberListener();
@@ -82,26 +82,31 @@ public class EventManager
 
     @Override
     public void handle(Event event) {
-        try {
-            final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
-            if (shouldFakeBlock) {
-                if (shardInfo == null) {
-                    logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
-                    return;
-                }
+        final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
-                if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
-                    return;
-                }
+        if (shouldFakeBlock) {
+            if (shardInfo == null) {
+                logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
+                return;
             }
 
-            for (final EventListener listener : this.listeners) {
-                listener.onEvent(event);
+            if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
+                return;
             }
-
-        } catch (Throwable thr) {
-            logger.error("Error while handling event " + event.getClass().getName() + "; " + thr.getLocalizedMessage(), thr);
         }
+
+        for (final EventListener listener : this.listeners) {
+            try {
+                listener.onEvent(event);
+            } catch (Throwable thr) {
+                logger.error("Error while handling event {}({}); {}",
+                    event.getClass().getName(),
+                    listener.getClass().getSimpleName(),
+                    thr.getLocalizedMessage());
+                logger.error("", thr);
+            }
+        }
+
     }
 
     @Override
