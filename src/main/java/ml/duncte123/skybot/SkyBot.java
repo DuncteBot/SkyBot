@@ -144,9 +144,6 @@ public final class SkyBot {
             // init web server
             new WebRouter(shardManager);
         }
-
-        // Check shard activity
-        new ShardWatcher();
     }
 
     public ShardManager getShardManager() {

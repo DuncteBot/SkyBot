@@ -52,11 +52,11 @@ public class ShardInfoCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         final List<String> headers = new ArrayList<>();
-        headers.add("ID");
+        headers.add("Shard ID");
         headers.add("Status");
         headers.add("Ping");
-        headers.add("Guilds");
-        headers.add("VCs");
+        headers.add("Guild Count");
+        headers.add("Connected VCs");
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
