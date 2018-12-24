@@ -116,4 +116,8 @@ public class BotinfoCommand extends Command {
         return "botinfo";
     }
 
+    @Override
+    public String[] getAliases() {
+        return new String[]{"about", "support"};
+    }
 }
