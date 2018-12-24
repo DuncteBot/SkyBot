@@ -269,7 +269,7 @@ class EvalCommand : Command() {
                 else -> {
                     if (out.toString().isEmpty() || out.toString().isBlank()) {
                         sendSuccess(event.message)
-                        return
+                        return@measureTimeMillis
                     }
 
                     if (isRanByBotOwner) {
@@ -277,7 +277,7 @@ class EvalCommand : Command() {
                             .appendCodeBlock(out.toString(), "")
                             .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
                             .forEach { it -> sendMsg(event, it) }
-                        return
+                        return@measureTimeMillis
                     }
 
                     if (filter.containsMentions(out.toString())) {
