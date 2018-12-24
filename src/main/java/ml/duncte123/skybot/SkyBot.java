@@ -20,6 +20,7 @@ package ml.duncte123.skybot;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.neovisionaries.ws.client.WebSocketFactory;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
@@ -127,12 +128,13 @@ public final class SkyBot {
         //Set up sharding for the bot
         final EventManager eventManager = new EventManager();
         this.shardManager = new DefaultShardManagerBuilder()
-            .setEventManagerProvider((id) -> eventManager)
-            .setBulkDeleteSplittingEnabled(false)
-            .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setToken(token)
             .setShardsTotal(totalShards)
             .setGameProvider(this.gameProvider)
-            .setToken(token)
+            .setBulkDeleteSplittingEnabled(false)
+            .setEventManagerProvider((id) -> eventManager)
+            .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setWebsocketFactory(new WebSocketFactory().setVerifyHostname(false))
             .build();
 
         this.startGameTimer();

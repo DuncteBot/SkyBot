@@ -235,63 +235,76 @@ class EvalCommand : Command() {
                     filter.unregister()
                 }
             }
-            when (out) {
-                null -> {
-                    sendSuccess(event.message)
-                }
-                is ArrayIndexOutOfBoundsException -> {
-                    sendSuccess(event.message)
-                }
-                is ExecutionException, is ScriptException -> {
-                    out as Exception
-                    sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
-                }
-                is TimeoutException, is InterruptedException, is IllegalStateException -> {
-                    out as Exception
-                    sendErrorWithMessage(event.message, "ERROR: " + out.toString())
-                }
-                is IllegalArgumentException, is DoomedException -> {
-                    out as RuntimeException
-                    sendErrorWithMessage(event.message, "ERROR: " + out.toString())
-                }
-                is Throwable -> {
-                    if (Settings.useJSON && isRanByBotOwner) {
-                        sendErrorJSON(event.message, out, true)
-                    } else {
-                        sendMsg(event, "ERROR: " + out.toString())
+
+            parseEvalResponse(out, event, isRanByBotOwner)
+        }
+
+        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script${TextColor.RESET}")
+    }
+
+    private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean) {
+        when (out) {
+            null -> {
+                sendSuccess(event.message)
+            }
+
+            is ArrayIndexOutOfBoundsException -> {
+                sendSuccess(event.message)
+            }
+
+            is ExecutionException, is ScriptException -> {
+                out as Exception
+                sendErrorWithMessage(event.message, "ERROR: " + out.cause.toString())
+            }
+
+            is TimeoutException, is InterruptedException, is IllegalStateException -> {
+                out as Exception
+                sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+            }
+
+            is IllegalArgumentException, is DoomedException -> {
+                out as RuntimeException
+                sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+            }
+
+            is Throwable -> {
+                if (Settings.useJSON && isRanByBotOwner) {
+                    sendErrorJSON(event.message, out, true)
+                } else {
+                    sendMsg(event, "ERROR: " + out.toString())
 //                        out.printStackTrace()
-                    }
-                }
-                is RestAction<*> -> {
-                    out.queue()
-                    sendSuccess(event.message)
-                }
-                else -> {
-                    if (out.toString().isEmpty() || out.toString().isBlank()) {
-                        sendSuccess(event.message)
-                        return@measureTimeMillis
-                    }
-
-                    if (isRanByBotOwner) {
-                        MessageBuilder()
-                            .appendCodeBlock(out.toString(), "")
-                            .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                            .forEach { it -> sendMsg(event, it) }
-                        return@measureTimeMillis
-                    }
-
-                    if (filter.containsMentions(out.toString())) {
-                        sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
-                    } else {
-                        sendMsg(event, "**" + event.author.name
-                            + ":** " + out.toString()
-                            .replace("@here".toRegex(), "@h\u0435re")
-                            .replace("@everyone".toRegex(), "@\u0435veryone"))
-                    }
-
                 }
             }
+
+            is RestAction<*> -> {
+                out.queue()
+                sendSuccess(event.message)
+            }
+
+            else -> {
+                if (out.toString().isEmpty() || out.toString().isBlank()) {
+                    sendSuccess(event.message)
+                    return
+                }
+
+                if (isRanByBotOwner) {
+                    MessageBuilder()
+                        .appendCodeBlock(out.toString(), "")
+                        .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
+                        .forEach { it -> sendMsg(event, it) }
+                    return
+                }
+
+                if (filter.containsMentions(out.toString())) {
+                    sendErrorWithMessage(event.message, "**ERROR:** Mentioning people!")
+                } else {
+                    sendMsg(event, "**" + event.author.name
+                        + ":** " + out.toString()
+                        .replace("@here".toRegex(), "@h\u0435re")
+                        .replace("@everyone".toRegex(), "@\u0435veryone"))
+                }
+
+            }
         }
-        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script${TextColor.RESET}")
     }
 }
