@@ -52,10 +52,6 @@ class DunctebotGuild(private val guild: Guild, private val variables: Variables)
         return EmbedUtils.getColorOrDefault(idLong, Settings.defaultColour)
     }
 
-    fun getColorColor(): Color {
-        return Color(getColor())
-    }
-
     fun getHexColor(): String {
         return AirUtils.colorToHex(getColor())
     }
