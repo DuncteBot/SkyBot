@@ -24,9 +24,9 @@
                         <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}" selected>#{{ textChannel.getName() }}</option>
                             {% else %}
-                                <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -80,9 +80,9 @@
                         <option value="" selected disabled>Select a role</option>
                         {% for role in goodRoles %}
                             {% if settings.getMuteRoleId() == role.getIdLong() %}
-                                <option value="{{ role.getId() }}" selected>@{{ role.getName() }}</option>
+                                <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
                             {% else %}
-                                <option value="{{ role.getId() }}">@{{ role.getName() }}</option>
+                                <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
                             {% endif %}
                         {% endfor %}
                         <option value="">Disable</option>

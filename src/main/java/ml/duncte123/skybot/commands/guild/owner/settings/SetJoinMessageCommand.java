@@ -34,7 +34,7 @@ public class SetJoinMessageCommand extends SettingsBase {
             return;
         }
 
-        String newJoinMessage = ctx.getArgsRaw().replaceAll("\n", "\\\\n")/*.replaceAll("\n", "\r\n")*/;
+        String newJoinMessage = ctx.getArgsRaw().replaceAll("\\\\n", "\n")/*.replaceAll("\n", "\r\n")*/;
         ctx.getGuild().setSettings(ctx.getGuildSettings().setCustomJoinMessage(newJoinMessage));
         sendMsg(ctx.getEvent(), "The new join message has been set to `" + newJoinMessage + "`");
     }
@@ -46,7 +46,7 @@ public class SetJoinMessageCommand extends SettingsBase {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"setwelcomenmessage"};
+        return new String[]{"setwelcomemessage"};
     }
 
     @Override

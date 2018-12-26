@@ -52,9 +52,9 @@
                         <option value="" selected disabled>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getWelcomeLeaveChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getId() }}" selected>#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}" selected>#{{ textChannel.getName() }}</option>
                             {% else %}
-                                <option value="{{ textChannel.getId() }}">#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
                         {% endfor %}
                     </select>
@@ -91,6 +91,7 @@
         function checkSelect(selectId, checkBox) {
             let box = _(checkBox);
             let select = _(selectId);
+
             if (select.value) {
                 box.checked = true;
                 box.disabled = false;
