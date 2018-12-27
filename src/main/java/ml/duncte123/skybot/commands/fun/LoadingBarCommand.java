@@ -44,13 +44,11 @@ public class LoadingBarCommand extends Command {
             return;
         }
 
-        final LoadingBar loadingBar = new LoadingBar();
-
-        final double progress = loadingBar.getPercentage();
+        final double progress = LoadingBar.getPercentage();
         final int year = Calendar.getInstance().getWeekYear();
 
         try {
-            ctx.getChannel().sendFile(loadingBar.generateImage(progress), "bar.png")
+            ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")
                 .appendFormat("**%s** is **%s**%% complete.", year, progress).queue();
         } catch (IOException e) {
             sendMsg(ctx.getEvent(), "Something went wrong with generating the image.");
