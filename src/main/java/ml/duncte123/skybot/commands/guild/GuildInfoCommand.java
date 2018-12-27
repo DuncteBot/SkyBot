@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -60,13 +61,18 @@ public class GuildInfoCommand extends Command {
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    g.getInvites().queue(invites ->
-                        invites.stream().findFirst().ifPresent(invite ->
-                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
-                        )
-                    );
+                    g.getInvites().queue((invites) -> {
+
+                        if (invites.isEmpty()) {
+                            sendGuildInfoEmbed(event, ctx, "");
+                            return;
+                        }
+                        
+                        final Invite invite = invites.get(0);
+                        sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
+                    });
                 } else {
-                    g.getVanityUrl().queue(invite ->
+                    g.getVanityUrl().queue((invite) ->
                         sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
