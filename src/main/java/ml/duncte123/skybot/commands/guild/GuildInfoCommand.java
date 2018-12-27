@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.GuildUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Invite;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.ocpsoft.prettytime.PrettyTime;
@@ -67,9 +68,8 @@ public class GuildInfoCommand extends Command {
                             return;
                         }
                         
-                        invites.stream().findFirst().ifPresent((invite) ->
-                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
-                        );
+                        Invite invite = invites.get(0);
+                        sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
                     });
                 } else {
                     g.getVanityUrl().queue((invite) ->
