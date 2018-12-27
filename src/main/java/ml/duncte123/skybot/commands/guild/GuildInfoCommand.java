@@ -116,7 +116,7 @@ public class GuildInfoCommand extends Command {
             eb.addField("Server Description", settings.getServerDesc() + "\n", false);
         }
 
-        eb.setThumbnail(event.getGuild().getIconUrl() != null ? event.getGuild().getIconUrl() : "https://i.duncte123.ml/blob/b1nzyblob.png")
+        eb.setThumbnail(event.getGuild().getIconUrl())
             .addField("Basic Info", "**Owner:** " + g.getOwner().getEffectiveName() + "\n" +
                 "**Name:** " + g.getName() + "\n" +
                 "**Prefix:** " + settings.getCustomPrefix() + "\n" +
