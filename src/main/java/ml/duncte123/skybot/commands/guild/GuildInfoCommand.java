@@ -68,7 +68,7 @@ public class GuildInfoCommand extends Command {
                             return;
                         }
                         
-                        Invite invite = invites.get(0);
+                        final Invite invite = invites.get(0);
                         sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
                     });
                 } else {
