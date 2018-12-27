@@ -48,7 +48,6 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 public class CustomCommandCommand extends Command {
 
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "remove", "raw");
-
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 

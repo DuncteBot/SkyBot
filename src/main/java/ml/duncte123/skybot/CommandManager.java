@@ -107,7 +107,7 @@ public class CommandManager {
     public ICommand getCommand(String name) {
         Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
 
-        if (cmd.isEmpty()) {
+        if (!cmd.isPresent()) {
             cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         }
 
@@ -338,7 +338,7 @@ public class CommandManager {
                     JDAImpl jda = (JDAImpl) event.getJDA();
                     MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);*/
 
-                    if (!message.isBlank()) {
+                    if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);
                     }
 

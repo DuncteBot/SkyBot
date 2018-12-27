@@ -61,7 +61,7 @@ public class GuildMemberListener extends BaseListener {
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() || !msg.isBlank() || welcomeLeaveChannel != null)
+            if (!msg.isEmpty() || !"".equals(msg.trim()) || welcomeLeaveChannel != null)
                 sendMsg(welcomeLeaveChannel, msg);
         }
 

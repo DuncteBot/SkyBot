@@ -43,7 +43,7 @@ apply plugin: 'kotlin'
 group = "ml.duncte123.skybot"
 version "3.84.0_${getGitHash()}"
 
-def javaVersion = JavaVersion.VERSION_11
+def javaVersion = JavaVersion.VERSION_1_10
 
 sourceCompatibility = javaVersion
 targetCompatibility = javaVersion
