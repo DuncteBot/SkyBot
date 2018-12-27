@@ -60,16 +60,19 @@ public class GuildInfoCommand extends Command {
 
             if (g.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
                 if (!g.getFeatures().contains("VANITY_URL")) {
-                    List<Invite> invites = g.getInvites().complete();
-		            if(invites.isEmpty()){
-                        sendGuildInfoEmbed(event, ctx, "");
-                    }else{
-                        invites.stream().findFirst().ifPresent(invite ->
-        	                sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
-				        );
-                    }
+                    g.getInvites().queue((invites) -> {
+
+                        if (invites.isEmpty()) {
+                            sendGuildInfoEmbed(event, ctx, "");
+                            return;
+                        }
+                        
+                        invites.stream().findFirst().ifPresent((invite) ->
+                            sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()))
+                        );
+                    });
                 } else {
-                    g.getVanityUrl().queue(invite ->
+                    g.getVanityUrl().queue((invite) ->
                         sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite))
                     );
                 }
