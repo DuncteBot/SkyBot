@@ -251,6 +251,8 @@ public class ModerationUtils {
             modLog(new ConsoleUser(), targetUser, "unmuted", dbGuild);
         }
 
+        logger.debug("Checking done, unmuted {} users.", mutes.size());
+
         final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
 
         if (!purgeIds.isEmpty()) {
