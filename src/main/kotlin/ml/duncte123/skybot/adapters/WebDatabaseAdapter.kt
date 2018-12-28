@@ -25,6 +25,7 @@ import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
+import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -270,11 +271,26 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun getExpiredBans(callback: (List<Ban>) -> Unit) {
+    override fun purgeBans(ids: List<Int>) {
+        variables.database.run {
+            variables.apis.purgeBans(ids)
+        }
+    }
+
+    override fun purgeMutes(ids: List<Int>) {
+        variables.database.run {
+            variables.apis.purgeMutes(ids)
+        }
+    }
+
+    override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
         variables.database.run {
             val bans = arrayListOf<Ban>()
+            val mutes = arrayListOf<Mute>()
 
-            val storedBans = variables.apis.getExpiredBans()
+            val storedData = variables.apis.getExpiredBansAndMutes()
+            val storedBans = storedData.getJSONArray("bans")
+            val storedMutes = storedData.getJSONArray("mutes")
 
             storedBans.forEach {
                 val json = it as JSONObject
@@ -289,13 +305,19 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 ))
             }
 
-            callback.invoke(bans)
-        }
-    }
+            storedMutes.forEach {
+                val json = it as JSONObject
 
-    override fun purgeBans(ids: List<Int>) {
-        variables.database.run {
-            variables.apis.purgeBans(ids)
+                mutes.add(Mute(
+                    json.getInt("id"),
+                    json.getString("mod_id"),
+                    json.getString("user_id"),
+                    json.getString("user_tag"),
+                    json.getString("guild_id")
+                ))
+            }
+
+            callback.invoke(Pair(bans, mutes))
         }
     }
 }

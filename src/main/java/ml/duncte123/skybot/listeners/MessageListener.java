@@ -21,7 +21,6 @@ package ml.duncte123.skybot.listeners;
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -49,7 +48,7 @@ public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
     private final BadWordFilter wordFilter = new BadWordFilter();
-    protected final SpamFilter spamFilter = new SpamFilter(variables);
+    protected final SpamFilter spamFilter = new SpamFilter();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -247,7 +246,7 @@ public class MessageListener extends BaseListener {
                 final Message messageToCheck = event.getMessage();
                 final long[] rates = settings.getRatelimits();
                 spamFilter.applyRates(rates);
-                final DunctebotGuild g = new DunctebotGuild(guild, variables);
+                final DunctebotGuild g = new DunctebotGuild(guild);
                 if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
                     ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
                         settings.getKickState() ? "kicked" : "muted", "spam", g);

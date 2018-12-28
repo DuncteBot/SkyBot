@@ -27,10 +27,12 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.FakeUser;
 import ml.duncte123.skybot.objects.api.Ban;
+import ml.duncte123.skybot.objects.api.Mute;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -170,43 +172,108 @@ public class ModerationUtils {
      * This will check if there are users that can be unbanned
      */
     public static void checkUnbans(Variables variables) {
-        variables.getDatabaseAdapter().getExpiredBans(
-            (bans) -> {
-                logger.debug("Checking for users to unban");
-                final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-                for (final Ban ban : bans) {
-                    final Guild guild = shardManager.getGuildById(ban.getGuildId());
+        variables.getDatabaseAdapter().getExpiredBansAndMutes(
+            (bansAndMutes) -> {
+                final DatabaseAdapter adapter = variables.getDatabaseAdapter();
+                final List<Ban> bans = bansAndMutes.getFirst();
+                final List<Mute> mutes = bansAndMutes.getSecond();
 
-                    if (guild == null) {
-                        continue;
-                    }
-
-
-                    logger.debug("Unbanning " + ban.getUserName());
-
-                    guild.getController()
-                        .unban(ban.getUserId()).reason("Ban expired").queue();
-
-                    modLog(new ConsoleUser(),
-                        new FakeUser(ban.getUserName(),
-                            Long.parseUnsignedLong(ban.getUserId()),
-                            Short.valueOf(ban.getDiscriminator())),
-                        "unbanned",
-                        new DunctebotGuild(guild, variables)
-                    );
-
-                }
-
-                logger.debug("Checking done, unbanned {} users.", bans.size());
-
-                final List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
-
-                variables.getDatabaseAdapter().purgeBans(purgeIds);
+                handleUnban(bans, adapter);
+                handleUnmute(mutes, adapter);
 
                 return null;
             }
         );
+    }
+
+    private static void handleUnmute(List<Mute> mutes, DatabaseAdapter adapter) {
+        logger.debug("Checking for users to unmute");
+        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+
+        for (final Mute mute : mutes) {
+            final Guild guild = shardManager.getGuildById(mute.getGuildId());
+
+            if (guild == null) {
+                continue;
+            }
+
+            final Member target = guild.getMemberById(mute.getUserId());
+
+            if (target == null) {
+                continue;
+            }
+
+            if (!guild.getSelfMember().canInteract(target)) {
+                continue;
+            }
+
+            final User targetUser = target.getUser();
+
+            logger.debug("Unmuting " + mute.getUserTag());
+
+            final DunctebotGuild dbGuild = new DunctebotGuild(guild);
+            final long muteRoleId = dbGuild.getSettings().getMuteRoleId();
+
+            if (muteRoleId < 1L) {
+                continue;
+            }
+
+            final Role muteRole = guild.getRoleById(muteRoleId);
+
+            if (muteRole == null) {
+                continue;
+            }
+
+            if (!guild.getSelfMember().canInteract(muteRole)) {
+                continue;
+            }
+
+            guild.getController().removeSingleRoleFromMember(target, muteRole).reason("Mute expired").queue();
+
+            modLog(new ConsoleUser(), targetUser, "unmuted", dbGuild);
+        }
+
+        final List<Integer> purgeIds = mutes.stream().map(Mute::getId).collect(Collectors.toList());
+
+        if (!purgeIds.isEmpty()) {
+            adapter.purgeMutes(purgeIds);
+        }
+    }
+
+    private static void handleUnban(List<Ban> bans, DatabaseAdapter adapter) {
+        logger.debug("Checking for users to unban");
+        final ShardManager shardManager = SkyBot.getInstance().getShardManager();
+
+        for (final Ban ban : bans) {
+            final Guild guild = shardManager.getGuildById(ban.getGuildId());
+
+            if (guild == null) {
+                continue;
+            }
+
+            logger.debug("Unbanning " + ban.getUserName());
+
+            guild.getController()
+                .unban(ban.getUserId()).reason("Ban expired").queue();
+
+            final User fakeUser = new FakeUser(
+                ban.getUserName(),
+                Long.parseUnsignedLong(ban.getUserId()),
+                Short.valueOf(ban.getDiscriminator())
+            );
+
+            modLog(new ConsoleUser(), fakeUser, "unbanned", new DunctebotGuild(guild));
+
+        }
+
+        logger.debug("Checking done, unbanned {} users.", bans.size());
+
+        final List<Integer> purgeIds = bans.stream().map(Ban::getId).collect(Collectors.toList());
+
+        if (!purgeIds.isEmpty()) {
+            adapter.purgeBans(purgeIds);
+        }
     }
 
     public static void muteUser(DunctebotGuild guild, Member member, TextChannel channel, String cause, long minutesUntilUnMute) {
