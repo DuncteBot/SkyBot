@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.time.DateUtils;
@@ -32,12 +33,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.utils.ModerationUtils.addBannedUserToDb;
-import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+import static ml.duncte123.skybot.utils.ModerationUtils.*;
 
 public class TempBanCommand extends Command {
     @Override
@@ -51,15 +50,18 @@ public class TempBanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 2) {
+        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
-        final User toBan = event.getMessage().getMentionedUsers().get(0);
-        if (toBan.equals(event.getAuthor()) &&
-            !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+        if (toBanMember.equals(event.getMember())) {
             sendMsg(event, "You are not permitted to perform this action.");
+            return;
+        }
+
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
             return;
         }
 
@@ -82,6 +84,7 @@ public class TempBanCommand extends Command {
         final int finalBanTime = calculateBanTime.getFinalBanTime();
 
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final User toBan = toBanMember.getUser();
 
         event.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
             (voidMethod) -> {

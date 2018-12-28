@@ -26,6 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
@@ -33,6 +34,8 @@ import org.apache.commons.lang3.StringUtils;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SoftbanCommand extends Command {
@@ -52,13 +55,19 @@ public class SoftbanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty() || args.isEmpty()) {
+        if (event.getMessage().getMentionedMembers().isEmpty() || args.isEmpty()) {
             MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 
+        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+
+        if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel())) {
+            return;
+        }
+
         try {
-            final User toBan = event.getMessage().getMentionedUsers().get(0);
+            final User toBan = toBanMember.getUser();
             if (toBan.equals(event.getAuthor()) &&
                 !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");

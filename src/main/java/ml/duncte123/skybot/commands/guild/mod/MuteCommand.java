@@ -35,6 +35,7 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends Command {
@@ -65,9 +66,20 @@ public class MuteCommand extends Command {
             return;
         }
 
+        final Member mod = ctx.getMember();
+        final Member self = ctx.getSelfMember();
         final String reason = String.join("", args.subList(1, args.size()));
         final Member toMute = event.getMessage().getMentionedMembers().get(0);
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+
+        if (!canInteract(mod, toMute, "mute",  ctx.getChannel())) {
+            return;
+        }
+
+        if (!self.canInteract(role)) {
+            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+            return;
+        }
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {

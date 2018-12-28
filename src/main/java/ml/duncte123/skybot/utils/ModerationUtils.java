@@ -53,6 +53,23 @@ public class ModerationUtils {
 
     private static Logger logger = LoggerFactory.getLogger(ModerationUtils.class);
 
+    public static boolean canInteract(Member mod, Member target, String action, TextChannel channel) {
+
+        if (!mod.canInteract(target)) {
+            sendMsg(channel, "You cannot " + action + " this member");
+            return false;
+        }
+
+        final Member self = mod.getGuild().getSelfMember();
+
+        if (!self.canInteract(target)) {
+            sendMsg(channel, "I cannot " + action + " this member, are their roles above mine?");
+            return false;
+        }
+
+        return true;
+    }
+
     /**
      * This will send a message to a channel called modlog
      *

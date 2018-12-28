@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -34,7 +35,9 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TempMuteCommand extends TempBanCommand {
 
     @Override
@@ -59,6 +62,22 @@ public class TempMuteCommand extends TempBanCommand {
             return;
         }
 
+        final User author = event.getAuthor();
+        final Member mod = ctx.getMember();
+        final Member toMute = event.getMessage().getMentionedMembers().get(0);
+        final User mutee = toMute.getUser();
+        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
+        final Member self = ctx.getSelfMember();
+
+        if (!canInteract(mod, toMute, "mute",  ctx.getChannel())) {
+            return;
+        }
+
+        if (!self.canInteract(role)) {
+            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+            return;
+        }
+
         final String reason = String.join(" ", args.subList(2, args.size()));
         final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
 
@@ -76,11 +95,6 @@ public class TempMuteCommand extends TempBanCommand {
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
         final String finalDate = muteTime.getFinalUnbanDate();
 
-        final User author = event.getAuthor();
-        final Member toMute = event.getMessage().getMentionedMembers().get(0);
-        final User mutee = toMute.getUser();
-        final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
-
         ctx.getDatabaseAdapter().createMute(
             author.getIdLong(),
             mutee.getIdLong(),
@@ -93,7 +107,7 @@ public class TempMuteCommand extends TempBanCommand {
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by" + String.format("%#s", author) + ": " + fReason)
             .queue(success -> {
-                ModerationUtils.modLog(author, mutee, "muted", fReason, ctx.getGuild());
+                ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );
