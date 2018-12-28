@@ -18,16 +18,15 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
+import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -36,12 +35,7 @@ import java.util.List;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class MuteCommand extends Command {
-
-    public MuteCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
-    }
+public class TempMuteCommand extends TempBanCommand {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -54,7 +48,7 @@ public class MuteCommand extends Command {
         }
 
         if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <reason>");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
@@ -65,13 +59,41 @@ public class MuteCommand extends Command {
             return;
         }
 
-        final String reason = String.join("", args.subList(1, args.size()));
+        final String reason = String.join(" ", args.subList(2, args.size()));
+        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+
+        if (!AirUtils.isInt(timeParts[0])) {
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
+            return;
+        }
+
+        final CalculateBanTime muteTime = new CalculateBanTime(event, timeParts).invoke();
+
+        if (muteTime.hasError()) {
+            return;
+        }
+
+        final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final String finalDate = muteTime.getFinalUnbanDate();
+
+        final User author = event.getAuthor();
         final Member toMute = event.getMessage().getMentionedMembers().get(0);
+        final User mutee = toMute.getUser();
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
+        ctx.getDatabaseAdapter().createMute(
+            author.getIdLong(),
+            mutee.getIdLong(),
+            String.format("%#s", mutee),
+            finalDate,
+            event.getGuild().getIdLong()
+        );
+
+
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+            .reason("Muted by" + String.format("%#s", author) + ": " + fReason)
+            .queue(success -> {
+                ModerationUtils.modLog(author, mutee, "muted", fReason, ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );
@@ -79,13 +101,13 @@ public class MuteCommand extends Command {
     }
 
     @Override
-    public String help() {
-        return "Mute a user.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <reason>`";
+    public String getName() {
+        return "tempmute";
     }
 
     @Override
-    public String getName() {
-        return "mute";
+    public String help() {
+        return "Temporally mutes a user on the guild\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
     }
 }

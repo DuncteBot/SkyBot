@@ -160,6 +160,15 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun createMute(json: JSONObject) {
+        val response = postJSON("mutes", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to create a mute\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     fun getWarningsForUser(userId: Long, guildId: Long): JSONArray {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
 

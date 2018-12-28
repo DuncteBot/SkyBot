@@ -249,6 +249,19 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
+        variables.database.run {
+            val json = JSONObject()
+                .put("mod_id", modId.toString())
+                .put("user_id", userId.toString())
+                .put("user_tag", userTag)
+                .put("guild_id", guildId.toString())
+                .put("unmute_date", unmuteDate)
+
+            variables.apis.createMute(json)
+        }
+    }
+
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         variables.database.run {
             val data = variables.apis.getWarningsForUser(userId, guildId)

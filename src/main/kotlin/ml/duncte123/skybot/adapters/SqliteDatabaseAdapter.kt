@@ -463,6 +463,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
+        // Api only
+    }
+
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         val database = variables.database
 
