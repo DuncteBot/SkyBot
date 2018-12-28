@@ -63,7 +63,7 @@ public class LoadingBarCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"progress", "progressbar"};
+        return new String[]{"progress", "progressbar", "lb"};
     }
 
     @Override
