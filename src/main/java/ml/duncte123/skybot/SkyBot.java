@@ -132,8 +132,7 @@ public final class SkyBot {
             .setShardsTotal(totalShards)
             .setGameProvider(this.gameProvider)
             .setBulkDeleteSplittingEnabled(false)
-//            .setEventManagerProvider((id) -> eventManager)
-            .addEventListeners(new TempListener())
+            .setEventManagerProvider((id) -> eventManager)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
             .setWebsocketFactory(new WebSocketFactory().setVerifyHostname(false))
             .build();
