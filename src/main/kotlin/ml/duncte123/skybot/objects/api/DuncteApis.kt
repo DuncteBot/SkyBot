@@ -160,16 +160,25 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun createMute(json: JSONObject) {
+        val response = postJSON("mutes", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to create a mute\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     fun getWarningsForUser(userId: Long, guildId: Long): JSONArray {
         val response = executeRequest(defaultRequest("warns/$userId/$guildId"))
 
         return response.getJSONArray("data")
     }
 
-    fun getExpiredBans(): JSONArray {
-        val response = executeRequest(defaultRequest("bans/expired"))
+    fun getExpiredBansAndMutes(): JSONObject {
+        val response = executeRequest(defaultRequest("expiredbansandmutes"))
 
-        return response.getJSONArray("data")
+        return response.getJSONObject("data")
     }
 
     fun purgeBans(ids: List<Int>) {
@@ -178,6 +187,16 @@ class DuncteApis(private val apiKey: String) {
 
         if (!response.getBoolean("success")) {
             logger.error("Failed to purge bans\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun purgeMutes(ids: List<Int>) {
+        val json = JSONObject().put("ids", ids)
+        val response = deleteJSON("mutes", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to purge mutes\n" +
                 "Response: {}", response.getJSONObject("error").toString(4))
         }
     }

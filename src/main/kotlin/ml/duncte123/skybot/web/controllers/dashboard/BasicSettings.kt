@@ -47,7 +47,7 @@ object BasicSettings {
         val announceTracks = paramToBoolean(params["announceTracks"])
         val color = Color.decode(params["embedColor"]).rgb
 
-        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!, variables)
+        val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!)
         guild.setColor(color)
 
         val newSettings = GuildSettingsUtils.getGuild(guild, variables)

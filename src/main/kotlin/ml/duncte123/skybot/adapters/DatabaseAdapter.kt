@@ -23,9 +23,11 @@ import gnu.trove.map.TLongLongMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
+import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
+import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val variables: Variables) {
@@ -96,9 +98,13 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun createWarning(modId: Long, userId: Long, guildId: Long, reason: String)
 
+    abstract fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long)
+
     abstract fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit)
 
-    abstract fun getExpiredBans(callback: (List<Ban>) -> Unit)
+    abstract fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit)
 
     abstract fun purgeBans(ids: List<Int>)
+
+    abstract fun purgeMutes(ids: List<Int>)
 }
