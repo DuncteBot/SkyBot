@@ -41,7 +41,6 @@ import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManag
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
-import org.jetbrains.annotations.Nullable;
 
 import java.util.logging.Level;
 
@@ -114,13 +113,30 @@ public class AudioUtils {
      *         The {@link GuildMusicManager MusicManager} for the guild
      * @param trackUrlRaw
      *         The url from the track to play
+     * @param ctx
+     *         the command context for this event
      * @param addPlayList
+     *         if we should add a playlist
      */
     public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw, final CommandContext ctx,
                             final boolean addPlayList) {
         loadAndPlay(mng, trackUrlRaw, addPlayList, ctx, true);
     }
 
+    /**
+     * Loads a track and plays it if the bot isn't playing
+     *
+     * @param mng
+     *         The {@link GuildMusicManager MusicManager} for the guild
+     * @param trackUrlRaw
+     *         The url from the track to play
+     * @param ctx
+     *         the command context for this event
+     * @param addPlayList
+     *         if we should add a
+     * @param announce
+     *         if we should announce the track
+     */
     public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
                             final boolean addPlayList, final CommandContext ctx, final boolean announce) {
         final String trackUrl;

@@ -240,10 +240,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public void shutdown() {
-        if (this.youtubeAudioSourceManager != null)
+        if (this.youtubeAudioSourceManager != null) {
             this.youtubeAudioSourceManager.shutdown();
-        if (this.service != null)
+        }
+
+        if (this.service != null) {
             this.service.shutdown();
+        }
 
     }
 
@@ -286,8 +289,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
             final SearchResult video = results.get(0);
             final ResourceId rId = video.getId();
             if (rId.getKind().equals("youtube#video")) {
-                Video v = getVideoById(video.getId().getVideoId(), config.googl);
-                playList.add(audioTrackFromVideo(v));
+                final Video videoById = getVideoById(video.getId().getVideoId(), config.googl);
+                playList.add(audioTrackFromVideo(videoById));
             }
         }
         return playList;

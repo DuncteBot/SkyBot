@@ -40,9 +40,9 @@ public class DogCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         final String base = "https://random.dog/";
-        GuildMessageReceivedEvent event = ctx.getEvent();
+        final GuildMessageReceivedEvent event = ctx.getEvent();
         try {
-            WebUtils.ins.getText(base + "woof").async(it -> {
+            WebUtils.ins.getText(base + "woof").async((it) -> {
                 final String finalS = base + it;
 
                 if (finalS.contains(".mp4")) {

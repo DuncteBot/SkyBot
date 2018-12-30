@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.web
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
-import javassist.compiler.ast.Variable
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
