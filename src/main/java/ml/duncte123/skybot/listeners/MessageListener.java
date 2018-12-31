@@ -106,11 +106,11 @@ public class MessageListener extends BaseListener {
         if (!autoResponses.isEmpty()) {
             final String stripped = event.getMessage().getContentStripped().toLowerCase();
 
-            Optional<CustomCommand> match = autoResponses.stream()
+            final Optional<CustomCommand> match = autoResponses.stream()
                 .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
 
             if (match.isPresent()) {
-                CustomCommand cmd = match.get();
+                final CustomCommand cmd = match.get();
 
                 commandManager.dispatchCommand(cmd, "",  List.of(), event);
                 return;
