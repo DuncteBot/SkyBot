@@ -182,4 +182,45 @@ object CustomCommands {
             .put("message", "Database error")
             .put("code", response.status())
     }
+
+    fun delete(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val commandData = JSONObject(request.body())
+
+        if (!commandData.has("name")) {
+            response.status(403)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Invalid data")
+                .put("code", response.status())
+        }
+
+        val invoke = commandData.getString("name")
+
+        val manager = variables.commandManager
+
+        if (!commandExists(invoke, guild.idLong, manager)) {
+            response.status(404)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Command does not exists")
+                .put("code", response.status())
+        }
+
+        val success = manager.removeCustomCommand(invoke, guild.idLong)
+
+        if (!success) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Could not delete command")
+                .put("code", response.status())
+        }
+
+        return JSONObject()
+            .put("status", "success")
+            .put("message", "Command deleted")
+            .put("code", response.status())
+    }
 }

@@ -93,9 +93,9 @@ function loadCommands() {
 
                         <div class="right">
                             <a href="#" onclick="showCommand('${command.name}'); return false;"
-                                class="waves-effect waves-light btn"><i class="material-icons">create</i> Edit</a>
-                            <a href="#" onclick="toast('Not implemented yet, use \\'\\'${prefix}cc delete ${command.name}\\'\\''); return false" 
-                                class="waves-effect waves-light red btn"><i class="material-icons">delete</i> Delete</a>
+                                class="waves-effect waves-light btn valign-wrapper"><i class="left material-icons">create</i> Edit</a>
+                            <a href="#" onclick="deleteCommand('${command.name}'); return false;" 
+                                class="waves-effect waves-light red btn valign-wrapper"><i class="left material-icons">delete</i> Delete</a>
                         </div>
 
                         <div class="clearfix"></div>
@@ -112,7 +112,46 @@ function showCommand(name) {
 
     const command = storedCommands[name];
 
-    showModal(name, command.message, `saveEdit("${name}")`);
+    showModal(name, command.message, `saveEdit("${name}")`, command.autoresponse);
+}
+
+function deleteCommand(name) {
+
+    const conf = confirm("Are you sure that you want to delete this command?");
+
+    if (!conf) {
+        return;
+    }
+
+    toast(`Deleting "${name}"!`);
+
+    fetch(`/api/customcommands/${guildId}`, {
+        method: "DELETE",
+        credentials: "same-origin",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name
+        })
+
+    })
+        .then((response) => response.json())
+        .then((json) => {
+
+            if (json.status === "success") {
+                toast("Deleted!");
+                modal.close();
+                _("chars").innerHTML = 0;
+                setTimeout(() => window.location.reload(), 500);
+                return
+            }
+
+            toast(`Could not save: ${json.message}`);
+        })
+        .catch((e) => {
+            toast(`Could not save: ${e}`);
+        });
 }
 
 function clearEditor() {
@@ -126,6 +165,7 @@ function saveEdit(name) {
 
     const command = storedCommands[name];
     command.message = editor.getValue();
+    command.autoresponse = _("autoresponse").checked;
 
     fetch(`/api/customcommands/${guildId}`, {
         method: "PATCH",
@@ -152,9 +192,10 @@ function saveEdit(name) {
         });
 }
 
-function showModal(invoke, message, method) {
+function showModal(invoke, message, method, autoresponse) {
     editor.setValue(message);
     _("commandName").value = invoke;
+    _("autoresponse").checked = autoresponse;
 
     _("saveBtn").setAttribute("onclick", `${method}; return false;`);
 
@@ -166,7 +207,7 @@ function showModal(invoke, message, method) {
 
 function prepareCreateNew() {
     _("chars").innerHTML = 0;
-    showModal("", "", "createNew()");
+    showModal("", "", "createNew()", false);
 }
 
 function createNew() {
@@ -198,7 +239,8 @@ function createNew() {
     const command = {
         name: name,
         message: action,
-        guildId: guildId
+        guildId: guildId,
+        autoresponse: _("autoresponse").checked,
     };
 
     storedCommands[name] = command;

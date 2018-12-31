@@ -50,13 +50,13 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     val con = manager.connection
 
-                    val res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands")
+                    val res = con.createStatement().executeQuery("SELECT * FROM customCommands")
                     while (res.next()) {
                         customCommands.add(CustomCommandImpl(
                             res.getString("invoke"),
                             res.getString("message"),
                             res.getLong("guildId"),
-                            false
+                            res.getBoolean("autoresponse")
                         ))
                     }
                 }
@@ -511,13 +511,13 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         // Api only
     }
 
-    private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {
+    private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val database = variables.database
 
         val sqlQuerry = if (isEdit) {
-            "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?"
+            "UPDATE customCommands SET message = ? , autoresponse = ? WHERE guildId = ? AND invoke = ?"
         } else {
-            "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)"
+            "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
 
         try {
@@ -526,9 +526,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 val stm = conn.prepareStatement(sqlQuerry)
 
-                stm.setString(if (isEdit) 2 else 1, guildId.toString())
-                stm.setString(if (isEdit) 3 else 2, invoke)
+                stm.setString(if (isEdit) 3 else 1, guildId.toString())
+                stm.setString(if (isEdit) 4 else 2, invoke)
                 stm.setString(if (isEdit) 1 else 3, message)
+                stm.setBoolean(if (isEdit) 2 else 4, autoresponse)
                 stm.execute()
             }
         } catch (e: SQLException) {
