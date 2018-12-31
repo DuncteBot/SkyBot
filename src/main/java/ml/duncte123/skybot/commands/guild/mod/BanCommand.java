@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
@@ -34,6 +35,7 @@ import java.util.Objects;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -54,13 +56,19 @@ public class BanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 2) {
+        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <Reason>");
             return;
         }
 
+        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
+            return;
+        }
+
         try {
-            final User toBan = event.getMessage().getMentionedUsers().get(0);
+            final User toBan = toBanMember.getUser();
             if (toBan.equals(event.getAuthor()) &&
                 !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
                 sendMsg(event, "You are not permitted to perform this action.");

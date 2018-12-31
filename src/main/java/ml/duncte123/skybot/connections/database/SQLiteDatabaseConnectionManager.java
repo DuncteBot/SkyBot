@@ -185,7 +185,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                     "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
                     "guildId VARCHAR(255) NOT NULL," +
                     "invoke VARCHAR(25) NOT NULL," +
-                    "message TEXT NOT NULL);"
+                    "message TEXT NOT NULL," +
+                    "autoresponse BOOLEAN NOT NULL DEFAULT FALSE);"
             );
 
             connection.createStatement().execute(

@@ -23,6 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.time.DateUtils;
@@ -32,12 +33,10 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
-import java.util.Objects;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.utils.ModerationUtils.addBannedUserToDb;
-import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+import static ml.duncte123.skybot.utils.ModerationUtils.*;
 
 public class TempBanCommand extends Command {
     @Override
@@ -51,15 +50,18 @@ public class TempBanCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty() || args.size() < 2) {
+        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
-        final User toBan = event.getMessage().getMentionedUsers().get(0);
-        if (toBan.equals(event.getAuthor()) &&
-            !Objects.requireNonNull(event.getGuild().getMember(event.getAuthor())).canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+        if (toBanMember.equals(event.getMember())) {
             sendMsg(event, "You are not permitted to perform this action.");
+            return;
+        }
+
+        if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
             return;
         }
 
@@ -74,25 +76,23 @@ public class TempBanCommand extends Command {
 
 
         final CalculateBanTime calculateBanTime = new CalculateBanTime(event, timeParts).invoke();
-        if (calculateBanTime.hasError()) return;
-
-        if (reason.isEmpty()) {
-            event.getGuild().getController().ban(toBan.getId(), 1, "No reason was provided").queue(
-                (v) -> modLog(event.getAuthor(), toBan, "banned", "*No reason was provided.*", ctx.getGuild())
-            );
-            sendSuccess(event.getMessage());
+        if (calculateBanTime.hasError()) {
             return;
         }
 
         final String finalUnbanDate = calculateBanTime.getFinalUnbanDate();
         final int finalBanTime = calculateBanTime.getFinalBanTime();
-        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+
+        final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
+        final User toBan = toBanMember.getUser();
+
+        event.getGuild().getController().ban(toBan.getId(), 1, fReason).queue(
             (voidMethod) -> {
                 if (finalBanTime > 0) {
                     addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
                         toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
 
-                    modLog(event.getAuthor(), toBan, "banned", reason, args.get(1), ctx.getGuild());
+                    modLog(event.getAuthor(), toBan, "banned", fReason, args.get(1), ctx.getGuild());
                 } else {
                     logger.error("This code should never run");
                     final String newReason = String.join(" ", ctx.getArgs().subList(1, ctx.getArgs().size()));
@@ -116,31 +116,31 @@ public class TempBanCommand extends Command {
             "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`";
     }
 
-    private class CalculateBanTime {
+    class CalculateBanTime {
         private boolean error;
         private GuildMessageReceivedEvent event;
         private String[] timeParts;
         private String finalUnbanDate;
         private int finalBanTime;
 
-        private CalculateBanTime(GuildMessageReceivedEvent event, String... timeParts) {
+        CalculateBanTime(GuildMessageReceivedEvent event, String[] timeParts) {
             this.event = event;
             this.timeParts = timeParts;
         }
 
-        private boolean hasError() {
+        boolean hasError() {
             return error;
         }
 
-        private String getFinalUnbanDate() {
+        String getFinalUnbanDate() {
             return finalUnbanDate;
         }
 
-        private int getFinalBanTime() {
+        int getFinalBanTime() {
             return finalBanTime;
         }
 
-        private CalculateBanTime invoke() {
+        CalculateBanTime invoke() {
             String unbanDate = "";
             int banTime; // initial value is always 0
             try {

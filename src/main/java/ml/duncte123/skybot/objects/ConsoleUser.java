@@ -28,6 +28,6 @@ import ml.duncte123.skybot.Author;
 public class ConsoleUser extends FakeUser {
 
     public ConsoleUser() {
-        super("AutoMod", 191231307290771456L, (short) 1337);
+        super("AutoMod", 191231307290771456L, (short) 0);
     }
 }

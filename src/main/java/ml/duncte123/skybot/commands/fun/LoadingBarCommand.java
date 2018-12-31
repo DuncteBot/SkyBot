@@ -45,7 +45,7 @@ public class LoadingBarCommand extends Command {
         }
 
         final double progress = LoadingBar.getPercentage();
-        final int year = Calendar.getInstance().getWeekYear();
+        final int year = Calendar.getInstance().get(Calendar.YEAR);
 
         try {
             ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")
@@ -63,7 +63,7 @@ public class LoadingBarCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"progress", "progressbar"};
+        return new String[]{"progress", "progressbar", "lb"};
     }
 
     @Override

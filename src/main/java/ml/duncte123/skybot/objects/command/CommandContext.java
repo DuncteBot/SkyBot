@@ -203,7 +203,7 @@ public class CommandContext {
     }
 
     public DunctebotGuild getGuild() {
-        return new DunctebotGuild(this.event.getGuild(), this.variables);
+        return new DunctebotGuild(this.event.getGuild());
     }
 
     public JDA getJDA() {

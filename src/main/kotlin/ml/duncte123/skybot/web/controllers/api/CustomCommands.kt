@@ -81,6 +81,7 @@ object CustomCommands {
 
         val invoke = commandData.getString("name")
         val message = commandData.getString("message")
+        val autoresponse = commandData.optBoolean("autoresponse", false)
         val manager = variables.commandManager
 
         if (!commandExists(invoke, guild.idLong, manager)) {
@@ -94,7 +95,7 @@ object CustomCommands {
 
         val customCommand = manager.getCustomCommand(invoke, guild.idLong)
 
-        val returnData = editCustomCommand(customCommand, message, manager)
+        val returnData = editCustomCommand(customCommand, message, autoresponse, manager)
 
         if (!returnData) {
             return JSONObject()
@@ -112,7 +113,7 @@ object CustomCommands {
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
         val commandData = JSONObject(request.body())
 
-        if (!commandData.has("name") || !commandData.has("message")) {
+        if (!commandData.has("name") || !commandData.has("message") || !commandData.has("autoresponse")) {
             response.status(403)
 
             return JSONObject()
@@ -151,8 +152,9 @@ object CustomCommands {
                 .put("message", "Command already exists")
                 .put("code", response.status())
         }
+        val autoresponse = commandData.getBoolean("autoresponse")
 
-        val result = registerCustomCommand(invoke, message, guild.idLong, manager)
+        val result = registerCustomCommand(invoke, message, guild.idLong, autoresponse, manager)
 
         if (result.first) {
             return JSONObject()
@@ -178,6 +180,47 @@ object CustomCommands {
         return JSONObject()
             .put("status", "error")
             .put("message", "Database error")
+            .put("code", response.status())
+    }
+
+    fun delete(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
+        val guild = WebHelpers.getGuildFromRequest(request, shardManager)!!
+        val commandData = JSONObject(request.body())
+
+        if (!commandData.has("name")) {
+            response.status(403)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Invalid data")
+                .put("code", response.status())
+        }
+
+        val invoke = commandData.getString("name")
+
+        val manager = variables.commandManager
+
+        if (!commandExists(invoke, guild.idLong, manager)) {
+            response.status(404)
+
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Command does not exists")
+                .put("code", response.status())
+        }
+
+        val success = manager.removeCustomCommand(invoke, guild.idLong)
+
+        if (!success) {
+            return JSONObject()
+                .put("status", "error")
+                .put("message", "Could not delete command")
+                .put("code", response.status())
+        }
+
+        return JSONObject()
+            .put("status", "success")
+            .put("message", "Command deleted")
             .put("code", response.status())
     }
 }

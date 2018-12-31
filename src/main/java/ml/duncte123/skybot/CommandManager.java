@@ -82,10 +82,10 @@ public class CommandManager {
             final List<String> names = new ArrayList<>();
 
             getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
-                .collect(Collectors.toSet()).forEach(c -> names.add(c.getName()));
+                .collect(Collectors.toSet()).forEach((c) -> names.add(c.getName()));
             Collections.sort(names);
 
-            names.forEach(n -> commandSet.add(getCommand(n)));
+            names.forEach((n) -> commandSet.add(getCommand(n)));
             commandsSorted.addAll(commandSet);
         }
 
@@ -105,10 +105,10 @@ public class CommandManager {
      * @return a possible null command for the name
      */
     public ICommand getCommand(String name) {
-        Optional<ICommand> cmd = commands.stream().filter(c -> c.getName().equals(name)).findFirst();
+        Optional<ICommand> cmd = commands.stream().filter((c) -> c.getName().equals(name)).findFirst();
 
         if (!cmd.isPresent()) {
-            cmd = commands.stream().filter(c -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
+            cmd = commands.stream().filter((c) -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
         }
 
         return cmd.orElse(null);
@@ -120,12 +120,19 @@ public class CommandManager {
 
 
     public CustomCommand getCustomCommand(String invoke, long guildId) {
-        return customCommands.stream().filter(c -> c.getGuildId() == guildId)
-            .filter(c -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
+        return customCommands.stream().filter((c) -> c.getGuildId() == guildId)
+            .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
     public List<CustomCommand> getCustomCommands(long guildId) {
-        return customCommands.stream().filter(c -> c.getGuildId() == guildId).collect(Collectors.toList());
+        return customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
+    }
+
+    public List<CustomCommand> getAutoResponses(long guildId) {
+        return customCommands.stream()
+            .filter((c) -> c.getGuildId() == guildId)
+            .filter(CustomCommand::isAutoResponse)
+            .collect(Collectors.toList());
     }
 
     public boolean editCustomCommand(CustomCommand c) {

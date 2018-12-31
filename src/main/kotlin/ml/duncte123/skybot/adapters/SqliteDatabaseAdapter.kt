@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
+import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -49,12 +50,13 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                     val con = manager.connection
 
-                    val res = con.createStatement().executeQuery("SELECT invoke, message, guildId FROM customCommands")
+                    val res = con.createStatement().executeQuery("SELECT * FROM customCommands")
                     while (res.next()) {
                         customCommands.add(CustomCommandImpl(
                             res.getString("invoke"),
                             res.getString("message"),
-                            res.getLong("guildId")
+                            res.getLong("guildId"),
+                            res.getBoolean("autoresponse")
                         ))
                     }
                 }
@@ -462,6 +464,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun createMute(modId: Long, userId: Long, userTag: String, unmuteDate: String, guildId: Long) {
+        // Api only
+    }
+
     override fun getWarningsForUser(userId: Long, guildId: Long, callback: (List<Warning>) -> Unit) {
         val database = variables.database
 
@@ -493,52 +499,25 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun getExpiredBans(callback: (List<Ban>) -> Unit) {
-        val database = variables.database
-        val dbName = database.name
-
-        database.run {
-            val bans = arrayListOf<Ban>()
-
-            database.connManager.use { manager ->
-                val connection = manager.connection
-                val smt = connection.createStatement()
-                val res = smt.executeQuery("SELECT * FROM $dbName.bans")
-
-                while (res.next()) {
-                    val unbanDate = res.getTimestamp("unban_date")
-                    val currDate = Date()
-
-                    if (!currDate.after(unbanDate)) {
-                        continue
-                    }
-
-                    bans.add(Ban(
-                        res.getInt("id"),
-                        res.getString("modUserId"),
-                        res.getString("userId"),
-                        res.getString("Username"),
-                        res.getString("discriminator"),
-                        res.getString("guildId")
-                    ))
-                }
-            }
-
-            callback.invoke(bans)
-        }
-    }
-
     override fun purgeBans(ids: List<Int>) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        // Api only
     }
 
-    private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean): Triple<Boolean, Boolean, Boolean>? {
+    override fun getExpiredBansAndMutes(callback: (Pair<List<Ban>, List<Mute>>) -> Unit) {
+        // Api only
+    }
+
+    override fun purgeMutes(ids: List<Int>) {
+        // Api only
+    }
+
+    private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val database = variables.database
 
         val sqlQuerry = if (isEdit) {
-            "UPDATE customCommands SET message = ? WHERE guildId = ? AND invoke = ?"
+            "UPDATE customCommands SET message = ? , autoresponse = ? WHERE guildId = ? AND invoke = ?"
         } else {
-            "INSERT INTO customCommands(guildId, invoke, message) VALUES (? , ? , ?)"
+            "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
 
         try {
@@ -547,9 +526,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 val stm = conn.prepareStatement(sqlQuerry)
 
-                stm.setString(if (isEdit) 2 else 1, guildId.toString())
-                stm.setString(if (isEdit) 3 else 2, invoke)
+                stm.setString(if (isEdit) 3 else 1, guildId.toString())
+                stm.setString(if (isEdit) 4 else 2, invoke)
                 stm.setString(if (isEdit) 1 else 3, message)
+                stm.setBoolean(if (isEdit) 2 else 4, autoresponse)
                 stm.execute()
             }
         } catch (e: SQLException) {

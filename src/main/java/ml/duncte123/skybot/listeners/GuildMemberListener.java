@@ -91,7 +91,7 @@ public class GuildMemberListener extends BaseListener {
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()) {
-            long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
+            final long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
                 ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);

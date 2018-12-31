@@ -26,12 +26,15 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
+
+import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class KickCommand extends Command {
@@ -51,14 +54,20 @@ public class KickCommand extends Command {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().isEmpty()) {
+        if (event.getMessage().getMentionedMembers().isEmpty()) {
             MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
+            return;
+        }
+
+        final Member toKickMember = event.getMessage().getMentionedMembers().get(0);
+
+        if (!canInteract(ctx.getMember(), toKickMember, "kick", ctx.getChannel())) {
             return;
         }
 
         try {
 
-            final User toKick = event.getMessage().getMentionedUsers().get(0);
+            final User toKick = toKickMember.getUser();
             if (toKick.equals(event.getAuthor()) ||
                 !event.getMember().canInteract(event.getGuild().getMember(toKick))) {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
