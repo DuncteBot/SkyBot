@@ -19,15 +19,24 @@
 
         <div class="right">
 
-            <a href="#" class="btn btn-large waves-effect waves-light"
-                    onclick="prepareCreateNew(); return false;"><i class="material-icons">add</i> Create new command</a>
+            <a href="#" class="btn btn-large waves-effect waves-light valign-wrapper"
+               onclick="prepareCreateNew(); return false;"><i class="left tiny material-icons">add</i> Create new
+                command</a>
 
         </div>
 
-        <div class="clearfix"></div><br/>
+        <div class="clearfix"></div>
+        <br/>
 
         <ul class="collection" id="commands">
-            <p class="center flow-text">Loading...</p>
+            <p class="center flow-text">
+                Loading...
+                <br />
+                <br />
+                <div class="progress">
+                    <div class="indeterminate"></div>
+                </div>
+            </p>
         </ul>
 
     </div>
@@ -39,11 +48,20 @@
                 <input type="text" id="commandName" name="commandName" placeholder="Name your command" maxlength="25">
                 <label for="commandName">Command name</label>
             </div>
-            <br />
+            <br/>
 
             <div>
                 <div id="editor"></div>
                 <div class="right"><span id="chars">0</span>/4000</div>
+                <br/>
+                <div class="switch right">
+                    <label>
+                        <input type="checkbox" name="autoresponse" id="autoresponse">
+                        <span class="lever"></span>
+                        <abbr class="white-text"
+                              title="Autoresponses are being called when the name of the custom command appears in a message">Autoresponse</abbr>
+                    </label>
+                </div>
                 <div class="clearfix"></div>
             </div>
 

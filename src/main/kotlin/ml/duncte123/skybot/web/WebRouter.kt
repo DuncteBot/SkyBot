@@ -200,6 +200,10 @@ class WebRouter(private val shardManager: ShardManager) {
                 post("") {
                     return@post CustomCommands.create(request, response, shardManager, variables)
                 }
+
+                delete("") {
+                    return@delete CustomCommands.delete(request, response, shardManager, variables)
+                }
             }
 
             post("/checkUserAndGuild") {

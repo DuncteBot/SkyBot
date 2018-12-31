@@ -32,6 +32,8 @@ public interface CustomCommand extends ICommand {
 
     long getGuildId();
 
+    boolean isAutoResponse();
+
     @Override
     default boolean isCustom() {
         return true;
@@ -62,6 +64,7 @@ public interface CustomCommand extends ICommand {
         return new JSONObject()
             .put("guildId", getGuildId())
             .put("name", getName())
+            .put("autoresponse", isAutoResponse())
             .put("message", getMessage());
     }
 }

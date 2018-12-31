@@ -26,11 +26,13 @@ public class CustomCommandImpl implements CustomCommand {
     private final String invoke;
     private final String message;
     private final long guildId;
+    private final boolean autoresponse;
 
-    public CustomCommandImpl(String invoke, String message, long guildId) {
+    public CustomCommandImpl(String invoke, String message, long guildId, boolean autoresponse) {
         this.invoke = invoke;
         this.message = message;
         this.guildId = guildId;
+        this.autoresponse = autoresponse;
     }
 
     @Override
@@ -46,5 +48,10 @@ public class CustomCommandImpl implements CustomCommand {
     @Override
     public String getName() {
         return invoke;
+    }
+
+    @Override
+    public boolean isAutoResponse() {
+        return autoresponse;
     }
 }
