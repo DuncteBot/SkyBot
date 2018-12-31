@@ -55,7 +55,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         customCommands.add(CustomCommandImpl(
                             res.getString("invoke"),
                             res.getString("message"),
-                            res.getLong("guildId")
+                            res.getLong("guildId"),
+                            false
                         ))
                     }
                 }

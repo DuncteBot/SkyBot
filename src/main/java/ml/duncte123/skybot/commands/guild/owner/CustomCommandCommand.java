@@ -238,12 +238,27 @@ public class CustomCommandCommand extends Command {
         return manager.getCustomCommand(name, guild) != null;
     }
 
-    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
-        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId));
+    private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
+        return registerCustomCommand(name, action, guildId, false, manager);
     }
 
-    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
-        final CustomCommand cmd = new CustomCommandImpl(customCommand.getName(), newMessage, customCommand.getGuildId());
+    public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId,
+                                                                          boolean autoresponse, CommandManager manager) {
+        return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
+    }
+
+    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
+        return editCustomCommand(customCommand, newMessage, false, manager);
+    }
+
+    public static boolean editCustomCommand(CustomCommand customCommand, String newMessage,
+                                            boolean autoresponse, CommandManager manager) {
+        final CustomCommand cmd = new CustomCommandImpl(
+            customCommand.getName(),
+            newMessage,
+            customCommand.getGuildId(),
+            autoresponse
+        );
         return manager.editCustomCommand(cmd);
     }
 }

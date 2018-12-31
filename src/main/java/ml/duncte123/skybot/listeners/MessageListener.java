@@ -25,6 +25,7 @@ import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
+import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.BadWordFilter;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
@@ -38,6 +39,8 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -96,6 +99,23 @@ public class MessageListener extends BaseListener {
                 Settings.PREFIX)
             );
             return;
+        }
+
+        final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
+
+        if (!autoResponses.isEmpty()) {
+            final String stripped = event.getMessage().getContentStripped().toLowerCase();
+
+            Optional<CustomCommand> match = autoResponses.stream()
+                .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
+
+            if (match.isPresent()) {
+                CustomCommand cmd = match.get();
+
+                commandManager.dispatchCommand(cmd, "",  List.of(), event);
+                return;
+            }
+
         }
 
         if (!rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&

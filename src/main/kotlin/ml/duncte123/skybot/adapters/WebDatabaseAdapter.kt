@@ -52,7 +52,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     customCommands.add(CustomCommandImpl(
                         j.getString("invoke"),
                         j.getString("message"),
-                        j.getLong("guildId")
+                        j.getLong("guildId"),
+                        j.getBoolean("autoresponse")
                     ))
                 }
 
