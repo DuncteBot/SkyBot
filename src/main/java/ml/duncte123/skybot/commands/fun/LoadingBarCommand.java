@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.loadingbar.LoadingBar;
+import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -30,6 +31,7 @@ import java.util.Calendar;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 public class LoadingBarCommand extends Command {
 
     public LoadingBarCommand() {
@@ -45,7 +47,7 @@ public class LoadingBarCommand extends Command {
         }
 
         final double progress = LoadingBar.getPercentage();
-        final int year = Calendar.getInstance().get(Calendar.YEAR);
+        final int year = Calendar.getInstance().get(1);
 
         try {
             ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")

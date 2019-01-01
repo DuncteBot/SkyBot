@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web.controllers.api
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand.*
 import ml.duncte123.skybot.web.WebHelpers
@@ -28,6 +29,7 @@ import spark.Request
 import spark.Response
 import spark.kotlin.halt
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 object CustomCommands {
 
     fun before(request: Request, response: Response) {
