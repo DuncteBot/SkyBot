@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 
@@ -39,7 +40,7 @@ class InstaCommand : Command() {
 
         val username = args.joinToString(separator = "")
 
-        WebUtils.ins.getJSONObject("https://apis.duncte123.me/insta/$username").async {
+        WebUtils.ins.getJSONObject("$API_HOST/insta/$username").async {
 
             if (!it.getBoolean("success")) {
                 MessageUtils.sendMsg(event, "No data found for this user")
@@ -50,7 +51,7 @@ class InstaCommand : Command() {
             val user = it.getJSONObject("user")
 
             val embed = EmbedUtils.defaultEmbed()
-                .setAuthor(user.getString("username"), null, user.getString("profile_pic_url"))
+                .setAuthor(user.getString("username"), "https://instagram.com/$username/", user.getString("profile_pic_url"))
                 .setTitle("Latest picture of $username", "https://instagram.com/$username/")
                 .setDescription(img.getString("caption"))
                 .setImage(img.getString("url"))

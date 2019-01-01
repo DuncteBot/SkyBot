@@ -135,7 +135,7 @@ public class HelpCommand extends Command {
 
     private String getCommandHelpMessage(ICommand cmd) {
         return "Command help for `" +
-            cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
+            cmd.getName() + "` : (`<required argument>` `[optional argument]`)\n" + cmd.help(cmd.getName()) +
             (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
             "\nSource code: <https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName() + '>';
     }

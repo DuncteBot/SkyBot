@@ -143,7 +143,8 @@ public class HelpEmbeds {
         final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
             .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-            .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
+            .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n")
+            .appendDescription("`<Required Argument>` `[Optional Argument]`");
 
         if (categories == null || categories.length == 0) {
             return embed
