@@ -80,10 +80,6 @@ public class GuildMemberListener extends BaseListener {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         final Guild guild = event.getGuild();
 
-        if (guild.getIdLong() == Command.supportGuildId) {
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
-        }
-
         if (event.getMember().equals(guild.getSelfMember())) {
             return;
         }
@@ -100,6 +96,10 @@ public class GuildMemberListener extends BaseListener {
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
             }
+        }
+
+        if (guild.getIdLong() == Command.supportGuildId) {
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
     }
 
