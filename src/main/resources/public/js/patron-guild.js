@@ -34,11 +34,7 @@ function submitForm(token) {
     })
         .then((blob) => blob.json())
         .then((json) => {
-
-            window.scrollTo(0, 0);
-            _("btn").disabled = false;
-            _("btn").classList.remove("disabled");
-            _("msg").innerHTML = "";
+            reset("");
 
             if (json.code !== 200) {
                 _("confirm").innerHTML = `ERROR: <b>${getMessage(json.message)}</b>`;
@@ -70,11 +66,15 @@ function submitForm(token) {
                     `;
         })
         .catch((e) => {
-            window.scrollTo(0, 0);
-            _("btn").disabled = false;
-            _("btn").classList.remove("disabled");
-            _("msg").innerHTML = e.message;
+            reset(e.message);
             console.log(e);
             console.error(e)
         });
+}
+
+function reset(message) {
+    window.scrollTo(0, 0);
+    _("btn").disabled = false;
+    _("btn").classList.remove("disabled");
+    _("msg").innerHTML = message;
 }
