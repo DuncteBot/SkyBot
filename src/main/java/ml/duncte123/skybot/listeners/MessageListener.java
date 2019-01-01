@@ -21,7 +21,6 @@ package ml.duncte123.skybot.listeners;
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -51,8 +50,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    private final BadWordFilter wordFilter = new BadWordFilter();
     protected final SpamFilter spamFilter = new SpamFilter();
+    private final BadWordFilter wordFilter = new BadWordFilter();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -114,7 +113,7 @@ public class MessageListener extends BaseListener {
             if (match.isPresent()) {
                 final CustomCommand cmd = match.get();
 
-                commandManager.dispatchCommand(cmd, "",  Arrays.asList(split).subList(1, split.length), event);
+                commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
                 return;
             }
 
