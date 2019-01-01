@@ -102,15 +102,17 @@ public class CustomCommandCommand extends Command {
     }
 
     private void deleteOrShowCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager) {
+        final String commandName = args.get(1);
+        final long guildid = event.getGuild().getIdLong();
+
         //Check for deleting
         if (args.get(0).equalsIgnoreCase("raw")) {
-            final String commandName = args.get(1);
-            final long guildid = event.getGuild().getIdLong();
 
             if (!commandExists(commandName, guildid, manager)) {
                 sendMsg(event, "No command was found for this name");
                 return;
             }
+
             final CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
             sendMsg(event, "Raw data for `" + commandName + "`:```perl\n" + cmd.getMessage() + "```");
         } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
@@ -119,9 +121,6 @@ public class CustomCommandCommand extends Command {
                 sendMsg(event, "You need the \"Administrator\" permission to add or remove commands");
                 return;
             }
-
-            final String commandName = args.get(1);
-            final long guildid = event.getGuild().getIdLong();
 
             if (!commandExists(commandName, guildid, manager)) {
                 sendMsg(event, "No command was found for this name");

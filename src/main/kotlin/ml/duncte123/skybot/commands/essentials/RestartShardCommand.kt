@@ -28,7 +28,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.JSONMessageErrors
+import ml.duncte123.skybot.utils.JSONMessageErrorsHelper
 import net.dv8tion.jda.bot.sharding.ShardManager
 import java.util.concurrent.TimeUnit
 
@@ -89,7 +89,7 @@ class RestartShardCommand : Command() {
             }
         } catch (ex: NumberFormatException) {
             if (Settings.useJSON) {
-                JSONMessageErrors.sendErrorJSON(event.message, ex, false)
+                JSONMessageErrorsHelper.sendErrorJSON(event.message, ex, false)
             } else {
                 MessageUtils.sendError(event.message)
             }

@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class Variables {
+public final class Variables {
 
     private final String googleBaseUrl;
     private final boolean isSql;

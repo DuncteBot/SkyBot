@@ -134,35 +134,60 @@ public class EvalFilter extends GroovyValueFilter {
      */
     @Override
     public final Object filter(Object o) {
-        if (o == null || ALLOWED_TYPES.contains(o.getClass()))
+        if (o == null || ALLOWED_TYPES.contains(o.getClass())) {
             return o;
+        }
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
-        if (o instanceof Category)
+        if (o instanceof Category) {
             return new CategoryDelegate((Category) o);
-        if (o instanceof TextChannel)
+        }
+
+        if (o instanceof TextChannel) {
             return new TextChannelDelegate((TextChannel) o);
-        if (o instanceof VoiceChannel)
+        }
+
+        if (o instanceof VoiceChannel) {
             return new VoiceChannelDelegate((VoiceChannel) o);
-        if (o instanceof Channel)
+        }
+
+        if (o instanceof Channel) {
             return new ChannelDelegate((Channel) o);
-        if (o instanceof Guild)
+        }
+
+        if (o instanceof Guild) {
             return new GuildDelegate((Guild) o);
-        if (o instanceof JDA)
+        }
+
+        if (o instanceof JDA) {
             return new JDADelegate((JDA) o);
-        if (o instanceof Member)
+        }
+
+        if (o instanceof Member) {
             return new MemberDelegate((Member) o);
-        if (o instanceof Presence)
+        }
+
+        if (o instanceof Presence) {
             return new PresenceDelegate((Presence) o);
-        if (o instanceof Role)
+        }
+
+        if (o instanceof Role) {
             return new RoleDelegate((Role) o);
-        if (o instanceof User)
+        }
+
+        if (o instanceof User) {
             return new UserDelegate((User) o);
+        }
+
         ////////////////////////////////////////////
-        if (o instanceof Script)
+
+        if (o instanceof Script) {
             return new ScriptDelegate((Script) o);
-        if (o instanceof Closure)
+        }
+
+        if (o instanceof Closure) {
             throw new SecurityException("Closures are not allowed.");
+        }
 
         throw new DoomedException("Class not allowed: " + o.toString().split(" ")[1]);
     }
