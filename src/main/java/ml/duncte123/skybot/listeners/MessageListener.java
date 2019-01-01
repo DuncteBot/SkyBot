@@ -21,6 +21,7 @@ package ml.duncte123.skybot.listeners;
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -101,6 +102,7 @@ public class MessageListener extends BaseListener {
             return;
         }
 
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
         if (!autoResponses.isEmpty()) {
@@ -112,7 +114,7 @@ public class MessageListener extends BaseListener {
             if (match.isPresent()) {
                 final CustomCommand cmd = match.get();
 
-                commandManager.dispatchCommand(cmd, "",  List.of(), event);
+                commandManager.dispatchCommand(cmd, "",  Arrays.asList(split).subList(1, split.length), event);
                 return;
             }
 
@@ -135,8 +137,6 @@ public class MessageListener extends BaseListener {
             commandManager.runCommand(event);
             return;
         }
-
-        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         //Handle the chat command
         final ICommand cmd = commandManager.getCommand("chat");
 
