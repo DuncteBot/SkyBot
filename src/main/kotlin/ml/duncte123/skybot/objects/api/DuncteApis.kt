@@ -80,7 +80,6 @@ class DuncteApis(private val apiKey: String) {
             command.getBoolean("autoresponse")
         ))
 
-
         return true
     }
 
