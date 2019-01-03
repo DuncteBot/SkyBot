@@ -125,12 +125,17 @@ public class FakeUser implements User {
 
     @Override
     public String getAsMention() {
-        return String.format("%s#%s", this.name, this.discrm);
+        return getAsTag();
     }
 
     @Override
     public long getIdLong() {
         return this.id;
+    }
+
+    @Override
+    public String getAsTag() {
+        return getName() + '#' + getDiscriminator();
     }
 
     @Override
@@ -140,12 +145,13 @@ public class FakeUser implements User {
         final boolean leftJustified = (flags & FormattableFlags.LEFT_JUSTIFY) == FormattableFlags.LEFT_JUSTIFY;
 
         String out;
-        if (!alt)
+        if (!alt) {
             out = getAsMention();
-        else if (upper)
-            out = String.format(formatter.locale(), "%S#%s", getName(), getDiscriminator());
-        else
-            out = String.format(formatter.locale(), "%s#%s", getName(), getDiscriminator());
+        } else if (upper) {
+            out = getAsTag().toUpperCase();
+        } else {
+            out = getAsTag();
+        }
 
         MiscUtil.appendTo(formatter, width, precision, leftJustified, out);
     }
