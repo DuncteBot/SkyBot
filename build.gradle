@@ -106,6 +106,7 @@ dependencies {
 
     //Spotify API
     implementation group: 'se.michaelthelin.spotify', name: 'spotify-web-api-java', version: '2.1.1'
+    
     // Youtube api
     implementation group: 'com.google.apis', name: 'google-api-services-youtube', version: 'v3-rev206-1.25.0'
 
@@ -129,6 +130,9 @@ dependencies {
     
     // https://mvnrepository.com/artifact/org.ocpsoft.prettytime/prettytime
     implementation group: 'org.ocpsoft.prettytime', name: 'prettytime', version: '4.0.2.Final'
+    
+    // Webhooks
+    compile group: 'club.minnced', name: 'discord-webhooks', version: '0.1.4'
 }
 
 task sourcesForRelease(type: Copy) {

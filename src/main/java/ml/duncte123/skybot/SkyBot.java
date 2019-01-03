@@ -18,6 +18,10 @@
 
 package ml.duncte123.skybot;
 
+import ch.qos.logback.classic.LoggerContext;
+import ch.qos.logback.classic.encoder.PatternLayoutEncoder;
+import ch.qos.logback.classic.filter.ThresholdFilter;
+import com.almightyalpaca.discord.jdabutler.util.logging.WebhookAppender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.neovisionaries.ws.client.WebSocketFactory;
@@ -73,6 +77,8 @@ public final class SkyBot {
         final DunctebotConfig config = variables.getConfig();
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
+
+        setWebhookLogger(config.webhook);
 
         WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
         EmbedUtils.setEmbedBuilder(
@@ -158,6 +164,36 @@ public final class SkyBot {
             1, 1, TimeUnit.DAYS);
     }
 
+    private void setWebhookLogger(DunctebotConfig.Webhook webhook) {
+
+        if (!webhook.enabled) {
+            return;
+        }
+
+        final LoggerContext lc = (LoggerContext) LoggerFactory.getILoggerFactory();
+
+        final ThresholdFilter filter = new ThresholdFilter();
+        filter.setLevel(webhook.level);
+        filter.setContext(lc);
+        filter.start();
+
+        final PatternLayoutEncoder encoder = new PatternLayoutEncoder();
+        encoder.setPattern(webhook.pattern);
+        encoder.setContext(lc);
+        encoder.start();
+
+        final WebhookAppender appender = new WebhookAppender();
+        appender.setEncoder(encoder);
+        appender.addFilter(filter);
+        appender.setWebhookUrl(webhook.webhookurl);
+        appender.setName("ERROR_WH");
+        appender.setContext(lc);
+        appender.start();
+
+        final Logger logger = LoggerFactory.getLogger(ch.qos.logback.classic.Logger.ROOT_LOGGER_NAME);
+        ((ch.qos.logback.classic.Logger) logger).addAppender(appender);
+    }
+
     /**
      * This is our main method
      *
@@ -221,7 +257,7 @@ public final class SkyBot {
         config.lavalink = lavalink;
 
         config.use_database = true;
-        config.sql = new DunctebotConfig.Sql();
+        config.webhook = new DunctebotConfig.Webhook();
 
         final GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
         final String json = builder.create().toJson(config);

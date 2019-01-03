@@ -27,8 +27,8 @@ public class DunctebotConfig {
     public Apis apis;
     public Genius genius;
     public Lavalink lavalink;
+    public Webhook webhook;
     public boolean use_database;
-    public Sql sql;
 
     public static class Discord {
         public Game game;
@@ -36,7 +36,6 @@ public class DunctebotConfig {
         public String prefix;
         public String botOwnerId;
         public Oauth oauth;
-        public String embedColour;
         public int totalShards;
         public boolean local;
         public String token;
@@ -97,16 +96,15 @@ public class DunctebotConfig {
         }
     }
 
-    public static class Sql {
-        public String host;
-        public int port;
-        public String database;
-        public String username;
-        public String password;
-    }
-
     public static class Genius {
         public String client_secret;
         public String client_id;
+    }
+
+    public static class Webhook {
+        public boolean enabled;
+        public String webhookurl;
+        public String level;
+        public String pattern;
     }
 }
