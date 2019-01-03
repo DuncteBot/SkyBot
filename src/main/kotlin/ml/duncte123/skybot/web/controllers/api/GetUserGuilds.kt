@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -29,6 +29,7 @@ import org.json.JSONObject
 import spark.Request
 import spark.Response
 import java.util.*
+import java.util.concurrent.ThreadLocalRandom
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object GetUserGuilds {
@@ -44,8 +45,9 @@ object GetUserGuilds {
         }
 
         val guilds = ArrayList<JSONObject>()
+        val guildsRequest = oAuth2Client.getGuilds(WebHelpers.getSession(request, oAuth2Client)).complete()
 
-        oAuth2Client.getGuilds(WebHelpers.getSession(request, oAuth2Client)).complete().forEach {
+        guildsRequest.forEach {
             if (it.hasPermission(Permission.ADMINISTRATOR) || it.hasPermission(Permission.MANAGE_SERVER)) {
                 guilds.add(guildToJson(it, shardManager))
             }
@@ -54,6 +56,7 @@ object GetUserGuilds {
         return JSONObject()
             .put("status", "success")
             .put("guilds", guilds)
+            .put("total", guildsRequest.size)
             .put("code", response.status())
     }
 
@@ -64,7 +67,8 @@ object GetUserGuilds {
         val icon = if (!guild.iconUrl.isNullOrEmpty()) {
             guild.iconUrl
         } else {
-            "https://cdn.discordapp.com/embed/avatars/0.png"
+            val number = ThreadLocalRandom.current().nextInt(0, 5)
+            "https://cdn.discordapp.com/embed/avatars/$number.png"
         }
 
         return JSONObject()

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -44,10 +44,6 @@ public class GuildMusicManager {
      */
     public final TrackScheduler scheduler;
     private final GuildSettings settings;
-    /**
-     * This is what actually sends the audio
-     */
-    private final AudioPlayerSenderHandler sendHandler;
 
     /**
      * Constructor
@@ -58,7 +54,6 @@ public class GuildMusicManager {
     public GuildMusicManager(Guild g, Variables variables) {
         player = LavalinkManager.ins.createPlayer(g.getIdLong());
         scheduler = new TrackScheduler(player, this);
-        sendHandler = new AudioPlayerSenderHandler(player);
         player.addListener(scheduler);
         this.settings = GuildSettingsUtils.getGuild(g, variables);
     }
@@ -69,7 +64,7 @@ public class GuildMusicManager {
      * @return The {@link AudioPlayerSenderHandler thing} that sends our audio
      */
     public AudioPlayerSenderHandler getSendHandler() {
-        return sendHandler;
+        return new AudioPlayerSenderHandler(player);
     }
 
     boolean isAnnounceTracks() {

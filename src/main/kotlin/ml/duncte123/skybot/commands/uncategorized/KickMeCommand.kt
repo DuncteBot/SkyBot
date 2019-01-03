@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -48,8 +48,8 @@ class KickMeCommand : Command() {
                 //Kick the user
                 MessageUtils.sendMsg(event, "Your kick will commerce in 20 seconds") {
                     it.guild.controller.kick(event.member)
-                        .reason("${String.format("%#s", event.author)} ran the kickme command and got kicked")
-                        .queueAfter(20L, TimeUnit.SECONDS) { _ ->
+                        .reason("${event.author.asTag} ran the kickme command and got kicked")
+                        .queueAfter(20L, TimeUnit.SECONDS) {
                             ModerationUtils.modLog(event.jda.selfUser,
                                 event.author, "kicked", "Used the kickme command", ctx.guild)
                         }

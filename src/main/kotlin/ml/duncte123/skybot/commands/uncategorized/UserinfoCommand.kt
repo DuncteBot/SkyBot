@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -87,7 +87,7 @@ class UserinfoCommand : Command() {
 
             if (ctx.invoke == "avatar") {
                 MessageUtils.sendMsg(event,
-                    "**${String.format("%#s", u)}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
+                    "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
                 return
             }
 
@@ -104,7 +104,7 @@ class UserinfoCommand : Command() {
         u = m.user
 
         if (ctx.invoke == "avatar") {
-            MessageUtils.sendMsg(event, "**${String.format("%#s", u)}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
+            MessageUtils.sendMsg(event, "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
             return
         }
 
@@ -123,7 +123,7 @@ class UserinfoCommand : Command() {
             .setThumbnail(user.effectiveAvatarUrl)
             .setDescription("""User info for ${user.asMention}
                         |
-                        |**Username + Discriminator:** ${String.format("%#s", user)}
+                        |**Username + Discriminator:** ${user.asTag}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
@@ -192,7 +192,7 @@ class UserinfoCommand : Command() {
             .setThumbnail(u.effectiveAvatarUrl)
             .setDescription("""User info for ${m.asMention}
                         |
-                        |**Username + Discriminator:** ${String.format("%#s", u)}
+                        |**Username + Discriminator:** ${u.asTag}
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -58,7 +58,7 @@ class DeHoistCommand : Command() {
         }
 
         event.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
-            .reason("de-hoist by ${String.format("%#s", event.author)}").queue()
+            .reason("de-hoist by ${event.author.asTag}").queue()
         sendSuccess(event.message)
     }
 

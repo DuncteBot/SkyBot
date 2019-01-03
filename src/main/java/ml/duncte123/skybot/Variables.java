@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -41,7 +41,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class Variables {
+public final class Variables {
 
     private final String googleBaseUrl;
     private final boolean isSql;

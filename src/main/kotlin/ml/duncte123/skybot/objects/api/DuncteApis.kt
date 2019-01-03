@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -23,6 +23,8 @@ import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
 import me.duncte123.botcommons.web.WebUtilsErrorUtils
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import okhttp3.Request
 import okhttp3.RequestBody
@@ -57,6 +59,28 @@ class DuncteApis(private val apiKey: String) {
         val request = defaultRequest("customcommands/$guildId/$invoke").delete()
 
         return executeRequest(request).getBoolean("success")
+    }
+
+    fun restoreCustomCommand(commandId: Int): Boolean {
+        val request = defaultRequest("customcommands/$commandId")
+            .put(RequestBody.create(null, JSONObject().toString()))
+        val response = executeRequest(request)
+
+        if (!response.getBoolean("success")) {
+            return false
+        }
+
+        val command = response.getJSONObject("data")
+        val commandManager = Variables.getInstance().commandManager
+
+        commandManager.customCommands.add(CustomCommandImpl(
+            command.getString("invoke"),
+            command.getString("message"),
+            command.getLong("guildId"),
+            command.getBoolean("autoresponse")
+        ))
+
+        return true
     }
 
     fun getGuildSettings(): JSONArray {
@@ -325,7 +349,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     companion object {
-         const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "https://apis.duncte123.me"
 //        const val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }

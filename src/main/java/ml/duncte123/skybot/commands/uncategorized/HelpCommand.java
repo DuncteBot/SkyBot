@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -135,7 +135,7 @@ public class HelpCommand extends Command {
 
     private String getCommandHelpMessage(ICommand cmd) {
         return "Command help for `" +
-            cmd.getName() + "` :\n" + cmd.help(cmd.getName()) +
+            cmd.getName() + "` : (`<required argument>` `[optional argument]`)\n" + cmd.help(cmd.getName()) +
             (cmd.getAliases().length > 0 ? "\nAliases: " + String.join(", ", cmd.getAliases()) : "") +
             "\nSource code: <https://apis.duncte123.me/file/" + cmd.getClass().getSimpleName() + '>';
     }

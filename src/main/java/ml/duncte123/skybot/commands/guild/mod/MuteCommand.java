@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -82,7 +82,7 @@ public class MuteCommand extends Command {
         }
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
+            .reason("Muted by" + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
                 ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                 sendSuccess(event.getMessage());
             }

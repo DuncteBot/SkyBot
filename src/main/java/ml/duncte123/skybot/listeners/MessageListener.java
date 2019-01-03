@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -50,8 +50,8 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    private final BadWordFilter wordFilter = new BadWordFilter();
     protected final SpamFilter spamFilter = new SpamFilter();
+    private final BadWordFilter wordFilter = new BadWordFilter();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -101,6 +101,7 @@ public class MessageListener extends BaseListener {
             return;
         }
 
+        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
         if (!autoResponses.isEmpty()) {
@@ -112,7 +113,7 @@ public class MessageListener extends BaseListener {
             if (match.isPresent()) {
                 final CustomCommand cmd = match.get();
 
-                commandManager.dispatchCommand(cmd, "",  List.of(), event);
+                commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
                 return;
             }
 
@@ -135,8 +136,6 @@ public class MessageListener extends BaseListener {
             commandManager.runCommand(event);
             return;
         }
-
-        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
         //Handle the chat command
         final ICommand cmd = commandManager.getCommand("chat");
 

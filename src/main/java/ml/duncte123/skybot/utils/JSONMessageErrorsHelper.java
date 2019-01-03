@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -31,15 +31,15 @@ import org.slf4j.LoggerFactory;
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 import static me.duncte123.botcommons.messaging.MessageUtils.CUSTOM_QUEUE_ERROR;
 
-@SuppressWarnings({"unused", "WeakerAccess"})
+@SuppressWarnings({"unused"})
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
-public class JSONMessageErrors {
+public class JSONMessageErrorsHelper {
 
     /////
-    private static Logger logger = LoggerFactory.getLogger(JSONMessageErrors.class);
+    private static Logger logger = LoggerFactory.getLogger(JSONMessageErrorsHelper.class);
 
     /**
      * This will react with a ❌ if the user doesn't have permission to run the command or any other error while

@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -143,7 +143,8 @@ public class HelpEmbeds {
         final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
             .setTitle("Click here for the support guild", "https://discord.gg/NKM9Xtk")
-            .setDescription("Use `" + prefix + "help [command]` to get more info about a command");
+            .setDescription("Use `" + prefix + "help [command]` to get more info about a command\n")
+            .appendDescription("`<Required Argument>` `[Optional Argument]`");
 
         if (categories == null || categories.length == 0) {
             return embed

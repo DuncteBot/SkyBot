@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -30,9 +30,7 @@ import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.MessageBuilder
-import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.lang.management.ManagementFactory
-import java.time.temporal.ChronoUnit
 
 @Authors(authors = [
     Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -48,11 +46,8 @@ class OneLinerCommands : Command() {
     override fun executeCommand(ctx: CommandContext) {
 
         val event = ctx.event
-        val args = ctx.args
 
         when (ctx.invoke) {
-            "ping" -> pingCommand(event)
-
             "cookie" -> sendMsg(event, "<:blobnomcookie_secret:317636549342789632>")
 
             "trigger" -> sendEmbed(event, EmbedUtils.embedImage("https://cdn.discordapp.com/attachments/94831883505905664/176181155467493377/triggered.gif"))
@@ -68,22 +63,17 @@ class OneLinerCommands : Command() {
                 )
             }
 
-
             // "event.jda.selfUser.id" might be invalid "jda.asBot().getApplicationInfo().complete().id"
-            "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=${event.jda.selfUser.id}&scope=bot&permissions=8>")
+            "invite" -> sendMsg(event, "Invite me with this link:\n<https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1>")
 
             "uptime" -> sendMsg(event, AirUtils.getUptime(ManagementFactory.getRuntimeMXBean().uptime, true))
 
             "quote" -> WebUtils.ins.getText("http://inspirobot.me/api?generate=true").async {
                 sendEmbed(event, EmbedUtils.embedImage(it))
             }
-            "yesno" -> yesnoCommand(event)
 
-
-            "donate" -> donateCommand(args, event)
-
-            "screenfetch" -> sendMsg(event, "```\n${screenFetchCommand()}```")
-            //val test =  "```${"screenfetch -N".execute().text.replaceAll("`", "​'").replaceAll("\u001B\\[[;\\d]*m", "")}```"
+            "screenfetch" -> sendMsg(event, "```\n${Runtime.getRuntime().exec("screenfetch -N")
+                .getString().replace("`", "​'").replace("\u001B\\[[;\\d]*m", "")}```")
 
             "xkcd" -> {
                 WebUtils.ins.scrapeWebPage("https://c.xkcd.com/random/comic/").async {
@@ -91,67 +81,13 @@ class OneLinerCommands : Command() {
                 }
             }
 
-            "reverse" -> {
-                if (args.isEmpty()) {
-                    sendMsg(event, "Missing arguments")
-                    return
-                }
-
-                val message = """**${String.format("%#s", ctx.author)}:**
-                    |**Input:** ${ctx.argsRaw}
-                    |**Output:** ${ctx.argsRaw.reversed()}
-                """.trimMargin()
-
-                sendMsg(event, message)
-            }
-
             else -> println("Invoke was invalid: ${ctx.invoke}")
         }
-    }
-
-    private fun donateCommand(args: List<String>, event: GuildMessageReceivedEvent) {
-        val amount = if (args.isNotEmpty()) "/" + args.joinToString(separator = "") else ""
-        sendMsg(event, """Hey there thank you for your interest in supporting the bot.
-                        |You can use one of the following methods to donate:
-                        |**PayPal:** <https://paypal.me/duncte123$amount>
-                        |**Patreon:** <https://patreon.com/DuncteBot>
-                        |
-                        |All donations are going directly into development of the bot ❤
-                    """.trimMargin())
-    }
-
-    private fun yesnoCommand(event: GuildMessageReceivedEvent) {
-        WebUtils.ins.getJSONObject("https://yesno.wtf/api").async {
-            sendEmbed(event, EmbedUtils.defaultEmbed()
-                .setTitle(it.getString("answer"))
-                .setImage(it.getString("image"))
-                .build())
-        }
-    }
-
-    private fun pingCommand(event: GuildMessageReceivedEvent) {
-        sendMsg(event, "PONG!") {
-            it.editMessage("PONG!\n" +
-                "Rest ping: ${event.message.creationTime.until(it.creationTime, ChronoUnit.MILLIS)}ms\n" +
-                "Websocket ping: ${event.jda.ping}ms\n" +
-                "Average shard ping: ${event.jda.asBot().shardManager.averagePing}ms").queue()
-        }
-    }
-
-    private fun screenFetchCommand(): String {
-        val command = Runtime.getRuntime().exec("screenfetch -N").getString()
-//        val command = Runtime.getRuntime().exec("help").getString()
-        return command.replace("`", "​'").replace("\u001B\\[[;\\d]*m", "")
     }
 
     override fun help(invoke: String?): String {
 
         return when (invoke) {
-            "ping" -> {
-                """Pong
-                    |Usage: `${Settings.PREFIX}$invoke`
-                """.trimMargin()
-            }
             "cookie" -> {
                 """blobnomcookie
                     |Usage: `${Settings.PREFIX}$invoke`
@@ -192,28 +128,15 @@ class OneLinerCommands : Command() {
                     |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
-            "yesno" -> {
-                """Chooses between yes or no
-                    |Usage: `${Settings.PREFIX}$invoke`
-                """.trimMargin()
-            }
-            "donate" -> {
-                """Gives you a link to donate for the bot
-                    |Usage: `${Settings.PREFIX}$invoke [amount]`
-                """.trimMargin()
-            }
             "xkcd" -> """Get a random comic from xkcd.com
                 |Usage: `${Settings.PREFIX}$invoke`
             """.trimMargin()
-            "reverse" -> """Reverses a string
-                |Usage: `${Settings.PREFIX}$invoke <text>`
-            """.trimMargin()
+
             else -> "invalid invoke"
         }
     }
 
-    override fun help() = """`${Settings.PREFIX}ping` => Shows the delay from the bot to the discord servers.
-            |`${Settings.PREFIX}cookie` => blobnomcookie.
+    override fun help() = """`${Settings.PREFIX}cookie` => blobnomcookie.
             |`${Settings.PREFIX}trigger` => Use when you are triggered.
             |`${Settings.PREFIX}spam` => What do you think 😏
             |`${Settings.PREFIX}wam` => You need more WAM!.
@@ -221,14 +144,10 @@ class OneLinerCommands : Command() {
             |`${Settings.PREFIX}invite` => Gives you the bot invite
             |`${Settings.PREFIX}uptime` => Shows the bot uptime
             |`${Settings.PREFIX}quote` => Shows an inspiring quote
-            |`${Settings.PREFIX}yesno` => Chooses between yes or no
-            |`${Settings.PREFIX}donate [amount]` => Gives you a link to donate for the bot
             |`${Settings.PREFIX}xkcd` => Get a random comic from xkcd.com
-            |`${Settings.PREFIX}reverse <text>` => reverses a string
     """.trimMargin()
 
-    override fun getName() = "ping"
+    override fun getName() = "cookie"
 
-    override fun getAliases() = arrayOf("cookie", "trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "yesno",
-        "insta", "donate", "xkcd", "reverse", "screenfetch")
+    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote","xkcd", "screenfetch")
 }

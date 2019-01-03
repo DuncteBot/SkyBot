@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -32,7 +32,7 @@ import ml.duncte123.skybot.exceptions.DoomedException
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import ml.duncte123.skybot.utils.JSONMessageErrors.sendErrorJSON
+import ml.duncte123.skybot.utils.JSONMessageErrorsHelper.sendErrorJSON
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import net.dv8tion.jda.core.requests.RestAction
@@ -114,7 +114,7 @@ class EvalCommand : Command() {
         val staticImports = listOf(
             "ml.duncte123.skybot.objects.EvalFunctions.*",
             "me.duncte123.botcommons.messaging.MessageUtils.*",
-            "ml.duncte123.skybot.utils.JSONMessageErrors.*"
+            "ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*"
         )
 
         importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +

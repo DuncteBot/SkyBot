@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -80,10 +80,6 @@ public class GuildMemberListener extends BaseListener {
     public void onGuildMemberLeave(GuildMemberLeaveEvent event) {
         final Guild guild = event.getGuild();
 
-        if (guild.getIdLong() == Command.supportGuildId) {
-            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
-        }
-
         if (event.getMember().equals(guild.getSelfMember())) {
             return;
         }
@@ -100,6 +96,10 @@ public class GuildMemberListener extends BaseListener {
             if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
             }
+        }
+
+        if (guild.getIdLong() == Command.supportGuildId) {
+            handlePatronRemoval(event.getUser().getIdLong(), event.getJDA().asBot().getShardManager());
         }
     }
 
@@ -180,7 +180,7 @@ public class GuildMemberListener extends BaseListener {
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
             .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-            .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
+            .replaceAll("\\{\\{USER_FULL}}", event.getUser().getAsTag())
             .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
             .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
             .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")

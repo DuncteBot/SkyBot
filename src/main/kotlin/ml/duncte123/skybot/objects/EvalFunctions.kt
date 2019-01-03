@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -70,11 +70,10 @@ class EvalFunctions {
         @JvmStatic
         fun getSharedGuilds(jda: JDA, member: Member): String {
             val shardManager = jda.asBot().shardManager
-            val user = member
 
             var out = ""
 
-            shardManager.guildCache.filter { it.memberCache.contains(user) }.forEach {
+            shardManager.getMutualGuilds(member.user).forEach {
                 out += "[Shard: ${it.jda.shardInfo.shardId}]: $it\n"
             }
 
@@ -93,6 +92,19 @@ class EvalFunctions {
             variables.databaseAdapter.loadGuildSetting(guildId) {
                 variables.guildSettings.put(guildId, it)
             }
+        }
+
+        @JvmStatic
+        fun restoreCustomCommand(commandId: Int): String {
+            val variables = Variables.getInstance()
+
+            val bool = variables.apis.restoreCustomCommand(commandId)
+
+            if (bool) {
+                return "Command Restored"
+            }
+
+            return "Could not restore command"
         }
     }
 }

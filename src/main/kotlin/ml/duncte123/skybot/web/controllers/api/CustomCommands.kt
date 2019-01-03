@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.web.controllers.api
 
+import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.commands.guild.owner.CustomCommandCommand.*
 import ml.duncte123.skybot.web.WebHelpers
@@ -28,6 +29,7 @@ import spark.Request
 import spark.Response
 import spark.kotlin.halt
 
+@Author(nickname = "duncte123", author = "Duncan Sterken")
 object CustomCommands {
 
     fun before(request: Request, response: Response) {

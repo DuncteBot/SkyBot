@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -71,7 +71,7 @@ class SkipCommand : MusicCommand() {
 
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Now playing: ${mng.player.playingTrack.info.title}\n" +
-                "Requester: ${String.format("%#s", user)}")
+                "Requester: ${user.asTag}")
         } else {
             MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Queue is now empty.")

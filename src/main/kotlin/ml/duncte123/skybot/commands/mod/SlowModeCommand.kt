@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -61,7 +61,7 @@ class SlowModeCommand : Command() {
         val delay = ctx.args[0]
 
         if (delay == "off") {
-            ctx.channel.manager.setSlowmode(0).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+            ctx.channel.manager.setSlowmode(0).reason("Requested by ${ctx.author.asTag}").queue()
             MessageUtils.sendSuccess(ctx.message)
             return
         }
@@ -78,7 +78,7 @@ class SlowModeCommand : Command() {
             return
         }
 
-        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
         MessageUtils.sendSuccess(ctx.message)
 
     }

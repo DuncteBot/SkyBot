@@ -1,6 +1,6 @@
 /*
  * Skybot, a multipurpose discord bot
- *      Copyright (C) 2017 - 2018  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
+ *      Copyright (C) 2017 - 2019  Duncan "duncte123" Sterken & Ramid "ramidzkh" Khan
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -76,7 +76,7 @@ object FindUserAndGuild {
         val userJson = JSONObject()
             .put("id", user.id)
             .put("name", user.name)
-            .put("formatted", String.format("%#s", user))
+            .put("formatted", user.asTag)
 
         return JSONObject()
             .put("status", "success")
