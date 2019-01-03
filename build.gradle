@@ -40,8 +40,8 @@ plugins {
 }
 apply plugin: 'kotlin'
 
-group = "ml.duncte123.skybot"
-version "3.85.0_${getGitHash()}"
+group = 'ml.duncte123.skybot'
+version "3.85.1_${getGitHash()}"
 
 def javaVersion = JavaVersion.VERSION_1_10
 
@@ -79,7 +79,7 @@ dependencies {
 
     //JDA (java discord api)
 //    implementation (group: 'com.github.DV8FromTheWorld', name: 'JDA', version: 'a7c5b3c') {
-    implementation(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_450') {
+    implementation(group: 'net.dv8tion', name: 'JDA', version: '3.8.1_453') {
         exclude module: 'opus-java'
     }
 
@@ -158,20 +158,20 @@ compileJava {
 
     options.encoding = 'UTF-8'
 
-    options.compilerArgs += ["-Xlint:deprecation", "-Xlint:unchecked"]
+    options.compilerArgs += ['-Xlint:deprecation', '-Xlint:unchecked']
 
     dependsOn generateJavaSources
 }
 
 shadowJar {
-    mainClassName = "ml.duncte123.skybot.SkyBot"
+    mainClassName = 'ml.duncte123.skybot.SkyBot'
     classifier = null
-    libsDirName = "../"
+    libsDirName = '../'
 }
 
 compileKotlin {
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = '1.8'
     }
 }
 
@@ -204,7 +204,7 @@ def getGitHash() {
         return stdout.toString().trim()
     } catch (Throwable ignored) {
         // Probably ramidzkh's problem
-        return 'unknown'
+        return 'DEV'
     }
 }
 

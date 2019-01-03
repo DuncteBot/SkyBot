@@ -98,14 +98,14 @@ public class TempMuteCommand extends TempBanCommand {
         ctx.getDatabaseAdapter().createMute(
             author.getIdLong(),
             mutee.getIdLong(),
-            String.format("%#s", mutee),
+            mutee.getAsTag(),
             finalDate,
             event.getGuild().getIdLong()
         );
 
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + String.format("%#s", author) + ": " + fReason)
+            .reason("Muted by" + author.getAsTag() + ": " + fReason)
             .queue(success -> {
                 ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
                 sendSuccess(event.getMessage());

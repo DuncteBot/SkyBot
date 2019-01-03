@@ -75,7 +75,7 @@ class WarnCommand : Command() {
             reason = args.subList(1, args.size).joinToString(separator = " ")
         }
 
-        val dmMessage = """You have been warned by ${String.format("%#s", event.author)}
+        val dmMessage = """You have been warned by ${event.author.asTag}
             |Reason: ${if (reason.isEmpty()) "No reason given" else "`$reason`"}
         """.trimMargin()
 

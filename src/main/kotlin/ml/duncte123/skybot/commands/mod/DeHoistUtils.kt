@@ -58,7 +58,7 @@ class DeHoistCommand : Command() {
         }
 
         event.guild.controller.setNickname(toDehoist, "\u25AA" + toDehoist.effectiveName)
-            .reason("de-hoist by ${String.format("%#s", event.author)}").queue()
+            .reason("de-hoist by ${event.author.asTag}").queue()
         sendSuccess(event.message)
     }
 

@@ -31,7 +31,7 @@ class ReverseCommand : Command() {
             return
         }
 
-        val message = """**${String.format("%#s", ctx.author)}:**
+        val message = """**${ctx.author.asTag}:**
                     |**Input:** ${ctx.argsRaw}
                     |**Output:** ${ctx.argsRaw.reversed()}
                 """.trimMargin()

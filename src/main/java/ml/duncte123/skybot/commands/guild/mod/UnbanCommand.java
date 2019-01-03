@@ -69,14 +69,15 @@ public class UnbanCommand extends Command {
 
                 for (final Guild.Ban ban : list) {
                     final User bannedUser = ban.getUser();
-                    final String userFormatted = String.format("%#s", bannedUser);
+                    final String userFormatted = bannedUser.getAsTag();
 
 
                     if (bannedUser.getName().equalsIgnoreCase(argsJoined) || bannedUser.getId().equals(argsJoined) ||
                         userFormatted.equalsIgnoreCase(argsJoined)) {
 
                         event.getGuild().getController().unban(bannedUser)
-                            .reason("Unbanned by " + String.format("%#s", event.getAuthor())).queue();
+                            .reason("Unbanned by " + userFormatted)
+                            .queue();
 
                         sendMsg(event, "User " + userFormatted + " unbanned.");
                         modLog(event.getAuthor(), ban.getUser(), "unbanned", ctx.getGuild());

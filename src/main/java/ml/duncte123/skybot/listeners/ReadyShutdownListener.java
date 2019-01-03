@@ -26,6 +26,7 @@ import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.GuildUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.bot.sharding.ShardManager;
+import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.Member;
@@ -50,7 +51,8 @@ public class ReadyShutdownListener extends MessageListener {
 
     @Override
     public void onReady(ReadyEvent event) {
-        logger.info("Logged in as {} (Shard {})", String.format("%#s", event.getJDA().getSelfUser()), event.getJDA().getShardInfo().getShardId());
+        final JDA jda = event.getJDA();
+        logger.info("Logged in as {} (Shard {})", jda.getSelfUser().getAsTag(), jda.getShardInfo().getShardId());
 
         //Start the timers if they have not been started yet
         if (!unbanTimerRunning) {
@@ -67,7 +69,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         shardsReady++;
-        final ShardManager manager = event.getJDA().asBot().getShardManager();
+        final ShardManager manager = jda.asBot().getShardManager();
         if (shardsReady == manager.getShardsTotal()) {
 
             loadPatrons(manager);

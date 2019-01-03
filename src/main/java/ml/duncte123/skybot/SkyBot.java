@@ -51,9 +51,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.function.IntFunction;
 
-/**
- * NOTE TO SELF String.format("%#s", userObject)
- */
 //Skybot version 1.0 and 2.0 where written in php
 @SinceSkybot(version = "3.0.0")
 @Authors(authors = {

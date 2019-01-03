@@ -180,7 +180,7 @@ public class GuildMemberListener extends BaseListener {
 
         return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
             .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-            .replaceAll("\\{\\{USER_FULL}}", String.format("%#s", event.getUser()))
+            .replaceAll("\\{\\{USER_FULL}}", event.getUser().getAsTag())
             .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
             .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
             .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")

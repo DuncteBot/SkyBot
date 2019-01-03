@@ -76,7 +76,7 @@ object FindUserAndGuild {
         val userJson = JSONObject()
             .put("id", user.id)
             .put("name", user.name)
-            .put("formatted", String.format("%#s", user))
+            .put("formatted", user.asTag)
 
         return JSONObject()
             .put("status", "success")

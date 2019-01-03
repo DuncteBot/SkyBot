@@ -61,7 +61,7 @@ class SlowModeCommand : Command() {
         val delay = ctx.args[0]
 
         if (delay == "off") {
-            ctx.channel.manager.setSlowmode(0).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+            ctx.channel.manager.setSlowmode(0).reason("Requested by ${ctx.author.asTag}").queue()
             MessageUtils.sendSuccess(ctx.message)
             return
         }
@@ -78,7 +78,7 @@ class SlowModeCommand : Command() {
             return
         }
 
-        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${String.format("%#s", ctx.author)}").queue()
+        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
         MessageUtils.sendSuccess(ctx.message)
 
     }

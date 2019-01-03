@@ -82,7 +82,7 @@ public class MuteCommand extends Command {
         }
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + String.format("%#s", event.getAuthor()) + ": " + reason).queue(success -> {
+            .reason("Muted by" + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
                 ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
