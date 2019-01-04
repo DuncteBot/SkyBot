@@ -27,8 +27,10 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.entities.jda.FakeMember;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
@@ -79,29 +81,6 @@ public class AirUtils {
 
         return -1;
     }
-
-    /*public static String gameToString(Game g) {
-        if (g == null) return "no game";
-
-        String gameType;
-
-        switch (g.getType().getKey()) {
-            case 1:
-                gameType = "Streaming";
-                break;
-            case 2:
-                gameType = "Listening to";
-                break;
-            case 3:
-                gameType = "Watching";
-                break;
-            default:
-                gameType = "Playing";
-                break;
-        }
-
-        return gameType + " " + g.getName();
-    }*/
 
     private static int longToInt(long input) {
         return (int) input;
@@ -267,5 +246,15 @@ public class AirUtils {
         }
 
         return target;
+    }
+
+    public static Member getMentionedUser(String argument, Guild guild) {
+        final List<Member> foundMembers = FinderUtil.findMembers(argument, guild);
+
+        if (foundMembers.isEmpty()) {
+            return new FakeMember(argument);
+        }
+
+        return foundMembers.get(0);
     }
 }

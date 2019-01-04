@@ -262,6 +262,12 @@ class DuncteApis(private val apiKey: String) {
         return json.getJSONObject("data")
     }
 
+    fun getLove(name: String, name2: String): JSONObject {
+        val json = executeRequest(defaultRequest("love/$name/$name2"))
+
+        return json.getJSONObject("data")
+    }
+
     fun setPronouns(userId: Long, pronouns: String, singular: Boolean) {
         val json = JSONObject()
             .put("pronouns", pronouns)
@@ -365,7 +371,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     companion object {
-//        const val API_HOST = "https://apis.duncte123.me"
-        const val API_HOST = "http://duncte123-apis-lumen.local"
+        const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }
