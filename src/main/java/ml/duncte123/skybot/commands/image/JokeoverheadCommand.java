@@ -22,50 +22,32 @@ import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-
-public class DrakeCommand extends NoPatronImageCommand {
+public class JokeoverheadCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
+        if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }
 
-        final String[] split = ctx.getArgsDisplay().split("\\|", 2);
-
-        if (split.length < 2) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
-            return;
+        final String url = getImageFromCommand(ctx);
+        if (url != null) {
+            ctx.getAlexFlipnote().getJokeoverhead(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
         }
-
-        final String invoke = ctx.getInvoke();
-
-        if (invoke.equalsIgnoreCase("ddrake") || invoke.equalsIgnoreCase("dddrake")) {
-            final boolean shouldDab = invoke.equalsIgnoreCase("dddrake");
-            final byte[] drake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
-
-            handleBasicImage(ctx.getEvent(), drake);
-
-            return;
-        }
-
-        ctx.getAlexFlipnote().getDrake(split[0], split[1])
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
     public String getName() {
-        return "drake";
+        return "jokeoverhead";
     }
 
     @Override
     public String[] getAliases() {
-        return new String[]{"ddrake", "dddrake"};
+        return new String[]{"woosh"};
     }
 
     @Override
     public String help() {
-        return "Did you type your search wrong?\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <Top text>|<Bottom text>`";
+        return "You just got wooshed\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " [@user/url]`";
     }
 }

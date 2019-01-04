@@ -95,6 +95,14 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getJokeoverhead(String image) {
+        final QueryBuilder builder = new QueryBuilder().append("image", image);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("jokeoverhead" + builder.build()),
+            IOHelper::read
+        );
+    }
+
     public PendingRequest<byte[]> getDrake(String top, String bottom) {
         final QueryBuilder builder = new QueryBuilder().append("top", top).append("bottom", bottom);
         return WebUtils.ins.prepareRaw(
