@@ -278,8 +278,24 @@ class DuncteApis(private val apiKey: String) {
     fun getFlag(flag: String, avatarUrl: String): ByteArray {
         val json = JSONObject().put("image", avatarUrl)
 
+        return postJSONBytes("flags/$flag", json)
+    }
+
+    fun getIWantToDie(text: String): ByteArray {
+        val json = JSONObject().put("text", text)
+
+        return postJSONBytes("memes/wanttodie", json)
+    }
+
+    fun getDannyDrake(top: String, bottom: String): ByteArray {
+        val json = JSONObject().put("top", top).put("bottom", bottom)
+
+        return postJSONBytes("memes/dannyphantomdrake", json)
+    }
+
+    private fun postJSONBytes(path: String, json: JSONObject): ByteArray {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest("flags/$flag").post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
     }
@@ -349,7 +365,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     companion object {
-        const val API_HOST = "https://apis.duncte123.me"
-//        const val API_HOST = "http://duncte123-apis-lumen.local"
+//        const val API_HOST = "https://apis.duncte123.me"
+        const val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }

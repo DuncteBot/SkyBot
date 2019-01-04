@@ -18,33 +18,50 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends NoPatronImageCommand {
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+
+public class DrakeCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
 
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
+        final String[] split = ctx.getArgsDisplay().split("\\|", 2);
+
+        if (split.length < 2) {
+            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
+            return;
+        }
+
+        if (ctx.getInvoke().equalsIgnoreCase("ddrake")) {
+            final byte[] drake = ctx.getApis().getDannyDrake(split[0], split[1]);
+            handleBasicImage(ctx.getEvent(), drake);
+
+            return;
+        }
+
+        ctx.getAlexFlipnote().getDrake(split[0], split[1])
             .async((image) -> handleBasicImage(ctx.getEvent(), image));
     }
 
     @Override
     public String getName() {
-        return "achievement";
+        return "drake";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"ddrake"};
     }
 
     @Override
     public String help() {
-        return "You got an achievement!\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+        return "Did you type your search wrong?\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <Top text>|<Bottom text>`";
     }
 }

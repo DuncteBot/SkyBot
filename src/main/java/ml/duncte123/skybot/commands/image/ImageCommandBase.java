@@ -127,7 +127,7 @@ public abstract class ImageCommandBase extends Command {
         return url;
     }
 
-    String parseTextArgsForImage(CommandContext ctx) {
+    public String parseTextArgsForImage(CommandContext ctx) {
         return ctx.getArgsDisplay();
     }
 }

@@ -79,6 +79,29 @@ public class Alexflipnote {
         );
     }
 
+    public PendingRequest<byte[]> getFacts(String text) {
+        final QueryBuilder builder = new QueryBuilder().append("text", text);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("facts" + builder.build()),
+            IOHelper::read
+        );
+    }
+
+    public PendingRequest<byte[]> getCaptcha(String text) {
+        final QueryBuilder builder = new QueryBuilder().append("text", text);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("captcha" + builder.build()),
+            IOHelper::read
+        );
+    }
+
+    public PendingRequest<byte[]> getDrake(String top, String bottom) {
+        final QueryBuilder builder = new QueryBuilder().append("top", top).append("bottom", bottom);
+        return WebUtils.ins.prepareRaw(
+            makeRequest("drake" + builder.build()),
+            IOHelper::read
+        );
+    }
 
     private Request makeRequest(String path) {
         return defaultRequest()

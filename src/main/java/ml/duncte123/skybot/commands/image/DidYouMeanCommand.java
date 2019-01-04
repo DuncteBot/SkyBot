@@ -25,11 +25,13 @@ import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class DidYouMeanCommand extends ImageCommandBase {
+public class DidYouMeanCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) return;
+        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
+            return;
+        }
 
         final String[] split = ctx.getArgsDisplay().split("\\|", 2);
 
@@ -52,10 +54,5 @@ public class DidYouMeanCommand extends ImageCommandBase {
     public String help() {
         return "Did you type your search wrong?\n" +
             "Usage: `" + Settings.PREFIX + getName() + " <Top text>|<Bottom text>`";
-    }
-
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
     }
 }
