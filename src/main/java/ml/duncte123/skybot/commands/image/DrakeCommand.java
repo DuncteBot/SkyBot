@@ -49,8 +49,8 @@ public class DrakeCommand extends NoPatronImageCommand {
             return;
         }
 
-        ctx.getAlexFlipnote().getDrake(split[0], split[1])
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+        final byte[] image = ctx.getApis().getDrakeMeme(split[0], split[1]);
+        handleBasicImage(ctx.getEvent(), image);
     }
 
     @Override

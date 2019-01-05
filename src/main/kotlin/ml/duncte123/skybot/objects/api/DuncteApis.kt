@@ -299,6 +299,12 @@ class DuncteApis(private val apiKey: String) {
         return postJSONBytes("memes/dannyphantomdrake", json)
     }
 
+    fun getDrakeMeme(top: String, bottom: String): ByteArray {
+        val json = JSONObject().put("top", top).put("bottom", bottom)
+
+        return postJSONBytes("memes/drakememe", json)
+    }
+
     private fun postJSONBytes(path: String, json: JSONObject): ByteArray {
         val body = RequestBody.create(null, json.toString())
         val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
