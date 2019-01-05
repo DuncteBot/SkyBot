@@ -37,7 +37,7 @@ public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
 
     @Override
     public String getName() {
-        return "freerealesate";
+        return "freerealestate";
     }
 
     @Override
