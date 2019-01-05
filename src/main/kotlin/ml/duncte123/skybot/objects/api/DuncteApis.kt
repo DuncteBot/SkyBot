@@ -293,6 +293,12 @@ class DuncteApis(private val apiKey: String) {
         return postJSONBytes("memes/wanttodie", json)
     }
 
+    fun getFreeRealEstate(text: String): ByteArray {
+        val json = JSONObject().put("text", text)
+
+        return postJSONBytes("memes/itsfreerealestate", json)
+    }
+
     fun getDannyDrake(top: String, bottom: String, dabbing: Boolean = false): ByteArray {
         val json = JSONObject().put("top", top).put("bottom", bottom).put("dabbing", dabbing)
 
