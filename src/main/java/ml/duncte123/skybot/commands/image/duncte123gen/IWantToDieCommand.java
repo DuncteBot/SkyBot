@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.image.duncte123gen;
 
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
@@ -41,6 +42,7 @@ public class IWantToDieCommand extends NoPatronImageCommand {
 
     @Override
     public String help() {
-        return null;
+        return "You have decided that you want to die\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
     }
 }
