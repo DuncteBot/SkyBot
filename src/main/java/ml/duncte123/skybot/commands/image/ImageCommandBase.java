@@ -24,6 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message.Attachment;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import java.io.File;
@@ -76,7 +77,13 @@ public abstract class ImageCommandBase extends Command {
     }
 
     public void handleBasicImage(GuildMessageReceivedEvent event, byte[] image) {
-        event.getChannel().sendFile(image, getFileName()).queue();
+        final TextChannel channel = event.getChannel();
+
+        if (event.getGuild().getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES)) {
+            channel.sendFile(image, getFileName()).queue();
+        } else {
+            sendMsg(channel, "I need permission to upload files in order for this command to work.");
+        }
     }
 
     @Override
