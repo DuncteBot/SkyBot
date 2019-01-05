@@ -71,7 +71,10 @@ public class LoveCommand extends Command {
             .setTitle(response.getString("names"), "https://patreon.com/DuncteBot")
             .addField(response.getString("score"), response.getString("message"), false);
 
-        final TextChannel channel = ctx.getChannel();
+
+        sendEmbed(event, embed);
+
+        /*final TextChannel channel = ctx.getChannel();
 
         if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES,
             Permission.MESSAGE_EMBED_LINKS) && channel.canTalk()) {
@@ -86,7 +89,7 @@ public class LoveCommand extends Command {
                 ).queue();
         } else {
             sendEmbed(event, embed);
-        }
+        }*/
     }
 
     @Override
