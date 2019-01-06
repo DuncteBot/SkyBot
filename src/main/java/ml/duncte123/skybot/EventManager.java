@@ -121,8 +121,4 @@ public class EventManager implements IEventManager {
         return this.reactionHandler;
     }
 
-    public void shutdown() {
-        eventThread.shutdown();
-    }
-
 }
