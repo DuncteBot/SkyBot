@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class ShitCommand extends ImageCommandBase {
+public class ShitCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
@@ -75,10 +75,5 @@ public class ShitCommand extends ImageCommandBase {
         }
 
         return null;
-    }
-
-    @Override
-    public CommandCategory getCategory() {
-        return CommandCategory.FUN;
     }
 }

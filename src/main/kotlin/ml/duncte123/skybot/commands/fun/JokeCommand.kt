@@ -30,6 +30,7 @@ import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
 import java.util.*
 
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class JokeCommand : Command() {
 
@@ -44,6 +45,15 @@ class JokeCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
+
+        if (ctx.invoke == "meme") {
+            WebUtils.ins.getJSONObject("https://api-to.get-a.life/meme").async {
+                val url = it.getString("url")
+                sendEmbed(ctx.event, EmbedUtils.embedImage(url))
+            }
+
+            return
+        }
 
         when (ctx.random.nextInt(2)) {
             0 -> sendRedditPost("Jokes", jokeIndex, ctx.event)

@@ -36,7 +36,7 @@ class StatsCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
 
         val shardManager = ctx.shardManager
-        val connectedVC = shardManager.shards.map { shard ->
+        val connectedVC = shardManager.shardCache.map { shard ->
             shard.voiceChannelCache.filter { vc ->
                 vc.members.contains(vc.guild.selfMember)
             }.count()

@@ -18,33 +18,36 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends NoPatronImageCommand {
+public class JokeoverheadCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
+        if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }
 
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+        final String url = getImageFromCommand(ctx);
+        if (url != null) {
+            ctx.getAlexFlipnote().getJokeoverhead(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
+        }
     }
 
     @Override
     public String getName() {
-        return "achievement";
+        return "jokeoverhead";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"woosh"};
     }
 
     @Override
     public String help() {
-        return "You got an achievement!\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+        return "You just got wooshed\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " [@user/url]`";
     }
 }

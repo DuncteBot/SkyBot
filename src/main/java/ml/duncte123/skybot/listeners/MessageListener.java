@@ -20,6 +20,7 @@ package ml.duncte123.skybot.listeners;
 
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
+import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -73,6 +74,11 @@ public class MessageListener extends BaseListener {
             && Settings.developers.contains(event.getAuthor().getIdLong())) {
             logger.info("Initialising shutdown!!!");
             shuttingDown = true;
+
+            final EventManager eventManager = (EventManager) event.getJDA().getEventManager();
+            eventManager.shutdown();
+
+            commandManager.shutdown();
 
             final ShardManager manager = event.getJDA().asBot().getShardManager();
 
@@ -235,9 +241,10 @@ public class MessageListener extends BaseListener {
                     guild.getInvites().queue((invites) -> {
                         //Check if the invite is for this guild, if it is not delete the message
                         if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
-                            event.getMessage().delete().reason("Contained unauthorized invite.").queue(it ->
+                            event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
                                 sendMsg(event, event.getAuthor().getAsMention() +
-                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS))
+                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
+                                (t) -> {}
                             );
                         }
                     });
@@ -248,15 +255,13 @@ public class MessageListener extends BaseListener {
                 final Message messageToCheck = event.getMessage();
                 if (wordFilter.filterText(rw)) {
                     messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
-                        .queue(null, (t) -> {
-                        });
+                        .queue(null, (t) -> {});
 
                     sendMsg(event,
                         String.format("Hello there, %s please do not use cursive language within this Discord.",
                             event.getAuthor().getAsMention()
                         ),
-                        m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {
-                        }));
+                        m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
                     return true;
                 }
             }

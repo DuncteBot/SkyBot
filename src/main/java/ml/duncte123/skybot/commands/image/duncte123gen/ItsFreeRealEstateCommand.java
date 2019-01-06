@@ -16,35 +16,33 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.image;
+package ml.duncte123.skybot.commands.image.duncte123gen;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends NoPatronImageCommand {
+public class ItsFreeRealEstateCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
 
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+        final byte[] image = ctx.getApis().getFreeRealEstate(parseTextArgsForImage(ctx));
+
+        handleBasicImage(ctx.getEvent(), image);
     }
 
     @Override
     public String getName() {
-        return "achievement";
+        return "freerealestate";
     }
 
     @Override
     public String help() {
-        return "You got an achievement!\n" +
+        return "It's free real estate\n" +
             "Usage: `" + Settings.PREFIX + getName() + " <text>`";
     }
 }

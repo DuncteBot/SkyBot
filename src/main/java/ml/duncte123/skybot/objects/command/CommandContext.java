@@ -230,6 +230,6 @@ public class CommandContext {
                 Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(getGuildSettings().getCustomPrefix()),
             "")
-            .split("\\s+", 2)[1];
+            .split("\\s+", 2)[1].replaceAll("\\\\n", "\n");
     }
 }

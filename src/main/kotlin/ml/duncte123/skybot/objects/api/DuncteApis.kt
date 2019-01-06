@@ -262,6 +262,12 @@ class DuncteApis(private val apiKey: String) {
         return json.getJSONObject("data")
     }
 
+    fun getLove(name: String, name2: String): JSONObject {
+        val json = executeRequest(defaultRequest("love/$name/$name2"))
+
+        return json.getJSONObject("data")
+    }
+
     fun setPronouns(userId: Long, pronouns: String, singular: Boolean) {
         val json = JSONObject()
             .put("pronouns", pronouns)
@@ -278,8 +284,36 @@ class DuncteApis(private val apiKey: String) {
     fun getFlag(flag: String, avatarUrl: String): ByteArray {
         val json = JSONObject().put("image", avatarUrl)
 
+        return postJSONBytes("flags/$flag", json)
+    }
+
+    fun getIWantToDie(text: String): ByteArray {
+        val json = JSONObject().put("text", text)
+
+        return postJSONBytes("memes/wanttodie", json)
+    }
+
+    fun getFreeRealEstate(text: String): ByteArray {
+        val json = JSONObject().put("text", text)
+
+        return postJSONBytes("memes/itsfreerealestate", json)
+    }
+
+    fun getDannyDrake(top: String, bottom: String, dabbing: Boolean = false): ByteArray {
+        val json = JSONObject().put("top", top).put("bottom", bottom).put("dabbing", dabbing)
+
+        return postJSONBytes("memes/dannyphantomdrake", json)
+    }
+
+    fun getDrakeMeme(top: String, bottom: String): ByteArray {
+        val json = JSONObject().put("top", top).put("bottom", bottom)
+
+        return postJSONBytes("memes/drakememe", json)
+    }
+
+    private fun postJSONBytes(path: String, json: JSONObject): ByteArray {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest("flags/$flag").post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
     }
