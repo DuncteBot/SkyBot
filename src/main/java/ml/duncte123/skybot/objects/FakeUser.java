@@ -90,7 +90,7 @@ public class FakeUser implements User {
 
     @Override
     public String getEffectiveAvatarUrl() {
-        return null;
+        return "https://cdn.discordapp.com/embed/avatars/0.png";
     }
 
     @Override

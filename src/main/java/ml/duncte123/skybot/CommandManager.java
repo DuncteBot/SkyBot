@@ -387,4 +387,8 @@ public class CommandManager {
             }
         );
     }
+
+    public void shutdown() {
+        commandThread.shutdown();
+    }
 }

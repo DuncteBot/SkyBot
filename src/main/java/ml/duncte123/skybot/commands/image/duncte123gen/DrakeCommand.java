@@ -16,19 +16,18 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.image;
+package ml.duncte123.skybot.commands.image.duncte123gen;
 
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
+import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-public class DidYouMeanCommand extends NoPatronImageCommand {
+public class DrakeCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }
@@ -40,14 +39,29 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
             return;
         }
 
-        ctx.getAlexFlipnote().getDidYouMean(split[0], split[1])
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+        final String invoke = ctx.getInvoke();
 
+        if (invoke.equalsIgnoreCase("ddrake") || invoke.equalsIgnoreCase("dddrake")) {
+            final boolean shouldDab = invoke.equalsIgnoreCase("dddrake");
+            final byte[] drake = ctx.getApis().getDannyDrake(split[0], split[1], shouldDab);
+
+            handleBasicImage(ctx.getEvent(), drake);
+
+            return;
+        }
+
+        final byte[] image = ctx.getApis().getDrakeMeme(split[0], split[1]);
+        handleBasicImage(ctx.getEvent(), image);
     }
 
     @Override
     public String getName() {
-        return "didyoumean";
+        return "drake";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"ddrake", "dddrake"};
     }
 
     @Override

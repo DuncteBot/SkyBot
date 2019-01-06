@@ -18,33 +18,31 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends NoPatronImageCommand {
+public class SaltyCommand extends NoPatronImageCommand {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
+        if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }
 
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
+        final String url = getImageFromCommand(ctx);
+        if (url != null) {
+            ctx.getAlexFlipnote().getSalty(url).async((image) -> handleBasicImage(ctx.getEvent(), image));
+        }
     }
 
     @Override
     public String getName() {
-        return "achievement";
+        return "salty";
     }
 
     @Override
     public String help() {
-        return "You got an achievement!\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+        return "Someones being salty today\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " [@user/url]`";
     }
 }

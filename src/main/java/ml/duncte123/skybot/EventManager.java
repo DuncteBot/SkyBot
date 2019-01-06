@@ -34,6 +34,8 @@ import org.slf4j.LoggerFactory;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 /**
  * A single event listener container
@@ -43,12 +45,12 @@ import java.util.concurrent.CopyOnWriteArrayList;
     @Author(nickname = "duncte123", author = "Duncan Sterken"),
     @Author(nickname = "ramidzkh", author = "Ramid Khan")
 })
-public class EventManager
-    implements IEventManager {
+public class EventManager implements IEventManager {
 
     public static int restartingShard = -32; // -32 = none, -1 = all, id = id;
     public static boolean shouldFakeBlock = false;
     private static final Logger logger = LoggerFactory.getLogger(EventManager.class);
+    private static final ExecutorService eventThread = Executors.newCachedThreadPool();
     private final ReactionHandler reactionHandler = new ReactionHandler();
     private final CopyOnWriteArrayList<EventListener> listeners = new CopyOnWriteArrayList<>();
 
@@ -82,31 +84,32 @@ public class EventManager
 
     @Override
     public void handle(Event event) {
-        final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
+        eventThread.submit(() -> {
+            final JDA.ShardInfo shardInfo = event.getJDA().getShardInfo();
 
-        if (shouldFakeBlock) {
-            if (shardInfo == null) {
-                logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
-                return;
+            if (shouldFakeBlock) {
+                if (shardInfo == null) {
+                    logger.warn(TextColor.RED + "Shard booting up." + TextColor.RESET);
+                    return;
+                }
+
+                if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
+                    return;
+                }
             }
 
-            if (restartingShard == -1 || restartingShard == shardInfo.getShardId()) {
-                return;
+            for (final EventListener listener : this.listeners) {
+                try {
+                    listener.onEvent(event);
+                } catch (Throwable thr) {
+                    logger.error("Error while handling event {}({}); {}",
+                        event.getClass().getName(),
+                        listener.getClass().getSimpleName(),
+                        thr.getLocalizedMessage());
+                    logger.error("", thr);
+                }
             }
-        }
-
-        for (final EventListener listener : this.listeners) {
-            try {
-                listener.onEvent(event);
-            } catch (Throwable thr) {
-                logger.error("Error while handling event {}({}); {}",
-                    event.getClass().getName(),
-                    listener.getClass().getSimpleName(),
-                    thr.getLocalizedMessage());
-                logger.error("", thr);
-            }
-        }
-
+        });
     }
 
     @Override
@@ -121,6 +124,10 @@ public class EventManager
      */
     public ReactionHandler getReactionHandler() {
         return this.reactionHandler;
+    }
+
+    public void shutdown() {
+        eventThread.shutdown();
     }
 
 }

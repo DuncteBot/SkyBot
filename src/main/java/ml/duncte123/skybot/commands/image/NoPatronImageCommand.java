@@ -18,33 +18,12 @@
 
 package ml.duncte123.skybot.commands.image;
 
-import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandCategory;
-import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-public class AchievementCommand extends NoPatronImageCommand {
-    @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-
-        if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
-            return;
-        }
-
-        ctx.getAlexFlipnote().getAchievement(parseTextArgsForImage(ctx))
-            .async((image) -> handleBasicImage(ctx.getEvent(), image));
-    }
+public abstract class NoPatronImageCommand extends ImageCommandBase {
 
     @Override
-    public String getName() {
-        return "achievement";
-    }
-
-    @Override
-    public String help() {
-        return "You got an achievement!\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <text>`";
+    public CommandCategory getCategory() {
+        return CommandCategory.FUN;
     }
 }
