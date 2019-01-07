@@ -19,11 +19,8 @@
 package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class DidYouMeanCommand extends NoPatronImageCommand {
     @Override
@@ -33,10 +30,9 @@ public class DidYouMeanCommand extends NoPatronImageCommand {
             return;
         }
 
-        final String[] split = ctx.getArgsDisplay().split("\\|", 2);
+        final String[] split = splitString(ctx);
 
-        if (split.length < 2) {
-            sendMsg(ctx.getEvent(), "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + "`");
+        if (split == null) {
             return;
         }
 
