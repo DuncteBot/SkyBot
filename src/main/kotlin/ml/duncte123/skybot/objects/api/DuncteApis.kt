@@ -313,7 +313,8 @@ class DuncteApis(private val apiKey: String) {
 
     private fun postJSONBytes(path: String, json: JSONObject): ByteArray {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path, false)
+            .post(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return WebUtils.ins.prepareRaw(request.build(), IOHelper::read).execute()
     }
@@ -350,23 +351,26 @@ class DuncteApis(private val apiKey: String) {
         return Triple(false, false, false)
     }
 
-    private fun patchJSON(path: String, json: JSONObject): JSONObject {
+    private fun patchJSON(path: String, json: JSONObject, prefixBot: Boolean = true): JSONObject {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest(path).patch(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path, prefixBot)
+            .patch(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return executeRequest(request)
     }
 
-    private fun postJSON(path: String, json: JSONObject): JSONObject {
+    private fun postJSON(path: String, json: JSONObject, prefixBot: Boolean = true): JSONObject {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest(path).post(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path, prefixBot)
+            .post(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return executeRequest(request)
     }
 
-    private fun deleteJSON(path: String, json: JSONObject): JSONObject {
+    private fun deleteJSON(path: String, json: JSONObject, prefixBot: Boolean = true): JSONObject {
         val body = RequestBody.create(null, json.toString())
-        val request = defaultRequest(path).delete(body).addHeader("Content-Type", APPLICATION_JSON.type)
+        val request = defaultRequest(path, prefixBot)
+            .delete(body).addHeader("Content-Type", APPLICATION_JSON.type)
 
         return executeRequest(request)
     }
@@ -375,15 +379,17 @@ class DuncteApis(private val apiKey: String) {
         return WebUtils.ins.prepareRaw(request.build(), WebUtilsErrorUtils::toJSONObject).execute()
     }
 
-    private fun defaultRequest(path: String): Request.Builder {
+    private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {
+        val prefix = if (prefixBot) "bot/" else ""
+
         return WebUtils.defaultRequest()
-            .url("$API_HOST/bot/$path")
+            .url("$API_HOST/$prefix$path")
             .get()
             .addHeader("Authorization", apiKey)
     }
 
     companion object {
-//        const val API_HOST = "https://apis.duncte123.me"
-        const val API_HOST = "http://duncte123-apis-lumen.local"
+        const val API_HOST = "https://apis.duncte123.me"
+//        const val API_HOST = "http://duncte123-apis-lumen.local"
     }
 }
