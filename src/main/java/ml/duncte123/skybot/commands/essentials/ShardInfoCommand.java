@@ -130,6 +130,14 @@ public class ShardInfoCommand extends Command {
                 }
             }
         }
+
+        final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
+        final String statsString = channelStats.getFirst() + " / " + channelStats.getSecond();
+
+        if (statsString.length() > widths[widths.length - 1]) {
+            widths[widths.length - 1] = statsString.length();
+        }
+
         sb.append("```").append("prolog").append("\n");
         final StringBuilder formatLine = new StringBuilder("║");
         for (final int width : widths) {
@@ -150,15 +158,13 @@ public class ShardInfoCommand extends Command {
         final String avgPing = new DecimalFormat("###").format(shardManager.getAveragePing());
         final String guilds = String.valueOf(shardManager.getGuildCache().size());
 
-        final Pair<Long, Long> channelStats = getConnectedVoiceChannels(shardManager);
-
         sb.append(String.format(
             formatLine.toString(),
             "Sum/Avg",
             connectedShards,
             avgPing,
             guilds,
-            channelStats.getFirst() + " / " + channelStats.getSecond()
+            statsString
         ));
         sb.append(appendSeparatorLine("╚", "╩", "╝", padding, widths));
         sb.append("```");
