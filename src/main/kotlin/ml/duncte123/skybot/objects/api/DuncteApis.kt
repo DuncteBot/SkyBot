@@ -48,8 +48,8 @@ class DuncteApis(private val apiKey: String) {
         return parseTripleResponse(response)
     }
 
-    fun updateCustomCommand(guildId: Long, invoke: String, message: String): Triple<Boolean, Boolean, Boolean> {
-        val json = JSONObject().put("message", message)
+    fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean): Triple<Boolean, Boolean, Boolean> {
+        val json = JSONObject().put("message", message).put("autoresponse", autoresponse)
         val response = patchJSON("customcommands/$guildId/$invoke", json)
 
         return parseTripleResponse(response)

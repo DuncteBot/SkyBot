@@ -72,10 +72,10 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         variables.database.run {
             callback.invoke(
-                variables.apis.updateCustomCommand(guildId, invoke, message)
+                variables.apis.updateCustomCommand(guildId, invoke, message, autoresponse)
             )
         }
     }
