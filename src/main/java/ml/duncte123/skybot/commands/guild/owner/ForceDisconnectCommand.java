@@ -48,7 +48,7 @@ public class ForceDisconnectCommand extends MusicCommand {
         manager.scheduler.queue.clear();
         getLavalinkManager().closeConnection(g);
 
-        sendMsg(event, "Successfully send the disconnect signal to the server");
+        sendMsg(event, "Successfully sent the disconnect signal to the server");
 
     }
 
