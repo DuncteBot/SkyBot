@@ -40,14 +40,14 @@ object ApiUtils {
     @JvmStatic
     fun getRandomAlpacaAsync(callback: (AlpacaObject) -> Unit) {
         WebUtils.ins.getJSONObject("$API_HOST/alpaca").async {
-            callback.invoke(AlpacaObject(it.getString("data")))
+            callback.invoke(AlpacaObject(it.getJSONObject("data").getString("file")))
         }
     }
 
     @JvmStatic
     fun getRandomSealAsync(callback: (String) -> Unit) {
         WebUtils.ins.getJSONObject("$API_HOST/seal").async {
-            callback.invoke(it.getString("data"))
+            callback.invoke(it.getJSONObject("data").getString("file"))
         }
     }
 

@@ -76,7 +76,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
+    override fun updateCustomCommand(guildId: Long, invoke: String, message: String, autoresponse: Boolean, callback: (Triple<Boolean, Boolean, Boolean>?) -> Unit) {
         variables.database.run {
             val res = changeCommand(guildId, invoke, message, true)
 

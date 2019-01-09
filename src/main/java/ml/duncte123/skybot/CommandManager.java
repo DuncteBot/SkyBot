@@ -162,7 +162,7 @@ public class CommandManager {
 
                 if (isEdit) {
                     variables.getDatabaseAdapter()
-                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
+                        .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
                             future.complete(triple);
                             return null;
                         });
