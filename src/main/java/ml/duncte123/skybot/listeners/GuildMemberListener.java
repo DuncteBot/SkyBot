@@ -169,7 +169,6 @@ public class GuildMemberListener extends BaseListener {
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
-        final long autoRoleId = s.getAutoroleRole();
 
         final String message = CustomCommandUtils.PARSER.clear()
             .put("user", event.getUser())
@@ -184,10 +183,6 @@ public class GuildMemberListener extends BaseListener {
             .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
             .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
             .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
-
-            //This one can be kept a secret :P
-            .replaceAll("\\{\\{AUTO_ROLE_NAME}", autoRoleId <= 0 ?
-                "Not set" : guild.getRoleById(autoRoleId).getName())
             .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
     }
 
