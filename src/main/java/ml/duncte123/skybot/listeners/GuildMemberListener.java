@@ -190,15 +190,19 @@ public class GuildMemberListener extends BaseListener {
         // Remove the user from the patrons list
         Command.patrons.remove(userId);
 
-        // Remove the user from the one guild patrons
-        Command.oneGuildPatrons.remove(userId);
-        GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
+        if (Command.oneGuildPatrons.containsKey(userId)) {
+            // Remove the user from the one guild patrons
+            Command.oneGuildPatrons.remove(userId);
+            GuildUtils.removeOneGuildPatron(userId, variables.getDatabaseAdapter());
+        }
 
         final User user = manager.getUserById(userId);
 
-        manager.getMutualGuilds(user).forEach(
-            (guild) -> Command.guildPatrons.remove(guild.getIdLong())
-        );
+        if (user != null) {
+            manager.getMutualGuilds(user).forEach(
+                (guild) -> Command.guildPatrons.remove(guild.getIdLong())
+            );
+        }
     }
 
     private void handleNewOneGuildPatron(long userId) {
