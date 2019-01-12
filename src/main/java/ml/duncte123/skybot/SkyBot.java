@@ -137,7 +137,6 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
-            .setWebsocketFactory(new WebSocketFactory().setVerifyHostname(false))
             .build();
 
         this.startGameTimer();
