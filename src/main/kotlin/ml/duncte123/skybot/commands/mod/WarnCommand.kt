@@ -21,46 +21,41 @@ package ml.duncte123.skybot.commands.mod
 import me.duncte123.botcommons.messaging.MessageUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.ModerationUtils
+import ml.duncte123.skybot.utils.ModerationUtils.canInteract
 import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-class WarnCommand : Command() {
+class WarnCommand : ModBaseCommand() {
 
     init {
-        this.category = CommandCategory.MOD_ADMIN
+        this.perms = arrayOf(Permission.KICK_MEMBERS)
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
         val args = ctx.args
+        val mentioned = ctx.mentionedMembers
 
-        if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command")
-            MessageUtils.sendError(event.message)
-            return
-        }
-
-        if (ctx.args.isEmpty() || event.message.mentionedMembers.isEmpty()) {
+        if (ctx.args.isEmpty() || mentioned.isEmpty()) {
             MessageUtils.sendMsg(event, "Must mention a member")
             MessageUtils.sendError(event.message)
             return
         }
 
-        val target = event.message.mentionedMembers[0]
+        val target = mentioned[0]
 
         if (target.user == event.jda.selfUser) {
             MessageUtils.sendErrorWithMessage(event.message, "You can not warn me")
             return
         }
 
-        if (!event.member.canInteract(target)) {
-            MessageUtils.sendMsg(event, "You can't warn that member because he/she has a higher or equal position than you")
-            MessageUtils.sendError(event.message)
+        if (!canInteract(ctx.member, target, "warn", ctx.channel)) {
             return
         }
 
@@ -82,9 +77,11 @@ class WarnCommand : Command() {
         ModerationUtils.addWarningToDb(ctx.databaseAdapter, event.author, target.user, reason, event.guild)
         ModerationUtils.modLog(event.author, target.user, "warned", reason, ctx.guild)
 
-        target.user.openPrivateChannel().queue {
-            //Ignore the fail consumer, we don't want to have spam in the console
-            it.sendMessage(dmMessage).queue(null) {  }
+        if (!target.user.isBot) {
+            target.user.openPrivateChannel().queue {
+                //Ignore the fail consumer, we don't want to have spam in the console
+                it.sendMessage(dmMessage).queue(null) { }
+            }
         }
 
         MessageUtils.sendSuccess(event.message)

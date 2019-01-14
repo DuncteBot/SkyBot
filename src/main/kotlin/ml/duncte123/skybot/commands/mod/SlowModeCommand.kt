@@ -22,6 +22,7 @@ import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -29,20 +30,16 @@ import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.Permission
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class SlowModeCommand : Command() {
+class SlowModeCommand : ModBaseCommand() {
 
     init {
-        this.category = CommandCategory.MOD_ADMIN
+        this.perms = arrayOf(Permission.MESSAGE_MANAGE)
+        this.argscheck = false
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!event.member.hasPermission(Permission.MESSAGE_MANAGE)) {
-            MessageUtils.sendMsg(event, "You don't have the `manage message` permission, this permission is required to run this command!")
-            return
-        }
 
         if (!ctx.selfMember.hasPermission(ctx.channel, Permission.MANAGE_CHANNEL)) {
             MessageUtils.sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
@@ -52,7 +49,7 @@ class SlowModeCommand : Command() {
         if (ctx.args.isEmpty()) {
 
             val currentMode = ctx.channel.slowmode
-            val currentModeString = if (currentMode == 0) "off" else "${currentMode} seconds"
+            val currentModeString = if (currentMode == 0) "off" else "$currentMode seconds"
 
             sendMsg(event, "Current slowmode is `$currentModeString`")
             return

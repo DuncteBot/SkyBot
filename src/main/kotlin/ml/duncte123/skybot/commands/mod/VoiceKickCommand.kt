@@ -22,39 +22,22 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
-import ml.duncte123.skybot.objects.command.Command
-import ml.duncte123.skybot.objects.command.CommandCategory
+import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
 import net.dv8tion.jda.core.entities.VoiceChannel
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class VoiceKickCommand : Command() {
+class VoiceKickCommand : ModBaseCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.perms = arrayOf(Permission.KICK_MEMBERS)
+        this.selfPerms = arrayOf(Permission.MANAGE_CHANNEL, Permission.MANAGE_SERVER, Permission.VOICE_MOVE_OTHERS)
+    }
+
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        val neededPerms = arrayListOf(
-            Permission.MANAGE_CHANNEL,
-            Permission.MANAGE_SERVER,
-            Permission.VOICE_MOVE_OTHERS
-        )
-
-        if (!ctx.guild.selfMember.hasPermission(neededPerms)) {
-            sendMsg(event, "I need these permissions in order for this command to work: `${neededPerms.joinToString()}`")
-            return
-        }
-
-        if (!event.member.hasPermission(Permission.KICK_MEMBERS)) {
-            sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.")
-            return
-        }
-
-        if (ctx.args.isEmpty()) {
-            sendMsg(event, "Usage is `${Settings.PREFIX}$name <@user/voice channel>`")
-            return
-        }
 
         val channels = ctx.guild.getVoiceChannelsByName(ctx.argsRaw, true)
         val controller = ctx.guild.controller
@@ -97,6 +80,4 @@ class VoiceKickCommand : Command() {
     override fun help() = """Kicks a user from the voice channel
         |Usage: `${Settings.PREFIX}$name <@user/voice channel>`
     """.trimMargin()
-
-    override fun getCategory() = CommandCategory.MOD_ADMIN
 }

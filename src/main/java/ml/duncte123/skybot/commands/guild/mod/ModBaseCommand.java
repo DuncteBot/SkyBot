@@ -35,9 +35,11 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public abstract class ModBaseCommand extends Command {
 
-    Permission[] perms;
+    protected Permission[] perms;
+    protected Permission[] selfPerms = {};
+    protected boolean argscheck = true;
 
-    ModBaseCommand() {
+    public ModBaseCommand() {
         this.category = CommandCategory.MODERATION;
         this.perms = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
@@ -48,17 +50,20 @@ public abstract class ModBaseCommand extends Command {
         final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(this.perms)) {
-            final String neededPerms = Arrays.stream(this.perms)
-                .map(Permission::getName)
-                .collect(Collectors.joining("`, `"));
-            final String permsFormatted = StringUtils.replaceLast(neededPerms, "`, `", "` and `");
-
-            sendMsg(event, "You need the `" + permsFormatted + "` permissions for this command\n" +
+            sendMsg(event, "You need the `" + parsePerms(this.perms) + "` permissions for this command\n" +
                 "Please contact your server administrator if this is incorrect.");
+
             return;
         }
 
-        if (args.isEmpty()) {
+        if (this.selfPerms.length > 0 && !ctx.getSelfMember().hasPermission(this.selfPerms)) {
+            sendMsg(event, "I need the `" + parsePerms(this.selfPerms) + "` permissions for this command to work\n" +
+                "Please contact your server administrator about this.");
+
+            return;
+        }
+
+        if (argscheck && args.isEmpty()) {
             sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + '`');
             return;
         }
@@ -67,4 +72,12 @@ public abstract class ModBaseCommand extends Command {
     }
 
     public abstract void run(@NotNull CommandContext ctx);
+
+    private String parsePerms(Permission[] perms) {
+        final String neededPerms = Arrays.stream(perms)
+            .map(Permission::getName)
+            .collect(Collectors.joining("`, `"));
+
+        return StringUtils.replaceLast(neededPerms, "`, `", "` and `");
+    }
 }
