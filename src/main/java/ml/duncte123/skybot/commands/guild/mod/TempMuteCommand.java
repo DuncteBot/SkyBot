@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
@@ -65,7 +64,7 @@ public class TempMuteCommand extends TempBanCommand {
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
-        if (!canInteract(mod, toMute, "mute",  ctx.getChannel())) {
+        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
             return;
         }
 
@@ -108,10 +107,10 @@ public class TempMuteCommand extends TempBanCommand {
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by" + author.getAsTag() + ": " + fReason)
             .queue(success -> {
-                ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
-                sendSuccess(event.getMessage());
-            }
-        );
+                    ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
+                    sendSuccess(event.getMessage());
+                }
+            );
 
     }
 

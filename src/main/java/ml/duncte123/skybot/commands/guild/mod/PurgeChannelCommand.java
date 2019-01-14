@@ -20,8 +20,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
