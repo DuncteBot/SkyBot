@@ -67,6 +67,11 @@ public class SeekCommand extends MusicCommand {
             return;
         }
 
+        if (!player.getPlayingTrack().isSeekable()) {
+            sendMsg(event, "This track is not seekable");
+            return;
+        }
+
         final long minutes = Integer.parseInt(matcher.group(1)) * 60 * 1000;
         final long seconds = Integer.parseInt(matcher.group(2)) * 1000;
 
