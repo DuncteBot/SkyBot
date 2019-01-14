@@ -42,6 +42,11 @@ class RestartCommand : MusicCommand() {
             return
         }
 
+        if (!player.playingTrack.isSeekable) {
+            MessageUtils.sendMsg(event, "This track is not seekable")
+            return
+        }
+
         player.seekTo(0)
         MessageUtils.sendSuccess(event.message)
     }
