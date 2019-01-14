@@ -38,22 +38,17 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class CleanupCommand extends Command {
+public class CleanupCommand extends ModBaseCommand {
 
     public CleanupCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.perms = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY};
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-
-        if (!event.getMember().hasPermission(Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY)) {
-            MessageUtils.sendMsg(event, "You don't have permission to run this command!");
-            return;
-        }
 
         int total = 5;
         boolean keepPinned = false;
@@ -111,10 +106,10 @@ public class CleanupCommand extends Command {
             }
             MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
             return 0;
-        }).whenCompleteAsync((count, thr) -> {
+        }).whenCompleteAsync((count, thr) ->
             MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
-                "Removed %d messages!", count);
-        });
+                "Removed %d messages!", count)
+        );
         // End of the annotation
     }
 

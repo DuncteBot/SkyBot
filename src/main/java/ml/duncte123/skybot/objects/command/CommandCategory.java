@@ -27,7 +27,6 @@ public enum CommandCategory {
     MAIN("main"),
     FUN("fun"),
     MUSIC("music"),
-    MOD_ADMIN("mod/admin"),
     MODERATION("mod"),
     ADMINISTRATION("admin"),
     NERD_STUFF("nerd stuff"),

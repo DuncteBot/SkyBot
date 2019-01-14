@@ -16,34 +16,50 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-package ml.duncte123.skybot.commands.guild.owner.settings;
+package ml.duncte123.skybot.commands.guild.mod;
 
-import com.jagrosh.jdautilities.commons.utils.FinderUtil;
-import ml.duncte123.skybot.Author;
+import me.duncte123.botcommons.StringUtils;
+import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.TextChannel;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
-@Author(nickname = "duncte123", author = "Duncan Sterken")
-abstract class SettingsBase extends Command {
+public abstract class ModBaseCommand extends Command {
 
-    public SettingsBase() {
-        this.category = CommandCategory.ADMINISTRATION;
-        this.displayAliasesInHelp = true;
+    Permission[] perms;
+
+    ModBaseCommand() {
+        this.category = CommandCategory.MODERATION;
+        this.perms = new Permission[]{Permission.KICK_MEMBERS, Permission.BAN_MEMBERS};
     }
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        if (!ctx.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(ctx.getAuthor())) {
-            sendMsg(ctx.getEvent(), "You need the \"Manage Server\" permission to use this command");
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+        final List<String> args = ctx.getArgs();
+
+        if (!event.getMember().hasPermission(this.perms)) {
+            final String neededPerms = Arrays.stream(this.perms)
+                .map(Permission::getName)
+                .collect(Collectors.joining("`, `"));
+            final String permsFormatted = StringUtils.replaceLast(neededPerms, "`, `", "` and `");
+
+            sendMsg(event, "You need the `" + permsFormatted + "` permissions for this command\n" +
+                "Please contact your server administrator if this is incorrect.");
+            return;
+        }
+
+        if (args.isEmpty()) {
+            sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + '`');
             return;
         }
 
@@ -51,16 +67,4 @@ abstract class SettingsBase extends Command {
     }
 
     public abstract void run(@NotNull CommandContext ctx);
-
-    @Nullable
-    protected TextChannel findTextChannel(@NotNull CommandContext ctx) {
-        final List<TextChannel> foundChannels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
-
-        if (foundChannels.isEmpty()) {
-            return null;
-        }
-
-        return foundChannels.stream()
-            .filter(TextChannel::canTalk).findFirst().orElse(null);
-    }
 }

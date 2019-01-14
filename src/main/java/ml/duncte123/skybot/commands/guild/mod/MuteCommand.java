@@ -38,23 +38,15 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class MuteCommand extends Command {
-
-    public MuteCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
-    }
+public class MuteCommand extends ModBaseCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <reason>");
             return;
         }
@@ -69,7 +61,7 @@ public class MuteCommand extends Command {
         final Member mod = ctx.getMember();
         final Member self = ctx.getSelfMember();
         final String reason = String.join("", args.subList(1, args.size()));
-        final Member toMute = event.getMessage().getMentionedMembers().get(0);
+        final Member toMute = mentioned.get(0);
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         if (!canInteract(mod, toMute, "mute",  ctx.getChannel())) {

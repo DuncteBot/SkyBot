@@ -41,21 +41,17 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class TempMuteCommand extends TempBanCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
+        final GuildSettings settings = ctx.getGuildSettings();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
-        final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
@@ -73,13 +69,18 @@ public class TempMuteCommand extends TempBanCommand {
             return;
         }
 
+        if (role == null) {
+            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
+            return;
+        }
+
         if (!self.canInteract(role)) {
             sendMsg(event, "I cannot mute this member, is the mute role above mine?");
             return;
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+");
 
         if (!AirUtils.isInt(timeParts[0])) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");

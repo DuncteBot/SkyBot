@@ -20,14 +20,10 @@ package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import net.dv8tion.jda.core.exceptions.HierarchyException;
 import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
@@ -39,55 +35,41 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class BanCommand extends Command {
-
-    public BanCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
-    }
+public class BanCommand extends ModBaseCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> <Reason>");
             return;
         }
 
-        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+        final Member toBanMember = mentioned.get(0);
 
         if (!canInteract(ctx.getMember(), toBanMember, "ban", ctx.getChannel())) {
             return;
         }
 
-        try {
-            final User toBan = toBanMember.getUser();
-            if (toBan.equals(event.getAuthor()) &&
-                !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
-                sendMsg(event, "You are not permitted to perform this action.");
-                return;
-            }
-
-
-            final String reason = String.join(" ", args.subList(1, args.size()));
-            event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
-                (m) -> {
-                    modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
-                    sendSuccess(event.getMessage());
-                }
-            );
-
-        } catch (HierarchyException e) {
-            //e.printStackTrace();
-            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
+        final User toBan = toBanMember.getUser();
+        if (toBan.equals(event.getAuthor()) &&
+            !event.getMember().canInteract(Objects.requireNonNull(event.getGuild().getMember(toBan)))) {
+            sendMsg(event, "You are not permitted to perform this action.");
+            return;
         }
+
+
+        final String reason = String.join(" ", args.subList(1, args.size()));
+        event.getGuild().getController().ban(toBan.getId(), 1, reason).queue(
+            (m) -> {
+                modLog(event.getAuthor(), toBan, "banned", reason, ctx.getGuild());
+                sendSuccess(event.getMessage());
+            }
+        );
     }
 
     @Override

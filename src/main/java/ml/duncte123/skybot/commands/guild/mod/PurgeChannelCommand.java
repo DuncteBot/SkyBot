@@ -32,29 +32,18 @@ import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
-public class PurgeChannelCommand extends Command {
+public class PurgeChannelCommand extends ModBaseCommand {
 
     public PurgeChannelCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.perms = new Permission[]{Permission.MESSAGE_MANAGE, Permission.MESSAGE_HISTORY};
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
 
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
             sendMsg(event, "I need the Manage Server permission for this command to work, please contact your server administrator about this");
-            return;
-        }
-
-        if (args.isEmpty()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <#text-channel>`");
             return;
         }
 

@@ -35,34 +35,20 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class UnbanCommand extends Command {
-
-    public UnbanCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
-    }
+public class UnbanCommand extends ModBaseCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
-        final List<String> args = ctx.getArgs();
-
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
 
         if (!ctx.getSelfMember().hasPermission(Permission.BAN_MEMBERS)) {
             sendMsg(event, "I need the ban members permission for this command to work");
             return;
         }
 
-        if (args.isEmpty()) {
-            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <username>");
-            return;
-        }
-
-        final String argsJoined = String.join(" ", args);
+        final String argsJoined = ctx.getArgsJoined();
+        final User mod = ctx.getAuthor();
 
         try {
             event.getGuild().getBanList().queue(list -> {
@@ -76,11 +62,11 @@ public class UnbanCommand extends Command {
                         userFormatted.equalsIgnoreCase(argsJoined)) {
 
                         event.getGuild().getController().unban(bannedUser)
-                            .reason("Unbanned by " + userFormatted)
+                            .reason("Unbanned by " + mod.getAsTag())
                             .queue();
 
                         sendMsg(event, "User " + userFormatted + " unbanned.");
-                        modLog(event.getAuthor(), ban.getUser(), "unbanned", ctx.getGuild());
+                        modLog(mod, ban.getUser(), "unbanned", ctx.getGuild());
                         return;
                     }
                 }
@@ -95,7 +81,8 @@ public class UnbanCommand extends Command {
 
     @Override
     public String help() {
-        return "Unbans a user";
+        return "Unbans a user\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <user>`";
     }
 
     @Override

@@ -35,31 +35,13 @@ import java.util.Optional;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class HackbanCommand extends Command {
-
-    public HackbanCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
-    }
+public class HackbanCommand extends ModBaseCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
-
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (args.isEmpty()) {
-            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <userId...>");
-            return;
-        }
-
         final List<String> messages = new ArrayList<>();
-
-        ctx.getChannel().sendTyping().queue();
 
         for (final String arg0 : args) {
             String id = "";
@@ -68,7 +50,9 @@ public class HackbanCommand extends Command {
                 id = arg0.substring(2, args.get(0).length() - 1);
             } else if (arg0.matches(".{2,32}#\\d{4}")) {
 
-                final Optional<User> opt = event.getJDA().getUsersByName(arg0.substring(0, arg0.length() - 5), false).stream()
+                final Optional<User> opt = ctx.getShardManager().getUserCache()
+                    .getElementsByName(arg0.substring(0, arg0.length() - 5), false)
+                    .stream()
                     .findFirst();
 
                 if (opt.isPresent()) {
@@ -84,11 +68,12 @@ public class HackbanCommand extends Command {
 
             try {
                 event.getGuild().getController().ban(id, 0)
-                    .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue(); //Commands are being ran on a separate thread, this is safe
+                    .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue();
                 messages.add(id);
             } catch (Exception e) {
-                e.printStackTrace();
+                logger.error("Hackban Error", e);
                 sendMsg(event, "ERROR: " + e.getMessage());
+                return;
             }
         }
 
@@ -97,7 +82,8 @@ public class HackbanCommand extends Command {
 
     @Override
     public String help() {
-        return "Ban a user before he/she can join your guild.\nUsage: " + Settings.PREFIX + getName() + " <userId>";
+        return "Ban a user before he/she can join your guild.\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <userId...>`";
     }
 
     @Override
