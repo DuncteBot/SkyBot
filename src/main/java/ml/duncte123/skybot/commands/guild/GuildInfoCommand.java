@@ -67,7 +67,7 @@ public class GuildInfoCommand extends Command {
                             sendGuildInfoEmbed(event, ctx, "");
                             return;
                         }
-                        
+
                         final Invite invite = invites.get(0);
                         sendGuildInfoEmbed(event, ctx, String.format(INVITE_STRING_TEMPLATE, invite.getCode()));
                     });

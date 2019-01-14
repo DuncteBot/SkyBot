@@ -38,9 +38,7 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendErrorWithMessage;
-import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 @Authors(authors = {
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
@@ -239,21 +237,21 @@ public class CustomCommandCommand extends Command {
         return event.getMember().hasPermission(event.getChannel(), Permission.ADMINISTRATOR);
     }
 
-    public static boolean commandExists(String name, long guild, CommandManager manager) {
-        return manager.getCustomCommand(name, guild) != null;
-    }
-
     private Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId, CommandManager manager) {
         return registerCustomCommand(name, action, guildId, false, manager);
+    }
+
+    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
+        return editCustomCommand(customCommand, newMessage, false, manager);
+    }
+
+    public static boolean commandExists(String name, long guild, CommandManager manager) {
+        return manager.getCustomCommand(name, guild) != null;
     }
 
     public static Triple<Boolean, Boolean, Boolean> registerCustomCommand(String name, String action, long guildId,
                                                                           boolean autoresponse, CommandManager manager) {
         return manager.addCustomCommand(new CustomCommandImpl(name, action, guildId, autoresponse));
-    }
-
-    private boolean editCustomCommand(CustomCommand customCommand, String newMessage, CommandManager manager) {
-        return editCustomCommand(customCommand, newMessage, false, manager);
     }
 
     public static boolean editCustomCommand(CustomCommand customCommand, String newMessage,
