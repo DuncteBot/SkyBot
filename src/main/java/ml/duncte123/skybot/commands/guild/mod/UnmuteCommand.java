@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
@@ -34,31 +33,28 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
-@Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class MuteCommand extends ModBaseCommand {
+public class UnmuteCommand extends ModBaseCommand {
 
     @Override
     public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
+        final Member mod = ctx.getMember();
+        final Member self = ctx.getSelfMember();
+        final GuildSettings settings = ctx.getGuildSettings();
 
-        if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <reason>`");
+        if (mentioned.isEmpty() || args.isEmpty()) {
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user>`");
             return;
         }
 
-        final GuildSettings settings = ctx.getGuildSettings();
+        final Member toMute = mentioned.get(0);
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!muterole <Role>` to set it");
             return;
         }
-
-        final Member mod = ctx.getMember();
-        final Member self = ctx.getSelfMember();
-        final String reason = String.join("", args.subList(1, args.size()));
-        final Member toMute = mentioned.get(0);
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
         if (role == null) {
@@ -66,18 +62,18 @@ public class MuteCommand extends ModBaseCommand {
             return;
         }
 
-        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
+        if (!canInteract(mod, toMute, "unmute", ctx.getChannel())) {
             return;
         }
 
         if (!self.canInteract(role)) {
-            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+            sendMsg(event, "I cannot unmute this member, is the mute role above mine?");
             return;
         }
 
-        event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
-                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
+        event.getGuild().getController().removeSingleRoleFromMember(toMute, role)
+            .reason("Unmute by" + event.getAuthor().getAsTag()).queue(success -> {
+                ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "unmuted", ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
         );
@@ -85,13 +81,13 @@ public class MuteCommand extends ModBaseCommand {
     }
 
     @Override
-    public String help() {
-        return "Mute a user.\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <reason>`";
+    public String getName() {
+        return "unmute";
     }
 
     @Override
-    public String getName() {
-        return "mute";
+    public String help() {
+        return "Unmutes a user if they are muted\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <@user>`";
     }
 }
