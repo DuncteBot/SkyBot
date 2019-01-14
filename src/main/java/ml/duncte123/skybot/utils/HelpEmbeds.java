@@ -47,7 +47,6 @@ public class HelpEmbeds {
     private static String LGBTQ_COMMANDS = "";
     private static String FUN_COMMANDS = "";
     private static String NERD_STUFF_COMMANDS = "";
-    private static String MOD_ADMIN_COMMANDS = "";
     private static String MODERATION_COMMANDS = "";
     private static String ADMINISTRATION_COMMANDS = "";
     private static String PATRON_COMMANDS = "";

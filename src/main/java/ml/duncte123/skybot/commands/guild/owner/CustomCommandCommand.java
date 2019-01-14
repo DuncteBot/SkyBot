@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
+import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl;
@@ -48,6 +49,11 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 public class CustomCommandCommand extends Command {
 
     private final List<String> systemInvokes = List.of("add", "new", "edit", "change", "delete", "remove", "raw");
+
+    public CustomCommandCommand() {
+        this.category = CommandCategory.ADMINISTRATION;
+    }
+
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 

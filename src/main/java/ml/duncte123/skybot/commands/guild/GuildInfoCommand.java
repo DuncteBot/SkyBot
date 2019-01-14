@@ -81,8 +81,8 @@ public class GuildInfoCommand extends Command {
             }
 
         } catch (Exception e) {
+            logger.error("GuildInfoCommand", e);
             MessageUtils.sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
-            e.printStackTrace();
         }
     }
 
@@ -113,7 +113,7 @@ public class GuildInfoCommand extends Command {
         final String createTimeHuman = prettyTime.format(createTimeDate);
 
         if (settings.getServerDesc() != null && !"".equals(settings.getServerDesc())) {
-            eb.addField("Server Description", settings.getServerDesc() + "\n", false);
+            eb.addField("Server Description", settings.getServerDesc() + "\n\u200B", false);
         }
 
         eb.setThumbnail(event.getGuild().getIconUrl())
@@ -123,7 +123,7 @@ public class GuildInfoCommand extends Command {
                 "**Region:** " + g.getRegion().getName() + "\n" +
                 "**Created at:** " + String.format("%s (%s)", createTimeFormat, createTimeHuman) + "\n" +
                 "**Verification level:** " + GuildUtils.verificationLvlToName(g.getVerificationLevel()) + "\n" +
-                inviteString, false)
+                inviteString + "\n\u200B", false)
             .addField("Member Stats", "**Total members:** " + g.getMemberCache().size() + "\n" +
                 "**(Possible) Nitro users:** " + GuildUtils.countAnimatedAvatars(g) + "\n" +
                 "**Bot to user ratio:** " + ratio[1] + "% is a bot and " + ratio[0] + "% is a user", false);

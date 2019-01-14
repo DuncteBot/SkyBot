@@ -38,7 +38,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 public class UnlockEmoteCommand extends Command {
 
     public UnlockEmoteCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.category = CommandCategory.ADMINISTRATION;
     }
 
     @Override
