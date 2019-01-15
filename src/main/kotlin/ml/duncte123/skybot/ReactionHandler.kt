@@ -76,7 +76,8 @@ class ReactionHandler : ListenerAdapter() {
             ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild),
                 "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
             requirementsCache -= cacheElement
-            ctx.channel.deleteMessageById(msgId).queue()
+
+            ctx.channel.deleteMessageById(msgId).queue(null) {} // Ignore the error if the message has already been deleted
         }
 
     }
