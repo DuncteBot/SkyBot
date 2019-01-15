@@ -24,7 +24,6 @@ import ch.qos.logback.classic.filter.ThresholdFilter;
 import com.almightyalpaca.discord.jdabutler.util.logging.WebhookAppender;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
-import com.neovisionaries.ws.client.WebSocketFactory;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
@@ -69,7 +68,7 @@ public final class SkyBot {
     private final ScheduledExecutorService gameScheduler = Executors.newSingleThreadScheduledExecutor(
         (r) -> new Thread(r, "Bot-Service-Thread")
     );
-    private IntFunction<? extends Game> gameProvider;
+    private final IntFunction<? extends Game> gameProvider;
 
     private SkyBot() throws Exception {
 

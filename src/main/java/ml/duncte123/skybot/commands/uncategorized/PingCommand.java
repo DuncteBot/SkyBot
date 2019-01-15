@@ -39,10 +39,10 @@ public class PingCommand extends Command {
             final long messagePing = ctx.getMessage().getCreationTime().until(it.getCreationTime(), ChronoUnit.MILLIS);
 
             it.editMessageFormat("PONG!\n" +
-                "Rest ping: %sms\n" +
-                "Message ping: %sms\n" +
-                "Websocket ping: %sms\n" +
-                "Average shard ping: %sms",
+                    "Rest ping: %sms\n" +
+                    "Message ping: %sms\n" +
+                    "Websocket ping: %sms\n" +
+                    "Average shard ping: %sms",
                 restPing,
                 messagePing,
                 ctx.getJDA().getPing(),

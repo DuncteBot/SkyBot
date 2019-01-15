@@ -35,6 +35,12 @@ public class SetLogChannelCommand extends SettingsBase {
             return;
         }
 
+        if ("null".equalsIgnoreCase(ctx.getArgsJoined()) || "none".equalsIgnoreCase(ctx.getArgsJoined()) || "off".equalsIgnoreCase(ctx.getArgsJoined())) {
+            ctx.getGuild().setSettings(ctx.getGuildSettings().setLogChannel(0L));
+            sendMsg(ctx.getEvent(), "Logging has been turned off");
+            return;
+        }
+
         final TextChannel channel = findTextChannel(ctx);
 
         if (channel == null) {

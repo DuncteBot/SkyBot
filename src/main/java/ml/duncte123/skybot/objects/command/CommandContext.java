@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.command;
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
@@ -37,6 +38,7 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
@@ -54,6 +56,7 @@ public class CommandContext {
     private final GuildMessageReceivedEvent event;
     private final Variables variables;
     private List<String> argsWithoutQuotes;
+    private List<Member> mentionedInMessage;
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
@@ -148,6 +151,18 @@ public class CommandContext {
 
     public GuildMessageReceivedEvent getEvent() {
         return this.event;
+    }
+
+    public List<Member> getMentionedMembers() {
+        if (this.mentionedInMessage == null) {
+           this.mentionedInMessage = new ArrayList<>();
+
+           getArgs().forEach(
+               (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, getGuild()))
+           );
+        }
+
+        return this.mentionedInMessage;
     }
 
     // --------------- Reaction processing methods --------------- //

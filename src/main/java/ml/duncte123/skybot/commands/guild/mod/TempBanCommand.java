@@ -19,10 +19,8 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AirUtils;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
@@ -38,24 +36,22 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
 import static ml.duncte123.skybot.utils.ModerationUtils.*;
 
-public class TempBanCommand extends Command {
+public class TempBanCommand extends ModBaseCommand {
+
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
-        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+        final Member toBanMember = mentioned.get(0);
+
         if (toBanMember.equals(event.getMember())) {
             sendMsg(event, "You are not permitted to perform this action.");
             return;

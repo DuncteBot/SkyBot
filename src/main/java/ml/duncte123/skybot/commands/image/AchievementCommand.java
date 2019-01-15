@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import org.jetbrains.annotations.NotNull;
 

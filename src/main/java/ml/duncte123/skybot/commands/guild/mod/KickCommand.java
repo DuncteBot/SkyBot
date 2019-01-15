@@ -21,8 +21,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -37,29 +35,25 @@ import java.util.List;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class KickCommand extends Command {
+public class KickCommand extends ModBaseCommand {
 
     public KickCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.perms = new Permission[]{Permission.KICK_MEMBERS};
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
-            MessageUtils.sendMsg(event, "You need the kick members permission to use this command, please contact your server administrator about this.");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty()) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 
-        final Member toKickMember = event.getMessage().getMentionedMembers().get(0);
+        final Member toKickMember = mentioned.get(0);
 
         if (!canInteract(ctx.getMember(), toKickMember, "kick", ctx.getChannel())) {
             return;
@@ -73,16 +67,16 @@ public class KickCommand extends Command {
                 MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            //Arrays.copyOfRange(Array, From, to)
+
             final String reason = String.join("", args.subList(1, args.size()));
-            event.getGuild().getController().kick(toKick.getId(), "Kicked by " + event.getAuthor().getName() + "\nReason: " + reason).queue(
+            event.getGuild().getController().kick(toKickMember)
+                .reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(
                 (noting) -> {
                     ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());
                     MessageUtils.sendSuccess(event.getMessage());
                 }
             );
-        } catch (HierarchyException ignored) { // if we don't do anything with it and just catch it we should name it "ignored"
-            //e.printStackTrace();
+        } catch (HierarchyException ignored) {
             MessageUtils.sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 
@@ -91,7 +85,8 @@ public class KickCommand extends Command {
 
     @Override
     public String help() {
-        return "Kicks a user.";
+        return "Kicks a user.\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> [reason]`";
     }
 
     @Override
