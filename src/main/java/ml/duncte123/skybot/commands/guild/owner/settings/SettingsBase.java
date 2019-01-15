@@ -36,7 +36,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 abstract class SettingsBase extends Command {
 
     public SettingsBase() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.category = CommandCategory.ADMINISTRATION;
         this.displayAliasesInHelp = true;
     }
 

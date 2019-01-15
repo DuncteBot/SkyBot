@@ -149,5 +149,5 @@ class OneLinerCommands : Command() {
 
     override fun getName() = "cookie"
 
-    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote","xkcd", "screenfetch")
+    override fun getAliases() = arrayOf("trigger", "spam", "wam", "mineh", "invite", "uptime", "quote", "xkcd", "screenfetch")
 }

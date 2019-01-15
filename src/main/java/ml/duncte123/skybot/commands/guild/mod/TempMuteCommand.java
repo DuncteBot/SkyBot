@@ -24,7 +24,6 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import ml.duncte123.skybot.utils.ModerationUtils;
-import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.User;
@@ -41,21 +40,17 @@ import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 public class TempMuteCommand extends TempBanCommand {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
+        final GuildSettings settings = ctx.getGuildSettings();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS, Permission.BAN_MEMBERS)) {
-            sendMsg(event, "You need the kick members and the ban members permission for this command, please contact your server administrator about this");
-            return;
-        }
-
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.size() < 2) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
             return;
         }
 
-        final GuildSettings settings = ctx.getGuildSettings();
 
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
@@ -69,7 +64,12 @@ public class TempMuteCommand extends TempBanCommand {
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
-        if (!canInteract(mod, toMute, "mute",  ctx.getChannel())) {
+        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
+            return;
+        }
+
+        if (role == null) {
+            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
             return;
         }
 
@@ -79,7 +79,7 @@ public class TempMuteCommand extends TempBanCommand {
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+"); //Split the string into ints and letters
+        final String[] timeParts = args.get(1).split("(?<=\\D)+(?=\\d)+|(?<=\\d)+(?=\\D)+");
 
         if (!AirUtils.isInt(timeParts[0])) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w/M/Y> [Reason]`");
@@ -107,10 +107,10 @@ public class TempMuteCommand extends TempBanCommand {
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by" + author.getAsTag() + ": " + fReason)
             .queue(success -> {
-                ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
-                sendSuccess(event.getMessage());
-            }
-        );
+                    ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
+                    sendSuccess(event.getMessage());
+                }
+            );
 
     }
 

@@ -114,9 +114,9 @@ public class CommandManager {
         return cmd.orElse(null);
     }
 
-    /*public List<ICommand> getCommands(CommandCategory category) {
+    public List<ICommand> getCommands(CommandCategory category) {
         return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
-    }*/
+    }
 
 
     public CustomCommand getCustomCommand(String invoke, long guildId) {

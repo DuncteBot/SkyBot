@@ -42,7 +42,7 @@ import static ml.duncte123.skybot.commands.guild.owner.UnlockEmoteCommand.cannot
 public class LockEmoteCommand extends Command {
 
     public LockEmoteCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.category = CommandCategory.ADMINISTRATION;
     }
 
     @Override

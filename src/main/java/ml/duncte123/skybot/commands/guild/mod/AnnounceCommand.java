@@ -19,11 +19,9 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.botcommons.messaging.EmbedUtils;
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
-import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
@@ -34,27 +32,23 @@ import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
-public class AnnounceCommand extends Command {
+public class AnnounceCommand extends ModBaseCommand {
 
     public AnnounceCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.category = CommandCategory.ADMINISTRATION;
+        this.perms = new Permission[]{Permission.ADMINISTRATOR};
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
         final String invoke = ctx.getInvoke();
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!event.getMember().hasPermission(Permission.ADMINISTRATOR)) {
-            MessageUtils.sendMsg(event, "I'm sorry but you don't have permission to run this command.");
-            return;
-        }
-
         if (event.getMessage().getMentionedChannels().isEmpty()) {
-            MessageUtils.sendMsg(event, "Correct usage is `" + Settings.PREFIX + getName() + " [#Channel] [Message]`");
+            sendMsg(event, "Correct usage is `" + Settings.PREFIX + getName() + " <#Channel> <Message>`");
             return;
         }
 
@@ -62,19 +56,17 @@ public class AnnounceCommand extends Command {
             final TextChannel targetChannel = event.getMessage().getMentionedChannels().get(0);
 
             if (!ctx.getSelfMember().hasPermission(targetChannel, Permission.MESSAGE_WRITE, Permission.MESSAGE_READ)) {
-                MessageUtils.sendMsg(event, "I can not talk in " + targetChannel.getAsMention());
-                MessageUtils.sendError(event.getMessage());
+                sendErrorWithMessage(event.getMessage(), "I can not talk in " + targetChannel.getAsMention());
                 return;
             }
 
-            @SinceSkybot(version = "3.68.0")
-            final String msg = ctx.getArgsRaw().replaceAll(targetChannel.getAsMention() + " ", "");
+            @SinceSkybot(version = "3.68.0") final String msg = ctx.getArgsRaw().replaceAll(targetChannel.getAsMention() + " ", "");
 
             switch (invoke) {
                 case "announce1":
                 case "announce":
-                    MessageUtils.sendMsg(targetChannel, msg);
-                    MessageUtils.sendSuccess(event.getMessage());
+                    sendMsg(targetChannel, msg);
+                    sendSuccess(event.getMessage());
                     break;
 
                 default:
@@ -91,14 +83,14 @@ public class AnnounceCommand extends Command {
                     }
 
                     sendEmbed(targetChannel, embed);
-                    MessageUtils.sendSuccess(event.getMessage());
+                    sendSuccess(event.getMessage());
                     break;
             }
 
         } catch (ArrayIndexOutOfBoundsException ex) {
-            MessageUtils.sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
+            sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
         } catch (Exception e) {
-            MessageUtils.sendMsg(event, "WHOOPS: " + e.getMessage());
+            sendMsg(event, "WHOOPS: " + e.getMessage());
             ComparatingUtils.execCheck(e);
             e.printStackTrace();
         }

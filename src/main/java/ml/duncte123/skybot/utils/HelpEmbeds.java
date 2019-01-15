@@ -26,27 +26,32 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 
+import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
 
+@SuppressWarnings("FieldCanBeLocal")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class HelpEmbeds {
 
     /**
-     * These lists hold the commands for each category
+     * These hold the command lists
      */
-    private static List<String> mainCommands = new ArrayList<>();
-    private static List<String> animalCommands = new ArrayList<>();
-    private static List<String> funCommands = new ArrayList<>();
-    private static List<String> musicCommands = new ArrayList<>();
-    private static List<String> nerdCommands = new ArrayList<>();
-    private static List<String> modAdminCommands = new ArrayList<>();
-    private static List<String> patronCommands = new ArrayList<>();
-    private static List<String> weebCommands = new ArrayList<>();
-    private static List<String> NSFWCommands = new ArrayList<>();
-    private static List<String> LGBTQCommands = new ArrayList<>();
+    private static String MAIN_COMMANDS = "";
+    private static String MUSIC_COMMANDS = "";
+    private static String ANIMALS_COMMANDS = "";
+    private static String WEEB_COMMANDS = "";
+    private static String LGBTQ_COMMANDS = "";
+    private static String FUN_COMMANDS = "";
+    private static String NERD_STUFF_COMMANDS = "";
+    private static String MODERATION_COMMANDS = "";
+    private static String ADMINISTRATION_COMMANDS = "";
+    private static String PATRON_COMMANDS = "";
+    private static String NSFW_COMMANDS = "";
+
     /**
      * This tells the fields to be inline or not
      */
@@ -55,76 +60,38 @@ public class HelpEmbeds {
     /**
      * This loads all the commands in the lists
      */
+
     public static void init(final CommandManager manager) {
-        for (final ICommand c : manager.getCommands()) {
-            switch (c.getCategory()) {
-                case MAIN:
-                    mainCommands.add(c.getName());
-                    break;
-                case FUN:
-                    funCommands.add(c.getName());
-                    break;
-                case ANIMALS:
-                    animalCommands.add(c.getName());
-                    break;
-                case MUSIC:
-                    musicCommands.add(c.getName());
-                    break;
-                case MOD_ADMIN:
-                    modAdminCommands.add(c.getName());
-                    break;
-                case NERD_STUFF:
-                    nerdCommands.add(c.getName());
-                    break;
-                case PATRON:
-                    patronCommands.add(c.getName());
-                    break;
-                case WEEB:
-                    weebCommands.add(c.getName());
-                    break;
-                case NSFW:
-                    NSFWCommands.add(c.getName());
-                    break;
-                case LGBTQ:
-                    LGBTQCommands.add(c.getName());
-                    break;
+        final CommandCategory[] categories = CommandCategory.values();
+        final Class<?> cls = HelpEmbeds.class;
+
+        for (final CommandCategory category : categories) {
+
+            if ("unlisted".equalsIgnoreCase(category.name())) {
+                continue;
             }
 
-            if (c.shouldDisplayAliasesInHelp())
-                for (final String alias : c.getAliases()) {
-                    switch (c.getCategory()) {
-                        case MAIN:
-                            mainCommands.add(alias);
-                            break;
-                        case FUN:
-                            funCommands.add(alias);
-                            break;
-                        case ANIMALS:
-                            animalCommands.add(alias);
-                            break;
-                        case MUSIC:
-                            musicCommands.add(alias);
-                            break;
-                        case MOD_ADMIN:
-                            modAdminCommands.add(alias);
-                            break;
-                        case NERD_STUFF:
-                            nerdCommands.add(alias);
-                            break;
-                        case PATRON:
-                            patronCommands.add(alias);
-                            break;
-                        case WEEB:
-                            weebCommands.add(alias);
-                            break;
-                        case NSFW:
-                            NSFWCommands.add(alias);
-                            break;
-                        case LGBTQ:
-                            LGBTQCommands.add(c.getName());
-                            break;
+            try {
+                final List<String> cmds = new ArrayList<>();
+                final String fieldName = category.name() + "_COMMANDS";
+                final Field field = cls.getDeclaredField(fieldName);
+
+                final List<ICommand> foundCommands = manager.getCommands(category);
+
+                for (final ICommand command : foundCommands) {
+                    cmds.add(command.getName());
+
+                    if (command.shouldDisplayAliasesInHelp()) {
+                        cmds.addAll(Arrays.asList(command.getAliases()));
                     }
                 }
+
+                field.set(cls, joinCommands(cmds));
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
         }
     }
 
@@ -136,9 +103,6 @@ public class HelpEmbeds {
      *
      * @return a embed containing all the commands
      */
-    /*public static MessageEmbed generateCommandEmbed(String prefix) {
-        return generateCommandEmbed(prefix, null);
-    }*/
     public static MessageEmbed generateCommandEmbed(String prefix, CommandCategory... categories) {
         final EmbedBuilder embed = defaultEmbed()
             .setThumbnail(Settings.DEFAULT_ICON)
@@ -148,16 +112,17 @@ public class HelpEmbeds {
 
         if (categories == null || categories.length == 0) {
             return embed
-                .addField("Main commands", joinCommands(mainCommands), INLINE)
-                .addField("Music commands", joinCommands(musicCommands), INLINE)
-                .addField("Animal commands", joinCommands(animalCommands), INLINE)
-                .addField("Weeb commands", joinCommands(weebCommands), INLINE)
-                .addField("LGBTQ+ commands", joinCommands(LGBTQCommands), INLINE)
-                .addField("Fun commands", joinCommands(funCommands), INLINE)
-                .addField("Nerd commands", joinCommands(nerdCommands), INLINE)
-                .addField("Mod/Admin commands", joinCommands(modAdminCommands), INLINE)
-                .addField("Patron only commands", joinCommands(patronCommands), INLINE)
-                .addField("NSFW commands", joinCommands(NSFWCommands), INLINE)
+                .addField("Main commands", MAIN_COMMANDS, INLINE)
+                .addField("Music commands", MUSIC_COMMANDS, INLINE)
+                .addField("Animal commands", ANIMALS_COMMANDS, INLINE)
+                .addField("Weeb commands", WEEB_COMMANDS, INLINE)
+                .addField("LGBTQ+ commands", LGBTQ_COMMANDS, INLINE)
+                .addField("Fun commands", FUN_COMMANDS, INLINE)
+                .addField("Nerd commands", NERD_STUFF_COMMANDS, INLINE)
+                .addField("Mod commands", MODERATION_COMMANDS, INLINE)
+                .addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE)
+                .addField("Patron only commands", PATRON_COMMANDS, INLINE)
+                .addField("NSFW commands", NSFW_COMMANDS, INLINE)
                 .addField("Other suff",
                     "Support server: [https://discord.gg/NKM9Xtk](https://discord.gg/NKM9Xtk)\n" +
                         "Support development of this bot: [https://www.patreon.com/DuncteBot](https://www.patreon.com/DuncteBot)", false)
@@ -166,37 +131,40 @@ public class HelpEmbeds {
 
         for (final CommandCategory category : categories) {
             switch (category) {
-                case FUN:
-                    embed.addField("Fun commands", joinCommands(funCommands), INLINE);
-                    break;
                 case MAIN:
-                    embed.addField("Main commands", joinCommands(mainCommands), INLINE);
-                    break;
-                case NSFW:
-                    embed.addField("NSFW commands", joinCommands(NSFWCommands), INLINE);
-                    break;
-                case NERD_STUFF:
-                    embed.addField("Nerd commands", joinCommands(nerdCommands), INLINE);
-                    break;
-                case WEEB:
-                    embed.addField("Weeb commands", joinCommands(weebCommands), INLINE);
-                    break;
-                case LGBTQ:
-                    embed.addField("LGBTQ+ commands", joinCommands(LGBTQCommands), INLINE);
+                    embed.addField("Main commands", MAIN_COMMANDS, INLINE);
                     break;
                 case MUSIC:
-                    embed.addField("Music commands", joinCommands(musicCommands), INLINE);
-                    break;
-                case PATRON:
-                    embed.addField("Patron only commands", joinCommands(patronCommands), INLINE);
+                    embed.addField("Music commands", MUSIC_COMMANDS, INLINE);
                     break;
                 case ANIMALS:
-                    embed.addField("Animal commands", joinCommands(animalCommands), INLINE);
+                    embed.addField("Animal commands", ANIMALS_COMMANDS, INLINE);
                     break;
-                case MOD_ADMIN:
-                    embed.addField("Mod/Admin commands", joinCommands(modAdminCommands), INLINE);
+                case WEEB:
+                    embed.addField("Weeb commands", WEEB_COMMANDS, INLINE);
                     break;
-                case UNLISTED:
+                case LGBTQ:
+                    embed.addField("LGBTQ+ commands", LGBTQ_COMMANDS, INLINE);
+                    break;
+                case FUN:
+                    embed.addField("Fun commands", FUN_COMMANDS, INLINE);
+                    break;
+                case NERD_STUFF:
+                    embed.addField("Nerd commands", NERD_STUFF_COMMANDS, INLINE);
+                    break;
+                case MODERATION:
+                    embed.addField("Mod commands", MODERATION_COMMANDS, INLINE);
+                    break;
+                case ADMINISTRATION:
+                    embed.addField("Admin commands", ADMINISTRATION_COMMANDS, INLINE);
+                    break;
+                case PATRON:
+                    embed.addField("Patron only commands", PATRON_COMMANDS, INLINE);
+                    break;
+                case NSFW:
+                    embed.addField("NSFW commands", NSFW_COMMANDS, INLINE);
+                    break;
+                default:
                     break;
             }
         }

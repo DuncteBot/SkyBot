@@ -21,8 +21,6 @@ package ml.duncte123.skybot.commands.guild.mod;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
-import ml.duncte123.skybot.objects.command.Command;
-import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.Permission;
@@ -35,32 +33,29 @@ import org.jetbrains.annotations.NotNull;
 
 import java.util.List;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SoftbanCommand extends Command {
+public class SoftbanCommand extends ModBaseCommand {
 
     public SoftbanCommand() {
-        this.category = CommandCategory.MOD_ADMIN;
+        this.perms = new Permission[]{Permission.KICK_MEMBERS};
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void run(@NotNull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
+        final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (!event.getMember().hasPermission(Permission.KICK_MEMBERS)) {
-            MessageUtils.sendMsg(event, "You need the kick members permission for this command, please contact your server administrator about this");
+        if (mentioned.isEmpty() || args.size() < 2) {
+            sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
             return;
         }
 
-        if (event.getMessage().getMentionedMembers().isEmpty() || args.isEmpty()) {
-            MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
-            return;
-        }
-
-        final Member toBanMember = event.getMessage().getMentionedMembers().get(0);
+        final Member toBanMember = mentioned.get(0);
 
         if (!canInteract(ctx.getMember(), toBanMember, "softban", ctx.getChannel())) {
             return;
@@ -70,21 +65,22 @@ public class SoftbanCommand extends Command {
             final User toBan = toBanMember.getUser();
             if (toBan.equals(event.getAuthor()) &&
                 !event.getGuild().getMember(event.getAuthor()).canInteract(event.getGuild().getMember(toBan))) {
-                MessageUtils.sendMsg(event, "You are not permitted to perform this action.");
+                sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
             final String reason = StringUtils.join(args.subList(1, args.size()), " ");
 
-            event.getGuild().getController().ban(toBan.getId(), 1, "Kicked by: " + event.getAuthor().getName() + "\nReason: " + reason).queue(
+            event.getGuild().getController().ban(toBanMember, 1)
+                .reason("Kicked by: " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(
                 nothing -> {
                     ModerationUtils.modLog(event.getAuthor(), toBan, "kicked", reason, ctx.getGuild());
                     MessageUtils.sendSuccess(event.getMessage());
-                    event.getGuild().getController().unban(toBan.getId()).reason("(softban) Kicked by: " + event.getAuthor().getName()).queue();
+                    event.getGuild().getController().unban(toBan.getId())
+                        .reason("(softban) Kicked by: " + event.getAuthor().getAsTag()).queue();
                 }
             );
-        } catch (HierarchyException e) {
-            //e.printStackTrace();
-            MessageUtils.sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
+        } catch (HierarchyException ignored) {
+            sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }
 
