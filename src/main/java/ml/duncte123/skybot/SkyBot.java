@@ -93,7 +93,7 @@ public final class SkyBot {
         }
 
         RestAction.DEFAULT_FAILURE = ComparatingUtils::execCheck;
-        RestAction.setPassContext(true);
+        RestAction.setPassContext(false);
 
         if (variables.useApi()) {
             logger.info(TextColor.GREEN + "Using api for all connections" + TextColor.RESET);
