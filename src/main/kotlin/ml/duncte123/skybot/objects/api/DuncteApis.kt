@@ -98,6 +98,15 @@ class DuncteApis(private val apiKey: String) {
         return response.getBoolean("success")
     }
 
+    fun deleteGuildSetting(guildId: Long) {
+        val response = executeRequest(defaultRequest("guildsettings/$guildId").delete())
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to delete guild setting\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson()
         val response = postJSON("guildsettings", json)

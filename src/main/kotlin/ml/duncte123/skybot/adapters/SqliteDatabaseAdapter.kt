@@ -161,6 +161,27 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         throw MethodNotSupportedException("Not supported for SQLite")
     }
 
+    override fun deleteGuildSetting(guildId: Long) {
+        val database = variables.database
+
+        database.run {
+
+            val dbName = database.name
+
+            try {
+                database.connManager.use { manager ->
+                    val connection = manager.connection
+
+                    val smt = connection.prepareStatement("DELETE FROM $dbName.guildSettings where guildId = '$guildId'")
+                    smt.executeUpdate()
+
+                }
+            } catch (e1: SQLException) {
+                e1.printStackTrace()
+            }
+        }
+    }
+
     override fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         val database = variables.database
 
@@ -210,10 +231,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
                 }
             } catch (e1: SQLException) {
-                e1.printStackTrace()
+            e1.printStackTrace()
 
-                callback.invoke(false)
-            }
+            callback.invoke(false)
+        }
 
             callback.invoke(true)
         }

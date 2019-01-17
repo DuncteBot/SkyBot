@@ -158,6 +158,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun deleteGuildSetting(guildId: Long) {
+        variables.database.run {
+            variables.apis.deleteGuildSetting(guildId)
+        }
+    }
+
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         variables.database.run {
             callback.invoke(

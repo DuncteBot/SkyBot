@@ -69,6 +69,8 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit)
 
+    abstract fun deleteGuildSetting(guildId: Long)
+
     abstract fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
 
     abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
