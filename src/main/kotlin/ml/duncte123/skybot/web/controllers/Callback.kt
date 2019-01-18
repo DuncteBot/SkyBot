@@ -43,7 +43,13 @@ object Callback {
 
         val userId = oAuth2Client.getUser(oauthses).complete().id
 
-        request.session(true).attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+        val session = request.session()
+
+        session.attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+
+        if (session.attributes().contains(WebRouter.OLD_PAGE)) {
+            return response.redirect(session.attribute(WebRouter.OLD_PAGE))
+        }
 
         return response.redirect("/dashboard")
     }
