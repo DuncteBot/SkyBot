@@ -33,15 +33,16 @@ import spark.Response
 import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-object Dashbord {
+object Dashboard {
 
     fun before(request: Request, response: Response, oAuth2Client: OAuth2Client, config: DunctebotConfig) {
+
         if (!request.session().attributes().contains(WebRouter.SESSION_ID)) {
             val url = oAuth2Client.generateAuthorizationURL(
                 config.discord.oauth.redirUrl,
                 Scope.IDENTIFY, Scope.GUILDS
             )
-            request.session(true).attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
+            request.session().attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
             response.redirect(url)
         }
     }
@@ -49,6 +50,7 @@ object Dashbord {
     fun beforeServer(request: Request, response: Response, shardManager: ShardManager) {
 
         if (!request.session().attributes().contains(WebRouter.USER_SESSION)) {
+            request.session().attribute(WebRouter.OLD_PAGE, request.pathInfo())
             return response.redirect("/dashboard")
         }
 

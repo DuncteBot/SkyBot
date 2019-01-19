@@ -36,7 +36,7 @@ import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
 import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
 import ml.duncte123.skybot.web.controllers.api.MainApi
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
-import ml.duncte123.skybot.web.controllers.dashboard.Dashbord
+import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
 import ml.duncte123.skybot.web.controllers.dashboard.ModerationSettings
 import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
@@ -105,24 +105,24 @@ class WebRouter(private val shardManager: ShardManager) {
         path("/dashboard") {
 
             before("") {
-                return@before Dashbord.before(request, response, oAuth2Client, config)
+                return@before Dashboard.before(request, response, oAuth2Client, config)
             }
 
             get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
             get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
             post("/issue") {
-                return@post Dashbord.postIssue()
+                return@post Dashboard.postIssue()
             }
         }
 
         path("/server/$GUILD_ID") {
             before("/*") {
-                return@before Dashbord.beforeServer(request, response, shardManager)
+                return@before Dashboard.beforeServer(request, response, shardManager)
             }
 
             get("/") {
-                return@get Dashbord.serverSelection(request, shardManager, engine)
+                return@get Dashboard.serverSelection(request, shardManager, engine)
             }
 
             get("/invalid") {
@@ -264,6 +264,7 @@ class WebRouter(private val shardManager: ShardManager) {
 
     companion object {
         const val FLASH_MESSAGE = "FLASH_MESSAGE"
+        const val OLD_PAGE = "OLD_PAGE"
         const val SESSION_ID = "sessionId"
         const val USER_SESSION = "USER_SESSION"
         const val SPLITTER = ":SKIRT:"
