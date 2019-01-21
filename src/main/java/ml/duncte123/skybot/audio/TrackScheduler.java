@@ -88,11 +88,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Starts the next track
      */
     public void nextTrack() {
-
-        if (queue.peek() == null) {
-            return;
-        }
-
         final AudioTrack nextTrack = queue.poll();
 
         if (nextTrack != null) {
