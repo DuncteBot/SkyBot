@@ -54,15 +54,15 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-        if (settings.isEnableJoinMessage()) {
-            final long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
-                ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+        if (settings.isEnableJoinMessage()  && settings.getWelcomeLeaveChannel() > 0) {
+            final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() || !"".equals(msg.trim()) || welcomeLeaveChannel != null)
+            if (!msg.isEmpty() || !"".equals(msg.trim()) || welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
+            }
         }
 
         if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
@@ -86,9 +86,8 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-        if (settings.isEnableJoinMessage()) {
-            final long welcomeLeaveChannelId = (settings.getWelcomeLeaveChannel() <= 0)
-                ? GuildUtils.getPublicChannel(guild).getIdLong() : settings.getWelcomeLeaveChannel();
+        if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
+            final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);

@@ -20,8 +20,10 @@ package ml.duncte123.skybot;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import kotlin.Pair;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
@@ -29,6 +31,7 @@ import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.adapters.SqliteDatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
+import ml.duncte123.skybot.objects.LongPair;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -43,9 +46,11 @@ import java.nio.charset.StandardCharsets;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
 
+    private static Variables instance;
     private final String googleBaseUrl;
     private final boolean isSql;
     private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
+    private final TLongObjectMap<LongPair> vcAutoRoleCache = new TLongObjectHashMap<>();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
@@ -55,8 +60,6 @@ public final class Variables {
     private DunctebotConfig config;
     private DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
-
-    private static Variables instance;
 
 
     private Variables() {
@@ -111,6 +114,19 @@ public final class Variables {
 
     public TLongObjectMap<GuildSettings> getGuildSettings() {
         return this.guildSettings;
+    }
+
+    /**
+     * Returns the vc autorole cache
+     * <p>
+     * Layout:
+     * Guild id ->
+     * Voice channel id -> Role id
+     *
+     * @return The vc autorole cache
+     */
+    public TLongObjectMap<LongPair> getVcAutoRoleCache() {
+        return vcAutoRoleCache;
     }
 
     public String getGoogleBaseUrl() {

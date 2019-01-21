@@ -18,15 +18,17 @@
 
 package ml.duncte123.skybot.commands.admin
 
+import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import ml.duncte123.skybot.objects.LongPair
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.Permission
 
-class AutoVcRoleCommand : ModBaseCommand() {
+class VcAutoRoleCommand : ModBaseCommand() {
 
     init {
         this.category = CommandCategory.ADMINISTRATION
@@ -36,29 +38,67 @@ class AutoVcRoleCommand : ModBaseCommand() {
 
     override fun run(ctx: CommandContext) {
         val event = ctx.event
+        val guild = ctx.guild
         val args = ctx.args
+        val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
 
         if (args.size == 1) {
 
-            if (args[0] !== "off") {
+            if (args[0] != "off") {
                 sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
                 return
             }
 
+            if (!vcAutoRoleCache.containsKey(guild.idLong)) {
+                sendMsg(event, "No vc autorole has been set for this server")
+                return
+            }
+
             sendMsg(event, "Auto VC Role has been disabled")
+            return
         }
+
+        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[0], guild)
+        val foundRoles = FinderUtil.findRoles(args[1], guild)
+
+        if (foundVoiceChannels.isEmpty()) {
+            sendMsgFormat(
+                event,
+                "I could not find any voice channels for `%s`%n" +
+                    "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
+                args[0]
+            )
+
+            return
+        }
+
+        if (foundRoles.isEmpty()) {
+            sendMsgFormat(
+                event,
+                "I could not find any role for `%s`%n" +
+                    "TIP: If your role name has spaces \"Surround it with quotes\" to give it as one argument",
+                args[1]
+            )
+
+            return
+        }
+
+        val targetChannel = foundVoiceChannels[0]
+        val targetRole = foundRoles[0]
+
+        vcAutoRoleCache.put(guild.idLong, LongPair(targetChannel.idLong, targetRole.idLong))
 
         sendMsgFormat(
             event,
-            "Role <@&%s> will now be applied to a user when they join <#%s>",
-            "ROLE_ID", "VC_ID"
+            "Role %s will now be applied to a user when they join <#%s>",
+            targetRole, targetChannel.id
         )
 
     }
 
-    override fun getName() = "autovcrole"
+    override fun getName() = "vcautorole"
 
-    override fun help() = """Sets the autorole for a voice channel
+    override fun help() = """Gives a role to a user when they join a specified voice channel
         |Usage: `${Settings.PREFIX}$name <voice channel> <role>` or `${Settings.PREFIX}$name off`
     """.trimMargin()
 }
