@@ -343,14 +343,33 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     }
 
     override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        variables.database.run {
+            val storedData = variables.apis.getVcAutoRoles()
+            val converted = ArrayList<VcAutoRole>()
+
+            storedData.forEach {
+                val json = it as JSONObject
+
+                converted.add(VcAutoRole(
+                    json.getLong("guild_id"),
+                    json.getLong("voice_channel_id"),
+                    json.getLong("role_id")
+                ))
+            }
+
+            callback.invoke(converted)
+        }
     }
 
     override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+        variables.database.run {
+            variables.apis.setVcAutoRole(guildId, voiceChannelId, roleId)
+        }
     }
 
-    override fun removeVcAutoRole(guildId: Long) {
-        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    override fun removeVcAutoRole(voiceChannelId: Long) {
+        variables.database.run {
+            variables.apis.removeVcAutoRole(voiceChannelId)
+        }
     }
 }

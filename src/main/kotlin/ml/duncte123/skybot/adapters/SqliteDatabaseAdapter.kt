@@ -580,7 +580,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
-    override fun removeVcAutoRole(guildId: Long) {
+    override fun removeVcAutoRole(voiceChannelId: Long) {
         val database = variables.database
 
         database.run {
@@ -589,10 +589,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                     val conn = manager.connection
 
                     val smt = conn.prepareStatement(
-                        "DELETE FROM vcAutoRoles WHERE guild_id = ?"
+                        "DELETE FROM vcAutoRoles WHERE voice_channel_id = ?"
                     )
 
-                    smt.setString(1, guildId.toString())
+                    smt.setString(1, voiceChannelId.toString())
                     smt.executeUpdate()
                 }
             } catch (e: SQLException) {

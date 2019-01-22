@@ -20,8 +20,8 @@ package ml.duncte123.skybot.objects;
 
 public class LongPair {
 
-    private long voiceChannelId;
-    private long roleId;
+    private final long voiceChannelId;
+    private final long roleId;
 
     public LongPair(long left, long right) {
         this.voiceChannelId = left;
@@ -32,16 +32,8 @@ public class LongPair {
         return voiceChannelId;
     }
 
-    public void setVoiceChannelId(long voiceChannelId) {
-        this.voiceChannelId = voiceChannelId;
-    }
-
     public long getRoleId() {
         return roleId;
-    }
-
-    public void setRoleId(long roleId) {
-        this.roleId = roleId;
     }
 
     @Override
