@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
+import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -339,5 +340,17 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             callback.invoke(Pair(bans, mutes))
         }
+    }
+
+    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun removeVcAutoRole(guildId: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

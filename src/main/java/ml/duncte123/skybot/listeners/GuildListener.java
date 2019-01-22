@@ -152,8 +152,8 @@ public class GuildListener extends BaseListener {
 
         final LongPair vcToRolePair = vcAutoRoleCache.get(guildId);
 
-        if (vcToRolePair.getLeft() == channel.getIdLong()) {
-            final Role role = guild.getRoleById(vcToRolePair.getRight());
+        if (vcToRolePair.getVoiceChannelId() == channel.getIdLong()) {
+            final Role role = guild.getRoleById(vcToRolePair.getRoleId());
 
             if (role != null) {
                 if (self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {

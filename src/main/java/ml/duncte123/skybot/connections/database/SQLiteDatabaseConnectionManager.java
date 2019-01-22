@@ -206,6 +206,14 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                     "guild_id VARCHAR(255) NOT NULL);"
             );
 
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS vcAutoRoles" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guild_id VARCHAR(255) NOT NULL," +
+                    "voice_channel_id VARCHAR(255) NOT NULL," +
+                    "role_id VARCHAR(255) NOT NULL);"
+            );
+
             close();
         } catch (SQLException | IOException e) {
             e.printStackTrace();

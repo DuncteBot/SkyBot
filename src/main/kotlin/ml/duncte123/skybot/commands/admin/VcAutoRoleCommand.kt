@@ -54,6 +54,8 @@ class VcAutoRoleCommand : ModBaseCommand() {
                 return
             }
 
+            ctx.databaseAdapter.removeVcAutoRole(guild.idLong)
+            vcAutoRoleCache.remove(guild.idLong)
             sendMsg(event, "Auto VC Role has been disabled")
             return
         }
@@ -87,6 +89,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val targetRole = foundRoles[0]
 
         vcAutoRoleCache.put(guild.idLong, LongPair(targetChannel.idLong, targetRole.idLong))
+        ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel.idLong, targetRole.idLong)
 
         sendMsgFormat(
             event,

@@ -27,6 +27,7 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
+import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -530,6 +531,74 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun purgeMutes(ids: List<Int>) {
         // Api only
+    }
+
+    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
+        val database = variables.database
+
+        database.run {
+            val items = ArrayList<VcAutoRole>()
+
+            database.connManager.use {
+                val conn = it.connection
+
+                val result = conn.createStatement().executeQuery("SELECT * FROM `vcAutoRoles`")
+
+                while (result.next()) {
+                    items.add(VcAutoRole(
+                        result.getLong("guild_id"),
+                        result.getLong("voice_channel_id"),
+                        result.getLong("role_id")
+                    ))
+                }
+            }
+
+            callback.invoke(items)
+        }
+    }
+
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
+        val database = variables.database
+
+        database.run {
+            try {
+                database.connManager.use { manager ->
+                    val conn = manager.connection
+
+                    val smt = conn.prepareStatement(
+                        "INSERT INTO vcAutoRoles(guild_id, voice_channel_id, role_id) VALUES(? , ? , ?)"
+                    )
+
+                    smt.setString(1, guildId.toString())
+                    smt.setString(2, voiceChannelId.toString())
+                    smt.setString(3, roleId.toString())
+                    smt.executeUpdate()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
+    }
+
+    override fun removeVcAutoRole(guildId: Long) {
+        val database = variables.database
+
+        database.run {
+            try {
+                database.connManager.use { manager ->
+                    val conn = manager.connection
+
+                    val smt = conn.prepareStatement(
+                        "DELETE FROM vcAutoRoles WHERE guild_id = ?"
+                    )
+
+                    smt.setString(1, guildId.toString())
+                    smt.executeUpdate()
+                }
+            } catch (e: SQLException) {
+                e.printStackTrace()
+            }
+        }
     }
 
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
