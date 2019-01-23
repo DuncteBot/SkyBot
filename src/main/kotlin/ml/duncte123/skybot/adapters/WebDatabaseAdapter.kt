@@ -240,7 +240,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         variables.database.run {
             val json = JSONObject()
-                .put("modUserID", modId.toString())
+                .put("modUserId", modId.toString())
                 .put("Username", userName)
                 .put("discriminator", userDiscriminator)
                 .put("userId", userId.toString())
