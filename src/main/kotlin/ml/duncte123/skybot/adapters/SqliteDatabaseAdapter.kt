@@ -34,7 +34,6 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.apache.http.MethodNotSupportedException
-import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -46,23 +45,19 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         database.run {
             val customCommands = arrayListOf<CustomCommand>()
 
-            try {
-                database.connManager.use { manager ->
+            database.connManager.use { manager ->
 
-                    val con = manager.connection
+                val con = manager.connection
 
-                    val res = con.createStatement().executeQuery("SELECT * FROM customCommands")
-                    while (res.next()) {
-                        customCommands.add(CustomCommandImpl(
-                            res.getString("invoke"),
-                            res.getString("message"),
-                            res.getLong("guildId"),
-                            res.getBoolean("autoresponse")
-                        ))
-                    }
+                val res = con.createStatement().executeQuery("SELECT * FROM customCommands")
+                while (res.next()) {
+                    customCommands.add(CustomCommandImpl(
+                        res.getString("invoke"),
+                        res.getString("message"),
+                        res.getLong("guildId"),
+                        res.getBoolean("autoresponse")
+                    ))
                 }
-            } catch (e: SQLException) {
-                e.printStackTrace()
             }
 
             callback.invoke(customCommands)
@@ -90,21 +85,13 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         database.run {
 
-            try {
-                database.connManager.use { manager ->
-                    val con = manager.connection
+            database.connManager.use { manager ->
+                val con = manager.connection
 
-                    val stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?")
-                    stm.setString(1, invoke)
-                    stm.setString(2, guildId.toString())
-                    stm.execute()
-                }
-
-            } catch (e: SQLException) {
-                e.printStackTrace()
-                callback.invoke(false)
-
-                return@run
+                val stm = con.prepareStatement("DELETE FROM customCommands WHERE invoke = ? AND guildId = ?")
+                stm.setString(1, invoke)
+                stm.setString(2, guildId.toString())
+                stm.execute()
             }
 
             callback.invoke(true)
@@ -117,44 +104,37 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         database.run {
 
             val dbName = database.name
-            database.run {
-                try {
-                    val settings = arrayListOf<GuildSettings>()
-                    database.connManager.use { manager ->
-                        val connection = manager.connection
-                        val smt = connection.createStatement()
+            val settings = arrayListOf<GuildSettings>()
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.createStatement()
 
-                        val res = smt.executeQuery("SELECT * FROM $dbName.guildSettings")
+                val res = smt.executeQuery("SELECT * FROM $dbName.guildSettings")
 
-                        while (res.next()) {
-                            val guildId = toLong(res.getString("guildId"))
+                while (res.next()) {
+                    val guildId = toLong(res.getString("guildId"))
 
-                            settings.add(GuildSettings(guildId)
-                                .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
-                                .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
-                                .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
-                                .setCustomPrefix(res.getString("prefix"))
-                                .setLogChannel(toLong(res.getString("logChannelId")))
-                                .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
-                                .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
-                                .setAutoroleRole(toLong(res.getString("autoRole")))
-                                .setServerDesc(replaceNewLines(res.getString("serverDesc")))
-                                .setAnnounceTracks(res.getBoolean("announceNextTrack"))
-                                .setAutoDeHoist(res.getBoolean("autoDeHoist"))
-                                .setFilterInvites(res.getBoolean("filterInvites"))
-                                .setEnableSpamFilter(res.getBoolean("spamFilterState"))
-                                .setMuteRoleId(toLong(res.getString("muteRoleId")))
-                                .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
-                                .setKickState(res.getBoolean("kickInsteadState"))
-                            )
-                        }
-                        callback.invoke(settings)
-                    }
-                } catch (e: SQLException) {
-                    e.printStackTrace()
+                    settings.add(GuildSettings(guildId)
+                        .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
+                        .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
+                        .setCustomJoinMessage(replaceNewLines(res.getString("customWelcomeMessage")))
+                        .setCustomPrefix(res.getString("prefix"))
+                        .setLogChannel(toLong(res.getString("logChannelId")))
+                        .setWelcomeLeaveChannel(toLong(res.getString("welcomeLeaveChannel")))
+                        .setCustomLeaveMessage(replaceNewLines(res.getString("customLeaveMessage")))
+                        .setAutoroleRole(toLong(res.getString("autoRole")))
+                        .setServerDesc(replaceNewLines(res.getString("serverDesc")))
+                        .setAnnounceTracks(res.getBoolean("announceNextTrack"))
+                        .setAutoDeHoist(res.getBoolean("autoDeHoist"))
+                        .setFilterInvites(res.getBoolean("filterInvites"))
+                        .setEnableSpamFilter(res.getBoolean("spamFilterState"))
+                        .setMuteRoleId(toLong(res.getString("muteRoleId")))
+                        .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
+                        .setKickState(res.getBoolean("kickInsteadState"))
+                    )
                 }
+                callback.invoke(settings)
             }
-
         }
     }
 
@@ -169,16 +149,12 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             val dbName = database.name
 
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
+            database.connManager.use { manager ->
+                val connection = manager.connection
 
-                    val smt = connection.prepareStatement("DELETE FROM $dbName.guildSettings where guildId = '$guildId'")
-                    smt.executeUpdate()
+                val smt = connection.prepareStatement("DELETE FROM $dbName.guildSettings where guildId = '$guildId'")
+                smt.executeUpdate()
 
-                }
-            } catch (e1: SQLException) {
-                e1.printStackTrace()
             }
         }
     }
@@ -190,52 +166,46 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
             val dbName = database.name
 
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
+            database.connManager.use { manager ->
+                val connection = manager.connection
 
-                    val smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
-                        "enableJoinMessage= ? , " +
-                        "enableSwearFilter= ? ," +
-                        "customWelcomeMessage= ? ," +
-                        "prefix= ? ," +
-                        "autoRole= ? ," +
-                        "logChannelId= ? ," +
-                        "welcomeLeaveChannel= ? ," +
-                        "customLeaveMessage = ? ," +
-                        "serverDesc = ? ," +
-                        "announceNextTrack = ? ," +
-                        "autoDeHoist = ? ," +
-                        "filterInvites = ? ," +
-                        "spamFilterState = ? ," +
-                        "muteRoleId = ? ," +
-                        "ratelimits = ? ," +
-                        "kickInsteadState = ? " +
-                        "WHERE guildId='" + guildSettings.guildId + "'")
-                    smt.setBoolean(1, guildSettings.isEnableJoinMessage)
-                    smt.setBoolean(2, guildSettings.isEnableSwearFilter)
-                    smt.setString(3, fixUnicodeAndLines(guildSettings.customJoinMessage))
-                    smt.setString(4, replaceUnicode(guildSettings.customPrefix))
-                    smt.setString(5, guildSettings.autoroleRole.toString())
-                    smt.setString(6, guildSettings.logChannel.toString())
-                    smt.setString(7, guildSettings.welcomeLeaveChannel.toString())
-                    smt.setString(8, fixUnicodeAndLines(guildSettings.customLeaveMessage))
-                    smt.setString(9, fixUnicodeAndLines(guildSettings.serverDesc))
-                    smt.setBoolean(10, guildSettings.isAnnounceTracks)
-                    smt.setBoolean(11, guildSettings.isAutoDeHoist)
-                    smt.setBoolean(12, guildSettings.isFilterInvites)
-                    smt.setBoolean(13, guildSettings.isEnableSpamFilter)
-                    smt.setString(14, guildSettings.muteRoleId.toString())
-                    smt.setString(15, convertJ2S(guildSettings.ratelimits))
-                    smt.setBoolean(16, guildSettings.kickState)
-                    smt.executeUpdate()
+                val smt = connection.prepareStatement("UPDATE " + dbName + ".guildSettings SET " +
+                    "enableJoinMessage= ? , " +
+                    "enableSwearFilter= ? ," +
+                    "customWelcomeMessage= ? ," +
+                    "prefix= ? ," +
+                    "autoRole= ? ," +
+                    "logChannelId= ? ," +
+                    "welcomeLeaveChannel= ? ," +
+                    "customLeaveMessage = ? ," +
+                    "serverDesc = ? ," +
+                    "announceNextTrack = ? ," +
+                    "autoDeHoist = ? ," +
+                    "filterInvites = ? ," +
+                    "spamFilterState = ? ," +
+                    "muteRoleId = ? ," +
+                    "ratelimits = ? ," +
+                    "kickInsteadState = ? " +
+                    "WHERE guildId='" + guildSettings.guildId + "'")
+                smt.setBoolean(1, guildSettings.isEnableJoinMessage)
+                smt.setBoolean(2, guildSettings.isEnableSwearFilter)
+                smt.setString(3, fixUnicodeAndLines(guildSettings.customJoinMessage))
+                smt.setString(4, replaceUnicode(guildSettings.customPrefix))
+                smt.setString(5, guildSettings.autoroleRole.toString())
+                smt.setString(6, guildSettings.logChannel.toString())
+                smt.setString(7, guildSettings.welcomeLeaveChannel.toString())
+                smt.setString(8, fixUnicodeAndLines(guildSettings.customLeaveMessage))
+                smt.setString(9, fixUnicodeAndLines(guildSettings.serverDesc))
+                smt.setBoolean(10, guildSettings.isAnnounceTracks)
+                smt.setBoolean(11, guildSettings.isAutoDeHoist)
+                smt.setBoolean(12, guildSettings.isFilterInvites)
+                smt.setBoolean(13, guildSettings.isEnableSpamFilter)
+                smt.setString(14, guildSettings.muteRoleId.toString())
+                smt.setString(15, convertJ2S(guildSettings.ratelimits))
+                smt.setBoolean(16, guildSettings.kickState)
+                smt.executeUpdate()
 
-                }
-            } catch (e1: SQLException) {
-            e1.printStackTrace()
-
-            callback.invoke(false)
-        }
+            }
 
             callback.invoke(true)
         }
@@ -249,34 +219,28 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             val dbName = database.name
             val guildId = guildSettings.guildId
 
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
-                    val resultSet = connection.createStatement()
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val resultSet = connection.createStatement()
 
-                        .executeQuery("SELECT id FROM $dbName.guildSettings WHERE guildId='$guildId'")
-                    var rows = 0
+                    .executeQuery("SELECT id FROM $dbName.guildSettings WHERE guildId='$guildId'")
+                var rows = 0
 
-                    while (resultSet.next()) {
-                        rows++
-                    }
-
-                    if (rows == 0) {
-                        val smt = connection.prepareStatement("INSERT INTO $dbName.guildSettings(guildId," +
-                            "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
-                            "VALUES('$guildId' , ? , ? , ? , ?)")
-
-                        smt.setString(1, guildSettings.customJoinMessage)
-                        smt.setString(2, Settings.PREFIX)
-                        smt.setString(3, guildSettings.customLeaveMessage.replace("\\P{Print}".toRegex(), ""))
-                        smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
-                        smt.execute()
-                    }
+                while (resultSet.next()) {
+                    rows++
                 }
-            } catch (e: Exception) {
-                e.printStackTrace()
 
-                callback.invoke(false)
+                if (rows == 0) {
+                    val smt = connection.prepareStatement("INSERT INTO $dbName.guildSettings(guildId," +
+                        "customWelcomeMessage, prefix, customLeaveMessage, ratelimits) " +
+                        "VALUES('$guildId' , ? , ? , ? , ?)")
+
+                    smt.setString(1, guildSettings.customJoinMessage)
+                    smt.setString(2, Settings.PREFIX)
+                    smt.setString(3, guildSettings.customLeaveMessage.replace("\\P{Print}".toRegex(), ""))
+                    smt.setString(4, "20|45|60|120|240|2400".replace("\\P{Print}".toRegex(), ""))
+                    smt.execute()
+                }
             }
 
             callback.invoke(true)
@@ -289,22 +253,18 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         database.run {
             val map = TLongIntHashMap()
 
-            try {
-                val dbName = database.name
-                database.connManager.use { manager ->
-                    val connection = manager.connection
-                    val smt = connection.createStatement()
+            val dbName = database.name
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.createStatement()
 
-                    val res = smt.executeQuery("SELECT * FROM $dbName.embedSettings")
+                val res = smt.executeQuery("SELECT * FROM $dbName.embedSettings")
 
-                    while (res.next()) {
-                        map.put(res.getLong("guild_id"), res.getInt("embed_color"))
-                    }
-
-                    callback.invoke(map)
+                while (res.next()) {
+                    map.put(res.getLong("guild_id"), res.getInt("embed_color"))
                 }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+
+                callback.invoke(map)
             }
         }
     }
@@ -314,20 +274,16 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         val dbName = database.name
 
         database.run {
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
-                    val smt = connection.prepareStatement(
-                        "INSERT INTO $dbName.embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?")
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.prepareStatement(
+                    "INSERT INTO $dbName.embedSettings(guild_id, embed_color) VALUES( ? , ? ) ON CONFLICT(guild_id) DO UPDATE SET embed_color = ?")
 
-                    smt.setString(1, guildId.toString())
-                    smt.setInt(2, color)
-                    smt.setInt(3, color)
+                smt.setString(1, guildId.toString())
+                smt.setInt(2, color)
+                smt.setInt(3, color)
 
-                    smt.executeUpdate()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+                smt.executeUpdate()
             }
         }
     }
@@ -339,20 +295,16 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         database.run {
             val map = TLongLongHashMap()
 
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
+            database.connManager.use { manager ->
+                val connection = manager.connection
 
-                    val resultSet = connection.createStatement().executeQuery("SELECT * FROM $dbName.oneGuildPatrons")
+                val resultSet = connection.createStatement().executeQuery("SELECT * FROM $dbName.oneGuildPatrons")
 
-                    while (resultSet.next()) {
-                        map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
-                    }
-
-                    callback.invoke(map)
+                while (resultSet.next()) {
+                    map.put(resultSet.getLong("user_id"), resultSet.getLong("guild_id"))
                 }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+
+                callback.invoke(map)
             }
         }
     }
@@ -362,24 +314,17 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         val dbName = database.name
 
         database.run {
+            database.connManager.use { manager ->
+                val connection = manager.connection
 
-            try {
-                database.connManager.use { manager ->
-                    val connection = manager.connection
+                val smt = connection.prepareStatement("INSERT INTO $dbName.oneGuildPatrons" +
+                    "(user_id, guild_id) VALUES( ? , ? ) ON DUPLICATE KEY UPDATE guild_id = ?")
 
-                    val smt = connection.prepareStatement("INSERT INTO $dbName.oneGuildPatrons" +
-                        "(user_id, guild_id) VALUES( ? , ? ) ON DUPLICATE KEY UPDATE guild_id = ?")
+                smt.setLong(1, userId)
+                smt.setLong(2, guildId)
+                smt.setLong(3, guildId)
 
-                    smt.setLong(1, userId)
-                    smt.setLong(2, guildId)
-                    smt.setLong(3, guildId)
-
-                    smt.executeUpdate()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
-
-                return@run
+                smt.executeUpdate()
             }
 
             callback.invoke(userId, guildId)
@@ -394,23 +339,19 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         database.run {
 
             database.connManager.use { manager ->
-                try {
-                    val connection = manager.connection
+                val connection = manager.connection
 
-                    val statement = connection.prepareStatement(
-                        "SELECT * FROM $dbName.oneGuildPatrons WHERE user_id = ? LIMIT 1")
+                val statement = connection.prepareStatement(
+                    "SELECT * FROM $dbName.oneGuildPatrons WHERE user_id = ? LIMIT 1")
 
-                    statement.setLong(1, userId)
+                statement.setLong(1, userId)
 
-                    val resultSet = statement.executeQuery()
+                val resultSet = statement.executeQuery()
 
-                    while (resultSet.next()) {
-                        val guildId = resultSet.getLong("guild_id")
+                while (resultSet.next()) {
+                    val guildId = resultSet.getLong("guild_id")
 
-                        map.put(userId, guildId)
-                    }
-                } catch (e: SQLException) {
-                    e.printStackTrace()
+                    map.put(userId, guildId)
                 }
             }
 
@@ -424,14 +365,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         database.run {
             database.connManager.use { manager ->
-                try {
-                    val connection = manager.connection
+                val connection = manager.connection
 
-                    connection.createStatement()
-                        .execute("DELETE FROM $dbName.oneGuildPatrons WHERE user_id = $userId")
-                } catch (e: SQLException) {
-                    e.printStackTrace()
-                }
+                connection.createStatement()
+                    .execute("DELETE FROM $dbName.oneGuildPatrons WHERE user_id = $userId")
             }
         }
     }
@@ -442,22 +379,18 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         database.run {
             database.connManager.use { manager ->
-                try {
-                    val conn = manager.connection
-                    val smt = conn.prepareStatement(
-                        "INSERT INTO $dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
-                            "VALUES(? , ? , ? , ? , NOW() , ?, ?)")
+                val conn = manager.connection
+                val smt = conn.prepareStatement(
+                    "INSERT INTO $dbName.bans(modUserId, Username, discriminator, userId, ban_date, unban_date, guildId) " +
+                        "VALUES(? , ? , ? , ? , NOW() , ?, ?)")
 
-                    smt.setString(1, modId.toString())
-                    smt.setString(2, userName)
-                    smt.setString(3, userDiscriminator)
-                    smt.setString(4, userId.toString())
-                    smt.setString(5, unbanDate)
-                    smt.setString(6, guildId.toString())
-                    smt.execute()
-                } catch (e: SQLException) {
-                    e.printStackTrace()
-                }
+                smt.setString(1, modId.toString())
+                smt.setString(2, userName)
+                smt.setString(3, userDiscriminator)
+                smt.setString(4, userId.toString())
+                smt.setString(5, unbanDate)
+                smt.setString(6, guildId.toString())
+                smt.execute()
             }
         }
     }
@@ -466,22 +399,18 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         val database = variables.database
 
         database.run {
-            try {
-                database.connManager.use { manager ->
-                    val conn = manager.connection
+            database.connManager.use { manager ->
+                val conn = manager.connection
 
-                    val smt = conn.prepareStatement(
-                        "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
-                            "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")
+                val smt = conn.prepareStatement(
+                    "INSERT INTO warnings(mod_id, user_id, reason, guild_id, warn_date, expire_date) " +
+                        "VALUES(? , ? , ? , ?  , CURDATE(), DATE_ADD(CURDATE(), INTERVAL 3 DAY) )")
 
-                    smt.setString(1, modId.toString())
-                    smt.setString(2, userId.toString())
-                    smt.setString(3, reason)
-                    smt.setString(4, guildId.toString())
-                    smt.executeUpdate()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+                smt.setString(1, modId.toString())
+                smt.setString(2, userId.toString())
+                smt.setString(3, reason)
+                smt.setString(4, guildId.toString())
+                smt.executeUpdate()
             }
         }
     }
@@ -561,21 +490,17 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         val database = variables.database
 
         database.run {
-            try {
-                database.connManager.use { manager ->
-                    val conn = manager.connection
+            database.connManager.use { manager ->
+                val conn = manager.connection
 
-                    val smt = conn.prepareStatement(
-                        "INSERT INTO vcAutoRoles(guild_id, voice_channel_id, role_id) VALUES(? , ? , ?)"
-                    )
+                val smt = conn.prepareStatement(
+                    "INSERT INTO vcAutoRoles(guild_id, voice_channel_id, role_id) VALUES(? , ? , ?)"
+                )
 
-                    smt.setString(1, guildId.toString())
-                    smt.setString(2, voiceChannelId.toString())
-                    smt.setString(3, roleId.toString())
-                    smt.executeUpdate()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+                smt.setString(1, guildId.toString())
+                smt.setString(2, voiceChannelId.toString())
+                smt.setString(3, roleId.toString())
+                smt.executeUpdate()
             }
         }
     }
@@ -584,19 +509,15 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         val database = variables.database
 
         database.run {
-            try {
-                database.connManager.use { manager ->
-                    val conn = manager.connection
+            database.connManager.use { manager ->
+                val conn = manager.connection
 
-                    val smt = conn.prepareStatement(
-                        "DELETE FROM vcAutoRoles WHERE voice_channel_id = ?"
-                    )
+                val smt = conn.prepareStatement(
+                    "DELETE FROM vcAutoRoles WHERE voice_channel_id = ?"
+                )
 
-                    smt.setString(1, voiceChannelId.toString())
-                    smt.executeUpdate()
-                }
-            } catch (e: SQLException) {
-                e.printStackTrace()
+                smt.setString(1, voiceChannelId.toString())
+                smt.executeUpdate()
             }
         }
     }
@@ -609,22 +530,16 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         } else {
             "INSERT INTO customCommands(guildId, invoke, message, autoresponse) VALUES (? , ? , ? , ?)"
         }
+        database.connManager.use { manager ->
+            val conn = manager.connection
 
-        try {
-            database.connManager.use { manager ->
-                val conn = manager.connection
+            val stm = conn.prepareStatement(sqlQuerry)
 
-                val stm = conn.prepareStatement(sqlQuerry)
-
-                stm.setString(if (isEdit) 3 else 1, guildId.toString())
-                stm.setString(if (isEdit) 4 else 2, invoke)
-                stm.setString(if (isEdit) 1 else 3, message)
-                stm.setBoolean(if (isEdit) 2 else 4, autoresponse)
-                stm.execute()
-            }
-        } catch (e: SQLException) {
-            e.printStackTrace()
-            return Triple(false, false, false)
+            stm.setString(if (isEdit) 3 else 1, guildId.toString())
+            stm.setString(if (isEdit) 4 else 2, invoke)
+            stm.setString(if (isEdit) 1 else 3, message)
+            stm.setBoolean(if (isEdit) 2 else 4, autoresponse)
+            stm.execute()
         }
 
         return null
