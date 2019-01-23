@@ -149,6 +149,11 @@ public class DiscordMethods {
 
             new Method("channel", (env) -> {
                 TextChannel tc = env.get("channel");
+
+                if (tc == null) {
+                    return "";
+                }
+
                 return tc.getAsMention();
             }, (env, in) -> {
                 if (in[0].equals(""))
@@ -159,6 +164,11 @@ public class DiscordMethods {
 
             new Method("channelid", (env) -> {
                 TextChannel tc = env.get("channel");
+
+                if (tc == null) {
+                    return "";
+                }
+
                 return tc.getId();
             }, (env, in) -> {
                 if (in[0].equals(""))
