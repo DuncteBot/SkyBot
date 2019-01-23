@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.controllers.dashboard
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
+import ml.duncte123.skybot.objects.LongPair
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
@@ -58,6 +59,17 @@ object BasicSettings {
             .setAnnounceTracks(announceTracks)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
+
+        val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
+        val autoVcRoleRole = (params["vcAutoRoleRole"] ?: "0").toLong()
+
+        if (autoVcRoleVc != 0L && autoVcRoleRole != 0L) {
+            variables.databaseAdapter.setVcAutoRole(guild.idLong, autoVcRoleVc, autoVcRoleRole)
+            variables.vcAutoRoleCache.put(guild.idLong, LongPair(autoVcRoleVc, autoVcRoleRole))
+        } else if (variables.vcAutoRoleCache.containsKey(guild.idLong)) {
+            val stored = variables.vcAutoRoleCache.remove(guild.idLong)
+            variables.databaseAdapter.removeVcAutoRole(stored.voiceChannelId)
+        }
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 

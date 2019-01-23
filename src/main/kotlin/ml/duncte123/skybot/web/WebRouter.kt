@@ -24,6 +24,7 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.LongPair
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
@@ -232,14 +233,17 @@ class WebRouter(private val shardManager: ShardManager) {
                         it.guild.selfMember.hasPermission(it, Permission.MESSAGE_READ, Permission.MESSAGE_WRITE)
                     }.toList()
 
-                    val goodRoles = guild.roles.filter {
-                        guild.selfMember.roles[0].canInteract(it) && it.name != "@everyone" && it.name != "@here"
-                    }.toList()
+                    val goodRoles = guild.roleCache.filter {
+                        guild.selfMember.canInteract(it) && it.name != "@everyone" && it.name != "@here"
+                    }.filter { !it.isManaged }.toList()
 
                     val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.defaultColour)
+                    val currVcAutoRole = variables.vcAutoRoleCache.get(guild.idLong) ?: LongPair(0, 0)
 
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)
+                    map.put("voiceChannels", guild.voiceChannelCache)
+                    map.put("currentVcAutoRole", currVcAutoRole)
                     map.put("settings", GuildSettingsUtils.getGuild(guild, variables))
                     map.put("guild", guild)
                     map.put("guildColor", colorToHex(colorRaw))
