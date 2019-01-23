@@ -161,9 +161,11 @@ public class MessageListener extends BaseListener {
     }
 
     //                                    raw,    category?
-    private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName) {
+    private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName, @NotNull GuildSettings settings) {
 
-        final ICommand command = commandManager.getCommand(rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+        final ICommand command = commandManager.getCommand(
+            rw.replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.PREFIX)
+            .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
             .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
         if (command == null) {
@@ -199,7 +201,7 @@ public class MessageListener extends BaseListener {
             if (s.startsWith("!")) {
                 s = s.split("!")[1];
 
-                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s)) {
+                if (isCategory(s.toUpperCase()) && !hasCorrectCategory(rw, s, settings)) {
                     return false;
                 }
 
@@ -210,7 +212,7 @@ public class MessageListener extends BaseListener {
                 return !shouldBlockCommand(settings, rw, s);
             }
 
-            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s)) {
+            if (isCategory(s.toUpperCase()) && hasCorrectCategory(rw, s, settings)) {
                 return false;
             }
 
