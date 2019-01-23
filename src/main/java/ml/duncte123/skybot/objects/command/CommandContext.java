@@ -138,7 +138,10 @@ public class CommandContext {
     }
 
     public String getArgsRaw() {
-        return parseRawArgs(this.event.getMessage().getContentRaw());
+        return getArgsRaw(true);
+    }
+    public String getArgsRaw(boolean fixlines) {
+        return parseRawArgs(this.event.getMessage().getContentRaw(), fixlines);
     }
 
     public String getArgsDisplay() {
@@ -240,11 +243,21 @@ public class CommandContext {
     // --------------- Private methods --------------- //
 
     private String parseRawArgs(String in) {
-        return in.replaceFirst(
+        return parseRawArgs(in, true);
+    }
+
+    private String parseRawArgs(String in, boolean fixlines) {
+        final String out = in.replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
                 Pattern.quote(Settings.OTHER_PREFIX) + "|" +
                 Pattern.quote(getGuildSettings().getCustomPrefix()),
             "")
-            .split("\\s+", 2)[1].replaceAll("\\\\n", "\n");
+            .split("\\s+", 2)[1];
+
+        if (fixlines) {
+            return out.replaceAll("\\\\n", "\n");
+        }
+
+        return out;
     }
 }
