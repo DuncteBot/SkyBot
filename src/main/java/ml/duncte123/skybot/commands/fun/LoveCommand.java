@@ -73,19 +73,19 @@ public class LoveCommand extends Command {
 
         final TextChannel channel = ctx.getChannel();
 
-        if (ctx.getSelfMember().hasPermission(channel,  Permission.MESSAGE_ATTACH_FILES,
+        if (ctx.getSelfMember().hasPermission(channel, Permission.MESSAGE_ATTACH_FILES,
             Permission.MESSAGE_EMBED_LINKS) && channel.canTalk()) {
-ctx.getWeebApi().generateLoveship(
-    target1.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png"),
-    target2.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png")
-).async((image) -> {
-    final String message = String.format("Shipping **%s** and **%s**", target1.getEffectiveName(), target2.getEffectiveName());
+            ctx.getWeebApi().generateLoveship(
+                target1.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png"),
+                target2.getUser().getEffectiveAvatarUrl().replaceFirst("gif", "png")
+            ).async((image) -> {
+                final String message = String.format("Shipping **%s** and **%s**", target1.getEffectiveName(), target2.getEffectiveName());
 
-    channel.sendMessage(message)
-        .addFile(image, "love.png")
-        .embed(embed.setImage("attachment://love.png").build())
-        .queue();
-});
+                channel.sendMessage(message)
+                    .addFile(image, "love.png")
+                    .embed(embed.setImage("attachment://love.png").build())
+                    .queue();
+            });
         } else {
             sendEmbed(event, embed);
         }
