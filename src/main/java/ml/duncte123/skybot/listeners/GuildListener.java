@@ -19,11 +19,16 @@
 package ml.duncte123.skybot.listeners;
 
 import fredboat.audio.player.LavalinkManager;
+import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
+import ml.duncte123.skybot.objects.LongPair;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
@@ -72,6 +77,8 @@ public class GuildListener extends BaseListener {
         final Guild guild = event.getGuild();
         final LavalinkManager manager = LavalinkManager.ins;
 
+        handleVcAutoRole(guild, event.getMember(), event.getChannelLeft(), true);
+
         if (!manager.isConnected(guild)) {
             return;
         }
@@ -91,18 +98,20 @@ public class GuildListener extends BaseListener {
         }
 
         channelCheckThing(guild, event.getChannelLeft());
-
     }
 
     @Override
     public void onGuildVoiceJoin(GuildVoiceJoinEvent event) {
         final Guild guild = event.getGuild();
+        final Member member = event.getMember();
+        final Member self = guild.getSelfMember();
+        final VoiceChannel channel = event.getChannelJoined();
 
-        if (!event.getMember().equals(guild.getSelfMember())) {
-            return;
+        if (member.equals(self)) {
+            channelCheckThing(guild, channel);
         }
 
-        channelCheckThing(guild, event.getChannelJoined());
+        handleVcAutoRole(guild, member, channel, false);
     }
 
     @Override
@@ -128,6 +137,39 @@ public class GuildListener extends BaseListener {
 
         if (event.getChannelLeft().equals(connected)) {
             channelCheckThing(guild, event.getChannelLeft());
+        }
+    }
+
+    private void handleVcAutoRole(Guild guild, Member member, VoiceChannel channel, boolean remove) {
+        final Member self = guild.getSelfMember();
+        final long guildId = guild.getIdLong();
+
+        final TLongObjectMap<LongPair> vcAutoRoleCache = variables.getVcAutoRoleCache();
+
+        if (!vcAutoRoleCache.containsKey(guildId)) {
+            return;
+        }
+
+        final LongPair vcToRolePair = vcAutoRoleCache.get(guildId);
+
+        if (vcToRolePair.getVoiceChannelId() == channel.getIdLong()) {
+            final Role role = guild.getRoleById(vcToRolePair.getRoleId());
+
+            if (role != null) {
+                if (self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
+                    if (remove) {
+                        guild.getController()
+                            .removeSingleRoleFromMember(member, role)
+                            .reason("VC auto role removed")
+                            .queue();
+                    } else {
+                        guild.getController()
+                            .addSingleRoleToMember(member, role)
+                            .reason("VC auto role applied")
+                            .queue();
+                    }
+                }
+            }
         }
     }
 

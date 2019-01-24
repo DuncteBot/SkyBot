@@ -24,6 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
+import ml.duncte123.skybot.objects.LongPair;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
 import org.jetbrains.annotations.NotNull;
@@ -46,6 +47,7 @@ public class GuildSettingsUtils {
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettings());
         loadEmbedColors(variables.getDatabaseAdapter());
+        loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
 
@@ -85,6 +87,21 @@ public class GuildSettingsUtils {
                 return null;
             }
         );
+    }
+
+    private static void loadVcAutoRoles(DatabaseAdapter adapter, TLongObjectMap<LongPair> vcAutoRoleCache) {
+        logger.info("Loading vc auto roles.");
+
+        adapter.getVcAutoRoles((items) -> {
+
+            items.forEach(
+                (item) -> vcAutoRoleCache.put(item.getGuildId(), new LongPair(item.getVoiceChannelId(), item.getRoleId()))
+            );
+
+            logger.info("Loaded " + items.size() + " vc auto roles.");
+
+            return null;
+        });
     }
 
     /**
