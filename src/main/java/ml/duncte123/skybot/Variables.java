@@ -23,7 +23,6 @@ import com.google.gson.Gson;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
-import kotlin.Pair;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
@@ -31,7 +30,6 @@ import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.adapters.SqliteDatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
-import ml.duncte123.skybot.objects.LongPair;
 import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.apis.BlargBot;
 import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
@@ -50,7 +48,7 @@ public final class Variables {
     private final String googleBaseUrl;
     private final boolean isSql;
     private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
-    private final TLongObjectMap<LongPair> vcAutoRoleCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = new TLongObjectHashMap<>();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
@@ -125,7 +123,7 @@ public final class Variables {
      *
      * @return The vc autorole cache
      */
-    public TLongObjectMap<LongPair> getVcAutoRoleCache() {
+    public TLongObjectMap<TLongLongMap> getVcAutoRoleCache() {
         return vcAutoRoleCache;
     }
 

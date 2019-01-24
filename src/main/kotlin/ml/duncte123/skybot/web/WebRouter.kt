@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.web
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -238,7 +239,8 @@ class WebRouter(private val shardManager: ShardManager) {
                     }.filter { !it.isManaged }.toList()
 
                     val colorRaw = EmbedUtils.getColorOrDefault(guild.idLong, Settings.defaultColour)
-                    val currVcAutoRole = variables.vcAutoRoleCache.get(guild.idLong) ?: LongPair(0, 0)
+                    val currVcAutoRole = variables.vcAutoRoleCache.get(guild.idLong)
+                        ?: variables.vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
 
                     map.put("goodChannels", tcs)
                     map.put("goodRoles", goodRoles)

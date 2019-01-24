@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.admin
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
+import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat
 import ml.duncte123.skybot.Settings
@@ -55,7 +56,12 @@ class VcAutoRoleCommand : ModBaseCommand() {
             }
 
             val stored = vcAutoRoleCache.remove(guild.idLong)
-            ctx.databaseAdapter.removeVcAutoRole(stored.voiceChannelId)
+
+            stored.forEachEntry { vc, _ ->
+                ctx.databaseAdapter.removeVcAutoRole(vc)
+
+                return@forEachEntry true
+            }
 
             sendMsg(event, "Auto VC Role has been disabled")
             return
@@ -89,7 +95,9 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val targetChannel = foundVoiceChannels[0]
         val targetRole = foundRoles[0]
 
-        vcAutoRoleCache.put(guild.idLong, LongPair(targetChannel.idLong, targetRole.idLong))
+        val cache = vcAutoRoleCache.get(guild.idLong) ?: vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+
+        cache.put(targetChannel.idLong, targetRole.idLong)
         ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel.idLong, targetRole.idLong)
 
         sendMsgFormat(

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.listeners;
 
 import fredboat.audio.player.LavalinkManager;
+import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
@@ -144,16 +145,16 @@ public class GuildListener extends BaseListener {
         final Member self = guild.getSelfMember();
         final long guildId = guild.getIdLong();
 
-        final TLongObjectMap<LongPair> vcAutoRoleCache = variables.getVcAutoRoleCache();
+        final TLongObjectMap<TLongLongMap> vcAutoRoleCache = variables.getVcAutoRoleCache();
 
         if (!vcAutoRoleCache.containsKey(guildId)) {
             return;
         }
 
-        final LongPair vcToRolePair = vcAutoRoleCache.get(guildId);
+        final TLongLongMap vcToRolePair = vcAutoRoleCache.get(guildId);
 
-        if (vcToRolePair.getVoiceChannelId() == channel.getIdLong()) {
-            final Role role = guild.getRoleById(vcToRolePair.getRoleId());
+        if (vcToRolePair.get(channel.getIdLong()) > 0) {
+            final Role role = guild.getRoleById(vcToRolePair.get(channel.getIdLong()));
 
             if (role != null) {
                 if (self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {

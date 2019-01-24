@@ -97,9 +97,9 @@ public class MessageListener extends BaseListener {
         }
 
         if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && rw.equals(selfMember)) {
-            sendMsg(event, String.format("Hey <@%s>, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                event.getAuthor().getId(),
-                Settings.PREFIX)
+            sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                event.getAuthor(),
+                settings.getCustomPrefix())
             );
             return;
         }
