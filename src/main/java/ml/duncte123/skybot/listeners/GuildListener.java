@@ -23,7 +23,6 @@ import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.audio.GuildMusicManager;
-import ml.duncte123.skybot.objects.LongPair;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;

@@ -25,7 +25,6 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
-import ml.duncte123.skybot.objects.LongPair
 import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
