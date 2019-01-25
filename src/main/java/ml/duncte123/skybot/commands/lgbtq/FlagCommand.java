@@ -36,7 +36,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class FlagCommand extends ImageCommandBase {
 
     private final List<String> flags = List.of("agender", "aromantic", "asexual", "bear", "bi", "gay",
-        "genderfluid", "nonbinary", "pan", "transgender");
+        "genderfluid", "nonbinary", "pan", "transgender", "demigirl");
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {

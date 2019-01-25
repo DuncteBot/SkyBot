@@ -41,7 +41,7 @@ plugins {
 apply plugin: 'kotlin'
 
 group = 'ml.duncte123.skybot'
-version "3.86.0_${getGitHash()}"
+version "3.87.0_${getGitHash()}"
 
 def javaVersion = JavaVersion.VERSION_1_10
 

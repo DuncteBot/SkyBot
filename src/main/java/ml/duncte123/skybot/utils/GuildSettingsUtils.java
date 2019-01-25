@@ -100,8 +100,12 @@ public class GuildSettingsUtils {
                 (item) -> {
                     final TLongLongMap cache = Optional.ofNullable(
                         vcAutoRoleCache.get(item.getGuildId())
-                    ).orElse(
-                        vcAutoRoleCache.put(item.getGuildId(), new TLongLongHashMap())
+                    )
+                    .orElseGet(
+                        () -> {
+                            vcAutoRoleCache.put(item.getGuildId(), new TLongLongHashMap()); // This returns the old value which was null
+                            return vcAutoRoleCache.get(item.getGuildId());
+                        }
                     );
 
                     cache.put(item.getVoiceChannelId(), item.getRoleId());

@@ -522,6 +522,23 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun removeVcAutoRoleForGuild(guildId: Long) {
+        val database = variables.database
+
+        database.run {
+            database.connManager.use { manager ->
+                val conn = manager.connection
+
+                val smt = conn.prepareStatement(
+                    "DELETE FROM vcAutoRoles WHERE guild_id = ?"
+                )
+
+                smt.setString(1, guildId.toString())
+                smt.executeUpdate()
+            }
+        }
+    }
+
     private fun changeCommand(guildId: Long, invoke: String, message: String, isEdit: Boolean, autoresponse: Boolean = false): Triple<Boolean, Boolean, Boolean>? {
         val database = variables.database
 

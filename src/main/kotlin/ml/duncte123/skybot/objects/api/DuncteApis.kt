@@ -263,6 +263,16 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun removeVcAutoRoleForGuild(guildId: Long) {
+        val request = defaultRequest("vcautoroles/guild/$guildId").delete()
+        val response = executeRequest(request)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to remove vc autorole\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 

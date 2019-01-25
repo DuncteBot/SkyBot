@@ -18,11 +18,9 @@
 
 package ml.duncte123.skybot.web.controllers.dashboard
 
-import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
-import ml.duncte123.skybot.objects.LongPair
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.WebHelpers
 import ml.duncte123.skybot.web.WebHelpers.paramToBoolean
@@ -61,7 +59,7 @@ object BasicSettings {
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 
-        val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
+       /* val autoVcRoleVc = (params["vcAutoRoleVc"] ?: "0").toLong()
         val autoVcRoleRole = (params["vcAutoRoleRole"] ?: "0").toLong()
         val cache = variables.vcAutoRoleCache.get(guild.idLong)
             ?: variables.vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
@@ -71,9 +69,9 @@ object BasicSettings {
             cache.put(autoVcRoleVc, autoVcRoleRole)
         } else if (variables.vcAutoRoleCache.containsKey(guild.idLong)) {
             // TODO: Refactor
-            /*val stored = variables.vcAutoRoleCache.remove(guild.idLong)
-            variables.databaseAdapter.removeVcAutoRole(stored.voiceChannelId)*/
-        }
+            val stored = variables.vcAutoRoleCache.remove(guild.idLong)
+            variables.databaseAdapter.removeVcAutoRole(stored.voiceChannelId)
+        }*/
 
         request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Settings updated</h4>")
 

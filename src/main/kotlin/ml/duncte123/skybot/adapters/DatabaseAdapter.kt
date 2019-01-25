@@ -119,4 +119,6 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
     abstract fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long)
 
     abstract fun removeVcAutoRole(voiceChannelId: Long)
+
+    abstract fun removeVcAutoRoleForGuild(guildId: Long)
 }

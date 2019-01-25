@@ -372,4 +372,10 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             variables.apis.removeVcAutoRole(voiceChannelId)
         }
     }
+
+    override fun removeVcAutoRoleForGuild(guildId: Long) {
+        variables.database.run {
+            variables.apis.removeVcAutoRoleForGuild(guildId)
+        }
+    }
 }

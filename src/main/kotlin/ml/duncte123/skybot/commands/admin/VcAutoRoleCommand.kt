@@ -20,8 +20,8 @@ package ml.duncte123.skybot.commands.admin
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import gnu.trove.map.hash.TLongLongHashMap
-import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat
+import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.objects.LongPair
@@ -45,37 +45,102 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
         if (args.size == 1) {
 
-            if (args[0] != "off") {
-                sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
-                return
-            }
-
             if (!vcAutoRoleCache.containsKey(guild.idLong)) {
                 sendMsg(event, "No vc autorole has been set for this server")
                 return
             }
 
-            val stored = vcAutoRoleCache.remove(guild.idLong)
-
-            stored.forEachEntry { vc, _ ->
-                ctx.databaseAdapter.removeVcAutoRole(vc)
-
-                return@forEachEntry true
+            if (args[0] == "list") {
+                listAutoVcRoles(ctx)
+                return
             }
 
-            sendMsg(event, "Auto VC Role has been disabled")
+            if (args[0] != "off") {
+                sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
+                return
+            }
+
+            vcAutoRoleCache.remove(guild.idLong)
+            ctx.databaseAdapter.removeVcAutoRoleForGuild(guild.idLong)
+
+            sendMsg(event, "All Auto VC Roles has been disabled")
             return
         }
 
-        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[0], guild)
-        val foundRoles = FinderUtil.findRoles(args[1], guild)
+        if (args.size > 1) {
+
+            if (args[0] == "add") {
+                addVcAutoRole(ctx)
+                return
+            }
+
+            if (args[0] == "remove") {
+                removeVcAutoRole(ctx)
+                return
+            }
+
+        }
+
+        sendMsg(event, "Unknown operation, check `${Settings.PREFIX}$name`")
+
+    }
+
+    override fun getName() = "vcautorole"
+
+    override fun help() = """Gives a role to a user when they join a specified voice channel
+        |Usage: `${Settings.PREFIX}$name add <voice channel> <role>`
+        |`${Settings.PREFIX}$name remove <voice channel>`
+        |`${Settings.PREFIX}$name off`
+        |`${Settings.PREFIX}$name list`
+    """.trimMargin()
+
+    private fun removeVcAutoRole(ctx: CommandContext) {
+        val event = ctx.event
+        val guild = ctx.guild
+        val args = ctx.args
+        val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
+        val cache = vcAutoRoleCache.get(guild.idLong) ?: vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+
+        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
 
         if (foundVoiceChannels.isEmpty()) {
             sendMsgFormat(
                 event,
                 "I could not find any voice channels for `%s`%n" +
                     "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[0]
+                args[1]
+            )
+
+            return
+        }
+
+        val targetChannel = foundVoiceChannels[0].idLong
+
+        if (!cache.containsKey(targetChannel)) {
+            sendMsg(event, "This voice channel does not have an autorole set")
+            return
+        }
+
+        cache.remove(targetChannel)
+        ctx.databaseAdapter.removeVcAutoRole(targetChannel)
+        sendMsg(event, "Autorole removed for <#$targetChannel>")
+    }
+
+    private fun addVcAutoRole(ctx: CommandContext) {
+        val event = ctx.event
+        val guild = ctx.guild
+        val args = ctx.args
+        val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
+
+        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
+        val foundRoles = FinderUtil.findRoles(args[2], guild)
+
+        if (foundVoiceChannels.isEmpty()) {
+            sendMsgFormat(
+                event,
+                "I could not find any voice channels for `%s`%n" +
+                    "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
+                args[1]
             )
 
             return
@@ -86,31 +151,37 @@ class VcAutoRoleCommand : ModBaseCommand() {
                 event,
                 "I could not find any role for `%s`%n" +
                     "TIP: If your role name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[1]
+                args[2]
             )
 
             return
         }
 
-        val targetChannel = foundVoiceChannels[0]
-        val targetRole = foundRoles[0]
+        val targetChannel = foundVoiceChannels[0].idLong
+        val targetRole = foundRoles[0].idLong
 
         val cache = vcAutoRoleCache.get(guild.idLong) ?: vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
 
-        cache.put(targetChannel.idLong, targetRole.idLong)
-        ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel.idLong, targetRole.idLong)
+        cache.put(targetChannel, targetRole)
+        ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
 
-        sendMsgFormat(
-            event,
-            "Role %s will now be applied to a user when they join <#%s>",
-            targetRole, targetChannel.id
-        )
-
+        sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
     }
 
-    override fun getName() = "vcautorole"
+    private fun listAutoVcRoles(ctx: CommandContext) {
 
-    override fun help() = """Gives a role to a user when they join a specified voice channel
-        |Usage: `${Settings.PREFIX}$name <voice channel> <role>` or `${Settings.PREFIX}$name off`
-    """.trimMargin()
+        val items = ctx.variables.vcAutoRoleCache.get(ctx.guild.idLong)
+
+        val embed = EmbedUtils.defaultEmbed()
+            .setDescription("List of vc auto roles:\n")
+
+        items.forEachEntry { vc, role ->
+
+            embed.appendDescription("<#$vc> => <@&$role>\n")
+
+            return@forEachEntry true
+        }
+
+        sendEmbed(ctx.event, embed)
+    }
 }
