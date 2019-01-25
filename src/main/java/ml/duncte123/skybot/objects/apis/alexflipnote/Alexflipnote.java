@@ -55,14 +55,6 @@ public class Alexflipnote {
         );
     }
 
-    public PendingRequest<byte[]> getFilter(String filter, String image) {
-        final QueryBuilder builder = new QueryBuilder().append(filter).append("image", image);
-        return WebUtils.ins.prepareRaw(
-            makeRequest("filter/" + builder.build()),
-            IOHelper::read
-        );
-    }
-
     public PendingRequest<byte[]> getScroll(String text) {
         final QueryBuilder builder = new QueryBuilder().append("text", text);
         return WebUtils.ins.prepareRaw(
@@ -107,14 +99,6 @@ public class Alexflipnote {
         final QueryBuilder builder = new QueryBuilder().append("image", image);
         return WebUtils.ins.prepareRaw(
             makeRequest("salty" + builder.build()),
-            IOHelper::read
-        );
-    }
-
-    public PendingRequest<byte[]> getDrake(String top, String bottom) {
-        final QueryBuilder builder = new QueryBuilder().append("top", top).append("bottom", bottom);
-        return WebUtils.ins.prepareRaw(
-            makeRequest("drake" + builder.build()),
             IOHelper::read
         );
     }

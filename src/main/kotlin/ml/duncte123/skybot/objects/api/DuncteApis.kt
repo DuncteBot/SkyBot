@@ -329,10 +329,14 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
-    fun getFlag(flag: String, avatarUrl: String): ByteArray {
+    fun getFlag(flag: String, avatarUrl: String) = getImageRaw("flags", flag, avatarUrl)
+
+    fun getFilter(flag: String, avatarUrl: String) = getImageRaw("filters", flag, avatarUrl)
+
+    private fun getImageRaw(path: String, item: String, avatarUrl: String): ByteArray {
         val json = JSONObject().put("image", avatarUrl)
 
-        return postJSONBytes("flags/$flag", json)
+        return postJSONBytes("$path/$item", json)
     }
 
     fun getIWantToDie(text: String): ByteArray {
