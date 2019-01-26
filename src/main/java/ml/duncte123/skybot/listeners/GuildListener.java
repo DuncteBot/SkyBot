@@ -155,19 +155,17 @@ public class GuildListener extends BaseListener {
         if (vcToRolePair.get(channel.getIdLong()) > 0) {
             final Role role = guild.getRoleById(vcToRolePair.get(channel.getIdLong()));
 
-            if (role != null) {
-                if (self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
-                    if (remove) {
-                        guild.getController()
-                            .removeSingleRoleFromMember(member, role)
-                            .reason("VC auto role removed")
-                            .queue();
-                    } else {
-                        guild.getController()
-                            .addSingleRoleToMember(member, role)
-                            .reason("VC auto role applied")
-                            .queue();
-                    }
+            if (role != null && self.canInteract(member) && self.canInteract(role) && self.hasPermission(Permission.MANAGE_ROLES)) {
+                if (remove) {
+                    guild.getController()
+                        .removeSingleRoleFromMember(member, role)
+                        .reason("VC auto role removed")
+                        .queue();
+                } else {
+                    guild.getController()
+                        .addSingleRoleToMember(member, role)
+                        .reason("VC auto role applied")
+                        .queue();
                 }
             }
         }
