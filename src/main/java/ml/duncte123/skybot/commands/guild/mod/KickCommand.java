@@ -68,7 +68,7 @@ public class KickCommand extends ModBaseCommand {
                 return;
             }
 
-            final String reason = String.join("", args.subList(1, args.size()));
+            final String reason = String.join(" ", args.subList(1, args.size()));
             event.getGuild().getController().kick(toKickMember)
                 .reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(
                 (noting) -> {
