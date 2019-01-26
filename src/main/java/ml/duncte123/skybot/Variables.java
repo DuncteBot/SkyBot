@@ -20,6 +20,7 @@ package ml.duncte123.skybot;
 
 import com.google.common.io.Files;
 import com.google.gson.Gson;
+import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
 import me.duncte123.weebJava.WeebApiBuilder;
@@ -43,9 +44,11 @@ import java.nio.charset.StandardCharsets;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
 
+    private static Variables instance;
     private final String googleBaseUrl;
     private final boolean isSql;
     private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
+    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = new TLongObjectHashMap<>();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
@@ -55,8 +58,6 @@ public final class Variables {
     private DunctebotConfig config;
     private DuncteApis apis;
     private DatabaseAdapter databaseAdapter;
-
-    private static Variables instance;
 
 
     private Variables() {
@@ -111,6 +112,19 @@ public final class Variables {
 
     public TLongObjectMap<GuildSettings> getGuildSettings() {
         return this.guildSettings;
+    }
+
+    /**
+     * Returns the vc autorole cache
+     * <p>
+     * Layout:
+     * Guild id ->
+     * Voice channel id -> Role id
+     *
+     * @return The vc autorole cache
+     */
+    public TLongObjectMap<TLongLongMap> getVcAutoRoleCache() {
+        return vcAutoRoleCache;
     }
 
     public String getGoogleBaseUrl() {

@@ -88,11 +88,6 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      * Starts the next track
      */
     public void nextTrack() {
-
-        if (queue.peek() == null) {
-            return;
-        }
-
         final AudioTrack nextTrack = queue.poll();
 
         if (nextTrack != null) {
@@ -222,12 +217,13 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             if (g != null) {
                 final AudioTrackInfo info = track.getInfo();
                 final String error = String.format(
-                    "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s)",
+                    "Guild %s (%s) had an FriendlyException on track \"%s\" by \"%s\" (source %s) (%s)",
                     g.getName(),
                     g.getId(),
                     info.title,
                     info.author,
-                    track.getSourceManager().getSourceName()
+                    track.getSourceManager().getSourceName(),
+                    info.identifier
                 );
 
                 logger.error(TextColor.RED + error + TextColor.RESET, exception);

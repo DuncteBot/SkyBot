@@ -103,6 +103,7 @@ public class LoveCommand extends Command {
 
     @Override
     public String help() {
-        return null;
+        return "Ship 2 people\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <@user>`";
     }
 }

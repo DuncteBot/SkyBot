@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
+import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
@@ -158,6 +159,12 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun deleteGuildSetting(guildId: Long) {
+        variables.database.run {
+            variables.apis.deleteGuildSetting(guildId)
+        }
+    }
+
     override fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit) {
         variables.database.run {
             callback.invoke(
@@ -233,7 +240,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
     override fun createBan(modId: Long, userName: String, userDiscriminator: String, userId: Long, unbanDate: String, guildId: Long) {
         variables.database.run {
             val json = JSONObject()
-                .put("modUserID", modId.toString())
+                .put("modUserId", modId.toString())
                 .put("Username", userName)
                 .put("discriminator", userDiscriminator)
                 .put("userId", userId.toString())
@@ -332,6 +339,43 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             }
 
             callback.invoke(Pair(bans, mutes))
+        }
+    }
+
+    override fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit) {
+        variables.database.run {
+            val storedData = variables.apis.getVcAutoRoles()
+            val converted = ArrayList<VcAutoRole>()
+
+            storedData.forEach {
+                val json = it as JSONObject
+
+                converted.add(VcAutoRole(
+                    json.getLong("guild_id"),
+                    json.getLong("voice_channel_id"),
+                    json.getLong("role_id")
+                ))
+            }
+
+            callback.invoke(converted)
+        }
+    }
+
+    override fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
+        variables.database.run {
+            variables.apis.setVcAutoRole(guildId, voiceChannelId, roleId)
+        }
+    }
+
+    override fun removeVcAutoRole(voiceChannelId: Long) {
+        variables.database.run {
+            variables.apis.removeVcAutoRole(voiceChannelId)
+        }
+    }
+
+    override fun removeVcAutoRoleForGuild(guildId: Long) {
+        variables.database.run {
+            variables.apis.removeVcAutoRoleForGuild(guildId)
         }
     }
 }

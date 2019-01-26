@@ -18,6 +18,10 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-public class GayCommand extends FilterBase {
-    // The FilterBase class handles everything
+public class SaturateCommand extends FilterBase {
+
+    @Override
+    String getFilterName() {
+        return "darken";
+    }
 }

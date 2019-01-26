@@ -29,23 +29,24 @@ public abstract class FilterBase extends ImageCommandBase {
 
     private final String commandName;
 
-    public FilterBase() {
+    FilterBase() {
         this.commandName = getClass().getSimpleName().replaceFirst("Command", "").toLowerCase();
-        this.category = CommandCategory.PATRON;
+        this.category = CommandCategory.FUN;
     }
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
-        if (!passesNoArgs(event)) {
+        if (!passesNoArgs(event, false)) {
             return;
         }
 
         final String url = getImageFromCommand(ctx);
 
         if (url != null) {
-            ctx.getAlexFlipnote().getFilter(getFilterName(), url).async((image) -> handleBasicImage(event, image));
+            final byte[] image = ctx.getApis().getFilter(getFilterName(), url);
+            handleBasicImage(event, image);
         }
     }
 

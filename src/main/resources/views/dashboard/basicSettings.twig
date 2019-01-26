@@ -107,6 +107,46 @@
 
             </div>
 
+            {# TODO: make this work #}
+            {#<div class="row">
+                <div class="divider"></div>
+            </div>
+
+            <div class="row section">
+                <h6>Vc Autorole settings:</h6> <br/>
+                #}{# VC auto role #}{#
+                <div class="input-field col s12 m3">
+                    <select id="vcAutoRoleVc" name="vcAutoRoleVc">
+                        <option value="" selected disabled>Select a voice channel</option>
+                        {% for voiceChannel in voiceChannels %}
+                            {% if currentVcAutoRole.getVoiceChannelId() == voiceChannel.getIdLong() %}
+                                <option value="{{ voiceChannel.getIdLong() }}" selected>🔊 {{ voiceChannel.getName() }}</option>
+                            {% else %}
+                                <option value="{{ voiceChannel.getIdLong() }}">🔊 {{ voiceChannel.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="0">🔇 Disable</option>
+                    </select>
+                    <label for="vcAutoRoleVc">Voice Channel</label>
+                </div>
+
+                <div class="input-field col s12 m3">
+                    <select id="vcAutoRoleRole" name="vcAutoRoleRole">
+                        <option value="" selected disabled>Select a role</option>
+                        {% for role in goodRoles %}
+                            <p>{{ currentVcAutoRole.getRoleId() }} == {{ role.getIdLong() }}</p>
+                            {% if currentVcAutoRole.getRoleId() == role.getIdLong() %}
+                                <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
+                            {% else %}
+                                <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="0">Disable</option>
+                    </select>
+                    <label for="vcAutoRoleRole">Role</label>
+                </div>
+            </div>#}
+
             <div class="row">
                 <div class="divider"></div>
             </div>

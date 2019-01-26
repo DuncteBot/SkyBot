@@ -141,7 +141,7 @@ class EvalCommand : Command() {
             return
         }
 
-        var userIn = ctx.argsRaw
+        var userIn = ctx.getArgsRaw(false)
 
         if (userIn.startsWith("```") && userIn.endsWith("```")) {
             userIn = userIn

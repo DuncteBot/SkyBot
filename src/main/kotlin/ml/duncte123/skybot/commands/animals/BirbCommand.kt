@@ -37,9 +37,8 @@ class BirbCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         try {
-            //https://random.birb.pw/
-            WebUtils.ins.getJSONObject("https://birdsare.cool/bird.json").async {
-                sendEmbed(ctx.event, EmbedUtils.embedImage(it.getString("url")))
+            WebUtils.ins.getJSONArray("https://shibe.online/api/birds").async {
+                sendEmbed(ctx.event, EmbedUtils.embedImage(it.getString(0)))
             }
 
         } catch (e: IOException) {

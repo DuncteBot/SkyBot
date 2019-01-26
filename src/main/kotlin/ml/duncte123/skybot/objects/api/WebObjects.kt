@@ -35,3 +35,5 @@ data class Warning(val id: Int, val date: Date, val expiryDate: Date, val modId:
 data class Ban(val id: Int, val modId: String, val userId: String, val userName: String, val discriminator: String, val guildId: String)
 data class Mute(val id: Int, val modId: String, val userId: String, val userTag: String, val guildId: String)
 
+data class VcAutoRole(val guildId: Long, val voiceChannelId: Long, val roleId: Long)
+

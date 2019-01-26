@@ -24,10 +24,10 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
+import ml.duncte123.skybot.objects.api.VcAutoRole
 import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.guild.GuildSettings
-import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val variables: Variables) {
@@ -69,6 +69,8 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit)
 
+    abstract fun deleteGuildSetting(guildId: Long)
+
     abstract fun updateGuildSetting(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
 
     abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
@@ -107,4 +109,15 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
     abstract fun purgeBans(ids: List<Int>)
 
     abstract fun purgeMutes(ids: List<Int>)
+
+    ///////////////
+    // VC auto role
+
+    abstract fun getVcAutoRoles(callback: (List<VcAutoRole>) -> Unit)
+
+    abstract fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long)
+
+    abstract fun removeVcAutoRole(voiceChannelId: Long)
+
+    abstract fun removeVcAutoRoleForGuild(guildId: Long)
 }

@@ -18,7 +18,9 @@
 
 package ml.duncte123.skybot.utils;
 
+import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
+import gnu.trove.map.hash.TLongLongHashMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
@@ -31,6 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
@@ -46,6 +49,7 @@ public class GuildSettingsUtils {
     public static void loadAllSettings(Variables variables) {
         loadGuildSettings(variables.getDatabaseAdapter(), variables.getGuildSettings());
         loadEmbedColors(variables.getDatabaseAdapter());
+        loadVcAutoRoles(variables.getDatabaseAdapter(), variables.getVcAutoRoleCache());
     }
 
 
@@ -85,6 +89,33 @@ public class GuildSettingsUtils {
                 return null;
             }
         );
+    }
+
+    private static void loadVcAutoRoles(DatabaseAdapter adapter, TLongObjectMap<TLongLongMap> vcAutoRoleCache) {
+        logger.info("Loading vc auto roles.");
+
+        adapter.getVcAutoRoles((items) -> {
+
+            items.forEach(
+                (item) -> {
+                    final TLongLongMap cache = Optional.ofNullable(
+                        vcAutoRoleCache.get(item.getGuildId())
+                    )
+                    .orElseGet(
+                        () -> {
+                            vcAutoRoleCache.put(item.getGuildId(), new TLongLongHashMap()); // This returns the old value which was null
+                            return vcAutoRoleCache.get(item.getGuildId());
+                        }
+                    );
+
+                    cache.put(item.getVoiceChannelId(), item.getRoleId());
+                }
+            );
+
+            logger.info("Loaded " + items.size() + " vc auto roles.");
+
+            return null;
+        });
     }
 
     /**

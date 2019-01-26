@@ -64,11 +64,11 @@ public abstract class ImageCommandBase extends Command {
         return passesNoArgs(event, patron) && hasArgs(event, args);
     }
 
-    protected boolean passesNoArgs(GuildMessageReceivedEvent event) {
+    boolean passesNoArgs(GuildMessageReceivedEvent event) {
         return passesNoArgs(event, true);
     }
 
-    boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
+    protected boolean passesNoArgs(GuildMessageReceivedEvent event, boolean patron) {
         return canSendFile(event) && (!patron || isUserOrGuildPatron(event));
     }
 

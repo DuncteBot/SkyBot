@@ -98,6 +98,15 @@ class DuncteApis(private val apiKey: String) {
         return response.getBoolean("success")
     }
 
+    fun deleteGuildSetting(guildId: Long) {
+        val response = executeRequest(defaultRequest("guildsettings/$guildId").delete())
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to delete guild setting\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     fun registerNewGuildSettings(guildSettings: GuildSettings): Boolean {
         val json = guildSettings.toJson()
         val response = postJSON("guildsettings", json)
@@ -225,6 +234,45 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
+    fun getVcAutoRoles(): JSONArray {
+        return paginateData("vcautoroles")
+    }
+
+    fun setVcAutoRole(guildId: Long, voiceChannelId: Long, roleId: Long) {
+        val json = JSONObject()
+            .put("guild_id", guildId.toString())
+            .put("voice_channel_id", voiceChannelId.toString())
+            .put("role_id", roleId.toString())
+
+
+        val response = postJSON("vcautoroles", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to set vc autorole\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun removeVcAutoRole(voiceChannelId: Long) {
+        val request = defaultRequest("vcautoroles/$voiceChannelId").delete()
+        val response = executeRequest(request)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to remove vc autorole\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun removeVcAutoRoleForGuild(guildId: Long) {
+        val request = defaultRequest("vcautoroles/guild/$guildId").delete()
+        val response = executeRequest(request)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to remove vc autorole\n" +
+                "Response: {}", response.getJSONObject("error").toString(4))
+        }
+    }
+
     private fun paginateData(path: String): JSONArray {
         val page1 = executeRequest(defaultRequest("$path?page=1")).getJSONObject("data")
 
@@ -281,10 +329,14 @@ class DuncteApis(private val apiKey: String) {
         }
     }
 
-    fun getFlag(flag: String, avatarUrl: String): ByteArray {
+    fun getFlag(flag: String, avatarUrl: String) = getImageRaw("flags", flag, avatarUrl)
+
+    fun getFilter(flag: String, avatarUrl: String) = getImageRaw("filters", flag, avatarUrl)
+
+    private fun getImageRaw(path: String, item: String, avatarUrl: String): ByteArray {
         val json = JSONObject().put("image", avatarUrl)
 
-        return postJSONBytes("flags/$flag", json)
+        return postJSONBytes("$path/$item", json)
     }
 
     fun getIWantToDie(text: String): ByteArray {
