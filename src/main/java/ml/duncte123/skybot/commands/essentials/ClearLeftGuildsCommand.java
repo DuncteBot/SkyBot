@@ -23,7 +23,6 @@ import gnu.trove.list.array.TLongArrayList;
 import gnu.trove.map.TLongObjectMap;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.objects.api.DuncteApis;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
