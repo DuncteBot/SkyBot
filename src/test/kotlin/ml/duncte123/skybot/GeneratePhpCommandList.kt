@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot
 
+import ml.duncte123.skybot.objects.command.Command
 import java.io.File
 import kotlin.system.exitProcess
 
@@ -31,8 +32,29 @@ class GeneratePhpCommandList {
             val variables = Variables.getInstance()
 
             genPhp(variables.commandManager)
+            genStaticSite(variables.commandManager)
 
             exitProcess(0)
+        }
+
+        @JvmStatic
+        private fun genStaticSite(commandManager: CommandManager) {
+            var output = "---\n" +
+                "layout: default\n" +
+                "commands:\n"
+
+            commandManager.commands.forEach {
+
+                val cmd = it as Command
+
+                output += "  - name: ${cmd.name}\n    description: \"${cmd.helpParsed()}\"\n"
+            }
+
+            output += "---\n\n{{ content }}\n"
+
+            val file = File("command_storage.html")
+            file.createNewFile()
+            file.writeText(output)
         }
 
         @JvmStatic
