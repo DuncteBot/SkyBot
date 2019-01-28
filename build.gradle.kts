@@ -178,12 +178,12 @@ compileJava.apply {
 }
 
 shadowJar.apply {
-    /*mainClassName = "ml.duncte123.skybot.SkyBot"
-    classifier = null
-    libsDirName = "../"*/
-
     classifier = ""
     destinationDir = File("./")
+
+    manifest {
+        attributes["Main-Class"] = "ml.duncte123.skybot.SkyBot"
+    }
 }
 
 task<Task>("printVersion") {
