@@ -23,6 +23,7 @@ import com.google.gson.Gson;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
 import gnu.trove.map.hash.TLongObjectHashMap;
+import io.sentry.Sentry;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
@@ -77,6 +78,10 @@ public final class Variables {
         this.googleBaseUrl = "https://www.googleapis.com/customsearch/v1?q=%s&cx=012048784535646064391:v-fxkttbw54" +
             "&hl=en&searchType=image&key=" + this.config.apis.googl + "&safe=off";
         this.isSql = this.config.use_database;
+
+        if (config.sentry.enabled) {
+            Sentry.init(config.sentry.dsn);
+        }
     }
 
     public BlargBot getBlargBot() {
