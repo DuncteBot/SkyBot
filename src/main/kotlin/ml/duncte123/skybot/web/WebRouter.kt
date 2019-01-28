@@ -211,6 +211,14 @@ class WebRouter(private val shardManager: ShardManager) {
                 return@post FindUserAndGuild.get(request, response, shardManager)
             }
 
+            after {
+                response.header("Access-Control-Allow-Origin", "*")
+                response.header("Access-Control-Allow-Credentials", "true")
+                response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
+                response.header("Access-Control-Allow-Headers", "Content-Type, Accept, X-Requested-With, Authorization")
+                response.header("Access-Control-Max-Age", "3600")
+            }
+
         }
 
         notFound {
