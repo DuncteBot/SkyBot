@@ -31,7 +31,6 @@ public class Settings {
     public static final TLongList developers = new TLongArrayList();
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
-    public static final String KOTLIN_VERSION = "@kotlinVersion@";
     public static final String DEFAULT_NAME = "DuncteBot";
     public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
     public static final int defaultColour = 0x0751c6;

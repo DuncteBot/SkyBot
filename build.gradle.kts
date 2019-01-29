@@ -22,8 +22,6 @@ import java.io.ByteArrayOutputStream
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
-val kotlinVersion = "1.3.20"
-
 buildscript {
     repositories {
         mavenCentral()
@@ -143,8 +141,7 @@ val sourcesForRelease = task<Copy>("sourcesForRelease") {
         include("**/Settings.java")
         
         val items = mapOf(
-            "versionObj"    to project.version,
-            "kotlinVersion" to kotlinVersion
+            "versionObj" to project.version
         )
 
         filter<ReplaceTokens>(mapOf("tokens" to items))
