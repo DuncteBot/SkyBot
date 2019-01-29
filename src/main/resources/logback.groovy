@@ -17,6 +17,8 @@
  */
 
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
+import ch.qos.logback.classic.filter.ThresholdFilter
+import io.sentry.logback.SentryAppender
 
 
 appender("STDOUT", ConsoleAppender) {
@@ -24,10 +26,17 @@ appender("STDOUT", ConsoleAppender) {
         //this one looks nice: [%red(%X{jda.shard.id}) / %red(%X{jda.shard.total})]
         //more nice stuff: %d{dd-MM-yyyy HH:mm:ss} %boldCyan(%-32.-32thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n
         //pattern = "[%d{dd-MM-yyyy HH:mm:ss, -5}] [%boldCyan(%thread)] [%boldGreen(%logger{36})] %red(%X{jda.shard}) %level - %msg%n"
-        pattern = "%d{dd-MM-yyyy HH:mm:ss} %boldCyan(%thread) %red(%X{jda.shard.id}) / %red(%X{jda.shard.total}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
+        pattern = "%d{dd-MM-yyyy HH:mm:ss} %boldCyan(%thread) %red(%X{jda.shard}) %boldGreen(%-15.-15logger{0}) %highlight(%-6level) %msg%n"
     }
 }
-root(INFO, ["STDOUT"])
+
+appender("Sentry", SentryAppender) {
+    filter(ThresholdFilter) {
+        level = WARN
+    }
+}
+
+root(INFO, ["STDOUT", "Sentry"])
 
 /*def bySecond = timestamp("yyyy-MM-dd'T'HH_mm_ss")
 

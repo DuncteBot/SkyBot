@@ -127,6 +127,9 @@ dependencies {
 
     // Webhooks
     implementation(group = "club.minnced", name = "discord-webhooks", version = "0.1.4")
+
+    //Sentry
+    implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
 }
 
 val compileJava: JavaCompile by tasks
@@ -223,7 +226,7 @@ fun getGitHash(): String {
 
         return stdout.toString().trim()
     } catch (ignored: Throwable) {
-        // Probably ramidzkh's problem
+        // Probably ramidzkh"s problem
         return "DEV"
     }
 }
