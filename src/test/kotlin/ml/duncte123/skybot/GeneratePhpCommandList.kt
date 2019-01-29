@@ -46,8 +46,9 @@ class GeneratePhpCommandList {
             commandManager.commands.forEach {
 
                 val cmd = it as Command
+                val cmdDesc = cmd.helpParsed().replace("\"", "\\\"")
 
-                output += "  - name: ${cmd.name}\n    description: \"${cmd.helpParsed()}\"\n"
+                output += "  - name: ${cmd.name}\n    description: \"$cmdDesc\"\n"
             }
 
             output += "---\n\n{{ content }}\n"

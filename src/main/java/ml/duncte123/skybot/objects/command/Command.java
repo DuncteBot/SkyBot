@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -190,8 +191,9 @@ public abstract class Command implements ICommand {
             String s = help()
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
-                .replaceAll("`(.*)`", "<code>$1</code>")
                 .replaceAll("\\n", "<br />")
+                .replaceAll("\\`\\`\\`(.*)\\`\\`\\`", "<pre><code>$1</code></pre>")
+                .replaceAll("\\`([^\\`]+)\\`", "<code>$1</code>")
                 .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
             if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
                 s += "<br />Aliases: " + Settings.PREFIX + String.join(", " + Settings.PREFIX, getAliases());
