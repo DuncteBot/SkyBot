@@ -27,7 +27,7 @@ public class DunctebotConfig {
     public Apis apis;
     public Genius genius;
     public Lavalink lavalink;
-    public Webhook webhook;
+    public Sentry sentry;
     public boolean use_database;
 
     public static class Discord {
@@ -101,10 +101,8 @@ public class DunctebotConfig {
         public String client_id;
     }
 
-    public static class Webhook {
+    public static class Sentry {
         public boolean enabled;
-        public String webhookurl;
-        public String level;
-        public String pattern;
+        public String dsn;
     }
 }
