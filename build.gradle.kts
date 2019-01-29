@@ -40,7 +40,7 @@ plugins {
     
     id("com.github.johnrengelman.shadow") version "4.0.4"
     kotlin("jvm") version "1.3.20"
-    id("com.github.breadmoirai.github-release") version "2.2.0"
+    id("com.github.breadmoirai.github-release") version "2.2.3"
 }
 
 project.group = "ml.duncte123.skybot"
