@@ -37,7 +37,6 @@ import org.slf4j.LoggerFactory;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
