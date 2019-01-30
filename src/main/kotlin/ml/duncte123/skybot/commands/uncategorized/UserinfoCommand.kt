@@ -200,7 +200,7 @@ class UserinfoCommand : Command() {
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
-                        |**Online Status:** ${convertStatus(mStatus)} ${mStatus.name.toLowerCase().replaceFirst("_", " ")}
+                        |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                         |
                         |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
