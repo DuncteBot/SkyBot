@@ -130,6 +130,12 @@ dependencies {
 
     //Sentry
     implementation(group = "io.sentry", name = "sentry-logback", version = "1.7.17")
+
+    // Trove
+    implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
+
+    // Okhttp
+    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.12.1")
 }
 
 val compileJava: JavaCompile by tasks
