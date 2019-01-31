@@ -28,7 +28,6 @@ import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
 import me.duncte123.weebJava.types.TokenType;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
-import ml.duncte123.skybot.adapters.SqliteDatabaseAdapter;
 import ml.duncte123.skybot.adapters.WebDatabaseAdapter;
 import ml.duncte123.skybot.connections.database.DBManager;
 import ml.duncte123.skybot.objects.api.DuncteApis;
@@ -37,9 +36,11 @@ import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
+import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -181,10 +182,18 @@ public final class Variables {
 
     public DatabaseAdapter getDatabaseAdapter() {
 
-        if (this.databaseAdapter == null) {
-            this.databaseAdapter = this.isSql ?
-                new WebDatabaseAdapter(this) :
-                new SqliteDatabaseAdapter(this);
+        try {
+            if (this.databaseAdapter == null) {
+                this.databaseAdapter = this.isSql ?
+                    new WebDatabaseAdapter(this) :
+                    (DatabaseAdapter) (Class.forName("ml.duncte123.skybot.adapters.SqliteDatabaseAdapter")
+                        .getDeclaredConstructor(Variables.class).newInstance(this));
+            }
+        }
+        catch (ClassNotFoundException | NoSuchMethodException | IllegalAccessException |
+            InstantiationException | InvocationTargetException e) {
+            LoggerFactory.getLogger(Variables.class).error("Could not load database class.\n" +
+                "Are you a developer?", e);
         }
 
         return this.databaseAdapter;

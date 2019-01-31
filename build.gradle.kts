@@ -197,6 +197,14 @@ compileJava.apply {
     dependsOn(generateJavaSources)
 }
 
+jar.apply {
+    exclude(
+        "**/SQLiteDatabaseConnectionManager.class",
+        "**/AudioPlayerSenderHandler.class",
+        "**/SqliteDatabaseAdapter**"
+    )
+}
+
 application {
     mainClassName = "ml.duncte123.skybot.SkyBot"
 }
