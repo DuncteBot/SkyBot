@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.github.breadmoirai.GithubRelease
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.*
 import java.io.ByteArrayOutputStream
@@ -183,13 +184,13 @@ compileJava.apply {
     dependsOn(generateJavaSources)
 }
 
+application {
+    mainClassName = "ml.duncte123.skybot.SkyBot"
+}
+
 shadowJar.apply {
     classifier = ""
     destinationDir = File("./")
-
-    manifest {
-        attributes["Main-Class"] = "ml.duncte123.skybot.SkyBot"
-    }
 }
 
 task<Task>("printVersion") {
@@ -209,6 +210,7 @@ githubRelease {
     repo("SkyBot")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
+    prerelease(true)
 }
 
 tasks.withType<Wrapper> {
