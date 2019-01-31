@@ -16,11 +16,9 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.github.breadmoirai.GithubReleaseExtension
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.*
 import java.io.ByteArrayOutputStream
-import java.util.Scanner
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
@@ -37,9 +35,9 @@ plugins {
     java
     idea
     application
-    
-    id("com.github.johnrengelman.shadow") version "4.0.4"
+
     kotlin("jvm") version "1.3.20"
+    id("com.github.johnrengelman.shadow") version "4.0.4"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
 
