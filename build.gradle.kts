@@ -16,7 +16,6 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import com.github.breadmoirai.GithubRelease
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.*
 import java.io.ByteArrayOutputStream
@@ -39,7 +38,7 @@ plugins {
     
     id("com.github.johnrengelman.shadow") version "4.0.4"
     kotlin("jvm") version "1.3.20"
-    id("com.github.breadmoirai.github-release") version "2.2.3"
+    id("com.github.breadmoirai.github-release") version "2.2.4"
 }
 
 project.group = "ml.duncte123.skybot"
@@ -134,9 +133,6 @@ dependencies {
 
     // Trove
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
-
-    // Okhttp
-    compile(group = "com.squareup.okhttp3", name = "okhttp", version = "3.12.1")
 }
 
 val compileJava: JavaCompile by tasks
