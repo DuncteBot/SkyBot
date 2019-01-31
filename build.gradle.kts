@@ -16,6 +16,7 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import com.github.breadmoirai.GithubReleaseExtension
 import org.apache.tools.ant.filters.ReplaceTokens
 import org.gradle.api.*
 import java.io.ByteArrayOutputStream
@@ -136,12 +137,29 @@ dependencies {
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
 }
 
+val compileKotlin: KotlinCompile by tasks
 val compileJava: JavaCompile by tasks
 val shadowJar: ShadowJar by tasks
-val jar: Jar by tasks
 val clean: Task by tasks
 val build: Task by tasks
-val compileKotlin: KotlinCompile by tasks
+val jar: Jar by tasks
+
+task<Task>("printVersion") {
+    println(project.version)
+}
+
+build.apply {
+    dependsOn(clean)
+    dependsOn(jar)
+
+    jar.mustRunAfter(clean)
+}
+
+compileKotlin.apply {
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
+}
 
 val sourcesForRelease = task<Copy>("sourcesForRelease") {
     from("src/main/java") {
@@ -188,17 +206,20 @@ application {
 shadowJar.apply {
     classifier = ""
     destinationDir = File("./")
+    
+    exclude(
+        "**/SQLiteDatabaseConnectionManager.class",
+        "**/AudioPlayerSenderHandler.class",
+        "**/SqliteDatabaseAdapter**"
+    )
+
+    dependencies {
+        exclude(dependency("org.xerial:sqlite-jdbc:3.25.2"))
+    }
 }
 
-task<Task>("printVersion") {
-    println(project.version)
-}
-
-build.apply {
-    dependsOn(clean)
-    dependsOn(jar)
-
-    jar.mustRunAfter(clean)
+tasks.withType<Wrapper> {
+    gradleVersion = "5.1.1"
 }
 
 githubRelease {
@@ -208,16 +229,6 @@ githubRelease {
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
     prerelease(true)
-}
-
-tasks.withType<Wrapper> {
-    gradleVersion = "5.1.1"
-}
-
-compileKotlin.apply {
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
 }
 
 fun getGitHash(): String {
