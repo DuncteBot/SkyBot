@@ -16,11 +16,10 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import org.apache.tools.ant.filters.ReplaceTokens
-import org.gradle.api.*
-import java.io.ByteArrayOutputStream
 import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
+import org.apache.tools.ant.filters.ReplaceTokens
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.ByteArrayOutputStream
 
 buildscript {
     repositories {
@@ -44,11 +43,10 @@ plugins {
 project.group = "ml.duncte123.skybot"
 project.version = "3.87.0_${getGitHash()}"
 
-val javaVersion = JavaVersion.VERSION_1_10
 
 java {
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
+    sourceCompatibility = JavaVersion.VERSION_1_10
+    targetCompatibility = JavaVersion.VERSION_1_10
 }
 
 repositories {
@@ -162,7 +160,7 @@ compileKotlin.apply {
 val sourcesForRelease = task<Copy>("sourcesForRelease") {
     from("src/main/java") {
         include("**/Settings.java")
-        
+
         val items = mapOf(
             "versionObj" to project.version
         )
@@ -212,7 +210,7 @@ application {
 shadowJar.apply {
     classifier = ""
     destinationDir = File("./")
-    
+
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
         "**/AudioPlayerSenderHandler.class",
