@@ -76,7 +76,7 @@ public class MuteCommand extends ModBaseCommand {
         }
 
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
-            .reason("Muted by" + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
+            .reason("Muted by " + event.getAuthor().getAsTag() + ": " + reason).queue(success -> {
                 ModerationUtils.modLog(event.getAuthor(), toMute.getUser(), "muted", ctx.getGuild());
                 sendSuccess(event.getMessage());
             }
