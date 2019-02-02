@@ -1,7 +1,7 @@
 [codacy]: https://api.codacy.com/project/badge/Grade/3ac632a5366a47e6a3a534303b4eb5f8
 [codacyLink]: https://www.codacy.com/app/DuncteBot/SkyBot?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DuncteBot/SkyBot&amp;utm_campaign=Badge_Grade
-[circle]: https://travis-ci.org/DuncteBot/SkyBot.svg?branch=master
-[circleLink]: https://travis-ci.org/DuncteBot/SkyBot
+[circle]: https://circleci.com/gh/DuncteBot/SkyBot/tree/master.svg?style=shield
+[circleLink]: https://circleci.com/gh/DuncteBot/SkyBot/tree/master
 [dbl]: https://discordbots.org/api/widget/status/210363111729790977.png
 [dblLink]: https://discordbots.org/bot/210363111729790977
 [discord]: https://discordapp.com/api/guilds/191245668617158656/embed.png
@@ -16,7 +16,7 @@
 SkyBot is a discord bot with music, mod, fun, weeb and nerd commands.
 
 # Support
-If you need any support please join our [support guild](https://discord.gg/NKM9Xtk) <br />
+If you need any support please join our [support guild][discordLink] <br />
 If you want to support development of the bot [conciser to be come a patron][patronLink]
 
 
