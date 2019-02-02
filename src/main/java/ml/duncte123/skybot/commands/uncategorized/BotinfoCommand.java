@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
 import com.sun.management.OperatingSystemMXBean;
+import kotlin.KotlinVersion;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.weebJava.WeebInfo;
@@ -95,7 +96,7 @@ public class BotinfoCommand extends Command {
                 "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
                 "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
-                ") and Kotlin (version " + Settings.KOTLIN_VERSION + ")\n\n" +
+                ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION + "" +
                 "\n**LavaPlayer version:** " + PlayerLibrary.VERSION + "\n" +
                 "**Weeb.java version:** " + WeebInfo.VERSION + "\n\u200B", false)
