@@ -211,7 +211,7 @@ class WebRouter(private val shardManager: ShardManager) {
                 return@post FindUserAndGuild.get(request, response, shardManager)
             }
 
-            after {
+            after("/*") {
                 response.header("Access-Control-Allow-Origin", "*")
                 response.header("Access-Control-Allow-Credentials", "true")
                 response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
