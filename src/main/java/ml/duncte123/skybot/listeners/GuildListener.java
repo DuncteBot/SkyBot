@@ -63,8 +63,7 @@ public class GuildListener extends BaseListener {
     @Override
     public void onGuildLeave(GuildLeaveEvent event) {
         final Guild guild = event.getGuild();
-
-        GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
+        final GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
 
         if (musicManager != null) {
             musicManager.player.stopTrack();

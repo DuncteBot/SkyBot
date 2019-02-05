@@ -41,7 +41,7 @@ plugins {
 }
 
 project.group = "ml.duncte123.skybot"
-project.version = "3.87.0_${getGitHash()}"
+project.version = "3.87.1_${getGitHash()}"
 
 
 java {
@@ -83,10 +83,10 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c14b92d")
 
     // SQLite
-    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
+    compileOnly(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
 
     //groovy
-    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.5")
+    implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
 
     //groovy sandbox
     implementation(group = "org.kohsuke", name = "groovy-sandbox", version = "1.20")
@@ -216,10 +216,6 @@ shadowJar.apply {
         "**/AudioPlayerSenderHandler.class",
         "**/SqliteDatabaseAdapter**"
     )
-
-    dependencies {
-        exclude(dependency("org.xerial:sqlite-jdbc:3.25.2"))
-    }
 }
 
 tasks.withType<Wrapper> {
