@@ -64,6 +64,13 @@ public class GuildListener extends BaseListener {
     public void onGuildLeave(GuildLeaveEvent event) {
         final Guild guild = event.getGuild();
 
+        GuildMusicManager musicManager = variables.getAudioUtils().getMusicManagers().get(guild.getIdLong());
+
+        if (musicManager != null) {
+            musicManager.player.stopTrack();
+            musicManager.scheduler.queue.clear();
+        }
+
         logger.info("{}Leaving guild: {} ({}).{}",
             TextColor.RED,
             guild.getName(),

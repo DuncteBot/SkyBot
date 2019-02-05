@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.guild.mod;
 
-import me.duncte123.botcommons.messaging.MessageUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.SinceSkybot;
