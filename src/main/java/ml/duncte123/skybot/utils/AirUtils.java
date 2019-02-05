@@ -76,8 +76,9 @@ public class AirUtils {
 
 
     public static int parseIntSafe(String integer) {
-        if (isInt(integer))
+        if (isInt(integer)) {
             return Integer.parseInt(integer);
+        }
 
         return -1;
     }
@@ -248,7 +249,7 @@ public class AirUtils {
         return target;
     }
 
-    public static Member getMentionedUser(String argument, Guild guild) {
+    public static Member getMentionedMember(String argument, Guild guild) {
         final List<Member> foundMembers = FinderUtil.findMembers(argument, guild);
 
         if (foundMembers.isEmpty()) {

@@ -35,6 +35,9 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static me.duncte123.botcommons.messaging.MessageUtils.*;
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
+
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class CleanupCommand extends ModBaseCommand {
 
@@ -53,7 +56,7 @@ public class CleanupCommand extends ModBaseCommand {
         boolean clearBots = false;
 
         if (args.size() > 3) {
-            MessageUtils.sendErrorWithMessage(event.getMessage(), "You provided more than three arguments.");
+            sendErrorWithMessage(event.getMessage(), "You provided more than three arguments.");
             return;
         }
 
@@ -67,12 +70,12 @@ public class CleanupCommand extends ModBaseCommand {
                 try {
                     total = Integer.parseInt(args.get(0));
                 } catch (NumberFormatException e) {
-                    MessageUtils.sendError(event.getMessage());
-                    MessageUtils.sendMsg(event, "Error: Amount to clear is not a valid number");
+                    sendError(event.getMessage());
+                    sendMsg(event, "Error: Amount to clear is not a valid number");
                     return;
                 }
                 if (total < 1 || total > 1000) {
-                    MessageUtils.sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
+                    sendMsgAndDeleteAfter(event, 5, TimeUnit.SECONDS, "Error: count must be minimal 2 and maximal 1000\n" +
                         "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`");
                     return;
                 }
@@ -96,18 +99,23 @@ public class CleanupCommand extends ModBaseCommand {
             final List<Message> msgList = msgStream.collect(Collectors.toList());
 
             channel.purgeMessages(msgList);
+
             return msgList.size();
         }).exceptionally((thr) -> {
             String cause = "";
+
             if (thr.getCause() != null) {
                 cause = " caused by: " + thr.getCause().getMessage();
             }
-            MessageUtils.sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+
+            sendMsg(event, "ERROR: " + thr.getMessage() + cause);
+
             return 0;
-        }).whenCompleteAsync((count, thr) ->
-            MessageUtils.sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS,
-                "Removed %d messages!", count)
-        );
+        }).whenCompleteAsync((count, thr) -> {
+            sendMsgFormatAndDeleteAfter(event, 10, TimeUnit.SECONDS, "Removed %d messages!", count);
+
+            modLog(String.format("%d messages removed in %s", count, channel), ctx.getGuild());
+        });
         // End of the annotation
     }
 

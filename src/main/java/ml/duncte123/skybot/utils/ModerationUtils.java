@@ -86,21 +86,28 @@ public class ModerationUtils {
      *         A instance of the {@link Guild}
      */
     public static void modLog(User mod, User punishedUser, String punishment, String reason, String time, DunctebotGuild g) {
-        final long chan = g.getSettings().getLogChannel();
-        if (chan > 0) {
-            final TextChannel logChannel = AirUtils.getLogChannel(chan, g);
-            String length = "";
-            if (time != null && !time.isEmpty()) {
-                length = " lasting " + time + "";
-            }
+        String length = "";
 
-            sendMsg(logChannel, String.format("User **%#s** got **%s** by **%#s**%s%s",
-                punishedUser,
-                punishment,
-                mod,
-                length,
-                reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
-            ));
+        if (time != null && !time.isEmpty()) {
+            length = " lasting " + time + "";
+        }
+
+        modLog(String.format("User **%#s** got **%s** by **%#s**%s%s",
+            punishedUser,
+            punishment,
+            mod,
+            length,
+            reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+        ), g);
+    }
+
+    public static void modLog(String message, DunctebotGuild guild) {
+        final long chan = guild.getSettings().getLogChannel();
+
+        if (chan > 0) {
+            final TextChannel logChannel = AirUtils.getLogChannel(chan, guild);
+
+            sendMsg(logChannel, message);
         }
     }
 
