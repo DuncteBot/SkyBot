@@ -41,7 +41,7 @@ class CoinCommand : Command() {
         val event = ctx.event
 
         event.channel.sendTyping().queue {
-            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) { _ ->
+            event.channel.sendMessage("*Flips a coin*").queueAfter(500, TimeUnit.MILLISECONDS) {
                 sendEmbed(event, EmbedUtils.embedImage("https://duncte123.me/img/coin/"
                     + imagesArr[ctx.random.nextInt(2)]))
             }
@@ -51,4 +51,6 @@ class CoinCommand : Command() {
     override fun help() = "flips a coin.\nUsage: `${Settings.PREFIX}$name`"
 
     override fun getName() = "coin"
+
+    override fun getAliases() = arrayOf("coinflip", "cf")
 }
