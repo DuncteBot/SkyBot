@@ -83,7 +83,7 @@ dependencies {
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "c14b92d")
 
     // SQLite
-    compileOnly(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
+    implementation(group = "org.xerial", name = "sqlite-jdbc", version = "3.25.2")
 
     //groovy
     implementation(group = "org.codehaus.groovy", name = "groovy-jsr223", version = "2.5.6")
@@ -216,6 +216,10 @@ shadowJar.apply {
         "**/AudioPlayerSenderHandler.class",
         "**/SqliteDatabaseAdapter**"
     )
+
+    dependencies {
+        exclude(dependency("org.xerial:sqlite-jdbc:3.25.2"))
+    }
 }
 
 tasks.withType<Wrapper> {
