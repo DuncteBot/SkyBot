@@ -188,6 +188,7 @@ public abstract class Command implements ICommand {
     public String helpParsed() {
         if (helpParsed == null) {
             String s = help()
+                .replaceAll("&", "&amp;")
                 .replaceAll("<", "&lt;")
                 .replaceAll(">", "&gt;")
                 .replaceAll("\\n", "<br />")
