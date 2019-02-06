@@ -43,7 +43,7 @@ class GeneratePhpCommandList {
                 "layout: default\n" +
                 "commands:\n"
 
-            commandManager.commands.forEach {
+            commandManager.sortedCommands.forEach {
 
                 val cmd = it as Command
                 val cmdDesc = cmd.helpParsed().replace("\"", "\\\"")
