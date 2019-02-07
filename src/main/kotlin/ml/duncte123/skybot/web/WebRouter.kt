@@ -29,13 +29,8 @@ import ml.duncte123.skybot.objects.WebVariables
 import ml.duncte123.skybot.utils.AirUtils.colorToHex
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.web.controllers.Callback
-import ml.duncte123.skybot.web.controllers.Commands
 import ml.duncte123.skybot.web.controllers.OneGuildRegister
-import ml.duncte123.skybot.web.controllers.Suggestions
-import ml.duncte123.skybot.web.controllers.api.CustomCommands
-import ml.duncte123.skybot.web.controllers.api.FindUserAndGuild
-import ml.duncte123.skybot.web.controllers.api.GetUserGuilds
-import ml.duncte123.skybot.web.controllers.api.MainApi
+import ml.duncte123.skybot.web.controllers.api.*
 import ml.duncte123.skybot.web.controllers.dashboard.BasicSettings
 import ml.duncte123.skybot.web.controllers.dashboard.Dashboard
 import ml.duncte123.skybot.web.controllers.dashboard.MessageSettings
@@ -68,31 +63,12 @@ class WebRouter(private val shardManager: ShardManager) {
 
         staticFiles.location("/public")
 
-        get("/", WebVariables().put("title", "Home"), "home.twig")
-
-        get("/commands") {
-            val output = Commands.show(request, variables, shardManager)
-            return@get engine.render(output)
-        }
-
-        get("/suggest", WebVariables().put("title", "Leave a suggestion")
-            .put("chapta_sitekey", config.apis.chapta.sitekey), "suggest.twig")
-
-        post("/suggest") {
-            return@post Suggestions.save(request, config, engine)
-        }
-
         get("/callback") {
             return@get Callback.handle(request, response, oAuth2Client)
         }
 
         get("/invite") {
             return@get response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
-        }
-
-        get("/liveServerCount") {
-            return@get engine.render(ModelAndView(mapOf("nothing" to "something"),
-                "static/liveServerCount.twig"))
         }
 
         get("/register-server", WebVariables()
@@ -103,7 +79,7 @@ class WebRouter(private val shardManager: ShardManager) {
             return@post OneGuildRegister.post(request, shardManager, variables, engine)
         }
 
-        path("/dashboard") {
+        path("/") {
 
             before("") {
                 return@before Dashboard.before(request, response, oAuth2Client, config)
@@ -183,6 +159,10 @@ class WebRouter(private val shardManager: ShardManager) {
 
             get("/getUserGuilds") {
                 return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager)
+            }
+
+            post("/suggest") {
+                return@post Suggest.create(request, response, config)
             }
 
             path("/customcommands/$GUILD_ID") {

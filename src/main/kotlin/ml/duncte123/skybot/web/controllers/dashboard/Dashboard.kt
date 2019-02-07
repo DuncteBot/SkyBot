@@ -51,7 +51,7 @@ object Dashboard {
 
         if (!request.session().attributes().contains(WebRouter.USER_SESSION)) {
             request.session().attribute(WebRouter.OLD_PAGE, request.pathInfo())
-            return response.redirect("/dashboard")
+            return response.redirect("/")
         }
 
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)

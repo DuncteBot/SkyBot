@@ -30,7 +30,7 @@ object Callback {
     fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
         if (!request.queryParams().contains("code")) {
-            return response.redirect("/")
+            return response.redirect("https://dunctebot.com/")
         }
 
         val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
@@ -51,7 +51,7 @@ object Callback {
             return response.redirect(session.attribute(WebRouter.OLD_PAGE))
         }
 
-        return response.redirect("/dashboard")
+        return response.redirect("/")
     }
 
 }
