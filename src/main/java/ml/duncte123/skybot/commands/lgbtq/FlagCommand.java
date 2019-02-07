@@ -36,7 +36,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class FlagCommand extends ImageCommandBase {
 
     private final List<String> flags = List.of("agender", "aromantic", "asexual", "bear", "bi", "gay",
-        "genderfluid", "nonbinary", "pan", "transgender", "demigirl");
+        "genderfluid", "nonbinary", "pan", "transgender", "demigirl", "lesbian");
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
@@ -50,13 +50,8 @@ public class FlagCommand extends ImageCommandBase {
 
         final String flag = ctx.getArgs().get(0).toLowerCase();
 
-        if ("list".equals(flag)) {
-            sendFlagsList(event);
-            return;
-        }
-
         if (!flags.contains(flag)) {
-            sendMsg(event, "I do not know what this flag is, use `" + Settings.PREFIX + getName() + " list` for a list of available flags.");
+            sendMsg(event, "I do not know what this flag is, visit <https://dunctebot.com/flags> for a list of available flags.");
             return;
         }
 
@@ -76,22 +71,6 @@ public class FlagCommand extends ImageCommandBase {
 
         handleBasicImage(event, image);
 
-    }
-
-    private void sendFlagsList(GuildMessageReceivedEvent event) {
-        final String message = "Current list of available flags, if a flag is missing contact duncte123#1245 to have it added.\n" +
-            "**Agender** => Agender pride flag\n" +
-            "**Aromantic** => Aromantic pride flag\n" +
-            "**Asexual** => Asexuality pride flag\n" +
-            "**Bear** => Bear Brotherhood pride flag\n" +
-            "**Bi** => Bisexuality pride flag\n" +
-            "**Gay** => Gay pride flag\n" +
-            "**Genderfluid** => Genderfluidity pride flag\n" +
-            "**Nonbinary** => Nonbinary pride flag\n" +
-            "**Pan** => Pansexuality pride flag\n" +
-            "**Transgender** => Transgender pride flag";
-
-        sendMsg(event, message);
     }
 
     @Override
