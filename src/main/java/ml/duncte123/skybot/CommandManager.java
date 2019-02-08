@@ -49,7 +49,6 @@ public class CommandManager {
      * This stores all our commands
      */
     private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
-    private final List<ICommand> commandsSorted = new ArrayList<>();
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     private final Variables variables;
@@ -74,22 +73,6 @@ public class CommandManager {
      */
     public Set<ICommand> getCommands() {
         return commands;
-    }
-
-    public List<ICommand> getSortedCommands() {
-        if (commandsSorted.isEmpty()) {
-            final List<ICommand> commandSet = new ArrayList<>();
-            final List<String> names = new ArrayList<>();
-
-            getCommands().stream().filter(cmd -> cmd.getCategory() != CommandCategory.UNLISTED)
-                .collect(Collectors.toSet()).forEach((c) -> names.add(c.getName()));
-            Collections.sort(names);
-
-            names.forEach((n) -> commandSet.add(getCommand(n)));
-            commandsSorted.addAll(commandSet);
-        }
-
-        return commandsSorted;
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -245,8 +228,7 @@ public class CommandManager {
         }
 
         if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
-            @SinceSkybot(version = "3.52.1")
-            final List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
+            @SinceSkybot(version = "3.52.1") final List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
                 .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
             for (final String alias : command.getAliases()) {
                 if (aliases.contains(alias)) {

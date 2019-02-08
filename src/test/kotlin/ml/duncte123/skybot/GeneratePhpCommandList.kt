@@ -19,7 +19,10 @@
 package ml.duncte123.skybot
 
 import ml.duncte123.skybot.objects.command.Command
+import ml.duncte123.skybot.objects.command.CommandCategory
 import java.io.File
+import java.util.*
+import java.util.stream.Collectors
 import kotlin.system.exitProcess
 
 class GeneratePhpCommandList {
@@ -43,10 +46,16 @@ class GeneratePhpCommandList {
                 "layout: default\n" +
                 "commands:\n"
 
-            commandManager.sortedCommands.forEach {
+            val names = ArrayList<String>()
 
-                val cmd = it as Command
-                val cmdDesc = cmd.helpParsed().replace("\"", "\\\"")
+            commandManager.commands.stream().filter { cmd -> cmd.category !== CommandCategory.UNLISTED }
+                .collect(Collectors.toList()).forEach { c -> names.add(c.name) }
+            names.sort()
+
+            names.forEach {
+
+                val cmd = commandManager.getCommand(it) as Command
+                val cmdDesc = parseHelp(cmd).replace("\"", "\\\"")
 
                 output += "  - name: ${cmd.name}\n    description: \"$cmdDesc\"\n"
             }
@@ -73,7 +82,7 @@ class GeneratePhpCommandList {
 
                 s += "\t\t'name' => '$clsName',\n"
                 s += "\t\t'path' => '$clsPath',\n"
-                s += "\t\t'type' => '${ if (cls.isKotlinClass()) "kotlin" else "java" }',\n"
+                s += "\t\t'type' => '${if (cls.isKotlinClass()) "kotlin" else "java"}',\n"
 
                 s += "\t],\n"
             }
@@ -83,6 +92,24 @@ class GeneratePhpCommandList {
             val file = File("commands.php")
             file.createNewFile()
             file.writeText(s)
+        }
+
+        @JvmStatic
+        fun parseHelp(cmd: Command): String {
+            var s = cmd.help()
+                .replace("&".toRegex(), "&amp;")
+                .replace("<".toRegex(), "&lt;")
+                .replace(">".toRegex(), "&gt;")
+                .replace("\\n".toRegex(), "<br />")
+                .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre><code>$1</code></pre>")
+                .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
+                .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
+
+            if (cmd.aliases.isNotEmpty() && cmd.shouldDisplayAliasesInHelp()) {
+                s += "<br />Aliases: " + Settings.PREFIX + cmd.aliases.joinToString(", " + Settings.PREFIX)
+            }
+
+            return s
         }
     }
 

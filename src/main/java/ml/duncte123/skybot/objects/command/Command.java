@@ -178,29 +178,6 @@ public abstract class Command implements ICommand {
         return this.category;
     }
 
-    /**
-     * This method is internally used to properly display the text on the webpages
-     *
-     * @return the html parsed help
-     */
-    @SuppressWarnings("unused")
-    public String helpParsed() {
-        String s = help()
-            .replaceAll("&", "&amp;")
-            .replaceAll("<", "&lt;")
-            .replaceAll(">", "&gt;")
-            .replaceAll("\\n", "<br />")
-            .replaceAll("\\`\\`\\`(.*)\\`\\`\\`", "<pre><code>$1</code></pre>")
-            .replaceAll("\\`([^\\`]+)\\`", "<code>$1</code>")
-            .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
-
-        if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
-            s += "<br />Aliases: " + Settings.PREFIX + String.join(", " + Settings.PREFIX, getAliases());
-        }
-
-        return s;
-    }
-
     @Override
     public String toString() {
         return "Command[" + getName() + "]";
