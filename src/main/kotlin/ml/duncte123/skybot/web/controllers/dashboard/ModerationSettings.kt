@@ -47,7 +47,7 @@ object ModerationSettings {
         val rateLimits = LongArray(6)
 
         for (i in 0..5) {
-            rateLimits[i] = params["rateLimits[$i]"]!!.toLong()
+            rateLimits[i] = params.getValue("rateLimits[$i]").toLong()
         }
 
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)

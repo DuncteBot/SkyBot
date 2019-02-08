@@ -82,6 +82,8 @@ public final class Variables {
 
         if (config.sentry.enabled) {
             Sentry.init(config.sentry.dsn);
+        } else {
+            Sentry.close();
         }
     }
 

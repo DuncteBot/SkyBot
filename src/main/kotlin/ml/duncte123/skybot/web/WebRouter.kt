@@ -149,6 +149,10 @@ class WebRouter(private val shardManager: ShardManager) {
                 response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
             }
 
+            options("/*") {
+                // Allow OPTIONS requests
+            }
+
             get("/getServerCount") {
                 return@get MainApi.serverCount(response, shardManager)
             }
