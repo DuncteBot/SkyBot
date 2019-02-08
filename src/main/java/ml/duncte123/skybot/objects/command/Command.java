@@ -69,7 +69,6 @@ public abstract class Command implements ICommand {
      * This tells the bot to display the aliases of the command in the help command
      */
     protected boolean displayAliasesInHelp = false;
-    private String helpParsed = null;
 
     /**
      * Returns if the bot should take up the aliases in the help command
@@ -186,21 +185,20 @@ public abstract class Command implements ICommand {
      */
     @SuppressWarnings("unused")
     public String helpParsed() {
-        if (helpParsed == null) {
-            String s = help()
-                .replaceAll("&", "&amp;")
-                .replaceAll("<", "&lt;")
-                .replaceAll(">", "&gt;")
-                .replaceAll("\\n", "<br />")
-                .replaceAll("\\`\\`\\`(.*)\\`\\`\\`", "<pre><code>$1</code></pre>")
-                .replaceAll("\\`([^\\`]+)\\`", "<code>$1</code>")
-                .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
-            if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
-                s += "<br />Aliases: " + Settings.PREFIX + String.join(", " + Settings.PREFIX, getAliases());
-            }
-            helpParsed = s;
+        String s = help()
+            .replaceAll("&", "&amp;")
+            .replaceAll("<", "&lt;")
+            .replaceAll(">", "&gt;")
+            .replaceAll("\\n", "<br />")
+            .replaceAll("\\`\\`\\`(.*)\\`\\`\\`", "<pre><code>$1</code></pre>")
+            .replaceAll("\\`([^\\`]+)\\`", "<code>$1</code>")
+            .replaceAll("\\*\\*(.*)\\*\\*", "<strong>$1</strong>");
+
+        if (getAliases().length > 0 && shouldDisplayAliasesInHelp()) {
+            s += "<br />Aliases: " + Settings.PREFIX + String.join(", " + Settings.PREFIX, getAliases());
         }
-        return helpParsed;
+
+        return s;
     }
 
     @Override
