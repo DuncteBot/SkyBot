@@ -45,10 +45,10 @@
 <header>
     <div class="hide">
         {% block menu %}
-            <li{% if title == "Home" %} class="active"{% endif %}><a href="/">Home</a></li>
-            <li{% if title == "List of commands" %} class="active"{% endif %}><a href="/commands">Commands</a></li>
-            <li{% if title == "Leave a suggestion" %} class="active"{% endif %}><a href="/suggest">Suggest</a></li>
-            <li{% if title == "Dashboard" %} class="active"{% endif %}><a href="/dashboard">Dashboard</a></li>
+            <li><a href="https://dunctebot.com/">Home</a></li>
+            <li><a href="https://dunctebot.com/commands">Commands</a></li>
+            <li><a href="https://dunctebot.com/suggest">Suggest</a></li>
+            <li class="active"><a href="/">Dashboard</a></li>
         {% endblock %}
     </div>
 
@@ -56,7 +56,7 @@
     <div class="navbar-fixed">
         <nav class="indigo">
             <div class="nav-wrapper container">
-                <a href="/" class="brand-logo">DuncteBot</a>
+                <a href="https://dunctebot.com/" class="brand-logo">DuncteBot</a>
                 <a href="#" data-target="mobile-demo" class="sidenav-trigger"><i class="material-icons">menu</i></a>
                 <ul class="right hide-on-med-and-down">
                     {{ block('menu') }}
