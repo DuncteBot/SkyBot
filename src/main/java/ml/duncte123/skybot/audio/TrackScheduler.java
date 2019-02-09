@@ -40,16 +40,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
+import java.util.Queue;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class TrackScheduler extends AudioEventAdapterWrapped {
 
-    public final BlockingQueue<AudioTrack> queue;
+    public final Queue<AudioTrack> queue;
     private static final Logger logger = LoggerFactory.getLogger(TrackScheduler.class);
     private final IPlayer player;
     private final GuildMusicManager guildMusicManager;
@@ -66,7 +66,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
      */
     TrackScheduler(IPlayer player, GuildMusicManager guildMusicManager) {
         this.player = player;
-        this.queue = new LinkedBlockingQueue<>();
+        this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
     }
 
