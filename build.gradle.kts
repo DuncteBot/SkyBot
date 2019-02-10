@@ -26,7 +26,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.20"))
+        classpath(kotlin("gradle-plugin", version = "1.3.21"))
     }
 }
 
@@ -35,7 +35,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.20"
+    kotlin("jvm") version "1.3.21"
     id("com.github.johnrengelman.shadow") version "4.0.4"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
