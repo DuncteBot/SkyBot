@@ -32,6 +32,7 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,9 +87,10 @@ public class AudioLoader implements AudioLoadResultHandler {
     public void playlistLoaded(AudioPlaylist playlist) {
         AudioTrack firstTrack = playlist.getSelectedTrack();
         final List<AudioTrack> tracks = new ArrayList<>();
+        final TrackUserData userData = new TrackUserData(requester.getIdLong());
 
         for (final AudioTrack track : playlist.getTracks()) {
-            track.setUserData(new TrackUserData(requester.getIdLong()));
+            track.setUserData(userData);
             tracks.add(track);
         }
 
@@ -111,19 +113,18 @@ public class AudioLoader implements AudioLoadResultHandler {
 
             if (addPlaylist) {
                 msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
-
-                if (mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
-                }
             } else {
                 final String prefix = GuildSettingsUtils.getGuild(channel.getGuild(), ctx.getVariables()).getCustomPrefix();
+
                 msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
                     "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
 
-                if (mng.player.getPlayingTrack() == null) {
-                    msg += "\nand the Player has started playing;";
-                }
             }
+
+            if (mng.player.getPlayingTrack() == null) {
+                msg += "\nand the Player has started playing;";
+            }
+
             sendEmbed(channel, embedField(audioUtils.embedTitle, msg));
         }
     }
@@ -147,12 +148,13 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        Throwable root = ExceptionUtils.getRootCause(exception);
+        @Nullable Throwable root = ExceptionUtils.getRootCause(exception);
 
         if (root == null) {
             // It can return null so shush
             // noinspection UnusedAssignment
             root = exception;
+
             return;
         }
 
