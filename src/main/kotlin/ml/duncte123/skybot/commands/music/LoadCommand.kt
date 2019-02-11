@@ -19,8 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -32,20 +31,24 @@ import java.util.*
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class LoadCommand : MusicCommand() {
 
+    init {
+        this.withAutoJoin = true
+    }
+
     override fun run(ctx: CommandContext) {
 
         val event = ctx.event
         val attachments = event.message.attachments
 
         if (attachments.size == 0) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "No attachment given")
+            sendError(event.message)
+            sendMsg(event, "No attachment given")
             return
         }
 
         if (attachments.size > 1) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "Please only attach one file at a time")
+            sendError(event.message)
+            sendMsg(event, "Please only attach one file at a time")
             return
         }
 
@@ -56,22 +59,28 @@ class LoadCommand : MusicCommand() {
                 // We have to do it this way because
                 // JSONArray doesn't accept a raw InputStream
                 val array = JSONArray(JSONTokener(it))
+                val musicManager = getMusicManager(event.guild, ctx.audioUtils)
+                var shouldAnnounce = true
+
+                sendMsg(event, "Loading ${array.length()} tracks, please wait...")
 
                 array.filter(Objects::nonNull)
                     .forEach { obj ->
                         // This probably announces it to the channel
-                        ctx.audioUtils.loadAndPlay(getMusicManager(event.guild, ctx.audioUtils),
+                        ctx.audioUtils.loadAndPlay(musicManager,
                             obj.toString(),
                             false,
                             ctx,
-                            false)
+                            shouldAnnounce).get()
+
+                        shouldAnnounce = false
                     }
 
                 sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle,
                     "Added ${array.length()} requested tracks."))
             } catch (exception: JSONException) {
-                MessageUtils.sendError(event.message)
-                MessageUtils.sendMsg(event, "Invalid JSON file!")
+                sendError(event.message)
+                sendMsg(event, "Invalid JSON file!")
             }
         }
     }

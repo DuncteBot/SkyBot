@@ -44,9 +44,11 @@ class RepeatCommand : MusicCommand() {
 
                 "status" -> {
                     sendMsg(event, """Current repeat status:
-                        |Repeating:       **${scheduler.isRepeating}**
+                        |Repeating: **${scheduler.isRepeating}**
                         |Repeating queue: **${scheduler.isRepeatingPlaylists}**
                     """.trimMargin())
+
+                    return
                 }
 
                 else -> {

@@ -45,6 +45,7 @@ import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.util.concurrent.Future;
 import java.util.logging.Level;
 
 @SinceSkybot(version = "3.5.1")
@@ -142,9 +143,11 @@ public class AudioUtils {
      *         if we should add a
      * @param announce
      *         if we should announce the track
+     *
+     * @return The future from lavaplayer
      */
-    public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
-                            final boolean addPlayList, final CommandContext ctx, final boolean announce) {
+    public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
+                              final boolean addPlayList, final CommandContext ctx, final boolean announce) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -156,7 +159,7 @@ public class AudioUtils {
 
         final AudioLoader loader = new AudioLoader(ctx, mng, announce, addPlayList, trackUrl, this);
 
-        getPlayerManager().loadItemOrdered(mng, trackUrl, loader);
+        return getPlayerManager().loadItemOrdered(mng, trackUrl, loader);
     }
 
     /**
