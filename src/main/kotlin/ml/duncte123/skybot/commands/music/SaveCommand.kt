@@ -49,11 +49,11 @@ class SaveCommand : MusicCommand() {
         val manager = getMusicManager(guild, audioUtils)
 
         val urls = manager.scheduler.queue
-            .map { it.identifier }
+            .map { it.info.uri }
             .toMutableList()
 
         if (manager.player.playingTrack != null) {
-            urls.add(0, manager.player.playingTrack.identifier)
+            urls.add(0, manager.player.playingTrack.info.uri)
         }
 
         for (url in urls) {
