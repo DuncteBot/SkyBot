@@ -58,24 +58,27 @@ class ReactionHandler : ListenerAdapter() {
 
             if (content == "cancel") {
                 ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue()
-                requirementsCache -= cacheElement
+                requirementsCache = requirementsCache - cacheElement
+
                 return@BiConsumer
             }
 
             if (index == -1 || index > resSet.size) {
                 ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue()
+
                 return@BiConsumer
             }
 
             val res = resSet.getOrNull(index - 1)
             if (res == null) {
                 ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue()
+
                 return@BiConsumer
             }
 
             ctx.audioUtils.loadAndPlay(ctx.audioUtils.getMusicManager(ctx.guild),
                 "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
-            requirementsCache -= cacheElement
+            requirementsCache = requirementsCache - cacheElement
 
             ctx.channel.deleteMessageById(msgId).queue(null) {} // Ignore the error if the message has already been deleted
         }
@@ -83,25 +86,19 @@ class ReactionHandler : ListenerAdapter() {
     }
 
     fun waitForReaction(timeoutInMillis: Long, msg: Message, userId: Long, context: CommandContext, resultSet: List<SearchResult>) {
-
-        @Suppress("UnnecessaryVariable")
-        val checkId = userId
-
         val cacheElement = ReactionCacheElement(msg.idLong, userId)
+        val pair = userId to (context.applySentId(userId) to resultSet)
 
-        val pair = checkId to (context.applySentId(userId) to resultSet)
-
-        requirementsCache += cacheElement
-        consumerCache += pair
+        requirementsCache = requirementsCache + cacheElement
+        consumerCache = consumerCache + pair
 
         executor.schedule({
-
             if (requirementsCache.contains(cacheElement)) {
-                requirementsCache -= cacheElement
-                consumerCache -= checkId
+                requirementsCache = requirementsCache - cacheElement
+                consumerCache = consumerCache - userId
+
                 context.channel.editMessageById(msg.idLong, "\uD83D\uDD0E Search timed out").override(true).queue()
             }
-
         }, timeoutInMillis, TimeUnit.MILLISECONDS)
     }
 
@@ -119,7 +116,7 @@ class ReactionHandler : ListenerAdapter() {
 
         if (ctx.author.idLong == event.author.idLong) {
             defaultConsumer.accept(ctx, pair.second)
-            consumerCache -= checkId
+            consumerCache = consumerCache - checkId
         }
     }
 }
