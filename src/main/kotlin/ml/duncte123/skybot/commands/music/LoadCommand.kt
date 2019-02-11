@@ -32,14 +32,9 @@ import java.util.*
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class LoadCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val attachments = event.message.attachments
 
         if (attachments.size == 0) {

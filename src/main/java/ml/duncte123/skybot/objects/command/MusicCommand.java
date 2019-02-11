@@ -29,6 +29,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -42,6 +43,7 @@ public abstract class MusicCommand extends Command {
 
     @SinceSkybot(version = "3.54.2")
     public static TLongLongMap cooldowns = new TLongLongHashMap();
+    protected boolean withAutoJoin = false;
 
     static {
         commandService.scheduleWithFixedDelay(() ->
@@ -61,6 +63,29 @@ public abstract class MusicCommand extends Command {
         this.category = CommandCategory.MUSIC;
     }
 
+    @Override
+    public void executeCommand(@NotNull CommandContext ctx) {
+        if (this.withAutoJoin) {
+            runWithAutoJoin(ctx);
+        } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {
+            run(ctx);
+        }
+    }
+
+    public void run(@NotNull CommandContext ctx) {
+        // Cannot be abstract due to the join command
+    }
+
+    private void runWithAutoJoin(@NotNull CommandContext ctx) {
+        if (isAbleToJoinChannel(ctx.getEvent())) {
+            ctx.getCommandManager().getCommand("join").executeCommand(ctx);
+        } else if (!channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {
+            return;
+        }
+
+        run(ctx);
+    }
+
     /**
      * This is a shortcut for getting the music manager
      *
@@ -69,7 +94,6 @@ public abstract class MusicCommand extends Command {
      *
      * @return the {@link GuildMusicManager GuildMusicManager} for that guild
      */
-    //@Deprecated(message = "Use #getLavalinkManager(guild)")
     protected GuildMusicManager getMusicManager(Guild guild, AudioUtils audioUtils) {
         return audioUtils.getMusicManager(guild);
     }
@@ -93,22 +117,28 @@ public abstract class MusicCommand extends Command {
         }
 
         final LavalinkManager lavalinkManager = getLavalinkManager();
-        if (!lavalinkManager.isConnected(event.getGuild())) {
+        final Guild guild = event.getGuild();
+
+        if (!lavalinkManager.isConnected(guild)) {
             if (reply) {
                 sendMsg(event, "I'm not in a voice channel, use `" + Settings.PREFIX + "join` to make me join a channel\n\n" +
                     "Want to have the bot automatically join your channel? Consider becoming a patron.");
             }
+
             return false;
         }
 
-        if (lavalinkManager.getConnectedChannel(event.getGuild()) != null &&
-            !lavalinkManager.getConnectedChannel(event.getGuild()).getMembers().contains(event.getMember())) {
+        if (lavalinkManager.getConnectedChannel(guild) != null &&
+            !lavalinkManager.getConnectedChannel(guild).getMembers().contains(event.getMember())) {
             if (reply) {
                 sendMsg(event, "I'm sorry, but you have to be in the same channel as me to use any music related commands");
             }
+
             return false;
         }
-        getMusicManager(event.getGuild(), audioUtils).latestChannel = event.getChannel().getIdLong();
+
+        getMusicManager(guild, audioUtils).latestChannel = event.getChannel().getIdLong();
+
         return true;
     }
 
@@ -125,15 +155,17 @@ public abstract class MusicCommand extends Command {
         return channelChecks(event, audioUtils, true);
     }
 
-    protected boolean prejoinChecks(GuildMessageReceivedEvent event) {
+    protected boolean isAbleToJoinChannel(GuildMessageReceivedEvent event) {
         if (isUserOrGuildPatron(event, false)) {
             //If the member is not connected
             if (!event.getMember().getVoiceState().inVoiceChannel()) {
                 sendMsg(event, "Please join a voice channel first.");
                 return false;
             }
+
             return !getLavalinkManager().isConnected(event.getGuild());
         }
+
         return false;
     }
 

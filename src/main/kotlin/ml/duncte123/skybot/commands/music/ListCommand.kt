@@ -29,14 +29,13 @@ import java.util.*
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ListCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
-
         val queue: Queue<AudioTrack> = scheduler.queue
+
         synchronized(queue) {
             if (queue.isEmpty()) {
                 sendEmbed(event, EmbedUtils.embedField(ctx.audioUtils.embedTitle, "The queue is currently empty!"))

@@ -40,6 +40,7 @@ class JoinCommand : MusicCommand() {
         val vc = event.member.voiceState.channel
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
+
         mng.latestChannel = event.channel.idLong
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
@@ -48,14 +49,18 @@ class JoinCommand : MusicCommand() {
             MessageUtils.sendError(event.message)
             return
         }
+
         cooldowns.remove(guild.idLong)
 
-        if (getLavalinkManager().isConnected(event.guild) && mng.player.playingTrack != null) {
+        val lavalink = getLavalinkManager()
+
+        if (lavalink.isConnected(event.guild) && mng.player.playingTrack != null) {
             MessageUtils.sendMsg(event, "I'm already in a channel.")
             return
         }
+
         try {
-            getLavalinkManager().openConnection(vc)
+            lavalink.openConnection(vc)
             MusicCommand.addCooldown(guild.idLong)
             MessageUtils.sendSuccess(event.message)
         } catch (e: PermissionException) {

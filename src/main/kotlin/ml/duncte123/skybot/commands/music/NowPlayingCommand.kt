@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.EmbedUtils
+import me.duncte123.botcommons.messaging.EmbedUtils.embedMessage
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
@@ -30,34 +31,36 @@ import java.awt.Color
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
+
         val msg = when {
             player.playingTrack != null && !player.playingTrack.info.isStream ->
-                EmbedUtils.embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + playerEmbed(mng))
+                embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + playerEmbed(mng))
+
             player.playingTrack != null && player.playingTrack.info.isStream -> {
                 val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
-                val stream = (ctx.commandManager.getCommand("radio") as RadioCommand).radioStreams.first { it.url == player.playingTrack.info.uri }
+                val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
+                    .radioStreams.first { it.url == player.playingTrack.info.uri }
+
                 if (stream is ILoveStream) {
-                    val channeldata = json!!.getJSONObject("channel-${stream.npChannel}")
-                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channeldata.getString("title")}]" +
-                        "(${stream.url}) by ${channeldata.getString("artist")}**")
-                        .setThumbnail("https://www.iloveradio.de${channeldata.getString("cover")}")
-                        .setColor(Color.decode(channeldata.getString("color")))
+                    val channelData = json!!.getJSONObject("channel-${stream.npChannel}")
+                    EmbedUtils.defaultEmbed().setDescription("**Playing [${channelData.getString("title")}]" +
+                        "(${stream.url}) by ${channelData.getString("artist")}**")
+                        .setThumbnail("https://www.iloveradio.de${channelData.getString("cover")}")
+                        .setColor(Color.decode(channelData.getString("color")))
                 } else {
-                    EmbedUtils.embedMessage("**Playing [${stream.name}](${stream.url})")
+                    embedMessage("**Playing [${stream.name}](${stream.url})")
                 }
+
             }
-            else -> EmbedUtils.embedMessage("The player is not currently playing anything!")
+
+            else -> embedMessage("The player is not currently playing anything!")
         }
+
         sendEmbed(event, msg)
     }
 

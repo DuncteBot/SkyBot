@@ -25,22 +25,19 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class ShuffleCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
+
         if (scheduler.queue.isEmpty()) {
             MessageUtils.sendMsg(event, "There are no songs to shuffle")
             return
         }
 
         scheduler.shuffle()
+
         MessageUtils.sendMsg(event, "The queue has been shuffled!")
     }
 

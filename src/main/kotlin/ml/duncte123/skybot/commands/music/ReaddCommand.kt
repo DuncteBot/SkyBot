@@ -19,8 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -28,20 +27,15 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class ReaddCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val manager = getMusicManager(event.guild, ctx.audioUtils)
         val t = manager.player.playingTrack
 
         if (t == null) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "No tracks in queue")
+            sendError(event.message)
+            sendMsg(event, "No tracks in queue")
             return
         }
 
@@ -63,7 +57,7 @@ class ReaddCommand : MusicCommand() {
         }
 
         manager.scheduler.queue(track)
-        MessageUtils.sendSuccess(event.message)
+        sendSuccess(event.message)
         sendEmbed(event.channel, EmbedUtils.embedField(ctx.audioUtils.embedTitle, msg))
     }
 

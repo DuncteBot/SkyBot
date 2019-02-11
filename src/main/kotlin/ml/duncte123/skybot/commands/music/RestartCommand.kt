@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
@@ -26,29 +26,25 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class RestartCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val player = getMusicManager(event.guild, ctx.audioUtils).player
 
         if (player.playingTrack == null) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "No track currently playing")
+            sendError(event.message)
+            sendMsg(event, "No track currently playing")
             return
         }
 
         if (!player.playingTrack.isSeekable) {
-            MessageUtils.sendMsg(event, "This track is not seekable")
+            sendMsg(event, "This track is not seekable")
             return
         }
 
         player.seekTo(0)
-        MessageUtils.sendSuccess(event.message)
+
+        sendSuccess(event.message)
     }
 
     override fun help() = "Start the current track back to the beginning"

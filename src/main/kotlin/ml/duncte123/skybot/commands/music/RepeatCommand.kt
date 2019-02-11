@@ -18,21 +18,17 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
@@ -45,7 +41,7 @@ class RepeatCommand : MusicCommand() {
             scheduler.isRepeating = !scheduler.isRepeating
         }
 
-        MessageUtils.sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
+        sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
             "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
 

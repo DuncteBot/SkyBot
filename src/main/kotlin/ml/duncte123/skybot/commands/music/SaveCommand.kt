@@ -26,13 +26,12 @@ import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.MessageBuilder
 import net.dv8tion.jda.core.entities.Guild
 import org.json.JSONArray
-
 import java.nio.charset.StandardCharsets.UTF_8
 
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 class SaveCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
 
@@ -53,10 +52,13 @@ class SaveCommand : MusicCommand() {
             .map { it.identifier }
             .toMutableList()
 
-        urls.add(0, manager.player.playingTrack.identifier)
+        if (manager.player.playingTrack != null) {
+            urls.add(0, manager.player.playingTrack.identifier)
+        }
 
-        for (x in urls)
-            array.put(x)
+        for (url in urls) {
+            array.put(url)
+        }
 
         return array.toString(2).toByteArray(UTF_8)
     }

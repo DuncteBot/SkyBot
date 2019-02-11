@@ -39,14 +39,8 @@ public class SeekCommand extends MusicCommand {
         ":(\\d{2})");
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
-
+    public void run(@NotNull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
-
-        if (!channelChecks(event, ctx.getAudioUtils())) {
-            return;
-        }
-
         final List<String> args = ctx.getArgs();
 
         if (args.isEmpty()) {
@@ -60,6 +54,7 @@ public class SeekCommand extends MusicCommand {
             sendMsg(event, "Invalid time format");
             return;
         }
+
         final IPlayer player = getMusicManager(ctx.getGuild(), ctx.getAudioUtils()).player;
 
         if (player.getPlayingTrack() == null) {
