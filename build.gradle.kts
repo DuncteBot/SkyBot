@@ -57,11 +57,6 @@ repositories {
         url = uri("http://repo.jenkins-ci.org/releases/")
     }
 
-    // Required for OkHTTP 3.13.0-SNAPSHOT
-    maven { 
-        url = uri("https://oss.sonatype.org/content/repositories/snapshots/") 
-    }
-
     // Use JitPack if jcenter doesn"t find, not download everything from JitPack ;)
     maven {
         name = "jitpack"
@@ -79,7 +74,7 @@ dependencies {
     implementation(group = "com.github.duncte123", name = "botCommons", version = "2644ca6067")
 
     //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.2_459") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_460") {
         exclude(module = "opus-java")
     }
 
