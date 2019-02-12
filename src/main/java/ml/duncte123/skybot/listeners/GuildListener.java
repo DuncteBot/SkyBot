@@ -201,10 +201,6 @@ public class GuildListener extends BaseListener {
             sendMsg(guild.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
         }
 
-        if (guild.getAudioManager().getConnectionListener() != null) {
-            guild.getAudioManager().setConnectionListener(null);
-        }
-
         MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
 
         variables.getDatabase().run(() -> {
