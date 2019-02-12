@@ -4,7 +4,7 @@ DuncteBot is a bot with a lot of features like mod commands.
 
 If you require any support, please join our [support guild](https://discord.gg/NKM9Xtk)
 
-A full list of all the commands can be found [here](https://bot.duncte123.me/commands).
+A full list of all the commands can be found [here](https://dunctebot.com/commands).
 
 ## Basic usage
 If you want more info on a command use `db!help [command]`

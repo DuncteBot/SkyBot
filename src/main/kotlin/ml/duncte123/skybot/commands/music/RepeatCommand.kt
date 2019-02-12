@@ -18,38 +18,59 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class RepeatCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
-        if (ctx.args.size == 1 && ctx.args[0] == "playlist") {
-            scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
-            scheduler.isRepeating = scheduler.isRepeatingPlaylists
+        if (ctx.args.size == 1) {
+            val firstArg = ctx.args[0]
+
+            when(firstArg) {
+                "playlist" -> {
+                    scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
+                    scheduler.isRepeating = scheduler.isRepeatingPlaylists
+                }
+
+                "status" -> {
+                    sendMsg(event, """Current repeat status:
+                        |Repeating: **${scheduler.isRepeating}**
+                        |Repeating queue: **${scheduler.isRepeatingPlaylists}**
+                    """.trimMargin())
+
+                    return
+                }
+
+                else -> {
+                    sendMsg(event, "Unknown argument, check `${Settings.PREFIX}help $name`")
+
+                    return
+                }
+            }
+
         } else {
             // turn off all repeats if they are on
             if (scheduler.isRepeatingPlaylists) scheduler.isRepeatingPlaylists = false
             scheduler.isRepeating = !scheduler.isRepeating
         }
 
-        MessageUtils.sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
+        sendMsg(event, "Player is set to: **${if (scheduler.isRepeating) "" else "not "}repeating" +
             "${if (scheduler.isRepeatingPlaylists) " this playlist" else ""}**")
     }
 
-    override fun help(): String = "Makes the player repeat the currently playing song"
+    override fun help(): String = "Makes the player repeat the currently playing song\n" +
+        "Use `${Settings.PREFIX}$name playlist` to repeat the current queue\n" +
+        "Use `${Settings.PREFIX}$name status` for the current status"
 
     override fun getName(): String = "repeat"
 

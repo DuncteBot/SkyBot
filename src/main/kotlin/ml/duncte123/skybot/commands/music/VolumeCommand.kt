@@ -18,7 +18,7 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -26,8 +26,8 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class VolumeCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
 
@@ -35,25 +35,23 @@ class VolumeCommand : MusicCommand() {
             return
         }
 
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         if (args.isEmpty()) {
-            MessageUtils.sendMsg(event, "The current volume is **${player.volume}**")
+            sendMsg(event, "The current volume is **${player.volume}**")
             return
         }
 
         try {
             val newVolume = Math.max(5, Math.min(1000, Integer.parseInt(args[0])))
             val oldVolume = player.volume
+
             player.volume = newVolume
-            MessageUtils.sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
+
+            sendMsg(event, "Player volume changed from **$oldVolume** to **$newVolume**")
         } catch (e: NumberFormatException) {
-            MessageUtils.sendMsg(event, "**${args[0]}** is not a valid integer. (5 - 1000)")
+            sendMsg(event, "**${args[0]}** is not a valid integer. (5 - 1000)")
         }
 
     }

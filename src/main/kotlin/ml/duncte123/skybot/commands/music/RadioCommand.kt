@@ -39,18 +39,12 @@ class RadioCommand : MusicCommand() {
 
     init {
         loadStations()
+        this.withAutoJoin = true
     }
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (prejoinChecks(event)) {
-            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val scheduler = mng.scheduler

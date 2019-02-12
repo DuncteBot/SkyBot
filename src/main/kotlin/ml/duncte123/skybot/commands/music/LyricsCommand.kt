@@ -38,20 +38,16 @@ class LyricsCommand : MusicCommand() {
     private var authToken = ""
     private val apiBase = "https://api.genius.com"
 
-    override fun executeCommand(ctx: CommandContext) {
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
+
         val search: String? = when {
             !ctx.args.isEmpty() -> ctx.argsRaw
             player.playingTrack != null && !player.playingTrack.info.isStream ->
-                player.playingTrack.info.title.replace("[OFFICIAL VIDEO]", "").trim()
+                player.playingTrack.info.title.trim()
             else -> null
         }
 
@@ -64,7 +60,7 @@ class LyricsCommand : MusicCommand() {
             if (it.isNullOrBlank()) {
                 sendMsg(event, "There where no lyrics found for the title of this song\n" +
                     "Alternatively you can try `${Settings.PREFIX}$name <song name>` to search for the lyrics on this song.\n" +
-                    "(sometimes the song names in the player are wrong)")
+                    "(sometimes the song names in the player are incorrect)")
             } else {
                 val url = "https://genius.com$it"
                 WebUtils.ins.scrapeWebPage(url).async { doc ->
@@ -95,6 +91,7 @@ class LyricsCommand : MusicCommand() {
             val raw = WebUtils.ins.preparePost("$apiBase/oauth/token", formData).execute()
             this.authToken = JSONObject(raw).optString("access_token")
         }
+
         return "Bearer $authToken"
     }
 

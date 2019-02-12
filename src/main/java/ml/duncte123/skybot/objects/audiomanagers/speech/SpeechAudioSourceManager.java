@@ -25,6 +25,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioReference;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.audiomanagers.IdentifiedAudioReference;
 
 import java.io.DataInput;
 import java.io.DataOutput;
@@ -78,7 +79,7 @@ public class SpeechAudioSourceManager extends HttpAudioSourceManager {
             .replace("%query%", encoded);
 
         // Redirect to somewhere else
-        return new AudioReference(mp3URL, "Speaking " + data);
+        return new IdentifiedAudioReference(mp3URL, reference.identifier, "Speaking " + data);
     }
 
     @Override

@@ -18,31 +18,26 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PauseCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
 
         if (player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
+            sendMsg(event, "Cannot pause or resume player because no track is loaded for playing.")
             return
         }
 
         player.isPaused = !player.isPaused
-        MessageUtils.sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
+        sendMsg(event, "The player has ${if (player.isPaused) "been paused" else "resumed playing"}.")
     }
 
     override fun help(): String = "Pauses the current song"

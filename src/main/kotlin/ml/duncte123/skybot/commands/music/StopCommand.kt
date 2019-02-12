@@ -18,35 +18,31 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class StopCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
         val scheduler = mng.scheduler
 
         if (mng.player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "The player is not playing.")
+            sendMsg(event, "The player is not playing.")
             return
         }
 
         scheduler.queue.clear()
         player.stopTrack()
         player.isPaused = false
-        MessageUtils.sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
+
+        sendMsg(event, "Playback has been completely stopped and the queue has been cleared.")
     }
 
     override fun help(): String = "Stops the music player."

@@ -18,29 +18,26 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.objects.ConsoleUser
 import ml.duncte123.skybot.objects.TrackUserData
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SkipCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
+
         mng.latestChannel = -1
 
         if (mng.player.playingTrack == null) {
-            MessageUtils.sendMsg(event, "The player is not playing.")
+            sendMsg(event, "The player is not playing.")
             return
         }
 
@@ -62,20 +59,21 @@ class SkipCommand : MusicCommand() {
             val trackUserData = mng.player.playingTrack.userData
 
             val user = if (trackUserData != null && trackUserData is TrackUserData) {
-                val userData = trackUserData
-                ctx.jda.getUserById(userData.userId)
+                // Return the console user when the requester is null
+                ctx.jda.getUserById(trackUserData.userId) ?: ConsoleUser()
             } else {
                 ctx.author
             }
 
 
-            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+            sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Now playing: ${mng.player.playingTrack.info.title}\n" +
                 "Requester: ${user.asTag}")
         } else {
-            MessageUtils.sendMsg(event, "Successfully skipped $count tracks.\n" +
+            sendMsg(event, "Successfully skipped $count tracks.\n" +
                 "Queue is now empty.")
         }
+
         mng.latestChannel = event.channel.idLong
     }
 

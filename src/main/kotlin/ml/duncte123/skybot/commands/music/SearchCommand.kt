@@ -31,15 +31,13 @@ import java.util.concurrent.TimeUnit
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SearchCommand : MusicCommand() {
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.withAutoJoin = true
+    }
+
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (prejoinChecks(event)) {
-            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
 
         if (ctx.args.isEmpty()) {
             sendMsg(event, "Correct usage: `${Settings.PREFIX}$name [search term]`")
@@ -47,14 +45,15 @@ class SearchCommand : MusicCommand() {
         }
 
         val handler = ctx.reactionHandler
+        val isPatron = isUserOrGuildPatron(event, false)
 
         val timeout = when {
             isDev(event.author) -> 60L
-            isUserOrGuildPatron(event, false) -> 30L
+            isPatron -> 30L
             else -> 15L
         }
 
-        val searchLimit = if (isUserOrGuildPatron(event, false)) 10L else 5L
+        val searchLimit = if (isPatron) 15L else 5L
 
         val toPlay = ctx.argsRaw
         val res = YoutubeUtils.searchYoutube(toPlay, ctx.config.apis.googl, searchLimit)
@@ -68,6 +67,7 @@ class SearchCommand : MusicCommand() {
             res.map { it.snippet.title }.forEachIndexed { index: Int, s: String ->
                 append(index + 1).append(". ").append(s).append("\n")
             }
+
             append("\n\n")
             append("Type the number of the song that you want to play or type `cancel` to cancel your search")
         }

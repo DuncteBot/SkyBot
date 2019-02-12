@@ -26,26 +26,26 @@ import com.sedmelluq.discord.lavaplayer.source.AudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.source.youtube.YoutubeAudioSourceManager;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException;
 import com.sedmelluq.discord.lavaplayer.tools.FriendlyException.Severity;
-import com.sedmelluq.discord.lavaplayer.tools.io.HttpConfigurable;
 import com.sedmelluq.discord.lavaplayer.track.*;
 import com.wrapper.spotify.SpotifyApi;
+import com.wrapper.spotify.exceptions.SpotifyWebApiException;
 import com.wrapper.spotify.model_objects.credentials.ClientCredentials;
 import com.wrapper.spotify.model_objects.specification.*;
 import com.wrapper.spotify.requests.authorization.client_credentials.ClientCredentialsRequest;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.DataInput;
 import java.io.DataOutput;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.*;
-import java.util.function.Consumer;
-import java.util.function.Function;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -53,7 +53,7 @@ import static ml.duncte123.skybot.utils.YoutubeUtils.getVideoById;
 import static ml.duncte123.skybot.utils.YoutubeUtils.searchYoutube;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfigurable {
+public class SpotifyAudioSourceManager implements AudioSourceManager {
 
     private static final Logger logger = LoggerFactory.getLogger(SpotifyAudioSourceManager.class);
 
@@ -83,8 +83,9 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         final String clientId = config.spotify.clientId;
         final String clientSecret = config.spotify.clientSecret;
         final String youtubeApiKey = config.googl;
+
         if (clientId == null || clientSecret == null || youtubeApiKey == null) {
-            logger.error("Could not load Spotify keys\n");
+            logger.error("Could not load Spotify keys");
             this.spotifyApi = null;
             this.service = null;
             this.youtubeAudioSourceManager = null;
@@ -94,25 +95,15 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
                 .setClientId(clientId)
                 .setClientSecret(clientSecret)
                 .build();
-            this.service = Executors.newScheduledThreadPool(1, r -> new Thread(r, "Spotify-Token-Update-Thread"));
-            service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
 
+            this.service = Executors.newScheduledThreadPool(2, r -> new Thread(r, "Spotify-Token-Update-Thread"));
+            service.scheduleAtFixedRate(this::updateAccessToken, 0, 1, TimeUnit.HOURS);
         }
     }
 
     @Override
     public String getSourceName() {
         return "spotify";
-    }
-
-    @Override
-    public void configureRequests(Function<RequestConfig, RequestConfig> configurator) {
-        // not needed
-    }
-
-    @Override
-    public void configureBuilder(Consumer<HttpClientBuilder> configurator) {
-        // also not needed
     }
 
     @Override
@@ -171,9 +162,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         try {
             final List<AudioTrack> finalPlaylist = new ArrayList<>();
 
-            final Future<Playlist> playlistFuture = spotifyApi.getPlaylist(playListId).build().executeAsync();
-
-            final Playlist spotifyPlaylist = playlistFuture.get();
+            final Playlist spotifyPlaylist = spotifyApi.getPlaylist(playListId).build().execute();
 
             for (final PlaylistTrack playlistTrack : spotifyPlaylist.getTracks().getItems()) {
                 final List<SearchResult> results = searchYoutube(playlistTrack.getTrack().getArtists()[0].getName()
@@ -195,13 +184,13 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private AudioItem getSpotifyTrack(AudioReference reference) {
 
         final Matcher res = SPOTIFY_TRACK_REGEX.matcher(reference.identifier);
+
         if (!res.matches()) {
             return null;
         }
 
         try {
-            final Future<Track> trackFuture = spotifyApi.getTrack(res.group(res.groupCount())).build().executeAsync();
-            final Track track = trackFuture.get();
+            final Track track = spotifyApi.getTrack(res.group(res.groupCount())).build().execute();
 
             final List<SearchResult> results = searchYoutube(track.getArtists()[0].getName() + " " + track.getName(),
                 config.googl, 1L);
@@ -235,7 +224,7 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
 
     @Override
     public AudioTrack decodeTrack(AudioTrackInfo trackInfo, DataInput input) {
-        return new ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
+        return new SpotifyAudioTrack(trackInfo, youtubeAudioSourceManager);
     }
 
     @Override
@@ -253,17 +242,19 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
     private void updateAccessToken() {
         try {
             final ClientCredentialsRequest request = spotifyApi.clientCredentials().build();
-            final Future<ClientCredentials> clientCredentialsFuture = request.executeAsync();
-            final ClientCredentials clientCredentials = clientCredentialsFuture.get();
+            final ClientCredentials clientCredentials = request.execute();
 
             // Set access token for further "spotifyApi" object usage
             spotifyApi.setAccessToken(clientCredentials.getAccessToken());
 
             logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
             logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (IOException | SpotifyWebApiException e) {
             e.printStackTrace();
             logger.error("Error while fetching Spotify token", e);
+
+            // Retry after 10 seconds
+            this.service.schedule(this::updateAccessToken, 10L, TimeUnit.SECONDS);
         }
     }
 
@@ -288,11 +279,14 @@ public class SpotifyAudioSourceManager implements AudioSourceManager, HttpConfig
         if (!results.isEmpty()) {
             final SearchResult video = results.get(0);
             final ResourceId rId = video.getId();
+
             if (rId.getKind().equals("youtube#video")) {
                 final Video videoById = getVideoById(video.getId().getVideoId(), config.googl);
+
                 playList.add(audioTrackFromVideo(videoById));
             }
         }
+
         return playList;
     }
 

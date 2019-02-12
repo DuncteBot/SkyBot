@@ -18,45 +18,42 @@
 
 package ml.duncte123.skybot.commands.music
 
-import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendError
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.objects.command.MusicCommand
-import ml.duncte123.skybot.utils.AirUtils
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class PPlayCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
+
+    init {
+        this.withAutoJoin = true
+    }
+
+    override fun run(ctx: CommandContext) {
 
         val event = ctx.event
-
-        if (prejoinChecks(event)) {
-            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
 
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(event, "To few arguments, use `${Settings.PREFIX}$name <media link>`")
+            sendMsg(event, "To few arguments, use `${Settings.PREFIX}$name <media link>`")
             return
         }
 
-        var toPlay = ctx.argsRaw
-        if (!AirUtils.isURL(toPlay)) {
-            toPlay = "ytsearch:$toPlay"
-        }
+        val toPlay = ctx.argsRaw
+
         if (toPlay.length > 1024) {
-            MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
+            sendError(event.message)
+            sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
         }
 
-        MessageUtils.sendMsg(event, "Loading playlist.......\n" +
+        sendMsg(event, "Loading playlist.......\n" +
             "This may take a while depending on the size.")
+
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx, true)
     }
 

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.music
 
 import me.duncte123.botcommons.messaging.MessageUtils
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.audio.GuildMusicManager
@@ -33,16 +34,12 @@ open class PlayCommand : MusicCommand() {
 
     protected var skipParsing: Boolean = false
 
-    override fun executeCommand(ctx: CommandContext) {
+    init {
+        this.withAutoJoin = true
+    }
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (prejoinChecks(event)) {
-            ctx.commandManager.getCommand("join")?.executeCommand(ctx)
-        } else if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val guild = event.guild
         val mng = getMusicManager(guild, ctx.audioUtils)
         val player = mng.player
@@ -53,13 +50,15 @@ open class PlayCommand : MusicCommand() {
                 player.isPaused -> {
                     player.isPaused = false
 
-                    MessageUtils.sendMsg(event, "Playback has been resumed.")
+                    sendMsg(event, "Playback has been resumed.")
                 }
 
-                player.playingTrack != null -> MessageUtils.sendMsg(event, "Player is already playing!")
-                scheduler.queue.isEmpty() -> MessageUtils.sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
+                player.playingTrack != null -> sendMsg(event, "Player is already playing!")
+
+                scheduler.queue.isEmpty() -> sendMsg(event, "The current audio queue is empty! Add something to the queue first!\n" +
                     "For example `${Settings.PREFIX}play https://www.youtube.com/watch?v=KKOBXrRzZwA`")
             }
+
             return
         }
 
@@ -71,12 +70,11 @@ open class PlayCommand : MusicCommand() {
         }
 
         if (!AirUtils.isURL(toPlay)) {
-
             val res = searchYoutube(toPlay, ctx.config.apis.googl, 1L)
 
             if (res.isEmpty()) {
                 MessageUtils.sendError(event.message)
-                MessageUtils.sendMsg(event, "No tracks where found")
+                sendMsg(event, "No tracks where found")
                 return
             }
 
@@ -89,7 +87,7 @@ open class PlayCommand : MusicCommand() {
     private fun handlePlay(toPlay: String, event: GuildMessageReceivedEvent, ctx: CommandContext, mng: GuildMusicManager?) {
         if (toPlay.length > 1024) {
             MessageUtils.sendError(event.message)
-            MessageUtils.sendMsg(event, "Input cannot be longer than 1024 characters.")
+            sendMsg(event, "Input cannot be longer than 1024 characters.")
             return
         }
         ctx.audioUtils.loadAndPlay(mng, toPlay, ctx, false)

@@ -25,14 +25,9 @@ import ml.duncte123.skybot.objects.command.MusicCommand
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class LeaveCommand : MusicCommand() {
-    override fun executeCommand(ctx: CommandContext) {
 
+    override fun run(ctx: CommandContext) {
         val event = ctx.event
-
-        if (!channelChecks(event, ctx.audioUtils)) {
-            return
-        }
-
         val guild = event.guild
 
         if (hasCoolDown(guild) && !isUserOrGuildPatron(event, false)) {
@@ -53,10 +48,6 @@ class LeaveCommand : MusicCommand() {
         getLavalinkManager().closeConnection(guild)
         guild.audioManager.sendingHandler = null
         MusicCommand.addCooldown(guild.idLong)
-
-        if (guild.audioManager.connectionListener != null) {
-            guild.audioManager.connectionListener = null
-        }
 
         MessageUtils.sendMsg(event, "Leaving your channel")
 

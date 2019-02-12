@@ -26,6 +26,7 @@ import com.sedmelluq.discord.lavaplayer.track.AudioTrack;
 import com.sedmelluq.discord.lavaplayer.track.AudioTrackInfo;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.objects.audiomanagers.IdentifiedAudioReference;
 import org.json.JSONObject;
 
 import java.io.DataInput;
@@ -46,6 +47,7 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
     @Override
     public AudioItem loadItem(DefaultAudioPlayerManager manager, AudioReference reference) {
         final Matcher m = CLYPIT_REGEX.matcher(reference.identifier);
+
         if (!m.matches()) {
             return null;
         }
@@ -53,8 +55,14 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
         try {
             final String clypitId = m.group(m.groupCount());
             final JSONObject json = WebUtils.ins.getJSONObject("https://api.clyp.it/" + clypitId).execute();
-            return new AudioReference(json.getString("SecureMp3Url"), json.getString("Title"));
+
+            return new IdentifiedAudioReference(
+                json.getString("Mp3Url"),
+                reference.identifier,
+                json.getString("Title")
+            );
         } catch (Exception e) {
+            e.printStackTrace();
             return null;
         }
     }
