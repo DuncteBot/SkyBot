@@ -47,7 +47,16 @@ object ModerationSettings {
         val rateLimits = LongArray(6)
 
         for (i in 0..5) {
-            rateLimits[i] = params.getValue("rateLimits[$i]").toLong()
+
+            val value = params.getValue("rateLimits[$i]")
+
+            if  (value.isNotEmpty()) {
+                request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")
+
+                return response.redirect(request.url())
+            }
+
+            rateLimits[i] = value.toLong()
         }
 
         val guild = WebHelpers.getGuildFromRequest(request, shardManager)

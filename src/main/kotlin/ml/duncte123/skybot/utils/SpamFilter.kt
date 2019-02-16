@@ -35,6 +35,7 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
 
     private lateinit var rates: TLongList
     private val adapter = Variables.getInstance().databaseAdapter
+    private val logger = LoggerFactory.getLogger(SpamFilter::class.java)
 
     @Throws(IllegalArgumentException::class)
     fun update(longs: LongArray, updateMode: Int = 0) {
@@ -134,14 +135,25 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
 
             if (shouldModerate) {
                 val warnings = ModerationUtils.getWarningCountForUser(adapter, user, author.guild) + 1
+
+                if (rates.size() < 6) {
+                    logger.error("Found invalid spam rate settings for " + author.guild)
+
+                    return false
+                }
+
                 val ratelimit = rates[warnings.coerceIn(0, 5)]
+
                 ModerationUtils.addWarningToDb(adapter, jda.selfUser, user, "Spam", guild)
+
                 if (data.third) {
                     ModerationUtils.kickUser(guild, author, msg.textChannel, "Spam")
                 } else {
                     ModerationUtils.muteUser(guild, author, msg.textChannel, "Spam", ratelimit)
                 }
+
                 val clearable = msg.textChannel.iterableHistory.stream().filter { it.author == author.user }.limit(9).collect(Collectors.toList())
+
                 msg.textChannel.deleteMessages(clearable).queue {
                     this[guild.idLong]?.get(author.user.idLong)?.grep { value -> !clearable.map { l -> l.idLong }.contains(value) }
                 }

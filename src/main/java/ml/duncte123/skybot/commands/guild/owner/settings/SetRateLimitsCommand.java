@@ -54,6 +54,12 @@ public class SetRateLimitsCommand extends SettingsBase {
         }
 
         final long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
+
+        if (rates.length < 6 || rates.length > 6) {
+            sendMsg(event, "");
+            return;
+        }
+
         guild.setSettings(settings.setRatelimits(rates));
         final String steps = Arrays.stream(rates).mapToObj(String::valueOf)
             .collect(Collectors.joining(", ", "", " minutes"));
