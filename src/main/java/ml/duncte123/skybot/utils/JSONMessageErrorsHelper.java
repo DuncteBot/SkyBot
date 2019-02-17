@@ -29,7 +29,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
-import static me.duncte123.botcommons.messaging.MessageUtils.CUSTOM_QUEUE_ERROR;
 
 @SuppressWarnings({"unused"})
 @Authors(authors = {
@@ -64,7 +63,7 @@ public class JSONMessageErrorsHelper {
             }
         }
 
-        message.addReaction("❌").queue(null, CUSTOM_QUEUE_ERROR);
+        message.addReaction("❌").queue(null, (ignored) -> {});
 
         message.getChannel().sendFile(EarthUtils.throwableToJSONObject(error).toString(4).getBytes(), "error.json",
             new MessageBuilder().setEmbed(defaultEmbed().setTitle("We got an error!").setDescription(String.format("Error type: %s",
