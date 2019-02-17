@@ -43,15 +43,6 @@ public class GuildMemberListener extends BaseListener {
             return;
         }
 
-        /*
-        {{USER_MENTION}} = mention user
-        {{USER_NAME}} = return username
-        {{GUILD_NAME}} = the name of the guild
-        {{GUILD_USER_COUNT}} = member count
-        {{GUILD_OWNER_MENTION}} = mention the guild owner
-        {{GUILD_OWNER_NAME}} = return the name form the owner
-         */
-
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
         if (settings.isEnableJoinMessage()  && settings.getWelcomeLeaveChannel() > 0) {
