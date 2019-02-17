@@ -60,7 +60,7 @@ public class GuildMemberListener extends BaseListener {
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomJoinMessage(), event);
 
-            if (!msg.isEmpty() || !"".equals(msg.trim()) || welcomeLeaveChannel != null) {
+            if (!msg.isEmpty() && !"".equals(msg.trim()) && welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
             }
         }
@@ -92,7 +92,7 @@ public class GuildMemberListener extends BaseListener {
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
             final String msg = parseGuildVars(settings.getCustomLeaveMessage(), event);
 
-            if (!msg.isEmpty() || "".equals(msg) || welcomeLeaveChannel != null) {
+            if (!msg.isEmpty() && !"".equals(msg.trim()) && welcomeLeaveChannel != null) {
                 sendMsg(welcomeLeaveChannel, msg);
             }
         }
