@@ -25,10 +25,7 @@ import com.jagrosh.jdautilities.commons.utils.FinderUtil;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.OnlineStatus;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.MiscUtil;
 import org.jetbrains.annotations.NotNull;
 
@@ -205,7 +202,35 @@ public class DiscordMethods {
                 }
 
                 return "";
-            })
+            }),
+
+            new Method("addrole", (env, in) -> {
+                final Guild guild = env.get("guild");
+
+                final List<Role> foundRoles = FinderUtil.findRoles(in[0], guild);
+
+                if (foundRoles.isEmpty()) {
+                    throw new ParseException("No roles found for input");
+                }
+
+                final List<Member> foundMembers = FinderUtil.findMembers(in[1], guild);
+
+                if (foundMembers.isEmpty()) {
+                    throw new ParseException("No members found for input");
+                }
+
+                final Member selfMember = guild.getSelfMember();
+                final Member targetMember = foundMembers.get(0);
+                final Role targetRole = foundRoles.get(0);
+
+                if (!selfMember.canInteract(targetMember) || !selfMember.canInteract(targetRole)) {
+                    throw new ParseException("Cannot interact with target member or target role");
+                }
+
+                guild.getController().addSingleRoleToMember(targetMember, targetRole).queue();
+
+                return "";
+            }, "|user:")
 
             /*,
 
