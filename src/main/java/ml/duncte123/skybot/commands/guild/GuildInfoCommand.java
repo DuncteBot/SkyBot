@@ -80,7 +80,8 @@ public class GuildInfoCommand extends Command {
                 sendGuildInfoEmbed(event, ctx, "");
             }
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             logger.error("GuildInfoCommand", e);
             MessageUtils.sendMsg(event, "OOPS, something went wrong: " + e.getMessage());
         }

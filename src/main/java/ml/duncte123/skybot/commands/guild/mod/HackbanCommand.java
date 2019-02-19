@@ -67,7 +67,8 @@ public class HackbanCommand extends ModBaseCommand {
                 event.getGuild().getController().ban(id, 0)
                     .reason(String.format("Hackban by %#s", ctx.getAuthor())).queue();
                 messages.add(id);
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 logger.error("Hackban Error", e);
                 sendMsg(event, "ERROR: " + e.getMessage());
                 return;

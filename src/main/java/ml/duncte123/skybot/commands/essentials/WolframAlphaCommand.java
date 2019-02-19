@@ -141,7 +141,8 @@ public class WolframAlphaCommand extends Command {
             final WAQueryResult result;
             try {
                 result = engine.performQuery(query);
-            } catch (WAException e) {
+            }
+            catch (WAException e) {
                 message.editMessage(":x: Error: "
                     + e.getClass().getSimpleName() + ": " + e.getMessage()).queue();
                 e.printStackTrace();

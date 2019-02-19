@@ -62,7 +62,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
             con.getMetaData().getURL();
             //Try to construct the database if not there
             innitDB(con);
-        } catch (NoClassDefFoundError | SQLException e) {
+        }
+        catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
             con = null;
         }
@@ -75,7 +76,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     public Connection getConnection() {
         try {
             return isConnected() ? con : JDBC.createConnection(url, new Properties());
-        } catch (NoClassDefFoundError | SQLException e) {
+        }
+        catch (NoClassDefFoundError | SQLException e) {
             e.printStackTrace();
             return null;
         }
@@ -88,7 +90,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     public boolean isConnected() {
         try {
             return con != null && !con.isClosed();
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -115,7 +118,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
         try {
             if (isConnected())
                 con.close();
-        } catch (SQLException e) {
+        }
+        catch (SQLException e) {
             throw new IOException(e);
         }
     }
@@ -215,7 +219,8 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
             );
 
             close();
-        } catch (SQLException | IOException e) {
+        }
+        catch (SQLException | IOException e) {
             e.printStackTrace();
         }
     }

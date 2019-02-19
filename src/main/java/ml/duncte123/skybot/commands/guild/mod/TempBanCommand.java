@@ -141,11 +141,13 @@ public class TempBanCommand extends ModBaseCommand {
             int banTime; // initial value is always 0
             try {
                 banTime = Integer.parseInt(timeParts[0]);
-            } catch (NumberFormatException e) {
+            }
+            catch (NumberFormatException e) {
                 sendMsg(event, e.getMessage() + " is not a valid number");
                 error = true;
                 return this;
-            } catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
+            }
+            catch (ArrayIndexOutOfBoundsException ignored /* https://youtube.com/DSHelmondGames */) {
                 sendMsg(event, "Incorrect time format, use `" + Settings.PREFIX + "help " + getName() + "` for more info.");
                 error = true;
                 return this;

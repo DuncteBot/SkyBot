@@ -143,7 +143,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             }
 
             return new BasicAudioPlaylist(album.getName(), playList, playList.get(0), false);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //logger.error("Something went wrong!", e);
             throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
         }
@@ -172,9 +173,11 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             }
 
             return new BasicAudioPlaylist(spotifyPlaylist.getName(), finalPlaylist, finalPlaylist.get(0), false);
-        } catch (IllegalArgumentException ex) {
+        }
+        catch (IllegalArgumentException ex) {
             throw new FriendlyException("This playlist could not be loaded, make sure that it's public", Severity.COMMON, ex);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //logger.error("Something went wrong!", e);
             throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
         }
@@ -202,7 +205,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
             final Video v = getVideoById(results.get(0).getId().getVideoId(), config.googl);
 
             return audioTrackFromVideo(v);
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //logger.error("Something went wrong!", e);
             throw new FriendlyException(e.getMessage(), Severity.FAULT, e);
         }
@@ -249,7 +253,8 @@ public class SpotifyAudioSourceManager implements AudioSourceManager {
 
             logger.debug("Successfully retrieved an access token! " + clientCredentials.getAccessToken());
             logger.debug("The access token expires in " + clientCredentials.getExpiresIn() + " seconds");
-        } catch (IOException | SpotifyWebApiException e) {
+        }
+        catch (IOException | SpotifyWebApiException e) {
             e.printStackTrace();
             logger.error("Error while fetching Spotify token", e);
 

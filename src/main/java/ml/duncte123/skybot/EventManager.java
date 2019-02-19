@@ -97,7 +97,8 @@ public class EventManager implements IEventManager {
         for (final EventListener listener : this.listeners) {
             try {
                 listener.onEvent(event);
-            } catch (Throwable thr) {
+            }
+            catch (Throwable thr) {
                 logger.error("Error while handling event {}({}); {}",
                     event.getClass().getName(),
                     listener.getClass().getSimpleName(),

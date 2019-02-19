@@ -94,7 +94,8 @@ public class HelpCommand extends Command {
             }
 
             return CommandCategory.valueOf(name.toUpperCase()) != null;
-        } catch (IllegalArgumentException ignored) {
+        }
+        catch (IllegalArgumentException ignored) {
             return false;
         }
     }
@@ -150,7 +151,8 @@ public class HelpCommand extends Command {
 
         try {
             return CommandCategory.valueOf(search.toUpperCase());
-        } catch (IllegalArgumentException ignored) {
+        }
+        catch (IllegalArgumentException ignored) {
             final List<CommandCategory> categoryList = Arrays.stream(CommandCategory.values()).filter(it -> it.getSearch()
                 .equals(search.toLowerCase())).collect(Collectors.toList());
             return categoryList.get(0);

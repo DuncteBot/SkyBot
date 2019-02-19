@@ -36,7 +36,7 @@ class RepeatCommand : MusicCommand() {
         if (ctx.args.size == 1) {
             val firstArg = ctx.args[0]
 
-            when(firstArg) {
+            when (firstArg) {
                 "playlist" -> {
                     scheduler.isRepeatingPlaylists = !scheduler.isRepeatingPlaylists
                     scheduler.isRepeating = scheduler.isRepeatingPlaylists

@@ -87,9 +87,11 @@ public class AnnounceCommand extends ModBaseCommand {
                     break;
             }
 
-        } catch (ArrayIndexOutOfBoundsException ex) {
+        }
+        catch (ArrayIndexOutOfBoundsException ex) {
             sendErrorWithMessage(event.getMessage(), "Please! You either forgot the text or to mention the channel!");
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             sendMsg(event, "WHOOPS: " + e.getMessage());
             ComparatingUtils.execCheck(e);
             e.printStackTrace();

@@ -41,7 +41,8 @@ public class YoutubeUtils {
             })
                 .setApplicationName("SkyBot-youtube-search")
                 .build();
-        } catch (GeneralSecurityException | IOException e) {
+        }
+        catch (GeneralSecurityException | IOException e) {
             e.printStackTrace();
         }
     }

@@ -20,7 +20,6 @@ package ml.duncte123.skybot.listeners;
 
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
-import ml.duncte123.skybot.EventManager;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.entities.jda.DunctebotGuild;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -165,8 +164,8 @@ public class MessageListener extends BaseListener {
 
         final ICommand command = commandManager.getCommand(
             rw.replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.PREFIX)
-            .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
-            .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
+                .replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Settings.PREFIX)
+                .replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+", 2)[0].toLowerCase());
 
         if (command == null) {
             return false;
@@ -179,7 +178,8 @@ public class MessageListener extends BaseListener {
     private boolean isCategory(@NotNull String name) {
         try {
             return CommandCategory.valueOf(name.toUpperCase()) != null;
-        } catch (IllegalArgumentException ignored) {
+        }
+        catch (IllegalArgumentException ignored) {
             return false;
         }
     }
@@ -241,8 +241,8 @@ public class MessageListener extends BaseListener {
                         //Check if the invite is for this guild, if it is not delete the message
                         if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
                             event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
-                                sendMsg(event, event.getAuthor().getAsMention() +
-                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
+                                    sendMsg(event, event.getAuthor().getAsMention() +
+                                        ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
                                 (t) -> {}
                             );
                         }

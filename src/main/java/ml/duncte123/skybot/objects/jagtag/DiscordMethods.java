@@ -85,7 +85,8 @@ public class DiscordMethods {
 
                 try {
                     id = Long.parseUnsignedLong(in[0]);
-                } catch (NumberFormatException ignored) {
+                }
+                catch (NumberFormatException ignored) {
                     throw new ParseException(String.format("Your input `%s` is not a valid long id", in[0]));
                 }
 

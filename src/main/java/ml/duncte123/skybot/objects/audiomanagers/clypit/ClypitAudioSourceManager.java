@@ -61,7 +61,8 @@ public class ClypitAudioSourceManager extends HttpAudioSourceManager {
                 reference.identifier,
                 json.getString("Title")
             );
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             return null;
         }

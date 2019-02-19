@@ -76,7 +76,8 @@ public class KickCommand extends ModBaseCommand {
                     MessageUtils.sendSuccess(event.getMessage());
                 }
             );
-        } catch (HierarchyException ignored) {
+        }
+        catch (HierarchyException ignored) {
             MessageUtils.sendMsg(event, "I can't kick that member because his roles are above or equals to mine.");
         }
 

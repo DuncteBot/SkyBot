@@ -76,7 +76,8 @@ public class SeekCommand extends MusicCommand {
 
         try {
             Thread.sleep(500);
-        } catch (InterruptedException ignored) {
+        }
+        catch (InterruptedException ignored) {
         }
 
         ctx.getCommandManager().getCommand("nowplaying").executeCommand(ctx);

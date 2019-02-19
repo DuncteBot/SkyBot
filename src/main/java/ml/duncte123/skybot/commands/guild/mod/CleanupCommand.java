@@ -68,7 +68,8 @@ public class CleanupCommand extends ModBaseCommand {
             } else if (AirUtils.isInt(arg)) {
                 try {
                     total = Integer.parseInt(args.get(0));
-                } catch (NumberFormatException e) {
+                }
+                catch (NumberFormatException e) {
                     sendError(event.getMessage());
                     sendMsg(event, "Error: Amount to clear is not a valid number");
                     return;

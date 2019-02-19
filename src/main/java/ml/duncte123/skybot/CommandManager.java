@@ -162,7 +162,8 @@ public class CommandManager {
                 if (res != null && !res.getFirst()) {
                     return res;
                 }
-            } catch (InterruptedException | ExecutionException e) {
+            }
+            catch (InterruptedException | ExecutionException e) {
                 e.printStackTrace();
             }
         }
@@ -207,7 +208,8 @@ public class CommandManager {
             }
 
             return result;
-        } catch (InterruptedException | ExecutionException e) {
+        }
+        catch (InterruptedException | ExecutionException e) {
             e.printStackTrace();
             return false;
         }
@@ -334,12 +336,14 @@ public class CommandManager {
 
 //                    sendEmbedRaw(event.getChannel(), embed, null);
                     parser.clear();
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     sendMsg(event, "Error with parsing custom command: " + e.getMessage());
                     execCheck(e);
                 }
 
-            } catch (Throwable ex) {
+            }
+            catch (Throwable ex) {
                 execCheck(ex);
             }
         });
@@ -353,7 +357,8 @@ public class CommandManager {
 //                System.out.println(command.getName());
                 //Add the command
                 this.addCommand(command);
-            } catch (Exception ignored) {
+            }
+            catch (Exception ignored) {
             }
         }
     }

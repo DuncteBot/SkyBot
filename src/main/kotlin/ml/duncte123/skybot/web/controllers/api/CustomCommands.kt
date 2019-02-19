@@ -50,9 +50,9 @@ object CustomCommands {
 
     fun show(request: Request, response: Response, shardManager: ShardManager, variables: Variables): Any {
         val guild = WebHelpers.getGuildFromRequest(request, shardManager) ?: return JSONObject()
-                .put("status", "error")
-                .put("message", "guild not found")
-                .put("code", response.status())
+            .put("status", "error")
+            .put("message", "guild not found")
+            .put("code", response.status())
 
         val commands = variables.commandManager
             .getCustomCommands(guild.idLong).map { it.toJSONObject() }

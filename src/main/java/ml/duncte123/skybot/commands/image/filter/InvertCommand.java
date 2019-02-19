@@ -18,4 +18,5 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-public class InvertCommand extends FilterBase { }
+public class InvertCommand extends FilterBase {
+}

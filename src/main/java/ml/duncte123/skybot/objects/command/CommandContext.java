@@ -140,6 +140,7 @@ public class CommandContext {
     public String getArgsRaw() {
         return getArgsRaw(true);
     }
+
     public String getArgsRaw(boolean fixlines) {
         return parseRawArgs(this.event.getMessage().getContentRaw(), fixlines);
     }
@@ -158,11 +159,11 @@ public class CommandContext {
 
     public List<Member> getMentionedMembers() {
         if (this.mentionedInMessage == null) {
-           this.mentionedInMessage = new ArrayList<>();
+            this.mentionedInMessage = new ArrayList<>();
 
-           getArgs().forEach(
-               (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, getGuild()))
-           );
+            getArgs().forEach(
+                (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, getGuild()))
+            );
         }
 
         return this.mentionedInMessage;

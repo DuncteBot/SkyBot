@@ -66,7 +66,8 @@ public final class Variables {
         try {
             final String json = Files.asCharSource(new File("config.json"), StandardCharsets.UTF_8).read();
             this.config = new Gson().fromJson(json, DunctebotConfig.class);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
 

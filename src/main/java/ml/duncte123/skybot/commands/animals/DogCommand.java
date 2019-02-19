@@ -52,7 +52,8 @@ public class DogCommand extends Command {
                 }
             });
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             //e.printStackTrace();
             sendEmbed(event, EmbedUtils.embedMessage("**[OOPS]** Something broke, blame duncte \n(" + e.toString() + ")"));
             ComparatingUtils.execCheck(e);

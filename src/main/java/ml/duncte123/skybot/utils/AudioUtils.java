@@ -43,7 +43,6 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
-import org.apache.http.impl.client.HttpClientBuilder;
 
 import java.util.concurrent.Future;
 import java.util.logging.Level;
@@ -147,7 +146,7 @@ public class AudioUtils {
      * @return The future from lavaplayer
      */
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
-                              final boolean addPlayList, final CommandContext ctx, final boolean announce) {
+                                    final boolean addPlayList, final CommandContext ctx, final boolean announce) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources

@@ -141,7 +141,8 @@ public final class LavalinkManager {
     private URI toURI(String uri) {
         try {
             return new URI(uri);
-        } catch (URISyntaxException e) {
+        }
+        catch (URISyntaxException e) {
             e.printStackTrace();
             return null;
         }

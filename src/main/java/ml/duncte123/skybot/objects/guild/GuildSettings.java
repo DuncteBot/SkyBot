@@ -414,7 +414,8 @@ public class GuildSettings {
                 }
 
                 j.put(name, value);
-            } catch (IllegalAccessException e) {
+            }
+            catch (IllegalAccessException e) {
                 e.printStackTrace();
             }
         }

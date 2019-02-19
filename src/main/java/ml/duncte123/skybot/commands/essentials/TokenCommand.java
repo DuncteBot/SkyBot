@@ -106,7 +106,8 @@ public class TokenCommand extends Command {
             gmt.setTimeInMillis(millis);
 
             return OffsetDateTime.ofInstant(gmt.toInstant(), gmt.getTimeZone().toZoneId());
-        } catch (IllegalArgumentException ignored) {
+        }
+        catch (IllegalArgumentException ignored) {
             return null;
         }
     }
@@ -114,7 +115,8 @@ public class TokenCommand extends Command {
     private boolean isLong(String input) {
         try {
             return Long.parseUnsignedLong(input) > -1L;
-        } catch (NumberFormatException ignored) {
+        }
+        catch (NumberFormatException ignored) {
             return false;
         }
     }
@@ -153,7 +155,8 @@ public class TokenCommand extends Command {
                     }
                 );
 
-            } catch (IllegalArgumentException e) {
+            }
+            catch (IllegalArgumentException e) {
                 final String info = String.format("%n%nThat token does not have a valid structure (%s)", e.getMessage());
                 final String newMessage = String.format(STRING_FORMAT, arg, id, timestamp, info);
                 message.editMessage(newMessage).queue();

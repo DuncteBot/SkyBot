@@ -45,7 +45,7 @@ public class GuildMemberListener extends BaseListener {
 
         final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
 
-        if (settings.isEnableJoinMessage()  && settings.getWelcomeLeaveChannel() > 0) {
+        if (settings.isEnableJoinMessage() && settings.getWelcomeLeaveChannel() > 0) {
             final long welcomeLeaveChannelId = settings.getWelcomeLeaveChannel();
 
             final TextChannel welcomeLeaveChannel = guild.getTextChannelById(welcomeLeaveChannelId);
@@ -57,7 +57,7 @@ public class GuildMemberListener extends BaseListener {
         }
 
         if (settings.isAutoroleEnabled() && guild.getSelfMember().hasPermission(Permission.MANAGE_ROLES)) {
-            final  Role r = guild.getRoleById(settings.getAutoroleRole());
+            final Role r = guild.getRoleById(settings.getAutoroleRole());
 
             if (r != null && !guild.getPublicRole().equals(r) && guild.getSelfMember().canInteract(r)) {
                 guild.getController()
