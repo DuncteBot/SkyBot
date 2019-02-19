@@ -316,6 +316,7 @@ public class CommandManager {
                     final Parser parser = CustomCommandUtils.PARSER;
 
                     final String message = parser.clear()
+                        .put("messageId", event.getMessage().getId())
                         .put("user", event.getAuthor())
                         .put("channel", event.getChannel())
                         .put("guild", event.getGuild())

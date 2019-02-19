@@ -66,7 +66,7 @@ public class CustomCommandCommand extends Command {
 
         switch (args.size()) {
             case 1:
-                invokeCustomCommand(args.get(0), event, manager, ctx);
+                listCustomCommands(args.get(0), event, manager, ctx);
                 break;
 
             case 2:
@@ -75,15 +75,16 @@ public class CustomCommandCommand extends Command {
                 break;
 
             default:
-                addEditOrInvokeCustomCommand(args, event, manager);
+                addOrEditCustomCommand(args, event, manager);
                 break;
         }
     }
 
-    private void invokeCustomCommand(String arg, GuildMessageReceivedEvent event, CommandManager manager, CommandContext ctx) {
+    private void listCustomCommands(String arg, GuildMessageReceivedEvent event, CommandManager manager, CommandContext ctx) {
         if (arg.equalsIgnoreCase("list")) {
             final GuildSettings s = ctx.getGuildSettings();
             final StringBuilder sb = new StringBuilder();
+
             manager.getCustomCommands().stream()
                 .filter(c -> c.getGuildId() == event.getGuild().getIdLong())
                 .forEach(cmd -> sb.append(s.getCustomPrefix())
@@ -94,14 +95,7 @@ public class CustomCommandCommand extends Command {
             sendMsg(event, new MessageBuilder().append("Custom Commands for this server").append('\n')
                 .appendCodeBlock(sb.toString(), "ldif").build());
         } else {
-            //fetch a custom command
-            final CustomCommand cmd = manager.getCustomCommand(arg, event.getGuild().getIdLong());
-            if (cmd != null) {
-                //Run the custom command?
-                manager.dispatchCommand(cmd, arg, List.of(), event);
-            } else {
-                sendMsg(event, "Invalid arguments use `db!help customcommand`");
-            }
+            sendMsg(event, "Insufficient arguments use `db!help customcommand`");
         }
     }
 
@@ -118,7 +112,7 @@ public class CustomCommandCommand extends Command {
             }
 
             final CustomCommand cmd = manager.getCustomCommand(commandName, guildid);
-            sendMsg(event, "Raw data for `" + commandName + "`:```perl\n" + cmd.getMessage() + "```");
+            sendMsg(event, "Raw data for `" + commandName + "`:```pascal\n" + cmd.getMessage() + "```");
         } else if (args.get(0).equalsIgnoreCase("delete") || args.get(0).equalsIgnoreCase("remove")) {
 
             if (!isAdmin(event)) {
@@ -143,21 +137,7 @@ public class CustomCommandCommand extends Command {
         }
     }
 
-    private void addEditOrInvokeCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager) {
-
-        if (!systemInvokes.contains(args.get(0))) {
-
-
-            //fetch a custom command
-            final CustomCommand cmd = manager.getCustomCommand(args.get(0), event.getGuild().getIdLong());
-            if (cmd != null) {
-                //Run the custom command?
-                manager.dispatchCommand(cmd, args.get(0), args.subList(1, args.size()), event);
-            }
-
-            return;
-
-        }
+    private void addOrEditCustomCommand(List<String> args, GuildMessageReceivedEvent event, CommandManager manager) {
 
         if (args.size() < 3 && !systemInvokes.contains(args.get(0))) {
             sendMsg(event, "Invalid arguments use `db!help customcommand`");
@@ -178,6 +158,7 @@ public class CustomCommandCommand extends Command {
 
         final String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
         final long guildId = event.getGuild().getIdLong();
+
         if (commandExists(commandName, guildId, manager)) {
 
             if (!args.get(0).equalsIgnoreCase("edit") && !args.get(0).equalsIgnoreCase("change")) {
@@ -192,6 +173,7 @@ public class CustomCommandCommand extends Command {
 
             return;
         }
+
         final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
         if (result.getFirst()) {

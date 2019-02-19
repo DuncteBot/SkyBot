@@ -190,7 +190,24 @@ public class DiscordMethods {
                 final int randNum = (int) Math.round(Math.random() * channels.size()) + 1;
 
                 return channels.get(randNum).getAsMention();
-            })/*,
+            }),
+
+            new Method("deleteinvoke", (env) -> {
+                if (env.containsKey("messageId")) {
+
+                    final TextChannel channel = env.get("channel");
+
+                    if (channel != null) {
+                        final String messageId = env.get("messageId");
+
+                        channel.deleteMessageById(messageId).queue(null, (failure) -> {});
+                    }
+                }
+
+                return "";
+            })
+
+            /*,
 
             new Method("embed", (env, input) -> {
                 try {
