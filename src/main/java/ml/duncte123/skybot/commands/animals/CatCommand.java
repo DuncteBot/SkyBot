@@ -59,7 +59,8 @@ public class CatCommand extends Command {
                 try {
                     ctx.getChannel().sendFile(new URL(file).openStream(),
                         "cat_" + System.currentTimeMillis() + "." + ext, null).queue();
-                } catch (IOException e) {
+                }
+                catch (IOException e) {
                     sendEmbed(event, EmbedUtils.embedMessage("Error: " + e.getMessage()));
                     ComparatingUtils.execCheck(e);
                 }

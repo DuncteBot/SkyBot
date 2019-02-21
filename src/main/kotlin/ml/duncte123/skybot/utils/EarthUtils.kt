@@ -216,7 +216,7 @@ class EarthUtils {
                         !filter.getJSONObject("data").getBoolean("over_18")
                     }
 
-                } .filter {filter ->
+                }.filter { filter ->
                     filter as JSONObject
 
                     filter.getJSONObject("data").getString("selftext").length <= 550

@@ -51,7 +51,7 @@ public class TestTagCommand extends Command {
         final String input = ctx.getArgsRaw();
 
         if (input.length() > 1000) {
-            sendMsg(event, "Pleas limit your input to 1000 characters.");
+            sendMsg(event, "Please limit your input to 1000 characters.");
             return;
         }
 
@@ -64,7 +64,7 @@ public class TestTagCommand extends Command {
 
         final String message = new MessageBuilder()
             .append("**Input:**")
-            .appendCodeBlock(input, "perl")
+            .appendCodeBlock(input, "pascal")
             .append('\n')
             .append("**Output:**\n")
             .append(output)

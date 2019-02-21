@@ -26,7 +26,7 @@ import net.dv8tion.jda.core.entities.*
 import java.awt.Color
 import java.time.OffsetDateTime
 
-class FakeMember(private val name: String): Member {
+class FakeMember(private val name: String) : Member {
     override fun isOwner(): Boolean {
         TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }

@@ -101,12 +101,12 @@ public class GuildSettingsUtils {
                     final TLongLongMap cache = Optional.ofNullable(
                         vcAutoRoleCache.get(item.getGuildId())
                     )
-                    .orElseGet(
-                        () -> {
-                            vcAutoRoleCache.put(item.getGuildId(), new TLongLongHashMap()); // This returns the old value which was null
-                            return vcAutoRoleCache.get(item.getGuildId());
-                        }
-                    );
+                        .orElseGet(
+                            () -> {
+                                vcAutoRoleCache.put(item.getGuildId(), new TLongLongHashMap()); // This returns the old value which was null
+                                return vcAutoRoleCache.get(item.getGuildId());
+                            }
+                        );
 
                     cache.put(item.getVoiceChannelId(), item.getRoleId());
                 }
@@ -249,7 +249,8 @@ public class GuildSettingsUtils {
     public static long toLong(String s) {
         try {
             return Long.parseUnsignedLong(s);
-        } catch (NumberFormatException ignored) {
+        }
+        catch (NumberFormatException ignored) {
             return 0L;
         }
     }

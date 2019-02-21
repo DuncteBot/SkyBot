@@ -221,7 +221,7 @@ public class GuildUtils {
 
         final boolean hasRole = newPatron.getRoles().stream()
             .map(Role::getIdLong)
-            .anyMatch( (role) -> role == Command.oneGuildPatronsRole );
+            .anyMatch((role) -> role == Command.oneGuildPatronsRole);
 
         if (hasRole) {
             Command.oneGuildPatrons.put(userId, guildId);

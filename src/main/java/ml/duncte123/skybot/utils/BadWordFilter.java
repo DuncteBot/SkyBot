@@ -33,8 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
  */
 public class BadWordFilter {
 
-    private int largestWordLength = 0;
     private final Map<String, String[]> words = new ConcurrentHashMap<>();
+    private int largestWordLength = 0;
 
     public BadWordFilter() {
         try {
@@ -69,13 +69,15 @@ public class BadWordFilter {
 
                     words.put(word.replaceAll(" ", ""), ignore_in_combination_with_words);
 
-                } catch (Exception e) {
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
 
             }
             LoggerFactory.getLogger(BadWordFilter.class).info("Loaded " + counter + " words to filter out");
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }

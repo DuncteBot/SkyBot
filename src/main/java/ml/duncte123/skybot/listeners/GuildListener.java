@@ -212,7 +212,8 @@ public class GuildListener extends BaseListener {
                     LavalinkManager.ins.closeConnection(guild);
                     variables.getAudioUtils().getMusicManagers().remove(guild.getIdLong());
                 }
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
         });

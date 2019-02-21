@@ -79,7 +79,8 @@ public class SoftbanCommand extends ModBaseCommand {
                         .reason("(softban) Kicked by: " + event.getAuthor().getAsTag()).queue();
                 }
             );
-        } catch (HierarchyException ignored) {
+        }
+        catch (HierarchyException ignored) {
             sendMsg(event, "I can't ban that member because his roles are above or equals to mine.");
         }
     }

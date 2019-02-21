@@ -18,4 +18,5 @@
 
 package ml.duncte123.skybot.commands.image.filter;
 
-public class DeepfryCommand extends FilterBase { }
+public class DeepfryCommand extends FilterBase {
+}

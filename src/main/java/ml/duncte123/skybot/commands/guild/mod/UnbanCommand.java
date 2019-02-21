@@ -69,7 +69,8 @@ public class UnbanCommand extends ModBaseCommand {
                 sendMsg(event, "This user is not banned");
             });
 
-        } catch (Exception e) {
+        }
+        catch (Exception e) {
             e.printStackTrace();
             sendMsg(event, "ERROR: " + e.getMessage());
         }

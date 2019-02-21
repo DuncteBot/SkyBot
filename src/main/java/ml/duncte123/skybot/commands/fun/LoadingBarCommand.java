@@ -52,7 +52,8 @@ public class LoadingBarCommand extends Command {
         try {
             ctx.getChannel().sendFile(LoadingBar.generateImage(progress), "bar.png")
                 .appendFormat("**%s** is **%s**%% complete.", year, progress).queue();
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             sendMsg(ctx.getEvent(), "Something went wrong with generating the image.");
         }
 

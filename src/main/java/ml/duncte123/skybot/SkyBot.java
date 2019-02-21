@@ -25,7 +25,6 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
-import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import ml.duncte123.skybot.web.WebRouter;
@@ -224,7 +223,8 @@ public final class SkyBot {
         final String json = builder.create().toJson(config);
         try {
             FileUtils.writeStringToFile(new File("config-empty.json"), json, StandardCharsets.UTF_8);
-        } catch (IOException e) {
+        }
+        catch (IOException e) {
             e.printStackTrace();
         }
     }

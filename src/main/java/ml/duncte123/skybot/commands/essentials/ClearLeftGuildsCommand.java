@@ -53,7 +53,7 @@ public class ClearLeftGuildsCommand extends Command {
 
         }
 
-        guildsToRemove.forEach((item) ->  {
+        guildsToRemove.forEach((item) -> {
             storedSettings.remove(item);
 
             return true;
@@ -74,7 +74,7 @@ public class ClearLeftGuildsCommand extends Command {
 
         final DatabaseAdapter adapter = ctx.getDatabaseAdapter();
 
-        guildsToRemove.forEach((item) ->  {
+        guildsToRemove.forEach((item) -> {
             adapter.deleteGuildSetting(item);
 
             return true;

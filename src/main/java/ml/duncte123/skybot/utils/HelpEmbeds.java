@@ -88,7 +88,8 @@ public class HelpEmbeds {
 
                 field.set(cls, joinCommands(cmds));
 
-            } catch (Exception e) {
+            }
+            catch (Exception e) {
                 e.printStackTrace();
             }
 

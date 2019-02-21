@@ -100,7 +100,8 @@ public abstract class ImageCommandBase extends Command {
         if (!args.isEmpty() && ctx.getMessage().getMentionedUsers().size() < 1) {
             try {
                 url = new URL(args.get(0)).toString();
-            } catch (MalformedURLException ignored) {
+            }
+            catch (MalformedURLException ignored) {
                 sendMsg(event, "That does not look like a valid url");
                 return null;
             }
@@ -120,7 +121,8 @@ public abstract class ImageCommandBase extends Command {
             String mimetype = null;
             try {
                 mimetype = Files.probeContentType(file.toPath());
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 e.printStackTrace();
             }
             //mimetype should be something like "image/png"

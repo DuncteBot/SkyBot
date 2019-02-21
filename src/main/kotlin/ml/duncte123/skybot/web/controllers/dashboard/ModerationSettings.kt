@@ -50,7 +50,7 @@ object ModerationSettings {
 
             val value = params.getValue("rateLimits[$i]")
 
-            if  (value.isNotEmpty()) {
+            if (value.isNotEmpty()) {
                 request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")
 
                 return response.redirect(request.url())
