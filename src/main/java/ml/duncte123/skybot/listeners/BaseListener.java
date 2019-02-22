@@ -53,9 +53,12 @@ public class BaseListener extends ListenerAdapter {
         }
     );
 
-    protected boolean isBotfarm(Guild guild) {
+    // Keeps track of the guilds that we are leaving as botfarms so that we don't spam
+    static final TLongList guildsLeaving = new TLongArrayList();
 
-        if (botLists.contains(guild.getIdLong())) {
+    boolean isBotfarm(Guild guild) {
+
+        if (botLists.contains(guild.getIdLong()) || guildsLeaving.contains(guild.getIdLong())) {
             return false;
         }
 
@@ -94,6 +97,8 @@ public class BaseListener extends ListenerAdapter {
             counts[1],
             TextColor.RESET
         );
+
+        guildsLeaving.add(guild.getIdLong());
 
         return true;
     }
