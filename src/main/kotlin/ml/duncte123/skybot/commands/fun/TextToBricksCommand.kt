@@ -19,13 +19,14 @@
 package ml.duncte123.skybot.commands.`fun`
 
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
+import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
+import net.dv8tion.jda.core.entities.MessageEmbed
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class TextToBricksCommand : Command() {
@@ -36,20 +37,26 @@ class TextToBricksCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
         if (ctx.args.isEmpty()) {
-            MessageUtils.sendMsg(ctx.event, "Correct usage: `${Settings.PREFIX}${ctx.invoke} <words>`")
+            sendMsg(ctx.event, "Correct usage: `${Settings.PREFIX}${ctx.invoke} <words>`")
+            return
+        }
+
+        val message = ctx.argsRaw
+            .toLowerCase()
+            .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
+            .replace(Regex("([0-9])"), "\$1\u20E3")
+            .replace("!!", ":bangbang:")
+            .replace("!", ":exclamation:")
+            .replace("?", ":question:")
+
+        if (message.length > MessageEmbed.TEXT_MAX_LENGTH) {
+            sendMsg(ctx.event, "Your input is too long, please limit it (${message.length} out of ${MessageEmbed.TEXT_MAX_LENGTH} max chars)")
+
             return
         }
 
         sendEmbed(ctx.event,
-            EmbedUtils.embedMessage(
-                ctx.argsRaw
-                    .toLowerCase()
-                    .replace(Regex("([a-zA-Z])"), ":regional_indicator_\$1:")
-                    .replace(Regex("([0-9])"), "\$1\u20E3")
-                    .replace("!!", ":bangbang:")
-                    .replace("!", ":exclamation:")
-                    .replace("?", ":question:")
-            )
+            EmbedUtils.embedMessage(message)
         )
     }
 
