@@ -440,6 +440,13 @@ class DuncteApis(private val apiKey: String) {
             .addHeader("Authorization", apiKey)
     }
 
+
+    fun executeDefaultGetRequest(path: String, prefixBot: Boolean = true): JSONObject {
+        return executeRequest(
+            defaultRequest(path, prefixBot)
+        )
+    }
+
     companion object {
         const val API_HOST = "https://apis.duncte123.me"
 //        const val API_HOST = "http://duncte123-apis-lumen.local"

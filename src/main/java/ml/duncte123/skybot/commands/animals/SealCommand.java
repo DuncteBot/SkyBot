@@ -37,8 +37,9 @@ public class SealCommand extends Command {
 
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        ApiUtils.getRandomSealAsync((seal) -> {
+        ApiUtils.getRandomSeal((seal) -> {
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(seal));
+
             return null;
         });
     }

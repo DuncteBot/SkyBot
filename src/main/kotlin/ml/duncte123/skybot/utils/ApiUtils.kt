@@ -18,11 +18,10 @@
 
 package ml.duncte123.skybot.utils
 
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.objects.api.*
-import ml.duncte123.skybot.objects.api.DuncteApis.Companion.API_HOST
 import java.net.URLEncoder
 import java.nio.charset.StandardCharsets
 import java.util.concurrent.CompletableFuture
@@ -32,30 +31,35 @@ object ApiUtils {
 
     @JvmStatic
     fun getRandomLlama(): LlamaObject {
-        val json = WebUtils.ins.getJSONObject("$API_HOST/llama").execute().getJSONObject("data")
+        val json = Variables.getInstance().apis
+            .executeDefaultGetRequest("llama", false).getJSONObject("data")
 
         return LlamaObject(json.getInt("id"), json.getString("file"))
     }
 
     @JvmStatic
-    fun getRandomAlpacaAsync(callback: (AlpacaObject) -> Unit) {
-        WebUtils.ins.getJSONObject("$API_HOST/alpaca").async {
-            callback.invoke(AlpacaObject(it.getJSONObject("data").getString("file")))
-        }
+    fun getRandomAlpaca(callback: (AlpacaObject) -> Unit) {
+        val json = Variables.getInstance().apis
+            .executeDefaultGetRequest("alpaca", false).getJSONObject("data")
+
+        callback.invoke(AlpacaObject(json.getString("file")))
     }
 
     @JvmStatic
-    fun getRandomSealAsync(callback: (String) -> Unit) {
-        WebUtils.ins.getJSONObject("$API_HOST/seal").async {
-            callback.invoke(it.getJSONObject("data").getString("file"))
-        }
+    fun getRandomSeal(callback: (String) -> Unit) {
+        val json = Variables.getInstance().apis
+            .executeDefaultGetRequest("seal", false).getJSONObject("data")
+
+        callback.invoke(json.getString("file"))
     }
 
     @JvmStatic
     fun getRandomKpopMember(search: String = ""): KpopObject {
         val path = if (!search.isBlank()) "/${URLEncoder.encode(search, StandardCharsets.UTF_8)}" else ""
 
-        val json = WebUtils.ins.getJSONObject("$API_HOST/kpop$path").execute().getJSONObject("data")
+
+        val json = Variables.getInstance().apis
+            .executeDefaultGetRequest("kpop$path", false).getJSONObject("data")
 
         return KpopObject(
             json.getInt("id"),

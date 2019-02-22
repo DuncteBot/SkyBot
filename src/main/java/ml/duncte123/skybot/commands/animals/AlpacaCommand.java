@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.commands.animals;
 
-import kotlin.Unit;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -39,9 +38,10 @@ public class AlpacaCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
 
-        ApiUtils.getRandomAlpacaAsync((alpaca) -> {
+        ApiUtils.getRandomAlpaca((alpaca) -> {
             sendEmbed(ctx.getEvent(), embedImage(alpaca.getFile()));
-            return Unit.INSTANCE;
+
+            return null;
         });
     }
 
