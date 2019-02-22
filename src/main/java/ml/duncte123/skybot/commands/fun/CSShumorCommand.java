@@ -18,6 +18,8 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import gnu.trove.map.TLongIntMap;
+import gnu.trove.map.hash.TLongIntHashMap;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Author;
@@ -37,11 +39,10 @@ import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CSShumorCommand extends Command {
 
-    private final Map<String, Integer> cssIndex;
+    private final TLongIntMap cssIndex = new TLongIntHashMap();
 
     public CSShumorCommand() {
         this.category = CommandCategory.FUN;
-        this.cssIndex = new TreeMap<>();
     }
 
 

@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.commands.`fun`
 
+import gnu.trove.map.hash.TLongIntHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.web.WebUtils
@@ -28,7 +29,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.EarthUtils.Companion.sendRedditPost
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import java.util.*
 
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -37,20 +37,17 @@ class JokeCommand : Command() {
     /*
      * This keeps track of where we are in the jokes
      */
-    private val jokeIndex: MutableMap<String, Int>
+    private val jokeIndex = TLongIntHashMap()
+    private val memeIndex = TLongIntHashMap()
 
     init {
         this.category = CommandCategory.FUN
-        this.jokeIndex = TreeMap()
     }
 
     override fun executeCommand(ctx: CommandContext) {
 
         if (ctx.invoke == "meme") {
-            WebUtils.ins.getJSONObject("https://api-to.get-a.life/meme").async {
-                val url = it.getString("url")
-                sendEmbed(ctx.event, EmbedUtils.embedImage(url))
-            }
+            sendRedditPost("memes", memeIndex, ctx.event)
 
             return
         }

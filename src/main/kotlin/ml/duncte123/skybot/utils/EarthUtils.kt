@@ -20,6 +20,7 @@ package ml.duncte123.skybot.utils
 
 import com.sedmelluq.discord.lavaplayer.player.AudioPlayer
 import com.sedmelluq.discord.lavaplayer.track.AudioTrack
+import gnu.trove.map.TLongIntMap
 import lavalink.client.player.IPlayer
 import me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.*
@@ -203,19 +204,12 @@ class EarthUtils {
                 .put("title", track.info.title)
 
         @JvmStatic
-        fun sendRedditPost(reddit: String, index: MutableMap<String, Int>, event: GuildMessageReceivedEvent, all: Boolean = false) {
-            val stort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
-            WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$stort").async {
+        fun sendRedditPost(reddit: String, index: TLongIntMap, event: GuildMessageReceivedEvent, all: Boolean = false) {
+            val sort = if (all) "/.json?sort=all&t=day&limit=400" else "top/.json?sort=top&t=day&limit=400"
+
+            WebUtils.ins.getJSONObject("https://www.reddit.com/r/$reddit/$sort").async {
                 val posts = it.getJSONObject("data").getJSONArray("children").filter { filter ->
-
-                    filter as JSONObject
-
-                    if (event.channel.isNSFW) {
-                        true
-                    } else {
-                        !filter.getJSONObject("data").getBoolean("over_18")
-                    }
-
+                    event.channel.isNSFW || !(filter as JSONObject).getJSONObject("data").getBoolean("over_18")
                 }.filter { filter ->
                     filter as JSONObject
 
@@ -230,15 +224,16 @@ class EarthUtils {
                     return@async
                 }
 
-                if (!index.containsKey(event.guild.id) || index.getOrDefault(event.guild.id, 0) >= posts.size) {
-                    index[event.guild.id] = 0
+                // We don't need to check for a contains because default value will be 0
+                if (index.get(event.guild.idLong) >= posts.size) {
+                    index.put(event.guild.idLong, 0)
                 }
 
-                val postI = index.getOrDefault(event.guild.id, 0)
+                val postI = index.get(event.guild.idLong)
 
                 val post: JSONObject = JSONArray(posts).getJSONObject(postI).getJSONObject("data")
 
-                index[event.guild.id] = postI + 1
+                index.put(event.guild.idLong, postI + 1)
 
                 val title: String = post.getString("title")
                 val text: String = post.optString("selftext", "")
@@ -256,7 +251,7 @@ class EarthUtils {
 
                 if (images != null) {
                     val image = images.getJSONObject(0).getJSONObject("source").getString("url")
-                    embed.setImage(image)
+                    embed.setImage(image.replaceFirst("preview", "i"))
                 }
 
                 sendEmbed(event, embed)
