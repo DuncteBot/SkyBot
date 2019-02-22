@@ -30,9 +30,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jsoup.nodes.Element;
 
-import java.util.Map;
-import java.util.TreeMap;
-
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 import static ml.duncte123.skybot.utils.EarthUtils.sendRedditPost;
 
