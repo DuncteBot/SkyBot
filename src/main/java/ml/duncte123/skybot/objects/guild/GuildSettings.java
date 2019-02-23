@@ -25,9 +25,11 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
 /**
  * This class will hold the settings for a guild
@@ -54,7 +56,7 @@ public class GuildSettings {
     private boolean spamFilterState = false;
     private boolean kickInsteadState = false;
     private long muteRoleId = 0L;
-    private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
+    private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private final List<String> blacklistedWords = new ArrayList<>();
 
     /**
@@ -382,13 +384,7 @@ public class GuildSettings {
     @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
     public Long[] getRateLimitsForTwig() {
-        final Long[] temp = new Long[ratelimits.length];
-
-        for (int i = 0; i < ratelimits.length; i++){
-            temp[i] = ratelimits[i];
-        }
-
-        return temp;
+        return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
     }
 
     public boolean getKickState() {

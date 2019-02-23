@@ -282,30 +282,28 @@ public class MessageListener extends BaseListener {
         final String[] split = messageToCheck.getContentRaw().toLowerCase().split("\\s+");
 
         for (final String foundWord : split) {
-            if (!blacklist.contains(foundWord)) {
-                continue;
+            if (blacklist.contains(foundWord)) {
+                messageToCheck.delete()
+                    .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
+
+                modLog(String.format(
+                    "Deleted message from %#s in %s for containing the blacklisted word \"%s\"",
+                    messageToCheck.getAuthor(),
+                    messageToCheck.getChannel(),
+                    foundWord
+                ), dbG);
+
+                sendMsgFormatAndDeleteAfter(
+                    (TextChannel) messageToCheck.getChannel(),
+                    5,
+                    TimeUnit.SECONDS,
+                    "%s the word \"%s\" is blacklisted on this server",
+                    messageToCheck.getMember(),
+                    foundWord
+                );
+
+                return true;
             }
-
-            messageToCheck.delete()
-                .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
-
-            modLog(String.format(
-                "Deleted message from %#s in %s for containing the blacklisted word \"%s\"",
-                messageToCheck.getAuthor(),
-                messageToCheck.getChannel(),
-                foundWord
-            ), dbG);
-
-            sendMsgFormatAndDeleteAfter(
-                (TextChannel) messageToCheck.getChannel(),
-                5,
-                TimeUnit.SECONDS,
-                "%s the word \"%s\" is blacklisted on this server",
-                messageToCheck.getMember(),
-                foundWord
-            );
-
-            return true;
         }
 
         return false;
