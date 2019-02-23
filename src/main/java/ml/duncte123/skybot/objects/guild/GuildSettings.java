@@ -29,7 +29,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
-import static ml.duncte123.skybot.utils.GuildSettingsUtils.ratelimmitChecks;
 
 /**
  * This class will hold the settings for a guild
