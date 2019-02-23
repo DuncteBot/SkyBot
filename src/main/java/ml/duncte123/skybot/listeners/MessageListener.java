@@ -29,12 +29,13 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.BadWordFilter;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
-import ml.duncte123.skybot.utils.ModerationUtils;
 import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
@@ -46,6 +47,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormatAndDeleteAfter;
+import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 
 public class MessageListener extends BaseListener {
 
@@ -192,8 +195,9 @@ public class MessageListener extends BaseListener {
             return true;
         }
 
-        if (topic.contains("-commands"))
+        if (topic.contains("-commands")) {
             return false;
+        }
 
         final String[] blocked = topic.split("-");
 
@@ -205,8 +209,9 @@ public class MessageListener extends BaseListener {
                     return false;
                 }
 
-                /*if (shouldBlockCommand(settings, rw, s))
+                /*if (shouldBlockCommand(settings, rw, s)) {
                     return false;
+                }
 
                 return true;*/
                 return !shouldBlockCommand(settings, rw, s);
@@ -225,56 +230,121 @@ public class MessageListener extends BaseListener {
         return true;
     }
 
+    private void checkMessageForInvites(Guild guild, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+        if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
+            final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
+            if (matcher.find()) {
+                //Get the invite Id from the message
+                final String inviteID = matcher.group(matcher.groupCount());
+
+                //Prohibiting failure because the bot is currently banned from the other guild.
+                guild.getInvites().queue((invites) -> {
+                    //Check if the invite is for this guild, if it is not delete the message
+                    if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
+                        event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
+                                sendMsg(event, event.getAuthor().getAsMention() +
+                                    ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
+                            (t) -> {}
+                        );
+                    }
+                });
+            }
+        }
+    }
+
+    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+        if (settings.isEnableSwearFilter()) {
+
+            if (!wordFilter.filterText(rw)) {
+                return false;
+            }
+
+            messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+                .queue(null, (t) -> {});
+
+            sendMsg(event,
+                String.format("Hello there, %s please do not use cursive language within this Discord.",
+                    event.getAuthor().getAsMention()
+                ),
+                m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean blacklistedWordCheck(DunctebotGuild dbG, Message messageToCheck, Member member, List<String> blacklist) {
+        if (member.hasPermission(Permission.KICK_MEMBERS)) {
+            return false;
+        }
+
+        final String[] split = messageToCheck.getContentRaw().toLowerCase().split("\\s+");
+
+        for (final String foundWord : split) {
+            if (!blacklist.contains(foundWord)) {
+                continue;
+            }
+
+            messageToCheck.delete()
+                .reason(String.format("Contains blacklisted word: \"%s\"", foundWord)).queue();
+
+            modLog(String.format(
+                "Deleted message from %#s in %s for containing the blacklisted word \"%s\"",
+                messageToCheck.getAuthor(),
+                messageToCheck.getChannel(),
+                foundWord
+            ), dbG);
+
+            sendMsgFormatAndDeleteAfter(
+                (TextChannel) messageToCheck.getChannel(),
+                5,
+                TimeUnit.SECONDS,
+                "%s the word \"%s\" is blacklisted on this server",
+                messageToCheck.getMember(),
+                foundWord
+            );
+
+            return true;
+        }
+
+        return false;
+    }
+
+    private void checkSpamFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings, DunctebotGuild g) {
+        if (settings.isEnableSpamFilter()) {
+            final long[] rates = settings.getRatelimits();
+
+            spamFilter.applyRates(rates);
+
+            if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
+                modLog(event.getJDA().getSelfUser(), event.getAuthor(),
+                    settings.getKickState() ? "kicked" : "muted", "spam", g);
+            }
+        }
+    }
+
     private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
 
-            if (settings.isFilterInvites() && guild.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {
-                final Matcher matcher = Message.INVITE_PATTERN.matcher(rw);
-                if (matcher.find()) {
-                    //Get the invite Id from the message
-                    final String inviteID = matcher.group(matcher.groupCount());
+            checkMessageForInvites(guild, event, settings, rw);
 
-                    //Prohibiting failure because the bot is currently banned from the other guild.
-                    guild.getInvites().queue((invites) -> {
-                        //Check if the invite is for this guild, if it is not delete the message
-                        if (invites.stream().noneMatch((invite) -> invite.getCode().equals(inviteID))) {
-                            event.getMessage().delete().reason("Contained unauthorized invite.").queue((it) ->
-                                    sendMsg(event, event.getAuthor().getAsMention() +
-                                        ", please don't post invite links here.", m -> m.delete().queueAfter(4, TimeUnit.SECONDS)),
-                                (t) -> {}
-                            );
-                        }
-                    });
-                }
+            final Message messageToCheck = event.getMessage();
+
+            if (checkSwearFilter(messageToCheck, event, settings, rw)) {
+                return true;
             }
 
-            if (settings.isEnableSwearFilter()) {
-                final Message messageToCheck = event.getMessage();
-                if (wordFilter.filterText(rw)) {
-                    messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
-                        .queue(null, (t) -> {});
+            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
 
-                    sendMsg(event,
-                        String.format("Hello there, %s please do not use cursive language within this Discord.",
-                            event.getAuthor().getAsMention()
-                        ),
-                        m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
-                    return true;
-                }
+            if (blacklistedWordCheck(dbG, messageToCheck, event.getMember(), settings.getBlacklistedWords())) {
+                return true;
             }
 
-            if (settings.isEnableSpamFilter()) {
-                final Message messageToCheck = event.getMessage();
-                final long[] rates = settings.getRatelimits();
-                spamFilter.applyRates(rates);
-                final DunctebotGuild g = new DunctebotGuild(guild);
-                if (spamFilter.check(new Triple<>(event.getMember(), messageToCheck, settings.getKickState()))) {
-                    ModerationUtils.modLog(event.getJDA().getSelfUser(), event.getAuthor(),
-                        settings.getKickState() ? "kicked" : "muted", "spam", g);
-                }
-            }
+
+            checkSpamFilter(messageToCheck, event, settings, dbG);
         }
 
         return false;

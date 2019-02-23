@@ -114,6 +114,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 while (res.next()) {
                     val guildId = toLong(res.getString("guildId"))
 
+                    val blackList = getBlackListsForGuild(guildId)
+
                     settings.add(GuildSettings(guildId)
                         .setEnableJoinMessage(res.getBoolean("enableJoinMessage"))
                         .setEnableSwearFilter(res.getBoolean("enableSwearFilter"))
@@ -131,6 +133,7 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         .setMuteRoleId(toLong(res.getString("muteRoleId")))
                         .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                         .setKickState(res.getBoolean("kickInsteadState"))
+                        .setBlacklistedWords(blackList)
                     )
                 }
                 callback.invoke(settings)
@@ -560,5 +563,26 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
 
         return null
+    }
+
+    private fun getBlackListsForGuild(guildId: Long): List<String> {
+        val database = variables.database
+        val list = arrayListOf<String>()
+        val dbName = database.name
+
+        database.connManager.use { manager ->
+            val connection = manager.connection
+            val smt = connection.createStatement()
+
+            val res = smt.executeQuery("SELECT * FROM $dbName.blacklists WHERE guild_id = '$guildId'")
+
+            while (res.next()) {
+                list.add(res.getString("word"))
+            }
+
+            res.close()
+        }
+
+        return list
     }
 }
