@@ -65,6 +65,7 @@ public abstract class ModBaseCommand extends Command {
 
         if (argscheck && args.isEmpty()) {
             sendMsg(event, "Missing arguments, check `" + Settings.PREFIX + "help " + getName() + '`');
+
             return;
         }
 
