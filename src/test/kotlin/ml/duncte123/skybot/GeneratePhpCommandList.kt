@@ -34,7 +34,7 @@ class GeneratePhpCommandList {
 
             val variables = Variables.getInstance()
 
-            genPhp(variables.commandManager)
+//            genPhp(variables.commandManager)
             genStaticSite(variables.commandManager)
 
             exitProcess(0)
@@ -101,7 +101,7 @@ class GeneratePhpCommandList {
                 .replace("<".toRegex(), "&lt;")
                 .replace(">".toRegex(), "&gt;")
                 .replace("\\n".toRegex(), "<br />")
-                .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre><code>$1</code></pre>")
+                .replace("\\`\\`\\`(.*)\\`\\`\\`".toRegex(), "<pre class=\"code-block\"><code>$1</code></pre>")
                 .replace("\\`([^\\`]+)\\`".toRegex(), "<code>$1</code>")
                 .replace("\\*\\*(.*)\\*\\*".toRegex(), "<strong>$1</strong>")
 
