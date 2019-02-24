@@ -75,6 +75,12 @@ abstract class DatabaseAdapter(@Suppress("UNUSED_PARAMETER") protected val varia
 
     abstract fun registerNewGuild(guildSettings: GuildSettings, callback: (Boolean) -> Unit)
 
+    abstract fun addWordToBlacklist(guildId: Long, word: String)
+
+    abstract fun removeWordFromBlacklist(guildId: Long, word: String)
+
+    abstract fun clearBlacklist(guildId: Long)
+
     /////////////////
     // Embed settings
 

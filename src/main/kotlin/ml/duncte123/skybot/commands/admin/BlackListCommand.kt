@@ -20,6 +20,7 @@ package ml.duncte123.skybot.commands.admin
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.adapters.DatabaseAdapter
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
 import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.CommandCategory
@@ -46,6 +47,12 @@ class BlackListCommand : ModBaseCommand() {
             return
         }
 
+        if (args[0] == "clear") {
+            clearBlacklist(ctx.databaseAdapter, ctx.guild, event)
+
+            return
+        }
+
         if (args.size < 2) {
             sendMsg(event, "Missing arguments, check `${Settings.PREFIX}help $name`")
 
@@ -53,9 +60,9 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         when(args[0]) {
-            "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.guild, event)
+            "add" -> addWordToBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
 
-            "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.guild, event)
+            "remove" -> removeWordFromBlacklist(args[1].toLowerCase(), ctx.databaseAdapter, ctx.guild, event)
 
             else -> sendMsg(event, "Unknown argument `${args[0]}` check `${Settings.PREFIX}help $name`")
         }
@@ -85,7 +92,13 @@ class BlackListCommand : ModBaseCommand() {
         }
     }
 
-    private fun addWordToBlacklist(word: String, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+    private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+        adapter.clearBlacklist(guild.idLong)
+
+        sendMsg(event, "The blacklist has been cleared")
+    }
+
+    private fun addWordToBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
         val list = guild.getSettings().blacklistedWords
 
         if (list.contains(word)) {
@@ -96,11 +109,12 @@ class BlackListCommand : ModBaseCommand() {
 
         list.add(word)
 
+        adapter.addWordToBlacklist(guild.idLong, word)
 
         sendMsg(event, "`$word` has been added to the blacklist")
     }
 
-    private fun removeWordFromBlacklist(word: String, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
+    private fun removeWordFromBlacklist(word: String, adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
         val list = guild.getSettings().blacklistedWords
 
         if (!list.contains(word)) {
@@ -110,6 +124,8 @@ class BlackListCommand : ModBaseCommand() {
         }
 
         list.remove(word)
+
+        adapter.removeWordFromBlacklist(guild.idLong, word)
 
         sendMsg(event, "`$word` has been removed from the blacklist")
     }
@@ -121,6 +137,7 @@ class BlackListCommand : ModBaseCommand() {
         |
         |Usage:```
         |   ${Settings.PREFIX}$name list => Gives you a list of the current blacklisted words
+        |   ${Settings.PREFIX}$name clear => Clears the blacklist
         |   ${Settings.PREFIX}$name add <word> => Adds a word to the blacklist
         |   ${Settings.PREFIX}$name remove <word> => Removes a word from the blacklist
         |```

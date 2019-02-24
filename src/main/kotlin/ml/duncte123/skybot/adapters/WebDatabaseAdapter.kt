@@ -175,6 +175,18 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun addWordToBlacklist(guildId: Long, word: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun removeWordFromBlacklist(guildId: Long, word: String) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun clearBlacklist(guildId: Long) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
     override fun loadEmbedSettings(callback: (TLongIntMap) -> Unit) {
         variables.database.run {
             val map = TLongIntHashMap()

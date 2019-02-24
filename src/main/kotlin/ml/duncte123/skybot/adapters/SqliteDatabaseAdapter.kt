@@ -141,6 +141,51 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         }
     }
 
+    override fun addWordToBlacklist(guildId: Long, word: String) {
+        val database = variables.database
+
+        database.run {
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.prepareStatement("INSERT INTO blacklists(guild_id, word) VALUES( ? , ? )")
+
+                smt.setString(1, guildId.toString())
+                smt.setString(2, word)
+
+                smt.executeUpdate()
+            }
+        }
+    }
+
+    override fun removeWordFromBlacklist(guildId: Long, word: String) {
+        val database = variables.database
+
+        database.run {
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.prepareStatement("DELETE FROM blacklists WHERE guild_id = ? AND word = ?")
+
+                smt.setString(1, guildId.toString())
+                smt.setString(2, word)
+
+                smt.executeUpdate()
+            }
+        }
+    }
+
+    override fun clearBlacklist(guildId: Long) {
+        val database = variables.database
+
+        database.run {
+            database.connManager.use { manager ->
+                val connection = manager.connection
+                val smt = connection.prepareStatement("DELETE FROM blacklists where guild_id = '$guildId'")
+
+                smt.executeUpdate()
+            }
+        }
+    }
+
     override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
         throw MethodNotSupportedException("Not supported for SQLite")
     }
@@ -150,12 +195,10 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
         database.run {
 
-            val dbName = database.name
-
             database.connManager.use { manager ->
                 val connection = manager.connection
 
-                val smt = connection.prepareStatement("DELETE FROM $dbName.guildSettings where guildId = '$guildId'")
+                val smt = connection.prepareStatement("DELETE FROM guildSettings where guildId = '$guildId'")
                 smt.executeUpdate()
 
             }
