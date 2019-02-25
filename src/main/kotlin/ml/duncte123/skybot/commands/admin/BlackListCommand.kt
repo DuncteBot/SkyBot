@@ -95,6 +95,8 @@ class BlackListCommand : ModBaseCommand() {
     private fun clearBlacklist(adapter: DatabaseAdapter, guild: DunctebotGuild, event: GuildMessageReceivedEvent) {
         adapter.clearBlacklist(guild.idLong)
 
+        guild.getSettings().blacklistedWords.clear()
+
         sendMsg(event, "The blacklist has been cleared")
     }
 

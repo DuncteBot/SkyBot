@@ -122,6 +122,36 @@ class DuncteApis(private val apiKey: String) {
         return false
     }
 
+    fun addWordToBlacklist(guildId: Long, word: String) {
+        val json = JSONObject().put("word", word)
+        val response = postJSON("guildsettings/$guildId/blacklist", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to add word to blacklist for guild {}\nResponse: {}",
+                guildId, response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun removeWordFromBlacklist(guildId: Long, word: String) {
+        val json = JSONObject().put("word", word)
+        val response = deleteJSON("guildsettings/$guildId/blacklist", json)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to remove word from blacklist for guild {}\nResponse: {}",
+                guildId, response.getJSONObject("error").toString(4))
+        }
+    }
+
+    fun clearBlacklist(guildId: Long) {
+        val request = defaultRequest("guildsettings/$guildId/blacklist/all").delete()
+        val response = executeRequest(request)
+
+        if (!response.getBoolean("success")) {
+            logger.error("Failed to clear blacklist for guild {}\nResponse: {}",
+                guildId, response.getJSONObject("error").toString(4))
+        }
+    }
+
     fun loadEmbedSettings(): JSONArray {
         return paginateData("embedsettings")
     }
