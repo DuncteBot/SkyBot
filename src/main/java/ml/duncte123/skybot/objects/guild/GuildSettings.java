@@ -24,6 +24,9 @@ import ml.duncte123.skybot.Settings;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 
@@ -52,7 +55,8 @@ public class GuildSettings {
     private boolean spamFilterState = false;
     private boolean kickInsteadState = false;
     private long muteRoleId = 0L;
-    private long[] ratelimits = new long[]{20, 45, 60, 120, 240, 2400};
+    private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
+    private final List<String> blacklistedWords = new ArrayList<>();
 
     /**
      * This will init everything
@@ -202,6 +206,7 @@ public class GuildSettings {
      */
     public GuildSettings setLogChannel(long tc) {
         this.logChannelId = tc;
+
         return this;
     }
 
@@ -224,6 +229,7 @@ public class GuildSettings {
      */
     public GuildSettings setAutoroleRole(long autoroleRole) {
         this.autoRole = autoroleRole;
+
         return this;
     }
 
@@ -250,6 +256,7 @@ public class GuildSettings {
      */
     public GuildSettings setWelcomeLeaveChannel(long welcomeLeaveChannel) {
         this.welcomeLeaveChannel = welcomeLeaveChannel;
+
         return this;
     }
 
@@ -272,6 +279,7 @@ public class GuildSettings {
      */
     public GuildSettings setServerDesc(String serverDesc) {
         this.serverDesc = serverDesc;
+
         return this;
     }
 
@@ -294,6 +302,7 @@ public class GuildSettings {
      */
     public GuildSettings setAnnounceTracks(boolean announceTracks) {
         this.announceNextTrack = announceTracks;
+
         return this;
     }
 
@@ -316,6 +325,7 @@ public class GuildSettings {
      */
     public GuildSettings setAutoDeHoist(boolean autoDeHoist) {
         this.autoDeHoist = autoDeHoist;
+
         return this;
     }
 
@@ -336,6 +346,7 @@ public class GuildSettings {
      */
     public GuildSettings setFilterInvites(boolean filterInvites) {
         this.filterInvites = filterInvites;
+
         return this;
     }
 
@@ -345,6 +356,7 @@ public class GuildSettings {
 
     public GuildSettings setEnableSpamFilter(boolean newState) {
         spamFilterState = newState;
+
         return this;
     }
 
@@ -354,6 +366,7 @@ public class GuildSettings {
 
     public GuildSettings setMuteRoleId(long muteRoleId) {
         this.muteRoleId = muteRoleId;
+
         return this;
     }
 
@@ -363,16 +376,14 @@ public class GuildSettings {
 
     public GuildSettings setRatelimits(long[] ratelimits) {
         this.ratelimits = ratelimits;
+
         return this;
     }
 
     @SuppressWarnings("unused") // This is used in twig but not detected by your ide
     // because for some reason twig casts long[] to an object
     public Long[] getRateLimitsForTwig() {
-        Long[] temp = new Long[ratelimits.length];
-        for (int i = 0; i < ratelimits.length; i++)
-            temp[i] = ratelimits[i];
-        return temp;
+        return Arrays.stream(ratelimits).boxed().toArray(Long[]::new);
     }
 
     public boolean getKickState() {
@@ -381,6 +392,18 @@ public class GuildSettings {
 
     public GuildSettings setKickState(boolean newState) {
         kickInsteadState = newState;
+
+        return this;
+    }
+
+    public List<String> getBlacklistedWords() {
+        return blacklistedWords;
+    }
+
+    public GuildSettings setBlacklistedWords(List<String> blacklistedWords) {
+        this.blacklistedWords.clear();
+        this.blacklistedWords.addAll(blacklistedWords);
+
         return this;
     }
 
@@ -402,18 +425,21 @@ public class GuildSettings {
         for (final Field field : obj.getClass().getDeclaredFields()) {
             try {
                 final String name = field.getName();
-                Object value = field.get(obj);
 
-                if ("ratelimits".equals(name)) {
-                    j.put(name, convertJ2S((long[]) value));
+                // Blacklisted words are done separately
+                if ("blacklistedWords".equals(name)) {
                     continue;
                 }
 
-                if (value instanceof Long) {
-                    value = String.valueOf(value);
+                final Object value = field.get(obj);
+
+                if ("ratelimits".equals(name)) {
+                    j.put(name, convertJ2S((long[]) value));
+
+                    continue;
                 }
 
-                j.put(name, value);
+                j.put(name, String.valueOf(value));
             }
             catch (IllegalAccessException e) {
                 e.printStackTrace();

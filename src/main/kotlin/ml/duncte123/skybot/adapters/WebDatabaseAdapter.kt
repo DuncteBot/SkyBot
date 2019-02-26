@@ -32,6 +32,7 @@ import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
+import org.json.JSONArray
 import org.json.JSONObject
 import java.sql.Date
 
@@ -146,6 +147,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 .setMuteRoleId(toLong(item.optString("muteRoleId")))
                 .setRatelimits(ratelimmitChecks(item.getString("ratelimits")))
                 .setKickState(toBool(item.getInt("kickInsteadState")))
+                .setBlacklistedWords(parseBlacklistedWords(item.getJSONArray("blacklisted_words")))
 
             callback.invoke(setting)
         }
@@ -170,6 +172,24 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             callback.invoke(
                 variables.apis.registerNewGuildSettings(guildSettings)
             )
+        }
+    }
+
+    override fun addWordToBlacklist(guildId: Long, word: String) {
+        variables.database.run {
+            variables.apis.addWordToBlacklist(guildId, word)
+        }
+    }
+
+    override fun removeWordFromBlacklist(guildId: Long, word: String) {
+        variables.database.run {
+            variables.apis.removeWordFromBlacklist(guildId, word)
+        }
+    }
+
+    override fun clearBlacklist(guildId: Long) {
+        variables.database.run {
+            variables.apis.clearBlacklist(guildId)
         }
     }
 
@@ -378,4 +398,6 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             variables.apis.removeVcAutoRoleForGuild(guildId)
         }
     }
+
+    private fun parseBlacklistedWords(array: JSONArray) = array.map { (it as JSONObject).getString("word") }
 }

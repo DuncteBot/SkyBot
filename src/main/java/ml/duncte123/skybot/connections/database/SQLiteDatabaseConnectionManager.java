@@ -218,6 +218,13 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
                     "role_id VARCHAR(255) NOT NULL);"
             );
 
+            connection.createStatement().execute(
+                "CREATE TABLE IF NOT EXISTS blacklists" +
+                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                    "guild_id VARCHAR(255) NOT NULL," +
+                    "word VARCHAR(255) NOT NULL);"
+            );
+
             close();
         }
         catch (SQLException | IOException e) {
