@@ -105,6 +105,23 @@ public class EvalFilter extends GroovyValueFilter {
 
     private static final Set<Class<?>> ALLOWED_TYPES = Arrays.stream(ALLOWED_TYPES_LIST).collect(Collectors.toSet());
 
+    private static final List<String> BLOCKED_METHODS = Arrays.asList(
+        "invokeMethod",
+        "invoke",
+        "print",
+        "run",
+        "dump",
+        "printf",
+        "evaluate",
+        "find",
+        "setProperty",
+        "getProperty",
+        "getBinding",
+        "setBinding",
+        "addShutdownHook",
+        "execute"
+    );
+
     /**
      * Filter arrays of
      */
@@ -195,8 +212,8 @@ public class EvalFilter extends GroovyValueFilter {
 
     @Override
     public Object onMethodCall(Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
-        if (method.equalsIgnoreCase("execute")) {
-            throw new DoomedException("The method \"execute\" is blocked for security reasons");
+        if (BLOCKED_METHODS.contains(method)) {
+            throw new DoomedException("The method \"%s\" is blocked for security reasons", method);
         }
 
         return super.onMethodCall(invoker, receiver, method, args);
