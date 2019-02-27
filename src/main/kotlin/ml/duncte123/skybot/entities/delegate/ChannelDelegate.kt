@@ -38,15 +38,15 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
     private val jda: JDA = JDADelegate(channel.jda)
     private val guild: Guild = GuildDelegate(channel.guild)
-    //private val parent: Category? = null
+    private val members = channel.members.map { MemberDelegate(it) }
 
-    override fun getParent(): Category? = CategoryDelegate(requireNotNull(channel.parent))
+    override fun getParent(): Category? = null
 
     override fun getJDA(): JDA = JDADelegate(this.jda)
 
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 
-    override fun getMembers(): List<Member> = channel.members.map { MemberDelegate(it) }
+    override fun getMembers(): List<Member> = this.members
     override fun createCopy(): ChannelAction = throw DoomedException("**\uD83D\uDD25 lit**")
     override fun getInvites(): RestAction<List<Invite>> = throw DoomedException("**\uD83D\uDD25 lit**")
     override fun getManager(): ChannelManager = throw DoomedException("**\uD83D\uDD25 lit**")

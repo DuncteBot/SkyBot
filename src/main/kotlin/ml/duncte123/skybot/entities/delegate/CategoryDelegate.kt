@@ -31,18 +31,19 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
 /**
  * @see Category
  */
-class CategoryDelegate(private val a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDelegate(a6sG3x_Hw) {
+class CategoryDelegate(a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDelegate(a6sG3x_Hw) {
     private val guild: Guild = GuildDelegate(a6sG3x_Hw.guild)
+    private val voiceChannelMap: () -> List<VoiceChannel> = { a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) } }
+    private val textChannelMap: () -> List<TextChannel> = { a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } }
+
     override fun getParent(): Category? = null
     override fun getJDA(): JDA = JDADelegate(this.jda)
-    override fun getGuild(): Guild = GuildDelegate(this.guild)
-    override fun getVoiceChannels(): List<VoiceChannel> = a6sG3x_Hw.voiceChannels.map { VoiceChannelDelegate(it) }
-    override fun getTextChannels(): List<TextChannel> = a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) }
+    override fun getGuild(): Guild = this.guild
+    override fun getVoiceChannels(): List<VoiceChannel> = this.voiceChannelMap()
+    override fun getTextChannels(): List<TextChannel> = this.textChannelMap()
     override fun getPermissionOverride(role: Role): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
 
     override fun getPermissionOverride(member: Member): PermissionOverride = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
     override fun createPermissionOverride(role: Role): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit role: ${role.name}**")
     override fun createPermissionOverride(member: Member): PermissionOverrideAction = throw DoomedException("**\uD83D\uDD25 lit member: ${member.effectiveName}**")
-
-    override fun toString() = a6sG3x_Hw.toString()
 }

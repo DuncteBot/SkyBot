@@ -36,31 +36,52 @@ import net.dv8tion.jda.core.requests.RestAction
 /**
  * @see Guild
  */
-class GuildDelegate(private val z88Am1Alk: Guild) : Guild by z88Am1Alk {
+class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
     private val jda: JDA = JDADelegate(z88Am1Alk.jda)
     private val manager: GuildManager? = null
 
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    private val getMemberClosure: (user: User) -> Member = { MemberDelegate(z88Am1Alk.getMember(it)) }
+    private val getSelfMemberClosure: () -> Member = { MemberDelegate(z88Am1Alk.selfMember) }
+    private val getRoleByIdClosure: (id: Long) -> Role = { RoleDelegate(z88Am1Alk.getRoleById(it)) }
+    private val getMemberByIdClosure: (id: Long) -> Member = { MemberDelegate(z88Am1Alk.getMemberById(it)) }
+    private val getMembersClosure: () -> List<Member> = { z88Am1Alk.members.map { MemberDelegate(it) } }
+    private val getMembersByEffectiveNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = {
+        name, ignoreCase -> z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
+    }
+    private val getMembersByNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = {
+        name, ignoreCase -> z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
+    }
+    private val getMembersByNicknameClosure: (nickname: String, ignoreCase: Boolean) -> List<Member> = {
+        nickname, ignoreCase -> z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
+    }
+    private val getMembersWithRolesClosure: (roles: Collection<Role>) -> List<Member> = {
+        z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
+    }
+    private val getRolesClosure: () -> List<Role> = { z88Am1Alk.roles.map { RoleDelegate(it) } }
+
+    private val getRolesByNameClosure: (name: String, ignoreCase: Boolean) -> List<Role> = {
+        name, ignoreCase -> z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
+    }
+
+    override fun getJDA() = this.jda
     override fun getManager(): GuildManager = throw DoomedException("**\uD83D\uDD25 lit**")
 
-    override fun getMember(user: User): Member = MemberDelegate(z88Am1Alk.getMember(user))
-    override fun getSelfMember(): Member = MemberDelegate(z88Am1Alk.selfMember)
-    override fun getRoleById(id: Long): Role = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getRoleById(id: String): Role = RoleDelegate(z88Am1Alk.getRoleById(id))
-    override fun getMemberById(userId: Long): Member = MemberDelegate(z88Am1Alk.getMemberById(userId))
-    override fun getMemberById(userId: String): Member = MemberDelegate(z88Am1Alk.getMemberById(userId))
+    override fun getMember(user: User) = getMemberClosure(user)
+    override fun getSelfMember() = getSelfMemberClosure()
+    override fun getRoleById(id: Long) = getRoleByIdClosure(id)
+    override fun getRoleById(id: String) = getRoleByIdClosure(id.toLong())
+    override fun getMemberById(userId: Long) = getMemberByIdClosure(userId)
+    override fun getMemberById(userId: String) = getMemberByIdClosure(userId.toLong())
 
-    override fun getMembers(): List<Member> = z88Am1Alk.members.map { MemberDelegate(it) }
-    override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersByName(name: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
-    override fun getMembersByNickname(nickname: String, ignoreCase: Boolean): List<Member> = z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
+    override fun getMembers(): List<Member> = getMembersClosure()
+    override fun getMembersByEffectiveName(name: String, ignoreCase: Boolean) = getMembersByEffectiveNameClosure(name, ignoreCase)
+    override fun getMembersByName(name: String, ignoreCase: Boolean) = getMembersByNameClosure(name, ignoreCase)
+    override fun getMembersByNickname(nickname: String, ignoreCase: Boolean) = getMembersByNicknameClosure(nickname, ignoreCase)
     override fun getMembersWithRoles(vararg roles: Role): List<Member> = throw DoomedException("Vargarg is not supported")
-    override fun getMembersWithRoles(roles: Collection<Role>): List<Member> = z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
-    override fun getRoles(): List<Role> = z88Am1Alk.roles.map { RoleDelegate(it) }
-    override fun getRolesByName(name: String, ignoreCase: Boolean): List<Role> = z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
+    override fun getMembersWithRoles(roles: Collection<Role>) = getMembersWithRolesClosure(roles)
+    override fun getRoles() = getRolesClosure()
+    override fun getRolesByName(name: String, ignoreCase: Boolean) = getRolesByNameClosure(name, ignoreCase)
 
     override fun getController(): GuildController = throw DoomedException("**\uD83D\uDD25 lit**")
     override fun leave(): RestAction<Void> = throw DoomedException("**\uD83D\uDD25 lit**")
-
-    override fun toString() = z88Am1Alk.toString()
 }
