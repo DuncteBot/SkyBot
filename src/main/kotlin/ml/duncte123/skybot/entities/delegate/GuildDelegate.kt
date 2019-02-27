@@ -37,7 +37,7 @@ import net.dv8tion.jda.core.requests.RestAction
  * @see Guild
  */
 class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
-    private val jda: JDA = JDADelegate(z88Am1Alk.jda)
+    private val jda: JDA = throw DoomedException("JDA not available")
     private val manager: GuildManager? = null
 
     private val getMemberClosure: (user: User) -> Member = { MemberDelegate(z88Am1Alk.getMember(it)) }
@@ -45,22 +45,22 @@ class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
     private val getRoleByIdClosure: (id: Long) -> Role = { RoleDelegate(z88Am1Alk.getRoleById(it)) }
     private val getMemberByIdClosure: (id: Long) -> Member = { MemberDelegate(z88Am1Alk.getMemberById(it)) }
     private val getMembersClosure: () -> List<Member> = { z88Am1Alk.members.map { MemberDelegate(it) } }
-    private val getMembersByEffectiveNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = {
-        name, ignoreCase -> z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
+    private val getMembersByEffectiveNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = { name, ignoreCase ->
+        z88Am1Alk.getMembersByEffectiveName(name, ignoreCase).map { MemberDelegate(it) }
     }
-    private val getMembersByNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = {
-        name, ignoreCase -> z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
+    private val getMembersByNameClosure: (name: String, ignoreCase: Boolean) -> List<Member> = { name, ignoreCase ->
+        z88Am1Alk.getMembersByName(name, ignoreCase).map { MemberDelegate(it) }
     }
-    private val getMembersByNicknameClosure: (nickname: String, ignoreCase: Boolean) -> List<Member> = {
-        nickname, ignoreCase -> z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
+    private val getMembersByNicknameClosure: (nickname: String, ignoreCase: Boolean) -> List<Member> = { nickname, ignoreCase ->
+        z88Am1Alk.getMembersByNickname(nickname, ignoreCase).map { MemberDelegate(it) }
     }
     private val getMembersWithRolesClosure: (roles: Collection<Role>) -> List<Member> = {
         z88Am1Alk.getMembersWithRoles(roles).map { MemberDelegate(it) }
     }
     private val getRolesClosure: () -> List<Role> = { z88Am1Alk.roles.map { RoleDelegate(it) } }
 
-    private val getRolesByNameClosure: (name: String, ignoreCase: Boolean) -> List<Role> = {
-        name, ignoreCase -> z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
+    private val getRolesByNameClosure: (name: String, ignoreCase: Boolean) -> List<Role> = { name, ignoreCase ->
+        z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
     }
 
     override fun getJDA() = this.jda

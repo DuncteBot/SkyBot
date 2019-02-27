@@ -179,7 +179,6 @@ class EvalCommand : Command() {
         } else {
             protectedShell.setVariable("author", UserDelegate(event.author))
             protectedShell.setVariable("guild", GuildDelegate(event.guild))
-            protectedShell.setVariable("jda", JDADelegate(event.jda))
             protectedShell.setVariable("member", MemberDelegate(event.member))
             protectedShell.setVariable("channel", TextChannelDelegate(event.channel))
 

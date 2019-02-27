@@ -33,8 +33,7 @@ import net.dv8tion.jda.core.requests.RestAction
  * @see User
  */
 class UserDelegate(private val yBGyt8Kduo: User) : User by yBGyt8Kduo {
-    private val jda: JDA = JDADelegate(yBGyt8Kduo.jda)
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
 
     override fun getMutualGuilds(): List<Guild> = yBGyt8Kduo.mutualGuilds.map { GuildDelegate(it) }
     override fun openPrivateChannel(): RestAction<PrivateChannel> = throw DoomedException("**\uD83D\uDD25 lit**")

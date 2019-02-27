@@ -20,6 +20,7 @@ package ml.duncte123.skybot.entities.delegate
 
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.exceptions.DoomedException
 import net.dv8tion.jda.core.JDA
 import net.dv8tion.jda.core.entities.Guild
 import net.dv8tion.jda.core.entities.Member
@@ -31,11 +32,10 @@ import net.dv8tion.jda.core.entities.User
  * @see Member
  */
 class MemberDelegate(private val xH4z9a_Qe: Member) : Member by xH4z9a_Qe {
-    private val jda: JDA = JDADelegate(xH4z9a_Qe.jda)
     private val guild: Guild = GuildDelegate(xH4z9a_Qe.guild)
     private val user: User = UserDelegate(xH4z9a_Qe.user)
 
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
     override fun getGuild(): Guild = GuildDelegate(this.guild)
     override fun getUser(): User = UserDelegate(this.user)
 

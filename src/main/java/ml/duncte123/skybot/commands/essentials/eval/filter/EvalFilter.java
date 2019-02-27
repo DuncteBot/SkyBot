@@ -91,7 +91,6 @@ public class EvalFilter extends GroovyValueFilter {
         CategoryDelegate.class,
         ChannelDelegate.class,
         GuildDelegate.class,
-        JDADelegate.class,
         MemberDelegate.class,
         PresenceDelegate.class,
         RoleDelegate.class,
@@ -178,7 +177,7 @@ public class EvalFilter extends GroovyValueFilter {
         }
 
         if (o instanceof JDA) {
-            return new JDADelegate((JDA) o);
+            throw new DoomedException("JDA not available");
         }
 
         if (o instanceof Member) {

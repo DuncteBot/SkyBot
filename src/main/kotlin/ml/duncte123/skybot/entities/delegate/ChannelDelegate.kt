@@ -36,13 +36,12 @@ import net.dv8tion.jda.core.requests.restaction.PermissionOverrideAction
  * @see Channel
  */
 open class ChannelDelegate(private val channel: Channel) : Channel by channel {
-    private val jda: JDA = JDADelegate(channel.jda)
     private val guild: Guild = GuildDelegate(channel.guild)
     private val members = channel.members.map { MemberDelegate(it) }
 
     override fun getParent(): Category? = null
 
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
 
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 

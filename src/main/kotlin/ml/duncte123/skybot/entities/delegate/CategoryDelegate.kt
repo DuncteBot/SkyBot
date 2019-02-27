@@ -37,7 +37,7 @@ class CategoryDelegate(a6sG3x_Hw: Category) : Category by a6sG3x_Hw, ChannelDele
     private val textChannelMap: () -> List<TextChannel> = { a6sG3x_Hw.textChannels.map { TextChannelDelegate(it) } }
 
     override fun getParent(): Category? = null
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
     override fun getGuild(): Guild = this.guild
     override fun getVoiceChannels(): List<VoiceChannel> = this.voiceChannelMap()
     override fun getTextChannels(): List<TextChannel> = this.textChannelMap()

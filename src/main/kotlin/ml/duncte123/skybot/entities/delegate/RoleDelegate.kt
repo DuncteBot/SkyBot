@@ -34,11 +34,9 @@ import net.dv8tion.jda.core.requests.restaction.RoleAction
  * @see Role
  */
 class RoleDelegate(val uA83D3Ax_ky: Role) : Role by uA83D3Ax_ky {
-
-    private val jda: JDA = JDADelegate(uA83D3Ax_ky.jda)
     private val guild: Guild = GuildDelegate(uA83D3Ax_ky.guild)
 
-    override fun getJDA(): JDA = JDADelegate(this.jda)
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
 
     override fun getGuild(): Guild = GuildDelegate(this.guild)
 
