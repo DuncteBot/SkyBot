@@ -221,29 +221,29 @@ class EvalCommand : Command() {
     @SinceSkybot("3.58.0")
     private suspend fun eval(event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean, script: String, millis: Long) {
         val time = measureTimeMillis {
-            val out = withTimeoutOrNull(millis) {
+            withTimeoutOrNull(millis) {
+                if (!isRanByBotOwner) {
+                    filter.register()
+                }
+
                 engine.setVariable("scope", this)
-                try {
+
+                val out = try {
                     if (isRanByBotOwner) {
                         engine.evaluate(script)
                     } else {
-                        filter.register()
-
-                        val ret = try {
-                            protectedShell.evaluate(script)
-                        } catch (ex: Throwable) {
-                            ex
-                        }
-                        filter.unregister()
-
-                        return@withTimeoutOrNull ret
+                        protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
                     ex
                 }
-            }
 
-            parseEvalResponse(out, event, isRanByBotOwner)
+                parseEvalResponse(out, event, isRanByBotOwner)
+
+                if (!isRanByBotOwner) {
+                    filter.unregister()
+                }
+            }
         }
 
         logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script${TextColor.RESET}")
