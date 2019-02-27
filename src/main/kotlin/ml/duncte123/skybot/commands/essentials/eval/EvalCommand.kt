@@ -228,12 +228,18 @@ class EvalCommand : Command() {
                         engine.evaluate(script)
                     } else {
                         filter.register()
-                        protectedShell.evaluate(script)
+
+                        val ret = try {
+                            protectedShell.evaluate(script)
+                        } catch (ex: Throwable) {
+                            ex
+                        }
+                        filter.unregister()
+
+                        return@withTimeoutOrNull ret
                     }
                 } catch (ex: Throwable) {
                     ex
-                } finally {
-                    filter.unregister()
                 }
             }
 
