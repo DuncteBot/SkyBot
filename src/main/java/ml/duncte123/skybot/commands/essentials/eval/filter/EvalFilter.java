@@ -22,6 +22,7 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.Author;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
@@ -216,6 +217,23 @@ public class EvalFilter extends GroovyValueFilter {
         }
 
         return super.onMethodCall(invoker, receiver, method, args);
+    }
+
+    @Override
+    public Object onGetArray(Invoker invoker, Object receiver, Object index) throws Throwable {
+        if (receiver instanceof ArrayList) {
+            final List receivingArray = (ArrayList) receiver;
+
+            if (!receivingArray.isEmpty()) {
+                final Object first = receivingArray.get(0);
+
+                if (first.getClass() == Variables.class) {
+                    throw new DoomedException("You cannot touch that");
+                }
+            }
+        }
+
+        return super.onGetArray(invoker, receiver, index);
     }
 
     @Override
