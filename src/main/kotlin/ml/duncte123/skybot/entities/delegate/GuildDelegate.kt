@@ -37,7 +37,6 @@ import net.dv8tion.jda.core.requests.RestAction
  * @see Guild
  */
 class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
-    private val jda: JDA = throw DoomedException("JDA not available")
     private val manager: GuildManager? = null
 
     private val getMemberClosure: (user: User) -> Member = { MemberDelegate(z88Am1Alk.getMember(it)) }
@@ -63,7 +62,7 @@ class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
         z88Am1Alk.getRolesByName(name, ignoreCase).map { RoleDelegate(it) }
     }
 
-    override fun getJDA() = this.jda
+    override fun getJDA(): JDA = throw DoomedException("JDA not available")
     override fun getManager(): GuildManager = throw DoomedException("**\uD83D\uDD25 lit**")
 
     override fun getMember(user: User) = getMemberClosure(user)

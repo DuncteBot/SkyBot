@@ -33,8 +33,6 @@ import net.dv8tion.jda.core.managers.Presence
  * @see Presence
  */
 class PresenceDelegate(private val presence: Presence) : Presence by presence {
-    private val jda: JDA? = null
-
     override fun getJDA(): JDA = throw DoomedException("JDA not available")
 
     override fun setGame(game: Game) = throw DoomedException("Can not set the game")
