@@ -22,7 +22,6 @@ import groovy.lang.Closure;
 import groovy.lang.Script;
 import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.Author;
-import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
@@ -222,13 +221,9 @@ public class EvalFilter extends GroovyValueFilter {
     @Override
     public Object onGetArray(Invoker invoker, Object receiver, Object index) throws Throwable {
         if (receiver instanceof ArrayList) {
-            final List receivingArray = (ArrayList) receiver;
-
-            if (!receivingArray.isEmpty()) {
-                for(Object clazz : receivingArray) {
-                    if (!ALLOWED_TYPES.contains(clazz.getClass())) {
-                        throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
-                    }
+            for (Object clazz : (ArrayList) receiver) {
+                if (!ALLOWED_TYPES.contains(clazz.getClass())) {
+                    throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
                 }
             }
         }
