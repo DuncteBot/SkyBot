@@ -30,7 +30,6 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.Presence;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
-import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
