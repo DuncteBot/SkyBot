@@ -225,10 +225,10 @@ public class EvalFilter extends GroovyValueFilter {
             final List receivingArray = (ArrayList) receiver;
 
             if (!receivingArray.isEmpty()) {
-                final Object first = receivingArray.get(0);
-
-                if (first.getClass() == Variables.class) {
-                    throw new DoomedException("You cannot touch that");
+                for(Object clazz : receivingArray) {
+                    if (!ALLOWED_TYPES.contains(clazz.getClass())) {
+                        throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
+                    }
                 }
             }
         }
