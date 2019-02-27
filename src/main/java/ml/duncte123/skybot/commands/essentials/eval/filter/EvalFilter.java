@@ -30,6 +30,7 @@ import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.Presence;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
+import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.*;
@@ -137,6 +138,7 @@ public class EvalFilter extends GroovyValueFilter {
         if (o == null || ALLOWED_TYPES.contains(o.getClass())) {
             return o;
         }
+
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
         if (o instanceof Category) {
@@ -189,7 +191,16 @@ public class EvalFilter extends GroovyValueFilter {
             throw new SecurityException("Closures are not allowed.");
         }
 
-        throw new DoomedException("Class not allowed: " + o.toString().split(" ")[1]);
+        throw new DoomedException("Class not allowed: " + o.getClass().getName());
+    }
+
+    @Override
+    public Object onMethodCall(Invoker invoker, Object receiver, String method, Object... args) throws Throwable {
+        if (method.equalsIgnoreCase("execute")) {
+            throw new DoomedException("The method \"execute\" is blocked for security reasons");
+        }
+
+        return super.onMethodCall(invoker, receiver, method, args);
     }
 
     @Override

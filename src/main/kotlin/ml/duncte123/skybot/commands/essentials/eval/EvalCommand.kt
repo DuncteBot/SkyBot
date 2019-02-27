@@ -224,21 +224,28 @@ class EvalCommand : Command() {
                     filter.register()
                 }
 
-                engine.setVariable("scope", this)
-
-                var out: Any
-
                 try {
-                    out = if (isRanByBotOwner) {
-                        engine.evaluate(script)
-                    } else {
-                        protectedShell.evaluate(script)
-                    }
-                } catch (ex: Throwable) {
-                    out = ex
-                }
 
-                parseEvalResponse(out, event, isRanByBotOwner)
+                    engine.setVariable("scope", this)
+
+                    var out: Any
+
+                    try {
+                        out = if (isRanByBotOwner) {
+                            engine.evaluate(script)
+                        } else {
+                            protectedShell.evaluate(script)
+                        }
+                    } catch (ex: Throwable) {
+                        out = ex
+                    }
+
+                    parseEvalResponse(out, event, isRanByBotOwner)
+
+                } catch (error: Throwable) {
+                    // Force parsing of the error
+                    parseEvalResponse(error, event, isRanByBotOwner)
+                }
 
                 if (!isRanByBotOwner) {
                     filter.unregister()
