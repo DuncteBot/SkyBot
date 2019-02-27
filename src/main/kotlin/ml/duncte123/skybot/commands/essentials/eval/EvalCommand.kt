@@ -53,13 +53,10 @@ class EvalCommand : Command() {
 
     private val protectedShell: GroovyShell
     private val engine: GroovyShell
-    /*private val packageImports: List<String>
-    private val classImports: List<String>
-    private val staticImports: List<String>*/
     private val importString: String
     private val filter = EvalFilter()
 
-//    private var runIfNotOwner = true
+    private var runIfNotOwner = false
 
     /**
      * This initialises the engine
@@ -87,7 +84,6 @@ class EvalCommand : Command() {
                 return super.evaluate(scriptText)
             }
         }
-//        engine = ScriptEngineManager().getEngineByName("groovy")
         engine = GroovyShell()
         val packageImports = listOf(
             "java.io",
@@ -129,8 +125,10 @@ class EvalCommand : Command() {
         val event = ctx.event
 
         val isRanByBotOwner = isDev(event.author) || event.author.idLong == Settings.OWNER_ID
-        /*if (!isRanByBotOwner && !runIfNotOwner)
-            return*/
+
+        if (!isRanByBotOwner && !runIfNotOwner) {
+            return
+        }
 
         if (!isRanByBotOwner && !isUserOrGuildPatron(event)) {
             return
@@ -228,14 +226,16 @@ class EvalCommand : Command() {
 
                 engine.setVariable("scope", this)
 
-                val out = try {
-                    if (isRanByBotOwner) {
+                var out: Any
+
+                try {
+                    out = if (isRanByBotOwner) {
                         engine.evaluate(script)
                     } else {
                         protectedShell.evaluate(script)
                     }
                 } catch (ex: Throwable) {
-                    ex
+                    out = ex
                 }
 
                 parseEvalResponse(out, event, isRanByBotOwner)
