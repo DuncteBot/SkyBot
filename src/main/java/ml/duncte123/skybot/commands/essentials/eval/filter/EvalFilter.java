@@ -221,14 +221,25 @@ public class EvalFilter extends GroovyValueFilter {
     @Override
     public Object onGetArray(Invoker invoker, Object receiver, Object index) throws Throwable {
         if (receiver instanceof ArrayList) {
-            for (Object clazz : (ArrayList) receiver) {
-                if (!ALLOWED_TYPES.contains(clazz.getClass())) {
-                    throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
-                }
-            }
+            checkArrayContent((ArrayList) receiver);
         }
 
         return super.onGetArray(invoker, receiver, index);
+    }
+
+    private void checkArrayContent(List receiver) {
+        for (Object clazz : receiver) {
+
+            if (clazz instanceof List) {
+                checkArrayContent((List) clazz);
+
+                continue;
+            }
+
+            if (!ALLOWED_TYPES.contains(clazz.getClass())) {
+                throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
+            }
+        }
     }
 
     @Override
