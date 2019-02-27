@@ -62,15 +62,15 @@ class UnsortenCommand : Command() {
                 try {
                     val res = body.string()
                     logger.debug("Unshorten: $res")
-                    val json = JSONObject(res)
+                    val json = JSONObject(res).getJSONObject("data")
 
                     val embed = EmbedUtils.embedMessage("""Short url:
                             |```
-                            |${json.getString("shortened")}
+                            |${json.getString("short_url")}
                             |```
                             |Unshortened url:
                             |```
-                            |${json.getString("unshortened")}
+                            |${json.getString("long_url")}
                             |```
                         """.trimMargin())
 
