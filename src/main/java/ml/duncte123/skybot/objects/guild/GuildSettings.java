@@ -431,7 +431,7 @@ public class GuildSettings {
                     continue;
                 }
 
-                final Object value = field.get(obj);
+                Object value = field.get(obj);
 
                 if ("ratelimits".equals(name)) {
                     j.put(name, convertJ2S((long[]) value));
@@ -439,7 +439,11 @@ public class GuildSettings {
                     continue;
                 }
 
-                j.put(name, String.valueOf(value));
+                if (value instanceof Long) {
+                    value = String.valueOf(value);
+                }
+
+                j.put(name, value);
             }
             catch (IllegalAccessException e) {
                 e.printStackTrace();
