@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.essentials.eval.filter;
 
 import groovy.lang.Closure;
 import groovy.lang.Script;
-import kotlin.collections.CollectionsKt;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.entities.delegate.*;
 import ml.duncte123.skybot.exceptions.DoomedException;
@@ -32,7 +31,10 @@ import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
-import java.util.*;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.ThreadLocalRandom;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -75,11 +77,6 @@ public class EvalFilter extends GroovyValueFilter {
         double.class,
 
         Arrays.class,
-
-        Collection.class,
-        List.class,
-        ArrayList.class,
-        CollectionsKt.class,
 
         BigDecimal.class,
         BigInteger.class,
@@ -154,8 +151,13 @@ public class EvalFilter extends GroovyValueFilter {
             return o;
         }
 
+        if (o instanceof Iterable) {
+            checkArrayContent((Iterable) o);
+        }
+
         //Return delegates for the objects, if they get access to the actual classes in some way they will get blocked
         //because the class is not whitelisted
+        // <editor-fold defaultstate="collapsed" desc="JDA delegates">
         if (o instanceof Category) {
             return new CategoryDelegate((Category) o);
         }
@@ -195,8 +197,7 @@ public class EvalFilter extends GroovyValueFilter {
         if (o instanceof User) {
             return new UserDelegate((User) o);
         }
-
-        ////////////////////////////////////////////
+        // </editor-fold>
 
         if (o instanceof Script) {
             return new ScriptDelegate((Script) o);
@@ -220,25 +221,31 @@ public class EvalFilter extends GroovyValueFilter {
 
     @Override
     public Object onGetArray(Invoker invoker, Object receiver, Object index) throws Throwable {
-        if (receiver instanceof ArrayList) {
-            checkArrayContent((ArrayList) receiver);
+        if (receiver instanceof Iterable) {
+            checkArrayContent((Iterable) receiver);
         }
+
+        checkAllowed(receiver);
 
         return super.onGetArray(invoker, receiver, index);
     }
 
-    private void checkArrayContent(List receiver) {
+    private void checkArrayContent(Iterable receiver) {
         for (Object clazz : receiver) {
 
-            if (clazz instanceof List) {
-                checkArrayContent((List) clazz);
+            if (clazz instanceof Iterable) {
+                checkArrayContent((Iterable) clazz);
 
                 continue;
             }
 
-            if (!ALLOWED_TYPES.contains(clazz.getClass())) {
-                throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
-            }
+            checkAllowed(clazz);
+        }
+    }
+
+    private void checkAllowed(Object clazz) {
+        if (!ALLOWED_TYPES.contains(clazz.getClass())) {
+            throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
         }
     }
 
