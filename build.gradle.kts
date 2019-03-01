@@ -36,7 +36,7 @@ plugins {
     application
 
     kotlin("jvm") version "1.3.21"
-    id("com.github.johnrengelman.shadow") version "4.0.4"
+    id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
 
@@ -223,7 +223,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "5.1.1"
+    gradleVersion = "5.2.1"
 }
 
 githubRelease {

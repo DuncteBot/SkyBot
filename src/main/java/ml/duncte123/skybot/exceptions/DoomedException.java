@@ -38,7 +38,7 @@ public class DoomedException extends SecurityException {
     }
 
     public DoomedException(String message, String... format) {
-        super(String.format(message, format));
+        super(String.format(message, (Object[]) format));
     }
 
     public DoomedException(String message, Throwable cause) {
