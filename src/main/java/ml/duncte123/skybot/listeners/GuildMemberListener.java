@@ -156,6 +156,10 @@ public class GuildMemberListener extends BaseListener {
             return "NOPE";
         }
 
+        if ("".equals(rawMessage.trim().toLowerCase())) {
+            return "";
+        }
+
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
