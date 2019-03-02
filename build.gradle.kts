@@ -231,7 +231,7 @@ githubRelease {
     repo("SkyBot")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
-    prerelease(true)
+    prerelease(false)
 }
 
 fun getGitHash(): String {
