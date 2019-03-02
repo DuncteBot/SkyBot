@@ -71,7 +71,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "com.github.duncte123", name = "botCommons", version = "e83105c001")
+    implementation(group = "com.github.duncte123", name = "botCommons", version = "a17ac5b")
 
     //JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_460") {
@@ -208,8 +208,7 @@ application {
 }
 
 shadowJar.apply {
-    classifier = ""
-    destinationDir = File("./")
+    archiveClassifier.set("")
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
@@ -232,7 +231,7 @@ githubRelease {
     repo("SkyBot")
     releaseAssets(shadowJar.outputs.files.toList())
     overwrite(true)
-    prerelease(false)
+    prerelease(true)
 }
 
 fun getGitHash(): String {
