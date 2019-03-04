@@ -76,6 +76,6 @@ public class SetRateLimitsCommand extends SettingsBase {
     public String help() {
         return "Sets our cooldown in minutes for un-muting your spammer of choice.\n" +
             "Usage: `" + Settings.PREFIX + getName() + " <1|2|3|4|5|6>`\n" +
-            "Example: " + Settings.PREFIX + getName() + "20|45|60|120|240|2400";
+            "Example: " + Settings.PREFIX + getName() + " 20|45|60|120|240|2400";
     }
 }
