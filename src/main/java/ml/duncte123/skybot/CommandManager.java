@@ -29,6 +29,7 @@ import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
+import org.slf4j.MDC;
 
 import java.util.*;
 import java.util.concurrent.*;
@@ -300,6 +301,12 @@ public class CommandManager {
                             "Please mark this channel as NSFW to use this command");
                         return;
                     }
+
+                    MDC.put("command.class", cmd.getClass().getName());
+                    MDC.put("command.invoke", invoke);
+                    MDC.put("command.args", args.toString());
+                    MDC.put("user", event.getAuthor().getAsTag());
+                    MDC.put("guild", event.getGuild().toString());
 
                     cmd.executeCommand(
                         new CommandContext(invoke, args, event, variables)
