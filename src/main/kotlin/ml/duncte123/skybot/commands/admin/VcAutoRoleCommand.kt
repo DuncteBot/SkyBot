@@ -19,6 +19,8 @@
 package ml.duncte123.skybot.commands.admin
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
+import gnu.trove.map.TLongLongMap
+import gnu.trove.map.TLongObjectMap
 import gnu.trove.map.hash.TLongLongHashMap
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
@@ -131,19 +133,7 @@ class VcAutoRoleCommand : ModBaseCommand() {
         val args = ctx.args
         val vcAutoRoleCache = ctx.variables.vcAutoRoleCache
 
-        val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
         val foundRoles = FinderUtil.findRoles(args[2], guild)
-
-        if (foundVoiceChannels.isEmpty()) {
-            sendMsgFormat(
-                event,
-                "I could not find any voice channels for `%s`%n" +
-                    "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
-                args[1]
-            )
-
-            return
-        }
 
         if (foundRoles.isEmpty()) {
             sendMsgFormat(
@@ -155,16 +145,42 @@ class VcAutoRoleCommand : ModBaseCommand() {
 
             return
         }
-
-        val targetChannel = foundVoiceChannels[0].idLong
         val targetRole = foundRoles[0].idLong
 
-        val cache = vcAutoRoleCache.get(guild.idLong) ?: vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+        var cache:TLongLongMap? = vcAutoRoleCache.get(guild.idLong)
 
-        cache.put(targetChannel, targetRole)
-        ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
+        if (cache == null) {
+            cache = vcAutoRoleCache.put(guild.idLong, TLongLongHashMap())
+        }
 
-        sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
+        if (args[1].toLowerCase() == "all") {
+            guild.voiceChannelCache.forEach {
+                cache!!.put(it.idLong, targetRole)
+                ctx.databaseAdapter.setVcAutoRole(guild.idLong, it.idLong, targetRole)
+            }
+
+            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join any voice channel")
+        } else {
+            val foundVoiceChannels = FinderUtil.findVoiceChannels(args[1], guild)
+
+            if (foundVoiceChannels.isEmpty()) {
+                sendMsgFormat(
+                    event,
+                    "I could not find any voice channels for `%s`%n" +
+                        "TIP: If your voice channel name has spaces \"Surround it with quotes\" to give it as one argument",
+                    args[1]
+                )
+
+                return
+            }
+
+            val targetChannel = foundVoiceChannels[0].idLong
+
+            cache!!.put(targetChannel, targetRole)
+            ctx.databaseAdapter.setVcAutoRole(guild.idLong, targetChannel, targetRole)
+
+            sendMsg(event, "Role <@&$targetRole> will now be applied to a user when they join <#$targetChannel>")
+        }
     }
 
     private fun listAutoVcRoles(ctx: CommandContext) {
