@@ -231,7 +231,7 @@ public class EvalFilter extends GroovyValueFilter {
     }
 
     private void checkArrayContent(Iterable receiver) {
-        for (Object clazz : receiver) {
+        for (final Object clazz : receiver) {
 
             if (clazz instanceof Iterable) {
                 checkArrayContent((Iterable) clazz);

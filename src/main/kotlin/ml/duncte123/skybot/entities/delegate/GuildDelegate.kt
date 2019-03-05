@@ -30,15 +30,12 @@ import net.dv8tion.jda.core.managers.GuildController
 import net.dv8tion.jda.core.managers.GuildManager
 import net.dv8tion.jda.core.requests.RestAction
 
-@Suppress("unused")
 @SinceSkybot("3.51.5")
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 /**
  * @see Guild
  */
 class GuildDelegate(z88Am1Alk: Guild) : Guild by z88Am1Alk {
-    private val manager: GuildManager? = null
-
     private val getMemberClosure: (user: User) -> Member = { MemberDelegate(z88Am1Alk.getMember(it)) }
     private val getSelfMemberClosure: () -> Member = { MemberDelegate(z88Am1Alk.selfMember) }
     private val getRoleByIdClosure: (id: Long) -> Role = { RoleDelegate(z88Am1Alk.getRoleById(it)) }
