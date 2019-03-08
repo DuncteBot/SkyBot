@@ -316,7 +316,7 @@ public class CommandManager {
                     MDC.put("guild", event.getGuild().toString());
 
                     cmd.executeCommand(
-                        new CommandContext(invoke, args, event, variables)
+                        new CommandContext(invoke, args, event)
                     );
 
                     return;

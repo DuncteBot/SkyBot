@@ -148,8 +148,7 @@ public class MessageListener extends BaseListener {
             cmd.executeCommand(new CommandContext(
                 "chat",
                 Arrays.asList(split).subList(1, split.length),
-                event,
-                variables
+                event
             ));
         }
     }

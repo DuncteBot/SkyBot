@@ -60,11 +60,11 @@ public class CommandContext {
     private GuildMessageReceivedEvent reactionAddEvent = null;
     private long replyId = 0L;
 
-    public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event, Variables variables) {
+    public CommandContext(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         this.invoke = invoke;
         this.args = Collections.unmodifiableList(args);
         this.event = event;
-        this.variables = variables;
+        this.variables = Variables.getInstance();
     }
 
     // --------------- Methods from the Variables class --------------- //
