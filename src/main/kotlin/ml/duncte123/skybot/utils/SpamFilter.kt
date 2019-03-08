@@ -33,7 +33,7 @@ import java.util.stream.Collectors
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class SpamFilter : TLongObjectHashMap<SpamCache>() {
 
-    private lateinit var rates: TLongList
+    private lateinit var rates: LongArray
     private val adapter = Variables.getInstance().databaseAdapter
     private val logger = LoggerFactory.getLogger(SpamFilter::class.java)
 
@@ -136,7 +136,7 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
             if (shouldModerate) {
                 val warnings = ModerationUtils.getWarningCountForUser(adapter, user, author.guild) + 1
 
-                if (rates.size() < 6) {
+                if (rates.size < 6) {
                     logger.error("Found invalid spam rate settings for " + author.guild)
 
                     return false
@@ -166,12 +166,12 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
     }
 
     fun applyRates(newRates: LongArray): SpamFilter {
-        rates = TLongArrayList(newRates)
+        rates = newRates
         return this
     }
 
     fun applyRates(newRates: TLongList): SpamFilter {
-        rates = newRates
+        rates = newRates.toArray()
         return this
     }
 

@@ -303,7 +303,7 @@ public class CommandManager {
 
                 if (!cmd.isCustom()) {
 
-                    if (cmd.getCategory() == CommandCategory.NSFW && !event.getChannel().isNSFW()) {
+                    if (cmd.getCategory() == CommandCategory.NSFW && !channel.isNSFW()) {
                         sendMsg(event, "Woops, this channel is not marked as NSFW.\n" +
                             "Please mark this channel as NSFW to use this command");
                         return;

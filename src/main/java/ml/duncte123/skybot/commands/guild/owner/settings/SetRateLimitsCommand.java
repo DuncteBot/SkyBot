@@ -53,7 +53,7 @@ public class SetRateLimitsCommand extends SettingsBase {
             return;
         }
 
-        final long[] rates = GuildSettingsUtils.ratelimmitChecks(args.get(0));
+        final long[] rates = GuildSettingsUtils.ratelimmitChecks(String.join("", args));
 
         if (rates.length < 6 || rates.length > 6) {
             sendMsg(event, "Invalid rate limit settings");
