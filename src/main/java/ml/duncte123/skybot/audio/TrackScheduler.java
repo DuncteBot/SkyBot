@@ -32,6 +32,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
+import ml.duncte123.skybot.utils.Debouncer;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
@@ -56,6 +57,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private final Variables variables = Variables.getInstance();
     private boolean repeating = false;
     private boolean repeatPlayList = false;
+    private final Debouncer messageDebouncer;
 
 
     /**
@@ -68,6 +70,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
+        this.messageDebouncer = new Debouncer((msg) ->
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg.toString())
+            , 100);
     }
 
     /**
@@ -235,9 +240,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             final Throwable rootCause = ExceptionUtils.getRootCause(exception);
             final Throwable finalCause = rootCause != null ? rootCause : exception;
 
-            MessageUtils.sendMsg(tc,
-                "Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
-                    "Details: " + finalCause);
+            messageDebouncer.accept("Something went wrong while playing the track, please contact the devs if this happens a lot.\n" +
+                "Details: " + finalCause);
         }
     }
 }
