@@ -27,6 +27,7 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.reflections.Reflections;
 import org.slf4j.MDC;
@@ -290,7 +291,13 @@ public class CommandManager {
 
         commandThread.submit(() -> {
 
-            event.getChannel().sendTyping().queue();
+            final TextChannel channel = event.getChannel();
+
+            if (!channel.canTalk()) {
+                return;
+            }
+
+            channel.sendTyping().queue();
 
             try {
 
@@ -327,7 +334,7 @@ public class CommandManager {
                     final String message = parser.clear()
                         .put("messageId", event.getMessage().getId())
                         .put("user", event.getAuthor())
-                        .put("channel", event.getChannel())
+                        .put("channel", channel)
                         .put("guild", event.getGuild())
                         .put("args", String.join(" ", args))
                         .parse(cc.getMessage());
