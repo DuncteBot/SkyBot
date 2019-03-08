@@ -199,7 +199,7 @@ public class GuildListener extends BaseListener {
             manager.player.setPaused(false);
             manager.scheduler.queue.clear();
 
-            sendMsg(guild.getTextChannelById(manager.latestChannel), "Leaving voice channel because all the members have left it.");
+            sendMsg(guild.getTextChannelById(manager.getLastChannel()), "Leaving voice channel because all the members have left it.");
         }
 
         MusicCommand.cooldowns.put(guild.getIdLong(), 12600);

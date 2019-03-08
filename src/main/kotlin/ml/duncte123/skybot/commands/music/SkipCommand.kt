@@ -34,7 +34,7 @@ class SkipCommand : MusicCommand() {
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val scheduler = mng.scheduler
 
-        mng.latestChannel = -1
+        mng.lastChannel = -1
 
         if (mng.player.playingTrack == null) {
             sendMsg(event, "The player is not playing.")
@@ -74,7 +74,7 @@ class SkipCommand : MusicCommand() {
                 "Queue is now empty.")
         }
 
-        mng.latestChannel = event.channel.idLong
+        mng.lastChannel = event.channel.idLong
     }
 
     override fun help(): String = "Skips the current track."

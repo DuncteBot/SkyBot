@@ -28,13 +28,15 @@ import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.TextChannel;
 
+import java.util.concurrent.atomic.AtomicLong;
+
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class GuildMusicManager {
 
     /**
      * This is the text channel were we will announce our songs
      */
-    public long latestChannel = -1;
+    private final AtomicLong lastChannel = new AtomicLong(-1);
     /**
      * This is our player
      */
@@ -71,11 +73,21 @@ public class GuildMusicManager {
         return settings.isAnnounceTracks();
     }
 
+    public long getLastChannel() {
+        return lastChannel.get();
+    }
+
+    public void setLastChannel(long lastChannel) {
+        this.lastChannel.set(lastChannel);
+    }
+
     TextChannel getLatestChannel() {
-        if (this.latestChannel == -1 || this.latestChannel == 0) {
+        final long last = this.getLastChannel();
+
+        if (last == -1 || last == 0) {
             return null;
         }
 
-        return SkyBot.getInstance().getShardManager().getTextChannelById(this.latestChannel);
+        return SkyBot.getInstance().getShardManager().getTextChannelById(last);
     }
 }

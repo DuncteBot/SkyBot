@@ -137,7 +137,7 @@ public abstract class MusicCommand extends Command {
             return false;
         }
 
-        getMusicManager(guild, audioUtils).latestChannel = event.getChannel().getIdLong();
+        getMusicManager(guild, audioUtils).setLastChannel(event.getChannel().getIdLong());
 
         return true;
     }

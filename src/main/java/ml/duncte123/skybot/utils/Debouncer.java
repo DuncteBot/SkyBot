@@ -18,12 +18,13 @@
 
 package ml.duncte123.skybot.utils;
 
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
 public class Debouncer implements Consumer {
 
-    private Consumer<Object> c;
-    private volatile long lastCalled;
+    private final Consumer<Object> c;
+    private final AtomicLong lastCalled = new AtomicLong(0);
     private int interval;
 
     public Debouncer(Consumer<Object> c, int interval) {
@@ -33,8 +34,8 @@ public class Debouncer implements Consumer {
 
     @Override
     public void accept(Object arg) {
-        if(lastCalled + interval < System.currentTimeMillis()) {
-            lastCalled = System.currentTimeMillis();
+        if(lastCalled.get() + interval < System.currentTimeMillis()) {
+            lastCalled.set(System.currentTimeMillis());
             c.accept(arg);
         }
     }
