@@ -57,6 +57,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private final Variables variables = Variables.getInstance();
     private boolean repeating = false;
     private boolean repeatPlayList = false;
+    private static int DEBOUNCE_INTERVAL = 5000;
     private final Debouncer messageDebouncer;
 
 
@@ -72,7 +73,7 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.guildMusicManager = guildMusicManager;
         this.messageDebouncer = new Debouncer((msg) ->
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg.toString())
-            , 100);
+            , DEBOUNCE_INTERVAL);
     }
 
     /**
