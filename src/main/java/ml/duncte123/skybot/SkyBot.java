@@ -72,7 +72,7 @@ public final class SkyBot {
         final CommandManager commandManager = variables.getCommandManager();
         final Logger logger = LoggerFactory.getLogger(SkyBot.class);
 
-        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://bot.duncte123.me;)");
+        WebUtils.setUserAgent("Mozilla/5.0 (compatible; SkyBot/" + Settings.VERSION + "; +https://dunctebot.com;)");
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
                 .setColor(Settings.defaultColour)

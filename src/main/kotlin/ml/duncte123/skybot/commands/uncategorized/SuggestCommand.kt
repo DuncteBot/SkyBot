@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 class SuggestCommand : Command() {
 
     override fun executeCommand(ctx: CommandContext) {
-        MessageUtils.sendMsg(ctx.event, """You can leave suggestions for the bot on his page: https://bot.duncte123.me/suggest
+        MessageUtils.sendMsg(ctx.event, """You can leave suggestions for the bot on his page: https://dunctebot.com/suggest
             |Make sure to join our server so we can contact you when needed: <https://discord.gg/NKM9Xtk>
         """.trimMargin())
     }

@@ -32,7 +32,7 @@ public class Settings {
     public static final String OTHER_PREFIX = "db.";
     public static final String VERSION = "@versionObj@";
     public static final String DEFAULT_NAME = "DuncteBot";
-    public static final String DEFAULT_ICON = "https://bot.duncte123.me/img/favicon.png";
+    public static final String DEFAULT_ICON = "https://dunctebot.com/img/favicon.png";
     public static final int defaultColour = 0x0751c6;
     public static final boolean enableUpdaterCommand = getProperty("updater") != null;
     public static final boolean useJSON = false;

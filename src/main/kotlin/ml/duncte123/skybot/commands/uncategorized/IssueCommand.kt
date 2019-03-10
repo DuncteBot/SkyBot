@@ -41,7 +41,7 @@ class IssueCommand : Command() {
         when (ctx.args.size) {
             0 -> {
                 MessageUtils.sendErrorWithMessage(event.message, """Well you forgot to add formatted data we require so we can resolve it faster.
-                    |You can generate it by using our dashboard. Link: <https://bot.duncte123.me/issuegenerator>""".trimMargin())
+                    |You can generate it by using our dashboard. Link: <https://dunctebot.com/issuegenerator>""".trimMargin())
             }
             else -> {
                 try {

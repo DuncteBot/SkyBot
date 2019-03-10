@@ -155,7 +155,7 @@ class UserinfoCommand : Command() {
         joinOrder.append("\n")
 
         if (joins[index] == m) {
-            joinOrder.append("[${joins[index].effectiveName}](https://bot.duncte123.me/)")
+            joinOrder.append("[${joins[index].effectiveName}](https://dunctebot.com/)")
         } else {
             joinOrder.append(joins[index].effectiveName)
         }
@@ -169,7 +169,7 @@ class UserinfoCommand : Command() {
             var usrName = usr.effectiveName
 
             if (usr == m) {
-                usrName = "[$usrName](https://bot.duncte123.me/)"
+                usrName = "[$usrName](https://dunctebot.com/)"
             }
 
             joinOrder.append(" > ").append(usrName)

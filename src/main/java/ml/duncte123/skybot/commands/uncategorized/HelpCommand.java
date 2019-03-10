@@ -106,8 +106,7 @@ public class HelpCommand extends Command {
                 msg -> sendMsg(event, event.getMember().getAsMention() + " check your DM's"),
                 //When sending fails, send to the channel
                 err -> sendMsg(event,
-                    "You can check out my commands here:\nhttps://bot.duncte123.me/commands?server=" +
-                        event.getGuild().getId())
+                    "You can check out my commands here:\nhttps://dunctebot.com/commands")
             ),
             err -> sendMsg(event, "ERROR: " + err.getMessage())
         );
