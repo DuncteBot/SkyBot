@@ -156,7 +156,7 @@ public class GuildMemberListener extends BaseListener {
             return "NOPE";
         }
 
-        if ("".equals(rawMessage.trim().toLowerCase())) {
+        if (rawMessage == null || "".equals(rawMessage.trim().toLowerCase())) {
             return "";
         }
 
