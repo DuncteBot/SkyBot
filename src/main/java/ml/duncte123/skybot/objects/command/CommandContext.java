@@ -138,7 +138,7 @@ public class CommandContext {
     }
 
     public String getArgsRaw() {
-        return getArgsRaw(true);
+        return this.getArgsRaw(true);
     }
 
     public String getArgsRaw(boolean fixlines) {
@@ -161,8 +161,8 @@ public class CommandContext {
         if (this.mentionedInMessage == null) {
             this.mentionedInMessage = new ArrayList<>();
 
-            getArgs().forEach(
-                (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, getGuild()))
+            this.getArgs().forEach(
+                (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, this.getGuild()))
             );
         }
 
@@ -200,7 +200,7 @@ public class CommandContext {
     }
 
     public long getSendId() {
-        return replyId;
+        return this.replyId;
     }
 
     // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //
@@ -230,15 +230,15 @@ public class CommandContext {
     }
 
     public ShardManager getShardManager() {
-        return getJDA().asBot().getShardManager();
+        return this.getJDA().asBot().getShardManager();
     }
 
     public User getSelfUser() {
-        return getJDA().getSelfUser();
+        return this.getJDA().getSelfUser();
     }
 
     public Member getSelfMember() {
-        return getGuild().getSelfMember();
+        return this.getGuild().getSelfMember();
     }
 
     // --------------- Private methods --------------- //
@@ -251,7 +251,7 @@ public class CommandContext {
         final String out = in.replaceFirst(
             "(?i)" + Pattern.quote(Settings.PREFIX) + "|" +
                 Pattern.quote(Settings.OTHER_PREFIX) + "|" +
-                Pattern.quote(getGuildSettings().getCustomPrefix()),
+                Pattern.quote(this.getGuildSettings().getCustomPrefix()),
             "")
             .split("\\s+", 2)[1];
 
