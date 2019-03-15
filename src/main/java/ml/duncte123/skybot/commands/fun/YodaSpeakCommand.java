@@ -18,11 +18,16 @@
 
 package ml.duncte123.skybot.commands.fun;
 
+import me.duncte123.botcommons.web.WebUtils;
+import me.duncte123.botcommons.web.WebUtils.EncodingType;
+import me.duncte123.botcommons.web.WebUtilsErrorUtils;
+import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.jetbrains.annotations.NotNull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -31,7 +36,33 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class YodaSpeakCommand extends Command {
     @Override
     public void executeCommand(@NotNull CommandContext ctx) {
-        sendMsg(ctx.getEvent(), "This command has been disabled due to technical issues");
+
+        final GuildMessageReceivedEvent event = ctx.getEvent();
+
+        if (ctx.getArgs().isEmpty()) {
+            sendMsg(event, "Correct usage: `" + Settings.PREFIX + getName() + " <A sentence.>`");
+            return;
+        }
+
+        final QueryBuilder builder = new QueryBuilder()
+            .append("https://apis.duncte123.me/yoda")
+            .append("sentence", ctx.getArgsDisplay())
+            .append("token", event.getJDA().getToken());
+
+        WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
+            .url(builder.build())
+            .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
+            .build(), WebUtilsErrorUtils::toJSONObject).async(
+            (json) -> {
+                logger.debug("Yoda response: " + json);
+                sendMsg(event, json.getString("data"));
+            },
+            error -> {
+                error.printStackTrace();
+                sendMsg(event, "Yoda is asleep tell my developers to wake him up");
+            }
+        );
+
     }
 
     @Override
