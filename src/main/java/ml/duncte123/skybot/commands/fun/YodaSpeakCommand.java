@@ -59,7 +59,7 @@ public class YodaSpeakCommand extends Command {
             },
             error -> {
                 error.printStackTrace();
-                sendMsg(event, "Yoda is asleep tell my developers to wake him up");
+                sendMsg(event, "Could not connect to yoda service, try again in a few hours");
             }
         );
 
