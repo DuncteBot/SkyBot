@@ -29,7 +29,7 @@ object Callback {
 
     fun handle(request: Request, response: Response, oAuth2Client: OAuth2Client): Any {
 
-        if (!request.queryParams().contains("code")) {
+        if (!request.queryParams().contains("code") || !request.queryParams().contains("state")) {
             return response.redirect("https://dunctebot.com/")
         }
 

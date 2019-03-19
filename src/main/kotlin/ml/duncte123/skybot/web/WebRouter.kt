@@ -67,6 +67,12 @@ class WebRouter(private val shardManager: ShardManager) {
             return@get Callback.handle(request, response, oAuth2Client)
         }
 
+        get("/logout") {
+            request.session().invalidate()
+
+            return@get response.redirect("https://dunctebot.com/")
+        }
+
         get("/invite") {
             return@get response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
         }

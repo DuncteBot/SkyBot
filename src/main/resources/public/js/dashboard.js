@@ -25,7 +25,7 @@ fetch("/api/getUserGuilds", {
 
         if (json.status === "error") {
             div.innerHTML = `<h1 class="center">Session not valid</h1>
-                              <h5 class="center">Please refresh your browser</h5>`;
+                              <h5 class="center">Please refresh your browser or <a href="/logout">click here</a> to log out</h5>`;
 
             return;
         }

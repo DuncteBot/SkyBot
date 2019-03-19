@@ -38,6 +38,8 @@ object GetUserGuilds {
         val attributes = request.session().attributes()
 
         if (!attributes.contains(WebRouter.USER_SESSION)) {
+            request.session().invalidate()
+
             return JSONObject()
                 .put("status", "error")
                 .put("message", "SESSION_INVALID")
