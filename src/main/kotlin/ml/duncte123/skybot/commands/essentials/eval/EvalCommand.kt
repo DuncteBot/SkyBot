@@ -29,6 +29,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.DoomedException
+import ml.duncte123.skybot.objects.ClojureFilter
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -229,7 +230,7 @@ class EvalCommand : Command() {
                     if (isRanByBotOwner) {
                         engine.evaluate(script)
                     } else {
-                        protectedShell.evaluate(script)
+                        protectedShell.evaluate(ClojureFilter().filterClojures(script))
                     }
 
                 } catch (ex: Throwable) {
