@@ -102,6 +102,11 @@ public class MusicEmbedUtils {
         final long minutes = seconds / 60;
         seconds %= 60;
 
-        return (hours > 0 ? hours + ":" : "") + (minutes < 10 ? "0" + minutes : minutes) + ":" + (seconds < 10 ? "0" + seconds : seconds);
+        return String.format(
+            "%s%02d:%02d",
+            hours > 0 ? hours + ":" : "",
+            minutes,
+            seconds
+        );
     }
 }
