@@ -56,6 +56,7 @@ class EvalCommand : Command() {
     private val engine: GroovyShell
     private val importString: String
     private val filter = EvalFilter()
+    private val clojureFilter = ClojureFilter()
 
     private var runIfNotOwner = false
 
@@ -230,7 +231,7 @@ class EvalCommand : Command() {
                     if (isRanByBotOwner) {
                         engine.evaluate(script)
                     } else {
-                        protectedShell.evaluate(ClojureFilter().filterClojures(script))
+                        protectedShell.evaluate(clojureFilter.filterClojures(script))
                     }
 
                 } catch (ex: Throwable) {
@@ -297,7 +298,7 @@ class EvalCommand : Command() {
                     MessageBuilder()
                         .appendCodeBlock(out.toString(), "")
                         .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                        .forEach { it -> sendMsg(event, it) }
+                        .forEach { sendMsg(event, it) }
                     return
                 }
 

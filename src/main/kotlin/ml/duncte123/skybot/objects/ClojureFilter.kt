@@ -18,8 +18,12 @@
 
 package ml.duncte123.skybot.objects
 
+import ml.duncte123.skybot.Author
+import ml.duncte123.skybot.SinceSkybot
 import java.util.regex.Pattern
 
+@Author(nickname = "Sanduhr32", author = "Maurice R S")
+@SinceSkybot(version = "3.87.1")
 class ClojureFilter {
     private val pattern = Pattern.compile("(\\{)(\\(*\\w*\\)*)?([\\w\\W]*)(\\})", Pattern.COMMENTS)
 
