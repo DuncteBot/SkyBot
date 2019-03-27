@@ -42,8 +42,10 @@ object Dashboard {
                 config.discord.oauth.redirUrl,
                 Scope.IDENTIFY, Scope.GUILDS
             )
+
             request.session().attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
-            response.redirect("$url&prompt=none")
+//            response.redirect("$url&prompt=none")
+            response.redirect(url)
         }
     }
 
@@ -51,7 +53,7 @@ object Dashboard {
 
         val attributes = request.session().attributes()
 
-        if (!attributes.contains(WebRouter.USER_SESSION) || !attributes.contains(WebRouter.SESSION_ID)) {
+        if (!attributes.contains(WebRouter.USER_ID) || !attributes.contains(WebRouter.SESSION_ID)) {
             request.session().attribute(WebRouter.OLD_PAGE, request.pathInfo())
             return response.redirect("/")
         }
