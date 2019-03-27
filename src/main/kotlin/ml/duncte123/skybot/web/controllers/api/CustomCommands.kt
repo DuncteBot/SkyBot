@@ -35,7 +35,7 @@ object CustomCommands {
     fun before(request: Request, response: Response) {
         val attributes = request.session().attributes()
 
-        if (!attributes.contains(WebRouter.USER_SESSION)) {
+        if (!attributes.contains(WebRouter.USER_SESSION) || !attributes.contains(WebRouter.SESSION_ID)) {
             response.status(401)
 
             halt(401,

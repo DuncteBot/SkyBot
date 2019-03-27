@@ -37,7 +37,7 @@ object GetUserGuilds {
     fun show(request: Request, response: Response, oAuth2Client: OAuth2Client, shardManager: ShardManager): Any {
         val attributes = request.session().attributes()
 
-        if (!attributes.contains(WebRouter.USER_SESSION)) {
+        if (!attributes.contains(WebRouter.USER_SESSION) || !attributes.contains(WebRouter.SESSION_ID)) {
             request.session().invalidate()
 
             return JSONObject()
