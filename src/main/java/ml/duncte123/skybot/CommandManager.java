@@ -47,10 +47,13 @@ public class CommandManager {
 
     public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
+
     /**
      * This stores all our commands
      */
-    private final Set<ICommand> commands = ConcurrentHashMap.newKeySet();
+    private final Map<String, ICommand> commands = new HashMap<>();
+    private final Map<String, String> aliases = new HashMap<>();
+
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
     private final Variables variables;
@@ -73,12 +76,16 @@ public class CommandManager {
      *
      * @return A list of all the commands
      */
-    public Set<ICommand> getCommands() {
-        return commands;
+    public Collection<ICommand> getCommands() {
+        return this.commands.values();
+    }
+
+    public Map<String, ICommand> getCommandsMap() {
+        return this.commands;
     }
 
     public Set<CustomCommand> getCustomCommands() {
-        return customCommands;
+        return this.customCommands;
     }
 
     /**
@@ -90,17 +97,22 @@ public class CommandManager {
      * @return a possible null command for the name
      */
     public ICommand getCommand(String name) {
-        Optional<ICommand> cmd = commands.stream().filter((c) -> c.getName().equals(name)).findFirst();
 
-        if (!cmd.isPresent()) {
-            cmd = commands.stream().filter((c) -> Arrays.asList(c.getAliases()).contains(name)).findFirst();
+        ICommand found = commands.get(name);
+
+        if (found == null) {
+            final String forAlias = this.aliases.get(name);
+
+            if (forAlias != null) {
+                found = this.commands.get(forAlias);
+            }
         }
 
-        return cmd.orElse(null);
+        return found;
     }
 
     public List<ICommand> getCommands(CommandCategory category) {
-        return commands.stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
+        return commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
 
@@ -223,27 +235,30 @@ public class CommandManager {
      * @param command
      *         The command to add
      *
-     * @return true if the command is added
+     * @throws IllegalArgumentException if the command or alias is already present
      */
     @SuppressWarnings({"UnusedReturnValue"})
-    public boolean addCommand(ICommand command) {
+    public void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
 
-        if (this.commands.stream().anyMatch((cmd) -> cmd.getName().equalsIgnoreCase(command.getName()))) {
-            @SinceSkybot(version = "3.52.1") final List<String> aliases = Arrays.asList(this.commands.stream().filter((cmd) -> cmd.getName()
-                .equalsIgnoreCase(command.getName())).findFirst().get().getAliases());
-            for (final String alias : command.getAliases()) {
-                if (aliases.contains(alias)) {
-                    return false;
-                }
-            }
-            return false;
+        if (this.commands.containsKey(command.getName())) {
+            throw new IllegalArgumentException(String.format("Command %s already present", command.getName()));
         }
-        this.commands.add(command);
 
-        return true;
+        for (final String alias : command.getAliases()) {
+            if (this.aliases.containsKey(alias)) {
+                throw new IllegalArgumentException(String.format("Alias %s already present", alias));
+            }
+        }
+
+        this.commands.put(command.getName(), command);
+
+        for (final String alias : command.getAliases()) {
+            this.aliases.put(alias, command.getName());
+        }
+
     }
 
     /**
