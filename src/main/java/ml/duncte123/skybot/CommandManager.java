@@ -51,8 +51,8 @@ public class CommandManager {
     /**
      * This stores all our commands
      */
-    private final Map<String, ICommand> commands = new HashMap<>();
-    private final Map<String, String> aliases = new HashMap<>();
+    private final Map<String, ICommand> commands = new ConcurrentHashMap<>();
+    private final Map<String, String> aliases = new ConcurrentHashMap<>();
 
     private final Set<CustomCommand> customCommands = ConcurrentHashMap.newKeySet();
 
