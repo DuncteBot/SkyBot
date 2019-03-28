@@ -79,7 +79,7 @@ dependencies {
     }
 
     //Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.10")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.13")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "35fbdf5")
 
     // SQLite
