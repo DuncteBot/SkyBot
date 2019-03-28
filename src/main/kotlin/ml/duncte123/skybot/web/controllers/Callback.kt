@@ -20,15 +20,10 @@ package ml.duncte123.skybot.web.controllers
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.Scope
-import com.jagrosh.jdautilities.oauth2.requests.OAuth2URL
-import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.Author
-import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.web.WebRouter
-import net.dv8tion.jda.core.utils.MiscUtil
 import spark.Request
 import spark.Response
-import kotlin.reflect.jvm.internal.impl.load.kotlin.JvmType
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object Callback {
@@ -40,24 +35,6 @@ object Callback {
         }
 
         val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
-
-        /*val oauth = Variables.getInstance().config.discord.oauth
-
-        val post = HashMap<String, Any>()
-
-        post["client_id"] = oauth.clientId
-        post["client_secret"] = oauth.clientSecret
-        post["grant_type"] = "authorization_code"
-        post["code"] = request.queryParams("code")
-        post["redirect_uri"] = MiscUtil.encodeUTF8(oauth.redirUrl)
-        post["scope"] = "identify guilds"
-
-        println(post)
-
-        val it = WebUtils.ins.preparePost("https://discordapp.com/api/v6/oauth2/token", post).execute()
-
-        println(it)*/
-
         val oauthses = oAuth2Client.startSession(
             request.queryParams("code"),
             request.queryParams("state"),
