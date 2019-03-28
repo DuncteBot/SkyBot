@@ -29,6 +29,7 @@ import ml.duncte123.skybot.SinceSkybot
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.DoomedException
+import ml.duncte123.skybot.objects.ClojureFilter
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
@@ -55,6 +56,7 @@ class EvalCommand : Command() {
     private val engine: GroovyShell
     private val importString: String
     private val filter = EvalFilter()
+    private val clojureFilter = ClojureFilter()
 
     private var runIfNotOwner = false
 
@@ -229,7 +231,7 @@ class EvalCommand : Command() {
                     if (isRanByBotOwner) {
                         engine.evaluate(script)
                     } else {
-                        protectedShell.evaluate(script)
+                        protectedShell.evaluate(clojureFilter.filterClojures(script))
                     }
 
                 } catch (ex: Throwable) {
@@ -296,7 +298,7 @@ class EvalCommand : Command() {
                     MessageBuilder()
                         .appendCodeBlock(out.toString(), "")
                         .buildAll(MessageBuilder.SplitPolicy.ANYWHERE)
-                        .forEach { it -> sendMsg(event, it) }
+                        .forEach { sendMsg(event, it) }
                     return
                 }
 
