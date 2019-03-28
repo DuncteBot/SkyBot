@@ -41,7 +41,7 @@ plugins {
 }
 
 project.group = "ml.duncte123.skybot"
-project.version = "3.87.1_${getGitHash()}"
+project.version = "3.87.2_${getGitHash()}"
 
 
 java {
