@@ -113,7 +113,8 @@ dependencies {
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
     // Oauth
-    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
+//    implementation(group = "com.github.JDA-Applications.JDA-Utilities", name = "jda-utilities-oauth2", version = "b98962c")
+    implementation(group = "com.github.duncte123.JDA-Utilities", name = "jda-utilities-oauth2", version = "c3383a8")
 
     implementation(group = "com.jagrosh", name = "JagTag", version = "0.5")
 
