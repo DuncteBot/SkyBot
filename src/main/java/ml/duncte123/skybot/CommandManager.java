@@ -312,7 +312,8 @@ public class CommandManager {
                 return;
             }
 
-            channel.sendTyping().queue();
+            // Suppress errors from when we can't type in the channel
+            channel.sendTyping().queue(null, (t) -> {});
 
             try {
 
