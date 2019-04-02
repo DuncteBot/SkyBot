@@ -358,11 +358,6 @@ public class CommandManager {
                         .put("args", String.join(" ", args))
                         .parse(cc.getMessage());
 
-                    /*JSONObject embedJson = parser.get("embed");
-
-                    JDAImpl jda = (JDAImpl) event.getJDA();
-                    MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);*/
-
                     if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);
                     }
