@@ -306,6 +306,11 @@ public class CommandManager {
 
         commandThread.submit(() -> {
 
+            MDC.put("command.invoke", invoke);
+            MDC.put("command.args", args.toString());
+            MDC.put("user", event.getAuthor().getAsTag());
+            MDC.put("guild", event.getGuild().toString());
+
             final TextChannel channel = event.getChannel();
 
             if (!channel.canTalk()) {
@@ -326,10 +331,6 @@ public class CommandManager {
                     }
 
                     MDC.put("command.class", cmd.getClass().getName());
-                    MDC.put("command.invoke", invoke);
-                    MDC.put("command.args", args.toString());
-                    MDC.put("user", event.getAuthor().getAsTag());
-                    MDC.put("guild", event.getGuild().toString());
 
                     cmd.executeCommand(
                         new CommandContext(invoke, args, event)
@@ -345,6 +346,8 @@ public class CommandManager {
                 }
 
                 try {
+                    MDC.put("command.custom.message", cc.getMessage());
+
                     final Parser parser = CustomCommandUtils.PARSER;
 
                     final String message = parser.clear()
@@ -364,7 +367,6 @@ public class CommandManager {
                         sendMsg(event, "\u200B" + message);
                     }
 
-//                    sendEmbedRaw(event.getChannel(), embed, null);
                     parser.clear();
                 }
                 catch (Exception e) {
