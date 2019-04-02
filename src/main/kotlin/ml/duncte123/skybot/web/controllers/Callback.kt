@@ -19,6 +19,8 @@
 package ml.duncte123.skybot.web.controllers
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import com.jagrosh.jdautilities.oauth2.Scope
+import com.jagrosh.jdautilities.oauth2.exceptions.InvalidStateException
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebRouter
 import spark.Request
@@ -33,25 +35,30 @@ object Callback {
             return response.redirect("https://dunctebot.com/")
         }
 
-        val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
+        return try {
+            val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
+            val oauthses = oAuth2Client.startSession(
+                request.queryParams("code"),
+                request.queryParams("state"),
+                sesid,
+                Scope.IDENTIFY, Scope.GUILDS
+            ).complete()
 
-        val oauthses = oAuth2Client.startSession(
-            request.queryParams("code"),
-            request.queryParams("state"),
-            sesid
-        ).complete()
+            val userId = oAuth2Client.getUser(oauthses).complete().id
 
-        val userId = oAuth2Client.getUser(oauthses).complete().id
+            val session = request.session()
 
-        val session = request.session()
+            session.attribute(WebRouter.USER_ID, userId)
 
-        session.attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+            if (session.attributes().contains(WebRouter.OLD_PAGE)) {
+                return response.redirect(session.attribute(WebRouter.OLD_PAGE))
+            }
 
-        if (session.attributes().contains(WebRouter.OLD_PAGE)) {
-            return response.redirect(session.attribute(WebRouter.OLD_PAGE))
+            response.redirect("/")
         }
-
-        return response.redirect("/")
+        catch(stateEx: InvalidStateException) {
+            "<h1>${stateEx.message}</h1><br /><a href=\"https://dunctebot.com\">Click here to go back home</a>"
+        }
     }
 
 }

@@ -42,14 +42,18 @@ object Dashboard {
                 config.discord.oauth.redirUrl,
                 Scope.IDENTIFY, Scope.GUILDS
             )
+
             request.session().attribute(WebRouter.SESSION_ID, "session_${System.currentTimeMillis()}")
+//            response.redirect("$url&prompt=none")
             response.redirect(url)
         }
     }
 
     fun beforeServer(request: Request, response: Response, shardManager: ShardManager) {
 
-        if (!request.session().attributes().contains(WebRouter.USER_SESSION)) {
+        val attributes = request.session().attributes()
+
+        if (!attributes.contains(WebRouter.USER_ID) || !attributes.contains(WebRouter.SESSION_ID)) {
             request.session().attribute(WebRouter.OLD_PAGE, request.pathInfo())
             return response.redirect("/")
         }

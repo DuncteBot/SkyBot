@@ -90,6 +90,6 @@ object WebHelpers {
     }
 
     fun getUserId(request: Request): String {
-        return (request.session().attribute(WebRouter.USER_SESSION) as String).split(WebRouter.SPLITTER)[1]
+        return request.session().attribute(WebRouter.USER_ID) as String
     }
 }
