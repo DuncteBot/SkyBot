@@ -80,6 +80,11 @@ public class TestTagCommand extends Command {
     }
 
     @Override
+    public String[] getAliases() {
+        return new String[]{"tt"};
+    }
+
+    @Override
     public String help() {
         return "Test your jagtag format before you save it as custom command etc.\n" +
             "Usage: `" + Settings.PREFIX + getName() + " <JagTag syntax>`";
