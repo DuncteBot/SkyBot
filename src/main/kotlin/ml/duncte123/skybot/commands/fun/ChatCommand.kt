@@ -180,7 +180,16 @@ class ChatSession(botid: String, userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         vars["input"] = URLEncoder.encode(text, "UTF-8")
         WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
-            response.invoke(xPathSearch(it, "//result/that/text()"))
+            try {
+                response.invoke(xPathSearch(it, "//result/that/text()"))
+            }
+            catch(e: Exception) {
+                response.invoke("""An Error occurred, please report this message my developers
+                    |```
+                    |${e.message}
+                    |```
+                """.trimMargin())
+            }
         }
     }
 
