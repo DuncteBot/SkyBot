@@ -82,7 +82,7 @@ public final class Variables {
         this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
-            Sentry.init(config.sentry.dsn);
+            Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION);
         } else {
             Sentry.close();
         }
