@@ -40,7 +40,11 @@ appender("Sentry", SentryAppender) {
 
     filter(EvaluatorFilter) {
         evaluator(GEventEvaluator) {
-            expression = "!e.formattedMessage.startsWith('Got disconnected from WebSocket') || e.message.contains('Ignoring deprecated socket close linger time')"
+            expression = """e.formattedMessage.startsWith('Got disconnected from WebSocket') || 
+                            e.message.contains('Ignoring deprecated socket close linger time') ||
+                            e.message.contains('Using SQLite as the database') ||
+                            e.message.contains('Please note that is is not recommended for production')
+                            """.stripMargin()
         }
 
         onMatch = DENY
