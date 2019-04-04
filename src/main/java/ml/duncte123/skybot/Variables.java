@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import com.google.common.io.Files;
 import com.google.gson.Gson;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
@@ -41,7 +40,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
@@ -64,7 +63,8 @@ public final class Variables {
 
     private Variables() {
         try {
-            final String json = Files.asCharSource(new File("config.json"), StandardCharsets.UTF_8).read();
+
+            final String json = new String(Files.readAllBytes(new File("config.json").toPath()));
             this.config = new Gson().fromJson(json, DunctebotConfig.class);
         }
         catch (IOException e) {
