@@ -40,7 +40,7 @@ appender("Sentry", SentryAppender) {
 
     filter(EvaluatorFilter) {
         evaluator(GEventEvaluator) {
-            expression = "!e.formattedMessage.startsWith('Got disconnected from WebSocket')"
+            expression = "!e.formattedMessage.startsWith('Got disconnected from WebSocket') || e.message.contains('Ignoring deprecated socket close linger time')"
         }
 
         onMatch = DENY
