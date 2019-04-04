@@ -43,7 +43,6 @@ import javax.xml.xpath.XPathFactory
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatCommand : Command() {
 
-    private val botid = "b0dafd24ee35a477"
     private val sessions = TLongObjectHashMap<ChatSession>()
     private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
@@ -94,7 +93,7 @@ class ChatCommand : Command() {
         message = replaceStuff(event, message)
 
         if (!sessions.containsKey(event.author.idLong)) {
-            sessions.put(event.author.idLong, ChatSession(botid, event.author.idLong))
+            sessions.put(event.author.idLong, ChatSession(event.author.idLong))
             //sessions[event.author.id]?.session =
         }
 
@@ -166,12 +165,12 @@ class ChatCommand : Command() {
  * Little wrapper class to help us keep track of inactive sessions
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class ChatSession(botid: String, userId: Long) {
+class ChatSession(userId: Long) {
     private val vars: MutableMap<String, Any>
 
     init {
         vars = LinkedHashMap()
-        vars["botid"] = botid
+        vars["botid"] = "b0dafd24ee35a477"
         vars["custid"] = userId
     }
 
