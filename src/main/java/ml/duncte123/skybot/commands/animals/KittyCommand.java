@@ -57,4 +57,9 @@ public class KittyCommand extends Command {
     public String getName() {
         return "kitty";
     }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"cat"};
+    }
 }
