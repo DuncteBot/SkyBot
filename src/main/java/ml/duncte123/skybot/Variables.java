@@ -83,8 +83,6 @@ public final class Variables {
 
         if (config.sentry.enabled) {
             Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION);
-        } else {
-            Sentry.close();
         }
     }
 
