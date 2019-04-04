@@ -115,7 +115,7 @@ public final class SkyBot {
             streamUrl
         );
 
-        logger.info(commandManager.getCommandsMap().size() + " commands loaded.");
+        logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
 

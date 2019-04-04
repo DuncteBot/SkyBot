@@ -84,6 +84,10 @@ public class CommandManager {
         return this.commands;
     }
 
+    public Map<String, String> getAliasesMap() {
+        return aliases;
+    }
+
     public Set<CustomCommand> getCustomCommands() {
         return this.customCommands;
     }
