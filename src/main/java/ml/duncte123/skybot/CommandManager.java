@@ -41,11 +41,10 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
-@SuppressWarnings("WeakerAccess")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
-    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    public final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
     /**
@@ -80,11 +79,11 @@ public class CommandManager {
         return this.commands.values();
     }
 
-    public Map<String, ICommand> getCommandsMap() {
+    Map<String, ICommand> getCommandsMap() {
         return this.commands;
     }
 
-    public Map<String, String> getAliasesMap() {
+    Map<String, String> getAliasesMap() {
         return aliases;
     }
 
@@ -144,7 +143,7 @@ public class CommandManager {
         return addCustomCommand(c, true, false);
     }
 
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
@@ -241,8 +240,7 @@ public class CommandManager {
      *
      * @throws IllegalArgumentException if the command or alias is already present
      */
-    @SuppressWarnings({"UnusedReturnValue"})
-    public void addCommand(ICommand command) {
+    private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
@@ -251,18 +249,26 @@ public class CommandManager {
             throw new IllegalArgumentException(String.format("Command %s already present", command.getName()));
         }
 
-        for (final String alias : command.getAliases()) {
-            if (this.aliases.containsKey(alias)) {
-                throw new IllegalArgumentException(String.format("Alias %s already present", alias));
-            }
-        }
-
         this.commands.put(command.getName(), command);
 
-        for (final String alias : command.getAliases()) {
-            this.aliases.put(alias, command.getName());
-        }
+        final String[] aliases = command.getAliases();
 
+        if (aliases.length > 0) {
+            for (final String alias : aliases) {
+                if (this.aliases.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.aliases.get(alias),
+                        command.getName()
+                    ));
+                }
+            }
+
+            for (final String alias : aliases) {
+                this.aliases.put(alias, command.getName());
+            }
+        }
     }
 
     /**
@@ -292,7 +298,7 @@ public class CommandManager {
         dispatchCommand(invoke, args, event);
     }
 
-    public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
 
         if (cmd == null) {
