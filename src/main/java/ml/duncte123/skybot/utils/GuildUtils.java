@@ -204,28 +204,29 @@ public class GuildUtils {
     }
 
     public static void addOneGuildPatron(long userId, long guildId, @NotNull Variables variables) {
-        variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> null);
+        variables.getDatabaseAdapter().addOneGuildPatrons(userId, guildId, (user, guild) -> {
+            final SkyBot instance = SkyBot.getInstance();
+            final Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
 
-        final SkyBot instance = SkyBot.getInstance();
-        final Guild dbGuild = instance.getShardManager().getGuildById(Command.supportGuildId);
+            if (dbGuild == null) {
+                return null;
+            }
 
-        if (dbGuild == null) {
-            return;
-        }
+            final Member newPatron = dbGuild.getMemberById(userId);
 
-        final Member newPatron = dbGuild.getMemberById(userId);
+            if (newPatron == null) {
+                return null;
+            }
 
-        if (newPatron == null) {
-            return;
-        }
+            final boolean hasRole = newPatron.getRoles().stream()
+                .map(Role::getIdLong)
+                .anyMatch((role) -> role == Command.oneGuildPatronsRole);
 
-        final boolean hasRole = newPatron.getRoles().stream()
-            .map(Role::getIdLong)
-            .anyMatch((role) -> role == Command.oneGuildPatronsRole);
+            if (hasRole) {
+                Command.oneGuildPatrons.put(userId, guildId);
+            }
 
-        if (hasRole) {
-            Command.oneGuildPatrons.put(userId, guildId);
-        }
-
+            return  null;
+        });
     }
 }
