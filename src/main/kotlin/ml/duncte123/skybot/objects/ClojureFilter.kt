@@ -46,7 +46,7 @@ class ClojureFilter {
     }
 }
 
-fun main() {
-    val str = "t = 24; {(xd)-> t = gandalf(t)} \${t}"
-    println(ClojureFilter().filterClojures(str))
-}
+//fun main() {
+//    val str = "t = 24; {(xd)-> t = gandalf(t); { -> gandalf(t); }} \${t}"
+//    println(ClojureFilter().filterClojures(str))
+//}
