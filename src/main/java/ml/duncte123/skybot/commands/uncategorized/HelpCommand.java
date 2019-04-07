@@ -113,21 +113,13 @@ public class HelpCommand extends Command {
     }
 
     private void sendCommandHelp(GuildMessageReceivedEvent event, String toSearch, CommandManager manager) {
-        for (final ICommand cmd : manager.getCommands()) {
-            if (cmd.getName().equals(toSearch)) {
 
-                sendMsg(event, getCommandHelpMessage(cmd));
+        final ICommand cmd = manager.getCommand(toSearch);
 
-                return;
-            }
+        if (cmd != null) {
+            sendMsg(event, getCommandHelpMessage(cmd));
 
-            for (final String alias : cmd.getAliases()) {
-                if (alias.equals(toSearch)) {
-                    sendMsg(event, getCommandHelpMessage(cmd));
-
-                    return;
-                }
-            }
+            return;
         }
 
         sendMsg(event, "That command could not be found, try `" + Settings.PREFIX + "help` for a list of commands");

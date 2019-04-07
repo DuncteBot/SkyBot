@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.web.controllers
 
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
+import com.jagrosh.jdautilities.oauth2.Scope
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.web.WebRouter
 import spark.Request
@@ -34,18 +35,18 @@ object Callback {
         }
 
         val sesid: String = request.session().attribute(WebRouter.SESSION_ID)
-
         val oauthses = oAuth2Client.startSession(
             request.queryParams("code"),
             request.queryParams("state"),
-            sesid
+            sesid,
+            Scope.IDENTIFY, Scope.GUILDS
         ).complete()
 
         val userId = oAuth2Client.getUser(oauthses).complete().id
 
         val session = request.session()
 
-        session.attribute(WebRouter.USER_SESSION, "$sesid${WebRouter.SPLITTER}$userId")
+        session.attribute(WebRouter.USER_ID, userId)
 
         if (session.attributes().contains(WebRouter.OLD_PAGE)) {
             return response.redirect(session.attribute(WebRouter.OLD_PAGE))

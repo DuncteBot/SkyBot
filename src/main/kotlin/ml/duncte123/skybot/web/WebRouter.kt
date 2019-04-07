@@ -269,8 +269,7 @@ class WebRouter(private val shardManager: ShardManager) {
         const val FLASH_MESSAGE = "FLASH_MESSAGE"
         const val OLD_PAGE = "OLD_PAGE"
         const val SESSION_ID = "sessionId"
-        const val USER_SESSION = "USER_SESSION"
-        const val SPLITTER = ":SKIRT:"
+        const val USER_ID = "USER_SESSION"
         const val GUILD_ID = ":guildid"
     }
 }
