@@ -34,7 +34,7 @@ class GeneratePhpCommandList {
 
             val variables = Variables.getInstance()
 
-//            genPhp(variables.commandManager)
+            genPhp(variables.commandManager)
             genStaticSite(variables.commandManager)
 
             exitProcess(0)
