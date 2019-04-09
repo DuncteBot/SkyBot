@@ -52,24 +52,19 @@ class UserinfoCommand : Command() {
     private val prettyTime = PrettyTime()
 
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
         val args = ctx.args
-
         var u: User? = null
         var m: Member? = null
 
         if (args.isEmpty()) {
             u = event.author
-            m = event.guild.getMemberById(u.id)
+            m = event.member
         } else {
-
             val members = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
-
             var users = members.stream().map { it.user }.collect(Collectors.toList())
 
             if (users.isEmpty()) {
-
                 users = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
 
                 if (users.isNotEmpty()) {
@@ -84,16 +79,9 @@ class UserinfoCommand : Command() {
         }
 
         if (u != null && m == null) {
-
-            if (ctx.invoke == "avatar") {
-                MessageUtils.sendMsg(event,
-                    "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
-                return
-            }
-
             renderUserEmbed(event, u)
-            return
 
+            return
         }
 
         if (m == null) {
@@ -226,7 +214,7 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i", "avatar", "whois")
+    override fun getAliases() = arrayOf("user", "i", "whois")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING) {

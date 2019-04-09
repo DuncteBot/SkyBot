@@ -41,7 +41,6 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
-@SuppressWarnings("WeakerAccess")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
@@ -80,7 +79,7 @@ public class CommandManager {
         return this.commands.values();
     }
 
-    public Map<String, ICommand> getCommandsMap() {
+    Map<String, ICommand> getCommandsMap() {
         return this.commands;
     }
 
@@ -140,7 +139,7 @@ public class CommandManager {
         return addCustomCommand(c, true, false);
     }
 
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
@@ -235,28 +234,32 @@ public class CommandManager {
      * @param command
      *         The command to add
      *
-     * @throws IllegalArgumentException if the command or alias is already present
+     * @throws IllegalArgumentException
+     *         if the command or alias is already present
      */
-    @SuppressWarnings({"UnusedReturnValue"})
-    public void addCommand(ICommand command) {
+    private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
 
-        if (this.commands.containsKey(command.getName())) {
-            throw new IllegalArgumentException(String.format("Command %s already present", command.getName()));
+        final String cmdName = command.getName().toLowerCase();
+
+        if (this.commands.containsKey(cmdName)) {
+            throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
         }
 
-        for (final String alias : command.getAliases()) {
+        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
+
+        for (final String alias : lowerAliasses) {
             if (this.aliases.containsKey(alias)) {
                 throw new IllegalArgumentException(String.format("Alias %s already present", alias));
             }
         }
 
-        this.commands.put(command.getName(), command);
+        this.commands.put(cmdName, command);
 
-        for (final String alias : command.getAliases()) {
-            this.aliases.put(alias, command.getName());
+        for (final String alias : lowerAliasses) {
+            this.aliases.put(alias, cmdName);
         }
 
     }
@@ -288,7 +291,7 @@ public class CommandManager {
         dispatchCommand(invoke, args, event);
     }
 
-    public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
 
         if (cmd == null) {

@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.objects.command;
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil;
+import me.duncte123.botcommons.commands.ICommandContext;
 import me.duncte123.weebJava.models.WeebApi;
 import ml.duncte123.skybot.*;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
@@ -49,7 +50,7 @@ import java.util.stream.Collectors;
     @Author(nickname = "Sanduhr32", author = "Maurice R S"),
     @Author(nickname = "duncte123", author = "Duncan Sterken")
 })
-public class CommandContext {
+public class CommandContext implements ICommandContext {
 
     private final String invoke;
     private final List<String> args;
@@ -205,40 +206,9 @@ public class CommandContext {
 
     // --------------- Methods that are in the GuildMessageReceivedEvent --------------- //
 
-    public Message getMessage() {
-        return this.event.getMessage();
-    }
-
-    public User getAuthor() {
-        return this.event.getAuthor();
-    }
-
-    public Member getMember() {
-        return this.event.getMember();
-    }
-
-    public TextChannel getChannel() {
-        return this.event.getChannel();
-    }
-
+    @Override
     public DunctebotGuild getGuild() {
         return new DunctebotGuild(this.event.getGuild());
-    }
-
-    public JDA getJDA() {
-        return this.event.getJDA();
-    }
-
-    public ShardManager getShardManager() {
-        return this.getJDA().asBot().getShardManager();
-    }
-
-    public User getSelfUser() {
-        return this.getJDA().getSelfUser();
-    }
-
-    public Member getSelfMember() {
-        return this.getGuild().getSelfMember();
     }
 
     // --------------- Private methods --------------- //
