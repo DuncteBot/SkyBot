@@ -44,7 +44,7 @@ import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
-    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
     /**
@@ -83,6 +83,10 @@ public class CommandManager {
         return this.commands;
     }
 
+    Map<String, String> getAliasesMap() {
+        return aliases;
+    }
+
     public Set<CustomCommand> getCustomCommands() {
         return this.customCommands;
     }
@@ -97,7 +101,7 @@ public class CommandManager {
      */
     public ICommand getCommand(String name) {
 
-        ICommand found = commands.get(name);
+        ICommand found = this.commands.get(name);
 
         if (found == null) {
             final String forAlias = this.aliases.get(name);
@@ -111,21 +115,21 @@ public class CommandManager {
     }
 
     public List<ICommand> getCommands(CommandCategory category) {
-        return commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
+        return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
 
     public CustomCommand getCustomCommand(String invoke, long guildId) {
-        return customCommands.stream().filter((c) -> c.getGuildId() == guildId)
+        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
             .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
     public List<CustomCommand> getCustomCommands(long guildId) {
-        return customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
+        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
     }
 
     public List<CustomCommand> getAutoResponses(long guildId) {
-        return customCommands.stream()
+        return this.customCommands.stream()
             .filter((c) -> c.getGuildId() == guildId)
             .filter(CustomCommand::isAutoResponse)
             .collect(Collectors.toList());
@@ -157,13 +161,13 @@ public class CommandManager {
                 final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
 
                 if (isEdit) {
-                    variables.getDatabaseAdapter()
+                    this.variables.getDatabaseAdapter()
                         .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
                             future.complete(triple);
                             return null;
                         });
                 } else {
-                    variables.getDatabaseAdapter()
+                    this.variables.getDatabaseAdapter()
                         .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
                             future.complete(triple);
                             return null;
@@ -209,7 +213,7 @@ public class CommandManager {
 
         try {
             final CompletableFuture<Boolean> future = new CompletableFuture<>();
-            variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
+            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
                 future.complete(bool);
                 return null;
             });
@@ -250,18 +254,24 @@ public class CommandManager {
 
         final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
 
-        for (final String alias : lowerAliasses) {
-            if (this.aliases.containsKey(alias)) {
-                throw new IllegalArgumentException(String.format("Alias %s already present", alias));
+        if (!lowerAliasses.isEmpty()) {
+            for (final String alias : lowerAliasses) {
+                if (this.aliases.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.aliases.get(alias),
+                        command.getName()
+                    ));
+                }
+            }
+
+            for (final String alias : lowerAliasses) {
+                this.aliases.put(alias, command.getName());
             }
         }
 
         this.commands.put(cmdName, command);
-
-        for (final String alias : lowerAliasses) {
-            this.aliases.put(alias, cmdName);
-        }
-
     }
 
     /**
@@ -307,7 +317,7 @@ public class CommandManager {
             return;
         }
 
-        commandThread.submit(() -> {
+        this.commandThread.submit(() -> {
 
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
@@ -394,8 +404,7 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-
-        variables.getDatabaseAdapter().getCustomCommands(
+        this.variables.getDatabaseAdapter().getCustomCommands(
             (loadedCommands) -> {
                 loadedCommands.forEach(
                     (command) -> addCustomCommand(command, false, false)
@@ -407,6 +416,6 @@ public class CommandManager {
     }
 
     public void shutdown() {
-        commandThread.shutdown();
+        this.commandThread.shutdown();
     }
 }

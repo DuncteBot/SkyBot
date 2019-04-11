@@ -98,7 +98,8 @@ public class MessageListener extends BaseListener {
             return;
         }
 
-        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) && rw.equals(selfMember)) {
+        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) &&
+            (rw.equals(selfMember) || rw.equals(selfUser))) {
             sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
                 event.getAuthor(),
                 settings.getCustomPrefix())

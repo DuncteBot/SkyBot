@@ -99,7 +99,7 @@ public class GuildInfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"serverinfo", "server", "guild"};
+        return new String[]{"serverinfo", "server", "guild", "gi", "si"};
     }
 
     private void sendGuildInfoEmbed(GuildMessageReceivedEvent event, CommandContext ctx, String inviteString) {

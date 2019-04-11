@@ -125,7 +125,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         AirUtils.stop(variables.getDatabase(), variables.getAudioUtils());
-        variables.getCommandManager().commandThread.shutdown();
+        variables.getCommandManager().shutdown();
 
         /*
          * Only shut down if we are not updating
