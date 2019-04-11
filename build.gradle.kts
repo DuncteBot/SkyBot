@@ -71,7 +71,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "com.github.duncte123", name = "botCommons", version = "a17ac5b")
+    implementation(group = "com.github.duncte123", name = "botCommons", version = "2e43820")
 
     //JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_462") {
@@ -79,7 +79,7 @@ dependencies {
     }
 
     //Lavaplayer/Lavalink
-    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.13")
+    implementation(group = "com.sedmelluq", name = "lavaplayer", version = "1.3.16")
     implementation(group = "com.github.DuncteBot", name = "Lavalink-Client", version = "35fbdf5")
 
     // SQLite

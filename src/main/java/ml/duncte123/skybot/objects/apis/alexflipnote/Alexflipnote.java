@@ -105,7 +105,7 @@ public class Alexflipnote {
 
     private Request makeRequest(String path) {
         return defaultRequest()
-            .url("https://api.alexflipnote.xyz/" + path)
+            .url("https://api.alexflipnote.dev/" + path)
             .get()
             .build();
     }

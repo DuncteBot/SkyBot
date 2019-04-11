@@ -238,23 +238,24 @@ public class CommandManager {
      * @param command
      *         The command to add
      *
-     * @throws IllegalArgumentException if the command or alias is already present
+     * @throws IllegalArgumentException
+     *         if the command or alias is already present
      */
     private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
 
-        if (this.commands.containsKey(command.getName())) {
-            throw new IllegalArgumentException(String.format("Command %s already present", command.getName()));
+        final String cmdName = command.getName().toLowerCase();
+
+        if (this.commands.containsKey(cmdName)) {
+            throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
         }
 
-        this.commands.put(command.getName(), command);
+        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
 
-        final String[] aliases = command.getAliases();
-
-        if (aliases.length > 0) {
-            for (final String alias : aliases) {
+        if (!lowerAliasses.isEmpty()) {
+            for (final String alias : lowerAliasses) {
                 if (this.aliases.containsKey(alias)) {
                     throw new IllegalArgumentException(String.format(
                         "Alias %s already present (Stored for: %s, trying to insert: %s))",
@@ -265,10 +266,12 @@ public class CommandManager {
                 }
             }
 
-            for (final String alias : aliases) {
+            for (final String alias : lowerAliasses) {
                 this.aliases.put(alias, command.getName());
             }
         }
+
+        this.commands.put(cmdName, command);
     }
 
     /**
