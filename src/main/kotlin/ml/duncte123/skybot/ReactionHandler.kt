@@ -57,21 +57,21 @@ class ReactionHandler : ListenerAdapter() {
             val msgId = cacheElement.msgID
 
             if (content == "cancel") {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue()
+                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Search canceled").override(true).queue(null, {})
                 requirementsCache = requirementsCache - cacheElement
 
                 return@BiConsumer
             }
 
             if (index == -1 || index > resSet.size) {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue()
+                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
 
                 return@BiConsumer
             }
 
             val res = resSet.getOrNull(index - 1)
             if (res == null) {
-                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue()
+                ctx.channel.editMessageById(msgId, "\uD83D\uDD0E Invalid index").override(true).queue(null, {})
 
                 return@BiConsumer
             }
@@ -80,7 +80,7 @@ class ReactionHandler : ListenerAdapter() {
                 "https://www.youtube.com/watch?v=${res.id.videoId}", ctx, false)
             requirementsCache = requirementsCache - cacheElement
 
-            ctx.channel.deleteMessageById(msgId).queue(null) {} // Ignore the error if the message has already been deleted
+            ctx.channel.deleteMessageById(msgId).queue(null, {}) // Ignore the error if the message has already been deleted
         }
 
     }
