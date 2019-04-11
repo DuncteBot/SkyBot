@@ -18,8 +18,8 @@
 
 package ml.duncte123.skybot.objects.apis.alexflipnote;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.github.natanbc.reliqua.request.PendingRequest;
-import com.google.gson.Gson;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import me.duncte123.weebJava.helpers.IOHelper;
@@ -33,7 +33,7 @@ import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Alexflipnote {
 
-    private final Gson gson = new Gson();
+    private final ObjectMapper mapper = new ObjectMapper();
 
 
     public PendingRequest<FlipnoteColourObj> getRandomColour() {
@@ -42,7 +42,7 @@ public class Alexflipnote {
             (r) -> {
                 final JSONObject jsonObject = WebUtilsErrorUtils.toJSONObject(r);
                 jsonObject.put("integer", jsonObject.getInt("int"));
-                return gson.fromJson(jsonObject.toString(), FlipnoteColourObj.class);
+                return mapper.readValue(jsonObject.toString(), FlipnoteColourObj.class);
             }
         );
     }

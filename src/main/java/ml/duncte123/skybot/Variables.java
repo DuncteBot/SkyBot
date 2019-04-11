@@ -18,10 +18,9 @@
 
 package ml.duncte123.skybot;
 
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
@@ -41,7 +40,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.file.Files;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
@@ -64,9 +62,7 @@ public final class Variables {
 
     private Variables() {
         try {
-
-            final String json = new String(Files.readAllBytes(new File("config.json").toPath()));
-            this.config = new Gson().fromJson(json, DunctebotConfig.class);
+            this.config = new ObjectMapper().readValue(new File("config.json"), DunctebotConfig.class);
         }
         catch (IOException e) {
             e.printStackTrace();
