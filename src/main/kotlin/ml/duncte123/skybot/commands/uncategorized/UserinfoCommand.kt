@@ -214,7 +214,7 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i", "whois")
+    override fun getAliases() = arrayOf("user", "i", "whois", "ui")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING) {
