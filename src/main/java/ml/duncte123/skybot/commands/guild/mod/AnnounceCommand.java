@@ -30,7 +30,7 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
 
@@ -43,7 +43,7 @@ public class AnnounceCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         final String invoke = ctx.getInvoke();
         final GuildMessageReceivedEvent event = ctx.getEvent();
 

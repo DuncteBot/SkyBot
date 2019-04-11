@@ -20,11 +20,11 @@ package ml.duncte123.skybot.commands.image;
 
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class JokeoverheadCommand extends NoPatronImageCommand {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         if (!passesNoArgs(ctx.getEvent(), false)) {
             return;
         }

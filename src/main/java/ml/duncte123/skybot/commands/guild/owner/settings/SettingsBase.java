@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
@@ -41,7 +41,7 @@ abstract class SettingsBase extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         if (!ctx.getMember().hasPermission(Permission.MANAGE_SERVER) && !isDev(ctx.getAuthor())) {
             sendMsg(ctx.getEvent(), "You need the \"Manage Server\" permission to use this command");
             return;
@@ -50,10 +50,10 @@ abstract class SettingsBase extends Command {
         run(ctx);
     }
 
-    public abstract void run(@NotNull CommandContext ctx);
+    public abstract void run(@Nonnull CommandContext ctx);
 
     @Nullable
-    protected TextChannel findTextChannel(@NotNull CommandContext ctx) {
+    protected TextChannel findTextChannel(@Nonnull CommandContext ctx) {
         final List<TextChannel> foundChannels = FinderUtil.findTextChannels(ctx.getArgsRaw(), ctx.getGuild());
 
         if (foundChannels.isEmpty()) {

@@ -24,7 +24,7 @@ import me.duncte123.botcommons.web.WebUtils.EncodingType;
 import me.duncte123.weebJava.helpers.IOHelper;
 import ml.duncte123.skybot.Author;
 import okhttp3.RequestBody;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.json.JSONObject;
 
 import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
@@ -34,7 +34,7 @@ public class BlargBot {
 
     private final String token;
 
-    public BlargBot(@NotNull String token) {
+    public BlargBot(@Nonnull String token) {
         this.token = token;
     }
 

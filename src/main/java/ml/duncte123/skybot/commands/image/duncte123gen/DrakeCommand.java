@@ -21,11 +21,11 @@ package ml.duncte123.skybot.commands.image.duncte123gen;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.commands.image.NoPatronImageCommand;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public class DrakeCommand extends NoPatronImageCommand {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         if (!passes(ctx.getEvent(), ctx.getArgs(), false)) {
             return;
         }

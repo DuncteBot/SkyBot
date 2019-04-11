@@ -28,7 +28,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -42,7 +42,7 @@ public class KickCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();

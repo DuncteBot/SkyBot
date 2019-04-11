@@ -28,7 +28,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -150,7 +150,7 @@ public class GuildMemberListener extends BaseListener {
 
     }
 
-    @NotNull
+    @Nonnull
     private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent)) {

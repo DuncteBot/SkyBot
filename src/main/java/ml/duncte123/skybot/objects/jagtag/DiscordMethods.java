@@ -27,7 +27,7 @@ import ml.duncte123.skybot.Authors;
 import net.dv8tion.jda.core.OnlineStatus;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.utils.MiscUtil;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.time.format.DateTimeFormatter;
 import java.util.Collection;
@@ -249,7 +249,7 @@ public class DiscordMethods {
         );
     }
 
-    @NotNull
+    @Nonnull
     private static TextChannel getFirstTextChannel(Environment env, String[] in) throws ParseException {
         final Guild g = env.get("guild");
         List<TextChannel> channels = null;
@@ -265,7 +265,7 @@ public class DiscordMethods {
         return channels.get(0);
     }
 
-    @NotNull
+    @Nonnull
     private static Member getMemberFromInput(Environment env, String[] in) throws ParseException {
 
         if (in[0].equals("")) {

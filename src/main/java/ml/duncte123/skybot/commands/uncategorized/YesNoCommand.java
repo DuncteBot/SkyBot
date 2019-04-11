@@ -23,13 +23,13 @@ import me.duncte123.botcommons.web.WebUtils;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
 public class YesNoCommand extends Command {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         WebUtils.ins.getJSONObject("https://yesno.wtf/api").async((it) ->
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImageWithTitle(
                 it.getString("answer"),

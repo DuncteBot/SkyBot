@@ -28,7 +28,7 @@ import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.entities.VoiceChannel;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -99,7 +99,7 @@ public final class LavalinkManager {
             g.getAudioManager().isConnected();
     }
 
-    public VoiceChannel getConnectedChannel(@NotNull Guild guild) {
+    public VoiceChannel getConnectedChannel(@Nonnull Guild guild) {
         //NOTE: never use the local audio manager, since the audio connection may be remote
         // there is also no reason to look the channel up remotely from lavalink, if we have access to a real guild
         // object here, since we can use the voice state of ourselves (and lavalink 1.x is buggy in keeping up with the

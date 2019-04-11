@@ -23,7 +23,7 @@ import ml.duncte123.skybot.commands.image.ImageCommandBase;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 public abstract class FilterBase extends ImageCommandBase {
 
@@ -35,7 +35,7 @@ public abstract class FilterBase extends ImageCommandBase {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!passesNoArgs(event, false)) {

@@ -37,7 +37,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -154,7 +154,7 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean shouldBlockCommand(@NotNull GuildSettings settings, @NotNull String rw, @NotNull String s) {
+    private boolean shouldBlockCommand(@Nonnull GuildSettings settings, @Nonnull String rw, @Nonnull String s) {
         return s.equalsIgnoreCase(
             rw.replaceFirst(Pattern.quote(Settings.OTHER_PREFIX), Pattern.quote(Settings.PREFIX))
                 .replaceFirst(Pattern.quote(settings.getCustomPrefix()), Pattern.quote(Settings.PREFIX))
@@ -163,7 +163,7 @@ public class MessageListener extends BaseListener {
     }
 
     //                                    raw,    category?
-    private boolean hasCorrectCategory(@NotNull String rw, @NotNull String categoryName, @NotNull GuildSettings settings) {
+    private boolean hasCorrectCategory(@Nonnull String rw, @Nonnull String categoryName, @Nonnull GuildSettings settings) {
 
         final ICommand command = commandManager.getCommand(
             rw.replaceFirst(Pattern.quote(settings.getCustomPrefix()), Settings.PREFIX)
@@ -178,7 +178,7 @@ public class MessageListener extends BaseListener {
     }
 
     @SuppressWarnings("ConstantConditions")
-    private boolean isCategory(@NotNull String name) {
+    private boolean isCategory(@Nonnull String name) {
         try {
             return CommandCategory.valueOf(name.toUpperCase()) != null;
         }
@@ -187,7 +187,7 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean canRunCommands(String rw, GuildSettings settings, @NotNull GuildMessageReceivedEvent event) {
+    private boolean canRunCommands(String rw, GuildSettings settings, @Nonnull GuildMessageReceivedEvent event) {
 
         final String topic = event.getChannel().getTopic();
 
@@ -322,7 +322,7 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean doAutoModChecks(@NotNull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private boolean doAutoModChecks(@Nonnull GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
         final Guild guild = event.getGuild();
         if (guild.getSelfMember().hasPermission(Permission.MESSAGE_MANAGE)
             && !event.getMember().hasPermission(Permission.MESSAGE_MANAGE)) {
@@ -348,7 +348,7 @@ public class MessageListener extends BaseListener {
         return false;
     }
 
-    private void killAllShards(@NotNull ShardManager manager) {
+    private void killAllShards(@Nonnull ShardManager manager) {
         manager.shutdown();
         /*manager.getShards().forEach(jda -> {
             logger.info(String.format("Shard %s has been shut down", jda.getShardInfo().getShardId()));

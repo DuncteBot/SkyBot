@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
@@ -29,7 +29,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class PingCommand extends Command {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         final long start = System.nanoTime();
 

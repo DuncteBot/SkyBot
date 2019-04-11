@@ -23,7 +23,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.EmbedBuilder;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static java.awt.Color.decode;
 import static me.duncte123.botcommons.messaging.EmbedUtils.defaultEmbed;
@@ -33,7 +33,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw;
 public class ColorCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         ctx.getAlexFlipnote().getRandomColour().async((data) -> {
             final String hex = data.hex;

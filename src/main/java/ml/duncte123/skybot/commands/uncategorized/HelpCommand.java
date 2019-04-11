@@ -29,7 +29,7 @@ import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.utils.HelpEmbeds;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -46,7 +46,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 public class HelpCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 

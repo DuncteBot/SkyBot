@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.jsoup.nodes.Element;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -44,7 +44,7 @@ public class CSShumorCommand extends Command {
 
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         switch (ctx.getRandom().nextInt(2)) {
             case 1:

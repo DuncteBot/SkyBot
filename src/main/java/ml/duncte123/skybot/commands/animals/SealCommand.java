@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.ApiUtils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -36,7 +36,7 @@ public class SealCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         ApiUtils.getRandomSeal((seal) -> {
             sendEmbed(ctx.getEvent(), EmbedUtils.embedImage(seal));
 

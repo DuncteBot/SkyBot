@@ -29,7 +29,7 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.utils.AudioUtils;
 import net.dv8tion.jda.core.entities.Guild;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.concurrent.TimeUnit;
 
@@ -64,7 +64,7 @@ public abstract class MusicCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         if (this.withAutoJoin) {
             runWithAutoJoin(ctx);
         } else if (channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {
@@ -72,11 +72,11 @@ public abstract class MusicCommand extends Command {
         }
     }
 
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         // Cannot be abstract due to the join command
     }
 
-    private void runWithAutoJoin(@NotNull CommandContext ctx) {
+    private void runWithAutoJoin(@Nonnull CommandContext ctx) {
         if (isAbleToJoinChannel(ctx.getEvent())) {
             ctx.getCommandManager().getCommand("join").executeCommand(ctx);
         } else if (!channelChecks(ctx.getEvent(), ctx.getAudioUtils())) {

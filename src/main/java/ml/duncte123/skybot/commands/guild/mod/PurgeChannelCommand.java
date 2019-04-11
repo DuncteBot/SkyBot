@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -37,7 +37,7 @@ public class PurgeChannelCommand extends ModBaseCommand {
     }
 
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
         if (!ctx.getSelfMember().hasPermission(Permission.MANAGE_SERVER)) {

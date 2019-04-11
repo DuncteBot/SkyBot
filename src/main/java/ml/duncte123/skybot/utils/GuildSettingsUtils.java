@@ -28,7 +28,7 @@ import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.adapters.DatabaseAdapter;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.core.entities.Guild;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +126,7 @@ public class GuildSettingsUtils {
      *
      * @return the guild
      */
-    @NotNull
+    @Nonnull
     public static GuildSettings getGuild(Guild guild, Variables variables) {
         final TLongObjectMap<GuildSettings> guildSettings = variables.getGuildSettings();
 
