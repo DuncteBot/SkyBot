@@ -39,8 +39,7 @@ import ml.duncte123.skybot.web.controllers.errors.HttpErrorHandlers
 import net.dv8tion.jda.bot.sharding.ShardManager
 import net.dv8tion.jda.core.Permission
 import spark.ModelAndView
-import spark.Spark.path
-import spark.kotlin.*
+import spark.Spark.*
 import spark.template.jtwig.JtwigTemplateEngine
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -63,17 +62,17 @@ class WebRouter(private val shardManager: ShardManager) {
 
         staticFiles.location("/public")
 
-        get("/callback") {
+        get("/callback") { request, response ->
             return@get Callback.handle(request, response, oAuth2Client)
         }
 
-        get("/logout") {
+        get("/logout") { request, response ->
             request.session().invalidate()
 
             return@get response.redirect("https://dunctebot.com/")
         }
 
-        get("/invite") {
+        get("/invite") { _, response ->
             return@get response.redirect("https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1")
         }
 
@@ -81,34 +80,34 @@ class WebRouter(private val shardManager: ShardManager) {
             .put("title", "Register your server for patron perks")
             .put("chapta_sitekey", config.apis.chapta.sitekey), "oneGuildRegister.twig")
 
-        post("/register-server") {
+        post("/register-server") { request, _ ->
             return@post OneGuildRegister.post(request, shardManager, variables, engine)
         }
 
         path("/") {
 
-            before("") {
+            before("") { request, response ->
                 return@before Dashboard.before(request, response, oAuth2Client, config)
             }
 
             get("", WebVariables().put("title", "Dashboard"), "dashboard/index.twig")
             get("/issue", WebVariables().put("title", "Issue Generator & Reporter"), "issues.twig")
 
-            post("/issue") {
+            post("/issue") { _, _ ->
                 return@post Dashboard.postIssue()
             }
         }
 
         path("/server/$GUILD_ID") {
-            before("/*") {
+            before("/*") { request, response ->
                 return@before Dashboard.beforeServer(request, response, shardManager)
             }
 
-            get("/") {
+            get("/") { request, _ ->
                 return@get Dashboard.serverSelection(request, shardManager, engine)
             }
 
-            get("/invalid") {
+            get("/invalid") { request, response ->
                 response.status(404)
 
                 return@get "DuncteBot is not in the requested server, why don't you <a href=\"https://discordapp.com/oauth2" +
@@ -116,7 +115,7 @@ class WebRouter(private val shardManager: ShardManager) {
                     "&scope=bot&permissions=-1\" target=\"_blank\">invite it</a>?"
             }
 
-            get("/noperms") {
+            get("/noperms") { _, _ ->
                 return@get "<h1>You don't have permission to edit this server</h1>"
             }
 
@@ -124,7 +123,7 @@ class WebRouter(private val shardManager: ShardManager) {
             get("/basic", WebVariables().put("title", "Dashboard"),
                 "dashboard/basicSettings.twig", true)
 
-            post("/basic") {
+            post("/basic") { request, response ->
                 return@post BasicSettings.save(request, response, shardManager, variables)
             }
 
@@ -132,7 +131,7 @@ class WebRouter(private val shardManager: ShardManager) {
             get("/moderation", WebVariables().put("title", "Dashboard"),
                 "dashboard/moderationSettings.twig", true)
 
-            post("/moderation") {
+            post("/moderation") { request, response ->
                 return@post ModerationSettings.save(request, response, shardManager, variables)
             }
 
@@ -144,64 +143,64 @@ class WebRouter(private val shardManager: ShardManager) {
             get("/messages", WebVariables().put("title", "Dashboard"),
                 "dashboard/welcomeLeaveDesc.twig", true)
 
-            post("/messages") {
+            post("/messages") { request, response ->
                 return@post MessageSettings.save(request, response, shardManager, variables)
             }
         }
 
         // Api routes
         path("/api") {
-            before("/*") {
+            before("/*") { _, response ->
                 response.type(WebUtils.EncodingType.APPLICATION_JSON.type)
             }
 
-            options("/*") {
+            options("/*") { _, _ ->
                 // Allow OPTIONS requests
             }
 
-            get("/getServerCount") {
+            get("/getServerCount") { _, response ->
                 return@get MainApi.serverCount(response, shardManager)
             }
 
-            get("/joinGuild") {
+            get("/joinGuild") { _, response ->
                 return@get MainApi.joinGuild(response)
             }
 
-            get("/getUserGuilds") {
+            get("/getUserGuilds") { request, response ->
                 return@get GetUserGuilds.show(request, response, oAuth2Client, shardManager)
             }
 
-            post("/suggest") {
+            post("/suggest") { request, response ->
                 return@post Suggest.create(request, response, config)
             }
 
             path("/customcommands/$GUILD_ID") {
-                before("") {
+                before("") { request, response ->
                     return@before CustomCommands.before(request, response)
                 }
 
-                get("") {
+                get("") { request, response ->
                     return@get CustomCommands.show(request, response, shardManager, variables)
                 }
 
-                patch("") {
+                patch("") { request, response ->
                     return@patch CustomCommands.update(request, response, shardManager, variables)
                 }
 
-                post("") {
+                post("") { request, response ->
                     return@post CustomCommands.create(request, response, shardManager, variables)
                 }
 
-                delete("") {
+                delete("") { request, response ->
                     return@delete CustomCommands.delete(request, response, shardManager, variables)
                 }
             }
 
-            post("/checkUserAndGuild") {
+            post("/checkUserAndGuild") { request, response ->
                 return@post FindUserAndGuild.get(request, response, shardManager)
             }
 
-            after("/*") {
+            after("/*") { _, response ->
                 response.header("Access-Control-Allow-Origin", "*")
                 response.header("Access-Control-Allow-Credentials", "true")
                 response.header("Access-Control-Allow-Methods", "POST, GET, OPTIONS, DELETE, PATCH")
@@ -211,18 +210,17 @@ class WebRouter(private val shardManager: ShardManager) {
 
         }
 
-        notFound {
-            return@notFound HttpErrorHandlers.notFound(this, engine)
+        notFound { request, response ->
+            return@notFound HttpErrorHandlers.notFound(request, response, engine)
         }
 
-        internalServerError {
-            return@internalServerError HttpErrorHandlers.internalServerError(this)
+        internalServerError { request, response ->
+            return@internalServerError HttpErrorHandlers.internalServerError(request, response)
         }
     }
 
     fun get(path: String, map: WebVariables, model: String, withGuildData: Boolean = false) {
-        get(path) {
-
+        get(path) { request, _ ->
             if (withGuildData) {
                 val guild = WebHelpers.getGuildFromRequest(request, shardManager)
 
