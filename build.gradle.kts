@@ -109,7 +109,6 @@ dependencies {
     implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.1.0")
 
     //Spark for website
-    implementation(group = "com.sparkjava", name = "spark-kotlin", version = "1.0.0-alpha")
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
     implementation(group = "com.sparkjava", name = "spark-template-jtwig", version = "2.7.1")
     // Oauth

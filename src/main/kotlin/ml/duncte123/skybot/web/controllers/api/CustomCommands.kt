@@ -27,7 +27,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager
 import org.json.JSONObject
 import spark.Request
 import spark.Response
-import spark.kotlin.halt
+import spark.Spark.halt
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 object CustomCommands {
