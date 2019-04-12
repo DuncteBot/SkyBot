@@ -136,7 +136,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        if (!event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
+        if (event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
             channelCheckThing(guild, connected);
 
             return;
