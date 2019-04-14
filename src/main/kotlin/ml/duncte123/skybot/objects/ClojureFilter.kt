@@ -25,7 +25,7 @@ import java.util.regex.Pattern
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 @SinceSkybot(version = "3.87.1")
 class ClojureFilter {
-    private val pattern = Pattern.compile("(\\{)(\\(*\\w*\\)*)?([\\w\\W]*)(\\})", Pattern.COMMENTS)
+    private val pattern = Pattern.compile("(\\{)(\\(*\\w*\\)*\\s*)?->([\\w\\s()\\[\\]=+\\-*$\"\'\\\\]*)\\}", Pattern.COMMENTS)
 
     fun filterClojures(script: String): String {
         var matcher = pattern.matcher(script)
@@ -45,3 +45,8 @@ class ClojureFilter {
         return secondScript
     }
 }
+
+//fun main() {
+//    val str = "t = 24; {(xd)-> t = gandalf(t); { -> gandalf(t); }} \${t}"
+//    println(ClojureFilter().filterClojures(str))
+//}
