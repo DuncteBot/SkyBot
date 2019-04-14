@@ -39,7 +39,7 @@ class ShardWatcher {
 
         this.pings = new long[totalShards];
 
-        service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
+        service.scheduleAtFixedRate(this::checkShards,10, 10, TimeUnit.MINUTES);
     }
 
     private void checkShards() {
