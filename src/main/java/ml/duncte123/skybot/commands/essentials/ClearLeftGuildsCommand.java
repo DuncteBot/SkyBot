@@ -27,7 +27,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -35,7 +35,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class ClearLeftGuildsCommand extends Command {
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         if (!isDev(ctx.getAuthor())) {
             return;

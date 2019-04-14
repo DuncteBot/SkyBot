@@ -31,10 +31,10 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -91,7 +91,7 @@ public abstract class Command implements ICommand {
      *
      * @return true if the user is a patron
      */
-    protected boolean isPatron(@NotNull User u, TextChannel tc) {
+    protected boolean isPatron(@Nonnull User u, TextChannel tc) {
         if (isDev(u) || patrons.contains(u.getIdLong())) {
             return true;
         }
@@ -123,12 +123,12 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    private boolean isPatron(@NotNull User u, TextChannel tc, boolean reply) {
+    private boolean isPatron(@Nonnull User u, TextChannel tc, boolean reply) {
         final TextChannel textChannel = reply ? tc : null;
         return isPatron(u, textChannel);
     }
 
-    private boolean isGuildPatron(@NotNull User u, @NotNull Guild g) {
+    private boolean isGuildPatron(@Nonnull User u, @Nonnull Guild g) {
 
         if (guildPatrons.contains(g.getIdLong()) || oneGuildPatrons.containsValue(g.getIdLong())) {
             return true;
@@ -155,17 +155,17 @@ public abstract class Command implements ICommand {
         return true;
     }
 
-    protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent event, boolean reply) {
+    protected boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent event, boolean reply) {
         final boolean isGuild = isGuildPatron(event.getAuthor(), event.getGuild());
         return isGuild || isPatron(event.getAuthor(), event.getChannel(), reply);
     }
 
-    protected boolean isUserOrGuildPatron(@NotNull GuildMessageReceivedEvent e) {
+    protected boolean isUserOrGuildPatron(@Nonnull GuildMessageReceivedEvent e) {
         return isUserOrGuildPatron(e, true);
     }
 
 
-    protected boolean isDev(@NotNull User u) {
+    protected boolean isDev(@Nonnull User u) {
         return Settings.developers.contains(u.getIdLong());
     }
 

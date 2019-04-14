@@ -24,7 +24,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -36,7 +36,7 @@ public class KittyCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         final String apiKey = ctx.getConfig().apis.thecatapi;
         final String url = "https://api.thecatapi.com/api/images/get?" +
             (!apiKey.isEmpty() ? "api_key=" + apiKey + "&" : "") + "format=xml&results_per_page=1";
@@ -56,5 +56,10 @@ public class KittyCommand extends Command {
     @Override
     public String getName() {
         return "kitty";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[]{"cat"};
     }
 }

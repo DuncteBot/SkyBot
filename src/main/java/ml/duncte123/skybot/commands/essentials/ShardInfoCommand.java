@@ -31,7 +31,7 @@ import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.text.WordUtils;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -50,7 +50,7 @@ public class ShardInfoCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         final List<String> headers = new ArrayList<>();
         headers.add("ID");
         headers.add("Status");

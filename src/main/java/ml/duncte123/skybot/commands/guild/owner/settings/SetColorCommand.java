@@ -22,7 +22,7 @@ import me.duncte123.botcommons.messaging.EmbedUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.awt.*;
 import java.util.List;
@@ -38,7 +38,7 @@ public class SetColorCommand extends SettingsBase {
     private static final Pattern COLOR_REGEX = Pattern.compile("#[a-zA-Z0-9]{6}");
 
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
 
         final List<String> args = ctx.getArgs();
 

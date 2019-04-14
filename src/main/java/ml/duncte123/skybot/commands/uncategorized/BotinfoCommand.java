@@ -34,7 +34,7 @@ import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.lang.management.ManagementFactory;
 import java.sql.Time;
@@ -53,7 +53,7 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 public class BotinfoCommand extends Command {
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
 
@@ -119,6 +119,6 @@ public class BotinfoCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"about", "support"};
+        return new String[]{"about", "support", "bi"};
     }
 }

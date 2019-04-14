@@ -39,14 +39,14 @@ class ShardWatcher {
 
         this.pings = new long[totalShards];
 
-        service.scheduleAtFixedRate(this::checkShards, 1, 1, TimeUnit.HOURS);
+        service.scheduleAtFixedRate(this::checkShards, 5, 5, TimeUnit.MINUTES);
     }
 
     private void checkShards() {
 
         final ShardManager shardManager = SkyBot.getInstance().getShardManager();
 
-        logger.info("Checking shards");
+        logger.debug("Checking shards");
 
         for (final JDA shard : shardManager.getShardCache()) {
             final ShardInfo info = shard.getShardInfo();
@@ -56,10 +56,10 @@ class ShardWatcher {
             if (oldPing != ping) {
                 this.pings[info.getShardId()] = ping;
             } else {
-                logger.error("{} is possibly down", info);
+                logger.warn("{} is possibly down", info);
             }
         }
 
-        logger.info("Checking done");
+        logger.debug("Checking done");
     }
 }

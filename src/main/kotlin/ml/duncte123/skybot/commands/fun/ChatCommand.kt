@@ -43,7 +43,6 @@ import javax.xml.xpath.XPathFactory
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ChatCommand : Command() {
 
-    private val botid = "b0dafd24ee35a477"
     private val sessions = TLongObjectHashMap<ChatSession>()
     private val MAX_DURATION = MILLISECONDS.convert(20, MINUTES)
     private val responses = arrayOf(
@@ -90,12 +89,11 @@ class ChatCommand : Command() {
 
         val time = System.currentTimeMillis()
         var message = ctx.argsRaw
-        event.channel.sendTyping().queue()
 
         message = replaceStuff(event, message)
 
         if (!sessions.containsKey(event.author.idLong)) {
-            sessions.put(event.author.idLong, ChatSession(botid, event.author.idLong))
+            sessions.put(event.author.idLong, ChatSession(event.author.idLong))
             //sessions[event.author.id]?.session =
         }
 
@@ -113,7 +111,7 @@ class ChatCommand : Command() {
 
             response = parseATags(response, withAds)
             if (withAds) {
-                response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/duncte123)."
+                response += "\n\nHelp supporting our bot by becoming a patron. [Click here](https://patreon.com/DuncteBot)."
                 MessageUtils.sendMsg(event, MessageBuilder().append(event.author)
                     .setEmbed(EmbedUtils.embedMessage(response).build()).build())
             } else {
@@ -167,12 +165,12 @@ class ChatCommand : Command() {
  * Little wrapper class to help us keep track of inactive sessions
  */
 @Author(nickname = "duncte123", author = "Duncan Sterken")
-class ChatSession(botid: String, userId: Long) {
+class ChatSession(userId: Long) {
     private val vars: MutableMap<String, Any>
 
     init {
         vars = LinkedHashMap()
-        vars["botid"] = botid
+        vars["botid"] = "b0dafd24ee35a477"
         vars["custid"] = userId
     }
 
@@ -181,7 +179,16 @@ class ChatSession(botid: String, userId: Long) {
     fun think(text: String, response: (String) -> Unit) {
         vars["input"] = URLEncoder.encode(text, "UTF-8")
         WebUtils.ins.preparePost("https://www.pandorabots.com/pandora/talk-xml", vars).async {
-            response.invoke(xPathSearch(it, "//result/that/text()"))
+            try {
+                response.invoke(xPathSearch(it, "//result/that/text()"))
+            }
+            catch(e: Exception) {
+                response.invoke("""An Error occurred, please report this message my developers
+                    |```
+                    |${e.message}
+                    |```
+                """.trimMargin())
+            }
         }
     }
 

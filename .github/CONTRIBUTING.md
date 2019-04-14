@@ -116,7 +116,7 @@ Based on the current `upstream/master` changes!
 +    * @return The {@link okhttp3.Response Response} from the webserver
 +    */
 +   @Nullable
-+   public static Response postRequest(String url, @NotNull Map<String, Object> postFields) {
++   public static Response postRequest(String url, @Nonnull Map<String, Object> postFields) {
 +       if (url != null) {
 +           return null;
 +       }

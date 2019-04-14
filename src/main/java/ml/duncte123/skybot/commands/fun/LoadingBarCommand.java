@@ -24,7 +24,7 @@ import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.io.IOException;
 import java.util.Calendar;
@@ -39,7 +39,7 @@ public class LoadingBarCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         if (!ctx.getSelfMember().hasPermission(Permission.MESSAGE_ATTACH_FILES, Permission.MESSAGE_WRITE)) {
             sendMsg(ctx.getEvent(), "I need the `Attach Files` permission for this command to work");

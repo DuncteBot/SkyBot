@@ -41,11 +41,10 @@ import java.util.stream.Collectors;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static ml.duncte123.skybot.unstable.utils.ComparatingUtils.execCheck;
 
-@SuppressWarnings("WeakerAccess")
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class CommandManager {
 
-    public final ExecutorService commandThread = Executors.newCachedThreadPool(t -> new Thread(t, "Command-execute-thread"));
+    private final ExecutorService commandThread = Executors.newCachedThreadPool((t) -> new Thread(t, "Command-execute-thread"));
     private static final Pattern COMMAND_PATTERN = Pattern.compile("([^\"]\\S*|\".+?\")\\s*");
 
     /**
@@ -80,8 +79,12 @@ public class CommandManager {
         return this.commands.values();
     }
 
-    public Map<String, ICommand> getCommandsMap() {
+    Map<String, ICommand> getCommandsMap() {
         return this.commands;
+    }
+
+    Map<String, String> getAliasesMap() {
+        return aliases;
     }
 
     public Set<CustomCommand> getCustomCommands() {
@@ -98,7 +101,7 @@ public class CommandManager {
      */
     public ICommand getCommand(String name) {
 
-        ICommand found = commands.get(name);
+        ICommand found = this.commands.get(name);
 
         if (found == null) {
             final String forAlias = this.aliases.get(name);
@@ -112,21 +115,21 @@ public class CommandManager {
     }
 
     public List<ICommand> getCommands(CommandCategory category) {
-        return commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
+        return this.commands.values().stream().filter(c -> c.getCategory().equals(category)).collect(Collectors.toList());
     }
 
 
     public CustomCommand getCustomCommand(String invoke, long guildId) {
-        return customCommands.stream().filter((c) -> c.getGuildId() == guildId)
+        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId)
             .filter((c) -> c.getName().equalsIgnoreCase(invoke)).findFirst().orElse(null);
     }
 
     public List<CustomCommand> getCustomCommands(long guildId) {
-        return customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
+        return this.customCommands.stream().filter((c) -> c.getGuildId() == guildId).collect(Collectors.toList());
     }
 
     public List<CustomCommand> getAutoResponses(long guildId) {
-        return customCommands.stream()
+        return this.customCommands.stream()
             .filter((c) -> c.getGuildId() == guildId)
             .filter(CustomCommand::isAutoResponse)
             .collect(Collectors.toList());
@@ -140,7 +143,7 @@ public class CommandManager {
         return addCustomCommand(c, true, false);
     }
 
-    public Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
+    private Triple<Boolean, Boolean, Boolean> addCustomCommand(CustomCommand command, boolean insertInDb, boolean isEdit) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
@@ -158,13 +161,13 @@ public class CommandManager {
                 final CompletableFuture<Triple<Boolean, Boolean, Boolean>> future = new CompletableFuture<>();
 
                 if (isEdit) {
-                    variables.getDatabaseAdapter()
+                    this.variables.getDatabaseAdapter()
                         .updateCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), command.isAutoResponse(), (triple) -> {
                             future.complete(triple);
                             return null;
                         });
                 } else {
-                    variables.getDatabaseAdapter()
+                    this.variables.getDatabaseAdapter()
                         .createCustomCommand(command.getGuildId(), command.getName(), command.getMessage(), (triple) -> {
                             future.complete(triple);
                             return null;
@@ -210,7 +213,7 @@ public class CommandManager {
 
         try {
             final CompletableFuture<Boolean> future = new CompletableFuture<>();
-            variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
+            this.variables.getDatabaseAdapter().deleteCustomCommand(guildId, name, (bool) -> {
                 future.complete(bool);
                 return null;
             });
@@ -235,30 +238,40 @@ public class CommandManager {
      * @param command
      *         The command to add
      *
-     * @throws IllegalArgumentException if the command or alias is already present
+     * @throws IllegalArgumentException
+     *         if the command or alias is already present
      */
-    @SuppressWarnings({"UnusedReturnValue"})
-    public void addCommand(ICommand command) {
+    private void addCommand(ICommand command) {
         if (command.getName().contains(" ")) {
             throw new DoomedException("Name can't have spaces!");
         }
 
-        if (this.commands.containsKey(command.getName())) {
-            throw new IllegalArgumentException(String.format("Command %s already present", command.getName()));
+        final String cmdName = command.getName().toLowerCase();
+
+        if (this.commands.containsKey(cmdName)) {
+            throw new IllegalArgumentException(String.format("Command %s already present", cmdName));
         }
 
-        for (final String alias : command.getAliases()) {
-            if (this.aliases.containsKey(alias)) {
-                throw new IllegalArgumentException(String.format("Alias %s already present", alias));
+        final List<String> lowerAliasses = Arrays.stream(command.getAliases()).map(String::toLowerCase).collect(Collectors.toList());
+
+        if (!lowerAliasses.isEmpty()) {
+            for (final String alias : lowerAliasses) {
+                if (this.aliases.containsKey(alias)) {
+                    throw new IllegalArgumentException(String.format(
+                        "Alias %s already present (Stored for: %s, trying to insert: %s))",
+                        alias,
+                        this.aliases.get(alias),
+                        command.getName()
+                    ));
+                }
+            }
+
+            for (final String alias : lowerAliasses) {
+                this.aliases.put(alias, command.getName());
             }
         }
 
-        this.commands.put(command.getName(), command);
-
-        for (final String alias : command.getAliases()) {
-            this.aliases.put(alias, command.getName());
-        }
-
+        this.commands.put(cmdName, command);
     }
 
     /**
@@ -288,7 +301,7 @@ public class CommandManager {
         dispatchCommand(invoke, args, event);
     }
 
-    public void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
+    private void dispatchCommand(String invoke, List<String> args, GuildMessageReceivedEvent event) {
         ICommand cmd = getCommand(invoke);
 
         if (cmd == null) {
@@ -304,7 +317,12 @@ public class CommandManager {
             return;
         }
 
-        commandThread.submit(() -> {
+        this.commandThread.submit(() -> {
+
+            MDC.put("command.invoke", invoke);
+            MDC.put("command.args", args.toString());
+            MDC.put("user", event.getAuthor().getAsTag());
+            MDC.put("guild", event.getGuild().toString());
 
             final TextChannel channel = event.getChannel();
 
@@ -312,7 +330,8 @@ public class CommandManager {
                 return;
             }
 
-            channel.sendTyping().queue();
+            // Suppress errors from when we can't type in the channel
+            channel.sendTyping().queue(null, (t) -> {});
 
             try {
 
@@ -325,10 +344,6 @@ public class CommandManager {
                     }
 
                     MDC.put("command.class", cmd.getClass().getName());
-                    MDC.put("command.invoke", invoke);
-                    MDC.put("command.args", args.toString());
-                    MDC.put("user", event.getAuthor().getAsTag());
-                    MDC.put("guild", event.getGuild().toString());
 
                     cmd.executeCommand(
                         new CommandContext(invoke, args, event)
@@ -344,6 +359,8 @@ public class CommandManager {
                 }
 
                 try {
+                    MDC.put("command.custom.message", cc.getMessage());
+
                     final Parser parser = CustomCommandUtils.PARSER;
 
                     final String message = parser.clear()
@@ -354,16 +371,10 @@ public class CommandManager {
                         .put("args", String.join(" ", args))
                         .parse(cc.getMessage());
 
-                    /*JSONObject embedJson = parser.get("embed");
-
-                    JDAImpl jda = (JDAImpl) event.getJDA();
-                    MessageEmbed embed = jda.getEntityBuilder().createMessageEmbed(embedJson);*/
-
                     if (!message.isEmpty()) {
                         sendMsg(event, "\u200B" + message);
                     }
 
-//                    sendEmbedRaw(event.getChannel(), embed, null);
                     parser.clear();
                 }
                 catch (Exception e) {
@@ -393,8 +404,7 @@ public class CommandManager {
     }
 
     private void loadCustomCommands() {
-
-        variables.getDatabaseAdapter().getCustomCommands(
+        this.variables.getDatabaseAdapter().getCustomCommands(
             (loadedCommands) -> {
                 loadedCommands.forEach(
                     (command) -> addCustomCommand(command, false, false)
@@ -406,6 +416,6 @@ public class CommandManager {
     }
 
     public void shutdown() {
-        commandThread.shutdown();
+        this.commandThread.shutdown();
     }
 }

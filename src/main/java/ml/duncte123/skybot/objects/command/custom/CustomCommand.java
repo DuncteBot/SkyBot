@@ -22,7 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.json.JSONObject;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -41,7 +41,7 @@ public interface CustomCommand extends ICommand {
 
     //Override some methods that are not needed
     @Override
-    default void executeCommand(@NotNull CommandContext ctx) {
+    default void executeCommand(@Nonnull CommandContext ctx) {
         // Custom commands are executed in a different way
     }
 

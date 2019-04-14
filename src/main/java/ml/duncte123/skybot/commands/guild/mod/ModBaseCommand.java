@@ -25,7 +25,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.Arrays;
 import java.util.List;
@@ -45,7 +45,7 @@ public abstract class ModBaseCommand extends Command {
     }
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
 
@@ -72,7 +72,7 @@ public abstract class ModBaseCommand extends Command {
         run(ctx);
     }
 
-    public abstract void run(@NotNull CommandContext ctx);
+    public abstract void run(@Nonnull CommandContext ctx);
 
     private String parsePerms(Permission[] perms) {
         final String neededPerms = Arrays.stream(perms)

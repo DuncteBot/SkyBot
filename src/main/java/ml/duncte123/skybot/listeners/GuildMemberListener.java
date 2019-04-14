@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import com.jagrosh.jagtag.Parser;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.CustomCommandUtils;
@@ -27,7 +28,7 @@ import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.member.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -149,7 +150,7 @@ public class GuildMemberListener extends BaseListener {
 
     }
 
-    @NotNull
+    @Nonnull
     private String parseGuildVars(String rawMessage, GenericGuildMemberEvent event) {
 
         if (!(event instanceof GuildMemberJoinEvent) && !(event instanceof GuildMemberLeaveEvent)) {
@@ -163,21 +164,17 @@ public class GuildMemberListener extends BaseListener {
         final Guild guild = event.getGuild();
         final GuildSettings s = GuildSettingsUtils.getGuild(guild, variables);
         final long welcomeLeaveChannel = s.getWelcomeLeaveChannel();
+        final Parser parser = CustomCommandUtils.PARSER;
 
-        final String message = CustomCommandUtils.PARSER.clear()
-            .put("user", event.getUser())
+        final String message = parser.put("user", event.getUser())
             .put("guild", event.getGuild())
             .put("channel", event.getGuild().getTextChannelById(welcomeLeaveChannel))
             .put("args", "")
             .parse(rawMessage);
 
-        return message.replaceAll("\\{\\{USER_MENTION}}", event.getUser().getAsMention())
-            .replaceAll("\\{\\{USER_NAME}}", event.getUser().getName())
-            .replaceAll("\\{\\{USER_FULL}}", event.getUser().getAsTag())
-            .replaceAll("\\{\\{IS_USER_BOT}}", String.valueOf(event.getUser().isBot()))
-            .replaceAll("\\{\\{GUILD_NAME}}", guild.getName())
-            .replaceAll("\\{\\{GUILD_USER_COUNT}}", guild.getMemberCache().size() + "")
-            .replaceAll("\\{\\{EVENT_TYPE}}", event instanceof GuildMemberJoinEvent ? "joined" : "left");
+        parser.clear();
+
+        return message;
     }
 
     private void handlePatronRemoval(long userId, ShardManager manager) {

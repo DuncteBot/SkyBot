@@ -41,6 +41,7 @@ import ml.duncte123.skybot.objects.audiomanagers.spotify.SpotifyAudioSourceManag
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.apache.http.client.config.CookieSpecs;
 import org.apache.http.client.config.RequestConfig;
 
@@ -78,7 +79,7 @@ public class AudioUtils {
         this.config = config;
         this.variables = variables;
         initPlayerManager();
-        musicManagers = new TLongObjectHashMap<>();
+        musicManagers = MiscUtil.newLongMap();
     }
 
     private void initPlayerManager() {

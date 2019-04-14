@@ -27,7 +27,7 @@ import net.dv8tion.jda.core.EmbedBuilder;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.impl.JDAImpl;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.json.JSONObject;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -38,7 +38,7 @@ public class ChangeLogCommand extends Command {
     private String embedJson = null;
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         if (embedJson == null || embedJson.isEmpty()) {
             fetchLatetstGitHubCommits(ctx.getEvent());

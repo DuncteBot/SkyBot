@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.objects.config;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import ml.duncte123.skybot.Author;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -30,11 +31,11 @@ public class DunctebotConfig {
     public Sentry sentry;
     public boolean use_database;
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Discord {
         public Game game;
         public long[] constantSuperUserIds;
         public String prefix;
-        public String botOwnerId;
         public Oauth oauth;
         public int totalShards;
         public boolean local;
@@ -47,6 +48,7 @@ public class DunctebotConfig {
             public int type;
         }
 
+        @JsonIgnoreProperties(ignoreUnknown = true)
         public static class Oauth {
             public long clientId;
             public String redirUrl;
@@ -54,6 +56,7 @@ public class DunctebotConfig {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Apis {
         public Trello trello;
         public String github;
@@ -85,6 +88,7 @@ public class DunctebotConfig {
         }
     }
 
+    @JsonIgnoreProperties(ignoreUnknown = true)
     public static class Lavalink {
         public boolean enable;
         public LavalinkNode[] nodes;

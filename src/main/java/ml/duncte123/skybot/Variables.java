@@ -18,11 +18,9 @@
 
 package ml.duncte123.skybot;
 
-import com.google.common.io.Files;
-import com.google.gson.Gson;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import gnu.trove.map.TLongLongMap;
 import gnu.trove.map.TLongObjectMap;
-import gnu.trove.map.hash.TLongObjectHashMap;
 import io.sentry.Sentry;
 import me.duncte123.weebJava.WeebApiBuilder;
 import me.duncte123.weebJava.models.WeebApi;
@@ -36,12 +34,12 @@ import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
+import net.dv8tion.jda.core.utils.MiscUtil;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.charset.StandardCharsets;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public final class Variables {
@@ -49,8 +47,8 @@ public final class Variables {
     private static Variables instance;
     private final String googleBaseUrl;
     private final boolean isSql;
-    private final TLongObjectMap<GuildSettings> guildSettings = new TLongObjectHashMap<>();
-    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = new TLongObjectHashMap<>();
+    private final TLongObjectMap<GuildSettings> guildSettings = MiscUtil.newLongMap();
+    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MiscUtil.newLongMap();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
@@ -64,8 +62,7 @@ public final class Variables {
 
     private Variables() {
         try {
-            final String json = Files.asCharSource(new File("config.json"), StandardCharsets.UTF_8).read();
-            this.config = new Gson().fromJson(json, DunctebotConfig.class);
+            this.config = new ObjectMapper().readValue(new File("config.json"), DunctebotConfig.class);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -82,9 +79,7 @@ public final class Variables {
         this.isSql = this.config.use_database;
 
         if (config.sentry.enabled) {
-            Sentry.init(config.sentry.dsn);
-        } else {
-            Sentry.close();
+            Sentry.init(config.sentry.dsn + "?release=" + Settings.VERSION);
         }
     }
 

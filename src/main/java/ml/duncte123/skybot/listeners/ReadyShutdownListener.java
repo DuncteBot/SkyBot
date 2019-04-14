@@ -33,7 +33,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.ReadyEvent;
 import net.dv8tion.jda.core.events.ShutdownEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -76,7 +76,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
     }
 
-    private void loadPatrons(@NotNull ShardManager manager) {
+    private void loadPatrons(@Nonnull ShardManager manager) {
         logger.info("Collecting patrons");
 
         final Guild supportGuild = manager.getGuildById(Command.supportGuildId);
@@ -125,7 +125,7 @@ public class ReadyShutdownListener extends MessageListener {
         }
 
         AirUtils.stop(variables.getDatabase(), variables.getAudioUtils());
-        variables.getCommandManager().commandThread.shutdown();
+        variables.getCommandManager().shutdown();
 
         /*
          * Only shut down if we are not updating

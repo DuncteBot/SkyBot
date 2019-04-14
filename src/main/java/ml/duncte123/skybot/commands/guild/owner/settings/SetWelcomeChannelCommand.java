@@ -22,14 +22,14 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.TextChannel;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetWelcomeChannelCommand extends SettingsBase {
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Incorrect usage: `" + Settings.PREFIX + "setwelcomechannel [text channel]`");
             return;

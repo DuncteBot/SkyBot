@@ -21,14 +21,14 @@ package ml.duncte123.skybot.commands.guild.owner.settings;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class SetLeaveMessageCommand extends SettingsBase {
     @Override
-    public void run(@NotNull CommandContext ctx) {
+    public void run(@Nonnull CommandContext ctx) {
         if (ctx.getArgs().isEmpty()) {
             sendMsg(ctx.getEvent(), "Correct usage is `" + Settings.PREFIX + "setleavemessage <new join message>`");
             return;

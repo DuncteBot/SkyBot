@@ -35,7 +35,7 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -136,7 +136,7 @@ public class GuildListener extends BaseListener {
             return;
         }
 
-        if (!event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
+        if (event.getChannelJoined().equals(connected) && event.getMember().equals(guild.getSelfMember())) {
             channelCheckThing(guild, connected);
 
             return;
@@ -186,7 +186,7 @@ public class GuildListener extends BaseListener {
      * @param vc
      *         the voice channel
      */
-    private void channelCheckThing(@NotNull Guild guild, @NotNull VoiceChannel vc) {
+    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel vc) {
 
         if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
             return;

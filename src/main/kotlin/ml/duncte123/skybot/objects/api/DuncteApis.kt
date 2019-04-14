@@ -341,7 +341,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     fun getLove(name: String, name2: String): JSONObject {
-        val json = executeRequest(defaultRequest("love/$name/$name2"))
+        val json = executeRequest(defaultRequest("love/$name/$name2", false))
 
         return json.getJSONObject("data")
     }

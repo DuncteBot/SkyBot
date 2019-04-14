@@ -22,15 +22,13 @@ import me.duncte123.botcommons.web.WebUtils
 import ml.duncte123.skybot.objects.WebVariables
 import org.json.JSONObject
 import spark.ModelAndView
-import spark.kotlin.RouteHandler
+import spark.Request
+import spark.Response
 import spark.template.jtwig.JtwigTemplateEngine
 
 object HttpErrorHandlers {
 
-    fun notFound(routeHandler: RouteHandler, engine: JtwigTemplateEngine): Any {
-        val request = routeHandler.request
-        val response = routeHandler.response
-
+    fun notFound(request: Request, response: Response, engine: JtwigTemplateEngine): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
 
@@ -46,10 +44,7 @@ object HttpErrorHandlers {
             .put("code", response.status())
     }
 
-    fun internalServerError(routeHandler: RouteHandler): Any {
-        val request = routeHandler.request
-        val response = routeHandler.response
-
+    fun internalServerError(request: Request, response: Response): Any {
         if (request.headers("Accept") != WebUtils.EncodingType.APPLICATION_JSON.type ||
             response.type() != WebUtils.EncodingType.APPLICATION_JSON.type) {
             return "<html><body><h1>Internal server error</h1></body></html>"

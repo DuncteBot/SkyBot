@@ -32,7 +32,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -173,7 +173,7 @@ public class ModerationUtils {
      *
      * @return The current amount of warnings that a user has
      */
-    public static int getWarningCountForUser(DatabaseAdapter adapter, @NotNull User u, @NotNull Guild g) {
+    public static int getWarningCountForUser(DatabaseAdapter adapter, @Nonnull User u, @Nonnull Guild g) {
         return ApiUtils.getWarnsForUser(adapter, u.getIdLong(), g.getIdLong()).getWarnings().size();
     }
 

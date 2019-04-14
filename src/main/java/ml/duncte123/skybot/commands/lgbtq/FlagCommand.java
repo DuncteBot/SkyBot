@@ -26,7 +26,7 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.jetbrains.annotations.NotNull;
+import javax.annotation.Nonnull;
 
 import java.util.List;
 
@@ -39,7 +39,7 @@ public class FlagCommand extends ImageCommandBase {
         "genderfluid", "nonbinary", "pan", "transgender", "demigirl", "lesbian");
 
     @Override
-    public void executeCommand(@NotNull CommandContext ctx) {
+    public void executeCommand(@Nonnull CommandContext ctx) {
 
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
@@ -50,8 +50,15 @@ public class FlagCommand extends ImageCommandBase {
 
         final String flag = ctx.getArgs().get(0).toLowerCase();
 
+        if (flag.equalsIgnoreCase("list")) {
+            sendMsg(event, "A list of flags can be found at https://dunctebot.com/flags");
+
+            return;
+        }
+
         if (!flags.contains(flag)) {
             sendMsg(event, "I do not know what this flag is, visit <https://dunctebot.com/flags> for a list of available flags.");
+
             return;
         }
 

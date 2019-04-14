@@ -16,10 +16,13 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+
+import ch.qos.logback.classic.boolex.GEventEvaluator
 import ch.qos.logback.classic.encoder.PatternLayoutEncoder
 import ch.qos.logback.classic.filter.ThresholdFilter
+import ch.qos.logback.core.filter.EvaluatorFilter
 import io.sentry.logback.SentryAppender
-
+import static ch.qos.logback.core.spi.FilterReply.*
 
 appender("STDOUT", ConsoleAppender) {
     encoder(PatternLayoutEncoder) {
@@ -33,6 +36,20 @@ appender("STDOUT", ConsoleAppender) {
 appender("Sentry", SentryAppender) {
     filter(ThresholdFilter) {
         level = WARN
+    }
+
+    filter(EvaluatorFilter) {
+        evaluator(GEventEvaluator) {
+            expression = """e.loggerName == 'ml.duncte123.skybot.ShardWatcher' ||
+                            e.formattedMessage.startsWith('Got disconnected from WebSocket') || 
+                            e.message.contains('Ignoring deprecated socket close linger time') ||
+                            e.message.contains('Using SQLite as the database') ||
+                            e.message.contains('Please note that is is not recommended for production')
+                            """.stripMargin()
+        }
+
+        onMatch = DENY
+        onMismatch = NEUTRAL
     }
 }
 

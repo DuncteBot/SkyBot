@@ -18,8 +18,6 @@
 
 package ml.duncte123.skybot;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
 import fredboat.audio.player.LavalinkManager;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.text.TextColor;
@@ -35,13 +33,9 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
-import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 import java.time.Instant;
 import java.util.EnumSet;
 import java.util.concurrent.Executors;
@@ -115,7 +109,7 @@ public final class SkyBot {
             streamUrl
         );
 
-        logger.info(commandManager.getCommandsMap().size() + " commands loaded.");
+        logger.info("{} commands with {} aliases loaded.", commandManager.getCommandsMap().size(), commandManager.getAliasesMap().size());
         LavalinkManager.ins.start(config, variables.getAudioUtils());
 
 
@@ -166,66 +160,10 @@ public final class SkyBot {
      */
     @Deprecated
     public static void main(final String[] args) throws Exception {
-        for (final String arg : args) {
-            if ("--gen".equals(arg)) {
-                gen();
-                return;
-            }
-        }
         instance = new SkyBot();
     }
 
     public static SkyBot getInstance() {
         return instance;
-    }
-
-    private static void gen() {
-        final DunctebotConfig config = new DunctebotConfig();
-
-        final DunctebotConfig.Discord discord = new DunctebotConfig.Discord();
-        discord.local = false;
-        final DunctebotConfig.Discord.Game game = new DunctebotConfig.Discord.Game();
-        game.name = "Danny Phantom on shard #{shardId}";
-        game.type = 3;
-        discord.game = game;
-        discord.botOwnerId = "191231307290771456";
-        discord.constantSuperUserIds = new long[]{
-            191231307290771456L
-        };
-        final DunctebotConfig.Discord.Oauth oauth = new DunctebotConfig.Discord.Oauth();
-        oauth.clientId = 215011992275124225L;
-        discord.oauth = oauth;
-        config.discord = discord;
-
-        final DunctebotConfig.Apis apis = new DunctebotConfig.Apis();
-
-        apis.trello = new DunctebotConfig.Apis.Trello();
-
-        apis.weebSh = new DunctebotConfig.Apis.WeebSh();
-
-        apis.chapta = new DunctebotConfig.Apis.Chapta();
-
-        apis.spotify = new DunctebotConfig.Apis.Spotify();
-        config.apis = apis;
-
-        config.genius = new DunctebotConfig.Genius();
-
-        final DunctebotConfig.Lavalink lavalink = new DunctebotConfig.Lavalink();
-        lavalink.enable = true;
-        final DunctebotConfig.Lavalink.LavalinkNode node = new DunctebotConfig.Lavalink.LavalinkNode();
-        lavalink.nodes = new DunctebotConfig.Lavalink.LavalinkNode[]{node};
-        config.lavalink = lavalink;
-
-        config.use_database = true;
-        config.sentry = new DunctebotConfig.Sentry();
-
-        final GsonBuilder builder = new Gson().newBuilder().setPrettyPrinting().serializeNulls();
-        final String json = builder.create().toJson(config);
-        try {
-            FileUtils.writeStringToFile(new File("config-empty.json"), json, StandardCharsets.UTF_8);
-        }
-        catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 }
