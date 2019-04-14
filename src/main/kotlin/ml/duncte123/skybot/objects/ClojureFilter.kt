@@ -33,6 +33,7 @@ class ClojureFilter {
         var tempScript: String
         var subscript: String
         var newStart: Int
+
         while (matcher.find()) {
             tempScript = matcher.group(3)
             newStart = tempScript.indexOf("->") + 2
@@ -42,6 +43,7 @@ class ClojureFilter {
             matcher = pattern.matcher(tempScript)
             secondScript = script.replace(tempScript, subscript)
         }
+
         return secondScript
     }
 }

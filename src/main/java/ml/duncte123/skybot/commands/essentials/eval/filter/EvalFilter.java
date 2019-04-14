@@ -27,6 +27,8 @@ import ml.duncte123.skybot.objects.delegate.ScriptDelegate;
 import net.dv8tion.jda.core.JDA;
 import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.managers.Presence;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.kohsuke.groovy.sandbox.GroovyValueFilter;
 
 import java.math.BigDecimal;
@@ -207,6 +209,30 @@ public class EvalFilter extends GroovyValueFilter {
             throw new SecurityException("Closures are not allowed.");
         }
 
+        /*if (o instanceof String) {
+            final String s = (String) o;
+
+            if (s.contains("{")) {
+                try {
+                    final int start = s.indexOf("{");
+                    final int end = s.lastIndexOf("}");
+                    final String sub = s.substring(start, end);
+                    final JSONObject json = new JSONObject(sub);
+                    final JSONObject discord = json.getJSONObject("discord");
+                    final JSONObject sentry = json.getJSONObject("sentry");
+
+                    if (discord != null && discord.has("prefix") && discord.has("local") &&
+                        sentry != null && sentry.has("enabled") && sentry.has("dsn") && json.has("use_database")) {
+                        throw new SecurityException("<https://duncte123.dev/congrats>");
+                    }
+                }
+                catch (JSONException ignored) {
+                    //
+                }
+
+            }
+        }*/
+
         throw new DoomedException("Class not allowed: " + o.getClass().getName());
     }
 
@@ -232,6 +258,7 @@ public class EvalFilter extends GroovyValueFilter {
 
     private void checkArrayContent(Iterable receiver) {
         for (final Object clazz : receiver) {
+            System.out.println(clazz.getClass().getName());
 
             if (clazz instanceof Iterable) {
                 checkArrayContent((Iterable) clazz);
@@ -244,9 +271,7 @@ public class EvalFilter extends GroovyValueFilter {
     }
 
     private void checkAllowed(Object clazz) {
-        if (!ALLOWED_TYPES.contains(clazz.getClass())) {
-            throw new DoomedException("Class not allowed: " + clazz.getClass().getName());
-        }
+        filter(clazz);
     }
 
     @Override

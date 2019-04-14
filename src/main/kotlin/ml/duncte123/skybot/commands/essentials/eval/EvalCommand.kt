@@ -266,19 +266,19 @@ class EvalCommand : Command() {
 
             is TimeoutException, is InterruptedException, is IllegalStateException -> {
                 out as Exception
-                sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+                sendErrorWithMessage(event.message, "ERROR: $out")
             }
 
             is IllegalArgumentException, is DoomedException -> {
                 out as RuntimeException
-                sendErrorWithMessage(event.message, "ERROR: " + out.toString())
+                sendErrorWithMessage(event.message, "ERROR: $out")
             }
 
             is Throwable -> {
                 if (Settings.useJSON && isRanByBotOwner) {
                     sendErrorJSON(event.message, out, true)
                 } else {
-                    sendMsg(event, "ERROR: " + out.toString())
+                    sendMsg(event, "ERROR: $out")
 //                        out.printStackTrace()
                 }
             }
