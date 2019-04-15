@@ -20,7 +20,6 @@ package ml.duncte123.skybot.extensions
 
 import ml.duncte123.skybot.Author
 import net.dv8tion.jda.core.managers.ChannelManager
-import net.dv8tion.jda.core.entities.ChannelType
 import net.dv8tion.jda.core.utils.Checks
 import kotlin.reflect.full.memberProperties
 import kotlin.reflect.jvm.isAccessible
@@ -29,13 +28,8 @@ import kotlin.reflect.jvm.javaField
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 fun ChannelManager.setSlowMode(slowmode: Int): ChannelManager {
-    if (type !== ChannelType.TEXT) {
-        throw IllegalStateException("Can only set slowmode on text channels") as Throwable
-    }
-
-    Checks.check(slowmode in 0..21600, "Slowmode per user must be between 0 and 21600 (seconds)!")
-
     setSlowmode(3)
+    Checks.check(slowmode in 0..21600, "Slowmode per user must be between 0 and 21600 (seconds)!")
 
     val f = ChannelManager::class.memberProperties.find { it.name == "slowmode" }
 
