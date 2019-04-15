@@ -74,7 +74,7 @@ dependencies {
     implementation(group = "com.github.duncte123", name = "botCommons", version = "c8ce3a5")
 
     //JDA (java discord api)
-    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_462") {
+    implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_463") {
         exclude(module = "opus-java")
     }
 

@@ -23,7 +23,6 @@ import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
-import ml.duncte123.skybot.extensions.setSlowMode
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.Permission
@@ -74,8 +73,7 @@ class SlowModeCommand : ModBaseCommand() {
             return
         }
 
-//        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
-        ctx.channel.manager.setSlowMode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
+        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
         sendSuccess(ctx.message)
 
     }
