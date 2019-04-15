@@ -46,7 +46,7 @@ class KickMeCommand : Command() {
             if (event.guild.selfMember.canInteract(event.member) && event.guild.selfMember.hasPermission(Permission.KICK_MEMBERS)) {
                 MessageUtils.sendSuccess(event.message)
                 //Kick the user
-                MessageUtils.sendMsg(event, "Your kick will commerce in 20 seconds") {
+                MessageUtils.sendMsg(event, "Your kick will commence in 20 seconds") {
                     it.guild.controller.kick(event.member)
                         .reason("${event.author.asTag} ran the kickme command and got kicked")
                         .queueAfter(20L, TimeUnit.SECONDS) {
