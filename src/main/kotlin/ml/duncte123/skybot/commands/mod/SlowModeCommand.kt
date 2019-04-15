@@ -18,11 +18,12 @@
 
 package ml.duncte123.skybot.commands.mod
 
-import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.messaging.MessageUtils.sendSuccess
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.commands.guild.mod.ModBaseCommand
+import ml.duncte123.skybot.extensions.setSlowMode
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import net.dv8tion.jda.core.Permission
@@ -40,7 +41,7 @@ class SlowModeCommand : ModBaseCommand() {
         val event = ctx.event
 
         if (!ctx.selfMember.hasPermission(ctx.channel, Permission.MANAGE_CHANNEL)) {
-            MessageUtils.sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
+            sendMsg(event, "I need the `manage channel` permission for this channel in order for this command to work")
             return
         }
 
@@ -57,7 +58,7 @@ class SlowModeCommand : ModBaseCommand() {
 
         if (delay == "off") {
             ctx.channel.manager.setSlowmode(0).reason("Requested by ${ctx.author.asTag}").queue()
-            MessageUtils.sendSuccess(ctx.message)
+            sendSuccess(ctx.message)
             return
         }
 
@@ -68,13 +69,14 @@ class SlowModeCommand : ModBaseCommand() {
 
         val intDelay = delay.toInt()
 
-        if (intDelay < 1 || intDelay > 120) {
-            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 1-120")
+        if (intDelay < 1 || intDelay > 21600) {
+            sendMsg(event, "$intDelay is not valid, a valid delay is a number in the range 1-21600 (21600 is 6 hours in seconds)")
             return
         }
 
-        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
-        MessageUtils.sendSuccess(ctx.message)
+//        ctx.channel.manager.setSlowmode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
+        ctx.channel.manager.setSlowMode(intDelay).reason("Requested by ${ctx.author.asTag}").queue()
+        sendSuccess(ctx.message)
 
     }
 
