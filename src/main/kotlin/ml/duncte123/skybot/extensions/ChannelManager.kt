@@ -30,7 +30,7 @@ import kotlin.reflect.jvm.javaField
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 fun ChannelManager.setSlowMode(slowmode: Int): ChannelManager {
     if (type !== ChannelType.TEXT) {
-        throw IllegalStateException("Can only set slowmode on text channels")
+        throw IllegalStateException("Can only set slowmode on text channels") as Throwable
     }
 
     Checks.check(slowmode in 0..21600, "Slowmode per user must be between 0 and 21600 (seconds)!")

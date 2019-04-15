@@ -79,7 +79,7 @@ class UserinfoCommand : Command() {
         }
 
         if (u != null && m == null) {
-            renderUserEmbed(event, u)
+            renderUserEmbed(event, u, ctx.guildSettings.customPrefix)
 
             return
         }
@@ -99,7 +99,7 @@ class UserinfoCommand : Command() {
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, prefix: String) {
 
         val createTime = user.creationTime
         val createTimeDate = Date.from(createTime.toInstant())
@@ -118,7 +118,7 @@ class UserinfoCommand : Command() {
                         |**Nitro User?** ${isNitro(user)}
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
-                        |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
+                        |_Use `${prefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         sendEmbed(event.channel, embed)
@@ -191,7 +191,7 @@ class UserinfoCommand : Command() {
                         |**Online Status:** ${convertStatus(mStatus)} ${mStatus.key}
                         |**Bot Account?** ${if (u.isBot) "Yes" else "No"}
                         |
-                        |_Use `${Settings.PREFIX}avatar [user]` to get a user's avatar_
+                        |_Use `${ctx.guildSettings.customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         if (!event.guild.selfMember.hasPermission(event.channel, Permission.MESSAGE_ATTACH_FILES)
