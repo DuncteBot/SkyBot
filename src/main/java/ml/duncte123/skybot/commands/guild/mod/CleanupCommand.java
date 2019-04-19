@@ -123,7 +123,7 @@ public class CleanupCommand extends ModBaseCommand {
     public String help() {
         return "Performs a cleanup in the channel where the command is run.\n" +
             "To clear an entire channel it's better to use `" + Settings.PREFIX + "purgechannel`\n" +
-            "Usage: `" + Settings.PREFIX + getName() + "[ammount] [keep-pinned] [bots-only]`";
+            "Usage: `" + Settings.PREFIX + getName() + " [ammount] [keep-pinned] [bots-only]`";
     }
 
     @Override
