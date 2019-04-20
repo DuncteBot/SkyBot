@@ -29,11 +29,15 @@ class AvatarCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
         var user: User? = ctx.author
 
-        if (!ctx.args.isEmpty()) {
+        if (ctx.args.isNotEmpty()) {
             // We're searching for members in the guild to get more accurate results
             val foundMembers = FinderUtil.findMembers(ctx.args[0], ctx.guild)
 
-            user = if (foundMembers.isEmpty()) null else foundMembers[0].user
+            user = if (foundMembers.isEmpty()) {
+                val foundUsers = FinderUtil.findUsers(ctx.args[0], ctx.jda)
+
+                if (foundUsers.isNotEmpty()) foundUsers[0] else null
+            } else foundMembers[0].user
         }
 
         if (user == null) {
