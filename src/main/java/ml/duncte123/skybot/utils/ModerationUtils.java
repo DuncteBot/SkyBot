@@ -97,7 +97,7 @@ public class ModerationUtils {
             punishment,
             mod,
             length,
-            reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
+            reason == null || reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
         ), g);
     }
 

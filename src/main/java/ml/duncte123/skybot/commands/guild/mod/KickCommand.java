@@ -28,6 +28,8 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
+import net.dv8tion.jda.core.requests.restaction.AuditableRestAction;
+
 import javax.annotation.Nonnull;
 
 import java.util.List;
@@ -48,7 +50,7 @@ public class KickCommand extends ModBaseCommand {
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
-        if (mentioned.isEmpty() || args.size() < 2) {
+        if (mentioned.isEmpty() || args.isEmpty()) {
             MessageUtils.sendMsg(event, "Usage is " + Settings.PREFIX + getName() + " <@user> [Reason]");
             return;
         }
@@ -68,11 +70,20 @@ public class KickCommand extends ModBaseCommand {
                 return;
             }
 
-            final String reason = String.join(" ", args.subList(1, args.size()));
-            event.getGuild().getController().kick(toKickMember)
-                .reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(
-                (noting) -> {
-                    ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", reason, ctx.getGuild());
+            final AuditableRestAction<Void> kickAction = event.getGuild().getController().kick(toKickMember);
+            String reason = null;
+
+
+            if (!args.isEmpty()) {
+                reason = String.join(" ", args.subList(1, args.size()));
+                kickAction.reason("Kicked by " + event.getAuthor().getAsTag() + "\nReason: " + reason);
+            }
+
+            final String finalReason = reason;
+
+            kickAction.queue(
+                (__) -> {
+                    ModerationUtils.modLog(event.getAuthor(), toKick, "kicked", finalReason, ctx.getGuild());
                     MessageUtils.sendSuccess(event.getMessage());
                 }
             );

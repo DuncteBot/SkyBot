@@ -25,8 +25,8 @@ import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -50,14 +50,18 @@ public abstract class ModBaseCommand extends Command {
         final List<String> args = ctx.getArgs();
 
         if (!event.getMember().hasPermission(this.perms)) {
-            sendMsg(event, "You need the `" + parsePerms(this.perms) + "` permissions for this command\n" +
+            final String permissionsWord = "permission" + (this.perms.length > 1 ? "s" : "");
+
+            sendMsg(event, "You need the `" + parsePerms(this.perms) + "` " + permissionsWord + " for this command\n" +
                 "Please contact your server administrator if this is incorrect.");
 
             return;
         }
 
         if (this.selfPerms.length > 0 && !ctx.getSelfMember().hasPermission(this.selfPerms)) {
-            sendMsg(event, "I need the `" + parsePerms(this.selfPerms) + "` permissions for this command to work\n" +
+            final String permissionsWord = "permission" + (this.selfPerms.length > 1 ? "s" : "");
+
+            sendMsg(event, "I need the `" + parsePerms(this.selfPerms) + "` " + permissionsWord + " for this command to work\n" +
                 "Please contact your server administrator about this.");
 
             return;
