@@ -237,9 +237,8 @@ class EarthUtils {
 
                 val title: String = post.getString("title")
                 val text: String = post.optString("selftext", "")
-                val url: String = post.getString("url")
-
-                val embed = defaultEmbed().setTitle(title, url)
+                val url: String = post.getString("id")
+                val embed = defaultEmbed().setTitle(title, "https://redd.it/$url")
 
                 if (text.isNotEmpty()) {
                     embed.setDescription(text)
