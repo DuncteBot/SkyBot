@@ -91,6 +91,7 @@ public class TempMuteCommand extends TempBanCommand {
         final Duration duration = optionalDuration.get();
 
         if (duration.getMilis() == 0) {
+            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
             return;
         }
 

@@ -73,6 +73,12 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         final Duration duration = optionalDuration.get();
+
+        if (duration.getMilis() == 0) {
+            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
+            return;
+        }
+
         final String finalUnbanDate = getBanDateFormat(duration);
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
         final User toBan = toBanMember.getUser();
