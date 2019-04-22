@@ -245,7 +245,6 @@ class EarthUtils {
                 }
 
                 val imagesO = post.optJSONObject("preview")
-
                 val images = imagesO?.optJSONArray("images")
 
                 if (images != null) {
