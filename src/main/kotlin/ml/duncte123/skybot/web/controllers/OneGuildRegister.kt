@@ -21,6 +21,7 @@ package ml.duncte123.skybot.web.controllers
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.objects.WebVariables
+import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import ml.duncte123.skybot.utils.GuildSettingsUtils
 import ml.duncte123.skybot.utils.GuildUtils
@@ -62,6 +63,10 @@ object OneGuildRegister {
 
         if (user == null) {
             return renderPage(WebVariables().put("message", "User with id <b>$userId</b> could not be found"), variables.config, engine)
+        }
+
+        if (Command.oneGuildPatrons.containsKey(userId)) {
+            return renderPage(WebVariables().put("message", "This user is already registered, please contact a bot admin to have it changed."), variables.config, engine)
         }
 
         val cap = WebHelpers.verifyCapcha(captcha, variables.config.apis.chapta.secret)
