@@ -20,7 +20,6 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
@@ -102,13 +101,6 @@ class UserinfoCommand : Command() {
 
         if (m == null) {
             sendMsg(event, "This user could not be found.")
-            return
-        }
-
-        u = m.user
-
-        if (ctx.invoke == "avatar") {
-            sendMsg(event, "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
             return
         }
 
