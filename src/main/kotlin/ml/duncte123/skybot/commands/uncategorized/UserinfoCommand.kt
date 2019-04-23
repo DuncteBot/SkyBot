@@ -21,8 +21,7 @@ package ml.duncte123.skybot.commands.uncategorized
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
@@ -54,6 +53,23 @@ class UserinfoCommand : Command() {
     override fun executeCommand(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
+
+        if (ctx.invoke == "retrieveuserinfo") {
+            if (args.isEmpty()) {
+                sendMsg(ctx, "Missing arguments for retrieving user information")
+
+                return
+            }
+
+            ctx.jda.retrieveUserById(args[0]).queue({
+                renderUserEmbed(event, it, ctx.guildSettings.customPrefix)
+            }, {
+                sendMsg(ctx, "Could not get user info: ${it.message}")
+            })
+
+            return
+        }
+
         var u: User? = null
         var m: Member? = null
 
@@ -85,14 +101,14 @@ class UserinfoCommand : Command() {
         }
 
         if (m == null) {
-            MessageUtils.sendMsg(event, "This user could not be found.")
+            sendMsg(event, "This user could not be found.")
             return
         }
 
         u = m.user
 
         if (ctx.invoke == "avatar") {
-            MessageUtils.sendMsg(event, "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
+            sendMsg(event, "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
             return
         }
 
@@ -214,7 +230,7 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i", "whois", "ui")
+    override fun getAliases() = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING) {
