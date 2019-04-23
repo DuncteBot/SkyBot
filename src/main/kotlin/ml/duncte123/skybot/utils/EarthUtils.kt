@@ -35,6 +35,7 @@ import org.json.JSONObject
 import java.io.File
 import java.io.FileOutputStream
 import java.time.OffsetDateTime
+import java.util.concurrent.ThreadLocalRandom
 
 
 @SinceSkybot("3.51.5")
@@ -230,10 +231,15 @@ class EarthUtils {
                 }
 
                 val postI = index.get(event.guild.idLong)
+                var rand = ThreadLocalRandom.current().nextInt(0, posts.size)
 
-                val post: JSONObject = JSONArray(posts).getJSONObject(postI).getJSONObject("data")
+                if (postI == rand) {
+                    rand = ThreadLocalRandom.current().nextInt(0, posts.size)
+                }
 
-                index.put(event.guild.idLong, postI + 1)
+                val post: JSONObject = JSONArray(posts).getJSONObject(rand).getJSONObject("data")
+
+                index.put(event.guild.idLong, rand)
 
                 val title: String = post.getString("title")
                 val text: String = post.optString("selftext", "")
