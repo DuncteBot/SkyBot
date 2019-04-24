@@ -68,7 +68,7 @@ public class ChangeLogCommand extends Command {
             final EmbedBuilder eb = EmbedUtils.defaultEmbed()
                 .setTitle("Changelog for DuncteBot", json.getString("html_url"));
 
-            for (String item : body.split("\n")) {
+            for (final String item : body.split("\n")) {
                 final String hash = item.substring(0, 7);
                 final String text = item.substring(8);
 
