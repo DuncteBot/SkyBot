@@ -48,6 +48,7 @@ import java.util.stream.Collectors
 class UserinfoCommand : Command() {
 
     private val prettyTime = PrettyTime()
+    private val nitroUserLink = "[**Nitro User?**](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")"
 
     override fun executeCommand(ctx: CommandContext) {
         val event = ctx.event
@@ -123,7 +124,7 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |**Nitro User?** ${isNitro(user)}
+                        |$nitroUserLink ${isNitro(user)}
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
                         |_Use `${prefix}avatar [user]` to get a user's avatar_
@@ -192,7 +193,7 @@ class UserinfoCommand : Command() {
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |**Nitro User?** ${isNitro(u)}
+                        |$nitroUserLink ${isNitro(u)}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
