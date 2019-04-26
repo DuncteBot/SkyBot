@@ -73,7 +73,7 @@ public class GuildJoinsCommand extends Command {
             final int yPos = imageHeight - ((i * imageHeight) / membersSize);
             final double angle = xPos == lastXPos ? 1 : Math.tan((lastYPos - yPos) / (xPos - lastXPos)) / (Math.PI / 2);
 
-            graphics2D.setColor(Color.getHSBColor((float) angle / 4, 1.0f, 1.0f));
+            graphics2D.setColor(Color.getHSBColor((float) angle / 4, 1f, 1f));
             graphics2D.drawLine((int) xPos, yPos, (int) lastXPos, lastYPos);
 
             lastXPos = xPos;

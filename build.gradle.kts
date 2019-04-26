@@ -26,7 +26,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.21"))
+        classpath(kotlin("gradle-plugin", version = "1.3.31"))
     }
 }
 
@@ -35,7 +35,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.3.31"
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
@@ -106,7 +106,7 @@ dependencies {
     //Add kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.1.0")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.0")
 
     //Spark for website
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
@@ -235,7 +235,7 @@ githubRelease {
 }
 
 fun getGitHash(): String {
-    try {
+    return try {
         val stdout = ByteArrayOutputStream()
 
         exec {
@@ -243,9 +243,9 @@ fun getGitHash(): String {
             standardOutput = stdout
         }
 
-        return stdout.toString().trim()
+        stdout.toString().trim()
     } catch (ignored: Throwable) {
         // Probably ramidzkh"s problem
-        return "DEV"
+        "DEV"
     }
 }
