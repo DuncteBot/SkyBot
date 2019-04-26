@@ -35,7 +35,6 @@ import java.time.ZoneOffset;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Date;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -51,7 +50,7 @@ public class GuildJoinsCommand extends Command {
         }
 
         final long startTime = ctx.getGuild().getCreationTime().toEpochSecond();
-        final OffsetDateTime now = new Date().toInstant().atOffset(ZoneOffset.UTC);
+        final OffsetDateTime now = OffsetDateTime.now(ZoneOffset.UTC);
         final long currentTime = now.toEpochSecond();
         final int imageWidth = 1000;
         final int imageHeight = 600;
@@ -94,6 +93,7 @@ public class GuildJoinsCommand extends Command {
 
             ctx.getChannel()
                 .sendFile(outputStream.toByteArray(), "joins-for-" + ctx.getGuild().getId() + ".png")
+                .appendFormat("Here is the join graph for _%s_", ctx.getGuild().getName())
                 .queue();
         }
         catch (IOException e) {
