@@ -25,6 +25,7 @@ import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildUtils
@@ -62,7 +63,7 @@ class UserinfoCommand : Command() {
             }
 
             ctx.jda.retrieveUserById(args[0]).queue({
-                renderUserEmbed(event, it, ctx.guildSettings.customPrefix)
+                renderUserEmbed(event, it, ctx.guild)
             }, {
                 sendMsg(ctx, "Could not get user info: ${it.message}")
             })
@@ -95,7 +96,7 @@ class UserinfoCommand : Command() {
         }
 
         if (u != null && m == null) {
-            renderUserEmbed(event, u, ctx.guildSettings.customPrefix)
+            renderUserEmbed(event, u, ctx.guild)
 
             return
         }
@@ -108,7 +109,7 @@ class UserinfoCommand : Command() {
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, prefix: String) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild) {
 
         val createTime = user.creationTime
         val createTimeDate = Date.from(createTime.toInstant())
@@ -116,8 +117,8 @@ class UserinfoCommand : Command() {
         val createTimeHuman = prettyTime.format(createTimeDate)
 
         val embed = EmbedUtils.defaultEmbed()
-            .setColor(Settings.defaultColour)
-            .setThumbnail(user.effectiveAvatarUrl)
+            .setColor(guild.getColor())
+            .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${user.asMention}
                         |
                         |**Username + Discriminator:** ${user.asTag}
@@ -127,7 +128,7 @@ class UserinfoCommand : Command() {
                         |$nitroUserLink ${isNitro(user)}
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
-                        |_Use `${prefix}avatar [user]` to get a user's avatar_
+                        |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         sendEmbed(event.channel, embed)
@@ -186,7 +187,7 @@ class UserinfoCommand : Command() {
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(m.color)
-            .setThumbnail(u.effectiveAvatarUrl)
+            .setThumbnail(u.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${m.asMention}
                         |
                         |**Username + Discriminator:** ${u.asTag}
