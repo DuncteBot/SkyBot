@@ -188,24 +188,24 @@ public class GuildListener extends BaseListener {
      */
     private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel vc) {
 
-        if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
-            return;
-        }
-
-        final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild);
-
-        if (manager != null) {
-            manager.player.stopTrack();
-            manager.player.setPaused(false);
-            manager.scheduler.queue.clear();
-        }
-
-        MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
-
         variables.getDatabase().run(() -> {
             try {
-                // Run the disconnecting after 500ms so we allow JDA to receive updates
-                Thread.sleep(500L);
+                // Run the disconnecting after 1000ms so we allow JDA to receive updates
+                Thread.sleep(1000L);
+
+                if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
+                    return;
+                }
+
+                final GuildMusicManager manager = variables.getAudioUtils().getMusicManager(guild);
+
+                if (manager != null) {
+                    manager.player.stopTrack();
+                    manager.player.setPaused(false);
+                    manager.scheduler.queue.clear();
+                }
+
+                MusicCommand.cooldowns.put(guild.getIdLong(), 12600);
 
                 if (LavalinkManager.ins.isConnected(guild)) {
                     LavalinkManager.ins.closeConnection(guild);

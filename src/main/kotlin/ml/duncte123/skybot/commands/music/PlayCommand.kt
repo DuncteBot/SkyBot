@@ -88,9 +88,11 @@ open class PlayCommand : MusicCommand() {
         if (toPlay.length > 1024) {
             MessageUtils.sendError(event.message)
             sendMsg(event, "Input cannot be longer than 1024 characters.")
+
             return
         }
-        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx, false)
+
+        ctx.audioUtils.loadAndPlay(mng, toPlay, ctx)
     }
 
 

@@ -69,7 +69,6 @@ class LoadCommand : MusicCommand() {
                         // This probably announces it to the channel
                         ctx.audioUtils.loadAndPlay(musicManager,
                             obj.toString(),
-                            false,
                             ctx,
                             shouldAnnounce).get()
 

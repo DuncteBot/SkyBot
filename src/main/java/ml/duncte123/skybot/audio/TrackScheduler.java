@@ -208,7 +208,9 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
             title = AudioLoader.getSteamTitle(track, title, variables.getCommandManager());
 
             final TrackUserData userData = (TrackUserData) track.getUserData();
-            final User user = userData != null ? getInstance().getShardManager().getUserById(userData.getUserId()) : new ConsoleUser();
+            final User user = userData == null ?
+                getInstance().getShardManager().getShardById(0).getSelfUser() :
+                getInstance().getShardManager().getUserById(userData.getUserId());
             final String message = String.format("Now playing: %s %s%nRequester: %#s", title, (repeated ? "(repeated)" : ""), user);
 
             MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), message);

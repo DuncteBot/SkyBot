@@ -28,9 +28,7 @@ import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -48,18 +46,15 @@ public class AudioLoader implements AudioLoadResultHandler {
     private final long requester;
     private final GuildMusicManager mng;
     private final boolean announce;
-    private final boolean addPlaylist;
     private final String trackUrl;
     private final AudioUtils audioUtils;
 
-    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce,
-                       boolean addPlaylist, String trackUrl, AudioUtils audioUtils) {
+    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, AudioUtils audioUtils) {
         this.ctx = ctx;
         this.channel = ctx.getChannel();
         this.requester = ctx.getAuthor().getIdLong();
         this.mng = mng;
         this.announce = announce;
-        this.addPlaylist = addPlaylist;
         this.trackUrl = trackUrl;
         this.audioUtils = audioUtils;
     }
@@ -83,7 +78,7 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        AudioTrack firstTrack = playlist.getSelectedTrack();
+//        AudioTrack firstTrack = playlist.getSelectedTrack();
         final List<AudioTrack> tracks = new ArrayList<>();
         final TrackUserData userData = new TrackUserData(this.requester);
 
@@ -94,22 +89,24 @@ public class AudioLoader implements AudioLoadResultHandler {
 
         if (tracks.isEmpty()) {
             sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
+
             return;
-
-        } else if (firstTrack == null) {
+        } /*else if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
-        }
+        }*/
 
-        if (this.addPlaylist) {
+        tracks.forEach(this.mng.scheduler::queue);
+
+        /*if (this.addPlaylist) {
             tracks.forEach(this.mng.scheduler::queue);
         } else {
             this.mng.scheduler.queue(firstTrack);
-        }
+        }*/
 
         if (this.announce) {
-            String msg;
+            String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
 
-            if (this.addPlaylist) {
+            /*if (this.addPlaylist) {
                 msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
             } else {
                 final String prefix = GuildSettingsUtils.getGuild(this.channel.getGuild(), this.ctx.getVariables()).getCustomPrefix();
@@ -117,7 +114,7 @@ public class AudioLoader implements AudioLoadResultHandler {
                 msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
                     "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
 
-            }
+            }*/
 
             if (this.mng.player.getPlayingTrack() == null) {
                 msg += "\nand the Player has started playing;";

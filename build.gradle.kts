@@ -212,7 +212,6 @@ shadowJar.apply {
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
-        "**/AudioPlayerSenderHandler.class",
         "**/SqliteDatabaseAdapter**"
     )
 
@@ -222,7 +221,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "5.2.1"
+    gradleVersion = "5.4.1"
 }
 
 githubRelease {

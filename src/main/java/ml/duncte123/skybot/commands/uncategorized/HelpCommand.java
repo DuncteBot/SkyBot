@@ -80,7 +80,7 @@ public class HelpCommand extends Command {
 
     @Override
     public String[] getAliases() {
-        return new String[]{"commands"};
+        return new String[]{"commands", "h"};
     }
 
     @SuppressWarnings("ConstantConditions")
