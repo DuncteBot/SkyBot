@@ -43,13 +43,12 @@ public class TempBanCommand extends ModBaseCommand {
 
     @Override
     public void run(@Nonnull CommandContext ctx) {
-
         final GuildMessageReceivedEvent event = ctx.getEvent();
         final List<String> args = ctx.getArgs();
         final List<Member> mentioned = ctx.getMentionedMembers();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
@@ -68,7 +67,7 @@ public class TempBanCommand extends ModBaseCommand {
         final Optional<Duration> optionalDuration = DurationParser.parse(args.get(1));
 
         if (!optionalDuration.isPresent()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
@@ -108,7 +107,7 @@ public class TempBanCommand extends ModBaseCommand {
     @Override
     public String help() {
         return "Temporally bans a user from the guild **(THIS WILL DELETE MESSAGES)**\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`";
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 
 

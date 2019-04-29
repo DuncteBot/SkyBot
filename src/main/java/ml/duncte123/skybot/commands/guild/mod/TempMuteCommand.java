@@ -49,7 +49,7 @@ public class TempMuteCommand extends TempBanCommand {
         final GuildSettings settings = ctx.getGuildSettings();
 
         if (mentioned.isEmpty() || args.size() < 2) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
@@ -84,7 +84,7 @@ public class TempMuteCommand extends TempBanCommand {
         final Optional<Duration> optionalDuration = DurationParser.parse(args.get(1));
 
         if (!optionalDuration.isPresent()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`");
+            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
             return;
         }
 
@@ -114,7 +114,6 @@ public class TempMuteCommand extends TempBanCommand {
                     sendSuccess(event.getMessage());
                 }
             );
-
     }
 
     @Override
@@ -125,6 +124,6 @@ public class TempMuteCommand extends TempBanCommand {
     @Override
     public String help() {
         return "Temporally mutes a user on the guild\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><m/h/d/w> [Reason]`";
+            "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 }
