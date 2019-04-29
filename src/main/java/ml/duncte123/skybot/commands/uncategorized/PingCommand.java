@@ -20,35 +20,41 @@ package ml.duncte123.skybot.commands.uncategorized;
 
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
+
 import javax.annotation.Nonnull;
-
-import java.text.DecimalFormat;
 import java.time.temporal.ChronoUnit;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import java.util.concurrent.atomic.AtomicLong;
 
 public class PingCommand extends Command {
     @Override
     public void executeCommand(@Nonnull CommandContext ctx) {
+        if (!ctx.getChannel().canTalk()) {
+            return;
+        }
 
-        final long start = System.nanoTime();
+        final AtomicLong start = new AtomicLong();
 
-        sendMsg(ctx.getEvent(), "PONG!", (it) -> {
+        ctx.getChannel().sendMessage("Pong!!")
+            .setCheck(() -> {
+                start.set(System.currentTimeMillis());
 
-            final String restPing = new DecimalFormat("#.##").format((System.nanoTime() - start) * 1E-6);
-            final long messagePing = ctx.getMessage().getCreationTime().until(it.getCreationTime(), ChronoUnit.MILLIS);
+                return true;
+            })
+            .queue((it) -> {
+                final double restPing = System.currentTimeMillis() - start.get();
+                final long messagePing = ctx.getMessage().getCreationTime().until(it.getCreationTime(), ChronoUnit.MILLIS);
 
-            it.editMessageFormat("PONG!\n" +
-                    "Rest ping: %sms\n" +
-                    "Message ping: %sms\n" +
-                    "Websocket ping: %sms\n" +
-                    "Average shard ping: %sms",
-                restPing,
-                messagePing,
-                ctx.getJDA().getPing(),
-                ctx.getShardManager().getAveragePing()
-            ).queue();
-        });
+                it.editMessageFormat("PONG!\n" +
+                        "Rest ping: %sms\n" +
+                        "Message ping: %sms\n" +
+                        "Websocket ping: %sms\n" +
+                        "Average shard ping: %sms",
+                    restPing,
+                    messagePing,
+                    ctx.getJDA().getPing(),
+                    ctx.getShardManager().getAveragePing()
+                ).queue();
+            });
     }
 
     @Override

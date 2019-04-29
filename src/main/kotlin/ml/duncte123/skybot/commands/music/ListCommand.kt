@@ -66,6 +66,6 @@ class ListCommand : MusicCommand() {
 
     override fun getName(): String = "list"
 
-    override fun getAliases(): Array<String> = arrayOf("queue")
+    override fun getAliases(): Array<String> = arrayOf("queue", "q")
 
 }

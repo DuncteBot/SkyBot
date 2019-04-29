@@ -33,6 +33,7 @@ import net.dv8tion.jda.core.entities.Game;
 import net.dv8tion.jda.core.entities.Game.GameType;
 import net.dv8tion.jda.core.requests.RestAction;
 import net.dv8tion.jda.core.utils.cache.CacheFlag;
+import okhttp3.OkHttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,6 +123,12 @@ public final class SkyBot {
             .setBulkDeleteSplittingEnabled(false)
             .setEventManagerProvider((id) -> eventManager)
             .setDisabledCacheFlags(EnumSet.of(CacheFlag.GAME))
+            .setHttpClientBuilder(
+                new OkHttpClient.Builder()
+                .connectTimeout(30L, TimeUnit.SECONDS)
+                .readTimeout(30L, TimeUnit.SECONDS)
+                .writeTimeout(30L, TimeUnit.SECONDS)
+            )
             .build();
 
         this.startGameTimer();

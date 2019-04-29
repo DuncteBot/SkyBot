@@ -28,9 +28,7 @@ import ml.duncte123.skybot.objects.RadioStream;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.utils.AudioUtils;
-import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.entities.TextChannel;
-import net.dv8tion.jda.core.entities.User;
 import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.jetbrains.annotations.Nullable;
 
@@ -45,49 +43,44 @@ public class AudioLoader implements AudioLoadResultHandler {
 
     private final CommandContext ctx;
     private final TextChannel channel;
-    private final User requester;
+    private final long requester;
     private final GuildMusicManager mng;
     private final boolean announce;
-    private final boolean addPlaylist;
     private final String trackUrl;
     private final AudioUtils audioUtils;
 
-    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce,
-                       boolean addPlaylist, String trackUrl, AudioUtils audioUtils) {
+    public AudioLoader(CommandContext ctx, GuildMusicManager mng, boolean announce, String trackUrl, AudioUtils audioUtils) {
         this.ctx = ctx;
         this.channel = ctx.getChannel();
-        this.requester = ctx.getAuthor();
+        this.requester = ctx.getAuthor().getIdLong();
         this.mng = mng;
         this.announce = announce;
-        this.addPlaylist = addPlaylist;
         this.trackUrl = trackUrl;
         this.audioUtils = audioUtils;
     }
 
     @Override
     public void trackLoaded(AudioTrack track) {
-        String title = track.getInfo().title;
-        title = getSteamTitle(track, title, ctx.getCommandManager());
+        final String title = getSteamTitle(track, track.getInfo().title, this.ctx.getCommandManager());
 
-        track.setUserData(new TrackUserData(requester.getIdLong()));
+        track.setUserData(new TrackUserData(this.requester));
+        this.mng.scheduler.queue(track);
 
-        mng.scheduler.queue(track);
-
-        if (announce) {
+        if (this.announce) {
             String msg = "Adding to queue: " + title;
-            if (mng.player.getPlayingTrack() == null) {
+            if (this.mng.player.getPlayingTrack() == null) {
                 msg += "\nand the Player has started playing;";
             }
 
-            sendEmbed(channel, embedField(audioUtils.embedTitle, msg));
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
         }
     }
 
     @Override
     public void playlistLoaded(AudioPlaylist playlist) {
-        AudioTrack firstTrack = playlist.getSelectedTrack();
+//        AudioTrack firstTrack = playlist.getSelectedTrack();
         final List<AudioTrack> tracks = new ArrayList<>();
-        final TrackUserData userData = new TrackUserData(requester.getIdLong());
+        final TrackUserData userData = new TrackUserData(this.requester);
 
         for (final AudioTrack track : playlist.getTracks()) {
             track.setUserData(userData);
@@ -95,55 +88,57 @@ public class AudioLoader implements AudioLoadResultHandler {
         }
 
         if (tracks.isEmpty()) {
-            sendEmbed(channel, embedField(audioUtils.embedTitle, "Error: This playlist is empty."));
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Error: This playlist is empty."));
+
             return;
-
-        } else if (firstTrack == null) {
+        } /*else if (firstTrack == null) {
             firstTrack = playlist.getTracks().get(0);
-        }
+        }*/
 
-        if (addPlaylist) {
-            tracks.forEach(mng.scheduler::queue);
+        tracks.forEach(this.mng.scheduler::queue);
+
+        /*if (this.addPlaylist) {
+            tracks.forEach(this.mng.scheduler::queue);
         } else {
-            mng.scheduler.queue(firstTrack);
-        }
+            this.mng.scheduler.queue(firstTrack);
+        }*/
 
-        if (announce) {
-            String msg;
+        if (this.announce) {
+            String msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
 
-            if (addPlaylist) {
+            /*if (this.addPlaylist) {
                 msg = "Adding **" + playlist.getTracks().size() + "** tracks to queue from playlist: " + playlist.getName();
             } else {
-                final String prefix = GuildSettingsUtils.getGuild(channel.getGuild(), ctx.getVariables()).getCustomPrefix();
+                final String prefix = GuildSettingsUtils.getGuild(this.channel.getGuild(), this.ctx.getVariables()).getCustomPrefix();
 
                 msg = "**Hint:** Use `" + prefix + "pplay <playlist link>` to add a playlist." +
                     "\n\nAdding to queue " + firstTrack.getInfo().title + " (first track of playlist " + playlist.getName() + ")";
 
-            }
+            }*/
 
-            if (mng.player.getPlayingTrack() == null) {
+            if (this.mng.player.getPlayingTrack() == null) {
                 msg += "\nand the Player has started playing;";
             }
 
-            sendEmbed(channel, embedField(audioUtils.embedTitle, msg));
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, msg));
         }
     }
 
     @Override
     public void noMatches() {
-        if (announce) {
-            sendEmbed(channel, embedField(audioUtils.embedTitle, "Nothing found by _" + trackUrl + "_"));
+        if (this.announce) {
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Nothing found by _" + this.trackUrl + "_"));
         }
     }
 
     @Override
     public void loadFailed(FriendlyException exception) {
-        if (!announce) {
+        if (!this.announce) {
             return;
         }
 
         if (exception.getMessage().endsWith("Playback on other websites has been disabled by the video owner.")) {
-            sendEmbed(channel, embedField(audioUtils.embedTitle, "Could not play: " + trackUrl
+            sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + this.trackUrl
                 + "\nExternal playback of this video was blocked by YouTube."));
             return;
         }
@@ -158,7 +153,7 @@ public class AudioLoader implements AudioLoadResultHandler {
             return;
         }
 
-        sendEmbed(channel, embedField(audioUtils.embedTitle, "Could not play: " + root.getMessage()
+        sendEmbed(this.channel, embedField(this.audioUtils.embedTitle, "Could not play: " + root.getMessage()
             + "\nIf this happens often try another link or join our [support guild](https://discord.gg/NKM9Xtk) for more!"));
 
     }

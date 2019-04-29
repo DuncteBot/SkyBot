@@ -103,10 +103,11 @@ public abstract class Command implements ICommand {
         }
 
         final Member m = supportGuild.getMember(u);
+
         if (m == null) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
-                "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot).\n" +
+                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot).\n" +
                 "You will also need to join our discord server [here](https://discord.gg/NKM9Xtk)"));
             return false;
         }
@@ -114,7 +115,7 @@ public abstract class Command implements ICommand {
         if (!m.getRoles().contains(supportGuild.getRoleById(patronsRole))) {
             sendEmbed(tc, EmbedUtils.embedMessage("This command is a patron only command and is locked for you because you " +
                 "are not one of our patrons.\n" +
-                "To become a patron and have access to this command please [click this link](https://www.patreon.com/DuncteBot)."));
+                "For only $1 per month you can have access to this and many other commands [click here link to get started](https://www.patreon.com/DuncteBot)."));
             return false;
         }
 

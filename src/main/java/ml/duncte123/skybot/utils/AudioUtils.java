@@ -122,12 +122,9 @@ public class AudioUtils {
      *         The url from the track to play
      * @param ctx
      *         the command context for this event
-     * @param addPlayList
-     *         if we should add a playlist
      */
-    public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw, final CommandContext ctx,
-                            final boolean addPlayList) {
-        loadAndPlay(mng, trackUrlRaw, addPlayList, ctx, true);
+    public void loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw, final CommandContext ctx) {
+        loadAndPlay(mng, trackUrlRaw, ctx, true);
     }
 
     /**
@@ -139,15 +136,13 @@ public class AudioUtils {
      *         The url from the track to play
      * @param ctx
      *         the command context for this event
-     * @param addPlayList
-     *         if we should add a
      * @param announce
      *         if we should announce the track
      *
      * @return The future from lavaplayer
      */
     public Future<Void> loadAndPlay(final GuildMusicManager mng, final String trackUrlRaw,
-                                    final boolean addPlayList, final CommandContext ctx, final boolean announce) {
+                                    final CommandContext ctx, final boolean announce) {
         final String trackUrl;
 
         //Strip <>'s that prevent discord from embedding link resources
@@ -157,7 +152,7 @@ public class AudioUtils {
             trackUrl = trackUrlRaw;
         }
 
-        final AudioLoader loader = new AudioLoader(ctx, mng, announce, addPlayList, trackUrl, this);
+        final AudioLoader loader = new AudioLoader(ctx, mng, announce, trackUrl, this);
 
         return getPlayerManager().loadItemOrdered(mng, trackUrl, loader);
     }

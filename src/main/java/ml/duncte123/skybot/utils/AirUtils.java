@@ -34,6 +34,7 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.entities.User;
 
+import javax.annotation.Nullable;
 import java.awt.*;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
@@ -207,7 +208,14 @@ public class AirUtils {
     }
 
     public static String colorToHex(int hex) {
-        final Color color = new Color(hex);
+        return colorToHex(new Color(hex));
+    }
+
+    public static String colorToHex(@Nullable Color color) {
+        if (color == null) {
+            return "#1FFFFFF";
+        }
+
         return String.format("#%02x%02x%02x", color.getRed(), color.getGreen(), color.getBlue());
     }
 

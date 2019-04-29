@@ -20,13 +20,12 @@ package ml.duncte123.skybot.commands.uncategorized
 
 import com.jagrosh.jdautilities.commons.utils.FinderUtil
 import me.duncte123.botcommons.messaging.EmbedUtils
-import me.duncte123.botcommons.messaging.MessageUtils
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
-import me.duncte123.botcommons.messaging.MessageUtils.sendEmbedRaw
+import me.duncte123.botcommons.messaging.MessageUtils.*
 import me.duncte123.weebJava.types.StatusType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
+import ml.duncte123.skybot.entities.jda.DunctebotGuild
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.GuildUtils
@@ -50,10 +49,28 @@ import java.util.stream.Collectors
 class UserinfoCommand : Command() {
 
     private val prettyTime = PrettyTime()
+    private val nitroUserLink = "[**Nitro User?**](https://github.com/DuncteBot/SkyBot/issues/201#issuecomment-486182959 \"Click for more info on the nitro user check\")"
 
     override fun executeCommand(ctx: CommandContext) {
         val event = ctx.event
         val args = ctx.args
+
+        if (ctx.invoke == "retrieveuserinfo") {
+            if (args.isEmpty()) {
+                sendMsg(ctx, "Missing arguments for retrieving user information")
+
+                return
+            }
+
+            ctx.jda.retrieveUserById(args[0]).queue({
+                renderUserEmbed(event, it, ctx.guild)
+            }, {
+                sendMsg(ctx, "Could not get user info: ${it.message}")
+            })
+
+            return
+        }
+
         var u: User? = null
         var m: Member? = null
 
@@ -79,27 +96,20 @@ class UserinfoCommand : Command() {
         }
 
         if (u != null && m == null) {
-            renderUserEmbed(event, u, ctx.guildSettings.customPrefix)
+            renderUserEmbed(event, u, ctx.guild)
 
             return
         }
 
         if (m == null) {
-            MessageUtils.sendMsg(event, "This user could not be found.")
-            return
-        }
-
-        u = m.user
-
-        if (ctx.invoke == "avatar") {
-            MessageUtils.sendMsg(event, "**${u.asTag}'s** avatar:\n${u.effectiveAvatarUrl}?size=2048")
+            sendMsg(event, "This user could not be found.")
             return
         }
 
         renderMemberEmbed(event, m, ctx)
     }
 
-    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, prefix: String) {
+    private fun renderUserEmbed(event: GuildMessageReceivedEvent, user: User, guild: DunctebotGuild) {
 
         val createTime = user.creationTime
         val createTimeDate = Date.from(createTime.toInstant())
@@ -107,18 +117,18 @@ class UserinfoCommand : Command() {
         val createTimeHuman = prettyTime.format(createTimeDate)
 
         val embed = EmbedUtils.defaultEmbed()
-            .setColor(Settings.defaultColour)
-            .setThumbnail(user.effectiveAvatarUrl)
+            .setColor(guild.getColor())
+            .setThumbnail(user.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${user.asMention}
                         |
                         |**Username + Discriminator:** ${user.asTag}
                         |**User Id:** ${user.id}
                         |**Display Name:** ${user.name}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |**Nitro User?** ${isNitro(user)}
+                        |$nitroUserLink ${isNitro(user)}
                         |**Bot Account?** ${if (user.isBot) "Yes" else "No"}
                         |
-                        |_Use `${prefix}avatar [user]` to get a user's avatar_
+                        |_Use `${guild.getSettings().customPrefix}avatar [user]` to get a user's avatar_
                     """.trimMargin())
 
         sendEmbed(event.channel, embed)
@@ -177,14 +187,14 @@ class UserinfoCommand : Command() {
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(m.color)
-            .setThumbnail(u.effectiveAvatarUrl)
+            .setThumbnail(u.effectiveAvatarUrl.replace(".gif", ".png"))
             .setDescription("""User info for ${m.asMention}
                         |
                         |**Username + Discriminator:** ${u.asTag}
                         |**User Id:** ${u.id}
                         |**Display Name:** ${m.effectiveName}
                         |**Account Created:** $createTimeFormat ($createTimeHuman)
-                        |**Nitro User?** ${isNitro(u)}
+                        |$nitroUserLink ${isNitro(u)}
                         |**Joined Server:** $joinTimeFormat ($joinTimeHuman)
                         |**Join position:** #${GuildUtils.getMemberJoinPosition(m)}
                         |**Join Order:** $joinOrder
@@ -214,7 +224,7 @@ class UserinfoCommand : Command() {
 
     override fun getName() = "userinfo"
 
-    override fun getAliases() = arrayOf("user", "i", "whois", "ui")
+    override fun getAliases() = arrayOf("user", "i", "whois", "ui", "retrieveuserinfo")
 
     private fun toWeebshStatus(member: Member): StatusType {
         if (member.game != null && member.game.type == Game.GameType.STREAMING) {

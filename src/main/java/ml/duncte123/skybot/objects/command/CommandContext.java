@@ -162,9 +162,13 @@ public class CommandContext implements ICommandContext {
         if (this.mentionedInMessage == null) {
             this.mentionedInMessage = new ArrayList<>();
 
-            this.getArgs().forEach(
-                (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, this.getGuild()))
-            );
+            if (!this.getMessage().getMentionedMembers().isEmpty()) {
+                this.mentionedInMessage.addAll(this.getMessage().getMentionedMembers());
+            } else {
+                this.getArgs().forEach(
+                    (arg) -> this.mentionedInMessage.addAll(FinderUtil.findMembers(arg, this.getGuild()))
+                );
+            }
         }
 
         return this.mentionedInMessage;

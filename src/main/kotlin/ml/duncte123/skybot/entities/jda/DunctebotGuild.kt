@@ -47,7 +47,7 @@ class DunctebotGuild(private val guild: Guild) : Guild by guild {
         GuildSettingsUtils.updateEmbedColor(this.guild, color, Variables.getInstance())
     }
 
-    private fun getColor(): Int {
+    fun getColor(): Int {
         return EmbedUtils.getColorOrDefault(idLong, Settings.defaultColour)
     }
 

@@ -26,7 +26,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath(kotlin("gradle-plugin", version = "1.3.21"))
+        classpath(kotlin("gradle-plugin", version = "1.3.31"))
     }
 }
 
@@ -35,7 +35,7 @@ plugins {
     idea
     application
 
-    kotlin("jvm") version "1.3.21"
+    kotlin("jvm") version "1.3.31"
     id("com.github.johnrengelman.shadow") version "5.0.0"
     id("com.github.breadmoirai.github-release") version "2.2.4"
 }
@@ -76,7 +76,7 @@ dependencies {
     implementation(group = "me.duncte123", name = "weebJava", version = "2.2.0_13")
 
     //My little utils
-    implementation(group = "com.github.duncte123", name = "botCommons", version = "c8ce3a5")
+    implementation(group = "com.github.duncte123", name = "botCommons", version = "2d01bca")
 
     //JDA (java discord api)
     implementation(group = "net.dv8tion", name = "JDA", version = "3.8.3_463") {
@@ -111,7 +111,7 @@ dependencies {
     //Add kotlin
     implementation(kotlin("stdlib"))
     implementation(kotlin("reflect"))
-    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.1.0")
+    implementation(group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version = "1.2.0")
 
     //Spark for website
     implementation(group = "com.sparkjava", name = "spark-core", version = "2.8.0") // Override spark to the latest version
@@ -220,7 +220,6 @@ shadowJar.apply {
 
     exclude(
         "**/SQLiteDatabaseConnectionManager.class",
-        "**/AudioPlayerSenderHandler.class",
         "**/SqliteDatabaseAdapter**"
     )
 
@@ -230,7 +229,7 @@ shadowJar.apply {
 }
 
 tasks.withType<Wrapper> {
-    gradleVersion = "5.2.1"
+    gradleVersion = "5.4.1"
 }
 
 githubRelease {
@@ -243,7 +242,7 @@ githubRelease {
 }
 
 fun getGitHash(): String {
-    try {
+    return try {
         val stdout = ByteArrayOutputStream()
 
         exec {
@@ -251,9 +250,9 @@ fun getGitHash(): String {
             standardOutput = stdout
         }
 
-        return stdout.toString().trim()
+        stdout.toString().trim()
     } catch (ignored: Throwable) {
         // Probably ramidzkh"s problem
-        return "DEV"
+        "DEV"
     }
 }
