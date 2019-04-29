@@ -53,7 +53,6 @@ public class TempMuteCommand extends TempBanCommand {
             return;
         }
 
-
         if (settings.getMuteRoleId() <= 0) {
             sendMsg(event, "No mute/spamrole is set, use `db!spamrole <Role>` to set it");
             return;
