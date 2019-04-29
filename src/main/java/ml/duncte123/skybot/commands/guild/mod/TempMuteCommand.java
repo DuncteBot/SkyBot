@@ -94,6 +94,11 @@ public class TempMuteCommand extends TempBanCommand {
             return;
         }
 
+        if (duration.getMinutes() < 5) {
+            sendMsg(event, "Minimum duration is 5 minutes");
+            return;
+        }
+
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
         final String finalDate = getBanDateFormat(duration);
 

@@ -76,6 +76,11 @@ public class TempBanCommand extends ModBaseCommand {
             return;
         }
 
+        if (duration.getMinutes() < 5) {
+            sendMsg(event, "Minimum duration is 5 minutes");
+            return;
+        }
+
         final String finalUnbanDate = getBanDateFormat(duration);
         final String fReason = reason.isEmpty() ? "No reason was provided" : reason;
         final User toBan = toBanMember.getUser();
