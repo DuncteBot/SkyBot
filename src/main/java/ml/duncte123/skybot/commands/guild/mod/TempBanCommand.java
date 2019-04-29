@@ -88,7 +88,7 @@ public class TempBanCommand extends ModBaseCommand {
                     addBannedUserToDb(ctx.getDatabaseAdapter(), event.getAuthor().getIdLong(),
                         toBan.getName(), toBan.getDiscriminator(), toBan.getIdLong(), finalUnbanDate, event.getGuild().getIdLong());
 
-                    modLog(event.getAuthor(), toBan, "temporally banned", fReason, args.get(1), ctx.getGuild());
+                    modLog(event.getAuthor(), toBan, "temporally banned", fReason, duration.toString(), ctx.getGuild());
                 } else {
                     logger.error("Perm ban code in temp ban ran {}", args);
                     modLog(event.getAuthor(), toBan, "banned", fReason, ctx.getGuild());

@@ -109,7 +109,7 @@ public class TempMuteCommand extends TempBanCommand {
         event.getGuild().getController().addSingleRoleToMember(toMute, role)
             .reason("Muted by " + author.getAsTag() + ": " + fReason)
             .queue(success -> {
-                    ModerationUtils.modLog(author, mutee, "muted", fReason, args.get(1), ctx.getGuild());
+                    ModerationUtils.modLog(author, mutee, "muted", fReason, duration.toString(), ctx.getGuild());
                     sendSuccess(event.getMessage());
                 }
             );

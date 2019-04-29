@@ -18,7 +18,6 @@
 
 package ml.duncte123.skybot.utils;
 
-import me.duncte123.botcommons.StringUtils;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.SkyBot;
@@ -33,12 +32,11 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
@@ -91,7 +89,7 @@ public class ModerationUtils {
         String length = "";
 
         if (time != null && !time.isEmpty()) {
-            length = " lasting **" + parseTimeToString(time) + "**";
+            length = " lasting **" + time + "**";
         }
 
         modLog(String.format("User **%#s** got **%s** by **%#s**%s%s",
@@ -101,61 +99,6 @@ public class ModerationUtils {
             length,
             reason == null || reason.isEmpty() ? "" : " with reason _\"" + reason + "\"_"
         ), g);
-    }
-
-    private static String parseTimeToString(String time) {
-        final StringBuilder builder = new StringBuilder();
-        StringBuilder duration = new StringBuilder();
-
-        for (final char c : time.toCharArray()) {
-            if (Character.isDigit(c)) {
-                duration.append(c);
-                continue;
-            }
-
-            final String dur = duration.toString();
-            final int amount = Integer.parseInt(dur);
-
-            builder.append(dur).append(' ');
-
-            switch (Character.toLowerCase(c)) {
-                case 'w':
-                    builder.append(pluralizeTime("Week", amount));
-                    break;
-
-                case 'd':
-                    builder.append(pluralizeTime("Day", amount));
-                    break;
-
-                case 'h':
-                    builder.append(pluralizeTime("Hour", amount));
-                    break;
-
-                case 'm':
-                    builder.append(pluralizeTime("Minute", amount));
-                    break;
-
-                case 's':
-                    builder.append(pluralizeTime("Second", amount));
-                    break;
-            }
-
-            builder.append(", ");
-
-            duration = new StringBuilder();
-        }
-
-        final String result = builder.toString().substring(0, builder.length() - 2);
-
-        return StringUtils.replaceLast(result, ", ", " and ");
-    }
-
-    private static String pluralizeTime(String part, int amount) {
-        if (amount > 1) {
-            return part + "s";
-        }
-
-        return part;
     }
 
     public static void modLog(String message, DunctebotGuild guild) {
