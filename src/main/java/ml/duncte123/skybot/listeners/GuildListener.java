@@ -26,16 +26,15 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.Guild;
-import net.dv8tion.jda.core.entities.Member;
-import net.dv8tion.jda.core.entities.Role;
-import net.dv8tion.jda.core.entities.VoiceChannel;
+import net.dv8tion.jda.core.entities.*;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
 import javax.annotation.Nonnull;
+
+import java.util.concurrent.TimeUnit;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
@@ -191,7 +190,7 @@ public class GuildListener extends BaseListener {
         variables.getDatabase().run(() -> {
             try {
                 // Run the disconnecting after 1000ms so we allow JDA to receive updates
-                Thread.sleep(1000L);
+                Thread.sleep(TimeUnit.SECONDS.toMillis(1));
 
                 if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
                     return;
