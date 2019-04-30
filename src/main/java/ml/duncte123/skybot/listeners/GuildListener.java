@@ -26,17 +26,18 @@ import ml.duncte123.skybot.audio.GuildMusicManager;
 import ml.duncte123.skybot.objects.command.MusicCommand;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
 import net.dv8tion.jda.core.Permission;
-import net.dv8tion.jda.core.entities.*;
+import net.dv8tion.jda.core.entities.Guild;
+import net.dv8tion.jda.core.entities.Member;
+import net.dv8tion.jda.core.entities.Role;
+import net.dv8tion.jda.core.entities.VoiceChannel;
 import net.dv8tion.jda.core.events.guild.GuildJoinEvent;
 import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
+
 import javax.annotation.Nonnull;
-
 import java.util.concurrent.TimeUnit;
-
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 
 public class GuildListener extends BaseListener {
 
@@ -182,15 +183,21 @@ public class GuildListener extends BaseListener {
      *
      * @param guild
      *         the guild
-     * @param vc
+     * @param voiceChannel
      *         the voice channel
      */
-    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel vc) {
-
+    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel voiceChannel) {
         variables.getDatabase().run(() -> {
             try {
-                // Run the disconnecting after 1000ms so we allow JDA to receive updates
-                Thread.sleep(TimeUnit.SECONDS.toMillis(1));
+                // Run the disconnecting after timeout so we allow JDA to receive updates
+                final long timeout = GuildSettingsUtils.getGuild(guild, variables).getLeaveTimeout();
+                Thread.sleep(TimeUnit.SECONDS.toMillis(timeout));
+
+                final VoiceChannel vc = guild.getJDA().getVoiceChannelById(voiceChannel.getIdLong());
+
+                if (vc == null) {
+                    return;
+                }
 
                 if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
                     return;
@@ -215,6 +222,5 @@ public class GuildListener extends BaseListener {
                 e.printStackTrace();
             }
         });
-
     }
 }

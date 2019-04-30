@@ -57,6 +57,7 @@ public class GuildSettings {
     private long muteRoleId = 0L;
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private final List<String> blacklistedWords = new ArrayList<>();
+    private int leaveTimeout = 1;
 
     /**
      * This will init everything
@@ -407,13 +408,22 @@ public class GuildSettings {
         return this;
     }
 
+    public int getLeaveTimeout() {
+        return leaveTimeout;
+    }
+
+    public GuildSettings setLeaveTimeout(int leaveTimeout) {
+        this.leaveTimeout = leaveTimeout;
+
+        return this;
+    }
+
     /**
      * {@inheritDoc}
      */
     @Override
     public String toString() {
-        return String.format("GuildSettings[%s](prefix=%s, Swearword filter=%s, autorole id=%s, spam filter=%s)", guildId, prefix,
-            (enableSwearFilter ? "Enabled" : "Disabled"), autoRole, (spamFilterState ? "Enabled" : "Disabled"));
+        return String.format("GuildSettings[%s]", guildId);
     }
 
     // A utility method that might come in handy in the future (22-08-2018) https://github.com/DuncteBot/SkyBot/commit/4356e0ebc35798f963bff9b2b94396329f39463e#diff-d6b916869893fbd27dd3e469ac1ddc5a
@@ -439,7 +449,7 @@ public class GuildSettings {
                     continue;
                 }
 
-                if (value instanceof Long) {
+                if (value instanceof Long || value instanceof Integer) {
                     value = String.valueOf(value);
                 }
 

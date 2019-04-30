@@ -43,9 +43,14 @@ object BasicSettings {
         val welcomeChannel = params["welcomeChannel"]
         val welcomeLeaveEnabled = paramToBoolean(params["welcomeChannelCB"])
         val autorole = params["autoRoleRole"]
-        //val autoRoleEnabled      = params["autoRoleRoleCB"]
+        //val autoRoleEnabled = params["autoRoleRoleCB"]
         val announceTracks = paramToBoolean(params["announceTracks"])
         val color = Color.decode(params["embedColor"]).rgb
+        var leaveTimeout = GuildSettingsUtils.toLong(params["leaveTimeout"]).toInt()
+
+        if (leaveTimeout < 1) {
+            leaveTimeout = 1
+        }
 
         val guild = DunctebotGuild(WebHelpers.getGuildFromRequest(request, shardManager)!!)
         guild.setColor(color)
@@ -56,6 +61,7 @@ object BasicSettings {
             .setEnableJoinMessage(welcomeLeaveEnabled)
             .setAutoroleRole(GuildSettingsUtils.toLong(autorole))
             .setAnnounceTracks(announceTracks)
+            .setLeaveTimeout(leaveTimeout)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

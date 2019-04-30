@@ -71,7 +71,7 @@ public final class SkyBot {
         EmbedUtils.setEmbedBuilder(
             () -> new EmbedBuilder()
                 .setColor(Settings.defaultColour)
-                .setFooter(Settings.DEFAULT_NAME, Settings.DEFAULT_ICON)
+                .setFooter("DuncteBot", Settings.DEFAULT_ICON)
                 .setTimestamp(Instant.now())
         );
 
