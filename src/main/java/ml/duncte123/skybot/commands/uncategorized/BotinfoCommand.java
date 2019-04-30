@@ -80,6 +80,7 @@ public class BotinfoCommand extends Command {
         final String ramid = "<@281673659834302464> (ramidzkh#4814)";
 
         final MessageEmbed eb = EmbedUtils.defaultEmbed()
+            .setImage('https://dunctebot.com/img/thedunctebanner.png')
             .setDescription("Here is some information about me \uD83D\uDE09")
             .setThumbnail(u.getEffectiveAvatarUrl())
             .addField("About me", "Hello there, my name is DuncteBot and I’m currently being developed by " +
