@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.unstable.utils;
 
+import io.sentry.Sentry;
 import ml.duncte123.skybot.Author;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,16 +26,7 @@ import org.slf4j.LoggerFactory;
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class ComparatingUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(ComparatingUtils.class);
-
-    // Needs to be fixed
     public static void execCheck(Throwable t) {
-        logger.error("An error occurred", t);
-        t.printStackTrace();
-        Throwable cause = t.getCause();
-        while (cause != null) {
-            cause.printStackTrace();
-            cause = cause.getCause();
-        }
+        Sentry.capture(t);
     }
 }

@@ -159,7 +159,6 @@ public abstract class MusicCommand extends Command {
         if (isUserOrGuildPatron(event, false)) {
             //If the member is not connected
             if (!event.getMember().getVoiceState().inVoiceChannel()) {
-                sendMsg(event, "Please join a voice channel first.");
                 return false;
             }
 
