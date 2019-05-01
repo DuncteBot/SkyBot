@@ -135,6 +135,8 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                         .setMuteRoleId(toLong(res.getString("muteRoleId")))
                         .setRatelimits(ratelimmitChecks(res.getString("ratelimits")))
                         .setKickState(res.getBoolean("kickInsteadState"))
+                        .setLeaveTimeout(res.getInt("leave_timeout"))
+                        .setSpamThreshold(res.getInt("spam_threshold"))
                         .setBlacklistedWords(blackList)
                     )
                 }

@@ -48,7 +48,7 @@ object BasicSettings {
         val color = Color.decode(params["embedColor"]).rgb
         var leaveTimeout = GuildSettingsUtils.toLong(params["leaveTimeout"]).toInt()
 
-        if (leaveTimeout < 1) {
+        if (leaveTimeout < 1 || leaveTimeout > 60) {
             leaveTimeout = 1
         }
 

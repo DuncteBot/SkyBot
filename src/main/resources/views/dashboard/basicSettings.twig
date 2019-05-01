@@ -2,18 +2,6 @@
 
 {% block container %}
 
-    {% if message %}
-        <div class="row">
-            <div class="col s5">
-                <div class="card white">
-                    <div class="card-content">
-                        <p>{{ message | raw }}</p>
-                    </div>
-                </div>
-            </div>
-        </div>
-    {% endif %}
-
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>
@@ -120,63 +108,66 @@
 
             <div class="row section">
                 <h6>Leave timeout:</h6>
-                <p>The following value indicates the amount of seconds before the bot checks if the vc is empty and
-                    automatically leaves</p>
-                <br/>
-                <div class="input-field">
-                    <input type="number" name="leaveTimeout" value="{{ settings.getLeaveTimeout() }}" required/>
+               <p>The following value indicates the amount of seconds before the bot checks if the vc is empty and
+                   automatically leaves</p>
+
+                <div class="col s5">
+                    <div class="input-field inline">
+                        <input type="number" name="leaveTimeout" value="{{ settings.getLeaveTimeout() }}" min="1"
+                               max="60" required/>
+                    </div>
+                    Seconds
                 </div>
             </div>
-    </div>
 
-    {# TODO: make this work #}
-    {#<div class="row">
-        <div class="divider"></div>
-    </div>
+            {# TODO: make this work #}
+            {#<div class="row">
+                <div class="divider"></div>
+            </div>
 
-    <div class="row section">
-        <h6>Vc Autorole settings:</h6> <br/>
-        #}{# VC auto role #}{#
-        <div class="input-field col s12 m3">
-            <select id="vcAutoRoleVc" name="vcAutoRoleVc">
-                <option value="" selected disabled>Select a voice channel</option>
-                {% for voiceChannel in voiceChannels %}
-                    {% if currentVcAutoRole.getVoiceChannelId() == voiceChannel.getIdLong() %}
-                        <option value="{{ voiceChannel.getIdLong() }}" selected>🔊 {{ voiceChannel.getName() }}</option>
-                    {% else %}
-                        <option value="{{ voiceChannel.getIdLong() }}">🔊 {{ voiceChannel.getName() }}</option>
-                    {% endif %}
-                {% endfor %}
-                <option value="0">🔇 Disable</option>
-            </select>
-            <label for="vcAutoRoleVc">Voice Channel</label>
-        </div>
+            <div class="row section">
+                <h6>Vc Autorole settings:</h6> <br/>
+                #}{# VC auto role #}{#
+                <div class="input-field col s12 m3">
+                    <select id="vcAutoRoleVc" name="vcAutoRoleVc">
+                        <option value="" selected disabled>Select a voice channel</option>
+                        {% for voiceChannel in voiceChannels %}
+                            {% if currentVcAutoRole.getVoiceChannelId() == voiceChannel.getIdLong() %}
+                                <option value="{{ voiceChannel.getIdLong() }}" selected>🔊 {{ voiceChannel.getName() }}</option>
+                            {% else %}
+                                <option value="{{ voiceChannel.getIdLong() }}">🔊 {{ voiceChannel.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="0">🔇 Disable</option>
+                    </select>
+                    <label for="vcAutoRoleVc">Voice Channel</label>
+                </div>
 
-        <div class="input-field col s12 m3">
-            <select id="vcAutoRoleRole" name="vcAutoRoleRole">
-                <option value="" selected disabled>Select a role</option>
-                {% for role in goodRoles %}
-                    <p>{{ currentVcAutoRole.getRoleId() }} == {{ role.getIdLong() }}</p>
-                    {% if currentVcAutoRole.getRoleId() == role.getIdLong() %}
-                        <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
-                    {% else %}
-                        <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
-                    {% endif %}
-                {% endfor %}
-                <option value="0">Disable</option>
-            </select>
-            <label for="vcAutoRoleRole">Role</label>
-        </div>
-    </div>#}
+                <div class="input-field col s12 m3">
+                    <select id="vcAutoRoleRole" name="vcAutoRoleRole">
+                        <option value="" selected disabled>Select a role</option>
+                        {% for role in goodRoles %}
+                            <p>{{ currentVcAutoRole.getRoleId() }} == {{ role.getIdLong() }}</p>
+                            {% if currentVcAutoRole.getRoleId() == role.getIdLong() %}
+                                <option value="{{ role.getIdLong() }}" selected>@{{ role.getName() }}</option>
+                            {% else %}
+                                <option value="{{ role.getIdLong() }}">@{{ role.getName() }}</option>
+                            {% endif %}
+                        {% endfor %}
+                        <option value="0">Disable</option>
+                    </select>
+                    <label for="vcAutoRoleRole">Role</label>
+                </div>
+            </div>#}
 
-    <div class="row">
-        <div class="divider"></div>
-    </div>
+            <div class="row">
+                <div class="divider"></div>
+            </div>
 
-    <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
-        Save
-    </button>
-    </form>
+            <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">
+                Save
+            </button>
+        </form>
     </div>
 
 

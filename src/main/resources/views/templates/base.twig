@@ -71,6 +71,20 @@
 </header>
 
 <main>
+    {% if message %}
+        <div class="container">
+            <div class="row">
+                <div class="col s5">
+                    <div class="card white">
+                        <div class="card-content black-text">
+                            <p>{{ message | raw }}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+
     {% block main %}
         <div class="container">
 

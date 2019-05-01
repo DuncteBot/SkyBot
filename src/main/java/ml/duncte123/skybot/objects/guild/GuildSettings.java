@@ -58,6 +58,7 @@ public class GuildSettings {
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
     private final List<String> blacklistedWords = new ArrayList<>();
     private int leaveTimeout = 1;
+    private int spamThreshold = 7;
 
     /**
      * This will init everything
@@ -414,6 +415,16 @@ public class GuildSettings {
 
     public GuildSettings setLeaveTimeout(int leaveTimeout) {
         this.leaveTimeout = leaveTimeout;
+
+        return this;
+    }
+
+    public int getSpamThreshold() {
+        return spamThreshold;
+    }
+
+    public GuildSettings setSpamThreshold(int spamThreshold) {
+        this.spamThreshold = spamThreshold;
 
         return this;
     }

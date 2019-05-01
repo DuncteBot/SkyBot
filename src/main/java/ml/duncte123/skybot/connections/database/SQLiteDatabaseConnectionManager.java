@@ -137,24 +137,28 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
         try {
             connection.createStatement().execute(
                 "CREATE TABLE IF NOT EXISTS guildSettings " +
-                    "(id INTEGER PRIMARY KEY AUTOINCREMENT," +
-                    "guildId TEXT NOT NULL," +
-                    "logChannelId TEXT NULL," +
-                    "welcomeLeaveChannel TEXT NULL," +
-                    "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
-                    "autoRole VARCHAR(255) NULL," +
-                    "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
-                    "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
-                    "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
-                    "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
-                    "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
-                    "customWelcomeMessage TEXT NOT NULL," +
-                    "serverDesc TEXT NULL," +
-                    "customLeaveMessage TEXT NOT NULL," +
-                    "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
-                    "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
-                    "muteRoleId varchar(255) DEFAULT NULL," +
-                    "ratelimits TEXT DEFAULT NULL);"
+                    '(' +
+                        "id INTEGER PRIMARY KEY AUTOINCREMENT," +
+                        "guildId TEXT NOT NULL," +
+                        "logChannelId TEXT NULL," +
+                        "welcomeLeaveChannel TEXT NULL," +
+                        "prefix VARCHAR(255) NOT NULL DEFAULT '" + Settings.PREFIX + "'," +
+                        "autoRole VARCHAR(255) NULL," +
+                        "enableJoinMessage tinyint(1) NOT NULL DEFAULT '0'," +
+                        "enableSwearFilter tinyint(1) NOT NULL DEFAULT '0'," +
+                        "autoDeHoist tinyint(1) NOT NULL DEFAULT '0'," +
+                        "filterInvites tinyint(1) NOT NULL DEFAULT '0'," +
+                        "announceNextTrack tinyint(1) NOT NULL DEFAULT '1'," +
+                        "customWelcomeMessage TEXT NOT NULL," +
+                        "serverDesc TEXT NULL," +
+                        "customLeaveMessage TEXT NOT NULL," +
+                        "spamFilterState tinyint(1) NOT NULL DEFAULT '0'," +
+                        "kickInsteadState tinyint(1) NOT NULL DEFAULT '0'," +
+                        "muteRoleId varchar(255) DEFAULT NULL," +
+                        "ratelimits TEXT DEFAULT NULL," +
+                        "spam_threshold integer(2) NOT NULL DEFAULT 7," +
+                        "leave_timeout tinyint(2) NOT NULL DEFAULT 1" +
+                    ");"
             );
 
             connection.createStatement().execute(
