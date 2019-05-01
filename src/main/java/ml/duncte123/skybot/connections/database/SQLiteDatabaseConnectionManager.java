@@ -22,6 +22,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import org.sqlite.JDBC;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
@@ -30,12 +31,12 @@ import java.util.Properties;
 import java.util.regex.Pattern;
 
 /**
- * Represents an SQLite file database {@link DBConnectionManager connection manager}
+ * Represents an SQLite file database connection manager
  *
  * @author ramidzkh
  */
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
-class SQLiteDatabaseConnectionManager implements DBConnectionManager {
+public class SQLiteDatabaseConnectionManager implements Closeable {
 
     /**
      * The URL of this database
@@ -53,7 +54,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
      * @param file
      *         The file where to create or load the database
      */
-    SQLiteDatabaseConnectionManager(File file) {
+    public SQLiteDatabaseConnectionManager(File file) {
         url = "jdbc:sqlite:" + file.getAbsolutePath().replaceAll(Pattern.quote("\\"), "/");
         try {
             con = JDBC.createConnection(url, new Properties());
@@ -72,7 +73,6 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     /**
      * Gets the associated connection object
      */
-    @Override
     public Connection getConnection() {
         try {
             return isConnected() ? con : JDBC.createConnection(url, new Properties());
@@ -86,8 +86,7 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
     /**
      * @return Is the connection open
      */
-    @Override
-    public boolean isConnected() {
+    private boolean isConnected() {
         try {
             return con != null && !con.isClosed();
         }
@@ -95,22 +94,6 @@ class SQLiteDatabaseConnectionManager implements DBConnectionManager {
             e.printStackTrace();
             return false;
         }
-    }
-
-    /**
-     * @return The URL of this database
-     */
-    @Override
-    public String getName() {
-        return "main"; //SQLite uses 'main' as name for the database
-    }
-
-    /**
-     * @return If the connection is available, open or closed
-     */
-    @Override
-    public boolean hasSettings() {
-        return true;
     }
 
     @Override
