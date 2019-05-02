@@ -31,8 +31,6 @@ import ml.duncte123.skybot.objects.api.Warning
 import ml.duncte123.skybot.objects.command.custom.CustomCommand
 import ml.duncte123.skybot.objects.command.custom.CustomCommandImpl
 import ml.duncte123.skybot.objects.guild.GuildSettings
-import ml.duncte123.skybot.utils.GuildSettingsUtils.*
-import org.json.JSONArray
 import org.json.JSONObject
 import java.sql.Date
 
@@ -40,7 +38,6 @@ import java.sql.Date
 class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun getCustomCommands(callback: (List<CustomCommand>) -> Unit) {
-
         variables.database.run {
             try {
 
@@ -97,25 +94,7 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 array.forEach { c ->
                     val json = c as JSONObject
 
-                    val setting = GuildSettings(json.getLong("guildId"))
-                        .setEnableJoinMessage(toBool(json.getInt("enableJoinMessage")))
-                        .setEnableSwearFilter(toBool(json.getInt("enableSwearFilter")))
-                        .setCustomJoinMessage(replaceNewLines(json.getString("customWelcomeMessage")))
-                        .setCustomPrefix(json.getString("prefix"))
-                        .setLogChannel(toLong(json.optString("logChannelId")))
-                        .setWelcomeLeaveChannel(toLong(json.optString("welcomeLeaveChannel")))
-                        .setCustomLeaveMessage(replaceNewLines(json.getString("customLeaveMessage")))
-                        .setAutoroleRole(toLong(json.optString("autoRole")))
-                        .setServerDesc(replaceNewLines(json.optString("serverDesc", null)))
-                        .setAnnounceTracks(toBool(json.getInt("announceNextTrack")))
-                        .setAutoDeHoist(toBool(json.getInt("autoDeHoist")))
-                        .setFilterInvites(toBool(json.getInt("filterInvites")))
-                        .setEnableSpamFilter(toBool(json.getInt("spamFilterState")))
-                        .setMuteRoleId(toLong(json.optString("muteRoleId")))
-                        .setRatelimits(ratelimmitChecks(json.getString("ratelimits")))
-                        .setKickState(toBool(json.getInt("kickInsteadState")))
-
-                    settings.add(setting)
+                    settings.add(GuildSettings.fromJSON(json))
                 }
 
                 callback.invoke(settings)
@@ -127,27 +106,8 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
 
     override fun loadGuildSetting(guildId: Long, callback: (GuildSettings) -> Unit) {
         variables.database.run {
-
             val item = variables.apis.getGuildSetting(guildId)
-
-            val setting = GuildSettings(item.getLong("guildId"))
-                .setEnableJoinMessage(toBool(item.getInt("enableJoinMessage")))
-                .setEnableSwearFilter(toBool(item.getInt("enableSwearFilter")))
-                .setCustomJoinMessage(replaceNewLines(item.getString("customWelcomeMessage")))
-                .setCustomPrefix(item.getString("prefix"))
-                .setLogChannel(toLong(item.optString("logChannelId")))
-                .setWelcomeLeaveChannel(toLong(item.optString("welcomeLeaveChannel")))
-                .setCustomLeaveMessage(replaceNewLines(item.getString("customLeaveMessage")))
-                .setAutoroleRole(toLong(item.optString("autoRole")))
-                .setServerDesc(replaceNewLines(item.optString("serverDesc", null)))
-                .setAnnounceTracks(toBool(item.getInt("announceNextTrack")))
-                .setAutoDeHoist(toBool(item.getInt("autoDeHoist")))
-                .setFilterInvites(toBool(item.getInt("filterInvites")))
-                .setEnableSpamFilter(toBool(item.getInt("spamFilterState")))
-                .setMuteRoleId(toLong(item.optString("muteRoleId")))
-                .setRatelimits(ratelimmitChecks(item.getString("ratelimits")))
-                .setKickState(toBool(item.getInt("kickInsteadState")))
-                .setBlacklistedWords(parseBlacklistedWords(item.getJSONArray("blacklisted_words")))
+            val setting = GuildSettings.fromJSON(item)
 
             callback.invoke(setting)
         }
@@ -398,6 +358,4 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
             variables.apis.removeVcAutoRoleForGuild(guildId)
         }
     }
-
-    private fun parseBlacklistedWords(array: JSONArray) = array.map { (it as JSONObject).getString("word") }
 }

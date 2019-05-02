@@ -21,14 +21,16 @@ package ml.duncte123.skybot.objects.guild;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
-import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
+import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
 
 /**
  * This class will hold the settings for a guild
@@ -40,6 +42,7 @@ import static ml.duncte123.skybot.utils.GuildSettingsUtils.convertJ2S;
 public class GuildSettings {
 
     private final long guildId;
+    private final List<String> blacklistedWords = new ArrayList<>();
     private String prefix = Settings.PREFIX;
     private long autoRole = 0L;
     private boolean enableJoinMessage = false;
@@ -56,9 +59,8 @@ public class GuildSettings {
     private boolean kickInsteadState = false;
     private long muteRoleId = 0L;
     private long[] ratelimits = {20L, 45L, 60L, 120L, 240L, 2400L};
-    private final List<String> blacklistedWords = new ArrayList<>();
-    private int leaveTimeout = 1;
-    private int spamThreshold = 7;
+    private int leave_timeout = 1;
+    private int spam_threshold = 7;
 
     /**
      * This will init everything
@@ -410,21 +412,21 @@ public class GuildSettings {
     }
 
     public int getLeaveTimeout() {
-        return leaveTimeout;
+        return leave_timeout;
     }
 
     public GuildSettings setLeaveTimeout(int leaveTimeout) {
-        this.leaveTimeout = leaveTimeout;
+        this.leave_timeout = leaveTimeout;
 
         return this;
     }
 
     public int getSpamThreshold() {
-        return spamThreshold;
+        return spam_threshold;
     }
 
     public GuildSettings setSpamThreshold(int spamThreshold) {
-        this.spamThreshold = spamThreshold;
+        this.spam_threshold = spamThreshold;
 
         return this;
     }
@@ -472,5 +474,32 @@ public class GuildSettings {
         }
 
         return j;
+    }
+
+    public static GuildSettings fromJSON(JSONObject json) {
+        return new GuildSettings(json.getLong("guildId"))
+            .setEnableJoinMessage(toBool(json.getInt("enableJoinMessage")))
+            .setEnableSwearFilter(toBool(json.getInt("enableSwearFilter")))
+            .setCustomJoinMessage(replaceNewLines(json.getString("customWelcomeMessage")))
+            .setCustomPrefix(json.getString("prefix"))
+            .setLogChannel(toLong(json.optString("logChannelId")))
+            .setWelcomeLeaveChannel(toLong(json.optString("welcomeLeaveChannel")))
+            .setCustomLeaveMessage(replaceNewLines(json.getString("customLeaveMessage")))
+            .setAutoroleRole(toLong(json.optString("autoRole")))
+            .setServerDesc(replaceNewLines(json.optString("serverDesc", null)))
+            .setAnnounceTracks(toBool(json.getInt("announceNextTrack")))
+            .setAutoDeHoist(toBool(json.getInt("autoDeHoist")))
+            .setFilterInvites(toBool(json.getInt("filterInvites")))
+            .setEnableSpamFilter(toBool(json.getInt("spamFilterState")))
+            .setMuteRoleId(toLong(json.optString("muteRoleId")))
+            .setRatelimits(ratelimmitChecks(json.getString("ratelimits")))
+            .setBlacklistedWords(parseBlacklistedWords(json.getJSONArray("blacklisted_words")))
+            .setKickState(toBool(json.getInt("kickInsteadState")))
+            .setLeaveTimeout(json.getInt("leave_timeout"))
+            .setSpamThreshold(json.getInt("spam_threshold"));
+    }
+
+    private static List<String> parseBlacklistedWords(JSONArray array) {
+        return array.toList().stream().map(it -> ((JSONObject) it).getString("word")).collect(Collectors.toList());
     }
 }

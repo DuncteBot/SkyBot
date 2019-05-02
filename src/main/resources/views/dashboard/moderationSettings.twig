@@ -18,8 +18,8 @@
                         <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getIdLong() }}" selected>
-                                    #{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}"
+                                        selected>#{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
