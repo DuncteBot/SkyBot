@@ -35,9 +35,9 @@ import net.dv8tion.jda.core.events.guild.GuildLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceJoinEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceLeaveEvent;
 import net.dv8tion.jda.core.events.guild.voice.GuildVoiceMoveEvent;
-import javax.annotation.Nonnull;
 
-import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import javax.annotation.Nonnull;
+import java.util.concurrent.TimeUnit;
 
 public class GuildListener extends BaseListener {
 
@@ -183,15 +183,21 @@ public class GuildListener extends BaseListener {
      *
      * @param guild
      *         the guild
-     * @param vc
+     * @param voiceChannel
      *         the voice channel
      */
-    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel vc) {
-
+    private void channelCheckThing(@Nonnull Guild guild, @Nonnull VoiceChannel voiceChannel) {
         variables.getDatabase().run(() -> {
             try {
-                // Run the disconnecting after 1000ms so we allow JDA to receive updates
-                Thread.sleep(1000L);
+                // Run the disconnecting after timeout so we allow JDA to receive updates
+                final long timeout = GuildSettingsUtils.getGuild(guild, variables).getLeaveTimeout();
+                Thread.sleep(TimeUnit.SECONDS.toMillis(timeout));
+
+                final VoiceChannel vc = guild.getJDA().getVoiceChannelById(voiceChannel.getIdLong());
+
+                if (vc == null) {
+                    return;
+                }
 
                 if (vc.getMembers().stream().anyMatch(m -> !m.getUser().isBot())) {
                     return;
@@ -216,6 +222,5 @@ public class GuildListener extends BaseListener {
                 e.printStackTrace();
             }
         });
-
     }
 }

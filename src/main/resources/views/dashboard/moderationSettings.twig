@@ -2,12 +2,6 @@
 
 {% block container %}
 
-    {% if message %}
-        <div class="row col s5">
-            <div>{{ message | raw }}</div>
-        </div>
-    {% endif %}
-
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>
@@ -24,7 +18,8 @@
                         <option value="" disabled selected>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getLogChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getIdLong() }}" selected>#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}"
+                                        selected>#{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
@@ -67,9 +62,10 @@
                         Enabled
                     </label>
                 </div>
+            </div>
 
-                <br/>
-                <br/>
+            <div class="row">
+                <div class="divider"></div>
             </div>
 
             <div class="row section">
@@ -118,18 +114,39 @@
                 </div>
             </div>
 
+            <div class="row">
+                <div class="divider"></div>
+            </div>
 
             <div class="row section">
-                <h6>Ratelimits:</h6>
-                <p>The following values indicate the mutes duration in minutes for incrementing amount of
-                    violations
-                </p>
-                <br/>
-                {% for i,r in settings.getRateLimitsForTwig() %}
-                    <div class="input-field col s12 m1">
-                        <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" required/>
+                <div class="col s6">
+                    <h6>Ratelimits:</h6>
+                    <p>The following values indicate the mutes duration in minutes for incrementing amount of
+                        violations
+                    </p>
+                    <br/>
+                    {% for i,r in settings.getRateLimitsForTwig() %}
+                        <div class="input-field col s12 m2">
+                            <input type="number" name="rateLimits[{{ i }}]" value="{{ r }}" min="1" max="1000000" required/>
+                        </div>
+                    {% endfor %}
+                </div>
+
+                <div class="col s6">
+                    <h6>Spam threshold:</h6>
+                    <p>This value indicates how many messages must have been sent before the bot considers it as
+                        spam</p>
+                    <br>
+
+                    <div>
+                        Moderate for spam if a user has sent more than
+                        <div class="input-field inline">
+                            <input type="number" name="spamThreshold" value="{{ settings.getSpamThreshold() }}" min="1"
+                                   max="99" required/>
+                        </div>
+                        messages
                     </div>
-                {% endfor %}
+                </div>
             </div>
 
             <button type="submit" class="btn waves-effect waves-light waves-ripple blue accent-4 white" value="submit">

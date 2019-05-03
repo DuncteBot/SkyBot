@@ -114,7 +114,7 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
                 true
             }
             else -> {
-                LoggerFactory.getLogger(SpamFilter::class.java).debug("${TextColor.CYAN_BACKGROUND}Message with Activity!!${TextColor.RESET}")
+                logger.debug("${TextColor.CYAN_BACKGROUND}Message with Activity!!${TextColor.RESET}")
                 false
             }
         }
@@ -126,8 +126,9 @@ class SpamFilter : TLongObjectHashMap<SpamCache>() {
 
             if (cache != null) {
                 val msgs = cache[user.idLong]
+
                 if (msgs != null) {
-                    if (msgs.size() > 7) {
+                    if (msgs.size() > guild.getSettings().spamThreshold) {
                         shouldModerate = true
                     }
                 }

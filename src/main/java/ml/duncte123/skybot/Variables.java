@@ -108,7 +108,7 @@ public final class Variables {
     public DBManager getDatabase() {
 
         if (this.database == null) {
-            this.database = new DBManager(this.useApi());
+            this.database = new DBManager();
         }
 
         return this.database;
