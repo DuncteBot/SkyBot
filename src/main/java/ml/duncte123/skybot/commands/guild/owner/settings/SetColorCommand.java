@@ -61,12 +61,18 @@ public class SetColorCommand extends SettingsBase {
         ctx.getGuild().setColor(colorInt);
 
         final String msg = String.format("Embed color has been set to `%s`", colorString);
+
         sendEmbed(ctx.getEvent(), EmbedUtils.embedMessage(msg));
     }
 
     @Override
     public String getName() {
         return "setcolor";
+    }
+
+    @Override
+    public String[] getAliases() {
+        return new String[] {"setembedcolor"};
     }
 
     @Override

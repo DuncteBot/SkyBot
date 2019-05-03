@@ -20,8 +20,6 @@ package ml.duncte123.skybot.connections.database;
 
 import ml.duncte123.skybot.Author;
 
-import java.io.File;
-import java.sql.Connection;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -30,71 +28,7 @@ import java.util.concurrent.Future;
 @Author(nickname = "ramidzkh", author = "Ramid Khan")
 public class DBManager {
 
-    private final DBConnectionManager connManager;
-    private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-thread"));
-    /**
-     * This is the database name
-     */
-    private final String name;
-
-    /**
-     * This will set our stuff up
-     */
-    public DBManager(boolean isSql) {
-        this.connManager = createDBManager(isSql);
-
-        if (this.connManager != null) {
-            this.name = connManager.getName();
-        } else {
-            this.name = "No_Db";
-        }
-    }
-
-    private DBConnectionManager createDBManager(boolean isSql) {
-        if (!isSql) {
-            return new SQLiteDatabaseConnectionManager(new File("database.db"));
-        }
-
-        return null;
-    }
-
-    /**
-     * This will check the connection for us
-     *
-     * @return true if we are connected
-     */
-    @SuppressWarnings("unused")
-    public boolean isConnected() {
-        return connManager.isConnected();
-    }
-
-    /**
-     * This will return the name of the connected database
-     *
-     * @return The name of the connected database
-     */
-    public String getName() {
-        return this.name;
-    }
-
-    /**
-     * This will get the connection for us
-     *
-     * @return the connection, will we null if we aren't connected
-     */
-    @SuppressWarnings("unused")
-    public Connection getConnection() {
-        return connManager.getConnection();
-    }
-
-    /**
-     * Returns the connection manager
-     *
-     * @return the {@link DBConnectionManager DatabaseConnectionManager}
-     */
-    public DBConnectionManager getConnManager() {
-        return connManager;
-    }
+    private final ExecutorService service = Executors.newCachedThreadPool(r -> new Thread(r, "SQL-Web-thread"));
 
     public <T> Future<T> run(Callable<T> c) {
         return service.submit(c);

@@ -44,13 +44,14 @@ object ModerationSettings {
         val muteRole = params["muteRole"]
         val spamFilter = paramToBoolean(params["spamFilter"])
         val kickMode = paramToBoolean(params["kickMode"])
+        val spamThreshold = (params["spamThreshold"] ?: "7").toInt()
         val rateLimits = LongArray(6)
 
         for (i in 0..5) {
 
             val value = params.getValue("rateLimits[$i]")
 
-            if (value.isNotEmpty()) {
+            if (value.isEmpty()) {
                 request.session().attribute(WebRouter.FLASH_MESSAGE, "<h4>Invalid settings detected</h4>")
 
                 return response.redirect(request.url())
@@ -70,6 +71,7 @@ object ModerationSettings {
             .setRatelimits(rateLimits)
             .setEnableSpamFilter(spamFilter)
             .setEnableSwearFilter(swearFilter)
+            .setSpamThreshold(spamThreshold)
 
         GuildSettingsUtils.updateGuildSettings(guild, newSettings, variables)
 

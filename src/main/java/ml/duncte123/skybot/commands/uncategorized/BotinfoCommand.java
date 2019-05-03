@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.uncategorized;
 
 import com.sedmelluq.discord.lavaplayer.tools.PlayerLibrary;
-import com.sun.management.OperatingSystemMXBean;
 import kotlin.KotlinVersion;
 import me.duncte123.botcommons.messaging.EmbedUtils;
 import me.duncte123.botcommons.messaging.MessageUtils;
@@ -29,16 +28,12 @@ import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandContext;
-import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.JDAInfo;
 import net.dv8tion.jda.core.entities.MessageEmbed;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
-import java.lang.management.ManagementFactory;
-import java.sql.Time;
-import java.text.DecimalFormat;
+import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
 
@@ -63,19 +58,6 @@ public class BotinfoCommand extends Command {
         }
 
         final User u = event.getJDA().getSelfUser();
-
-        final OperatingSystemMXBean platformMXBean = ManagementFactory.getPlatformMXBean(OperatingSystemMXBean.class);
-        final String OS = platformMXBean.getName() +
-            " " + platformMXBean.getArch() +
-            " " + platformMXBean.getVersion();
-        final String cpu0 = new DecimalFormat("###.###%").format(platformMXBean.getProcessCpuLoad());
-        final String cpu2 = new DecimalFormat("###.###%").format(platformMXBean.getSystemCpuLoad());
-        final int cpu1 = ManagementFactory.getOperatingSystemMXBean().getAvailableProcessors();
-        final long ram0 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getUsed() >> 20;
-        final long ram1 = ManagementFactory.getMemoryMXBean().getHeapMemoryUsage().getMax() >> 20;
-        final long uptimeLong = ManagementFactory.getRuntimeMXBean().getUptime();
-        final Time uptimeTime = new Time(uptimeLong - 3600000);
-
         final String duncte = " <@191231307290771456> (duncte123#1245)";
         final String ramid = "<@281673659834302464> (ramidzkh#4814)";
 
@@ -89,12 +71,6 @@ public class BotinfoCommand extends Command {
                 "**[Invite me](https://discordapp.com/oauth2/authorize?client_id=210363111729790977&scope=bot&permissions=-1)**" +
                 " \u2022 **[Twitter](https://twitter.com/DuncteBot)**  \u2022 **[Cheap hosting](https://billing.oxide.host/aff.php?aff=6)**" +
                 "\n\u200B", true)
-            .addField("Other info", "**Guilds:** " + ctx.getShardManager().getGuildCache().size() + "\n" +
-                "**Bot version:** " + Settings.VERSION + "\n"
-                + "**Operating System:** " + OS + "\n" +
-                "**Uptime:** " + AirUtils.getUptime(uptimeLong) + " " + uptimeTime + "\n" +
-                "**Ram:** " + ram0 + "MB/" + ram1 + "MB\n" +
-                "**CPU Usage:** " + cpu0 + " / " + cpu2 + " (" + cpu1 + " Cores)\n\u200B", false)
             .addField("Lang & lib info", "**Coded in:** Java (version " + System.getProperty("java.version") +
                 ") and Kotlin (version " + KotlinVersion.CURRENT + ")\n\n" +
                 "**JDA version:** " + JDAInfo.VERSION + "" +

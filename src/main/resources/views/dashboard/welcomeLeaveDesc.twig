@@ -2,12 +2,6 @@
 
 {% block container %}
 
-    {% if message %}
-        <div class="row col s5">
-            <div>{{ message | raw }}</div>
-        </div>
-    {% endif %}
-
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>

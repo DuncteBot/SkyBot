@@ -2,12 +2,6 @@
 
 {% block container %}
 
-    {% if message %}
-        <div class="row col s5">
-            <div>{{ message | raw }}</div>
-        </div>
-    {% endif %}
-
     <div class="row">
         <h5>Selected guild: {{ guild.getName() }}</h5>
         <a href="/server/{{ guild.getIdLong() }}/">Go back</a>
@@ -31,7 +25,8 @@
                         <option value="" selected disabled>Select a channel</option>
                         {% for textChannel in goodChannels %}
                             {% if settings.getWelcomeLeaveChannel() == textChannel.getIdLong() %}
-                                <option value="{{ textChannel.getIdLong() }}" selected>#{{ textChannel.getName() }}</option>
+                                <option value="{{ textChannel.getIdLong() }}" selected>
+                                    #{{ textChannel.getName() }}</option>
                             {% else %}
                                 <option value="{{ textChannel.getIdLong() }}">#{{ textChannel.getName() }}</option>
                             {% endif %}
@@ -105,6 +100,24 @@
 
                 </div>
 
+            </div>
+
+            <div class="row">
+                <div class="divider"></div>
+            </div>
+
+            <div class="row section">
+                <h6>Leave timeout:</h6>
+                <p>The following value indicates the amount of seconds before the bot checks if the vc is empty and
+                   automatically leaves</p>
+
+                <div class="col s5">
+                    <div class="input-field inline">
+                        <input type="number" name="leaveTimeout" value="{{ settings.getLeaveTimeout() }}" min="1"
+                               max="60" required/>
+                    </div>
+                    Seconds
+                </div>
             </div>
 
             {# TODO: make this work #}
