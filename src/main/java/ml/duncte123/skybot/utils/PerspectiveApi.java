@@ -31,7 +31,7 @@ public class PerspectiveApi {
             final JSONObject json = makeRequest(text, channelId, apiKey);
 
             if (json.has("error")) {
-                return 0f;
+                throw new Exception("Error while handling perspective api request: " + json);
             }
 
             final JSONObject score = json.getJSONObject("attributeScores").getJSONObject("SEVERE_TOXICITY")
@@ -39,7 +39,7 @@ public class PerspectiveApi {
 
             return score.getFloat("value");
         }
-        catch (RequestException e) {
+        catch (Exception e) {
             Sentry.capture(e);
             e.printStackTrace();
 
