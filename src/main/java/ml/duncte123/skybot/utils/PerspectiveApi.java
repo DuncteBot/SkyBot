@@ -18,30 +18,44 @@
 
 package ml.duncte123.skybot.utils;
 
-import com.github.natanbc.reliqua.request.PendingRequest;
+import com.github.natanbc.reliqua.request.RequestException;
+import io.sentry.Sentry;
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import org.json.JSONObject;
 
-import java.util.function.Consumer;
-
 public class PerspectiveApi {
 
-    public static void checkProfanity(String text, String apiKey, Consumer<Long> callback) {
+    public static float checkProfanity(String text, String channelId, String apiKey) {
+        try {
+            final JSONObject json = makeRequest(text, channelId, apiKey);
 
-        //
+            if (json.has("error")) {
+                return 0f;
+            }
 
+            final JSONObject score = json.getJSONObject("attributeScores").getJSONObject("SEVERE_TOXICITY")
+                .getJSONObject("summaryScore");
+
+            return score.getFloat("value");
+        }
+        catch (RequestException e) {
+            Sentry.capture(e);
+            e.printStackTrace();
+
+            return 0f;
+        }
     }
 
-    private static String genBody(String text) {
-        return "{\"comment\":{\"text\":\"" + text + "\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}}}";
+    private static String genBody(String text, String channelId) {
+        return "{\"comment\":{\"text\":\"" + text + "\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
     }
 
     private static String genUrl(String apiKey) {
         return "https://commentanalyzer.googleapis.com/v1alpha1/comments:analyze?key=" + apiKey;
     }
 
-    private static PendingRequest<JSONObject> makeRequest(String text, String apiKey) {
-        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text), WebUtilsErrorUtils::toJSONObject);
+    private static JSONObject makeRequest(String text, String channelId, String apiKey) throws RequestException {
+        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId), WebUtilsErrorUtils::toJSONObject).execute();
     }
 }

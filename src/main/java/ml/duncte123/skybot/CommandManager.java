@@ -321,7 +321,8 @@ public class CommandManager {
 
             MDC.put("command.invoke", invoke);
             MDC.put("command.args", args.toString());
-            MDC.put("user", event.getAuthor().getAsTag());
+            MDC.put("user.tag", event.getAuthor().getAsTag());
+            MDC.put("user.id", event.getAuthor().getId());
             MDC.put("guild", event.getGuild().toString());
 
             final TextChannel channel = event.getChannel();
