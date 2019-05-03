@@ -26,7 +26,7 @@ import org.json.JSONObject;
 
 public class PerspectiveApi {
 
-    public static float checkProfanity(String text, String channelId, String apiKey) {
+    public static float checkSevereToxicity(String text, String channelId, String apiKey) {
         try {
             final JSONObject json = makeRequest(text, channelId, apiKey);
 

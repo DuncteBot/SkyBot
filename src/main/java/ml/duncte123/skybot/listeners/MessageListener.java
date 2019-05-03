@@ -266,7 +266,7 @@ public class MessageListener extends BaseListener {
                 .replaceAll("}", "\\\\}")
                 .replaceAll("\"", "\\\\\"");
 
-            final float score = PerspectiveApi.checkProfanity(text, event.getChannel().getId(), variables.getConfig().apis.googl);
+            final float score = PerspectiveApi.checkSevereToxicity(text, event.getChannel().getId(), variables.getConfig().apis.googl);
 
             if (score < 0.7f) {
                 return false;
