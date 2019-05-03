@@ -54,7 +54,7 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    protected final SpamFilter spamFilter = new SpamFilter();
+    final SpamFilter spamFilter = new SpamFilter();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
@@ -259,11 +259,11 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
+    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings) {
         if (settings.isEnableSwearFilter()) {
             final String text = messageToCheck.getContentStripped()
                 .replaceAll("\\{","\\\\{")
-                .replaceAll("\\}", "\\\\}")
+                .replaceAll("}", "\\\\}")
                 .replaceAll("\"", "\\\\\"");
 
             final float score = PerspectiveApi.checkProfanity(text, event.getChannel().getId(), variables.getConfig().apis.googl);
@@ -344,7 +344,7 @@ public class MessageListener extends BaseListener {
 
             final Message messageToCheck = event.getMessage();
 
-            if (checkSwearFilter(messageToCheck, event, settings, rw)) {
+            if (checkSwearFilter(messageToCheck, event, settings)) {
                 return true;
             }
 
