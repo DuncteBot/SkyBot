@@ -26,7 +26,9 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AirUtils;
 import net.dv8tion.jda.core.EmbedBuilder;
+import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.entities.TextChannel;
+
 import javax.annotation.Nonnull;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendEmbed;
@@ -43,6 +45,8 @@ public class SettingsCommand extends SettingsBase {
         //false <:xmark:314349398824058880>
         final TextChannel logChan = AirUtils.getLogChannel(settings.getLogChannel(), guild);
         final TextChannel welcomeLeaveChannel = AirUtils.getLogChannel(settings.getWelcomeLeaveChannel(), guild);
+        final Role muteRole = guild.getRoleById(settings.getAutoroleRole());
+
         final EmbedBuilder message = EmbedUtils.embedMessage("Here are the settings from this guild.\n" +
             "**Show join/leave messages:** " + boolToEmoji(settings.isEnableJoinMessage()) + "\n" +
             "**Swearword filter:** " + boolToEmoji(settings.isEnableSwearFilter()) + "\n" +
@@ -56,7 +60,7 @@ public class SettingsCommand extends SettingsBase {
             "**Join message:** " + settings.getCustomJoinMessage() + "\n" +
             "**Leave message:** " + settings.getCustomLeaveMessage() + "\n" +
             "**AutoRole:** " + (settings.getAutoroleRole() <= 0
-            ? "Not Set" : guild.getRoleById(settings.getAutoroleRole()).getAsMention()) + "\n" +
+            ? "Not Set" : (muteRole == null ? "Not Set" : muteRole.getAsMention()) + "\n" +
             "**Current prefix:** " + settings.getCustomPrefix() + "\n" +
             "**Modlog Channel:** " + (logChan != null ? logChan.getAsMention() : "none") + "\n" +
             "**Welcome/Leave channel:** " + (welcomeLeaveChannel != null ? welcomeLeaveChannel.getAsMention() : "none") + "\n" +
