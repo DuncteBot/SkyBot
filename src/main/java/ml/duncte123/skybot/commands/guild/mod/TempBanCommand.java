@@ -62,7 +62,14 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        final Optional<Duration> optionalDuration = DurationParser.parse(args.get(1));
+        Optional<Duration> optionalDuration;
+
+        try {
+            optionalDuration = DurationParser.parse(args.get(1));
+        }
+        catch (IllegalArgumentException ignored) {
+            optionalDuration = Optional.empty();
+        }
 
         if (!optionalDuration.isPresent()) {
             sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
