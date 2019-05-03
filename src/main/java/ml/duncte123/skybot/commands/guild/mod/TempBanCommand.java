@@ -27,6 +27,7 @@ import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -62,29 +63,9 @@ public class TempBanCommand extends ModBaseCommand {
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        Optional<Duration> optionalDuration;
+        final Duration duration = getDuration(args.get(1), getName(), event);
 
-        try {
-            optionalDuration = DurationParser.parse(args.get(1));
-        }
-        catch (IllegalArgumentException ignored) {
-            optionalDuration = Optional.empty();
-        }
-
-        if (!optionalDuration.isPresent()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
-            return;
-        }
-
-        final Duration duration = optionalDuration.get();
-
-        if (duration.getMilis() == 0) {
-            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
-            return;
-        }
-
-        if (duration.getMinutes() < 5) {
-            sendMsg(event, "Minimum duration is 5 minutes");
+        if (duration == null) {
             return;
         }
 
@@ -120,6 +101,39 @@ public class TempBanCommand extends ModBaseCommand {
             "Usage: `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`";
     }
 
+    @Nullable
+    static Duration getDuration(String arg, String name, GuildMessageReceivedEvent event) {
+        Optional<Duration> optionalDuration;
+
+        try {
+            optionalDuration = DurationParser.parse(arg);
+        }
+        catch (IllegalArgumentException ignored) {
+            optionalDuration = Optional.empty();
+        }
+
+        if (!optionalDuration.isPresent()) {
+            sendMsg(event, "Usage is `" + Settings.PREFIX + name + " <@user> <time><w/d/h/m/s> [Reason]`");
+
+            return null;
+        }
+
+        final Duration duration = optionalDuration.get();
+
+        if (duration.getMilis() == 0) {
+            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
+
+            return null;
+        }
+
+        if (duration.getMinutes() < 10) {
+            sendMsg(event, "Minimum duration is 10 minutes");
+
+            return null;
+        }
+
+        return duration;
+    }
 
     static String getBanDateFormat(Duration duration) {
         final DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

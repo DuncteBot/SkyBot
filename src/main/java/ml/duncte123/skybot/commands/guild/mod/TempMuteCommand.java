@@ -19,7 +19,6 @@
 package ml.duncte123.skybot.commands.guild.mod;
 
 import me.duncte123.durationparser.Duration;
-import me.duncte123.durationparser.DurationParser;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -32,7 +31,6 @@ import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 
 import javax.annotation.Nonnull;
 import java.util.List;
-import java.util.Optional;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
@@ -65,44 +63,14 @@ public class TempMuteCommand extends TempBanCommand {
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
         final Member self = ctx.getSelfMember();
 
-        if (role == null) {
-            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
-            return;
-        }
-
-        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
-            return;
-        }
-
-        if (!self.canInteract(role)) {
-            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+        if (canNotProceed(ctx, event, mod, toMute, role, self)) {
             return;
         }
 
         final String reason = String.join(" ", args.subList(2, args.size()));
-        Optional<Duration> optionalDuration;
+        final Duration duration = getDuration(args.get(1), getName(), event);
 
-        try {
-            optionalDuration = DurationParser.parse(args.get(1));
-        }
-        catch (IllegalArgumentException ignored) {
-            optionalDuration = Optional.empty();
-        }
-
-        if (!optionalDuration.isPresent()) {
-            sendMsg(event, "Usage is `" + Settings.PREFIX + getName() + " <@user> <time><w/d/h/m/s> [Reason]`");
-            return;
-        }
-
-        final Duration duration = optionalDuration.get();
-
-        if (duration.getMilis() == 0) {
-            sendMsg(event, "Your specified time is too short or the time syntax is invalid.");
-            return;
-        }
-
-        if (duration.getMinutes() < 5) {
-            sendMsg(event, "Minimum duration is 5 minutes");
+        if (duration == null) {
             return;
         }
 
@@ -125,6 +93,26 @@ public class TempMuteCommand extends TempBanCommand {
                     sendSuccess(event.getMessage());
                 }
             );
+    }
+
+    static boolean canNotProceed(@Nonnull CommandContext ctx, GuildMessageReceivedEvent event, Member mod, Member toMute, Role role, Member self) {
+        if (role == null) {
+            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
+
+            return true;
+        }
+
+        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
+            return true;
+        }
+
+        if (!self.canInteract(role)) {
+            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+
+            return true;
+        }
+
+        return false;
     }
 
     @Override
