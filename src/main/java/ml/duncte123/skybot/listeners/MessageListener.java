@@ -261,12 +261,10 @@ public class MessageListener extends BaseListener {
 
     private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings) {
         if (settings.isEnableSwearFilter()) {
-            final String text = messageToCheck.getContentStripped()
-                .replaceAll("\\{","\\\\{")
-                .replaceAll("}", "\\\\}")
-                .replaceAll("\"", "\\\\\"");
-
-            final float score = PerspectiveApi.checkSevereToxicity(text, event.getChannel().getId(), variables.getConfig().apis.googl);
+            final float score = PerspectiveApi.checkSevereToxicity(
+                messageToCheck.getContentStripped(),
+                event.getChannel().getId(),
+                variables.getConfig().apis.googl);
 
             if (score < 0.7f) {
                 return false;

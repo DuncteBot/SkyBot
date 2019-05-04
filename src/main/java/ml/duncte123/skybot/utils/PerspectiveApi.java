@@ -48,7 +48,8 @@ public class PerspectiveApi {
     }
 
     private static String genBody(String text, String channelId) {
-        return "{\"comment\":{\"text\":\"" + text + "\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
+        return "{\"comment\":{\"text\":\"" + JSONObject.quote(text) +
+            "\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
     }
 
     private static String genUrl(String apiKey) {

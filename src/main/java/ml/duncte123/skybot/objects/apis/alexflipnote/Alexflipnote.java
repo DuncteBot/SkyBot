@@ -33,8 +33,11 @@ import static me.duncte123.botcommons.web.WebUtils.defaultRequest;
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 public class Alexflipnote {
 
-    private final ObjectMapper mapper = new ObjectMapper();
+    private final ObjectMapper mapper;
 
+    public Alexflipnote(ObjectMapper mapper) {
+        this.mapper = mapper;
+    }
 
     public PendingRequest<FlipnoteColourObj> getRandomColour() {
         return WebUtils.ins.prepareRaw(
