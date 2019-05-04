@@ -76,13 +76,13 @@ class WeebCommands : WeebCommandBase() {
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
                         .append("Here is a list of all the valid categories")
-                        .appendCodeBlock(StringUtils.join(weebTags, ", "), "LDIF")
+                        .appendCodeBlock(weebTags.joinToString(), "LDIF")
                         .build())
                     return
                 }
-                val type = StringUtils.join(args, "")
+                val type = args.joinToString("")
                 if (weebTags.contains(type)) {
-                    val img = ctx.weebApi.getRandomImage(StringUtils.join(args, "")).execute()
+                    val img = ctx.weebApi.getRandomImage(type).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
                     sendMsg(event, "That category could not be found, Use `${Settings.PREFIX}weeb_image categories` for all categories")

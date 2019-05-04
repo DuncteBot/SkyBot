@@ -28,9 +28,8 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.User;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
 import net.dv8tion.jda.core.exceptions.HierarchyException;
-import org.apache.commons.lang3.StringUtils;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
@@ -68,7 +67,8 @@ public class SoftbanCommand extends ModBaseCommand {
                 sendMsg(event, "You are not permitted to perform this action.");
                 return;
             }
-            final String reason = StringUtils.join(args.subList(1, args.size()), " ");
+
+            final String reason = String.join(" ", args.subList(1, args.size()));
 
             event.getGuild().getController().ban(toBanMember, 1)
                 .reason("Kicked by: " + event.getAuthor().getAsTag() + "\nReason: " + reason).queue(

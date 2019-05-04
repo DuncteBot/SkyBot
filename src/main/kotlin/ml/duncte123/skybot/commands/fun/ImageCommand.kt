@@ -27,7 +27,6 @@ import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.Command
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
-import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class ImageCommand : Command() {
@@ -45,7 +44,7 @@ class ImageCommand : Command() {
                 MessageUtils.sendMsg(event, "Incorrect usage: `${Settings.PREFIX}$name <search term>`")
                 return
             }
-            val keyword = StringUtils.join(ctx.args, "+")
+            val keyword = ctx.args.joinToString("+")
             WebUtils.ins.getJSONObject(String.format(ctx.googleBaseUrl, keyword)).async {
                 val jsonArray = it.getJSONArray("items")
                 val randomItem = jsonArray.getJSONObject(ctx.random.nextInt(jsonArray.length()))

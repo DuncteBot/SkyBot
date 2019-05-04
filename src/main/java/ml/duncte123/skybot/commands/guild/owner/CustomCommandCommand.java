@@ -33,9 +33,8 @@ import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import org.apache.commons.lang3.StringUtils;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.*;
@@ -156,7 +155,7 @@ public class CustomCommandCommand extends Command {
             return;
         }
 
-        final String commandAction = StringUtils.join(args.subList(2, args.size()), " ");
+        final String commandAction = String.join(" ", args.subList(2, args.size()));
         final long guildId = event.getGuild().getIdLong();
 
         if (commandExists(commandName, guildId, manager)) {
