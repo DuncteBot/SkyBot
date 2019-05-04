@@ -346,6 +346,12 @@ class DuncteApis(private val apiKey: String) {
         return json.getJSONObject("data")
     }
 
+    fun getMeguminQuote(): String {
+        val json = executeRequest(defaultRequest("megumin", false))
+
+        return json.getJSONObject("data").getString("quote")
+    }
+
     fun setPronouns(userId: Long, pronouns: String, singular: Boolean) {
         val json = JSONObject()
             .put("pronouns", pronouns)
