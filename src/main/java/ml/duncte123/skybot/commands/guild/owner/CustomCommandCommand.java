@@ -23,6 +23,7 @@ import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Authors;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.exceptions.DoomedException;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
@@ -173,23 +174,31 @@ public class CustomCommandCommand extends Command {
             return;
         }
 
-        final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
+        try {
+            final Triple<Boolean, Boolean, Boolean> result = registerCustomCommand(commandName, commandAction, guildId, manager);
 
-        if (result.getFirst()) {
-            sendMsg(event, "Command added.");
+            if (result.getFirst()) {
+                sendMsg(event, "Command added.");
 
-            return;
+                return;
+            }
+
+            final String error = "Failed to add custom command. \n Reason(s): %s";
+            String reason = "";
+
+            if (result.getSecond()) {
+                reason += "The command was already found.\n";
+            } else if (result.getThird()) {
+                reason += "You reached the limit of 50 custom commands on this server.\n";
+            } else if (!result.getSecond() && !result.getThird()) {
+                reason += "We have an database issue.";
+            }
+
+            sendMsg(event, String.format(error, reason));
         }
-        final String error = "Failed to add custom command. \n Reason(s): %s";
-        String reason = "";
-        if (result.getSecond()) {
-            reason += "The command was already found.\n";
-        } else if (result.getThird()) {
-            reason += "You reached the limit of 50 custom commands on this server.\n";
-        } else if (!result.getSecond() && !result.getThird()) {
-            reason += "We have an database issue.";
+        catch (DoomedException e) {
+            sendMsg(event, "Could not add command: " + e.getMessage());
         }
-        sendMsg(event, String.format(error, reason));
 
     }
 
