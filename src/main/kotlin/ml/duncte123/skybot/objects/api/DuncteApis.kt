@@ -20,7 +20,7 @@ package ml.duncte123.skybot.objects.api
 
 import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.botcommons.web.WebUtils.EncodingType.APPLICATION_JSON
-import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.weebJava.helpers.IOHelper
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
@@ -464,7 +464,7 @@ class DuncteApis(private val apiKey: String) {
     }
 
     private fun executeRequest(request: Request.Builder): JSONObject {
-        return WebUtils.ins.prepareRaw(request.build(), WebUtilsErrorUtils::toJSONObject).execute()
+        return WebUtils.ins.prepareRaw(request.build(), WebParserUtils::toJSONObject).execute()
     }
 
     private fun defaultRequest(path: String, prefixBot: Boolean = true): Request.Builder {

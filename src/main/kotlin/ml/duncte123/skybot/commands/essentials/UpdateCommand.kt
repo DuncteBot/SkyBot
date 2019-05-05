@@ -168,6 +168,6 @@ class UpdateCommand : Command() {
                 appendln(scanner.nextLine())
             }
         }
-        return WebUtils.ins.hastebin(out).execute()
+        return out
     }
 }
