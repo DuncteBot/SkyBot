@@ -246,7 +246,8 @@ class EvalCommand : Command() {
             }
         }
 
-        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script${TextColor.RESET}")
+        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script (User: ${event.author})${TextColor.RESET}")
+        logger.info("${TextColor.PURPLE}Eval script: $script${TextColor.RESET}")
     }
 
     private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean) {
