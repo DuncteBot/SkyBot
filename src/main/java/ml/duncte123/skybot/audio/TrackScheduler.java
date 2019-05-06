@@ -29,7 +29,6 @@ import me.duncte123.botcommons.messaging.MessageUtils;
 import me.duncte123.botcommons.text.TextColor;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Variables;
-import ml.duncte123.skybot.objects.ConsoleUser;
 import ml.duncte123.skybot.objects.TrackUserData;
 import ml.duncte123.skybot.unstable.utils.ComparatingUtils;
 import ml.duncte123.skybot.utils.Debouncer;
@@ -44,6 +43,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.concurrent.TimeUnit;
 
 import static ml.duncte123.skybot.SkyBot.getInstance;
 
@@ -57,8 +57,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
     private final Variables variables = Variables.getInstance();
     private boolean repeating = false;
     private boolean repeatPlayList = false;
-    private static int DEBOUNCE_INTERVAL = 5000;
-    private final Debouncer messageDebouncer;
+    private static long DEBOUNCE_INTERVAL = TimeUnit.SECONDS.toMillis(5);
+    private final Debouncer<String> messageDebouncer;
 
 
     /**
@@ -71,8 +71,8 @@ public class TrackScheduler extends AudioEventAdapterWrapped {
         this.player = player;
         this.queue = new LinkedList<>();
         this.guildMusicManager = guildMusicManager;
-        this.messageDebouncer = new Debouncer((msg) ->
-            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg.toString())
+        this.messageDebouncer = new Debouncer<String>((msg) ->
+            MessageUtils.sendMsg(guildMusicManager.getLatestChannel(), msg)
             , DEBOUNCE_INTERVAL);
     }
 
