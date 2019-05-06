@@ -19,6 +19,7 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.Variables;
 import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
@@ -36,21 +37,16 @@ import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class TagCommand extends Command {
 
-    private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
     private final Map<String, Tag> tagStore = new HashMap<>();
 
     public TagCommand() {
         this.category = CommandCategory.FUN;
 
-        for (int i = 1; i < 11; i++) {
-            final Tag t = new Tag();
+        Variables.getInstance().getDatabaseAdapter().loadTags((tags) -> {
+            tags.forEach((tag) -> this.tagStore.put(tag.name, tag));
 
-            t.name = "tag" + i;
-            t.text = randomAlphaNumeric(5 * i);
-            t.owner_id = 191231307290771456L;
-
-            tagStore.put(t.name, t);
-        }
+            return null;
+        });
     }
 
     @Override
@@ -103,7 +99,7 @@ public class TagCommand extends Command {
         }
 
         if (this.tagStore.containsKey(subCmd)) {
-            sendMsg(ctx, this.tagStore.get(subCmd).text);
+            sendMsg(ctx, this.tagStore.get(subCmd).content);
 
             return;
         }
@@ -130,6 +126,12 @@ public class TagCommand extends Command {
     }
 
     private void sendTagsList(CommandContext ctx) {
+        if (this.tagStore.isEmpty()) {
+            sendMsg(ctx, "There are no tags in the system");
+
+            return;
+        }
+
         final Permission perm = Permission.MESSAGE_ATTACH_FILES;
 
         if (!ctx.getSelfMember().hasPermission(ctx.getChannel(), perm)) {
@@ -161,11 +163,64 @@ public class TagCommand extends Command {
     }
 
     private void removeTag(CommandContext ctx, String tagName) {
-        //
+        if (!this.tagStore.containsKey(tagName)) {
+            sendMsg(ctx, "That tag does not exist");
+
+            return;
+        }
+
+        final Tag tag = this.tagStore.get(tagName);
+
+        if (ctx.getAuthor().getIdLong() != tag.owner_id) {
+            sendMsg(ctx, "You do not own that tag");
+
+            return;
+        }
+
+        ctx.getDatabaseAdapter().deleteTag(tag, (success, reason) -> {
+            if (!success) {
+                sendMsg(ctx, "Failed to remove tag: " + reason);
+
+                return null;
+            }
+
+            this.tagStore.remove(tag.name);
+
+            sendMsgFormat(ctx, "Tag `%s` deleted", tag.name);
+
+            return null;
+        });
     }
 
     private void createTag(CommandContext ctx) {
-        //
+        final List<String> args = ctx.getArgs();
+        final String tagName = args.get(1);
+
+        if (this.tagStore.containsKey(tagName)) {
+            sendMsg(ctx, "This tag already exists");
+
+            return;
+        }
+
+        final Tag newTag = new Tag();
+
+        newTag.owner_id = ctx.getAuthor().getIdLong();
+        newTag.name = tagName;
+        newTag.content = ctx.getArgsRaw().split("\\s+", 3)[2];
+
+        ctx.getDatabaseAdapter().createTag(newTag, (success, reason) -> {
+            if (!success) {
+                sendMsg(ctx, "Failed to create tag: " + reason);
+
+                return null;
+            }
+
+            this.tagStore.put(tagName, newTag);
+
+            sendMsgFormat(ctx, "Tag `%s` created", tagName);
+
+            return null;
+        });
     }
 
     @Override
@@ -183,14 +238,5 @@ public class TagCommand extends Command {
     @Override
     public String[] getAliases() {
         return new String[]{"pasta", "tags", "t"};
-    }
-
-    private static String randomAlphaNumeric(int count) {
-        StringBuilder builder = new StringBuilder();
-        while (count-- != 0) {
-            int character = (int) (Math.random() * ALPHA_NUMERIC_STRING.length());
-            builder.append(ALPHA_NUMERIC_STRING.charAt(character));
-        }
-        return builder.toString();
     }
 }

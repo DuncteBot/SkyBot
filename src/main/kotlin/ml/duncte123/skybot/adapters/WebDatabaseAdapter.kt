@@ -24,6 +24,7 @@ import gnu.trove.map.hash.TLongIntHashMap
 import gnu.trove.map.hash.TLongLongHashMap
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Variables
+import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.VcAutoRole
@@ -357,5 +358,17 @@ class WebDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
         variables.database.run {
             variables.apis.removeVcAutoRoleForGuild(guildId)
         }
+    }
+
+    override fun loadTags(callback: (List<Tag>) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
+    }
+
+    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        TODO("not implemented") //To change body of created functions use File | Settings | File Templates.
     }
 }

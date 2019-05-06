@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.Variables
 import ml.duncte123.skybot.connections.database.SQLiteDatabaseConnectionManager
+import ml.duncte123.skybot.objects.Tag
 import ml.duncte123.skybot.objects.api.Ban
 import ml.duncte123.skybot.objects.api.Mute
 import ml.duncte123.skybot.objects.api.VcAutoRole
@@ -36,6 +37,7 @@ import ml.duncte123.skybot.objects.guild.GuildSettings
 import ml.duncte123.skybot.utils.GuildSettingsUtils.*
 import org.apache.http.MethodNotSupportedException
 import java.io.File
+import java.sql.SQLException
 import java.util.*
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
@@ -548,9 +550,78 @@ class SqliteDatabaseAdapter(variables: Variables) : DatabaseAdapter(variables) {
                 conn.prepareStatement(
                     "DELETE FROM vcAutoRoles WHERE guild_id = ?"
                 ).apply {
-
                     setString(1, guildId.toString())
                     executeUpdate()
+                }
+            }
+        }
+    }
+
+    override fun loadTags(callback: (List<Tag>) -> Unit) {
+        variables.database.run {
+            val tags = arrayListOf<Tag>()
+
+            connManager.use {
+                val conn = it.connection
+
+                val res = conn.createStatement().executeQuery("SELECT * FROM tags")
+
+                while(res.next()) {
+                    val tag = Tag()
+
+                    tag.owner_id = res.getLong("owner_id")
+                    tag.name = res.getString("name")
+                    tag.content = res.getString("content")
+
+                    tags.add(tag)
+                }
+
+                res.close()
+            }
+
+            callback.invoke(tags)
+        }
+    }
+
+    override fun createTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        variables.database.run {
+            connManager.use {
+                val conn = it.connection
+
+                try {
+                    conn.prepareStatement("INSERT INTO tags(owner_id, name, content) VALUES(?, ?, ?)")
+                        .apply {
+                            setLong(1, tag.owner_id)
+                            setString(2, tag.name)
+                            setString(3, tag.content)
+
+                            executeUpdate()
+                        }
+
+                    callback.invoke(true, "")
+                } catch (e: SQLException) {
+                    callback.invoke(false, e.message ?: "Unknown reason")
+                }
+            }
+        }
+    }
+
+    override fun deleteTag(tag: Tag, callback: (Boolean, String) -> Unit) {
+        variables.database.run {
+            connManager.use {
+                val conn = it.connection
+
+                try {
+                    conn.prepareStatement("DELETE FROM tags where name = ?")
+                        .apply {
+                            setString(1, tag.name)
+
+                            executeUpdate()
+                        }
+
+                    callback.invoke(true, "")
+                } catch (e: SQLException) {
+                    callback.invoke(false, e.message ?: "Unknown reason")
                 }
             }
         }

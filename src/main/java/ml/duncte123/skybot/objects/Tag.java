@@ -20,6 +20,6 @@ package ml.duncte123.skybot.objects;
 
 public class Tag {
     public String name;
-    public String text;
+    public String content;
     public long owner_id;
 }
