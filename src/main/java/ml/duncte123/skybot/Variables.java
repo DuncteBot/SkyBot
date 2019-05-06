@@ -34,7 +34,7 @@ import ml.duncte123.skybot.objects.apis.alexflipnote.Alexflipnote;
 import ml.duncte123.skybot.objects.config.DunctebotConfig;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
 import ml.duncte123.skybot.utils.AudioUtils;
-import net.dv8tion.jda.core.utils.MiscUtil;
+import ml.duncte123.skybot.utils.MapUtils;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
@@ -47,8 +47,8 @@ public final class Variables {
     private static Variables instance;
     private final String googleBaseUrl;
     private final boolean isSql;
-    private final TLongObjectMap<GuildSettings> guildSettings = MiscUtil.newLongMap();
-    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MiscUtil.newLongMap();
+    private final TLongObjectMap<GuildSettings> guildSettings = MapUtils.newLongObjectMap();
+    private final TLongObjectMap<TLongLongMap> vcAutoRoleCache = MapUtils.newLongObjectMap();
     private AudioUtils audioUtils;
     private Alexflipnote alexflipnote;
     private WeebApi weebApi;
