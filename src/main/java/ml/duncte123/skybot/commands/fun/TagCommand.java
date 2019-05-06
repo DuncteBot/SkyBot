@@ -19,10 +19,12 @@
 package ml.duncte123.skybot.commands.fun;
 
 import ml.duncte123.skybot.Settings;
+import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
 import java.util.HashMap;
@@ -30,17 +32,24 @@ import java.util.List;
 import java.util.Map;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
+import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class TagCommand extends Command {
 
     private static final String ALPHA_NUMERIC_STRING = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-    private final Map<String, Object> tagStore = new HashMap<>();
+    private final Map<String, Tag> tagStore = new HashMap<>();
 
     public TagCommand() {
         this.category = CommandCategory.FUN;
 
         for (int i = 1; i < 11; i++) {
-            tagStore.put(randomAlphaNumeric(5 + i), null);
+            final Tag t = new Tag();
+
+            t.name = "tag" + i;
+            t.text = randomAlphaNumeric(5 * i);
+            t.owner_id = 191231307290771456L;
+
+            tagStore.put(t.name, t);
         }
     }
 
@@ -74,7 +83,7 @@ public class TagCommand extends Command {
         if (args.size() == 2) {
             final String tagName = args.get(1);
 
-            if (subCmd.equalsIgnoreCase("author") || subCmd.equalsIgnoreCase("who")) {
+            if (subCmd.equalsIgnoreCase("author") || subCmd.equalsIgnoreCase("owner") || subCmd.equalsIgnoreCase("who")) {
                 sendTagOwner(ctx, tagName);
 
                 return;
@@ -93,12 +102,31 @@ public class TagCommand extends Command {
             return;
         }
 
-        sendMsg(ctx, "Unknown argument `" + subCmd + "`, check `" +
+        if (this.tagStore.containsKey(subCmd)) {
+            sendMsg(ctx, this.tagStore.get(subCmd).text);
+
+            return;
+        }
+
+        sendMsg(ctx, "Unknown tag `" + subCmd + "`, check `" +
             ctx.getGuildSettings().getCustomPrefix() + ctx.getInvoke() + " help`");
     }
 
     private void sendTagHelp(CommandContext ctx) {
-        //
+        final String invoke = ctx.getInvoke();
+        final String prefix = ctx.getGuildSettings().getCustomPrefix();
+        final String message = String.format(
+            "Tag help:\n" +
+                "\t`%1$s%2$s help` => Shows this message\n" +
+                "\t`%1$s%2$s list` => Gives you a list of all the tags\n" +
+                "\t`%1$s%2$s author <tag name>` => Shows the owner of a tag\n" +
+                "\t`%1$s%2$s delete <tag name>` => Deletes a tag\n" +
+                "\t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag",
+            prefix,
+            invoke
+        );
+
+        sendMsg(ctx, message);
     }
 
     private void sendTagsList(CommandContext ctx) {
@@ -119,7 +147,17 @@ public class TagCommand extends Command {
     }
 
     private void sendTagOwner(CommandContext ctx, String tagName) {
-        //
+        if (!this.tagStore.containsKey(tagName)) {
+            sendMsg(ctx, "That tag does not exist");
+
+            return;
+        }
+
+        final long ownerId = this.tagStore.get(tagName).owner_id;
+        final User user = ctx.getShardManager().getUserById(ownerId);
+        final String userTag = user == null ? "UnknownUser#0000" : user.getAsTag();
+
+        sendMsgFormat(ctx, "`%s` was created by `%s`", tagName, userTag);
     }
 
     private void removeTag(CommandContext ctx, String tagName) {
