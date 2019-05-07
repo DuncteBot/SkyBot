@@ -26,6 +26,7 @@ import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Authors
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.SinceSkybot
+import ml.duncte123.skybot.commands.essentials.UpdateCommand.Companion.makeHastePost
 import ml.duncte123.skybot.commands.essentials.eval.filter.EvalFilter
 import ml.duncte123.skybot.entities.delegate.*
 import ml.duncte123.skybot.exceptions.DoomedException
@@ -116,7 +117,7 @@ class EvalCommand : Command() {
             "ml.duncte123.skybot.utils.JSONMessageErrorsHelper.*"
         )
 
-        importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\n import ") +
+        importString = packageImports.joinToString(separator = ".*\nimport ", prefix = "import ", postfix = ".*\nimport ") +
             classImports.joinToString(separator = "\nimport ", postfix = "\n") +
             staticImports.joinToString(prefix = "import static ", separator = "\nimport static ", postfix = "\n")
     }
@@ -246,8 +247,8 @@ class EvalCommand : Command() {
             }
         }
 
-        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script (User: ${event.author})${TextColor.RESET}")
-        logger.info("${TextColor.PURPLE}Eval script: $script${TextColor.RESET}")
+        logger.info("${TextColor.PURPLE}Took ${time}ms for evaluating last script ${TextColor.ORANGE}(User: ${event.author})" +
+            "${TextColor.YELLOW}(script: ${makeHastePost(script, "2d", "groovy")})${TextColor.RESET}")
     }
 
     private fun parseEvalResponse(out: Any?, event: GuildMessageReceivedEvent, isRanByBotOwner: Boolean) {
