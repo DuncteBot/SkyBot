@@ -27,10 +27,20 @@ import org.json.JSONObject;
 public class PerspectiveApi {
 
     public static float checkSevereToxicity(String text, String channelId, String apiKey) {
+        if (text.isEmpty()) {
+            return 0f;
+        }
+
         try {
             final JSONObject json = makeRequest(text, channelId, apiKey);
 
             if (json.has("error")) {
+                final String error = json.getJSONObject("error").getString("message");
+
+                if (error.contains("does not support request languages")) {
+                    return 0f;
+                }
+
                 throw new Exception("Error while handling perspective api request: " + json);
             }
 
@@ -48,8 +58,8 @@ public class PerspectiveApi {
     }
 
     private static String genBody(String text, String channelId) {
-        return "{\"comment\":{\"text\":\"" + JSONObject.quote(text) +
-            "\"},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
+        return "{\"comment\":{\"text\":" + JSONObject.quote(text) +
+            "},\"requestedAttributes\":{\"SEVERE_TOXICITY\":{}},\"sessionId\":\"" + channelId + "\"}";
     }
 
     private static String genUrl(String apiKey) {
