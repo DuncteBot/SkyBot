@@ -23,7 +23,9 @@ import me.duncte123.botcommons.messaging.EmbedUtils
 import me.duncte123.botcommons.messaging.MessageUtils
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.botcommons.web.WebUtils
+import me.duncte123.botcommons.web.WebUtils.EncodingType
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.connections.database.DBManager
@@ -34,6 +36,7 @@ import ml.duncte123.skybot.objects.command.CommandContext
 import ml.duncte123.skybot.utils.AirUtils
 import ml.duncte123.skybot.utils.AudioUtils
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
+import org.jsoup.Jsoup
 import java.util.*
 import java.util.concurrent.Executors
 
@@ -45,7 +48,6 @@ class UpdateCommand : Command() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
 
         if (!isDev(event.author)
@@ -73,7 +75,7 @@ class UpdateCommand : Command() {
                     // This will also shutdown eval
                     event.jda.asBot().shardManager.shutdown()
 
-                    // Stop everything that my be using resources
+                    // Stop everything that may be using resources
                     AirUtils.stop(ctx.variables.database, ctx.audioUtils)
 
                     // Magic code. Tell the updater to update
@@ -103,7 +105,6 @@ class UpdateCommand : Command() {
         lateinit var links: String
 
         val executor = Executors.newSingleThreadExecutor().asCoroutineDispatcher()
-
         val updateprogress: Deferred<Boolean> = GlobalScope.async(executor, CoroutineStart.DEFAULT) {
             val pull = getCommand("git pull")
             val build = getCommand("gradlew build --refresh-dependencies -x test")
@@ -114,18 +115,23 @@ class UpdateCommand : Command() {
                 appendln(runProcess(Runtime.getRuntime().exec(build)))
             }
 
-
             val process = Runtime.getRuntime().exec(versioncmd)
-
             val scanner = Scanner(process.inputStream)
+
             while (scanner.hasNextLine()) {
                 val s = scanner.nextLine()
+
                 if (s.matches("[0-9]\\.[0-9]{1,3}\\.[0-9]{1,3}_.{6,9}".toRegex())) {
                     version = s
-                    if (process.isAlive) process.destroy()
+
+                    if (process.isAlive) {
+                        process.destroy()
+                    }
+
                     return@async true
                 }
             }
+
             return@async false
 //            return@async true
         }
@@ -135,7 +141,7 @@ class UpdateCommand : Command() {
         if (progress) {
             sendMsg(event, "✅ Update built. Shutting running version down.") {
                 event.channel.deleteMessageById(id).queue()
-                if (!version.isEmpty()) {
+                if (version.isNotEmpty()) {
                     // This will also shutdown eval
                     event.jda.asBot().shardManager.shutdown()
 
@@ -161,6 +167,24 @@ class UpdateCommand : Command() {
         }
     }
 
+    private fun makeHastePost(text: String): String {
+        val base = "https://paste.menudocs.org"
+        val dataMap = hashMapOf<String, Any>()
+
+        dataMap["text"] = text
+        dataMap["expire"] = "1h"
+        dataMap["lang"] = "text"
+
+        val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, EncodingType.TEXT_PLAIN)
+            .build({
+                return@build Jsoup.parse(it.body()!!.string())
+                    .select("a[title=\"View Raw\"]").first().attr("href")
+                    .replaceFirst("/raw", "")
+            }, WebParserUtils::handleError).execute()
+
+        return base + loc
+    }
+
     private fun runProcess(process: Process): String {
         val scanner = Scanner(process.inputStream)
         val out = buildString {
@@ -168,6 +192,7 @@ class UpdateCommand : Command() {
                 appendln(scanner.nextLine())
             }
         }
-        return WebUtils.ins.hastebin(out).execute()
+
+        return makeHastePost(out)
     }
 }

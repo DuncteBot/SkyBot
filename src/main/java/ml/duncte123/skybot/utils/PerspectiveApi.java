@@ -20,8 +20,8 @@ package ml.duncte123.skybot.utils;
 
 import com.github.natanbc.reliqua.request.RequestException;
 import io.sentry.Sentry;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.botcommons.web.WebUtils;
-import me.duncte123.botcommons.web.WebUtilsErrorUtils;
 import org.json.JSONObject;
 
 public class PerspectiveApi {
@@ -67,6 +67,6 @@ public class PerspectiveApi {
     }
 
     private static JSONObject makeRequest(String text, String channelId, String apiKey) throws RequestException {
-        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId), WebUtilsErrorUtils::toJSONObject).execute();
+        return WebUtils.ins.postJSON(genUrl(apiKey), genBody(text, channelId), WebParserUtils::toJSONObject).execute();
     }
 }

@@ -20,14 +20,12 @@ package ml.duncte123.skybot.commands.weeb
 
 import me.duncte123.botcommons.messaging.MessageUtils.sendEmbed
 import me.duncte123.botcommons.messaging.MessageUtils.sendMsg
-import me.duncte123.botcommons.web.WebUtils
 import me.duncte123.weebJava.types.HiddenMode
 import ml.duncte123.skybot.Author
 import ml.duncte123.skybot.Settings
 import ml.duncte123.skybot.objects.command.CommandCategory
 import ml.duncte123.skybot.objects.command.CommandContext
 import net.dv8tion.jda.core.MessageBuilder
-import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 class WeebCommands : WeebCommandBase() {
@@ -39,7 +37,6 @@ class WeebCommands : WeebCommandBase() {
     }
 
     override fun executeCommand(ctx: CommandContext) {
-
         val event = ctx.event
         val args = ctx.args
 
@@ -55,15 +52,10 @@ class WeebCommands : WeebCommandBase() {
             "owo" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage("owo").execute().url))
             "b1nzy" -> sendEmbed(event, getWeebEmbedImage(ctx.weebApi.getRandomImage(listOf("b1nzy")).execute().url))
             "megumin" -> {
-                WebUtils.ins.getJSONObject("https://megumin.torque.ink/api/explosion").async({
-                    val chant = it.optString("chant")
-                    val img = it.optString("img")
-                    sendEmbed(event, getWeebEmbedImageAndDesc(chant, img))
-                }, {
-                    //When the site is down or dies
-                    val img = ctx.weebApi.getRandomImage("megumin")
-                    sendEmbed(event, getWeebEmbedImage(img.execute().url))
-                })
+                val quote = ctx.apis.getMeguminQuote()
+                val img = ctx.weebApi.getRandomImage("megumin")
+
+                sendEmbed(event, getWeebEmbedImageAndDesc(quote, img.execute().url))
             }
             "weeb" -> {
                 if (args.isEmpty()) {
@@ -76,13 +68,13 @@ class WeebCommands : WeebCommandBase() {
                 if (args[0] == "categories") {
                     sendMsg(event, MessageBuilder()
                         .append("Here is a list of all the valid categories")
-                        .appendCodeBlock(StringUtils.join(weebTags, ", "), "LDIF")
+                        .appendCodeBlock(weebTags.joinToString(), "LDIF")
                         .build())
                     return
                 }
-                val type = StringUtils.join(args, "")
+                val type = args.joinToString("")
                 if (weebTags.contains(type)) {
-                    val img = ctx.weebApi.getRandomImage(StringUtils.join(args, "")).execute()
+                    val img = ctx.weebApi.getRandomImage(type).execute()
                     sendEmbed(event, getWeebEmbedImageAndDesc("Image ID: ${img.id}", img.url))
                 } else {
                     sendMsg(event, "That category could not be found, Use `${Settings.PREFIX}weeb_image categories` for all categories")

@@ -27,7 +27,6 @@ import ml.duncte123.skybot.objects.command.CommandCategory
 import net.dv8tion.jda.core.EmbedBuilder
 import net.dv8tion.jda.core.entities.MessageEmbed
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent
-import org.apache.commons.lang3.StringUtils
 
 @Author(nickname = "duncte123", author = "Duncan Sterken")
 abstract class WeebCommandBase : Command() {
@@ -65,7 +64,7 @@ abstract class WeebCommandBase : Command() {
                 return@async
             }
             sendEmbed(event, getWeebEmbedImageAndDesc(
-                "${event.member.asMention} $thing ${StringUtils.join(args, " ")}", imageUrl))
+                "${event.member.asMention} $thing ${args.joinToString(" ")}", imageUrl))
         }
 
     }

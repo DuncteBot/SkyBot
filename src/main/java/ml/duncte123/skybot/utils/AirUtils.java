@@ -204,7 +204,7 @@ public class AirUtils {
     }
 
     public static PendingRequest<String> shortenUrl(String url, String googleKey) {
-        return WebUtils.ins.shortenUrl(url, googleKey);
+        return WebUtils.ins.shortenUrl(url, "lnk.dunctebot.com", googleKey);
     }
 
     public static String colorToHex(int hex) {

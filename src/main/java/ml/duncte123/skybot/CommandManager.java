@@ -386,6 +386,7 @@ public class CommandManager {
             }
             catch (Throwable ex) {
                 execCheck(ex);
+                ex.printStackTrace();
             }
         });
     }
