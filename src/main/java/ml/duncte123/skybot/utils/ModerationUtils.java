@@ -32,10 +32,10 @@ import ml.duncte123.skybot.objects.guild.GuildSettings;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.*;
-import javax.annotation.Nonnull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
@@ -89,7 +89,7 @@ public class ModerationUtils {
         String length = "";
 
         if (time != null && !time.isEmpty()) {
-            length = " lasting " + time + "";
+            length = " lasting **" + time + "**";
         }
 
         modLog(String.format("User **%#s** got **%s** by **%#s**%s%s",
