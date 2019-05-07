@@ -137,11 +137,9 @@ class BlackListCommand : ModBaseCommand() {
     override fun help() = """Control the blacklisted words on your server
         |Note: **People that have the kick members permission will bypass the blacklist**
         |
-        |Usage:```
-        |   ${Settings.PREFIX}$name list => Gives you a list of the current blacklisted words
-        |   ${Settings.PREFIX}$name clear => Clears the blacklist
-        |   ${Settings.PREFIX}$name add <word> => Adds a word to the blacklist
-        |   ${Settings.PREFIX}$name remove <word> => Removes a word from the blacklist
-        |```
+        |Usage:```${Settings.PREFIX}$name list => Gives you a list of the current blacklisted words
+        |${Settings.PREFIX}$name clear => Clears the blacklist
+        |${Settings.PREFIX}$name add <word> => Adds a word to the blacklist
+        |${Settings.PREFIX}$name remove <word> => Removes a word from the blacklist```
     """.trimMargin()
 }

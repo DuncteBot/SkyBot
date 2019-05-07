@@ -21,7 +21,7 @@ package ml.duncte123.skybot.web
 import com.jagrosh.jdautilities.oauth2.OAuth2Client
 import com.jagrosh.jdautilities.oauth2.session.Session
 import me.duncte123.botcommons.web.WebUtils
-import me.duncte123.botcommons.web.WebUtilsErrorUtils
+import me.duncte123.botcommons.web.WebParserUtils
 import me.duncte123.weebJava.helpers.QueryBuilder
 import ml.duncte123.skybot.objects.config.DunctebotConfig
 import net.dv8tion.jda.bot.sharding.ShardManager
@@ -39,7 +39,7 @@ object WebHelpers {
         fields["response"] = response
         val req = WebUtils.ins.preparePost("https://www.google.com/recaptcha/api/siteverify", fields,
             WebUtils.EncodingType.APPLICATION_JSON)
-            .build(WebUtilsErrorUtils::toJSONObject, WebUtilsErrorUtils::handleError)
+            .build(WebParserUtils::toJSONObject, WebParserUtils::handleError)
 
         return req.execute()
     }

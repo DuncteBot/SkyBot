@@ -90,6 +90,12 @@ public class UnlockEmoteCommand extends Command {
     }
 
     static boolean cannotInteractWithEmote(GuildMessageReceivedEvent event, Emote emote) {
+        if (emote == null) {
+            sendMsg(event, "I cannot access that emote");
+
+            return true;
+        }
+
         if (!emote.getGuild().equals(event.getGuild())) {
             sendMsg(event, "That emote does not exist on this server");
             return true;

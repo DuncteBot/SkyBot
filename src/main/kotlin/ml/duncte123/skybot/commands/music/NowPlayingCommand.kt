@@ -32,7 +32,7 @@ import java.awt.Color
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 class NowPlayingCommand : MusicCommand() {
 
-    override fun run(ctx: CommandContext) {
+    override fun executeCommand(ctx: CommandContext) {
         val event = ctx.event
         val mng = getMusicManager(event.guild, ctx.audioUtils)
         val player = mng.player
@@ -42,18 +42,21 @@ class NowPlayingCommand : MusicCommand() {
                 embedMessage("**Playing** [${player.playingTrack.info.title}](${player.playingTrack.info.uri})\n" + playerEmbed(mng))
 
             player.playingTrack != null && player.playingTrack.info.isStream -> {
-                val json = WebUtils.ins.getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
+                val trackinfo = player.playingTrack.info
                 val stream = (ctx.commandManager.getCommand("radio") as RadioCommand)
-                    .radioStreams.first { it.url == player.playingTrack.info.uri }
+                    .radioStreams.first { it.url == trackinfo.uri }
 
                 if (stream is ILoveStream) {
-                    val channelData = json!!.getJSONObject("channel-${stream.npChannel}")
+                    val json = WebUtils.ins
+                        .getJSONObject("https://www.iloveradio.de/typo3conf/ext/ep_channel/Scripts/playlist.php").execute()
+                    val channelData = json.getJSONObject("channel-${stream.npChannel}")
+
                     EmbedUtils.defaultEmbed().setDescription("**Playing [${channelData.getString("title")}]" +
                         "(${stream.url}) by ${channelData.getString("artist")}**")
                         .setThumbnail("https://www.iloveradio.de${channelData.getString("cover")}")
                         .setColor(Color.decode(channelData.getString("color")))
                 } else {
-                    embedMessage("**Playing [${stream.name}](${stream.url})")
+                    embedMessage("**Playing [${trackinfo.title}](${trackinfo.uri})")
                 }
 
             }

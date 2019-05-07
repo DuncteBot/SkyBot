@@ -20,7 +20,7 @@ package ml.duncte123.skybot.commands.fun;
 
 import me.duncte123.botcommons.web.WebUtils;
 import me.duncte123.botcommons.web.WebUtils.EncodingType;
-import me.duncte123.botcommons.web.WebUtilsErrorUtils;
+import me.duncte123.botcommons.web.WebParserUtils;
 import me.duncte123.weebJava.helpers.QueryBuilder;
 import ml.duncte123.skybot.Author;
 import ml.duncte123.skybot.Settings;
@@ -52,7 +52,7 @@ public class YodaSpeakCommand extends Command {
         WebUtils.ins.prepareRaw(WebUtils.defaultRequest()
             .url(builder.build())
             .addHeader("Accept", EncodingType.APPLICATION_JSON.getType())
-            .build(), WebUtilsErrorUtils::toJSONObject).async(
+            .build(), WebParserUtils::toJSONObject).async(
             (json) -> {
                 logger.debug("Yoda response: " + json);
                 sendMsg(event, json.getString("data"));

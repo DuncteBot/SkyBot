@@ -75,12 +75,6 @@ class OneLinerCommands : Command() {
             "screenfetch" -> sendMsg(event, "```\n${Runtime.getRuntime().exec("screenfetch -N")
                 .getString().replace("`", "​'").replace("\u001B\\[[;\\d]*m", "")}```")
 
-            "xkcd" -> {
-                WebUtils.ins.scrapeWebPage("https://c.xkcd.com/random/comic/").async {
-                    sendMsg(event, "https:" + it.select("#comic img").attr("src"))
-                }
-            }
-
             else -> println("Invoke was invalid: ${ctx.invoke}")
         }
     }
@@ -128,9 +122,6 @@ class OneLinerCommands : Command() {
                     |Usage: `${Settings.PREFIX}$invoke`
                 """.trimMargin()
             }
-            "xkcd" -> """Get a random comic from xkcd.com
-                |Usage: `${Settings.PREFIX}$invoke`
-            """.trimMargin()
 
             else -> "invalid invoke"
         }
@@ -144,7 +135,6 @@ class OneLinerCommands : Command() {
             |`${Settings.PREFIX}invite` => Gives you the bot invite
             |`${Settings.PREFIX}uptime` => Shows the bot uptime
             |`${Settings.PREFIX}quote` => Shows an inspiring quote
-            |`${Settings.PREFIX}xkcd` => Get a random comic from xkcd.com
     """.trimMargin()
 
     override fun getName() = "cookie"
