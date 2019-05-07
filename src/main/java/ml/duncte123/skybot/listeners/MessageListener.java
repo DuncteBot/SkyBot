@@ -259,7 +259,9 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings) {
+    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, DunctebotGuild guild) {
+        final GuildSettings settings = guild.getSettings();
+
         if (settings.isEnableSwearFilter()) {
             final float score = PerspectiveApi.checkSevereToxicity(
                 messageToCheck.getContentStripped(),
@@ -270,7 +272,9 @@ public class MessageListener extends BaseListener {
                 return false;
             }
 
-            messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+            final String display = messageToCheck.getContentDisplay();
+
+            messageToCheck.delete().reason("Blocked for swearing: " + display)
                 .queue(null, (t) -> {});
 
             sendMsg(event,
@@ -278,6 +282,12 @@ public class MessageListener extends BaseListener {
                     event.getAuthor().getAsMention()
                 ),
                 m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
+
+            modLog(String.format(
+                "Message deleted in %s for profanity, message content was:```\n%s```",
+                event.getChannel().getAsMention(),
+                display
+            ), guild);
 
             return true;
         }
@@ -341,12 +351,11 @@ public class MessageListener extends BaseListener {
             checkMessageForInvites(guild, event, settings, rw);
 
             final Message messageToCheck = event.getMessage();
+            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
 
-            if (checkSwearFilter(messageToCheck, event, settings)) {
+            if (checkSwearFilter(messageToCheck, event, dbG)) {
                 return true;
             }
-
-            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
 
             if (blacklistedWordCheck(dbG, messageToCheck, event.getMember(), settings.getBlacklistedWords())) {
                 return true;
