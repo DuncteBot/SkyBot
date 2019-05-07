@@ -31,10 +31,7 @@ object Suggest {
         return try {
             val jsonBody = JSONObject(request.body())
 
-            if (!jsonBody.has("name") &&
-                !jsonBody.has("sug") &&
-                !jsonBody.has("desc") &&
-                !jsonBody.has("g-recaptcha-response")) {
+            if (!(jsonBody.has("name") && jsonBody.has("sug") && jsonBody.has("desc") && jsonBody.has("g-recaptcha-response"))) {
                 response.status(400)
 
                 return JSONObject()

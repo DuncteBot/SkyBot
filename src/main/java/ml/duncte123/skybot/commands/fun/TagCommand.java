@@ -28,16 +28,16 @@ import net.dv8tion.jda.core.Permission;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsgFormat;
 
 public class TagCommand extends Command {
 
-    private final Map<String, Tag> tagStore = new HashMap<>();
+    private final Map<String, Tag> tagStore = new ConcurrentHashMap<>();
 
     public TagCommand() {
         this.category = CommandCategory.FUN;
