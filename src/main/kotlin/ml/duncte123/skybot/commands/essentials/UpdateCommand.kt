@@ -167,24 +167,6 @@ class UpdateCommand : Command() {
         }
     }
 
-    private fun makeHastePost(text: String): String {
-        val base = "https://paste.menudocs.org"
-        val dataMap = hashMapOf<String, Any>()
-
-        dataMap["text"] = text
-        dataMap["expire"] = "1h"
-        dataMap["lang"] = "text"
-
-        val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, EncodingType.TEXT_PLAIN)
-            .build({
-                return@build Jsoup.parse(it.body()!!.string())
-                    .select("a[title=\"View Raw\"]").first().attr("href")
-                    .replaceFirst("/raw", "")
-            }, WebParserUtils::handleError).execute()
-
-        return base + loc
-    }
-
     private fun runProcess(process: Process): String {
         val scanner = Scanner(process.inputStream)
         val out = buildString {
@@ -194,5 +176,25 @@ class UpdateCommand : Command() {
         }
 
         return makeHastePost(out)
+    }
+
+    companion object {
+        fun makeHastePost(text: String, expiration: String = "1h", lang: String = "text"): String {
+            val base = "https://paste.menudocs.org"
+            val dataMap = hashMapOf<String, Any>()
+
+            dataMap["text"] = text
+            dataMap["expire"] = expiration
+            dataMap["lang"] = lang
+
+            val loc = WebUtils.ins.preparePost("$base/paste/new", dataMap, EncodingType.TEXT_PLAIN)
+                .build({
+                    return@build Jsoup.parse(it.body()!!.string())
+                        .select("a[title=\"View Raw\"]").first().attr("href")
+                        .replaceFirst("/raw", "")
+                }, WebParserUtils::handleError).execute()
+
+            return base + loc
+        }
     }
 }
