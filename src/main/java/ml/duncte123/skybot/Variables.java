@@ -45,6 +45,7 @@ import java.lang.reflect.InvocationTargetException;
 public final class Variables {
 
     private static Variables instance;
+    private final ObjectMapper mapper = new ObjectMapper();
     private final String googleBaseUrl;
     private final boolean isSql;
     private final TLongObjectMap<GuildSettings> guildSettings = MapUtils.newLongObjectMap();
@@ -62,7 +63,7 @@ public final class Variables {
 
     private Variables() {
         try {
-            this.config = new ObjectMapper().readValue(new File("config.json"), DunctebotConfig.class);
+            this.config = this.mapper.readValue(new File("config.json"), DunctebotConfig.class);
         }
         catch (IOException e) {
             e.printStackTrace();
@@ -154,7 +155,7 @@ public final class Variables {
     public Alexflipnote getAlexflipnote() {
 
         if (this.alexflipnote == null) {
-            this.alexflipnote = new Alexflipnote();
+            this.alexflipnote = new Alexflipnote(this.mapper);
         }
 
         return this.alexflipnote;

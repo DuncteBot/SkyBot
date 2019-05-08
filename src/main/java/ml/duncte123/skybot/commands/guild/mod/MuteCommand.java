@@ -26,13 +26,13 @@ import ml.duncte123.skybot.utils.ModerationUtils;
 import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Role;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.List;
 
 import static me.duncte123.botcommons.messaging.MessageUtils.sendMsg;
 import static me.duncte123.botcommons.messaging.MessageUtils.sendSuccess;
-import static ml.duncte123.skybot.utils.ModerationUtils.canInteract;
+import static ml.duncte123.skybot.commands.guild.mod.TempMuteCommand.canNotProceed;
 
 @Author(nickname = "Sanduhr32", author = "Maurice R S")
 public class MuteCommand extends ModBaseCommand {
@@ -61,17 +61,7 @@ public class MuteCommand extends ModBaseCommand {
         final Member toMute = mentioned.get(0);
         final Role role = event.getGuild().getRoleById(settings.getMuteRoleId());
 
-        if (role == null) {
-            sendMsg(event, "The current mute role does not exist on this server, please contact your server administrator about this.");
-            return;
-        }
-
-        if (!canInteract(mod, toMute, "mute", ctx.getChannel())) {
-            return;
-        }
-
-        if (!self.canInteract(role)) {
-            sendMsg(event, "I cannot mute this member, is the mute role above mine?");
+        if (canNotProceed(ctx, event, mod, toMute, role, self)) {
             return;
         }
 

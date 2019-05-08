@@ -31,10 +31,10 @@ class AvatarCommand : Command() {
 
         if (ctx.args.isNotEmpty()) {
             // We're searching for members in the guild to get more accurate results
-            val foundMembers = FinderUtil.findMembers(ctx.args[0], ctx.guild)
+            val foundMembers = FinderUtil.findMembers(ctx.argsRaw, ctx.guild)
 
             user = if (foundMembers.isEmpty()) {
-                val foundUsers = FinderUtil.findUsers(ctx.args[0], ctx.jda)
+                val foundUsers = FinderUtil.findUsers(ctx.argsRaw, ctx.jda)
 
                 if (foundUsers.isNotEmpty()) foundUsers[0] else null
             } else foundMembers[0].user

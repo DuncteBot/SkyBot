@@ -28,6 +28,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import static ml.duncte123.skybot.utils.GuildSettingsUtils.*;
@@ -500,6 +501,6 @@ public class GuildSettings {
     }
 
     private static List<String> parseBlacklistedWords(JSONArray array) {
-        return array.toList().stream().map(it -> ((JSONObject) it).getString("word")).collect(Collectors.toList());
+        return array.toList().stream().map(it -> ((Map<String, Object>) it).get("word").toString()).collect(Collectors.toList());
     }
 }

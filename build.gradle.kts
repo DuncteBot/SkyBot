@@ -57,6 +57,11 @@ repositories {
         url = uri("http://repo.jenkins-ci.org/releases/")
     }
 
+    maven {
+        name = "duncte123 bintray"
+        url = uri("https://dl.bintray.com/duncte123/maven")
+    }
+
     // Use JitPack if jcenter doesn"t find, not download everything from JitPack ;)
     maven {
         name = "jitpack"
@@ -131,6 +136,9 @@ dependencies {
 
     // Trove
     implementation(group = "net.sf.trove4j", name = "trove4j", version = "3.0.3")
+
+    // A nice duration parser
+    implementation(group = "me.duncte123", name = "durationParser", version = "1.0.14")
 }
 
 val compileKotlin: KotlinCompile by tasks

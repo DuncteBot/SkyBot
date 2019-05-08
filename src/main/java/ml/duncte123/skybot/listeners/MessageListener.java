@@ -18,6 +18,7 @@
 
 package ml.duncte123.skybot.listeners;
 
+import io.sentry.Sentry;
 import kotlin.Triple;
 import ml.duncte123.skybot.CommandManager;
 import ml.duncte123.skybot.Settings;
@@ -27,8 +28,8 @@ import ml.duncte123.skybot.objects.command.CommandContext;
 import ml.duncte123.skybot.objects.command.ICommand;
 import ml.duncte123.skybot.objects.command.custom.CustomCommand;
 import ml.duncte123.skybot.objects.guild.GuildSettings;
-import ml.duncte123.skybot.utils.BadWordFilter;
 import ml.duncte123.skybot.utils.GuildSettingsUtils;
+import ml.duncte123.skybot.utils.PerspectiveApi;
 import ml.duncte123.skybot.utils.SpamFilter;
 import net.dv8tion.jda.bot.sharding.ShardManager;
 import net.dv8tion.jda.core.Permission;
@@ -37,8 +38,8 @@ import net.dv8tion.jda.core.entities.Member;
 import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.TextChannel;
 import net.dv8tion.jda.core.events.message.guild.GuildMessageReceivedEvent;
-import javax.annotation.Nonnull;
 
+import javax.annotation.Nonnull;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -53,12 +54,10 @@ import static ml.duncte123.skybot.utils.ModerationUtils.modLog;
 public class MessageListener extends BaseListener {
 
     protected final CommandManager commandManager = variables.getCommandManager();
-    protected final SpamFilter spamFilter = new SpamFilter();
-    private final BadWordFilter wordFilter = new BadWordFilter();
+    final SpamFilter spamFilter = new SpamFilter();
 
     @Override
     public void onGuildMessageReceived(GuildMessageReceivedEvent event) {
-
         final Guild guild = event.getGuild();
 
         if (isBotfarm(guild)) {
@@ -89,69 +88,77 @@ public class MessageListener extends BaseListener {
             return;
         }
 
-        final String selfMember = guild.getSelfMember().getAsMention();
-        final String selfUser = event.getJDA().getSelfUser().getAsMention();
-        final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
-        final String rwLower = rw.toLowerCase();
+        variables.getDatabase().run(() -> {
+            try {
+                final String selfMember = guild.getSelfMember().getAsMention();
+                final String selfUser = event.getJDA().getSelfUser().getAsMention();
+                final GuildSettings settings = GuildSettingsUtils.getGuild(guild, variables);
+                final String rwLower = rw.toLowerCase();
 
-        if (doAutoModChecks(event, settings, rw)) {
-            return;
-        }
+                if (doAutoModChecks(event, settings, rw)) {
+                    return;
+                }
 
-        if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) &&
-            (rw.equals(selfMember) || rw.equals(selfUser))) {
-            sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
-                event.getAuthor(),
-                settings.getCustomPrefix())
-            );
-            return;
-        }
+                if (event.getMessage().getMentionedUsers().contains(event.getJDA().getSelfUser()) &&
+                    (rw.equals(selfMember) || rw.equals(selfUser))) {
+                    sendMsg(event, String.format("Hey %s, try `%shelp` for a list of commands. If it doesn't work scream at _duncte123#1245_",
+                        event.getAuthor(),
+                        settings.getCustomPrefix())
+                    );
+                    return;
+                }
 
-        final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
-        final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
+                final String[] split = rw.replaceFirst(Pattern.quote(Settings.PREFIX), "").split("\\s+");
+                final List<CustomCommand> autoResponses = commandManager.getAutoResponses(guild.getIdLong());
 
-        if (!autoResponses.isEmpty()) {
-            final String stripped = event.getMessage().getContentStripped().toLowerCase();
+                if (!autoResponses.isEmpty()) {
+                    final String stripped = event.getMessage().getContentStripped().toLowerCase();
 
-            final Optional<CustomCommand> match = autoResponses.stream()
-                .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
+                    final Optional<CustomCommand> match = autoResponses.stream()
+                        .filter((cmd) -> stripped.contains(cmd.getName().toLowerCase())).findFirst();
 
-            if (match.isPresent()) {
-                final CustomCommand cmd = match.get();
+                    if (match.isPresent()) {
+                        final CustomCommand cmd = match.get();
 
-                commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
-                return;
+                        commandManager.dispatchCommand(cmd, "", Arrays.asList(split).subList(1, split.length), event);
+                        return;
+                    }
+
+                }
+
+                if (!rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
+                    !rw.startsWith(settings.getCustomPrefix())
+                    && !rw.startsWith(selfMember)
+                    && !rw.startsWith(selfUser)
+                    && !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
+                    return;
+                }
+
+                if (!canRunCommands(rw, settings, event)) {
+                    return;
+                }
+
+                if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
+                    //Handle the command
+                    commandManager.runCommand(event);
+                    return;
+                }
+                //Handle the chat command
+                final ICommand cmd = commandManager.getCommand("chat");
+
+                if (cmd != null) {
+                    cmd.executeCommand(new CommandContext(
+                        "chat",
+                        Arrays.asList(split).subList(1, split.length),
+                        event
+                    ));
+                }
             }
-
-        }
-
-        if (!rwLower.startsWith(Settings.PREFIX.toLowerCase()) &&
-            !rw.startsWith(settings.getCustomPrefix())
-            && !rw.startsWith(selfMember)
-            && !rw.startsWith(selfUser)
-            && !rwLower.startsWith(Settings.OTHER_PREFIX.toLowerCase())) {
-            return;
-        }
-
-        if (!canRunCommands(rw, settings, event)) {
-            return;
-        }
-
-        if (!rw.startsWith(selfMember) && !rw.startsWith(selfUser)) {
-            //Handle the command
-            commandManager.runCommand(event);
-            return;
-        }
-        //Handle the chat command
-        final ICommand cmd = commandManager.getCommand("chat");
-
-        if (cmd != null) {
-            cmd.executeCommand(new CommandContext(
-                "chat",
-                Arrays.asList(split).subList(1, split.length),
-                event
-            ));
-        }
+            catch (Exception e) {
+                Sentry.capture(e);
+                e.printStackTrace();
+            }
+        });
     }
 
     private boolean shouldBlockCommand(@Nonnull GuildSettings settings, @Nonnull String rw, @Nonnull String s) {
@@ -252,14 +259,22 @@ public class MessageListener extends BaseListener {
         }
     }
 
-    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, GuildSettings settings, String rw) {
-        if (settings.isEnableSwearFilter()) {
+    private boolean checkSwearFilter(Message messageToCheck, GuildMessageReceivedEvent event, DunctebotGuild guild) {
+        final GuildSettings settings = guild.getSettings();
 
-            if (!wordFilter.filterText(rw)) {
+        if (settings.isEnableSwearFilter()) {
+            final float score = PerspectiveApi.checkSevereToxicity(
+                messageToCheck.getContentStripped(),
+                event.getChannel().getId(),
+                variables.getConfig().apis.googl);
+
+            if (score < 0.7f) {
                 return false;
             }
 
-            messageToCheck.delete().reason("Blocked for bad swearing: " + messageToCheck.getContentDisplay())
+            final String display = messageToCheck.getContentDisplay();
+
+            messageToCheck.delete().reason("Blocked for swearing: " + display)
                 .queue(null, (t) -> {});
 
             sendMsg(event,
@@ -267,6 +282,12 @@ public class MessageListener extends BaseListener {
                     event.getAuthor().getAsMention()
                 ),
                 m -> m.delete().queueAfter(5, TimeUnit.SECONDS, null, (t) -> {}));
+
+            modLog(String.format(
+                "Message deleted in %s for profanity, message content was:```\n%s```",
+                event.getChannel().getAsMention(),
+                display
+            ), guild);
 
             return true;
         }
@@ -330,12 +351,11 @@ public class MessageListener extends BaseListener {
             checkMessageForInvites(guild, event, settings, rw);
 
             final Message messageToCheck = event.getMessage();
+            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
 
-            if (checkSwearFilter(messageToCheck, event, settings, rw)) {
+            if (checkSwearFilter(messageToCheck, event, dbG)) {
                 return true;
             }
-
-            final DunctebotGuild dbG = new DunctebotGuild(event.getGuild());
 
             if (blacklistedWordCheck(dbG, messageToCheck, event.getMember(), settings.getBlacklistedWords())) {
                 return true;
