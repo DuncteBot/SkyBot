@@ -42,6 +42,7 @@ class RoleInfoCommand : Command() {
         }
 
         val role = roles[0]
+        val perms = role.permissions.map { it.getName() }.joinToString()
 
         val embed = EmbedUtils.defaultEmbed()
             .setColor(role.colorRaw)
@@ -54,6 +55,7 @@ class RoleInfoCommand : Command() {
                 |**Managed:** ${role.isManaged.toYN()}
                 |**Hoisted:** ${role.isHoisted.toYN()}
                 |**Mentionable:** ${role.isMentionable.toYN()}
+                |**Permissions:** $perms
             """.trimMargin())
 
         sendEmbedRaw(ctx.channel, embed.build()) {}
