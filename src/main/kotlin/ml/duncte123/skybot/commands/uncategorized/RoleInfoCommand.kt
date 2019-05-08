@@ -52,6 +52,7 @@ class RoleInfoCommand : Command() {
                 |**Id:** ${role.id}
                 |**Name:** ${role.name}
                 |**Position:** ${role.position}
+                |**Members with this role:** ${ctx.guild.getMembersWithRoles(role).size}
                 |**Managed:** ${role.isManaged.toYN()}
                 |**Hoisted:** ${role.isHoisted.toYN()}
                 |**Mentionable:** ${role.isMentionable.toYN()}
