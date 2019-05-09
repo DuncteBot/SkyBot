@@ -222,7 +222,7 @@ public class TagCommand extends Command {
 
     private void createTag(CommandContext ctx) {
         if (!isPatron(ctx.getAuthor(), null)) {
-            sendMsg(ctx, "Unfortunately only our patrons are able to create tags. You can become one here: <https://patreon.com/DuncteBot>");
+            sendMsg(ctx, "Unfortunately only our patrons are able to create tags. You can become one for as little as $1/month: <https://patreon.com/DuncteBot>");
 
             return;
         }
