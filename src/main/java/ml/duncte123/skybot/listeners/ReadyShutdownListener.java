@@ -47,7 +47,7 @@ public class ReadyShutdownListener extends MessageListener {
         r -> new Thread(r, "Bot-Service-Thread"));
     private boolean unbanTimerRunning = false;
     private boolean isCacheCleanerActive = false;
-    private short shardsReady = 0;
+    private byte shardsReady = 0;
 
     @Override
     public void onReady(ReadyEvent event) {

@@ -161,6 +161,10 @@ public final class Variables {
         return this.alexflipnote;
     }
 
+    public ObjectMapper getJackson() {
+        return mapper;
+    }
+
     public AudioUtils getAudioUtils() {
 
         if (this.audioUtils == null) {

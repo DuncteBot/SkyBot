@@ -24,7 +24,9 @@ import ml.duncte123.skybot.objects.Tag;
 import ml.duncte123.skybot.objects.command.Command;
 import ml.duncte123.skybot.objects.command.CommandCategory;
 import ml.duncte123.skybot.objects.command.CommandContext;
+import net.dv8tion.jda.core.MessageBuilder;
 import net.dv8tion.jda.core.Permission;
+import net.dv8tion.jda.core.entities.Message;
 import net.dv8tion.jda.core.entities.User;
 
 import javax.annotation.Nonnull;
@@ -90,6 +92,12 @@ public class TagCommand extends Command {
 
                 return;
             }
+
+            if (subCmd.equalsIgnoreCase("raw")) {
+                sendTagRaw(ctx, tagName);
+
+                return;
+            }
         }
 
         if (subCmd.equalsIgnoreCase("create") || subCmd.equalsIgnoreCase("new")) {
@@ -116,6 +124,7 @@ public class TagCommand extends Command {
                 "\t`%1$s%2$s help` => Shows this message\n" +
                 "\t`%1$s%2$s list` => Gives you a list of all the tags\n" +
                 "\t`%1$s%2$s author <tag name>` => Shows the owner of a tag\n" +
+                "\t`%1$s%2$s raw <tag name>` => Shows raw content of a tag\n" +
                 "\t`%1$s%2$s delete <tag name>` => Deletes a tag\n" +
                 "\t`%1$s%2$s create <tag name> <tag content>` => Creates a new tag",
             prefix,
@@ -125,9 +134,28 @@ public class TagCommand extends Command {
         sendMsg(ctx, message);
     }
 
+    private void sendTagRaw(CommandContext ctx, String tagName) {
+        if (!this.tagStore.containsKey(tagName)) {
+            sendMsg(ctx, "That tag does not exist");
+
+            return;
+        }
+
+        final Message message = new MessageBuilder()
+            .appendCodeBlock(this.tagStore.get(tagName).content, "").build();
+
+        sendMsg(ctx, message);
+    }
+
     private void sendTagsList(CommandContext ctx) {
         if (this.tagStore.isEmpty()) {
             sendMsg(ctx, "There are no tags in the system");
+
+            return;
+        }
+
+        if (this.tagStore.size() < 13) {
+            sendMsgFormat(ctx, "Here is the current tag list: `%s`", String.join("`, `", this.tagStore.keySet()));
 
             return;
         }
@@ -171,7 +199,7 @@ public class TagCommand extends Command {
 
         final Tag tag = this.tagStore.get(tagName);
 
-        if (ctx.getAuthor().getIdLong() != tag.owner_id) {
+        if (ctx.getAuthor().getIdLong() != tag.owner_id && !isDev(ctx.getAuthor())) {
             sendMsg(ctx, "You do not own that tag");
 
             return;
@@ -198,6 +226,12 @@ public class TagCommand extends Command {
 
         if (this.tagStore.containsKey(tagName)) {
             sendMsg(ctx, "This tag already exists");
+
+            return;
+        }
+
+        if (tagName.length() > 10) {
+            sendMsg(ctx, "Max length for the name is 10 characters");
 
             return;
         }
@@ -231,7 +265,7 @@ public class TagCommand extends Command {
     @Override
     public String help() {
         return "Store it in a tag\n" +
-            "Usage: `" + Settings.PREFIX + getName() + " <tag name/author/delete/create/help> [tag-name] [tag content]`\n" +
+            "Usage: `" + Settings.PREFIX + getName() + " <tag-name/raw/author/delete/create/help> [tag-name] [tag content]`\n" +
             "**Note:** The tag content are plain text and will not be parsed like welcome messages and custom commands";
     }
 
